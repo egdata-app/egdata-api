@@ -7,6 +7,9 @@ import { Asset } from "@egdata/core.schemas.assets";
 import { PriceEngine } from "@egdata/core.schemas.price";
 import { Changelog } from "@egdata/core.schemas.changelog";
 import { db } from "../db/index.js";
+import { regions } from "../utils/countries.js";
+import { getCookie } from "hono/cookie";
+import { FreeGames } from "@egdata/core.schemas.free-games";
 
 const app = new Hono();
 
@@ -188,6 +191,82 @@ app.get("/releases/yearly", async (c) => {
       },
     },
   ]);
+
+  // Cache for 1 day
+  await client.set(cacheKey, JSON.stringify(result), "EX", 86400);
+
+  return c.json(result, 200);
+});
+
+/**
+ * Returns the following stats
+ * - Number of offers in the DB
+ * - Number of tracked price changes in the last 72 hours
+ * - Number of active discounts
+ * - Number of giveaways
+ */
+app.get("/homepage", async (c) => {
+  const country = c.req.query("country");
+  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
+
+  const selectedCountry = country ?? cookieCountry ?? "US";
+
+  // Get the region for the selected country
+  const region = Object.keys(regions).find((r) =>
+    regions[r].countries.includes(selectedCountry)
+  );
+
+  if (!region) {
+    c.status(404);
+    return c.json({
+      message: "Country not found",
+    });
+  }
+
+  const cacheKey = `stats:homepage:${region}`;
+
+  const cached = await client.get(cacheKey);
+
+  if (cached) {
+    return c.json(JSON.parse(cached), 200, {
+      "Cache-Control": "public, max-age=3600",
+    });
+  }
+
+  const [offersData, trackedPriceChangesData, activeDiscountsData, giveawaysData] =
+    await Promise.allSettled([
+      Offer.countDocuments(),
+      PriceEngine.countDocuments({
+        region,
+        updatedAt: {
+          $gte: new Date(Date.now() - 72 * 60 * 60 * 1000),
+        },
+        // If the appliedRules array is not empty, it means that the price engine has been updated
+        appliedRules: {
+          $ne: [],
+        },
+      }),
+      PriceEngine.countDocuments({
+        region,
+        appliedRules: {
+          $ne: [],
+        },
+      }),
+      FreeGames.countDocuments(),
+    ]);
+
+  const result = {
+    offers: offersData.status === "fulfilled" ? offersData.value : 0,
+    trackedPriceChanges:
+      trackedPriceChangesData.status === "fulfilled"
+        ? trackedPriceChangesData.value
+        : 0,
+    activeDiscounts:
+      activeDiscountsData.status === "fulfilled"
+        ? activeDiscountsData.value
+        : 0,
+    giveaways: giveawaysData.status === "fulfilled" ? giveawaysData.value : 0,
+  };
 
   // Cache for 1 day
   await client.set(cacheKey, JSON.stringify(result), "EX", 86400);
