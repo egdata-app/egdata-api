@@ -3520,4 +3520,186 @@ app.get("/:id/igdb", async (c) => {
   return c.json(igdb);
 });
 
+app.get("/:id/overview", async (c) => {
+  const { id } = c.req.param();
+  const country = c.req.query("country");
+  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
+  const selectedCountry = country ?? cookieCountry ?? "US";
+
+  // Get the region for the selected country
+  const region = Object.keys(regions).find((r) =>
+    regions[r].countries.includes(selectedCountry)
+  );
+
+  if (!region) {
+    c.status(404);
+    return c.json({
+      message: "Country not found",
+    });
+  }
+
+  const start = new Date();
+  const cacheKey = `overview:${id}:${region}:v0.1`;
+  const cached = false // await client.get(cacheKey);
+
+  if (cached) {
+    return c.json(JSON.parse(cached), 200, {
+      "Cache-Control": "public, max-age=60",
+    });
+  }
+
+  // Get base offer data
+  const offer = await Offer.findOne({ id }).lean();
+
+  if (!offer) {
+    c.status(404);
+    return c.json({
+      message: "Offer not found",
+    });
+  }
+
+  // Execute all data fetching in parallel for better performance
+  const [
+    price,
+    media,
+    igdb,
+    subItems,
+    sandbox,
+    giveaways,
+    genres,
+  ] = await Promise.allSettled([
+    // Price data
+    PriceEngine.findOne({ offerId: id, region }),
+    // Media data
+    Media.findOne({ _id: id }),
+    // IGDB data
+    db.db.collection("igdb").findOne({ offerId: id }),
+    // Sub items for features and technologies
+    OfferSubItems.find({ _id: id }),
+    // Sandbox for age ratings and ratings
+    Sandbox.findOne({ _id: offer.namespace }),
+    // Giveaways
+    FreeGames.find({ id }, undefined, { sort: { startDate: -1 } }),
+    // Genres
+    Tags.find({ groupName: "genre", status: "ACTIVE" }),
+  ]);
+
+  // Get items for features and technologies
+  const subItemsData = subItems.status === "fulfilled" ? subItems.value : [];
+  const items = await Item.find({
+    $or: [
+      {
+        id: {
+          $in: [
+            ...offer.items.map((i) => i.id),
+            ...subItemsData.flatMap((i) => i.subItems.map((s) => s.id)),
+          ],
+        },
+      },
+      { linkedOffers: id },
+    ],
+  });
+
+  // Get features
+  const customAttributes = items.reduce((acc, item) => {
+    return Object.assign(acc, attributesToObject(item.customAttributes));
+  }, attributesToObject([]));
+
+  const tagsObject = offer.tags.reduce((acc: Record<string, unknown>, tag) => {
+    acc[tag.id] = tag;
+    return acc;
+  }, {});
+
+  const features = getGameFeatures({
+    attributes: customAttributes,
+    // @ts-expect-error
+    tags: tagsObject,
+  });
+
+  // Get age ratings
+  let ageRating = null;
+  const sandboxData = sandbox.status === "fulfilled" ? sandbox.value : null;
+  if (sandboxData && "ageGatings" in sandboxData) {
+    const selectedRating =
+      Object.entries(ageRatingsCountries).find(([, rating]) =>
+        rating.includes(selectedCountry)
+      )?.[0] ?? "Generic";
+
+    const ageGatings = sandboxData.ageGatings as Record<string, unknown>;
+    const rating = ageGatings[selectedRating];
+    if (rating) {
+      ageRating = { [selectedRating]: rating };
+    }
+  }
+
+  // Get polls
+  const polls = await db.db.collection("ratings_polls").findOne({
+    _id: sandboxData?.id,
+  });
+
+  // Get technologies
+  const assets = await Asset.find({
+    itemId: { $in: items.map((i) => i.id) },
+  });
+
+  const builds = await db.db
+    .collection("builds")
+    .aggregate([
+      { $match: { appName: { $in: assets.map((a) => a.artifactId) } } },
+      { $sort: { createdAt: -1 } },
+      {
+        $group: {
+          _id: "$appName",
+          doc: { $first: "$$ROOT" },
+        },
+      },
+    ])
+    .toArray();
+
+  const latestBuilds = builds.map((b) => b.doc);
+  const technologies = latestBuilds
+    .flatMap((b) => b.technologies || [])
+    .filter(Boolean)
+    .reduce((acc: Array<{ technology: string }>, tech) => {
+      if (
+        !acc.find(
+          (a) => a.technology === tech.technology
+        )
+      ) {
+        acc.push(tech);
+      }
+      return acc;
+    }, []);
+
+  // Filter genres from offer tags
+  const genresData = genres.status === "fulfilled" ? genres.value : [];
+  const offerGenres = offer.tags.filter((tag) =>
+    genresData?.map((genre) => genre?.id).includes(tag?.id)
+  );
+
+  // Combine all data
+  const result = {
+    offer: {
+      ...orderOffersObject(offer),
+      customAttributes: attributesToObject(offer.customAttributes as unknown as Array<{ key: string; value: string }>),
+    },
+    price: price.status === "fulfilled" ? price.value : null,
+    media: media.status === "fulfilled" ? media.value : null,
+    igdb: igdb.status === "fulfilled" ? igdb.value : null,
+    features,
+    ageRating,
+    giveaways: giveaways.status === "fulfilled" ? giveaways.value : [],
+    polls,
+    genres: offerGenres,
+    technologies,
+  };
+
+  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+
+  return c.json(result, 200, {
+    "Cache-Control": "public, max-age=60",
+    "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
+  });
+});
+
 export default app;
