@@ -812,6 +812,20 @@ app.post('/v2/search', async (c) => {
           }
         });
         break;
+      case 'releaseDate': {
+        // If the sort by is `releaseDate` and the sortDir is `desc` 
+        // exclude the offers not released right now
+        if (dir === 'desc') {
+          filter.push({
+            range: {
+              'releaseDate': {
+                gte: new Date().toISOString()
+              }
+            }
+          });
+        }
+        break;
+      }
       default:
         sort.push({ [q.sortBy]: { order: dir } });
     }
