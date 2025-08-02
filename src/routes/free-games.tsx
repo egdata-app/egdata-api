@@ -1,8 +1,8 @@
 import React from "react";
 import { Hono } from "hono";
 import { FreeGames } from "@egdata/core.schemas.free-games";
-import { Offer } from "@egdata/core.schemas.offers";
-import { PriceEngine } from "@egdata/core.schemas.price";
+import { Offer, type OfferType } from "@egdata/core.schemas.offers";
+import { PriceEngine, type PriceEngineType } from "@egdata/core.schemas.price";
 import satori from "satori";
 import { orderOffersObject } from "../utils/order-offers-object.js";
 import { regions } from "../utils/countries.js";
@@ -10,83 +10,134 @@ import { getCookie } from "hono/cookie";
 import { Blob } from "node:buffer";
 import client from "../clients/redis.js";
 import { meiliSearchClient } from "../clients/meilisearch.js";
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 import { getImage } from "../utils/get-image.js";
-import { createHash, hash } from "node:crypto";
+import { createHash } from "node:crypto";
 import { db } from "../db/index.js";
+import { Item } from "@egdata/core.schemas.items";
+import { OfferSubItems } from "@egdata/core.schemas.subitems";
 
 const app = new Hono();
 
 app.get('/', async (c) => {
+  const now = new Date();
   const country = c.req.query('country');
   const cookieCountry = getCookie(c, 'EGDATA_COUNTRY');
-
   const selectedCountry = country ?? cookieCountry ?? 'US';
 
-  // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
     regions[r].countries.includes(selectedCountry)
   );
-
   if (!region) {
     c.status(404);
-    return c.json({
-      message: 'Country not found',
-    });
+    return c.json({ message: 'Country not found' });
   }
 
-  const freeGames = await FreeGames.find(
+  // Helper: unwrap Promise.allSettled results
+  const unwrap = <T,>(r: PromiseSettledResult<T>): T | null =>
+    r.status === 'fulfilled' ? r.value : null;
+
+  const fetchOfferAndPriceAndHistory = async <H,>(
+    offerId: string,
+    getHistory: () => Promise<H>
+  ) => {
+    const [offerR, priceR, histR] = await Promise.allSettled([
+      Offer.findOne({ id: offerId }),
+      PriceEngine.findOne({ offerId, region }),
+      getHistory(),
+    ]);
+    return {
+      offer: unwrap(offerR),
+      price: unwrap(priceR),
+      historical: unwrap(histR),
+    } as { offer: OfferType | null; price: PriceEngineType | null; historical: H | null };
+  };
+
+  const fetchItemsForOffer = async (offer: OfferType) => {
+    const itemsSpecified: string[] = offer.items.map((i) => i.id);
+    const subItems = await OfferSubItems.find({ _id: offer.id });
+    const subItemIds = subItems.flatMap((i) => i.subItems.map((s) => s.id));
+    return Item.find({
+      $or: [
+        { id: { $in: [...itemsSpecified, ...subItemIds] } },
+        { linkedOffers: offer.id },
+      ],
+    });
+  };
+
+  const [freeGamesR, mobileFreebiesR] = await Promise.allSettled([
+    FreeGames.find(
+      { endDate: { $gte: now } },
+      undefined,
+      { sort: { endDate: 1 } }
+    ),
+    db.db
+      .collection<{ platform: string; offerId: string; startDate: Date; endDate: Date }>('mobile-freebies')
+      .find({ endDate: { $gte: now } }, { sort: { endDate: 1 } })
+      .toArray(),
+  ]);
+
+  const freeGames = unwrap(freeGamesR) ?? [];
+  const mobileFreebies = unwrap(mobileFreebiesR) ?? [];
+
+  type Source<G, H> = {
+    list: G[];
+    getOfferId: (g: G) => string;
+    getHistory: (offerId: string) => Promise<H>;
+    toPojo: (g: G) => any;
+  };
+
+  const sources: Array<Source<any, any>> = [
     {
-      endDate: { $gte: new Date() },
+      list: freeGames,
+      getOfferId: (g: any) => g.id,
+      getHistory: (id: string) => FreeGames.find({ id }),
+      toPojo: (g: any) => (typeof g.toObject === 'function' ? g.toObject() : g),
     },
-    null,
     {
-      sort: {
-        endDate: 1,
-      },
-    }
-  );
+      list: mobileFreebies,
+      getOfferId: (g: any) => g.offerId,
+      getHistory: (offerId: string) =>
+        db.db.collection('mobile-freebies').findOne({ offerId }),
+      toPojo: (g: any) => g, // already POJO
+    },
+  ];
 
-  const result = await Promise.all(
-    freeGames.map(async (game) => {
-      const [offerData, priceData, historicalData] = await Promise.allSettled([
-        Offer.findOne({
-          id: game.id,
-        }),
-        PriceEngine.findOne({
-          offerId: game.id,
-          region: region,
-        }),
-        FreeGames.find({
-          id: game.id,
-        }),
-      ]);
+  const enriched = await Promise.all(
+    sources.flatMap((src) =>
+      src.list.map(async (game) => {
+        const offerId = src.getOfferId(game);
+        const { offer, price, historical } = await fetchOfferAndPriceAndHistory(
+          offerId,
+          () => src.getHistory(offerId)
+        );
 
-      const offer = offerData.status === 'fulfilled' ? offerData.value : null;
-      const price = priceData.status === 'fulfilled' ? priceData.value : null;
-      const historical =
-        historicalData.status === 'fulfilled' ? historicalData.value : [];
+        if (!offer) {
+          return { giveaway: game };
+        }
 
-      if (!offer) {
+        const items = await fetchItemsForOffer(offer);
+
         return {
-          giveaway: game,
+          ...orderOffersObject(
+            typeof offer.toObject === 'function' ? offer.toObject() : offer
+          ),
+          items,
+          giveaway: {
+            ...src.toPojo(game),
+            historical: historical ?? (Array.isArray(historical) ? [] : null),
+          },
+          price: price ?? null,
         };
-      }
-
-      return {
-        ...orderOffersObject(offer?.toObject()),
-        giveaway: { ...game.toObject(), historical },
-        price: price ?? null,
-      };
-    })
+      })
+    )
   );
 
-  return c.json(result, 200, {
-    'Cache-Control': 'private, max-age=0',
-  });
+  return c.json(enriched, 200, { 'Cache-Control': 'private, max-age=0' });
 });
+
 
 app.get('/history', async (c) => {
   const country = c.req.query('country');
@@ -241,34 +292,34 @@ app.patch('/index', async (c) => {
 interface FreeGamesSearchQuery {
   title?: string;
   offerType?:
-    | 'IN_GAME_PURCHASE'
-    | 'BASE_GAME'
-    | 'EXPERIENCE'
-    | 'UNLOCKABLE'
-    | 'ADD_ON'
-    | 'Bundle'
-    | 'CONSUMABLE'
-    | 'WALLET'
-    | 'OTHERS'
-    | 'DEMO'
-    | 'DLC'
-    | 'VIRTUAL_CURRENCY'
-    | 'BUNDLE'
-    | 'DIGITAL_EXTRA'
-    | 'EDITION';
+  | 'IN_GAME_PURCHASE'
+  | 'BASE_GAME'
+  | 'EXPERIENCE'
+  | 'UNLOCKABLE'
+  | 'ADD_ON'
+  | 'Bundle'
+  | 'CONSUMABLE'
+  | 'WALLET'
+  | 'OTHERS'
+  | 'DEMO'
+  | 'DLC'
+  | 'VIRTUAL_CURRENCY'
+  | 'BUNDLE'
+  | 'DIGITAL_EXTRA'
+  | 'EDITION';
   tags?: string[];
   sortBy?:
-    | 'giveawayDate'
-    | 'releaseDate'
-    | 'lastModifiedDate'
-    | 'effectiveDate'
-    | 'creationDate'
-    | 'viewableDate'
-    | 'pcReleaseDate'
-    | 'upcoming'
-    | 'price'
-    | 'giveaway.endDate'
-    | 'price.price.discountPrice';
+  | 'giveawayDate'
+  | 'releaseDate'
+  | 'lastModifiedDate'
+  | 'effectiveDate'
+  | 'creationDate'
+  | 'viewableDate'
+  | 'pcReleaseDate'
+  | 'upcoming'
+  | 'price'
+  | 'giveaway.endDate'
+  | 'price.price.discountPrice';
   sortDir?: 'asc' | 'desc';
   limit?: string;
   page?: string;
@@ -848,7 +899,7 @@ app.get('/mobile', async (c) => {
       message: 'Country not found',
     });
   }
-  
+
   const freeGames = await db.db.collection<{
     offerId: string;
     startDate: Date;
@@ -862,7 +913,7 @@ app.get('/mobile', async (c) => {
     const offer = await Offer.findOne({
       id: game.offerId,
     });
-    
+
     if (!offer) {
       console.error(`Offer not found for game ${game.offerId}`);
       return null;
