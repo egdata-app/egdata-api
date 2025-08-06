@@ -477,7 +477,14 @@ app.get("/:slug/:week/og", async (c) => {
       >
         {cell(`#${i + 1}`, COLS[0].flex)}
         {cell(game?.title ?? 'N/A', COLS[1].flex)}
-        {cell(game?.price?.price?.discount ? `-${game.price.price.discount}%` : '', COLS[2].flex)}
+        {cell(
+          game?.price?.price?.originalPrice &&
+            game?.price?.price?.discountPrice &&
+            game.price.price.originalPrice !== game.price.price.discountPrice
+            ? `-${Math.round(((game.price.price.originalPrice - game.price.price.discountPrice) / game.price.price.originalPrice) * 100)}%`
+            : '',
+          COLS[2].flex
+        )}
         {cell(
           game?.price?.price?.originalPrice &&
             game.price.price.originalPrice !== game.price.price.discountPrice
