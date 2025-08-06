@@ -39,6 +39,7 @@ import BuildsRoute from "./routes/builds.js";
 import LauncherRoute from "./routes/launcher.js";
 import UsersServiceRoute from "./routes/users-service.js";
 import StatsRoute from "./routes/stats.js";
+import PushRoute from "./routes/push.js";
 import { config } from "dotenv";
 import { gaClient } from "./clients/ga.js";
 import { Event } from "./db/schemas/events.js";
@@ -1653,6 +1654,8 @@ app.route("/launcher", LauncherRoute);
 app.route("/users-service", UsersServiceRoute);
 
 app.route("/stats", StatsRoute);
+
+app.route("/push", PushRoute);
 
 app.get("/items-sitemap.xml", async (c) => {
   const cacheKey = "items-sitemap-index";
