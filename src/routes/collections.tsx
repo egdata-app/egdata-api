@@ -221,7 +221,7 @@ app.get("/:slug/:week", async (c) => {
     .filter(Boolean)
     .filter((o) => o !== null)
 
-  const ranked = (offersWithPositions as Array<{ position?: number }>)
+  const ranked = offersWithPositions
     .filter((o) => typeof o.position === "number" && (o.position as number) > 0)
     .sort((a, b) => (a.position as number) - (b.position as number));
 
@@ -254,11 +254,10 @@ app.get("/:slug/:week", async (c) => {
     page,
     limit,
     title: collection.name,
-    // FIX: "total" should reflect the number of ranked items in this week, not raw insideWeek
     total: ranked.length,
     updatedAt: collection.updatedAt.toISOString(),
-    start,          // Date (UTC) inclusive
-    end: endExclusive, // Date (UTC) exclusive
+    start,
+    end: endExclusive,
   };
 
   await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
@@ -426,7 +425,7 @@ app.get("/:slug/:week/og", async (c) => {
         minWidth: 0,
         fontWeight: 'bold',
         color: 'white',
-        fontSize: '18px',
+        fontSize: '24px',
         padding: '10px 14px',
         alignItems: 'center',
       }}
@@ -443,7 +442,7 @@ app.get("/:slug/:week/og", async (c) => {
         flexShrink: 1,
         flexBasis: 0,
         minWidth: 0,
-        fontSize: '16px',
+        fontSize: '20px',
         color: '#ddd',
         padding: '10px 14px',
         alignItems: 'center',
@@ -584,11 +583,11 @@ app.get("/:slug/:week/og", async (c) => {
           fontSize: '14px',
         }}
       >
-        <span style={{ display: 'flex' }}>{String(week)}</span>
-        <span style={{ display: 'flex', color: '#666' }}>•</span>
-        <span style={{ display: 'flex' }}>
-          {start.toISOString().slice(0, 10)} - {endExclusive.toISOString().slice(0, 10)}
-        </span>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
+          {start.toLocaleDateString('en-GB')}
+          <span style={{ color: '#666' }}>•</span>
+          {endExclusive.toLocaleDateString('en-GB')}
+        </div>
       </div>
     </div>,
     {
