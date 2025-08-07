@@ -3,6 +3,7 @@ import { PushSubscription } from '../db/schemas/push-subscriptions.js';
 import { randomUUID } from 'node:crypto';
 import webpush from 'web-push';
 import type { Context, Next } from 'hono';
+import { z } from 'zod';
 
 type Variables = {
     user: ApiUser;
@@ -42,10 +43,7 @@ interface NotificationPayload {
     }>;
 }
 
-interface SendNotificationBody {
-    topic: string;
-    notification: NotificationPayload;
-}
+
 
 // Configure VAPID keys (should be set via environment variables)
 if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY && process.env.VAPID_EMAIL) {
@@ -90,34 +88,48 @@ function validateTopicSubscription(body: unknown): TopicSubscriptionBody {
     return { subscriptionId: b.subscriptionId, topics: b.topics };
 }
 
+const notificationSchema = z.object({
+    title: z.string(),
+    body: z.string(),
+    icon: z.string().optional(),
+    badge: z.string().optional(),
+    actions: z.array(z.object({
+        action: z.object({
+            type: z.enum(['open', 'close']),
+            url: z.string().optional()
+        }),
+        title: z.string(),
+        icon: z.string().optional()
+    })).optional()
+})
+
+const sendNotificationSchema = z.object({
+    topic: z.string(),
+    notification: notificationSchema
+});
+
+interface SendNotificationBody {
+    topic: string;
+    notification: z.output<typeof notificationSchema>;
+}
+
 function validateSendNotification(body: unknown): SendNotificationBody {
     const b = body as Record<string, unknown>;
-    if (!b.topic || typeof b.topic !== 'string') {
-        throw new Error('Invalid topic');
+
+    const result = sendNotificationSchema.safeParse(b);
+    if (!result.success) {
+        throw new Error(result.error.message);
     }
-    if (!b.notification || typeof b.notification !== 'object' || b.notification === null) {
-        throw new Error('Invalid notification');
-    }
-    const notification = b.notification as Record<string, unknown>;
-    if (!notification.title || typeof notification.title !== 'string') {
-        throw new Error('Invalid notification title');
-    }
-    if (!notification.body || typeof notification.body !== 'string') {
-        throw new Error('Invalid notification body');
-    }
+    const { topic, notification } = result.data
+
     return {
-        topic: b.topic,
+        topic,
         notification: {
-            title: notification.title as string,
-            body: notification.body as string,
-            icon: notification.icon as string | undefined,
-            badge: notification.badge as string | undefined,
-            data: notification.data as Record<string, unknown> | undefined,
-            actions: notification.actions as Array<{
-                action: string;
-                title: string;
-                icon?: string;
-            }> | undefined
+            title: notification.title,
+            body: notification.body,
+            icon: notification.icon,
+            badge: notification.badge,
+            actions: notification.actions
         }
     };
 }
@@ -232,7 +244,7 @@ app.get("/subscribe", userApiKeyMiddleware, async (c) => {
 
         // Check if user has any active subscriptions
         const subscriptions = await PushSubscription.find({ userId }).select(
-            'id endpoint topics createdAt updatedAt'
+            'id topics createdAt updatedAt'
         );
 
         return c.json({
@@ -381,7 +393,7 @@ app.get('/subscriptions/:subscriptionId', userApiKeyMiddleware, async (c) => {
         const subscription = await PushSubscription.findOne({
             id: subscriptionId,
             userId,
-        }).select('id endpoint topics createdAt updatedAt');
+        }).select('id topics createdAt updatedAt');
 
         if (!subscription) {
             return c.json({ error: 'Subscription not found' }, 404);
