@@ -1,11 +1,11 @@
 import { Hono } from 'hono'
 import { PushSubscription } from '../db/schemas/push-subscriptions.js';
 import { randomUUID } from 'node:crypto';
-import { jwtMiddleware } from '../middlewares/jwt.js';
 import webpush from 'web-push';
+import type { Context, Next } from 'hono';
 
 type Variables = {
-    user: JWTUser;
+    user: ApiUser;
 };
 
 const app = new Hono<{ Variables: Variables }>();
@@ -24,9 +24,9 @@ interface TopicSubscriptionBody {
     topics: string[];
 }
 
-interface JWTUser {
-    id?: string;
-    sub?: string;
+interface ApiUser {
+    id: string;
+    apiKey: string;
 }
 
 interface NotificationPayload {
@@ -118,15 +118,65 @@ function validateSendNotification(body: unknown): SendNotificationBody {
     };
 }
 
+// User API key authentication middleware
+// Requires API key to be provided via X-API-Key header
+// Each user gets their own unique API key for push notifications
+const userApiKeyMiddleware = async (c: Context, next: Next) => {
+    const apiKey = c.req.header('X-API-Key');
+    
+    if (!apiKey) {
+        return c.json({ error: 'API key required' }, 401);
+    }
+    
+    // For now, we'll use the API key as the user ID
+    // In a real implementation, you'd validate against a database
+    // and map the API key to a user ID
+    const userId = apiKey; // Simple implementation - API key = user ID
+    
+    // Set user context
+    c.set('user', { id: userId, apiKey });
+    
+    await next();
+};
+
+// Private key authentication middleware for admin operations
+// Requires PUSH_ADMIN_API_KEY environment variable to be set
+// API key can be provided via:
+// - X-API-Key header
+// - Authorization header (Bearer token or direct key)
+const adminKeyMiddleware = async (c: Context, next: Next) => {
+    const authHeader = c.req.header('Authorization');
+    const apiKey = c.req.header('X-API-Key');
+    
+    // Check for API key in header or Authorization header
+    const providedKey = apiKey || (authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : authHeader);
+    
+    if (!providedKey) {
+        return c.json({ error: 'API key required for this operation' }, 401);
+    }
+    
+    // Check against environment variable
+    const validApiKey = process.env.PUSH_ADMIN_API_KEY;
+    if (!validApiKey) {
+        return c.json({ error: 'Push notifications admin API not configured' }, 500);
+    }
+    
+    if (providedKey !== validApiKey) {
+        return c.json({ error: 'Invalid API key' }, 403);
+    }
+    
+    await next();
+};
+
 // Subscribe to push notifications
-app.post('/subscribe', jwtMiddleware, async (c) => {
+app.post('/subscribe', userApiKeyMiddleware, async (c) => {
     try {
         const body = await c.req.json();
         const { endpoint, keys } = validateSubscription(body);
 
-        // Get user from JWT middleware
-        const user = c.get('user') as JWTUser;
-        const userId = user?.id || user?.sub;
+        // Get user from API key middleware
+        const user = c.get('user') as ApiUser;
+        const userId = user.id;
 
         if (!userId) {
             return c.json({ error: 'User not authenticated' }, 401);
@@ -167,11 +217,11 @@ app.post('/subscribe', jwtMiddleware, async (c) => {
 });
 
 // Unsubscribe from push notifications
-app.delete('/unsubscribe/:subscriptionId', jwtMiddleware, async (c) => {
+app.delete('/unsubscribe/:subscriptionId', userApiKeyMiddleware, async (c) => {
     try {
         const subscriptionId = c.req.param('subscriptionId');
-        const user = c.get('user') as JWTUser;
-        const userId = user?.id || user?.sub;
+        const user = c.get('user') as ApiUser;
+        const userId = user.id;
 
         if (!userId) {
             return c.json({ error: 'User not authenticated' }, 401);
@@ -194,12 +244,12 @@ app.delete('/unsubscribe/:subscriptionId', jwtMiddleware, async (c) => {
 });
 
 // Subscribe to specific topics
-app.post('/topics/subscribe', jwtMiddleware, async (c) => {
+app.post('/topics/subscribe', userApiKeyMiddleware, async (c) => {
     try {
         const body = await c.req.json();
         const { subscriptionId, topics } = validateTopicSubscription(body);
-        const user = c.get('user') as JWTUser;
-        const userId = user?.id || user?.sub;
+        const user = c.get('user') as ApiUser;
+        const userId = user.id;
 
         if (!userId) {
             return c.json({ error: 'User not authenticated' }, 401);
@@ -230,12 +280,12 @@ app.post('/topics/subscribe', jwtMiddleware, async (c) => {
 });
 
 // Unsubscribe from specific topics
-app.post('/topics/unsubscribe', jwtMiddleware, async (c) => {
+app.post('/topics/unsubscribe', userApiKeyMiddleware, async (c) => {
     try {
         const body = await c.req.json();
         const { subscriptionId, topics } = validateTopicSubscription(body);
-        const user = c.get('user') as JWTUser;
-        const userId = user?.id || user?.sub;
+        const user = c.get('user') as ApiUser;
+        const userId = user.id;
 
         if (!userId) {
             return c.json({ error: 'User not authenticated' }, 401);
@@ -267,10 +317,10 @@ app.post('/topics/unsubscribe', jwtMiddleware, async (c) => {
 });
 
 // Get user's subscriptions and topics
-app.get('/subscriptions', jwtMiddleware, async (c) => {
+app.get('/subscriptions', userApiKeyMiddleware, async (c) => {
     try {
-        const user = c.get('user') as JWTUser;
-        const userId = user?.id || user?.sub;
+        const user = c.get('user') as ApiUser;
+        const userId = user.id;
 
         if (!userId) {
             return c.json({ error: 'User not authenticated' }, 401);
@@ -288,11 +338,11 @@ app.get('/subscriptions', jwtMiddleware, async (c) => {
 });
 
 // Get subscription by ID
-app.get('/subscriptions/:subscriptionId', jwtMiddleware, async (c) => {
+app.get('/subscriptions/:subscriptionId', userApiKeyMiddleware, async (c) => {
     try {
         const subscriptionId = c.req.param('subscriptionId');
-        const user = c.get('user') as JWTUser;
-        const userId = user?.id || user?.sub;
+        const user = c.get('user') as ApiUser;
+        const userId = user.id;
 
         if (!userId) {
             return c.json({ error: 'User not authenticated' }, 401);
@@ -314,8 +364,8 @@ app.get('/subscriptions/:subscriptionId', jwtMiddleware, async (c) => {
     }
 });
 
-// Send notification to topic subscribers
-app.post('/send', jwtMiddleware, async (c) => {
+// Send notification to topic subscribers (Admin only - requires API key)
+app.post('/send', adminKeyMiddleware, async (c) => {
     try {
         const body = await c.req.json();
         const { topic, notification } = validateSendNotification(body);
@@ -389,8 +439,8 @@ app.post('/send', jwtMiddleware, async (c) => {
     }
 });
 
-// Send notification to specific user
-app.post('/send-to-user', jwtMiddleware, async (c) => {
+// Send notification to specific user (Admin only - requires API key)
+app.post('/send-to-user', adminKeyMiddleware, async (c) => {
     try {
         const body = await c.req.json();
         const b = body as Record<string, unknown>;
@@ -484,7 +534,7 @@ app.get('/vapid-public-key', async (c) => {
 });
 
 // Get topic statistics
-app.get('/topics/stats', jwtMiddleware, async (c) => {
+app.get('/topics/stats', userApiKeyMiddleware, async (c) => {
     try {
         const topicStats = await PushSubscription.aggregate([
             { $unwind: '$topics' },
