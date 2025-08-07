@@ -49,10 +49,10 @@ interface SendNotificationBody {
 
 // Configure VAPID keys (should be set via environment variables)
 if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY && process.env.VAPID_EMAIL) {
-    const vapidEmail = process.env.VAPID_EMAIL.startsWith('mailto:') 
-        ? process.env.VAPID_EMAIL 
+    const vapidEmail = process.env.VAPID_EMAIL.startsWith('mailto:')
+        ? process.env.VAPID_EMAIL
         : `mailto:${process.env.VAPID_EMAIL}`;
-    
+
     webpush.setVapidDetails(
         vapidEmail,
         process.env.VAPID_PUBLIC_KEY,
@@ -127,19 +127,19 @@ function validateSendNotification(body: unknown): SendNotificationBody {
 // Each user gets their own unique API key for push notifications
 const userApiKeyMiddleware = async (c: Context, next: Next) => {
     const apiKey = c.req.header('X-API-Key');
-    
+
     if (!apiKey) {
         return c.json({ error: 'API key required' }, 401);
     }
-    
+
     // For now, we'll use the API key as the user ID
     // In a real implementation, you'd validate against a database
     // and map the API key to a user ID
     const userId = apiKey; // Simple implementation - API key = user ID
-    
+
     // Set user context
     c.set('user', { id: userId, apiKey });
-    
+
     await next();
 };
 
@@ -151,24 +151,24 @@ const userApiKeyMiddleware = async (c: Context, next: Next) => {
 const adminKeyMiddleware = async (c: Context, next: Next) => {
     const authHeader = c.req.header('Authorization');
     const apiKey = c.req.header('X-API-Key');
-    
+
     // Check for API key in header or Authorization header
     const providedKey = apiKey || (authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : authHeader);
-    
+
     if (!providedKey) {
         return c.json({ error: 'API key required for this operation' }, 401);
     }
-    
+
     // Check against environment variable
     const validApiKey = process.env.PUSH_ADMIN_API_KEY;
     if (!validApiKey) {
         return c.json({ error: 'Push notifications admin API not configured' }, 500);
     }
-    
+
     if (providedKey !== validApiKey) {
         return c.json({ error: 'Invalid API key' }, 403);
     }
-    
+
     await next();
 };
 
@@ -219,6 +219,32 @@ app.post('/subscribe', userApiKeyMiddleware, async (c) => {
         return c.json({ error: 'Failed to subscribe' }, 500);
     }
 });
+
+// Check if the user is subscribed
+app.get("/subscribe", userApiKeyMiddleware, async (c) => {
+    try {
+        const user = c.get('user') as ApiUser;
+        const userId = user.id;
+
+        if (!userId) {
+            return c.json({ error: 'User not authenticated' }, 401);
+        }
+
+        // Check if user has any active subscriptions
+        const subscriptions = await PushSubscription.find({ userId }).select(
+            'id endpoint topics createdAt updatedAt'
+        );
+
+        return c.json({
+            isSubscribed: subscriptions.length > 0,
+            subscriptionCount: subscriptions.length,
+            subscriptions: subscriptions
+        });
+    } catch (error) {
+        console.error('Error checking subscription status:', error);
+        return c.json({ error: 'Failed to check subscription status' }, 500);
+    }
+})
 
 // Unsubscribe from push notifications
 app.delete('/unsubscribe/:subscriptionId', userApiKeyMiddleware, async (c) => {
