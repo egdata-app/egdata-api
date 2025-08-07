@@ -41,7 +41,6 @@ const pushSubscriptionSchema = new mongoose.Schema<IPushSubscription>({
   topics: {
     type: [String],
     default: [],
-    index: true,
   },
   createdAt: {
     type: Date,
