@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { PushSubscription } from '../db/schemas/push-subscriptions.js';
+import { PushSubscription, type IPushSubscription } from '../db/schemas/push-subscriptions.js';
 import { randomUUID } from 'node:crypto';
 import webpush from 'web-push';
 import type { Context, Next } from 'hono';
@@ -43,9 +43,6 @@ interface NotificationPayload {
     }>;
 }
 
-
-
-// Configure VAPID keys (should be set via environment variables)
 if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY && process.env.VAPID_EMAIL) {
     const vapidEmail = process.env.VAPID_EMAIL.startsWith('mailto:')
         ? process.env.VAPID_EMAIL
@@ -91,6 +88,7 @@ function validateTopicSubscription(body: unknown): TopicSubscriptionBody {
 const notificationSchema = z.object({
     title: z.string(),
     body: z.string(),
+    image: z.string().optional(),
     icon: z.string().optional(),
     badge: z.string().optional(),
     actions: z.array(z.object({
@@ -417,10 +415,38 @@ app.post('/send', adminKeyMiddleware, async (c) => {
             return c.json({ error: 'Push notifications not configured' }, 500);
         }
 
-        // Find all subscriptions for this topic
-        const subscriptions = await PushSubscription.find({
+        // Find all subscriptions for this topic (including wildcard matches)
+        
+        // Always find exact matches first
+        const exactMatches = await PushSubscription.find({
             topics: topic
         });
+        
+        // Also find wildcard subscriptions that would match this topic
+        // For topic "offer:123:price", find subscriptions to "offer:123:*", "offer:*", etc.
+        const topicParts = topic.split(':');
+        const wildcardPatterns = [];
+        
+        // Generate wildcard patterns: offer:123:* and offer:*
+         for (let i = 1; i < topicParts.length; i++) {
+             const pattern = `${topicParts.slice(0, i).join(':')}:*`;
+             wildcardPatterns.push(pattern);
+         }
+        
+        let wildcardMatches: IPushSubscription[] = [];
+        if (wildcardPatterns.length > 0) {
+            wildcardMatches = await PushSubscription.find({
+                topics: { $in: wildcardPatterns }
+            });
+        }
+        
+        // Combine and deduplicate subscriptions
+        const allMatches = [...exactMatches, ...wildcardMatches];
+        const uniqueSubscriptions = allMatches.filter((sub, index, self) => 
+            index === self.findIndex(s => s.id === sub.id)
+        );
+        
+        const subscriptions = uniqueSubscriptions;
 
         if (subscriptions.length === 0) {
             return c.json({
