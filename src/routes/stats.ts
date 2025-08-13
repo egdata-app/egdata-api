@@ -147,6 +147,110 @@ app.get("/releases/monthly", async (c) => {
   return c.json(result, 200);
 });
 
+app.get("/creations/monthly", async (c) => {
+  const cacheKey = "stats:creations:monthly";
+
+  const cached = await client.get(cacheKey);
+
+  if (cached) {
+    return c.json(JSON.parse(cached), 200, {
+      "Cache-Control": "public, max-age=3600",
+    });
+  }
+
+  const result = await Offer.aggregate([
+    {
+      $match: {
+        prePurchase: { $ne: true }, // keep null/false/missing
+        isCodeRedemptionOnly: { $ne: true }, // keep null/false/missing
+        creationDate: {
+          $ne: null,
+          $lte: new Date(),
+          $gte: new Date("2018-12-06"),
+        },
+        offerType: { $eq: "BASE_GAME" },
+      },
+    },
+
+    {
+      $group: {
+        _id: {
+          year: { $year: "$creationDate" },
+          month: { $month: "$creationDate" },
+        },
+        creations: { $sum: 1 },
+      },
+    },
+
+    { $sort: { "_id.year": 1, "_id.month": 1 } },
+
+    {
+      $project: {
+        _id: 0,
+        year: "$_id.year",
+        month: "$_id.month",
+        creations: 1,
+      },
+    },
+  ]);
+
+  // Cache for 1 day
+  await client.set(cacheKey, JSON.stringify(result), "EX", 86400);
+
+  return c.json(result, 200);
+});
+
+app.get("/creations/yearly", async (c) => {
+  const cacheKey = "stats:creations:yearly";
+
+  const cached = await client.get(cacheKey);
+
+  if (cached) {
+    return c.json(JSON.parse(cached), 200, {
+      "Cache-Control": "public, max-age=3600",
+    });
+  }
+
+  const result = await Offer.aggregate([
+    {
+      $match: {
+        prePurchase: { $ne: true }, // keep null/false/missing
+        isCodeRedemptionOnly: { $ne: true }, // keep null/false/missing
+        creationDate: {
+          $ne: null,
+          $lte: new Date(),
+          $gte: new Date("2018-12-06"),
+        },
+        offerType: { $eq: "BASE_GAME" },
+      },
+    },
+
+    {
+      $group: {
+        _id: {
+          year: { $year: "$creationDate" },
+        },
+        creations: { $sum: 1 },
+      },
+    },
+
+    { $sort: { "_id.year": 1 } },
+
+    {
+      $project: {
+        _id: 0,
+        year: "$_id.year",
+        creations: 1,
+      },
+    },
+  ]);
+
+  // Cache for 1 day
+  await client.set(cacheKey, JSON.stringify(result), "EX", 86400);
+
+  return c.json(result, 200);
+});
+
 app.get("/releases/yearly", async (c) => {
   const cacheKey = "stats:releases:yearly";
 
