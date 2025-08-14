@@ -819,6 +819,14 @@ app.post('/v2/search', async (c) => {
           filter.push({
             range: {
               'releaseDate': {
+                lte: new Date().toISOString()
+              }
+            }
+          });
+        } else {
+          filter.push({
+            range: {
+              'releaseDate': {
                 gte: new Date().toISOString()
               }
             }
