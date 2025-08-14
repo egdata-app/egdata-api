@@ -832,6 +832,8 @@ app.post('/v2/search', async (c) => {
             }
           });
         }
+
+        sort.push({ 'releaseDate': { order: dir } });
         break;
       }
       default:
