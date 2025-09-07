@@ -51,7 +51,7 @@ import type { OpenAPIV3 } from "openapi-types";
 import { consola } from "./utils/logger.js";
 import { discord } from "./clients/discord.js";
 import { Routes } from "discord-api-types/v10";
-import { honoMiddleware } from './middlewares/apollo.js';
+import { honoMiddleware } from "./middlewares/apollo.js";
 import { server } from "./graphql/index.js";
 
 config();
@@ -74,11 +74,14 @@ const ALLOWED_ORIGINS = [
 
 const app = new Hono();
 
-await server.start().then(() => {
-  consola.success("GraphQL server started");
-}).catch((e) => {
-  consola.error("GraphQL server failed to start", e);
-});
+await server
+  .start()
+  .then(() => {
+    consola.success("GraphQL server started");
+  })
+  .catch((e) => {
+    consola.error("GraphQL server failed to start", e);
+  });
 
 app.use(
   "/*",
@@ -93,49 +96,26 @@ app.use(
     allowHeaders: [],
     allowMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"],
     credentials: true,
-  }),
+  })
 );
 
 app.use("/*", etag());
 
-app.use('/graphql', honoMiddleware(server, {
-  context: async () => ({
-    db: db.db,
-    logger: consola,
-  }),
-}));
-
-app.use("/*", (c, next) => {
-  const memoryUsage = process.memoryUsage();
-  consola.debug(
-    `[${c.req.method}] ${c.req.path} - Memory Usage: ${memoryUsage.heapUsed / 1024 / 1024
-    }MB`,
-  );
-  return next();
-});
-
 app.use(
-  rateLimiter({
-    limit: 1000,
-    windowMs: 30 * 1000,
-    standardHeaders: "draft-6",
-    keyGenerator: (c) => "egdata-api",
-    skip(c) {
-      // If the referer is 'egdata.app', skip rate limiting
-      if (c.req.header("Referer") === "https://egdata.app/") {
-        return true;
-      }
-
-      return c.req.header("CF-Connecting-IP") === process.env.SERVER_IP;
-    },
-  }),
+  "/graphql",
+  honoMiddleware(server, {
+    context: async () => ({
+      db: db.db,
+      logger: consola,
+    }),
+  })
 );
 
 app.get(
   "/ui",
   swaggerUI({
     url: "/doc",
-  }),
+  })
 );
 
 app.get("/health", async (c) => {
@@ -143,7 +123,7 @@ app.get("/health", async (c) => {
     return Promise.race([
       promise,
       new Promise<T>((_, reject) =>
-        setTimeout(() => reject(new Error("timeout")), ms),
+        setTimeout(() => reject(new Error("timeout")), ms)
       ),
     ]);
   }
@@ -180,7 +160,7 @@ app.get("/health", async (c) => {
         mongodb: { status: mongoStatus, latency: mongoLatency },
       },
     },
-    allOk ? 200 : 500,
+    allOk ? 200 : 500
   );
 });
 
@@ -190,7 +170,7 @@ app.get("/", (c) => {
     version: "0.0.1-alpha",
     endpoints: inspectRoutes(app)
       .filter(
-        (x) => !x.isMiddleware && x.name === "[handler]" && x.path !== "/",
+        (x) => !x.isMiddleware && x.name === "[handler]" && x.path !== "/"
       )
       .sort((a, b) => {
         if (a.path !== b.path) {
@@ -205,33 +185,30 @@ app.get("/", (c) => {
 
 app.get("/open-api.json", async (c) => {
   const endpoints = inspectRoutes(app).filter(
-    (x) => !x.isMiddleware && x.name === "[handler]",
+    (x) => !x.isMiddleware && x.name === "[handler]"
   );
 
-  const paths = endpoints.reduce(
-    (acc, endpoint) => {
-      if (!acc[endpoint.path]) {
-        acc[endpoint.path] = {};
-      }
-      acc[endpoint.path][endpoint.method.toLowerCase()] = {
-        summary: `Endpoint for ${endpoint.method} ${endpoint.path}`,
-        responses: {
-          "200": {
-            description: "Successful response",
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                },
+  const paths = endpoints.reduce((acc, endpoint) => {
+    if (!acc[endpoint.path]) {
+      acc[endpoint.path] = {};
+    }
+    acc[endpoint.path][endpoint.method.toLowerCase()] = {
+      summary: `Endpoint for ${endpoint.method} ${endpoint.path}`,
+      responses: {
+        "200": {
+          description: "Successful response",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
               },
             },
           },
         },
-      };
-      return acc;
-    },
-    {} as Record<string, any>,
-  );
+      },
+    };
+    return acc;
+  }, {} as Record<string, any>);
 
   const result: OpenAPIV3.Document = {
     openapi: "3.0.0",
@@ -339,11 +316,12 @@ app.get("/sitemap.xml", async (c) => {
       siteMapIndex = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${Array.from(
-        { length: Math.ceil(count / limit) },
-        (_, i) =>
-          `<sitemap><loc>https://api.egdata.app/sitemap.xml?page=${i + 1
-          }</loc><lastmod>${new Date().toISOString()}</lastmod></sitemap>`,
-      ).join("")}
+    { length: Math.ceil(count / limit) },
+    (_, i) =>
+      `<sitemap><loc>https://api.egdata.app/sitemap.xml?page=${
+        i + 1
+      }</loc><lastmod>${new Date().toISOString()}</lastmod></sitemap>`
+  ).join("")}
 </sitemapindex>`;
 
       await client.set(cacheKey, siteMapIndex, "EX", cacheTimeInSec);
@@ -380,31 +358,31 @@ app.get("/sitemap.xml", async (c) => {
         limit,
         skip: (Number.parseInt(page, 10) - 1) * limit,
         sort: { lastModifiedDate: -1 },
-      },
+      }
     );
 
     siteMap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${offers
-        .map((offer) => {
-          const url = `https://egdata.app/offers/${offer.id}`;
-          return `<url>
+    .map((offer) => {
+      const url = `https://egdata.app/offers/${offer.id}`;
+      return `<url>
         <loc>${url}</loc>
         <lastmod>${(offer.lastModifiedDate as Date).toISOString()}</lastmod>
       </url>
       ${sections
-              .map(
-                (section) => `
+        .map(
+          (section) => `
       <url>
         <loc>${url}/${section}</loc>
         <lastmod>${(offer.lastModifiedDate as Date).toISOString()}</lastmod>
       </url>
-      `,
-              )
-              .join("\n")}
-      `;
-        })
+      `
+        )
         .join("\n")}
+      `;
+    })
+    .join("\n")}
 </urlset>`;
 
     await client.set(cacheKeyPage, siteMap, "EX", cacheTimeInSec);
@@ -441,7 +419,7 @@ app.get("/promotions-sitemap.xml", async (c) => {
           limit: pageSize,
           skip: page * pageSize,
           sort: { updated: -1 },
-        },
+        }
       );
 
       hasMore = tags.length === pageSize;
@@ -581,7 +559,7 @@ app.get("/latest-games", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry),
+    regions[r].countries.includes(selectedCountry)
   );
 
   if (!region) {
@@ -612,7 +590,7 @@ app.get("/latest-games", async (c) => {
       sort: {
         creationDate: -1,
       },
-    },
+    }
   );
 
   const prices = await PriceEngine.find({
@@ -683,7 +661,7 @@ app.get("/featured", async (c) => {
       sort: {
         lastModifiedDate: -1,
       },
-    },
+    }
   );
 
   const result = offers.map((o) => orderOffersObject(o));
@@ -695,9 +673,10 @@ app.get("/featured", async (c) => {
     200,
     {
       "Cache-Control": "public, max-age=60",
-      "Server-Timing": `db;dur=${GET_FEATURED_GAMES_END.getTime() - GET_FEATURED_GAMES_START.getTime()
-        }`,
-    },
+      "Server-Timing": `db;dur=${
+        GET_FEATURED_GAMES_END.getTime() - GET_FEATURED_GAMES_START.getTime()
+      }`,
+    }
   );
 });
 
@@ -714,7 +693,7 @@ app.get("/autocomplete", async (c) => {
   const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 10);
 
   const cacheKey = `autocomplete:${Buffer.from(query).toString(
-    "base64",
+    "base64"
   )}:${limit}:v0.1`;
 
   const cached = await client.get(cacheKey);
@@ -751,7 +730,7 @@ app.get("/autocomplete", async (c) => {
         offerType: -1,
         lastModifiedDate: -1,
       },
-    },
+    }
   );
 
   const response = {
@@ -767,7 +746,7 @@ app.get("/autocomplete", async (c) => {
       },
       {
         collation: { locale: "en", strength: 1 },
-      },
+      }
     ),
   };
 
@@ -792,7 +771,7 @@ app.get("/sales", async (c) => {
   const selectedCountry = country ?? cookieCountry ?? "US";
 
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry),
+    regions[r].countries.includes(selectedCountry)
   );
 
   if (!region) {
@@ -895,7 +874,7 @@ app.get("/base-game/:namespace", async (c) => {
       {
         error: "Internal namespace",
       },
-      404,
+      404
     );
   }
 
@@ -952,7 +931,7 @@ app.get("/region", async (c) => {
   const selectedCountry = country ?? cookieCountry ?? "US";
 
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry),
+    regions[r].countries.includes(selectedCountry)
   );
 
   if (!region) {
@@ -969,7 +948,7 @@ app.get("/region", async (c) => {
     200,
     {
       "Cache-Control": "public, max-age=60",
-    },
+    }
   );
 });
 
@@ -1007,7 +986,7 @@ app.get("/changelist", async (ctx) => {
       sort: {
         timestamp: -1,
       },
-    },
+    }
   );
 
   /**
@@ -1024,7 +1003,7 @@ app.get("/changelist", async (ctx) => {
               title: 1,
               keyImages: 1,
               offerType: 1,
-            },
+            }
           );
         case "item":
           return Item.findOne(
@@ -1033,7 +1012,7 @@ app.get("/changelist", async (ctx) => {
               id: 1,
               title: 1,
               keyImages: 1,
-            },
+            }
           );
         case "asset":
           return Asset.findOne(
@@ -1041,17 +1020,17 @@ app.get("/changelist", async (ctx) => {
             {
               id: 1,
               artifactId: 1,
-            },
+            }
           );
         default:
           return null;
       }
-    }),
+    })
   );
 
   const result = changelist.map((change) => {
     const element = elements.find(
-      (e) => e?.toObject().id === change.metadata.contextId,
+      (e) => e?.toObject().id === change.metadata.contextId
     );
 
     return {
@@ -1101,7 +1080,7 @@ app.get("/changelist/:id", async (ctx) => {
           keyImages: 1,
           offerType: 1,
           namespace: 1,
-        },
+        }
       );
       break;
     case "item":
@@ -1112,7 +1091,7 @@ app.get("/changelist/:id", async (ctx) => {
           title: 1,
           keyImages: 1,
           namespace: 1,
-        },
+        }
       );
       break;
     case "asset":
@@ -1122,7 +1101,7 @@ app.get("/changelist/:id", async (ctx) => {
           id: 1,
           artifactId: 1,
           namespace: 1,
-        },
+        }
       );
       break;
   }
@@ -1232,14 +1211,14 @@ async function refreshChangelogIndex() {
 
     totallogs += logs.length;
     console.log(
-      `Processing logs ${totallogs - logs.length + 1} to ${totallogs}`,
+      `Processing logs ${totallogs - logs.length + 1} to ${totallogs}`
     );
 
     await index.addDocuments(
       logs.map((o) => o.toObject()),
       {
         primaryKey: "_id",
-      },
+      }
     );
 
     page++;
@@ -1267,7 +1246,7 @@ async function refreshOffersIndex() {
 
     totalOffers += offers.length;
     console.log(
-      `Processing offers ${totalOffers - offers.length + 1} to ${totalOffers}`,
+      `Processing offers ${totalOffers - offers.length + 1} to ${totalOffers}`
     );
 
     await index.addDocuments(
@@ -1279,7 +1258,7 @@ async function refreshOffersIndex() {
       }),
       {
         primaryKey: "_id",
-      },
+      }
     );
 
     page++;
@@ -1307,14 +1286,14 @@ async function refreshItemsIndex() {
 
     totalItems += items.length;
     console.log(
-      `Processing items ${totalItems - items.length + 1} to ${totalItems}`,
+      `Processing items ${totalItems - items.length + 1} to ${totalItems}`
     );
 
     await index.addDocuments(
       items.map((o) => o.toObject()),
       {
         primaryKey: "_id",
-      },
+      }
     );
 
     page++;
@@ -1342,15 +1321,16 @@ async function refreshSellersIndex() {
 
     totalSellers += sellers.length;
     console.log(
-      `Processing sellers ${totalSellers - sellers.length + 1
-      } to ${totalSellers}`,
+      `Processing sellers ${
+        totalSellers - sellers.length + 1
+      } to ${totalSellers}`
     );
 
     await index.addDocuments(
       sellers.map((o) => o.toObject()),
       {
         primaryKey: "_id",
-      },
+      }
     );
 
     page++;
@@ -1422,7 +1402,7 @@ app.get("/active-sales", async (c) => {
   const selectedCountry = country ?? cookieCountry ?? "US";
 
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry),
+    regions[r].countries.includes(selectedCountry)
   );
 
   if (!region) {
@@ -1454,7 +1434,7 @@ app.get("/active-sales", async (c) => {
       sort: {
         updated: -1,
       },
-    },
+    }
   );
 
   const result: {
@@ -1474,7 +1454,7 @@ app.get("/active-sales", async (c) => {
           sort: {
             lastModifiedDate: -1,
           },
-        },
+        }
       );
 
       const prices = await PriceEngine.find({
@@ -1487,7 +1467,7 @@ app.get("/active-sales", async (c) => {
         t.id === "29899" ||
         (prices.length > 0 &&
           prices.every(
-            (p) => p.price.discount > 0 || p.price.originalPrice === 0,
+            (p) => p.price.discount > 0 || p.price.originalPrice === 0
           ));
 
       result.push({
@@ -1497,7 +1477,7 @@ app.get("/active-sales", async (c) => {
         // @ts-expect-error
         offers: offers.slice(0, 3).map((o) => orderOffersObject(o)),
       });
-    }),
+    })
   );
 
   await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
@@ -1544,7 +1524,7 @@ app.post("/donate/key/:code", epic, async (c) => {
   const url = new URL(
     "https://fulfillment-public-service-prod.ol.epicgames.com/fulfillment/api/public/accounts/:accountId/codes/:code"
       .replace(":accountId", process.env.ADMIN_ACCOUNT_ID as string)
-      .replace(":code", code),
+      .replace(":code", code)
   );
 
   console.log("Fetching code details from Epic Games");
@@ -1676,11 +1656,12 @@ app.get("/items-sitemap.xml", async (c) => {
       siteMapIndex = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${Array.from(
-        { length: Math.ceil(count / limit) },
-        (_, i) =>
-          `<sitemap><loc>https://api.egdata.app/items-sitemap.xml?page=${i + 1
-          }</loc><lastmod>${new Date().toISOString()}</lastmod></sitemap>`,
-      ).join("")}
+    { length: Math.ceil(count / limit) },
+    (_, i) =>
+      `<sitemap><loc>https://api.egdata.app/items-sitemap.xml?page=${
+        i + 1
+      }</loc><lastmod>${new Date().toISOString()}</lastmod></sitemap>`
+  ).join("")}
 </sitemapindex>`;
 
       await client.set(cacheKey, siteMapIndex, "EX", cacheTimeInSec);
@@ -1717,31 +1698,31 @@ app.get("/items-sitemap.xml", async (c) => {
         limit,
         skip: (Number.parseInt(page, 10) - 1) * limit,
         sort: { lastModifiedDate: -1 },
-      },
+      }
     );
 
     siteMap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${items
-        .map((item) => {
-          const url = `https://egdata.app/items/${item.id}`;
-          return `<url>
+    .map((item) => {
+      const url = `https://egdata.app/items/${item.id}`;
+      return `<url>
         <loc>${url}</loc>
         <lastmod>${(item.lastModifiedDate as Date).toISOString()}</lastmod>
       </url>
       ${sections
-              .map(
-                (section) => `
+        .map(
+          (section) => `
       <url>
         <loc>${url}/${section}</loc>
         <lastmod>${(item.lastModifiedDate as Date).toISOString()}</lastmod>
       </url>
-      `,
-              )
-              .join("\n")}
-      `;
-        })
+      `
+        )
         .join("\n")}
+      `;
+    })
+    .join("\n")}
 </urlset>`;
 
     await client.set(cacheKeyPage, siteMap, "EX", cacheTimeInSec);
@@ -1765,10 +1746,10 @@ async function startServer() {
     server.on("listening", () => {
       console.log(
         `${chalk.gray("Listening on")} ${chalk.green(
-          "http://localhost:4000",
+          "http://localhost:4000"
         )} (${chalk.gray("took")} ${chalk.magenta(
-          `${(process.uptime() * 1000).toFixed(2)}ms`,
-        )})`,
+          `${(process.uptime() * 1000).toFixed(2)}ms`
+        )})`
       );
     });
   } catch (error) {
