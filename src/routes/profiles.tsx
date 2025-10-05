@@ -1366,7 +1366,12 @@ app.get("/:id/games", async (c) => {
 
     const [{ paginated, total = 0 }] = await db.db
       .collection("player-achievements")
-      .aggregate(pipeline)
+      .aggregate(pipeline, { 
+        allowDiskUse: true,
+        ...(sortBy === "alphabetical" && {
+          collation: { locale: "en", strength: 2 } // Case-insensitive sorting
+        })
+      })
       .toArray();
 
     /** ─────────── build & cache response ─────────── */
