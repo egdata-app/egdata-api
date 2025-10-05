@@ -1124,16 +1124,26 @@ app.get("/:id/information", async (c) => {
 
 app.get("/:id/games", async (c) => {
   const { id } = c.req.param();
-  const { page = "1", limit = "10" } = c.req.query();
+  const { 
+    page = "1", 
+    limit = "10", 
+    platinum = "false", 
+    sort = "completion" 
+  } = c.req.query();
   const pageNum = Number.parseInt(page, 10);
   const limitNum = Number.parseInt(limit, 10);
+  const platinumOnly = platinum === "true";
+  
+  // Validate sort parameter
+  const validSorts = ["completion", "alphabetical", "xp", "achievements"];
+  const sortBy = validSorts.includes(sort) ? sort : "completion";
 
   if (!id) {
     c.status(400);
     return c.json({ message: "Missing id parameter" });
   }
 
-  const cacheKey = `epic-profile:${id}:games:page:${pageNum}:limit:${limitNum}`;
+  const cacheKey = `epic-profile:${id}:games:page:${pageNum}:limit:${limitNum}:platinum:${platinumOnly}:sort:${sortBy}`;
 
   const cached = await client.get(cacheKey);
   if (cached)
@@ -1177,6 +1187,17 @@ app.get("/:id/games", async (c) => {
         },
       },
       { $project: { playerAwards_arr: 0 } },
+
+      /* 3.5️⃣  filter platinum games only if requested -------------------- */
+      ...(platinumOnly ? [
+        {
+          $match: {
+            $expr: {
+              $gt: [{ $size: "$playerAwards" }, 0]
+            }
+          }
+        }
+      ] : []),
 
       /* 4️⃣  join ONE BASE_GAME offer per sandbox -------------------------- */
       {
@@ -1291,25 +1312,40 @@ app.get("/:id/games", async (c) => {
         },
       },
 
-      /* 7️⃣  sort: % complete ↓ ,   name ↑ ,   sandboxId ↑ ---------------- */
-      {
-        $sort: {
-          completionPercentage: -1,
-          "product.name": 1,
-          sandboxId: 1,
-        },
-      },
-
-      {
-        $sort: {
-          isComplete: -1,
-          totalXP: -1,
-          totalUnlocked: -1,
-          completionPercentage: -1,
-          "product.name": 1,
-          sandboxId: 1,
-        },
-      },
+      /* 7️⃣  dynamic sorting based on sort parameter ---------------------- */
+      ...(sortBy === "alphabetical" ? [
+        {
+          $sort: {
+            "product.name": 1,
+            sandboxId: 1,
+          },
+        }
+      ] : sortBy === "xp" ? [
+        {
+          $sort: {
+            totalXP: -1,
+            "product.name": 1,
+            sandboxId: 1,
+          },
+        }
+      ] : sortBy === "achievements" ? [
+        {
+          $sort: {
+            totalUnlocked: -1,
+            "product.name": 1,
+            sandboxId: 1,
+          },
+        }
+      ] : [
+        // Default: completion percentage
+        {
+          $sort: {
+            completionPercentage: -1,
+            "product.name": 1,
+            sandboxId: 1,
+          },
+        }
+      ]),
 
       /* 8️⃣  facet for pagination + total count in one pass ---------------- */
       {
