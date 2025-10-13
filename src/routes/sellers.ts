@@ -7,7 +7,6 @@ import { PriceEngine } from "@egdata/core.schemas.price";
 import { orderOffersObject } from "../utils/order-offers-object.js";
 import { GamePosition } from "@egdata/core.schemas.collections";
 import { Item } from "@egdata/core.schemas.items";
-import { FreeGames } from "@egdata/core.schemas.free-games";
 import { Seller } from "@egdata/core.schemas.sellers";
 import { db } from "../db/index.js";
 
