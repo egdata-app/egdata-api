@@ -801,12 +801,9 @@ app.post("/v2/search", async (c) => {
   }
 
   if (q.isLowestPrice) {
+    // Push separate filter clauses to avoid malformed query structure
+    filter.push({ term: { isAtLowestPriceUS: true } });
     filter.push({
-      term: {
-        isAtLowestPriceUS: {
-          value: true,
-        },
-      },
       range: { [`prices.${region}.price.discount`]: { gt: q.onSale ? 0 : 0 } },
     });
   }
