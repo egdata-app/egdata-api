@@ -15,7 +15,7 @@ import { ObjectId } from "mongodb";
 import type { Filter } from "meilisearch";
 import { opensearch } from "../clients/opensearch.js";
 import type { PriceEngineType } from "@egdata/core.schemas.price";
-import type { Types } from '@opensearch-project/opensearch';
+import type { Types } from "@opensearch-project/opensearch";
 import { orderOffersObject } from "../utils/order-offers-object.js";
 
 type AggregationContainer = Types.Common_Aggregations.AggregationContainer;
@@ -23,38 +23,38 @@ type AggregationContainer = Types.Common_Aggregations.AggregationContainer;
 interface SearchBody {
   title?: string;
   offerType?:
-  | "IN_GAME_PURCHASE"
-  | "BASE_GAME"
-  | "EXPERIENCE"
-  | "UNLOCKABLE"
-  | "ADD_ON"
-  | "Bundle"
-  | "CONSUMABLE"
-  | "WALLET"
-  | "OTHERS"
-  | "DEMO"
-  | "DLC"
-  | "VIRTUAL_CURRENCY"
-  | "BUNDLE"
-  | "DIGITAL_EXTRA"
-  | "EDITION";
+    | "IN_GAME_PURCHASE"
+    | "BASE_GAME"
+    | "EXPERIENCE"
+    | "UNLOCKABLE"
+    | "ADD_ON"
+    | "Bundle"
+    | "CONSUMABLE"
+    | "WALLET"
+    | "OTHERS"
+    | "DEMO"
+    | "DLC"
+    | "VIRTUAL_CURRENCY"
+    | "BUNDLE"
+    | "DIGITAL_EXTRA"
+    | "EDITION";
   tags?: string[];
   customAttributes?: string[];
   seller?: string;
   sortBy?:
-  | "releaseDate"
-  | "lastModifiedDate"
-  | "effectiveDate"
-  | "creationDate"
-  | "viewableDate"
-  | "pcReleaseDate"
-  | "upcoming"
-  | "priceAsc"
-  | "priceDesc"
-  | "price"
-  | "discount"
-  | "discountPercent"
-  | "giveawayDate";
+    | "releaseDate"
+    | "lastModifiedDate"
+    | "effectiveDate"
+    | "creationDate"
+    | "viewableDate"
+    | "pcReleaseDate"
+    | "upcoming"
+    | "priceAsc"
+    | "priceDesc"
+    | "price"
+    | "discount"
+    | "discountPercent"
+    | "giveawayDate";
   sortDir?: "asc" | "desc";
   limit?: number;
   page?: number;
@@ -71,6 +71,7 @@ interface SearchBody {
   spt?: boolean;
   excludeBlockchain?: boolean;
   pastGiveaways?: boolean;
+  isLowestPrice?: boolean;
 }
 
 interface MongoQuery {
@@ -141,7 +142,7 @@ function buildBaseQuery(query: SearchBody): MongoQuery {
   if (query.seller) {
     mongoQuery.$or = [
       { "seller.name": query.seller },
-      { "seller.id": query.seller }
+      { "seller.id": query.seller },
     ];
   }
 
@@ -194,14 +195,21 @@ function buildPriceQuery(query: SearchBody): PriceQuery {
     }
   }
 
-  if (query.onSale || ["discount", "discountPercent"].includes(query.sortBy || "")) {
+  if (
+    query.onSale ||
+    ["discount", "discountPercent"].includes(query.sortBy || "")
+  ) {
     priceQuery["price.discount"] = { $gt: 0 };
   }
 
   return priceQuery;
 }
 
-function buildSortParams(query: SearchBody, sort: string, dir: number): Record<string, 1 | -1 | { $meta: string }> {
+function buildSortParams(
+  query: SearchBody,
+  sort: string,
+  dir: number
+): Record<string, 1 | -1 | { $meta: string }> {
   let sortParams: Record<string, 1 | -1 | { $meta: string }> = {};
 
   if (query.title) {
@@ -210,7 +218,16 @@ function buildSortParams(query: SearchBody, sort: string, dir: number): Record<s
     };
   }
 
-  if (!["upcoming", "priceAsc", "priceDesc", "price", "discount", "discountPercent"].includes(sort)) {
+  if (
+    ![
+      "upcoming",
+      "priceAsc",
+      "priceDesc",
+      "price",
+      "discount",
+      "discountPercent",
+    ].includes(sort)
+  ) {
     sortParams[sort] = dir;
   } else if (sort === "upcoming") {
     sortParams = {
@@ -321,7 +338,11 @@ app.post("/", async (c) => {
   let offersPipeline: PipelineStage[] = [];
   let collection = "offers";
 
-  if (["priceAsc", "priceDesc", "price", "discount", "discountPercent"].includes(sort)) {
+  if (
+    ["priceAsc", "priceDesc", "price", "discount", "discountPercent"].includes(
+      sort
+    )
+  ) {
     let priceSortOrder: 1 | -1 =
       sort === "priceAsc" || sort === "priceDesc"
         ? sort === "priceAsc"
@@ -384,21 +405,23 @@ app.post("/", async (c) => {
       {
         $match: mongoQuery,
       },
-      ...(query.pastGiveaways ? [
-        {
-          $lookup: {
-            from: "freegames",
-            localField: "id",
-            foreignField: "id",
-            as: "freegame"
-          }
-        },
-        {
-          $match: {
-            freegame: { $ne: [] }
-          }
-        }
-      ] : []),
+      ...(query.pastGiveaways
+        ? [
+            {
+              $lookup: {
+                from: "freegames",
+                localField: "id",
+                foreignField: "id",
+                as: "freegame",
+              },
+            },
+            {
+              $match: {
+                freegame: { $ne: [] },
+              },
+            },
+          ]
+        : []),
       {
         $skip: (page - 1) * limit,
       },
@@ -414,7 +437,7 @@ app.post("/", async (c) => {
           country: 0,
           offerId: 0,
           updatedAt: 0,
-          freegame: 0
+          freegame: 0,
         },
       },
     ];
@@ -455,25 +478,27 @@ app.post("/", async (c) => {
           price: { $ne: null },
         },
       },
-      ...(query.pastGiveaways ? [
-        {
-          $lookup: {
-            from: "freegames",
-            localField: "id",
-            foreignField: "id",
-            as: "freegame"
-          }
-        },
-        {
-          $match: {
-            freegame: { $ne: [] }
-          }
-        }
-      ] : []),
+      ...(query.pastGiveaways
+        ? [
+            {
+              $lookup: {
+                from: "freegames",
+                localField: "id",
+                foreignField: "id",
+                as: "freegame",
+              },
+            },
+            {
+              $match: {
+                freegame: { $ne: [] },
+              },
+            },
+          ]
+        : []),
       {
         $project: {
           priceEngine: 0,
-          freegame: 0
+          freegame: 0,
         },
       },
       {
@@ -507,7 +532,7 @@ app.post("/", async (c) => {
     query: queryId,
   };
 
-  await client.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
 
   return c.json(result, 200, {
     "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
@@ -680,18 +705,18 @@ app.get("/changelog", async (c) => {
   });
 });
 
-app.post('/v2/search', async (c) => {
-  const country = c.req.query('country');
-  const cookieCountry = getCookie(c, 'EGDATA_COUNTRY');
-  const selectedCountry = country ?? cookieCountry ?? 'US';
+app.post("/v2/search", async (c) => {
+  const country = c.req.query("country");
+  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
+  const selectedCountry = country ?? cookieCountry ?? "US";
   const region =
     Object.keys(regions).find((r) =>
       regions[r].countries.includes(selectedCountry)
-    ) ?? 'US';
+    ) ?? "US";
 
   const body = await c.req.json().catch(() => null);
   if (!body) {
-    return c.json({ message: 'Invalid body' }, 400);
+    return c.json({ message: "Invalid body" }, 400);
   }
   const q = body as SearchBody;
 
@@ -711,47 +736,55 @@ app.post('/v2/search', async (c) => {
             match: {
               title: {
                 query: q.title,
-                minimum_should_match: "90%"
-              }
-            }
-          }
+                minimum_should_match: "90%",
+              },
+            },
+          },
         ],
-        minimum_should_match: 1
-      }
+        minimum_should_match: 1,
+      },
     });
   }
-  if (q.offerType) filter.push({ term: { 'offerType.keyword': q.offerType } });
+  if (q.offerType) filter.push({ term: { "offerType.keyword": q.offerType } });
   if (q.tags?.length) {
     filter.push({
       terms_set: {
-        'tags.id.keyword': {
+        "tags.id.keyword": {
           terms: q.tags,
           minimum_should_match_script: {
-            source: q.tags.length.toString()
-          }
-        }
-      }
+            source: q.tags.length.toString(),
+          },
+        },
+      },
     });
   }
-  if (q.categories?.length) filter.push({ terms: { 'categories.keyword': q.categories } });
-  if (q.customAttributes?.length) filter.push({ terms: { 'customAttributes.keyword': q.customAttributes } });
-  if (q.seller) filter.push({ term: { 'seller.id.keyword': q.seller } });
-  if (q.developerDisplayName) filter.push({ term: { 'developerDisplayName.keyword': q.developerDisplayName } });
-  if (q.publisherDisplayName) filter.push({ term: { 'publisherDisplayName.keyword': q.publisherDisplayName } });
-  if (q.refundType) filter.push({ term: { 'refundType.keyword': q.refundType } });
-  if (q.isCodeRedemptionOnly) filter.push({ term: { isCodeRedemptionOnly: true } });
+  if (q.categories?.length)
+    filter.push({ terms: { "categories.keyword": q.categories } });
+  if (q.customAttributes?.length)
+    filter.push({ terms: { "customAttributes.keyword": q.customAttributes } });
+  if (q.seller) filter.push({ term: { "seller.id.keyword": q.seller } });
+  if (q.developerDisplayName)
+    filter.push({
+      term: { "developerDisplayName.keyword": q.developerDisplayName },
+    });
+  if (q.publisherDisplayName)
+    filter.push({
+      term: { "publisherDisplayName.keyword": q.publisherDisplayName },
+    });
+  if (q.refundType)
+    filter.push({ term: { "refundType.keyword": q.refundType } });
+  if (q.isCodeRedemptionOnly)
+    filter.push({ term: { isCodeRedemptionOnly: true } });
   if (q.excludeBlockchain) {
     filter.push({
       bool: {
-        must_not: [
-          { term: { 'customAttributes.isBlockchainUsed': true } }
-        ]
-      }
+        must_not: [{ term: { "customAttributes.isBlockchainUsed": true } }],
+      },
     });
   }
 
   if (q.pastGiveaways) {
-    filter.push({ exists: { field: 'freeEntries' } });
+    filter.push({ exists: { field: "freeEntries" } });
   }
 
   if (q.price) {
@@ -763,77 +796,89 @@ app.post('/v2/search', async (c) => {
 
   if (q.onSale !== undefined) {
     filter.push({
-      range: { [`prices.${region}.price.discount`]: { gt: q.onSale ? 0 : 0 } }
+      range: { [`prices.${region}.price.discount`]: { gt: q.onSale ? 0 : 0 } },
     });
   }
 
-  const sort: Array<Record<string, { order: 'asc' | 'desc' }>> = [];
+  if (q.isLowestPrice) {
+    filter.push({
+      term: {
+        isAtLowestPriceUS: {
+          value: true,
+        },
+      },
+      range: { [`prices.${region}.price.discount`]: { gt: q.onSale ? 0 : 0 } },
+    });
+  }
+
+  const sort: Array<Record<string, { order: "asc" | "desc" }>> = [];
   if (q.sortBy) {
-    const dir = q.sortDir ?? 'desc';
+    const dir = q.sortDir ?? "desc";
     switch (q.sortBy) {
-      case 'priceAsc':
-      case 'priceDesc':
-      case 'price': {
-        const direction = dir || (q.sortBy === 'priceDesc' ? 'desc' : 'asc');
+      case "priceAsc":
+      case "priceDesc":
+      case "price": {
+        const direction = dir || (q.sortBy === "priceDesc" ? "desc" : "asc");
         sort.push({
           [`prices.${region}.price.discountPrice`]: {
-            order: direction
-          }
+            order: direction,
+          },
         });
         break;
       }
-      case 'discount':
+      case "discount":
         sort.push({
-          [`prices.${region}.price.discount`]: { order: dir }
+          [`prices.${region}.price.discount`]: { order: dir },
         });
         break;
-      case 'discountPercent':
+      case "discountPercent":
         sort.push({
-          [`prices.${region}.appliedRules.discountSetting.discountPercentage`]: { order: dir }
+          [`prices.${region}.appliedRules.discountSetting.discountPercentage`]:
+            { order: dir },
         });
         break;
-      case 'upcoming':
+      case "upcoming":
         // Release date that is in the future (inverted direction, asc = desc, desc = asc)
-        sort.push({ 'releaseDate': { order: dir === 'asc' ? 'desc' : 'asc' } });
+        sort.push({ releaseDate: { order: dir === "asc" ? "desc" : "asc" } });
         filter.push({
           range: {
-            'releaseDate': {
-              gte: new Date().toISOString()
-            }
-          }
+            releaseDate: {
+              gte: new Date().toISOString(),
+            },
+          },
         });
         break;
-      case 'giveawayDate':
-        sort.push({ 'freeEntries.endDate': { order: dir } });
+      case "giveawayDate":
+        sort.push({ "freeEntries.endDate": { order: dir } });
         // Check if freeEntries is an array and has at least one element
         filter.push({
           exists: {
-            field: 'freeEntries'
-          }
+            field: "freeEntries",
+          },
         });
         break;
-      case 'releaseDate': {
-        // If the sort by is `releaseDate` and the sortDir is `desc` 
+      case "releaseDate": {
+        // If the sort by is `releaseDate` and the sortDir is `desc`
         // exclude the offers not released right now
-        if (dir === 'desc') {
+        if (dir === "desc") {
           filter.push({
             range: {
-              'releaseDate': {
-                lte: new Date().toISOString()
-              }
-            }
+              releaseDate: {
+                lte: new Date().toISOString(),
+              },
+            },
           });
         } else {
           filter.push({
             range: {
-              'releaseDate': {
-                gte: new Date().toISOString()
-              }
-            }
+              releaseDate: {
+                gte: new Date().toISOString(),
+              },
+            },
           });
         }
 
-        sort.push({ 'releaseDate': { order: dir } });
+        sort.push({ releaseDate: { order: dir } });
         break;
       }
       default:
@@ -841,34 +886,38 @@ app.post('/v2/search', async (c) => {
     }
   } else {
     if (q.title) {
-      sort.push({ _score: { order: 'desc' } });
+      sort.push({ _score: { order: "desc" } });
     } else {
-      sort.push({ 'lastModifiedDate': { order: 'desc' } });
+      sort.push({ lastModifiedDate: { order: "desc" } });
     }
   }
 
   if (sort.length > 0) {
     // If there is a title query, sort by _score as secondary sort
     if (q.title) {
-      sort.push({ _score: { order: 'desc' } });
+      sort.push({ _score: { order: "desc" } });
     }
   }
 
   const aggregations: Record<string, AggregationContainer> = {
-    "offerType": { terms: { field: 'offerType.keyword', size: 100 } },
-    "tags": { terms: { field: 'tags.name.keyword', size: 10_000 } },
-    "developer": { terms: { field: 'developerDisplayName.keyword', size: 1000 } },
-    "publisher": { terms: { field: 'publisherDisplayName.keyword', size: 1000 } },
-    "seller": { terms: { field: 'seller.name.keyword', size: 1000 } },
-    "price_stats": { stats: { field: `prices.${region}.price.discountPrice` } }
+    offerType: { terms: { field: "offerType.keyword", size: 100 } },
+    tags: { terms: { field: "tags.name.keyword", size: 10_000 } },
+    developer: { terms: { field: "developerDisplayName.keyword", size: 1000 } },
+    publisher: { terms: { field: "publisherDisplayName.keyword", size: 1000 } },
+    seller: { terms: { field: "seller.name.keyword", size: 1000 } },
+    price_stats: { stats: { field: `prices.${region}.price.discountPrice` } },
   };
 
-  const hash = createHash('sha256').update(JSON.stringify({
-    must,
-    filter,
-    sort,
-    aggregations
-  })).digest('hex');
+  const hash = createHash("sha256")
+    .update(
+      JSON.stringify({
+        must,
+        filter,
+        sort,
+        aggregations,
+      })
+    )
+    .digest("hex");
 
   const cacheKey = `search:v2:${hash}`;
 
@@ -885,40 +934,50 @@ app.post('/v2/search', async (c) => {
   console.log(must, filter, sort, aggregations);
 
   const osResponse = await opensearch.search({
-    index: 'egdata.offers',
+    index: "egdata.offers",
     body: {
       from,
       size: limit,
       query: { bool: { must, filter } },
       sort,
-      aggregations
-    }
+      aggregations,
+    },
   });
 
   const hits = osResponse.body.hits.hits;
-  const total = typeof osResponse.body.hits.total === 'number' ? osResponse.body.hits.total : osResponse.body.hits.total?.value;
+  const total =
+    typeof osResponse.body.hits.total === "number"
+      ? osResponse.body.hits.total
+      : osResponse.body.hits.total?.value;
 
-  const offers = hits.map(hit => {
-    const doc = hit._source as OfferType & { prices: Record<string, PriceEngineType> | undefined };
+  const offers = hits.map((hit) => {
+    const doc = hit._source as OfferType & {
+      prices: Record<string, PriceEngineType> | undefined;
+    };
     const regionalPrice: PriceEngineType | null = doc.prices?.[region] ?? null;
     doc.prices = undefined;
     return {
       ...orderOffersObject(doc),
-      price: regionalPrice
+      price: regionalPrice,
     };
   });
 
   const result = {
-    total, offers, page, limit, aggregations: osResponse.body.aggregations, meta: {
+    total,
+    offers,
+    page,
+    limit,
+    aggregations: osResponse.body.aggregations,
+    meta: {
       ms: osResponse.body.took,
       timed_out: osResponse.body.timed_out,
       cached: false,
-    }
+    },
   };
 
-  await client.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
 
-  return c.json(result, 200, { 'Cache-Control': 'public, max-age=60' });
+  return c.json(result, 200, { "Cache-Control": "public, max-age=60" });
 });
 
 app.get("/:id", async (c) => {
@@ -1006,7 +1065,7 @@ app.get("/:id/count", async (c) => {
   if (query.seller) {
     mongoQuery["$or"] = [
       { "seller.name": query.seller },
-      { "seller.id": query.seller }
+      { "seller.id": query.seller },
     ];
   }
 
@@ -1084,21 +1143,23 @@ app.get("/:id/count", async (c) => {
             price: { $ne: null },
           },
         },
-        ...(query.pastGiveaways ? [
-          {
-            $lookup: {
-              from: "freegames",
-              localField: "id",
-              foreignField: "id",
-              as: "freegame"
-            }
-          },
-          {
-            $match: {
-              freegame: { $ne: [] }
-            }
-          }
-        ] : []),
+        ...(query.pastGiveaways
+          ? [
+              {
+                $lookup: {
+                  from: "freegames",
+                  localField: "id",
+                  foreignField: "id",
+                  as: "freegame",
+                },
+              },
+              {
+                $match: {
+                  freegame: { $ne: [] },
+                },
+              },
+            ]
+          : []),
         {
           $facet: {
             // Get total count
@@ -1107,25 +1168,25 @@ app.get("/:id/count", async (c) => {
             // Get tag counts
             tagCounts: [
               { $unwind: "$tags" },
-              { $group: { _id: "$tags.id", count: { $sum: 1 } } }
+              { $group: { _id: "$tags.id", count: { $sum: 1 } } },
             ],
 
             // Get offer type counts
             offerTypeCounts: [
-              { $group: { _id: "$offerType", count: { $sum: 1 } } }
+              { $group: { _id: "$offerType", count: { $sum: 1 } } },
             ],
 
             // Get developer counts
             developer: [
               { $unwind: "$developerDisplayName" },
-              { $group: { _id: "$developerDisplayName", count: { $sum: 1 } } }
+              { $group: { _id: "$developerDisplayName", count: { $sum: 1 } } },
             ],
 
             // Get publisher counts
             publisher: [
               { $unwind: "$publisherDisplayName" },
               { $group: { _id: "$publisherDisplayName", count: { $sum: 1 } } },
-              { $sort: { count: -1 } }
+              { $sort: { count: -1 } },
             ],
 
             // Get price range
@@ -1135,13 +1196,13 @@ app.get("/:id/count", async (c) => {
                   _id: null,
                   minPrice: { $min: "$price.price.discountPrice" },
                   maxPrice: { $max: "$price.price.discountPrice" },
-                  currency: { $first: "$price.price.currencyCode" }
-                }
-              }
-            ]
-          }
-        }
-      ])
+                  currency: { $first: "$price.price.currencyCode" },
+                },
+              },
+            ],
+          },
+        },
+      ]),
     ]);
 
     if (mainAggregation.status === "rejected") {
@@ -1154,11 +1215,14 @@ app.get("/:id/count", async (c) => {
       total: mainAggregation.value[0]?.total[0]?.total || 0,
       developer: mainAggregation.value[0]?.developer || [],
       publisher: mainAggregation.value[0]?.publisher || [],
-      priceRange: mainAggregation.value[0]?.priceRange[0] || { minPrice: null, maxPrice: null }
+      priceRange: mainAggregation.value[0]?.priceRange[0] || {
+        minPrice: null,
+        maxPrice: null,
+      },
     };
 
     // Cache the result for 24 hours
-    await client.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+    await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
 
     return c.json(result, 200, {
       "Cache-Control": "public, max-age=60",
