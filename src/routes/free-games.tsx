@@ -1,3 +1,4 @@
+/** @jsxImportSource react */
 import React from "react";
 import { Hono } from "hono";
 import { FreeGames } from "@egdata/core.schemas.free-games";
@@ -21,23 +22,23 @@ import { OfferSubItems } from "@egdata/core.schemas.subitems";
 
 const app = new Hono();
 
-app.get('/', async (c) => {
+app.get("/", async (c) => {
   const now = new Date();
-  const country = c.req.query('country');
-  const cookieCountry = getCookie(c, 'EGDATA_COUNTRY');
-  const selectedCountry = country ?? cookieCountry ?? 'US';
+  const country = c.req.query("country");
+  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
+  const selectedCountry = country ?? cookieCountry ?? "US";
 
   const region = Object.keys(regions).find((r) =>
     regions[r].countries.includes(selectedCountry)
   );
   if (!region) {
     c.status(404);
-    return c.json({ message: 'Country not found' });
+    return c.json({ message: "Country not found" });
   }
 
   // Helper: unwrap Promise.allSettled results
   const unwrap = <T,>(r: PromiseSettledResult<T>): T | null =>
-    r.status === 'fulfilled' ? r.value : null;
+    r.status === "fulfilled" ? r.value : null;
 
   const fetchOfferAndPriceAndHistory = async <H,>(
     offerId: string,
@@ -52,7 +53,11 @@ app.get('/', async (c) => {
       offer: unwrap(offerR),
       price: unwrap(priceR),
       historical: unwrap(histR),
-    } as { offer: OfferType | null; price: PriceEngineType | null; historical: H | null };
+    } as {
+      offer: OfferType | null;
+      price: PriceEngineType | null;
+      historical: H | null;
+    };
   };
 
   const fetchItemsForOffer = async (offer: OfferType) => {
@@ -68,13 +73,16 @@ app.get('/', async (c) => {
   };
 
   const [freeGamesR, mobileFreebiesR] = await Promise.allSettled([
-    FreeGames.find(
-      { endDate: { $gte: now } },
-      undefined,
-      { sort: { endDate: 1 } }
-    ),
+    FreeGames.find({ endDate: { $gte: now } }, undefined, {
+      sort: { endDate: 1 },
+    }),
     db.db
-      .collection<{ platform: string; offerId: string; startDate: Date; endDate: Date }>('mobile-freebies')
+      .collection<{
+        platform: string;
+        offerId: string;
+        startDate: Date;
+        endDate: Date;
+      }>("mobile-freebies")
       .find({ endDate: { $gte: now } }, { sort: { endDate: 1 } })
       .toArray(),
   ]);
@@ -94,13 +102,13 @@ app.get('/', async (c) => {
       list: freeGames,
       getOfferId: (g: any) => g.id,
       getHistory: (id: string) => FreeGames.find({ id }),
-      toPojo: (g: any) => (typeof g.toObject === 'function' ? g.toObject() : g),
+      toPojo: (g: any) => (typeof g.toObject === "function" ? g.toObject() : g),
     },
     {
       list: mobileFreebies,
       getOfferId: (g: any) => g.offerId,
       getHistory: (offerId: string) =>
-        db.db.collection('mobile-freebies').findOne({ offerId }),
+        db.db.collection("mobile-freebies").findOne({ offerId }),
       toPojo: (g: any) => g, // already POJO
     },
   ];
@@ -122,7 +130,7 @@ app.get('/', async (c) => {
 
         return {
           ...orderOffersObject(
-            typeof offer.toObject === 'function' ? offer.toObject() : offer
+            typeof offer.toObject === "function" ? offer.toObject() : offer
           ),
           items,
           giveaway: {
@@ -135,18 +143,17 @@ app.get('/', async (c) => {
     )
   );
 
-  return c.json(enriched, 200, { 'Cache-Control': 'private, max-age=0' });
+  return c.json(enriched, 200, { "Cache-Control": "private, max-age=0" });
 });
 
-
-app.get('/history', async (c) => {
-  const country = c.req.query('country');
-  const cookieCountry = getCookie(c, 'EGDATA_COUNTRY');
-  const limit = Math.min(Number.parseInt(c.req.query('limit') || '10'), 25);
-  const page = Math.max(Number.parseInt(c.req.query('page') || '1'), 1);
+app.get("/history", async (c) => {
+  const country = c.req.query("country");
+  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
+  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 25);
+  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
   const skip = (page - 1) * limit;
 
-  const selectedCountry = country ?? cookieCountry ?? 'US';
+  const selectedCountry = country ?? cookieCountry ?? "US";
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
@@ -156,7 +163,7 @@ app.get('/history', async (c) => {
   if (!region) {
     c.status(404);
     return c.json({
-      message: 'Country not found',
+      message: "Country not found",
     });
   }
 
@@ -166,7 +173,7 @@ app.get('/history', async (c) => {
 
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
-      'Cache-Control': 'public, max-age=60',
+      "Cache-Control": "public, max-age=60",
     });
   }
 
@@ -188,8 +195,8 @@ app.get('/history', async (c) => {
     }),
   ]);
 
-  const offers = offersData.status === 'fulfilled' ? offersData.value : [];
-  const prices = pricesData.status === 'fulfilled' ? pricesData.value : [];
+  const offers = offersData.status === "fulfilled" ? offersData.value : [];
+  const prices = pricesData.status === "fulfilled" ? pricesData.value : [];
 
   const result = await Promise.all(
     freeGames.map(async (game) => {
@@ -210,16 +217,16 @@ app.get('/history', async (c) => {
     })
   );
 
-  await client.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
 
   return c.json(result, 200, {
-    'Cache-Control': 'private, max-age=0',
+    "Cache-Control": "private, max-age=0",
   });
 });
 
-app.patch('/index', async (c) => {
-  console.log('Refreshing MeiliSearch free games index');
-  const index = meiliSearchClient.index('free-games');
+app.patch("/index", async (c) => {
+  console.log("Refreshing MeiliSearch free games index");
+  const index = meiliSearchClient.index("free-games");
   await index.deleteAllDocuments();
 
   const giveaways = await FreeGames.find({}, undefined, {
@@ -236,12 +243,12 @@ app.patch('/index', async (c) => {
     }),
     PriceEngine.find({
       offerId: { $in: giveaways.map((g) => g.id) },
-      region: 'US',
+      region: "US",
     }),
   ]);
 
-  const offers = offersData.status === 'fulfilled' ? offersData.value : [];
-  const prices = pricesData.status === 'fulfilled' ? pricesData.value : [];
+  const offers = offersData.status === "fulfilled" ? offersData.value : [];
+  const prices = pricesData.status === "fulfilled" ? pricesData.value : [];
 
   const result = giveaways.map((g) => {
     const offer = offers.find((o) => o.id === g.id);
@@ -282,58 +289,58 @@ app.patch('/index', async (c) => {
         return o;
       }),
     {
-      primaryKey: '_id',
+      primaryKey: "_id",
     }
   );
 
-  return c.json({ message: 'ok' });
+  return c.json({ message: "ok" });
 });
 
 interface FreeGamesSearchQuery {
   title?: string;
   offerType?:
-  | 'IN_GAME_PURCHASE'
-  | 'BASE_GAME'
-  | 'EXPERIENCE'
-  | 'UNLOCKABLE'
-  | 'ADD_ON'
-  | 'Bundle'
-  | 'CONSUMABLE'
-  | 'WALLET'
-  | 'OTHERS'
-  | 'DEMO'
-  | 'DLC'
-  | 'VIRTUAL_CURRENCY'
-  | 'BUNDLE'
-  | 'DIGITAL_EXTRA'
-  | 'EDITION';
+    | "IN_GAME_PURCHASE"
+    | "BASE_GAME"
+    | "EXPERIENCE"
+    | "UNLOCKABLE"
+    | "ADD_ON"
+    | "Bundle"
+    | "CONSUMABLE"
+    | "WALLET"
+    | "OTHERS"
+    | "DEMO"
+    | "DLC"
+    | "VIRTUAL_CURRENCY"
+    | "BUNDLE"
+    | "DIGITAL_EXTRA"
+    | "EDITION";
   tags?: string[];
   sortBy?:
-  | 'giveawayDate'
-  | 'releaseDate'
-  | 'lastModifiedDate'
-  | 'effectiveDate'
-  | 'creationDate'
-  | 'viewableDate'
-  | 'pcReleaseDate'
-  | 'upcoming'
-  | 'price'
-  | 'giveaway.endDate'
-  | 'price.price.discountPrice';
-  sortDir?: 'asc' | 'desc';
+    | "giveawayDate"
+    | "releaseDate"
+    | "lastModifiedDate"
+    | "effectiveDate"
+    | "creationDate"
+    | "viewableDate"
+    | "pcReleaseDate"
+    | "upcoming"
+    | "price"
+    | "giveaway.endDate"
+    | "price.price.discountPrice";
+  sortDir?: "asc" | "desc";
   limit?: string;
   page?: string;
   categories?: string[];
   year?: string;
 }
 
-app.get('/search', async (c) => {
+app.get("/search", async (c) => {
   const query = c.req.query() as FreeGamesSearchQuery;
 
-  const country = c.req.query('country');
-  const cookieCountry = getCookie(c, 'EGDATA_COUNTRY');
+  const country = c.req.query("country");
+  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
-  const selectedCountry = country ?? cookieCountry ?? 'US';
+  const selectedCountry = country ?? cookieCountry ?? "US";
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
@@ -343,31 +350,31 @@ app.get('/search', async (c) => {
   if (!region) {
     c.status(404);
     return c.json({
-      message: 'Country not found',
+      message: "Country not found",
     });
   }
 
-  const limit = Math.min(Number.parseInt(query.limit || '10'), 50);
-  const page = Math.max(Number.parseInt(query.page || '1'), 1);
+  const limit = Math.min(Number.parseInt(query.limit || "10"), 50);
+  const page = Math.max(Number.parseInt(query.page || "1"), 1);
   const skip = (page - 1) * limit;
-  let sort = query.sortBy || 'lastModifiedDate';
-  const sortDir = query.sortDir || 'desc';
+  let sort = query.sortBy || "lastModifiedDate";
+  const sortDir = query.sortDir || "desc";
 
   const cacheKey = `free-games-search:${Buffer.from(
     JSON.stringify(query)
-  ).toString('base64')}:${limit}:${page}`;
+  ).toString("base64")}:${limit}:${page}`;
 
   const cached = await client.get(cacheKey);
 
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
-      'Cache-Control': 'public, max-age=60',
+      "Cache-Control": "public, max-age=60",
     });
   }
 
   const start = new Date();
 
-  const index = meiliSearchClient.index('free-games');
+  const index = meiliSearchClient.index("free-games");
 
   const filters: Array<string> = [];
 
@@ -376,20 +383,20 @@ app.get('/search', async (c) => {
   }
 
   if (query.tags) {
-    filters.push(`tags.id in [${query.tags.map((t) => `'${t}'`).join(',')}]`);
+    filters.push(`tags.id in [${query.tags.map((t) => `'${t}'`).join(",")}]`);
   }
 
   if (query.categories) {
     filters.push(
-      `categories in [${query.categories.map((t) => `'${t}'`).join(',')}]`
+      `categories in [${query.categories.map((t) => `'${t}'`).join(",")}]`
     );
   }
 
   if (query.sortBy) {
-    if (query.sortBy === 'giveawayDate') {
-      sort = 'giveaway.endDate';
-    } else if (query.sortBy === 'price') {
-      sort = 'price.price.discountPrice';
+    if (query.sortBy === "giveawayDate") {
+      sort = "giveaway.endDate";
+    } else if (query.sortBy === "price") {
+      sort = "price.price.discountPrice";
     }
   }
 
@@ -404,11 +411,11 @@ app.get('/search', async (c) => {
     filters.push(`giveaway.endTimestamp <= ${endDate.getTime()}`);
   }
 
-  const result = await index.search(query.title || '', {
+  const result = await index.search(query.title || "", {
     // Use empty string if title is undefined
     limit,
     offset: skip,
-    filter: filters.length > 0 ? filters.join(' AND ') : undefined, // Apply filter only if not empty
+    filter: filters.length > 0 ? filters.join(" AND ") : undefined, // Apply filter only if not empty
     sort: [sort],
   });
 
@@ -430,18 +437,18 @@ app.get('/search', async (c) => {
     total: result.estimatedTotalHits,
   };
 
-  await client.set(cacheKey, JSON.stringify(response), 'EX', 60);
+  await client.set(cacheKey, JSON.stringify(response), "EX", 60);
 
   return c.json(response, 200, {
-    'Server-Timing': `db;dur=${new Date().getTime() - start.getTime()}`,
+    "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
   });
 });
 
-app.get('/stats', async (c) => {
-  const country = c.req.query('country');
-  const cookieCountry = getCookie(c, 'EGDATA_COUNTRY');
+app.get("/stats", async (c) => {
+  const country = c.req.query("country");
+  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
-  const selectedCountry = country ?? cookieCountry ?? 'US';
+  const selectedCountry = country ?? cookieCountry ?? "US";
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
@@ -451,7 +458,7 @@ app.get('/stats', async (c) => {
   if (!region) {
     c.status(404);
     return c.json({
-      message: 'Country not found',
+      message: "Country not found",
     });
   }
 
@@ -461,7 +468,7 @@ app.get('/stats', async (c) => {
 
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
-      'Cache-Control': 'public, max-age=60',
+      "Cache-Control": "public, max-age=60",
     });
   }
 
@@ -481,8 +488,8 @@ app.get('/stats', async (c) => {
     }),
   ]);
 
-  const offers = offersData.status === 'fulfilled' ? offersData.value : [];
-  const prices = pricesData.status === 'fulfilled' ? pricesData.value : [];
+  const offers = offersData.status === "fulfilled" ? offersData.value : [];
+  const prices = pricesData.status === "fulfilled" ? pricesData.value : [];
 
   const offerRepetitions: Record<string, number> = {};
 
@@ -544,18 +551,18 @@ app.get('/stats', async (c) => {
     sellers: Object.keys(singleSellers).length,
   };
 
-  await client.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
 
   return c.json(result, 200, {
-    'Cache-Control': 'private, max-age=0',
+    "Cache-Control": "private, max-age=0",
   });
 });
 
-app.get('/og', async (c) => {
-  const country = c.req.query('country');
-  const cookieCountry = getCookie(c, 'EGDATA_COUNTRY');
+app.get("/og", async (c) => {
+  const country = c.req.query("country");
+  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
-  const selectedCountry = country ?? cookieCountry ?? 'US';
+  const selectedCountry = country ?? cookieCountry ?? "US";
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
@@ -565,7 +572,7 @@ app.get('/og', async (c) => {
   if (!region) {
     c.status(404);
     return c.json({
-      message: 'Country not found',
+      message: "Country not found",
     });
   }
 
@@ -587,11 +594,9 @@ app.get('/og', async (c) => {
   const hexHash = hash.digest("hex");
 
   // Check if the image already exists in the database
-  const cachedImage = await db.db
-    .collection("freebies-og")
-    .findOne({
-      hash: hexHash,
-    });
+  const cachedImage = await db.db.collection("freebies-og").findOne({
+    hash: hexHash,
+  });
 
   if (cachedImage) {
     return c.json(
@@ -617,10 +622,10 @@ app.get('/og', async (c) => {
         }),
       ]);
 
-      const offer = offerData.status === 'fulfilled' ? offerData.value : null;
-      const price = priceData.status === 'fulfilled' ? priceData.value : null;
+      const offer = offerData.status === "fulfilled" ? offerData.value : null;
+      const price = priceData.status === "fulfilled" ? priceData.value : null;
       const historical =
-        historicalData.status === 'fulfilled' ? historicalData.value : [];
+        historicalData.status === "fulfilled" ? historicalData.value : [];
 
       if (!offer) {
         return {
@@ -639,78 +644,78 @@ app.get('/og', async (c) => {
   const svg = await satori(
     <div
       style={{
-        width: '1300px',
-        height: '630px',
-        display: 'flex',
-        flexDirection: 'column',
-        background: '#001B3D',
-        fontFamily: 'Inter, sans-serif',
-        position: 'relative',
-        overflow: 'hidden',
+        width: "1300px",
+        height: "630px",
+        display: "flex",
+        flexDirection: "column",
+        background: "#001B3D",
+        fontFamily: "Inter, sans-serif",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
       {/* Gradient Background */}
       <div
         style={{
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
           background:
-            'linear-gradient(135deg, rgba(0, 27, 61, 1) 0%, rgba(0, 9, 19, 1) 100%)',
+            "linear-gradient(135deg, rgba(0, 27, 61, 1) 0%, rgba(0, 9, 19, 1) 100%)",
         }}
       />
       {/* Background Pattern */}
       <div
         style={{
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
           backgroundImage:
-            'linear-gradient(to bottom, rgba(0, 120, 242, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 120, 242, 0.05) 1px, transparent 1px)',
-          backgroundSize: '30px 30px',
+            "linear-gradient(to bottom, rgba(0, 120, 242, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 120, 242, 0.05) 1px, transparent 1px)",
+          backgroundSize: "30px 30px",
           opacity: 0.3,
         }}
       />
       {/* Content Container */}
       <div
         style={{
-          padding: '60px',
+          padding: "60px",
           flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'relative',
+          display: "flex",
+          flexDirection: "column",
+          position: "relative",
           zIndex: 1,
         }}
       >
         {/* Header */}
         <div
           style={{
-            marginBottom: '40px',
-            display: 'flex',
-            flexDirection: 'column',
+            marginBottom: "40px",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           <div
             style={{
-              fontSize: '32px',
-              color: 'rgba(255, 255, 255, 0.9)',
-              marginBottom: '16px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
+              fontSize: "32px",
+              color: "rgba(255, 255, 255, 0.9)",
+              marginBottom: "16px",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
             }}
           >
             This Week on Epic Games
           </div>
           <div
             style={{
-              fontSize: '72px',
+              fontSize: "72px",
               fontWeight: 800,
-              color: '#FFFFFF',
-              textShadow: '0 0 30px rgba(0, 120, 242, 0.3)',
+              color: "#FFFFFF",
+              textShadow: "0 0 30px rgba(0, 120, 242, 0.3)",
             }}
           >
             FREE GAMES
@@ -719,83 +724,83 @@ app.get('/og', async (c) => {
         {/* Games Grid */}
         <div
           style={{
-            display: 'flex',
-            gap: '20px',
+            display: "flex",
+            gap: "20px",
           }}
         >
           {games.map((game, index) => (
             <div
               key={index}
               style={{
-                display: 'flex',
-                flexDirection: 'column',
+                display: "flex",
+                flexDirection: "column",
                 flex: 1,
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '12px',
-                padding: '24px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+                background: "rgba(255, 255, 255, 0.05)",
+                borderRadius: "12px",
+                padding: "24px",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3)",
               }}
             >
               <div
                 style={{
-                  width: '100%',
-                  height: '200px',
-                  background: 'rgba(0, 120, 242, 0.1)',
-                  borderRadius: '8px',
-                  marginBottom: '16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '48px',
-                  color: '#0078F2',
-                  fontWeight: 'bold',
+                  width: "100%",
+                  height: "200px",
+                  background: "rgba(0, 120, 242, 0.1)",
+                  borderRadius: "8px",
+                  marginBottom: "16px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "48px",
+                  color: "#0078F2",
+                  fontWeight: "bold",
                 }}
               >
                 <img
                   src={
                     getImage(game?.keyImages || [], [
-                      'DieselGameBoxWide',
-                      'OfferImageWide',
-                      'Featured',
-                      'DieselStoreFrontWide',
-                      'VaultClosed',
+                      "DieselGameBoxWide",
+                      "OfferImageWide",
+                      "Featured",
+                      "DieselStoreFrontWide",
+                      "VaultClosed",
                     ])?.url
                   }
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "8px",
                   }}
                 />
               </div>
               <div
                 style={{
-                  fontSize: '24px',
-                  fontWeight: 'bold',
-                  color: 'white',
-                  marginBottom: '8px',
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  color: "white",
+                  marginBottom: "8px",
                 }}
               >
                 {game.title}
               </div>
               <div
                 style={{
-                  fontSize: '16px',
-                  color: 'rgba(255, 255, 255, 1)',
-                  display: 'flex',
+                  fontSize: "16px",
+                  color: "rgba(255, 255, 255, 1)",
+                  display: "flex",
                 }}
               >
-                {game.giveaway.startDate.toLocaleString('en-UK', {
-                  month: 'short',
-                  day: 'numeric',
+                {game.giveaway.startDate.toLocaleString("en-UK", {
+                  month: "short",
+                  day: "numeric",
                   year: undefined,
-                })}{' '}
-                -{' '}
-                {game.giveaway.endDate.toLocaleString('en-UK', {
-                  month: 'short',
-                  day: 'numeric',
+                })}{" "}
+                -{" "}
+                {game.giveaway.endDate.toLocaleString("en-UK", {
+                  month: "short",
+                  day: "numeric",
                   year: undefined,
                 })}
               </div>
@@ -809,10 +814,10 @@ app.get('/og', async (c) => {
       height: 630,
       fonts: [
         {
-          name: 'Roboto',
-          data: readFileSync(resolve('./src/static/Roboto-Light.ttf')),
+          name: "Roboto",
+          data: readFileSync(resolve("./src/static/Roboto-Light.ttf")),
           weight: 400,
-          style: 'normal',
+          style: "normal",
         },
       ],
     }
@@ -820,11 +825,11 @@ app.get('/og', async (c) => {
 
   const resvg = new Resvg(svg, {
     font: {
-      fontFiles: [resolve('./src/static/Roboto-Light.ttf')],
+      fontFiles: [resolve("./src/static/Roboto-Light.ttf")],
       loadSystemFonts: false,
     },
     fitTo: {
-      mode: 'width',
+      mode: "width",
       value: 1400,
     },
   });
@@ -832,19 +837,19 @@ app.get('/og', async (c) => {
   const pngBuffer = pngData.asPng();
 
   const cfImagesUrl =
-    'https://api.cloudflare.com/client/v4/accounts/7da0b3179a5b5ef4f1a2d1189f072d0b/images/v1';
+    "https://api.cloudflare.com/client/v4/accounts/7da0b3179a5b5ef4f1a2d1189f072d0b/images/v1";
   const accessToken = process.env.CF_IMAGES_KEY;
 
   const formData = new FormData();
   formData.set(
-    'file',
-    new Blob([pngBuffer], { type: 'image/png' }),
+    "file",
+    new Blob([pngBuffer], { type: "image/png" }),
     // Generate a hash from the free games data
     `freebies-og/${hexHash}.png`
   );
 
   const response = await fetch(cfImagesUrl, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -852,14 +857,14 @@ app.get('/og', async (c) => {
   });
 
   if (!response.ok) {
-    console.error('Failed to upload image', await response.json());
-    return c.json({ error: 'Failed to upload image' }, 400);
+    console.error("Failed to upload image", await response.json());
+    return c.json({ error: "Failed to upload image" }, 400);
   }
 
   const responseData = (await response.json()) as { result: { id: string } };
 
   // Save the image ID in the database
-  await db.db.collection('freebies-og').updateOne(
+  await db.db.collection("freebies-og").updateOne(
     {
       id: responseData.result.id,
     },
@@ -882,11 +887,11 @@ app.get('/og', async (c) => {
   );
 });
 
-app.get('/mobile', async (c) => {
-  const country = c.req.query('country');
-  const cookieCountry = getCookie(c, 'EGDATA_COUNTRY');
+app.get("/mobile", async (c) => {
+  const country = c.req.query("country");
+  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
-  const selectedCountry = country ?? cookieCountry ?? 'US';
+  const selectedCountry = country ?? cookieCountry ?? "US";
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
@@ -896,84 +901,95 @@ app.get('/mobile', async (c) => {
   if (!region) {
     c.status(404);
     return c.json({
-      message: 'Country not found',
+      message: "Country not found",
     });
   }
 
-  const freeGames = await db.db.collection<{
-    offerId: string;
-    startDate: Date;
-    endDate: Date;
-  }>('mobile-freebies').find({
-    startDate: { $lte: new Date() },
-    endDate: { $gte: new Date() },
-  }).toArray();
+  const freeGames = await db.db
+    .collection<{
+      offerId: string;
+      startDate: Date;
+      endDate: Date;
+    }>("mobile-freebies")
+    .find({
+      startDate: { $lte: new Date() },
+      endDate: { $gte: new Date() },
+    })
+    .toArray();
 
-  const result = await Promise.all(freeGames.map(async (game) => {
-    const offer = await Offer.findOne({
-      id: game.offerId,
-    });
+  const result = await Promise.all(
+    freeGames.map(async (game) => {
+      const offer = await Offer.findOne({
+        id: game.offerId,
+      });
 
-    if (!offer) {
-      console.error(`Offer not found for game ${game.offerId}`);
-      return null;
-    }
+      if (!offer) {
+        console.error(`Offer not found for game ${game.offerId}`);
+        return null;
+      }
 
-    const price = await PriceEngine.findOne({
-      offerId: game.offerId,
-      region,
-    });
+      const price = await PriceEngine.findOne({
+        offerId: game.offerId,
+        region,
+      });
 
-    return {
-      ...orderOffersObject(offer?.toObject()),
-      giveaway: game,
-      price: price ?? null,
-    };
-  }));
+      return {
+        ...orderOffersObject(offer?.toObject()),
+        giveaway: game,
+        price: price ?? null,
+      };
+    })
+  );
 
-  return c.json(result.filter((r) => r !== null), 200);
+  return c.json(
+    result.filter((r) => r !== null),
+    200
+  );
 });
 
-app.get('/sellers', async (c) => {
-  const sellers = await db.db.collection('freegames').aggregate(
-    [
-      {
-        $group: {
-          _id: '$id',
-          doc: { $first: '$$ROOT' }
-        }
-      },
-      { $replaceRoot: { newRoot: '$doc' } },
-      {
-        $lookup: {
-          from: 'offers',
-          localField: 'id',
-          foreignField: 'id',
-          as: 'offer'
-        }
-      },
-      { $unwind: '$offer' },
-      {
-        $group: {
-          _id: {
-            sellerId: '$offer.seller.id',
-            sellerName: '$offer.seller.name'
+app.get("/sellers", async (c) => {
+  const sellers = await db.db
+    .collection("freegames")
+    .aggregate(
+      [
+        {
+          $group: {
+            _id: "$id",
+            doc: { $first: "$$ROOT" },
           },
-          totalSingleGames: { $sum: 1 }
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          sellerId: '$_id.sellerId',
-          sellerName: '$_id.sellerName',
-          totalSingleGames: 1
-        }
-      },
-      { $sort: { totalSingleGames: -1 } }
-    ],
-    { maxTimeMS: 60000, allowDiskUse: true }
-  ).toArray();
+        },
+        { $replaceRoot: { newRoot: "$doc" } },
+        {
+          $lookup: {
+            from: "offers",
+            localField: "id",
+            foreignField: "id",
+            as: "offer",
+          },
+        },
+        { $unwind: "$offer" },
+        {
+          $group: {
+            _id: {
+              sellerId: "$offer.seller.id",
+              sellerName: "$offer.seller.name",
+            },
+            totalSingleGames: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            sellerId: "$_id.sellerId",
+            sellerName: "$_id.sellerName",
+            totalSingleGames: 1,
+          },
+        },
+        { $sort: { totalSingleGames: -1 } },
+      ],
+      { maxTimeMS: 60000, allowDiskUse: true }
+    )
+    .toArray();
 
   return c.json(sellers, 200);
 });

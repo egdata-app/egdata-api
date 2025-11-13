@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
-
 import { AchievementSet } from "@egdata/core.schemas.achievements";
 import { Asset } from "@egdata/core.schemas.assets";
 import { Bundles } from "@egdata/core.schemas.bundles";
@@ -22,7 +21,6 @@ import { Sandbox } from "@egdata/core.schemas.sandboxes";
 import { OfferSubItems } from "@egdata/core.schemas.subitems";
 import { TagModel, Tags } from "@egdata/core.schemas.tags";
 import { Queue } from "bullmq";
-
 import { db } from "../db/index.js";
 import { type IReview, Review } from "../db/schemas/reviews.js";
 import client, { ioredis } from "../clients/redis.js";
@@ -36,6 +34,11 @@ import { getProduct } from "../utils/get-product.js";
 import { orderOffersObject } from "../utils/order-offers-object.js";
 import { verifyGameOwnership } from "../utils/verify-game-ownership.js";
 import consola from "consola";
+import satori from "satori";
+import { Resvg } from "@resvg/resvg-js";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import React from "react";
 
 type RegenOfferQueueType =
   | { slug: string }
@@ -437,6 +440,715 @@ app.get("/genres", async (c) => {
   );
 
   return c.json(result, 200, {
+    "Cache-Control": "public, max-age=60",
+  });
+});
+
+app.get("/:id/og", async (c) => {
+  const { id } = c.req.param();
+  const country = c.req.query("country");
+  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
+  const selectedCountry = country ?? cookieCountry ?? "US";
+
+  const region = Object.keys(regions).find((r) =>
+    regions[r].countries.includes(selectedCountry)
+  );
+
+  if (!region) {
+    c.status(404);
+    return c.json({ message: "Country not found" });
+  }
+
+  const offer = await Offer.findOne({ id }).lean();
+
+  if (!offer) {
+    c.status(404);
+    return c.json({ message: "Offer not found" });
+  }
+
+  const [price, lowestPrice, lastDiscount] = await Promise.all([
+    PriceEngine.findOne({ offerId: id, region }, undefined, {
+      sort: { updatedAt: -1 },
+    }),
+    PriceEngineHistorical.findOne(
+      { offerId: id, region, "price.discount": { $gt: 0 } },
+      undefined,
+      { sort: { "price.discountPrice": 1 } }
+    ),
+    PriceEngineHistorical.findOne(
+      { offerId: id, region, "price.discount": { $gt: 0 } },
+      undefined,
+      { sort: { updatedAt: -1 } }
+    ),
+  ]);
+
+  const tagsIds = offer.tags.map((t) => t.id);
+  const tagsInformation = await TagModel.find({ id: { $in: tagsIds } });
+  const genres = tagsInformation
+    .filter((t) => t.groupName === "genre")
+    .map((g) => g.name)
+    .slice(0, 3);
+
+  const subItemsData = await OfferSubItems.find({ _id: id });
+  const items = await Item.find({
+    $or: [
+      {
+        id: {
+          $in: [
+            ...offer.items.map((i) => i.id),
+            ...subItemsData.flatMap((i) => i.subItems.map((s) => s.id)),
+          ],
+        },
+      },
+      { linkedOffers: id },
+    ],
+  });
+
+  const customAttributes = items.reduce((acc, item) => {
+    return Object.assign(acc, attributesToObject(item.customAttributes));
+  }, attributesToObject([]));
+
+  const tagsObject = offer.tags.reduce((acc: Record<string, unknown>, tag) => {
+    acc[tag.id] = tag;
+    return acc;
+  }, {});
+
+  const featuresData = getGameFeatures({
+    attributes: customAttributes,
+    // @ts-expect-error
+    tags: tagsObject,
+  });
+
+  const assets = await Asset.find({
+    itemId: { $in: items.map((i) => i.id) },
+  });
+
+  const buildsAgg = await db.db
+    .collection("builds")
+    .aggregate([
+      { $match: { appName: { $in: assets.map((a) => a.artifactId) } } },
+      { $sort: { createdAt: -1 } },
+      {
+        $group: {
+          _id: "$appName",
+          doc: { $first: "$$ROOT" },
+        },
+      },
+    ])
+    .toArray();
+
+  const latestBuilds = buildsAgg.map((b: any) => b.doc);
+  const technologies = latestBuilds
+    .flatMap((b: any) => b.technologies || [])
+    .filter(Boolean)
+    .reduce((acc: Array<{ technology: string }>, tech: any) => {
+      if (!acc.find((a) => a.technology === tech.technology)) {
+        acc.push(tech);
+      }
+      return acc;
+    }, [] as Array<{ technology: string }>);
+
+  const sandboxData = await Sandbox.findOne({ _id: offer.namespace });
+  let ageRatingLabel: string | null = null;
+  if (sandboxData && (sandboxData as any).ageGatings) {
+    const selectedRating =
+      Object.entries(ageRatingsCountries).find(([, rating]) =>
+        rating.includes(selectedCountry)
+      )?.[0] ?? "Generic";
+    const rating = (sandboxData as any).ageGatings[selectedRating];
+    if (rating) {
+      const val = (
+        (rating as any).age ||
+        (rating as any).rating ||
+        (rating as any).value ||
+        (rating as any).level ||
+        ""
+      ).toString();
+      ageRatingLabel = `${selectedRating}${val ? ` ${val}` : ""}`;
+    }
+  }
+
+  const activeGiveaway = await FreeGames.findOne({
+    id,
+    startDate: { $lte: new Date() },
+    endDate: { $gte: new Date() },
+  });
+
+  const reviewsCount = await Review.countDocuments({ id });
+
+  const achievementSets = await AchievementSet.find({
+    sandboxId: offer.namespace,
+    isBase: offer.offerType === "BASE_GAME",
+  });
+  const achievementsCount = achievementSets.reduce(
+    (acc, curr) => acc + (curr.achievements?.length ?? 0),
+    0
+  );
+
+  const product = sandboxData
+    ? await db.db.collection("products").findOne({
+        // @ts-expect-error
+        _id: (sandboxData as any).parent,
+      })
+    : null;
+
+  const epicRatings = product
+    ? await Ratings.findOne({
+        _id: (product as any).slug,
+      })
+    : null;
+
+  const epicScoreRaw =
+    (epicRatings as any)?.overallScore ?? (epicRatings as any)?.score ?? null;
+  const epicScore =
+    typeof epicScoreRaw === "number" ? epicScoreRaw.toFixed(1) : null;
+  const epicRecommendedRaw =
+    (epicRatings as any)?.recommendedPercentage ??
+    (epicRatings as any)?.recommendedPercent ??
+    (epicRatings as any)?.recommended ??
+    null;
+  const epicRecommended =
+    typeof epicRecommendedRaw === "number"
+      ? Math.round(epicRecommendedRaw)
+      : null;
+
+  const image = getImage(offer.keyImages, [
+    "DieselGameBoxTall",
+    "OfferImageTall",
+    "DieselStoreFrontTall",
+    "ProductLogo",
+    "DieselStoreFrontWide",
+    "OfferImageWide",
+    "Featured",
+    "DieselGameBoxWide",
+  ]);
+
+  const currencyCode = regions[region].currencyCode;
+  const originalPrice = price?.price.originalPrice ?? null;
+  const discountPrice = price?.price.discountPrice ?? null;
+  const discountPercent =
+    price?.appliedRules?.discountSetting?.discountPercentage ?? null;
+  const isFree = typeof discountPrice === "number" && discountPrice === 0;
+  const isDiscounted =
+    typeof discountPercent === "number" && discountPercent > 0;
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currencyCode,
+  });
+
+  const title = offer.title;
+  const publisher = offer.publisherDisplayName ?? offer.seller?.name ?? "";
+  const developer = offer.developerDisplayName ?? "";
+  const releaseDate =
+    offer.releaseDate ?? offer.effectiveDate ?? offer.viewableDate ?? null;
+  const notReleased = releaseDate ? new Date(releaseDate) > new Date() : false;
+
+  const svg = await satori(
+    React.createElement(
+      "div",
+      {
+        style: {
+          width: "1200px",
+          height: "630px",
+          display: "flex",
+          flexDirection: "row",
+          background: "#001B3D",
+          fontFamily: "Inter, sans-serif",
+          position: "relative",
+          overflow: "hidden",
+          padding: "24px",
+        },
+      },
+      [
+        React.createElement("div", {
+          key: "bg-gradient",
+          style: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background:
+              "linear-gradient(135deg, rgba(0, 27, 61, 1) 0%, rgba(0, 9, 19, 1) 100%)",
+          },
+        }),
+        React.createElement(
+          "div",
+          {
+            key: "left",
+            style: {
+              width: "460px",
+              height: "100%",
+              borderRadius: "16px",
+              overflow: "hidden",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              background: "rgba(255, 255, 255, 0.06)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: "24px",
+            },
+          },
+          [
+            React.createElement("img", {
+              key: "cover",
+              src: image?.url,
+              style: {
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              },
+            }),
+          ]
+        ),
+        React.createElement(
+          "div",
+          {
+            key: "right",
+            style: {
+              width: "668px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "16px",
+            },
+          },
+          [
+            React.createElement(
+              "div",
+              {
+                key: "eyebrow",
+                style: {
+                  fontSize: "18px",
+                  color: "rgba(255, 255, 255, 0.7)",
+                  letterSpacing: "0.1em",
+                },
+              },
+              "egdata.app"
+            ),
+            React.createElement(
+              "div",
+              {
+                key: "title",
+                style: {
+                  fontSize: "42px",
+                  fontWeight: 800,
+                  color: "#FFFFFF",
+                  lineHeight: "1.1",
+                },
+              },
+              title
+            ),
+            React.createElement(
+              "div",
+              {
+                key: "meta",
+                style: {
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "8px",
+                  color: "rgba(255,255,255,0.85)",
+                  fontSize: "18px",
+                },
+              },
+              [
+                React.createElement(
+                  "div",
+                  { key: "devpub" },
+                  [
+                    developer ? `By ${developer}` : "",
+                    developer && publisher ? " • " : "",
+                    publisher ? `Published by ${publisher}` : "",
+                  ].join("")
+                ),
+                releaseDate && notReleased
+                  ? React.createElement(
+                      "div",
+                      { key: "release" },
+                      new Date(releaseDate).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                      })
+                    )
+                  : null,
+              ]
+            ),
+            React.createElement(
+              "div",
+              {
+                key: "section-pricing",
+                style: {
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: "12px",
+                  padding: "12px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "12px",
+                },
+              },
+              [
+                React.createElement(
+                  "div",
+                  {
+                    key: "section-pricing-title",
+                    style: {
+                      fontSize: "16px",
+                      color: "#0078F2",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                    },
+                  },
+                  "Pricing"
+                ),
+                React.createElement(
+                  "div",
+                  {
+                    key: "price",
+                    style: {
+                      display: "flex",
+                      alignItems: "baseline",
+                      gap: "12px",
+                    },
+                  },
+                  [
+                    isFree
+                      ? React.createElement(
+                          "div",
+                          {
+                            key: "free",
+                            style: {
+                              fontSize: "36px",
+                              fontWeight: 700,
+                              color: "#00D084",
+                            },
+                          },
+                          "Free"
+                        )
+                      : React.createElement(
+                          "div",
+                          {
+                            key: "discountPrice",
+                            style: {
+                              fontSize: "36px",
+                              fontWeight: 700,
+                              color: "#FFFFFF",
+                            },
+                          },
+                          typeof discountPrice === "number"
+                            ? formatter.format(discountPrice / 100)
+                            : ""
+                        ),
+                    typeof originalPrice === "number" &&
+                    discountPrice !== originalPrice
+                      ? React.createElement(
+                          "div",
+                          {
+                            key: "originalPrice",
+                            style: {
+                              fontSize: "22px",
+                              color: "rgba(255,255,255,0.6)",
+                              textDecoration: "line-through",
+                            },
+                          },
+                          formatter.format(originalPrice / 100)
+                        )
+                      : null,
+                    typeof discountPercent === "number" && discountPercent > 0
+                      ? React.createElement(
+                          "div",
+                          {
+                            key: "discountPercent",
+                            style: {
+                              fontSize: "20px",
+                              color: "#00D084",
+                              background: "rgba(0, 208, 132, 0.15)",
+                              border: "1px solid rgba(0, 208, 132, 0.4)",
+                              borderRadius: "8px",
+                              padding: "6px 10px",
+                            },
+                          },
+                          `-${discountPercent}%`
+                        )
+                      : null,
+                  ]
+                ),
+                React.createElement(
+                  "div",
+                  {
+                    key: "pricing-badges",
+                    style: {
+                      display: "flex",
+                      gap: "8px",
+                      flexWrap: "wrap",
+                    },
+                  },
+                  [
+                    isDiscounted
+                      ? React.createElement(
+                          "div",
+                          {
+                            key: "sale",
+                            style: {
+                              fontSize: "16px",
+                              color: "#FFFFFF",
+                              background: "rgba(0, 120, 242, 0.2)",
+                              border: "1px solid rgba(0, 120, 242, 0.4)",
+                              borderRadius: "999px",
+                              padding: "6px 12px",
+                            },
+                          },
+                          "On Sale"
+                        )
+                      : null,
+                    lowestPrice?.price?.discountPrice
+                      ? React.createElement(
+                          "div",
+                          {
+                            key: "lowest",
+                            style: {
+                              fontSize: "16px",
+                              color: "#FFFFFF",
+                              background: "rgba(255,255,255,0.08)",
+                              border: "1px solid rgba(255,255,255,0.15)",
+                              borderRadius: "999px",
+                              padding: "6px 12px",
+                            },
+                          },
+                          `Lowest: ${formatter.format(
+                            (lowestPrice.price.discountPrice || 0) / 100
+                          )}`
+                        )
+                      : null,
+                    lastDiscount?.updatedAt
+                      ? React.createElement(
+                          "div",
+                          {
+                            key: "lastDiscount",
+                            style: {
+                              fontSize: "16px",
+                              color: "#FFFFFF",
+                              background: "rgba(255,255,255,0.08)",
+                              border: "1px solid rgba(255,255,255,0.15)",
+                              borderRadius: "999px",
+                              padding: "6px 12px",
+                            },
+                          },
+                          `Last discount: ${new Date(
+                            lastDiscount.updatedAt
+                          ).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "2-digit",
+                            year: "numeric",
+                          })}`
+                        )
+                      : null,
+                    activeGiveaway
+                      ? React.createElement(
+                          "div",
+                          {
+                            key: "giveaway",
+                            style: {
+                              fontSize: "16px",
+                              color: "#FFFFFF",
+                              background: "rgba(0, 208, 132, 0.2)",
+                              border: "1px solid rgba(0, 208, 132, 0.4)",
+                              borderRadius: "999px",
+                              padding: "6px 12px",
+                            },
+                          },
+                          `Free until ${new Date(
+                            activeGiveaway.endDate
+                          ).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "2-digit",
+                          })}`
+                        )
+                      : null,
+                  ]
+                ),
+              ]
+            ),
+            React.createElement(
+              "div",
+              {
+                key: "section-features",
+                style: {
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: "12px",
+                  padding: "12px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "12px",
+                },
+              },
+              [
+                React.createElement(
+                  "div",
+                  {
+                    key: "section-features-title",
+                    style: {
+                      fontSize: "16px",
+                      color: "#0078F2",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                    },
+                  },
+                  "Features"
+                ),
+                React.createElement(
+                  "div",
+                  {
+                    key: "features",
+                    style: {
+                      display: "flex",
+                      gap: "8px",
+                      flexWrap: "wrap",
+                    },
+                  },
+                  [
+                    ...(featuresData.features || []).slice(0, 6).map((f, i) =>
+                      React.createElement(
+                        "div",
+                        {
+                          key: `feat-${i}`,
+                          style: {
+                            fontSize: "16px",
+                            color: "#FFFFFF",
+                            background: "rgba(255,255,255,0.08)",
+                            border: "1px solid rgba(255,255,255,0.15)",
+                            borderRadius: "999px",
+                            padding: "6px 12px",
+                          },
+                        },
+                        f
+                      )
+                    ),
+                    ...(featuresData.epicFeatures || [])
+                      .slice(0, 4)
+                      .map((f, i) =>
+                        React.createElement(
+                          "div",
+                          {
+                            key: `epicf-${i}`,
+                            style: {
+                              fontSize: "16px",
+                              color: "#FFFFFF",
+                              background: "rgba(0, 120, 242, 0.15)",
+                              border: "1px solid rgba(0, 120, 242, 0.4)",
+                              borderRadius: "999px",
+                              padding: "6px 12px",
+                            },
+                          },
+                          f
+                        )
+                      ),
+                  ]
+                ),
+              ]
+            ),
+            React.createElement(
+              "div",
+              {
+                key: "section-positions",
+                style: {
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: "12px",
+                  padding: "12px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "12px",
+                },
+              },
+              [
+                React.createElement(
+                  "div",
+                  {
+                    key: "section-positions-title",
+                    style: {
+                      fontSize: "16px",
+                      color: "#0078F2",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                    },
+                  },
+                  "Rankings"
+                ),
+                React.createElement(
+                  "div",
+                  {
+                    key: "positions",
+                    style: {
+                      display: "flex",
+                      gap: "8px",
+                      flexWrap: "wrap",
+                    },
+                  },
+                  (
+                    await GamePosition.find({ offerId: id })
+                  )
+                    .map((p) => ({
+                      collectionId: p.collectionId,
+                      position: p.position,
+                    }))
+                    .filter(
+                      (p) => typeof p.position === "number" && p.position > 0
+                    )
+                    .slice(0, 4)
+                    .map((p, i) =>
+                      React.createElement(
+                        "div",
+                        {
+                          key: `pos-${i}`,
+                          style: {
+                            fontSize: "16px",
+                            color: "#FFFFFF",
+                            background: "rgba(255,255,255,0.08)",
+                            border: "1px solid rgba(255,255,255,0.15)",
+                            borderRadius: "999px",
+                            padding: "6px 12px",
+                          },
+                        },
+                        `${p.collectionId[0].toUpperCase()}${p.collectionId
+                          .substring(1)
+                          .replace(/-/g, " ")}: #${p.position}`
+                      )
+                    )
+                ),
+              ]
+            ),
+          ]
+        ),
+      ]
+    ),
+    {
+      width: 1200,
+      height: 630,
+      fonts: [
+        {
+          name: "Roboto",
+          data: readFileSync(resolve("./src/static/Roboto-Light.ttf")),
+          weight: 400,
+          style: "normal",
+        },
+      ],
+    }
+  );
+
+  const resvg = new Resvg(svg, {
+    font: {
+      fontFiles: [resolve("./src/static/Roboto-Light.ttf")],
+      loadSystemFonts: false,
+    },
+    fitTo: { mode: "width", value: 1200 },
+  });
+  const pngData = resvg.render();
+  const pngBuffer = pngData.asPng();
+
+  return c.body(pngBuffer, 200, {
+    "Content-Type": "image/png",
     "Cache-Control": "public, max-age=60",
   });
 });
@@ -962,8 +1674,9 @@ app.get("/:id/price-history", async (c) => {
     Object.keys(regions).find((r) => regions[r].countries.includes(country));
 
   if (region) {
-    const cacheKey = `price-history:${id}:${region}:${since ?? "unlimited"
-      }:v0.1`;
+    const cacheKey = `price-history:${id}:${region}:${
+      since ?? "unlimited"
+    }:v0.1`;
     const cached = await client.get(cacheKey);
 
     if (cached) {
@@ -2224,9 +2937,9 @@ app.get("/:id/reviews", epicInfo, async (c) => {
 
   const userReview = currentUser
     ? await Review.findOne({
-      userId: currentUser,
-      id,
-    })
+        userId: currentUser,
+        id,
+      })
     : null;
 
   if (userReview) {
@@ -2327,9 +3040,9 @@ app.post("/:id/reviews", epic, async (c) => {
   const isOwned =
     session?.user?.email.split("@")[0] ?? epic?.account_id
       ? await verifyGameOwnership(
-        session?.user?.email.split("@")[0] ?? (epic?.account_id as string),
-        product._id as unknown as string
-      )
+          session?.user?.email.split("@")[0] ?? (epic?.account_id as string),
+          product._id as unknown as string
+        )
       : false;
 
   const review: IReview = {
@@ -2387,9 +3100,9 @@ app.patch("/:id/reviews", epic, async (c) => {
   const isOwned = ((session?.user?.email.split("@")[0] ??
     epic?.account_id) as string)
     ? await verifyGameOwnership(
-      (session?.user?.email.split("@")[0] ?? epic?.account_id) as string,
-      product._id as unknown as string
-    )
+        (session?.user?.email.split("@")[0] ?? epic?.account_id) as string,
+        product._id as unknown as string
+      )
     : false;
 
   const oldReview = await Review.findOne({
@@ -2587,9 +3300,9 @@ app.get("/:id/ownership", epic, async (c) => {
   const isOwned =
     session?.user?.email.split("@")[0] ?? epic?.account_id
       ? await verifyGameOwnership(
-        session?.user?.email.split("@")[0] ?? (epic?.account_id as string),
-        product._id as unknown as string
-      )
+          session?.user?.email.split("@")[0] ?? (epic?.account_id as string),
+          product._id as unknown as string
+        )
       : false;
 
   return c.json({
@@ -3540,7 +4253,7 @@ app.get("/:id/overview", async (c) => {
 
   const start = new Date();
   const cacheKey = `overview:${id}:${region}:v0.1`;
-  const cached = false // await client.get(cacheKey);
+  const cached = false; // await client.get(cacheKey);
 
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
@@ -3559,30 +4272,23 @@ app.get("/:id/overview", async (c) => {
   }
 
   // Execute all data fetching in parallel for better performance
-  const [
-    price,
-    media,
-    igdb,
-    subItems,
-    sandbox,
-    giveaways,
-    genres,
-  ] = await Promise.allSettled([
-    // Price data
-    PriceEngine.findOne({ offerId: id, region }),
-    // Media data
-    Media.findOne({ _id: id }),
-    // IGDB data
-    db.db.collection("igdb").findOne({ offerId: id }),
-    // Sub items for features and technologies
-    OfferSubItems.find({ _id: id }),
-    // Sandbox for age ratings and ratings
-    Sandbox.findOne({ _id: offer.namespace }),
-    // Giveaways
-    FreeGames.find({ id }, undefined, { sort: { startDate: -1 } }),
-    // Genres
-    Tags.find({ groupName: "genre", status: "ACTIVE" }),
-  ]);
+  const [price, media, igdb, subItems, sandbox, giveaways, genres] =
+    await Promise.allSettled([
+      // Price data
+      PriceEngine.findOne({ offerId: id, region }),
+      // Media data
+      Media.findOne({ _id: id }),
+      // IGDB data
+      db.db.collection("igdb").findOne({ offerId: id }),
+      // Sub items for features and technologies
+      OfferSubItems.find({ _id: id }),
+      // Sandbox for age ratings and ratings
+      Sandbox.findOne({ _id: offer.namespace }),
+      // Giveaways
+      FreeGames.find({ id }, undefined, { sort: { startDate: -1 } }),
+      // Genres
+      Tags.find({ groupName: "genre", status: "ACTIVE" }),
+    ]);
 
   // Get items for features and technologies
   const subItemsData = subItems.status === "fulfilled" ? subItems.value : [];
@@ -3661,11 +4367,7 @@ app.get("/:id/overview", async (c) => {
     .flatMap((b) => b.technologies || [])
     .filter(Boolean)
     .reduce((acc: Array<{ technology: string }>, tech) => {
-      if (
-        !acc.find(
-          (a) => a.technology === tech.technology
-        )
-      ) {
+      if (!acc.find((a) => a.technology === tech.technology)) {
         acc.push(tech);
       }
       return acc;
@@ -3681,7 +4383,12 @@ app.get("/:id/overview", async (c) => {
   const result = {
     offer: {
       ...orderOffersObject(offer),
-      customAttributes: attributesToObject(offer.customAttributes as unknown as Array<{ key: string; value: string }>),
+      customAttributes: attributesToObject(
+        offer.customAttributes as unknown as Array<{
+          key: string;
+          value: string;
+        }>
+      ),
     },
     price: price.status === "fulfilled" ? price.value : null,
     media: media.status === "fulfilled" ? media.value : null,
