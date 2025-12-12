@@ -90,7 +90,7 @@ app.get("/", async (c) => {
     const offersMap = new Map(offers.map((x) => [x.id, x]));
 
     type OfferWithPrice = OfferType & {
-        price: PriceEngineType
+        price: PriceEngineType | null
     };
 
     const result: {
@@ -102,13 +102,14 @@ app.get("/", async (c) => {
       const offers: OfferWithPrice[] = [];
 
       if (!module.offers.length) {
+        console.log("No offers for module", module.title);
         return;
       }
 
       for (const offerId of module.offers) {
         const offer = offersMap.get(offerId.id);
         if (!offer) {
-            return;
+            continue;
         }
 
         const price = await PriceEngine.findOne({
@@ -116,18 +117,14 @@ app.get("/", async (c) => {
             region
         });
 
-        if (!price) {
-            return;
-        }
-
         offers.push({
             ...offer.toObject(),
-            price: price.toObject()
+            price: price?.toObject() ?? null
         });
       }
 
       result.push({
-        title: module.title,
+        title: module.title.trim(),
         offers
       });
     }));
