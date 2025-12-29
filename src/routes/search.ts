@@ -731,18 +731,36 @@ app.post("/v2/search", async (c) => {
     must.push({
       bool: {
         should: [
-          { match_phrase: { title: q.title } },
+          // 1. Broad Search: Handles typos and searches multiple fields
           {
-            match: {
+            multi_match: {
+              query: q.title,
+              fields: [
+                "title^4",                   // Highest priority
+                "title.ngram^2",             // If you have an N-gram subfield for partial matches
+                "developerDisplayName^2",    // Allow searching by dev
+                "publisherDisplayName^2",    
+                "tags.name",                 // Allow searching by tag (e.g. "Action")
+                "description"                // Lowest priority, but catches keywords
+              ],
+              type: "best_fields",
+              fuzziness: "AUTO",             // Fixes "Witcher" vs "Witchar"
+              operator: "and"                // Ensures most terms must be present
+            }
+          },
+          // 2. Phrase Boost: huge score boost if they type the EXACT title phrase
+          {
+            match_phrase: {
               title: {
                 query: q.title,
-                minimum_should_match: "90%",
-              },
-            },
-          },
+                boost: 10,                   // Push exact phrase matches to the very top
+                slop: 2                      // Allows "Call Duty" to find "Call of Duty"
+              }
+            }
+          }
         ],
-        minimum_should_match: 1,
-      },
+        minimum_should_match: 1 // At least one of the above strategies must match
+      }
     });
   }
   if (q.offerType) filter.push({ term: { "offerType.keyword": q.offerType } });
