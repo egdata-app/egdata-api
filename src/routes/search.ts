@@ -731,35 +731,35 @@ app.post("/v2/search", async (c) => {
     must.push({
       bool: {
         should: [
-          // 1. Broad Search: Handles typos and searches multiple fields
+          // 1. Broad Search: Handles synonyms, typos, and metadata
           {
             multi_match: {
               query: q.title,
               fields: [
-                "title^4",                   // Highest priority
-                "title.ngram^2",             // If you have an N-gram subfield for partial matches
-                "developerDisplayName^2",    // Allow searching by dev
-                "publisherDisplayName^2",    
-                "tags.name",                 // Allow searching by tag (e.g. "Action")
-                "description"                // Lowest priority, but catches keywords
+                "title^4",               // Priority 1: Exact word matches
+                "title.synonym^3",       // Priority 2: Matches "Civ 6" to "Civilization VI" <--- ADD THIS
+                "developerDisplayName^2",
+                "publisherDisplayName^2",
+                "tags.name",             
+                "description"            
               ],
               type: "best_fields",
-              fuzziness: "AUTO",             // Fixes "Witcher" vs "Witchar"
-              operator: "and"                // Ensures most terms must be present
+              fuzziness: "AUTO",         
+              operator: "and"            
             }
           },
-          // 2. Phrase Boost: huge score boost if they type the EXACT title phrase
+          // 2. Phrase Boost: huge score boost for exact phrasing
           {
             match_phrase: {
               title: {
                 query: q.title,
-                boost: 10,                   // Push exact phrase matches to the very top
-                slop: 2                      // Allows "Call Duty" to find "Call of Duty"
+                boost: 10,               
+                slop: 2                  
               }
             }
           }
         ],
-        minimum_should_match: 1 // At least one of the above strategies must match
+        minimum_should_match: 1
       }
     });
   }
