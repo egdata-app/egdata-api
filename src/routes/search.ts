@@ -822,20 +822,20 @@ app.post("/v2/search", async (c) => {
   if (q.isLowestPrice) {
     // Push separate filter clauses to avoid malformed query structure
     filter.push({ term: { isAtLowestPriceUS: true } });
-    // Push separate filter clauses to avoid malformed query structure
-    if (q.onSale !== undefined) {
+    // Enforce onSale to be true
+    if (q.onSale === undefined) {
       filter.push({
-        range: { [`prices.${region}.price.discount`]: { gt: q.onSale ? 0 : 0 } },
+        range: { [`prices.${region}.price.discount`]: { gt: 0 } },
       });
     }
   }
 
   if (q.isLowestPriceEver) {
     filter.push({ term: { isHistoricalLowestEverUS: true } });
-    // Push separate filter clauses to avoid malformed query structure
-    if (q.onSale !== undefined) {
+    // Enforce onSale to be true
+    if (q.onSale === undefined) {
       filter.push({
-        range: { [`prices.${region}.price.discount`]: { gt: q.onSale ? 0 : 0 } },
+        range: { [`prices.${region}.price.discount`]: { gt: 0 } },
       });
     }
   }
