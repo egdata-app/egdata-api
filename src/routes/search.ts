@@ -72,6 +72,7 @@ interface SearchBody {
   excludeBlockchain?: boolean;
   pastGiveaways?: boolean;
   isLowestPrice?: boolean;
+  isLowestPriceEver?: boolean;
 }
 
 interface MongoQuery {
@@ -737,7 +738,7 @@ app.post("/v2/search", async (c) => {
               query: q.title,
               fields: [
                 "title^4",               // Priority 1: Exact word matches
-                "title.synonym^3",       // Priority 2: Matches "Civ 6" to "Civilization VI" <--- ADD THIS
+                "title.synonym^3",       // Priority 2: Matches "Civ 6" to "Civilization VI"
                 "developerDisplayName^2",
                 "publisherDisplayName^2",
                 "tags.name",             
@@ -824,6 +825,10 @@ app.post("/v2/search", async (c) => {
     filter.push({
       range: { [`prices.${region}.price.discount`]: { gt: q.onSale ? 0 : 0 } },
     });
+  }
+
+  if (q.isLowestPriceEver) {
+    filter.push({ term: { isHistoricalLowestEverUS: true } });
   }
 
   const sort: Array<Record<string, { order: "asc" | "desc" }>> = [];
