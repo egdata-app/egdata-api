@@ -1,21 +1,27 @@
-import { Hono } from 'hono';
-import { Item } from '@egdata/core.schemas.items';
-import { attributesToObject } from '../utils/attributes-to-object.js';
-import { Asset } from '@egdata/core.schemas.assets';
-import { db } from '../db/index.js';
-import client from '../clients/redis.js';
-import { Offer } from '@egdata/core.schemas.offers';
-import { OfferSubItems } from '@egdata/core.schemas.subitems';
+import { Asset } from "@egdata/core.schemas.assets";
+import { Item } from "@egdata/core.schemas.items";
+import { Offer } from "@egdata/core.schemas.offers";
+import { OfferSubItems } from "@egdata/core.schemas.subitems";
+import { Queue } from "bullmq";
+import { Hono } from "hono";
+import client from "../clients/redis.js";
+import { ioredis } from "../clients/redis.js";
+import { db } from "../db/index.js";
+import { attributesToObject } from "../utils/attributes-to-object.js";
+
+const regenItemsQueue = new Queue<{ id: string }>("regenItemsQueue", {
+  connection: ioredis,
+});
 
 const app = new Hono();
 
-app.get('/', async (c) => {
+app.get("/", async (c) => {
   const MAX_LIMIT = 50;
   const limit = Math.min(
-    Number.parseInt(c.req.query('limit') || '10'),
-    MAX_LIMIT
+    Number.parseInt(c.req.query("limit") || "10"),
+    MAX_LIMIT,
   );
-  const page = Math.max(Number.parseInt(c.req.query('page') || '1'), 1);
+  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
 
   const items = await Item.find({}, undefined, {
     limit,
@@ -52,13 +58,13 @@ app.get("/sitemap.xml", async (c) => {
       siteMapIndex = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${Array.from(
-        { length: Math.ceil(count / limit) },
-        (_, i) =>
-          `<sitemap><loc>https://api.egdata.app/items/sitemap.xml?page=${i + 1}</loc><lastmod>${new Date().toISOString()}</lastmod></sitemap>`
-      ).join("")}
+    { length: Math.ceil(count / limit) },
+    (_, i) =>
+      `<sitemap><loc>https://api.egdata.app/items/sitemap.xml?page=${i + 1}</loc><lastmod>${new Date().toISOString()}</lastmod></sitemap>`,
+  ).join("")}
 </sitemapindex>`;
 
-      await client.set(cacheKey, siteMapIndex, 'EX', cacheTimeInSec);
+      await client.set(cacheKey, siteMapIndex, "EX", cacheTimeInSec);
     }
 
     return c.text(siteMapIndex, 200, {
@@ -75,12 +81,7 @@ app.get("/sitemap.xml", async (c) => {
   if (cachedPage) {
     siteMap = cachedPage;
   } else {
-    const sections = [
-      "assets",
-      "builds",
-      "images",
-      "changelog",
-    ];
+    const sections = ["assets", "builds", "images", "changelog"];
 
     const items = await Item.find(
       {},
@@ -89,34 +90,34 @@ app.get("/sitemap.xml", async (c) => {
         limit,
         skip: (Number.parseInt(page, 10) - 1) * limit,
         sort: { lastModifiedDate: -1 },
-      }
+      },
     );
 
     siteMap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${items
-        .map((item) => {
-          const url = `https://egdata.app/items/${item.id}`;
-          return `<url>
+    .map((item) => {
+      const url = `https://egdata.app/items/${item.id}`;
+      return `<url>
         <loc>${url}</loc>
         <lastmod>${(item.lastModifiedDate as Date).toISOString()}</lastmod>
       </url>
       ${sections
-              .map(
-                (section) => `
+        .map(
+          (section) => `
       <url>
         <loc>${url}/${section}</loc>
         <lastmod>${(item.lastModifiedDate as Date).toISOString()}</lastmod>
       </url>
-      `
-              )
-              .join("\n")}
-      `;
-        })
+      `,
+        )
         .join("\n")}
+      `;
+    })
+    .join("\n")}
 </urlset>`;
 
-    await client.set(cacheKeyPage, siteMap, 'EX', cacheTimeInSec);
+    await client.set(cacheKeyPage, siteMap, "EX", cacheTimeInSec);
   }
 
   return c.text(siteMap, 200, {
@@ -125,10 +126,9 @@ app.get("/sitemap.xml", async (c) => {
   });
 });
 
-
 type BulkBody = { items: string[] };
 
-app.post('/bulk', async (c) => {
+app.post("/bulk", async (c) => {
   const batch = (await c.req.json().catch((e) => {
     console.error(e);
     return {
@@ -137,7 +137,7 @@ app.post('/bulk', async (c) => {
   })) as BulkBody;
 
   // Select only the items in the array that are a string, no objects, nulls, booleans, etc...
-  const ids = batch.items.filter((id) => typeof id === 'string').slice(0, 100);
+  const ids = batch.items.filter((id) => typeof id === "string").slice(0, 100);
 
   const items = await Item.find({
     id: { $in: ids },
@@ -151,11 +151,11 @@ app.post('/bulk', async (c) => {
           ? attributesToObject(item.customAttributes as any)
           : {},
       };
-    })
+    }),
   );
 });
 
-app.get('/:id', async (c) => {
+app.get("/:id", async (c) => {
   const { id } = c.req.param();
   const item = await Item.findOne({
     $or: [{ _id: id }, { id: id }],
@@ -164,7 +164,7 @@ app.get('/:id', async (c) => {
   if (!item) {
     c.status(404);
     return c.json({
-      message: 'Item not found',
+      message: "Item not found",
     });
   }
 
@@ -176,7 +176,7 @@ app.get('/:id', async (c) => {
   });
 });
 
-app.get('/:id/assets', async (c) => {
+app.get("/:id/assets", async (c) => {
   const { id } = c.req.param();
 
   const item = await Asset.find({
@@ -186,7 +186,7 @@ app.get('/:id/assets', async (c) => {
   return c.json(item);
 });
 
-app.get('/:id/builds', async (c) => {
+app.get("/:id/builds", async (c) => {
   const { id } = c.req.param();
 
   const item = await Item.findOne({
@@ -194,11 +194,11 @@ app.get('/:id/builds', async (c) => {
   });
 
   if (!item) {
-    return c.json({ error: 'Item not found' }, 404);
+    return c.json({ error: "Item not found" }, 404);
   }
 
   const builds = await db.db
-    .collection('builds')
+    .collection("builds")
     .find({
       appName: {
         $in: item.releaseInfo.map((r) => r.appId),
@@ -210,7 +210,7 @@ app.get('/:id/builds', async (c) => {
     builds.map(async (build) => {
       const asset = await Asset.findOne({
         artifactId: build.appName,
-        platform: build.labelName.split('-')[1],
+        platform: build.labelName.split("-")[1],
       });
 
       return {
@@ -219,7 +219,7 @@ app.get('/:id/builds', async (c) => {
         installedSizeBytes:
           build?.installedSizeBytes ?? asset?.installedSizeBytes,
       };
-    })
+    }),
   );
 
   return c.json(assets);
@@ -252,88 +252,105 @@ app.get("/:id/changelog", async (c) => {
 
   // Get assets for this item
   const assets = await Asset.find({ itemId: id });
-  const assetIds = assets.map(a => a.artifactId);
+  const assetIds = assets.map((a) => a.artifactId);
 
   // Get builds for these assets
-  const builds = await db.db.collection("builds").find({
-    appName: { $in: assetIds }
-  }).toArray();
-  const buildIds = builds.map(b => b._id.toString());
+  const builds = await db.db
+    .collection("builds")
+    .find({
+      appName: { $in: assetIds },
+    })
+    .toArray();
+  const buildIds = builds.map((b) => b._id.toString());
 
   const allIds = [id, ...assetIds, ...buildIds];
 
   // Use aggregation pipeline for better performance
-  const changelog = await db.db.collection("changelogs_v2").aggregate([
-    {
-      $match: {
-        "metadata.contextId": { $in: allIds }
-      }
-    },
-    {
-      $sort: { timestamp: -1 }
-    },
-    {
-      $skip: skip
-    },
-    {
-      $limit: limit
-    },
-    {
-      $lookup: {
-        from: "items",
-        let: { contextId: "$metadata.contextId" },
-        pipeline: [
-          { $match: { $expr: { $eq: ["$id", "$$contextId"] } } }
-        ],
-        as: "itemDoc"
-      }
-    },
-    {
-      $lookup: {
-        from: "assets",
-        let: { contextId: "$metadata.contextId" },
-        pipeline: [
-          { $match: { $expr: { $eq: ["$artifactId", "$$contextId"] } } }
-        ],
-        as: "assetDoc"
-      }
-    },
-    {
-      $lookup: {
-        from: "builds",
-        let: { contextId: "$metadata.contextId" },
-        pipeline: [
-          { $match: { $expr: { $eq: [{ $toString: "$_id" }, "$$contextId"] } } }
-        ],
-        as: "buildDoc"
-      }
-    },
-    {
-      $addFields: {
-        document: {
-          $switch: {
-            branches: [
-              { case: { $eq: ["$metadata.contextType", "item"] }, then: { $arrayElemAt: ["$itemDoc", 0] } },
-              { case: { $eq: ["$metadata.contextType", "asset"] }, then: { $arrayElemAt: ["$assetDoc", 0] } },
-              { case: { $eq: ["$metadata.contextType", "build"] }, then: { $arrayElemAt: ["$buildDoc", 0] } }
-            ],
-            default: null
-          }
-        }
-      }
-    },
-    {
-      $project: {
-        _id: 1,
-        metadata: 1,
-        timestamp: 1,
-        document: 1
-      }
-    }
-  ]).toArray();
+  const changelog = await db.db
+    .collection("changelogs_v2")
+    .aggregate([
+      {
+        $match: {
+          "metadata.contextId": { $in: allIds },
+        },
+      },
+      {
+        $sort: { timestamp: -1 },
+      },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $lookup: {
+          from: "items",
+          let: { contextId: "$metadata.contextId" },
+          pipeline: [{ $match: { $expr: { $eq: ["$id", "$$contextId"] } } }],
+          as: "itemDoc",
+        },
+      },
+      {
+        $lookup: {
+          from: "assets",
+          let: { contextId: "$metadata.contextId" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$artifactId", "$$contextId"] } } },
+          ],
+          as: "assetDoc",
+        },
+      },
+      {
+        $lookup: {
+          from: "builds",
+          let: { contextId: "$metadata.contextId" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: [{ $toString: "$_id" }, "$$contextId"] },
+              },
+            },
+          ],
+          as: "buildDoc",
+        },
+      },
+      {
+        $addFields: {
+          document: {
+            $switch: {
+              branches: [
+                {
+                  case: { $eq: ["$metadata.contextType", "item"] },
+                  then: { $arrayElemAt: ["$itemDoc", 0] },
+                },
+                {
+                  case: { $eq: ["$metadata.contextType", "asset"] },
+                  then: { $arrayElemAt: ["$assetDoc", 0] },
+                },
+                {
+                  case: { $eq: ["$metadata.contextType", "build"] },
+                  then: { $arrayElemAt: ["$buildDoc", 0] },
+                },
+              ],
+              default: null,
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          metadata: 1,
+          timestamp: 1,
+          document: 1,
+        },
+      },
+    ])
+    .toArray();
 
   // Cache the results
-  await client.set(cacheKey, JSON.stringify(changelog), 'EX', 3600);
+  await client.set(cacheKey, JSON.stringify(changelog), "EX", 3600);
 
   return c.json(changelog, 200, {
     "Cache-Control": "public, max-age=60",
@@ -356,12 +373,12 @@ app.get("/:id/offer", async (c) => {
   }
 
   const subItems = await OfferSubItems.find({
-    'subItems.id': id,
+    "subItems.id": id,
   });
 
   const offers = await Offer.find({
     id: { $in: subItems.map((s) => s._id) },
-    offerType: "BASE_GAME"
+    offerType: "BASE_GAME",
   });
 
   if (offers.length === 0) {
@@ -370,7 +387,7 @@ app.get("/:id/offer", async (c) => {
 
   if (offers.length === 1) {
     // Cache the result
-    await client.set(cacheKey, JSON.stringify(offers[0]), 'EX', 3600);
+    await client.set(cacheKey, JSON.stringify(offers[0]), "EX", 3600);
 
     return c.json(offers[0], 200, {
       "Cache-Control": `public, max-age=${CACHE_TTL}`,
@@ -382,7 +399,7 @@ app.get("/:id/offer", async (c) => {
     const offer = offers.find((o) => !o.prePurchase);
     if (offer) {
       // Cache the result
-      await client.set(cacheKey, JSON.stringify(offer), 'EX', 3600);
+      await client.set(cacheKey, JSON.stringify(offer), "EX", 3600);
 
       return c.json(offer, 200, {
         "Cache-Control": `public, max-age=${CACHE_TTL}`,
@@ -391,6 +408,27 @@ app.get("/:id/offer", async (c) => {
   }
 
   return c.json({ error: "No offer found" }, 404);
+});
+
+app.put("/regen/:id", async (c) => {
+  const { id } = c.req.param();
+
+  await regenItemsQueue.add(`regenItem-${id}`, { id });
+
+  return c.json({ message: "Item regen requested" }, 200);
+});
+
+app.post("/bulk-regen", async (c) => {
+  const { items } = await c.req.json<{ items: string[] }>();
+
+  await regenItemsQueue.addBulk(
+    items.map((o) => ({
+      name: `regenItem-${o}`,
+      data: { id: o },
+    })),
+  );
+
+  return c.json({ message: "Item regen requested" }, 200);
 });
 
 export default app;
