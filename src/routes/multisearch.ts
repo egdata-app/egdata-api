@@ -46,10 +46,7 @@ app.get("/offers", async (c) => {
     index: "egdata.offers",
     body: {
       query: { bool: { must, filter } },
-      sort: [
-        { offerTypeRank: { order: "asc" } },
-        { lastModifiedDate: { order: "desc" } },
-      ],
+      sort: [{ lastModifiedDate: { order: "desc" } }],
     },
   });
 
