@@ -23,12 +23,12 @@ type Collection<T> = {
 
 type Projection = Document | string | undefined;
 
-const wrapDoc = <T>(doc: T | null): (T & { toObject: () => T }) | null => {
+const wrapDoc = <T>(doc: T | null): (T & { toObject: () => T; toJSON: () => T }) | null => {
   if (!doc || typeof doc !== "object") {
-    return doc as (T & { toObject: () => T }) | null;
+    return doc as (T & { toObject: () => T; toJSON: () => T }) | null;
   }
 
-  const value = doc as T & { toObject?: () => T };
+  const value = doc as T & { toObject?: () => T; toJSON?: () => T };
   if (typeof value.toObject !== "function") {
     Object.defineProperty(value, "toObject", {
       value: () => doc,
@@ -37,7 +37,15 @@ const wrapDoc = <T>(doc: T | null): (T & { toObject: () => T }) | null => {
     });
   }
 
-  return value as T & { toObject: () => T };
+  if (typeof value.toJSON !== "function") {
+    Object.defineProperty(value, "toJSON", {
+      value: () => doc,
+      enumerable: false,
+      writable: false,
+    });
+  }
+
+  return value as T & { toObject: () => T; toJSON: () => T };
 };
 
 const parseSelectProjection = (select: string): Document => {
@@ -62,12 +70,14 @@ const normalizeProjection = (projection: Projection): Document | undefined => {
   return projection;
 };
 
-class QueryOne<T extends Document> implements PromiseLike<(T & { toObject: () => T }) | null> {
+class QueryOne<T extends Document>
+  implements PromiseLike<(T & { toObject: () => T; toJSON: () => T }) | null>
+{
   constructor(private readonly rawPromise: Promise<T | null>) {}
 
-  then<TResult1 = (T & { toObject: () => T }) | null, TResult2 = never>(
+  then<TResult1 = (T & { toObject: () => T; toJSON: () => T }) | null, TResult2 = never>(
     onfulfilled?:
-      | ((value: (T & { toObject: () => T }) | null) => TResult1 | PromiseLike<TResult1>)
+      | ((value: (T & { toObject: () => T; toJSON: () => T }) | null) => TResult1 | PromiseLike<TResult1>)
       | null,
     onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ): Promise<TResult1 | TResult2> {
@@ -82,7 +92,9 @@ class QueryOne<T extends Document> implements PromiseLike<(T & { toObject: () =>
   }
 }
 
-class QueryMany<T extends Document> implements PromiseLike<Array<T & { toObject: () => T }>> {
+class QueryMany<T extends Document>
+  implements PromiseLike<Array<T & { toObject: () => T; toJSON: () => T }>>
+{
   private projection?: Document;
   private options: FindOptions;
 
@@ -130,15 +142,17 @@ class QueryMany<T extends Document> implements PromiseLike<Array<T & { toObject:
       .toArray()) as T[];
   }
 
-  then<TResult1 = Array<T & { toObject: () => T }>, TResult2 = never>(
+  then<TResult1 = Array<T & { toObject: () => T; toJSON: () => T }>, TResult2 = never>(
     onfulfilled?:
-      | ((value: Array<T & { toObject: () => T }>) => TResult1 | PromiseLike<TResult1>)
+      | ((value: Array<T & { toObject: () => T; toJSON: () => T }>) => TResult1 | PromiseLike<TResult1>)
       | null,
     onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ): Promise<TResult1 | TResult2> {
     return this.lean().then(
       (rows) => {
-        const wrapped = rows.map((row) => wrapDoc(row) as T & { toObject: () => T });
+        const wrapped = rows.map(
+          (row) => wrapDoc(row) as T & { toObject: () => T; toJSON: () => T },
+        );
         return onfulfilled ? onfulfilled(wrapped) : (wrapped as TResult1);
       },
       onrejected ?? undefined,
@@ -146,18 +160,20 @@ class QueryMany<T extends Document> implements PromiseLike<Array<T & { toObject:
   }
 }
 
-class AggregateQuery<T extends Document> implements PromiseLike<Array<T & { toObject: () => T }>> {
+class AggregateQuery<T extends Document>
+  implements PromiseLike<Array<T & { toObject: () => T; toJSON: () => T }>>
+{
   constructor(private readonly promise: Promise<T[]>) {}
 
-  exec(): Promise<Array<T & { toObject: () => T }>> {
+  exec(): Promise<Array<T & { toObject: () => T; toJSON: () => T }>> {
     return this.promise.then((rows) =>
-      rows.map((row) => wrapDoc(row) as T & { toObject: () => T }),
+      rows.map((row) => wrapDoc(row) as T & { toObject: () => T; toJSON: () => T }),
     );
   }
 
-  then<TResult1 = Array<T & { toObject: () => T }>, TResult2 = never>(
+  then<TResult1 = Array<T & { toObject: () => T; toJSON: () => T }>, TResult2 = never>(
     onfulfilled?:
-      | ((value: Array<T & { toObject: () => T }>) => TResult1 | PromiseLike<TResult1>)
+      | ((value: Array<T & { toObject: () => T; toJSON: () => T }>) => TResult1 | PromiseLike<TResult1>)
       | null,
     onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ): Promise<TResult1 | TResult2> {
@@ -226,7 +242,7 @@ export const createMongoModel = <T extends Document>(
       }
 
       await collectionFactory().insertOne(payload as OptionalUnlessRequiredId<T>);
-      return wrapDoc(payload) as T & { toObject: () => T };
+      return wrapDoc(payload) as T & { toObject: () => T; toJSON: () => T };
     },
 
     updateOne(filter: Filter<T>, update: UpdateFilter<T> | Document, options?: Document) {
@@ -258,7 +274,7 @@ export const createMongoModel = <T extends Document>(
         returnDocument: options?.new ? "after" : "before",
         upsert: options?.upsert,
       });
-      return wrapDoc(result) as (T & { toObject: () => T }) | null;
+      return wrapDoc(result) as (T & { toObject: () => T; toJSON: () => T }) | null;
     },
   };
 };
