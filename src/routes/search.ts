@@ -652,21 +652,21 @@ app.get("/changelog", async (c) => {
     filter.push({ term: { "metadata.contextType.keyword": type } });
   }
 
-  // Remove contextType = 'file' from the results
-  filter.push({
-    bool: { must_not: { term: { "metadata.contextType.keyword": "file" } } },
-  });
+  const mustNot: Array<Record<string, unknown>> = [
+    { term: { "metadata.contextType.keyword": "file" } },
+    { term: { "metadata.contextType.keyword": "achievements" } },
+  ];
 
-  // Remove contextType = 'achievements' from the results
-  filter.push({
-    bool: {
-      must_not: { term: { "metadata.contextType.keyword": "achievements" } },
-    },
-  });
+  // Build bool query with only non-empty clauses
+  const boolQuery: Record<string, unknown> = { must_not: mustNot };
+  if (must.length > 0) {
+    boolQuery.must = must;
+  }
+  if (filter.length > 0) {
+    boolQuery.filter = filter;
+  }
 
-  // Build query - use match_all if no must clauses
-  const queryBody =
-    must.length > 0 ? { bool: { must, filter } } : { bool: { filter } };
+  const queryBody = { bool: boolQuery };
 
   const response = await opensearch.search({
     index: "egdata.changelog",
