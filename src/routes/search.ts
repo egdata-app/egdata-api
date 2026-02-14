@@ -664,12 +664,16 @@ app.get("/changelog", async (c) => {
     },
   });
 
+  // Build query - use match_all if no must clauses
+  const queryBody =
+    must.length > 0 ? { bool: { must, filter } } : { bool: { filter } };
+
   const response = await opensearch.search({
     index: "egdata.changelog",
     body: {
       from: (page - 1) * limit,
       size: limit,
-      query: { bool: { must, filter } },
+      query: queryBody,
       sort: [{ timestamp: { order: "desc" } }],
     },
   });
