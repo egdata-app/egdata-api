@@ -639,7 +639,7 @@ app.get("/changelog", async (c) => {
     must.push({
       multi_match: {
         query,
-        fields: ["description^2", "metadata.contextId"],
+        fields: ["*"],
       },
     });
   }
