@@ -22,7 +22,6 @@ import { etag } from "hono/etag";
 import type { OpenAPIV3 } from "openapi-types";
 import { discord } from "./clients/discord.js";
 import { gaClient } from "./clients/ga.js";
-import { meiliSearchClient } from "./clients/meilisearch.js";
 import client from "./clients/redis.js";
 import { db } from "./db/index.js";
 import { Event } from "./db/schemas/events.js";
@@ -1197,78 +1196,19 @@ const offerTypeRanks: {
 const PAGE_SIZE = 500;
 
 async function refreshChangelogIndex() {
-  console.log("Refreshing MeiliSearch changelog index");
-  const index = meiliSearchClient.index("changelog");
-
-  let page = 0;
-  let totallogs = 0;
-  while (true) {
-    const logs = await Changelog.find({}, undefined, {
-      sort: {
-        timestamp: -1,
-      },
-      skip: page * PAGE_SIZE,
-      limit: PAGE_SIZE,
-    });
-
-    if (logs.length === 0) break;
-
-    totallogs += logs.length;
-    console.log(
-      `Processing logs ${totallogs - logs.length + 1} to ${totallogs}`,
-    );
-
-    await index.addDocuments(
-      logs.map((o) => o.toObject()),
-      {
-        primaryKey: "_id",
-      },
-    );
-
-    page++;
-  }
-
-  console.log(`Total logs processed: ${totallogs}`);
+  console.log(
+    "Skipping MeiliSearch changelog index refresh - migrated to OpenSearch",
+  );
+  // Changelog index migrated to OpenSearch (egdata.changelog)
+  // Real-time updates handled by Mongo change streams in src/jobs/opensearch.ts
 }
 
 async function refreshOffersIndex() {
-  console.log("Refreshing MeiliSearch offers index");
-  const index = meiliSearchClient.index("offers");
-
-  let page = 0;
-  let totalOffers = 0;
-  while (true) {
-    const offers = await Offer.find({}, undefined, {
-      sort: {
-        lastModifiedDate: -1,
-      },
-      skip: page * PAGE_SIZE,
-      limit: PAGE_SIZE,
-    });
-
-    if (offers.length === 0) break;
-
-    totalOffers += offers.length;
-    console.log(
-      `Processing offers ${totalOffers - offers.length + 1} to ${totalOffers}`,
-    );
-
-    await index.addDocuments(
-      offers.map((o) => {
-        return {
-          ...o.toObject(),
-          offerTypeRank: o.offerType ? offerTypeRanks[o.offerType] ?? 16 : 16,
-        };
-      }),
-      {
-        primaryKey: "_id",
-      },
-    );
-
-    page++;
-  }
-
-  console.log(`Total offers processed: ${totalOffers}`);
+  console.log(
+    "Skipping MeiliSearch offers index refresh - migrated to OpenSearch",
+  );
+  // Offers index migrated to OpenSearch (egdata.offers)
+  // Real-time updates handled by Mongo change streams in src/jobs/opensearch.ts
 }
 
 async function refreshItemsIndex() {

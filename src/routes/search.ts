@@ -1,21 +1,19 @@
 import { createHash } from "node:crypto";
-import { Hono } from "hono";
-import client from "../clients/redis.js";
-import { Offer, type OfferType } from "@egdata/core.schemas.offers";
-import { Tags } from "@egdata/core.schemas.tags";
-import type { PipelineStage } from "mongoose";
-import { regions } from "../utils/countries.js";
-import { getCookie } from "hono/cookie";
-import { db } from "../db/index.js";
-import type { ChangelogType } from "@egdata/core.schemas.changelog";
-import { meiliSearchClient } from "../clients/meilisearch.js";
-import { Item } from "@egdata/core.schemas.items";
 import { Asset } from "@egdata/core.schemas.assets";
-import { ObjectId } from "mongodb";
-import type { Filter } from "meilisearch";
-import { opensearch } from "../clients/opensearch.js";
+import type { ChangelogType } from "@egdata/core.schemas.changelog";
+import { Item } from "@egdata/core.schemas.items";
+import { Offer, type OfferType } from "@egdata/core.schemas.offers";
 import type { PriceEngineType } from "@egdata/core.schemas.price";
+import { Tags } from "@egdata/core.schemas.tags";
 import type { Types } from "@opensearch-project/opensearch";
+import { Hono } from "hono";
+import { getCookie } from "hono/cookie";
+import { ObjectId } from "mongodb";
+import type { PipelineStage } from "mongoose";
+import { opensearch } from "../clients/opensearch.js";
+import client from "../clients/redis.js";
+import { db } from "../db/index.js";
+import { regions } from "../utils/countries.js";
 import { orderOffersObject } from "../utils/order-offers-object.js";
 
 type AggregationContainer = Types.Common_Aggregations.AggregationContainer;
@@ -209,7 +207,7 @@ function buildPriceQuery(query: SearchBody): PriceQuery {
 function buildSortParams(
   query: SearchBody,
   sort: string,
-  dir: number
+  dir: number,
 ): Record<string, 1 | -1 | { $meta: string }> {
   let sortParams: Record<string, 1 | -1 | { $meta: string }> = {};
 
@@ -257,7 +255,7 @@ app.post("/", async (c) => {
 
   const region =
     Object.keys(regions).find((r) =>
-      regions[r].countries.includes(selectedCountry)
+      regions[r].countries.includes(selectedCountry),
     ) || "US";
 
   const body = await c.req.json().catch((err) => {
@@ -279,7 +277,7 @@ app.post("/", async (c) => {
         ...query,
         page: undefined,
         limit: undefined,
-      })
+      }),
     )
     .digest("hex");
 
@@ -310,7 +308,7 @@ app.post("/", async (c) => {
   const limit = Math.min(query.limit || 10, 50);
   const page = Math.max(query.page || 1, 1);
 
-  let sort = query.sortBy || "lastModifiedDate";
+  const sort = query.sortBy || "lastModifiedDate";
   const sortDir = query.sortDir || "desc";
   const dir = sortDir === "asc" ? 1 : -1;
 
@@ -341,7 +339,7 @@ app.post("/", async (c) => {
 
   if (
     ["priceAsc", "priceDesc", "price", "discount", "discountPercent"].includes(
-      sort
+      sort,
     )
   ) {
     let priceSortOrder: 1 | -1 =
@@ -560,7 +558,7 @@ app.get("/offer-types", async (c) => {
     200,
     {
       "Cache-Control": "public, max-age=60",
-    }
+    },
   );
 });
 
@@ -634,53 +632,71 @@ app.get("/changelog", async (c) => {
   const page = Math.max(Number.parseInt(requestedPage, 10) || 1, 1);
   const limit = Math.min(Number.parseInt(requestedLimit, 10) || 10, 50);
 
-  const filter: Filter = [];
+  const must: Array<Record<string, unknown>> = [];
+  const filter: Array<Record<string, unknown>> = [];
+
+  if (query) {
+    must.push({
+      multi_match: {
+        query,
+        fields: ["description^2", "metadata.contextId"],
+      },
+    });
+  }
 
   if (id) {
-    filter.push(`metadata.contextId = "${id}"`);
+    filter.push({ term: { "metadata.contextId.keyword": id } });
   }
 
   if (type) {
-    filter.push(`metadata.contextType = "${type}"`);
+    filter.push({ term: { "metadata.contextType.keyword": type } });
   }
 
   // Remove contextType = 'file' from the results
-  filter.push(`metadata.contextType != "file"`);
-
-  // Remove contextType = 'achievements' from the results
-  filter.push(`metadata.contextType != "achievements"`);
-
-  const changelogs = await meiliSearchClient.index("changelog").search<
-    ChangelogType & {
-      document: unknown;
-    }
-  >(query, {
-    offset: (page - 1) * limit,
-    limit,
-    sort: ["timestamp:desc"],
-    filter,
+  filter.push({
+    bool: { must_not: { term: { "metadata.contextType.keyword": "file" } } },
   });
 
+  // Remove contextType = 'achievements' from the results
+  filter.push({
+    bool: {
+      must_not: { term: { "metadata.contextType.keyword": "achievements" } },
+    },
+  });
+
+  const response = await opensearch.search({
+    index: "egdata.changelog",
+    body: {
+      from: (page - 1) * limit,
+      size: limit,
+      query: { bool: { must, filter } },
+      sort: [{ timestamp: { order: "desc" } }],
+    },
+  });
+
+  const hits = response.body.hits.hits.map((hit) => ({
+    ...hit._source,
+    _id: hit._id,
+  })) as Array<ChangelogType & { _id: string; document?: unknown }>;
+
   await Promise.all(
-    changelogs.hits
+    hits
       .filter((hit) => hit.metadata)
       .map(async (hit) => {
-        const type = hit.metadata.contextType;
-        const id = hit.metadata.contextId;
+        const contextType = hit.metadata.contextType;
+        const contextId = hit.metadata.contextId;
 
-        if (type === "offer") {
-          hit.document = await Offer.findOne({ id });
+        if (contextType === "offer") {
+          hit.document = await Offer.findOne({ id: contextId });
         }
 
-        if (type === "item") {
-          hit.document = await Item.findOne({
-            id,
-          });
+        if (contextType === "item") {
+          hit.document = await Item.findOne({ id: contextId });
         }
 
-        if (type === "asset") {
+        if (contextType === "asset") {
           const asset = await Asset.findOne({
-            artifactId: id,
+            artifactId: contextId,
           });
 
           hit.document = await Item.findOne({
@@ -688,22 +704,35 @@ app.get("/changelog", async (c) => {
           });
         }
 
-        if (type === "build") {
+        if (contextType === "build") {
           const build = await db.db.collection("builds").findOne({
-            _id: new ObjectId(id),
+            _id: new ObjectId(contextId),
           });
 
           hit.document = build;
         }
 
         return hit;
-      })
+      }),
   );
 
-  // Return the changelogs
-  return c.json(changelogs, 200, {
-    "Cache-Control": "public, max-age=60",
-  });
+  const total = response.body.hits.total;
+  const estimatedTotalHits =
+    typeof total === "number" ? total : total?.value ?? 0;
+
+  // Return the changelogs with MeiliSearch-compatible format
+  return c.json(
+    {
+      hits,
+      estimatedTotalHits,
+      processingTimeMs: response.body.took,
+      query: query || "",
+    },
+    200,
+    {
+      "Cache-Control": "public, max-age=60",
+    },
+  );
 });
 
 app.post("/v2/search", async (c) => {
@@ -712,7 +741,7 @@ app.post("/v2/search", async (c) => {
   const selectedCountry = country ?? cookieCountry ?? "US";
   const region =
     Object.keys(regions).find((r) =>
-      regions[r].countries.includes(selectedCountry)
+      regions[r].countries.includes(selectedCountry),
     ) ?? "US";
 
   const body = await c.req.json().catch(() => null);
@@ -737,31 +766,31 @@ app.post("/v2/search", async (c) => {
             multi_match: {
               query: q.title,
               fields: [
-                "title^4",               // Priority 1: Exact word matches
-                "title.synonym^3",       // Priority 2: Matches "Civ 6" to "Civilization VI"
+                "title^4", // Priority 1: Exact word matches
+                "title.synonym^3", // Priority 2: Matches "Civ 6" to "Civilization VI"
                 "developerDisplayName^2",
                 "publisherDisplayName^2",
-                "tags.name",             
-                "description"            
+                "tags.name",
+                "description",
               ],
               type: "best_fields",
-              fuzziness: "AUTO",         
-              operator: "and"            
-            }
+              fuzziness: "AUTO",
+              operator: "and",
+            },
           },
           // 2. Phrase Boost: huge score boost for exact phrasing
           {
             match_phrase: {
               title: {
                 query: q.title,
-                boost: 10,               
-                slop: 2                  
-              }
-            }
-          }
+                boost: 10,
+                slop: 2,
+              },
+            },
+          },
         ],
-        minimum_should_match: 1
-      }
+        minimum_should_match: 1,
+      },
     });
   }
   if (q.offerType) filter.push({ term: { "offerType.keyword": q.offerType } });
@@ -944,7 +973,7 @@ app.post("/v2/search", async (c) => {
         filter,
         sort,
         aggregations,
-      })
+      }),
     )
     .digest("hex");
 
@@ -1035,7 +1064,7 @@ app.get("/:id/count", async (c) => {
   // Get the region for the selected country
   const region =
     Object.keys(regions).find((r) =>
-      regions[r].countries.includes(selectedCountry)
+      regions[r].countries.includes(selectedCountry),
     ) || "US";
 
   const { id } = c.req.param();

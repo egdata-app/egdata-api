@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { meiliSearchClient } from "../clients/meilisearch.js";
 import { opensearch } from "../clients/opensearch.js";
 import { attributesToObject } from "../utils/attributes-to-object.js";
 import { orderOffersObject } from "../utils/order-offers-object.js";
@@ -22,19 +21,55 @@ app.get("/offers", async (c) => {
     }
   }
 
-  const search = await meiliSearchClient.index("offers").search(query, {
-    sort: ["offerTypeRank:asc", "lastModifiedDate:desc"],
-    filter: ['namespace != "ue"'],
+  const must: Array<Record<string, unknown>> = [];
+  const filter: Array<Record<string, unknown>> = [
+    { bool: { must_not: { term: { "namespace.keyword": "ue" } } } },
+  ];
+
+  if (query) {
+    must.push({
+      multi_match: {
+        query,
+        fields: [
+          "title^3",
+          "description",
+          "id",
+          "developerDisplayName",
+          "publisherDisplayName",
+          "tags.name",
+        ],
+      },
+    });
+  }
+
+  const response = await opensearch.search({
+    index: "egdata.offers",
+    body: {
+      query: { bool: { must, filter } },
+      sort: [
+        { offerTypeRank: { order: "asc" } },
+        { lastModifiedDate: { order: "desc" } },
+      ],
+    },
   });
 
+  const hits = response.body.hits.hits.map((hit) => {
+    const source = hit._source || {};
+    return {
+      ...source,
+      _id: hit._id,
+    };
+  });
+
+  const total = response.body.hits.total;
+  const estimatedTotalHits =
+    typeof total === "number" ? total : total?.value ?? 0;
+
   return c.json({
-    ...search,
-    hits: search.hits.map((hit) => {
-      return {
-        ...orderOffersObject(hit as never),
-        offerTypeRank: hit.offerTypeRank,
-      };
-    }),
+    hits,
+    estimatedTotalHits,
+    processingTimeMs: response.body.took,
+    query: query || "",
   });
 });
 

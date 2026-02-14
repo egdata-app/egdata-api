@@ -1,24 +1,24 @@
-/** @jsxImportSource react */
-import React from "react";
-import { Hono } from "hono";
-import { FreeGames } from "@egdata/core.schemas.free-games";
-import { Offer, type OfferType } from "@egdata/core.schemas.offers";
-import { PriceEngine, type PriceEngineType } from "@egdata/core.schemas.price";
-import satori from "satori";
-import { orderOffersObject } from "../utils/order-offers-object.js";
-import { regions } from "../utils/countries.js";
-import { getCookie } from "hono/cookie";
 import { Blob } from "node:buffer";
-import client from "../clients/redis.js";
-import { meiliSearchClient } from "../clients/meilisearch.js";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { Resvg } from "@resvg/resvg-js";
-import { getImage } from "../utils/get-image.js";
-import { createHash } from "node:crypto";
-import { db } from "../db/index.js";
+import { FreeGames } from "@egdata/core.schemas.free-games";
 import { Item } from "@egdata/core.schemas.items";
+import { Offer, type OfferType } from "@egdata/core.schemas.offers";
+import { PriceEngine, type PriceEngineType } from "@egdata/core.schemas.price";
 import { OfferSubItems } from "@egdata/core.schemas.subitems";
+import { Resvg } from "@resvg/resvg-js";
+import { Hono } from "hono";
+import { getCookie } from "hono/cookie";
+/** @jsxImportSource react */
+import React from "react";
+import satori from "satori";
+import { opensearch } from "../clients/opensearch.js";
+import client from "../clients/redis.js";
+import { db } from "../db/index.js";
+import { regions } from "../utils/countries.js";
+import { getImage } from "../utils/get-image.js";
+import { orderOffersObject } from "../utils/order-offers-object.js";
 
 const app = new Hono();
 
@@ -29,7 +29,7 @@ app.get("/", async (c) => {
   const selectedCountry = country ?? cookieCountry ?? "US";
 
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
   if (!region) {
     c.status(404);
@@ -42,7 +42,7 @@ app.get("/", async (c) => {
 
   const fetchOfferAndPriceAndHistory = async <H,>(
     offerId: string,
-    getHistory: () => Promise<H>
+    getHistory: () => Promise<H>,
   ) => {
     const [offerR, priceR, histR] = await Promise.allSettled([
       Offer.findOne({ id: offerId }),
@@ -119,7 +119,7 @@ app.get("/", async (c) => {
         const offerId = src.getOfferId(game);
         const { offer, price, historical } = await fetchOfferAndPriceAndHistory(
           offerId,
-          () => src.getHistory(offerId)
+          () => src.getHistory(offerId),
         );
 
         if (!offer) {
@@ -130,7 +130,7 @@ app.get("/", async (c) => {
 
         return {
           ...orderOffersObject(
-            typeof offer.toObject === "function" ? offer.toObject() : offer
+            typeof offer.toObject === "function" ? offer.toObject() : offer,
           ),
           items,
           giveaway: {
@@ -139,8 +139,8 @@ app.get("/", async (c) => {
           },
           price: price ?? null,
         };
-      })
-    )
+      }),
+    ),
   );
 
   return c.json(enriched, 200, { "Cache-Control": "private, max-age=0" });
@@ -157,7 +157,7 @@ app.get("/history", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -214,7 +214,7 @@ app.get("/history", async (c) => {
         price: price ?? null,
         giveaway: game,
       };
-    })
+    }),
   );
 
   await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
@@ -225,74 +225,11 @@ app.get("/history", async (c) => {
 });
 
 app.patch("/index", async (c) => {
-  console.log("Refreshing MeiliSearch free games index");
-  const index = meiliSearchClient.index("free-games");
-  await index.deleteAllDocuments();
-
-  const giveaways = await FreeGames.find({}, undefined, {
-    sort: {
-      endDate: -1,
-    },
-  });
-
-  console.log(`Found ${giveaways.length} giveaways`);
-
-  const [offersData, pricesData] = await Promise.allSettled([
-    Offer.find({
-      id: { $in: giveaways.map((g) => g.id) },
-    }),
-    PriceEngine.find({
-      offerId: { $in: giveaways.map((g) => g.id) },
-      region: "US",
-    }),
-  ]);
-
-  const offers = offersData.status === "fulfilled" ? offersData.value : [];
-  const prices = pricesData.status === "fulfilled" ? pricesData.value : [];
-
-  const result = giveaways.map((g) => {
-    const offer = offers.find((o) => o.id === g.id);
-    const price = prices.find((p) => p.offerId === g.id);
-
-    if (!offer) {
-      return null;
-    }
-
-    return {
-      ...orderOffersObject(offer),
-      giveaway: {
-        ...g.toObject(),
-        startTimestamp: new Date(g.startDate).getTime(),
-        endTimestamp: new Date(g.endDate).getTime(),
-      },
-      price: price ?? null,
-      effectiveTimestamp: offer.effectiveDate
-        ? new Date(offer.effectiveDate).getTime()
-        : null,
-      creationTimestamp: offer.creationDate
-        ? new Date(offer.creationDate).getTime()
-        : null,
-      viewableTimestamp: offer.viewableDate
-        ? new Date(offer.viewableDate).getTime()
-        : null,
-      pcReleaseTimestamp: offer.pcReleaseDate
-        ? new Date(offer.pcReleaseDate).getTime()
-        : null,
-      _id: g._id,
-    };
-  });
-
-  await index.addDocuments(
-    result
-      .filter((r) => r !== null)
-      .map((o) => {
-        return o;
-      }),
-    {
-      primaryKey: "_id",
-    }
+  console.log(
+    "Skipping MeiliSearch free-games index refresh - now using egdata.offers",
   );
-
+  // Free games search now uses the egdata.offers OpenSearch index
+  // with filter on freeEntries field instead of separate free-games index
   return c.json({ message: "ok" });
 });
 
@@ -344,7 +281,7 @@ app.get("/search", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -357,11 +294,10 @@ app.get("/search", async (c) => {
   const limit = Math.min(Number.parseInt(query.limit || "10"), 50);
   const page = Math.max(Number.parseInt(query.page || "1"), 1);
   const skip = (page - 1) * limit;
-  let sort = query.sortBy || "lastModifiedDate";
   const sortDir = query.sortDir || "desc";
 
   const cacheKey = `free-games-search:${Buffer.from(
-    JSON.stringify(query)
+    JSON.stringify(query),
   ).toString("base64")}:${limit}:${page}`;
 
   const cached = await client.get(cacheKey);
@@ -374,72 +310,97 @@ app.get("/search", async (c) => {
 
   const start = new Date();
 
-  const index = meiliSearchClient.index("free-games");
+  // Build OpenSearch query
+  const must: Array<Record<string, unknown>> = [];
+  const filter: Array<Record<string, unknown>> = [
+    { exists: { field: "freeEntries" } }, // Only free games/giveaways
+  ];
 
-  const filters: Array<string> = [];
+  if (query.title) {
+    must.push({
+      multi_match: {
+        query: query.title,
+        fields: ["title^3", "description", "id"],
+      },
+    });
+  }
 
   if (query.offerType) {
-    filters.push(`offerType = ${query.offerType}`);
+    filter.push({ term: { "offerType.keyword": query.offerType } });
   }
 
   if (query.tags) {
-    filters.push(`tags.id in [${query.tags.map((t) => `'${t}'`).join(",")}]`);
+    filter.push({
+      terms_set: {
+        "tags.id.keyword": {
+          terms: query.tags,
+          minimum_should_match_script: {
+            source: query.tags.length.toString(),
+          },
+        },
+      },
+    });
   }
 
   if (query.categories) {
-    filters.push(
-      `categories in [${query.categories.map((t) => `'${t}'`).join(",")}]`
-    );
+    filter.push({ terms: { "categories.keyword": query.categories } });
   }
 
+  // Build sort
+  const sort: Array<Record<string, { order: "asc" | "desc" }>> = [];
   if (query.sortBy) {
-    if (query.sortBy === "giveawayDate") {
-      sort = "giveaway.endDate";
-    } else if (query.sortBy === "price") {
-      sort = "price.price.discountPrice";
+    switch (query.sortBy) {
+      case "giveawayDate":
+        sort.push({ "freeEntries.endDate": { order: sortDir } });
+        break;
+      case "price":
+        sort.push({
+          [`prices.${region}.price.discountPrice`]: { order: sortDir },
+        });
+        break;
+      default:
+        sort.push({ [query.sortBy]: { order: sortDir } });
     }
+  } else {
+    sort.push({ lastModifiedDate: { order: "desc" } });
   }
 
-  sort += `:${sortDir}`;
-
-  if (query.year) {
-    // Meilisearch does not support dates, so we need to convert to milliseconds
-    const startDate = new Date(`${query.year}-01-01`);
-    const endDate = new Date(`${query.year}-12-31`);
-
-    filters.push(`giveaway.startTimestamp >= ${startDate.getTime()}`);
-    filters.push(`giveaway.endTimestamp <= ${endDate.getTime()}`);
-  }
-
-  const result = await index.search(query.title || "", {
-    // Use empty string if title is undefined
-    limit,
-    offset: skip,
-    filter: filters.length > 0 ? filters.join(" AND ") : undefined, // Apply filter only if not empty
-    sort: [sort],
+  const response = await opensearch.search({
+    index: "egdata.offers",
+    body: {
+      from: skip,
+      size: limit,
+      query: { bool: { must, filter } },
+      sort,
+    },
   });
 
+  const hits = response.body.hits.hits.map((hit) => hit._source) as OfferType[];
+
   const prices = await PriceEngine.find({
-    offerId: { $in: result.hits.map((h) => h.giveaway.id) },
+    offerId: { $in: hits.map((h) => h.id) },
     region,
   });
 
-  const response = {
-    elements: result.hits.map((h) => {
-      const price = prices.find((p) => p.offerId === h.giveaway.id);
+  const total = response.body.hits.total;
+  const totalHits = typeof total === "number" ? total : total?.value ?? 0;
+
+  const result = {
+    elements: hits.map((h) => {
+      const price = prices.find((p) => p.offerId === h.id);
       return {
-        ...h,
+        ...orderOffersObject(h),
         price: price ?? null,
       };
     }),
     page,
     limit,
-    total: result.estimatedTotalHits,
+    total: totalHits,
   };
 
-  await client.set(cacheKey, JSON.stringify(response), "EX", 60);
+  await client.set(cacheKey, JSON.stringify(result), "EX", 60);
 
-  return c.json(response, 200, {
+  return c.json(result, 200, {
     "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
   });
 });
@@ -452,7 +413,7 @@ app.get("/stats", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -541,7 +502,7 @@ app.get("/stats", async (c) => {
         basePayoutPrice: 0,
         basePayoutCurrencyCode: prices[0].price.basePayoutCurrencyCode,
         payoutCurrencyExchangeRate: prices[0].price.payoutCurrencyExchangeRate,
-      }
+      },
     ),
     totalOffers: offers.length,
     totalGiveaways: giveaways.length,
@@ -566,7 +527,7 @@ app.get("/og", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -585,7 +546,7 @@ app.get("/og", async (c) => {
       sort: {
         endDate: 1,
       },
-    }
+    },
   );
 
   const hash = createHash("sha256");
@@ -603,7 +564,7 @@ app.get("/og", async (c) => {
       {
         id: cachedImage.imageId,
       },
-      200
+      200,
     );
   }
 
@@ -638,7 +599,7 @@ app.get("/og", async (c) => {
         giveaway: { ...game.toObject(), historical },
         price: price ?? null,
       };
-    })
+    }),
   );
 
   const svg = await satori(
@@ -820,7 +781,7 @@ app.get("/og", async (c) => {
           style: "normal",
         },
       ],
-    }
+    },
   );
 
   const resvg = new Resvg(svg, {
@@ -845,7 +806,7 @@ app.get("/og", async (c) => {
     "file",
     new Blob([pngBuffer], { type: "image/png" }),
     // Generate a hash from the free games data
-    `freebies-og/${hexHash}.png`
+    `freebies-og/${hexHash}.png`,
   );
 
   const response = await fetch(cfImagesUrl, {
@@ -876,14 +837,14 @@ app.get("/og", async (c) => {
     },
     {
       upsert: true,
-    }
+    },
   );
 
   return c.json(
     {
       id: responseData.result.id,
     },
-    200
+    200,
   );
 });
 
@@ -895,7 +856,7 @@ app.get("/mobile", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -938,12 +899,12 @@ app.get("/mobile", async (c) => {
         giveaway: game,
         price: price ?? null,
       };
-    })
+    }),
   );
 
   return c.json(
     result.filter((r) => r !== null),
-    200
+    200,
   );
 });
 
@@ -987,7 +948,7 @@ app.get("/sellers", async (c) => {
         },
         { $sort: { totalSingleGames: -1 } },
       ],
-      { maxTimeMS: 60000, allowDiskUse: true }
+      { maxTimeMS: 60000, allowDiskUse: true },
     )
     .toArray();
 
