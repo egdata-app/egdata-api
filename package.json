@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "rslib build --watch & node --enable-source-maps --env-file=.env --watch-path=./dist dist/index.js",
+    "dev": "rslib build --watch & while [ ! -f dist/index.js ]; do sleep 0.2; done; node --enable-source-maps --env-file=.env --watch-path=./dist dist/index.js",
     "build": "rslib build",
     "start": "node --enable-source-maps --env-file=.env dist/index.js"
   },

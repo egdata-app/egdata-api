@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { Asset } from "@egdata/core.schemas.assets";
-import type { ChangelogType } from "@egdata/core.schemas.changelog";
+import { Changelog, type ChangelogType } from "@egdata/core.schemas.changelog";
 import { Item } from "@egdata/core.schemas.items";
 import { Offer, type OfferType } from "@egdata/core.schemas.offers";
 import type { PriceEngineType } from "@egdata/core.schemas.price";
@@ -631,16 +631,69 @@ app.get("/changelog", async (c) => {
   // Parse the page and limit
   const page = Math.max(Number.parseInt(requestedPage, 10) || 1, 1);
   const limit = Math.min(Number.parseInt(requestedLimit, 10) || 10, 50);
+  const debug = c.req.query("debug") === "1";
 
   const must: Array<Record<string, unknown>> = [];
   const filter: Array<Record<string, unknown>> = [];
+  let relatedContextIds: string[] = [];
 
   if (query) {
-    // Use query_string for more flexible text search across all fields
+    const [offerMatches, itemMatches] = await Promise.all([
+      opensearch.search({
+        index: "egdata.offers",
+        body: {
+          size: 100,
+          query: {
+            multi_match: {
+              query,
+              fields: ["title^3", "description", "id"],
+            },
+          },
+        },
+      }),
+      opensearch.search({
+        index: "egdata.items",
+        body: {
+          size: 100,
+          query: {
+            multi_match: {
+              query,
+              fields: ["title^3", "description", "id"],
+            },
+          },
+        },
+      }),
+    ]);
+
+    relatedContextIds = Array.from(
+      new Set([
+        ...offerMatches.body.hits.hits
+          .map((hit) => (hit._source as { id?: string } | undefined)?.id)
+          .filter((id): id is string => Boolean(id)),
+        ...itemMatches.body.hits.hits
+          .map((hit) => (hit._source as { id?: string } | undefined)?.id)
+          .filter((id): id is string => Boolean(id)),
+      ]),
+    );
+
+    const should: Array<Record<string, unknown>> = [
+      {
+        query_string: {
+          query,
+          default_operator: "AND",
+        },
+      },
+    ];
+
+    if (relatedContextIds.length > 0) {
+      should.push({ terms: { "metadata.contextId.keyword": relatedContextIds } });
+      should.push({ terms: { "metadata.contextId": relatedContextIds } });
+    }
+
     must.push({
-      query_string: {
-        query: query,
-        default_operator: "AND",
+      bool: {
+        should,
+        minimum_should_match: 1,
       },
     });
   }
@@ -735,6 +788,98 @@ app.get("/changelog", async (c) => {
   const estimatedTotalHits =
     typeof total === "number" ? total : total?.value ?? 0;
 
+  if (query && estimatedTotalHits === 0 && relatedContextIds.length > 0) {
+    const mongoFilter: Record<string, unknown> = {
+      "metadata.contextType": { $nin: ["file", "achievements"] },
+      "metadata.contextId": { $in: relatedContextIds },
+    };
+
+    if (id) {
+      mongoFilter["metadata.contextId"] = id;
+    }
+
+    if (type) {
+      mongoFilter["metadata.contextType"] = type;
+    }
+
+    const [fallbackHits, fallbackTotal] = await Promise.all([
+      Changelog.find(mongoFilter, undefined, {
+        sort: { timestamp: -1 },
+        skip: (page - 1) * limit,
+        limit,
+      }),
+      Changelog.countDocuments(mongoFilter),
+    ]);
+
+    const fallbackResponseHits = fallbackHits.map((hit) => ({
+      ...hit.toObject(),
+      _id: String(hit._id),
+    })) as Array<ChangelogType & { _id: string; document?: unknown }>;
+
+    await Promise.all(
+      fallbackResponseHits
+        .filter((hit) => hit.metadata)
+        .map(async (hit) => {
+          const contextType = hit.metadata.contextType;
+          const contextId = hit.metadata.contextId;
+
+          if (contextType === "offer") {
+            hit.document = await Offer.findOne({ id: contextId });
+          }
+
+          if (contextType === "item") {
+            hit.document = await Item.findOne({ id: contextId });
+          }
+
+          if (contextType === "asset") {
+            const asset = await Asset.findOne({ artifactId: contextId });
+            hit.document = await Item.findOne({ id: asset?.itemId });
+          }
+
+          if (contextType === "build") {
+            const build = await db.db.collection("builds").findOne({
+              _id: new ObjectId(contextId),
+            });
+            hit.document = build;
+          }
+
+          return hit;
+        }),
+    );
+
+    return c.json(
+      {
+        hits: fallbackResponseHits,
+        estimatedTotalHits: fallbackTotal,
+        processingTimeMs: response.body.took,
+        query: query || "",
+        ...(debug
+          ? {
+              debug: {
+                usedMongoFallback: true,
+                relatedContextIdsCount: relatedContextIds.length,
+                relatedContextIdsSample: relatedContextIds.slice(0, 10),
+                queryBody,
+              },
+            }
+          : {}),
+      },
+      200,
+      {
+        "Cache-Control": debug ? "no-store" : "public, max-age=60",
+      },
+    );
+  }
+
+  const debugInfo =
+    debug
+      ? {
+          relatedContextIdsCount: relatedContextIds.length,
+          relatedContextIdsSample: relatedContextIds.slice(0, 10),
+          queryBody,
+        }
+      : undefined;
+
   // Return the changelogs with MeiliSearch-compatible format
   return c.json(
     {
@@ -742,10 +887,11 @@ app.get("/changelog", async (c) => {
       estimatedTotalHits,
       processingTimeMs: response.body.took,
       query: query || "",
+      ...(debugInfo ? { debug: debugInfo } : {}),
     },
     200,
     {
-      "Cache-Control": "public, max-age=60",
+      "Cache-Control": debug ? "no-store" : "public, max-age=60",
     },
   );
 });
