@@ -18,7 +18,6 @@ import {
 } from "@egdata/core.schemas.price";
 import { Ratings } from "@egdata/core.schemas.ratings";
 import { Sandbox } from "@egdata/core.schemas.sandboxes";
-import { OfferSubItems } from "@egdata/core.schemas.subitems";
 import { TagModel, Tags } from "@egdata/core.schemas.tags";
 import { Queue } from "bullmq";
 import { db } from "../db/index.js";
@@ -49,6 +48,22 @@ const regenOffersQueue = new Queue<RegenOfferQueueType>("regenOffersQueue", {
 });
 
 const app = new Hono();
+
+type OfferSubItemsDoc = {
+  _id: string;
+  subItems: Array<{ id: string }>;
+};
+
+const getOfferSubItems = (query: Record<string, unknown>) =>
+  db.db
+    .collection<OfferSubItemsDoc>("offersubitems")
+    .find(query, {
+      projection: {
+        _id: 1,
+        subItems: 1,
+      },
+    })
+    .toArray();
 
 // Add memory tracking middleware
 app.use("*", async (c, next) => {
@@ -489,7 +504,7 @@ app.get("/:id/og", async (c) => {
     .map((g) => g.name)
     .slice(0, 3);
 
-  const subItemsData = await OfferSubItems.find({ _id: id });
+  const subItemsData = await getOfferSubItems({ _id: id });
   const items = await Item.find({
     $or: [
       {
@@ -1759,7 +1774,7 @@ app.get("/:id/features", async (c) => {
     });
   }
 
-  const subItems = await OfferSubItems.find({
+  const subItems = await getOfferSubItems({
     _id: id,
   });
 
@@ -1816,7 +1831,7 @@ app.get("/:id/assets", async (c) => {
     return c.json({ error: "Offer not found" }, 404);
   }
 
-  const subItems = await OfferSubItems.find({
+  const subItems = await getOfferSubItems({
     _id: id,
   });
 
@@ -1875,7 +1890,7 @@ app.get("/:id/items", async (c) => {
 
   const itemsSpecified = offer.items.map((item) => item.id);
 
-  const subItems = await OfferSubItems.find({
+  const subItems = await getOfferSubItems({
     _id: id,
   });
 
@@ -2142,7 +2157,7 @@ app.get("/:id/changelog", async (c) => {
     });
   }
 
-  const subItems = await OfferSubItems.find({
+  const subItems = await getOfferSubItems({
     _id: id,
   });
 
@@ -3977,7 +3992,7 @@ app.get("/:id/technologies", async (c) => {
 
   const itemsSpecified = offer.items.map((item) => item.id);
 
-  const subItems = await OfferSubItems.find({
+  const subItems = await getOfferSubItems({
     _id: id,
   });
 
@@ -4064,7 +4079,7 @@ app.get("/:id/builds", async (c) => {
 
   const itemsSpecified = offer.items.map((item) => item.id);
 
-  const subItems = await OfferSubItems.find({
+  const subItems = await getOfferSubItems({
     _id: id,
   });
 
@@ -4127,7 +4142,7 @@ app.get("/:id/assets", async (c) => {
 
   const itemsSpecified = offer.items.map((item) => item.id);
 
-  const subItems = await OfferSubItems.find({
+  const subItems = await getOfferSubItems({
     _id: id,
   });
 
@@ -4176,7 +4191,7 @@ app.get("/:id/builds", async (c) => {
 
   const itemsSpecified = offer.items.map((item) => item.id);
 
-  const subItems = await OfferSubItems.find({
+  const subItems = await getOfferSubItems({
     _id: id,
   });
 
@@ -4281,7 +4296,7 @@ app.get("/:id/overview", async (c) => {
       // IGDB data
       db.db.collection("igdb").findOne({ offerId: id }),
       // Sub items for features and technologies
-      OfferSubItems.find({ _id: id }),
+      getOfferSubItems({ _id: id }),
       // Sandbox for age ratings and ratings
       Sandbox.findOne({ _id: offer.namespace }),
       // Giveaways

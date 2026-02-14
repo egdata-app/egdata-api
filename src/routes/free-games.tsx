@@ -6,7 +6,6 @@ import { FreeGames } from "@egdata/core.schemas.free-games";
 import { Item } from "@egdata/core.schemas.items";
 import { Offer, type OfferType } from "@egdata/core.schemas.offers";
 import { PriceEngine, type PriceEngineType } from "@egdata/core.schemas.price";
-import { OfferSubItems } from "@egdata/core.schemas.subitems";
 import { Resvg } from "@resvg/resvg-js";
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
@@ -62,7 +61,19 @@ app.get("/", async (c) => {
 
   const fetchItemsForOffer = async (offer: OfferType) => {
     const itemsSpecified: string[] = offer.items.map((i) => i.id);
-    const subItems = await OfferSubItems.find({ _id: offer.id });
+    const subItems = await db.db
+      .collection<{ _id: string; subItems: Array<{ id: string }> }>(
+        "offersubitems",
+      )
+      .find(
+        { _id: offer.id },
+        {
+          projection: {
+            subItems: 1,
+          },
+        },
+      )
+      .toArray();
     const subItemIds = subItems.flatMap((i) => i.subItems.map((s) => s.id));
     return Item.find({
       $or: [

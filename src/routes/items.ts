@@ -1,7 +1,6 @@
 import { Asset } from "@egdata/core.schemas.assets";
 import { Item } from "@egdata/core.schemas.items";
 import { Offer } from "@egdata/core.schemas.offers";
-import { OfferSubItems } from "@egdata/core.schemas.subitems";
 import { Queue } from "bullmq";
 import { Hono } from "hono";
 import client from "../clients/redis.js";
@@ -389,9 +388,19 @@ app.get("/:id/offer", async (c) => {
         });
     }
 
-    const subItems = await OfferSubItems.find({
-        "subItems.id": id,
-    });
+    const subItems = await db.db
+        .collection<{ _id: string }>("offersubitems")
+        .find(
+            {
+                "subItems.id": id,
+            },
+            {
+                projection: {
+                    _id: 1,
+                },
+            },
+        )
+        .toArray();
 
     const offers = await Offer.find({
         id: { $in: subItems.map((s) => s._id) },
