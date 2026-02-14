@@ -636,10 +636,11 @@ app.get("/changelog", async (c) => {
   const filter: Array<Record<string, unknown>> = [];
 
   if (query) {
+    // Use query_string for more flexible text search across all fields
     must.push({
-      multi_match: {
-        query,
-        fields: ["*"],
+      query_string: {
+        query: query,
+        default_operator: "AND",
       },
     });
   }
@@ -657,16 +658,26 @@ app.get("/changelog", async (c) => {
     { term: { "metadata.contextType.keyword": "achievements" } },
   ];
 
-  // Build bool query with only non-empty clauses
-  const boolQuery: Record<string, unknown> = { must_not: mustNot };
+  // Build query with match_all fallback when no must clauses
+  let queryBody: Record<string, unknown>;
   if (must.length > 0) {
-    boolQuery.must = must;
+    const boolQuery: Record<string, unknown> = { 
+      must_not: mustNot,
+      must,
+    };
+    if (filter.length > 0) {
+      boolQuery.filter = filter;
+    }
+    queryBody = { bool: boolQuery };
+  } else {
+    // No search term - use match_all
+    queryBody = { 
+      bool: { 
+        must_not: mustNot,
+        ...(filter.length > 0 ? { filter } : {}),
+      } 
+    };
   }
-  if (filter.length > 0) {
-    boolQuery.filter = filter;
-  }
-
-  const queryBody = { bool: boolQuery };
 
   const response = await opensearch.search({
     index: "egdata.changelog",
