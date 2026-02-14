@@ -1,6 +1,4 @@
-import { Asset } from "@egdata/core.schemas.assets";
-import { Item } from "@egdata/core.schemas.items";
-import { Offer } from "@egdata/core.schemas.offers";
+import { Asset, Item, Offer } from "../models/index.js";
 import { Queue } from "bullmq";
 import { Hono } from "hono";
 import client from "../clients/redis.js";

@@ -1,4 +1,4 @@
-import type { OfferType } from '@egdata/core.schemas.offers';
+import type { OfferType } from '../models/index.js';
 import { attributesToObject } from './attributes-to-object.js';
 
 export const orderOffersObject = (offer: OfferType) => {

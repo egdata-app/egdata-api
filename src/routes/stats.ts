@@ -1,15 +1,17 @@
 import { Hono } from "hono";
 import client from "../clients/redis.js";
-import { Offer } from "@egdata/core.schemas.offers";
-import { Item } from "@egdata/core.schemas.items";
-import { Tags } from "@egdata/core.schemas.tags";
-import { Asset } from "@egdata/core.schemas.assets";
-import { PriceEngine } from "@egdata/core.schemas.price";
-import { Changelog } from "@egdata/core.schemas.changelog";
 import { db } from "../db/index.js";
 import { regions } from "../utils/countries.js";
 import { getCookie } from "hono/cookie";
-import { FreeGames } from "@egdata/core.schemas.free-games";
+import {
+  Asset,
+  Changelog,
+  FreeGames,
+  Item,
+  Offer,
+  PriceEngine,
+  Tags,
+} from "../models/index.js";
 
 const app = new Hono();
 

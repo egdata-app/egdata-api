@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { jwtMiddleware } from "../middlewares/jwt";
 import { decrypt } from "../utils/tokens";
-import GoogleAuth from "../db/schemas/google-auth";
+import { GoogleAuth } from "../models/index.js";
 
 const app = new Hono();
 

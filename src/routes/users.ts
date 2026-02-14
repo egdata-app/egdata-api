@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import * as jwt from "jsonwebtoken";
-import { type IUser, User } from "../db/schemas/users.js";
+import { type IUser, User } from "../models/index.js";
 import axios from "axios";
 import jwkToPem from "jwk-to-pem";
 import { epicStoreClient } from "../clients/epic.js";
@@ -99,8 +99,10 @@ app.post("/find-or-create", async (c) => {
       return c.json(userDoc);
     }
 
-    const newUser = new User(body);
-    await newUser.save();
+    const newUser = await User.create({
+      ...body,
+      registrationDate: (body as IUser).registrationDate ?? new Date(),
+    });
 
     return c.json(newUser);
   } catch (err) {
@@ -212,8 +214,10 @@ app.post("/discord", async (c) => {
       return c.json(userDoc);
     }
 
-    const newUser = new User(body);
-    await newUser.save();
+    const newUser = await User.create({
+      ...body,
+      registrationDate: new Date(),
+    });
 
     return c.json(newUser);
   } catch (err) {
@@ -277,9 +281,14 @@ app.put("/epic", async (c) => {
       return c.json({ error: "User not found" }, 404);
     }
 
-    userDoc.epicId = epicProfile.epicAccountId;
-
-    await userDoc.save();
+    await User.updateOne(
+      { id: discordData.id },
+      {
+        $set: {
+          epicId: epicProfile.epicAccountId,
+        },
+      },
+    );
 
     return c.json({
       success: true,
@@ -333,9 +342,14 @@ app.delete("/epic", async (c) => {
       return c.json({ error: "User not found" }, 404);
     }
 
-    userDoc.epicId = null;
-
-    await userDoc.save();
+    await User.updateOne(
+      { id: discordData.id },
+      {
+        $set: {
+          epicId: null,
+        },
+      },
+    );
 
     return c.json({
       success: true,

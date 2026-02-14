@@ -1,19 +1,20 @@
 import { Hono } from "hono";
 import client from "../clients/redis.js";
-import { AchievementSet } from "@egdata/core.schemas.achievements";
-import { Namespace } from "@egdata/core.schemas.namespace";
-import { Item } from "@egdata/core.schemas.items";
-import { Offer } from "@egdata/core.schemas.offers";
-import { Asset } from "@egdata/core.schemas.assets";
 import { db } from "../db/index.js";
-import { PriceEngine } from "@egdata/core.schemas.price";
 import { regions } from "../utils/countries.js";
 import { getCookie } from "hono/cookie";
 import { orderOffersObject } from "../utils/order-offers-object.js";
-import { Changelog } from "@egdata/core.schemas.changelog";
 import { ObjectId } from "mongodb";
 import { consola } from "../utils/logger.js";
-import { RootFilterQuery } from "mongoose";
+import {
+  AchievementSet,
+  Asset,
+  Changelog,
+  Item,
+  Namespace,
+  Offer,
+  PriceEngine,
+} from "../models/index.js";
 
 const app = new Hono();
 
@@ -189,7 +190,7 @@ app.get("/:sandboxId/items", async (ctx) => {
     });
   }
 
-  const query: RootFilterQuery<typeof Item> = {
+  const query: Record<string, unknown> = {
     namespace: sandboxId,
   };
 
@@ -269,7 +270,7 @@ app.get("/:sandboxId/offers", async (ctx) => {
     });
   }
 
-  const query: RootFilterQuery<typeof Offer> = {
+  const query: Record<string, unknown> = {
     namespace: sandboxId,
   };
 
@@ -792,7 +793,7 @@ app.get("/:sandboxId/builds", async (c) => {
     });
   }
 
-  const query: RootFilterQuery<typeof Item> = {
+  const query: Record<string, unknown> = {
     namespace: sandboxId,
   };
 

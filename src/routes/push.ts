@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { PushSubscription, type IPushSubscription } from '../db/schemas/push-subscriptions.js';
+import { PushSubscription, type IPushSubscription } from '../models/index.js';
 import { randomUUID } from 'node:crypto';
 import webpush from 'web-push';
 import type { Context, Next } from 'hono';
@@ -210,15 +210,15 @@ app.post('/subscribe', userApiKeyMiddleware, async (c) => {
         }
 
         // Create new subscription
-        const subscription = new PushSubscription({
+        const subscription = await PushSubscription.create({
             id: randomUUID(),
             userId,
             endpoint,
             keys,
             topics: [],
+            createdAt: new Date(),
+            updatedAt: new Date(),
         });
-
-        await subscription.save();
 
         return c.json({
             id: subscription.id,
@@ -306,12 +306,19 @@ app.post('/topics/subscribe', userApiKeyMiddleware, async (c) => {
 
         // Add new topics to existing ones (avoid duplicates)
         const uniqueTopics = [...new Set([...subscription.topics, ...topics])];
-        subscription.topics = uniqueTopics;
-        await subscription.save();
+        await PushSubscription.updateOne(
+            { id: subscriptionId, userId },
+            {
+                $set: {
+                    topics: uniqueTopics,
+                    updatedAt: new Date(),
+                },
+            },
+        );
 
         return c.json({
             message: 'Successfully subscribed to topics',
-            topics: subscription.topics,
+            topics: uniqueTopics,
         });
     } catch (error) {
         console.error('Error subscribing to topics:', error);
@@ -341,14 +348,22 @@ app.post('/topics/unsubscribe', userApiKeyMiddleware, async (c) => {
         }
 
         // Remove topics from subscription
-        subscription.topics = subscription.topics.filter(
+        const updatedTopics = subscription.topics.filter(
             topic => !topics.includes(topic)
         );
-        await subscription.save();
+        await PushSubscription.updateOne(
+            { id: subscriptionId, userId },
+            {
+                $set: {
+                    topics: updatedTopics,
+                    updatedAt: new Date(),
+                },
+            },
+        );
 
         return c.json({
             message: 'Successfully unsubscribed from topics',
-            topics: subscription.topics,
+            topics: updatedTopics,
         });
     } catch (error) {
         console.error('Error unsubscribing from topics:', error);
@@ -388,10 +403,13 @@ app.get('/subscriptions/:subscriptionId', userApiKeyMiddleware, async (c) => {
             return c.json({ error: 'User not authenticated' }, 401);
         }
 
-        const subscription = await PushSubscription.findOne({
-            id: subscriptionId,
-            userId,
-        }).select('id topics createdAt updatedAt');
+        const subscription = await PushSubscription.findOne(
+            {
+                id: subscriptionId,
+                userId,
+            },
+            'id topics createdAt updatedAt',
+        );
 
         if (!subscription) {
             return c.json({ error: 'Subscription not found' }, 404);

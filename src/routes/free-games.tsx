@@ -2,10 +2,6 @@ import { Blob } from "node:buffer";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { FreeGames } from "@egdata/core.schemas.free-games";
-import { Item } from "@egdata/core.schemas.items";
-import { Offer, type OfferType } from "@egdata/core.schemas.offers";
-import { PriceEngine, type PriceEngineType } from "@egdata/core.schemas.price";
 import { Resvg } from "@resvg/resvg-js";
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
@@ -15,6 +11,14 @@ import satori from "satori";
 import { opensearch } from "../clients/opensearch.js";
 import client from "../clients/redis.js";
 import { db } from "../db/index.js";
+import {
+  FreeGames,
+  Item,
+  Offer,
+  type OfferType,
+  PriceEngine,
+  type PriceEngineType,
+} from "../models/index.js";
 import { regions } from "../utils/countries.js";
 import { getImage } from "../utils/get-image.js";
 import { orderOffersObject } from "../utils/order-offers-object.js";

@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { db } from "../db/index.js";
-import { Item } from "@egdata/core.schemas.items";
-import { Asset } from "@egdata/core.schemas.assets";
+import { Asset, Item } from "../models/index.js";
 import { type Filter, ObjectId, type Sort } from "mongodb";
-import type { AnyObject } from "mongoose";
 import client from "../clients/redis.js";
+
+type AnyObject = Record<string, unknown>;
 
 const app = new Hono();
 

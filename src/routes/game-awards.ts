@@ -1,7 +1,11 @@
-import { Offer, type OfferType } from "@egdata/core.schemas.offers";
+import {
+  Offer,
+  type OfferType,
+  PriceEngine,
+  type PriceEngineType,
+} from "../models/index.js";
 import { Hono } from "hono";
 import { db } from "../db/index.js";
-import { PriceEngine, type PriceEngineType } from "@egdata/core.schemas.price";
 import { getCookie } from "hono/cookie";
 import { regions } from "../utils/countries.js";
 import satori from "satori";
@@ -57,8 +61,6 @@ export interface LastUpdated {
   $date: string
 }
 
-const collection = db.db.collection<Root>('storefront-modules');
-
 app.get("/", async (c) => {
     const country = c.req.query("country");
     const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -77,7 +79,7 @@ app.get("/", async (c) => {
       });
     }
 
-    const modules = await collection.find({
+    const modules = await db.db.collection<Root>("storefront-modules").find({
         eventSlug: "the-game-awards"
     }).toArray();
 

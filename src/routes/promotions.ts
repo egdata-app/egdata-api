@@ -1,11 +1,10 @@
 import { Hono } from 'hono';
 import { getCookie } from 'hono/cookie';
 import client from '../clients/redis.js';
-import { Offer } from '@egdata/core.schemas.offers';
-import { PriceEngine } from '@egdata/core.schemas.price';
-import { Tags } from '@egdata/core.schemas.tags';
+import { Offer, PriceEngine, Tags } from '../models/index.js';
 import { regions } from '../utils/countries.js';
-import type { PipelineStage } from 'mongoose';
+
+type PipelineStage = Record<string, unknown>;
 
 type SortBy =
   | 'releaseDate'

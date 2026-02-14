@@ -1,14 +1,10 @@
 import { Hono } from "hono";
-import { Offer } from "@egdata/core.schemas.offers";
 import { getCookie } from "hono/cookie";
 import { regions } from "../utils/countries.js";
 import client from "../clients/redis.js";
-import { PriceEngine } from "@egdata/core.schemas.price";
 import { orderOffersObject } from "../utils/order-offers-object.js";
-import { GamePosition } from "@egdata/core.schemas.collections";
-import { Item } from "@egdata/core.schemas.items";
-import { Seller } from "@egdata/core.schemas.sellers";
 import { db } from "../db/index.js";
+import { GamePosition, Item, Offer, PriceEngine, Seller } from "../models/index.js";
 
 const app = new Hono();
 

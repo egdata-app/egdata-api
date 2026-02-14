@@ -1,13 +1,3 @@
-import { Asset } from "@egdata/core.schemas.assets";
-import { Changelog } from "@egdata/core.schemas.changelog";
-import { Item } from "@egdata/core.schemas.items";
-import { Offer, type OfferType } from "@egdata/core.schemas.offers";
-import {
-  PriceEngine,
-  type PriceEngineType as PriceType,
-} from "@egdata/core.schemas.price";
-import { Seller } from "@egdata/core.schemas.sellers";
-import { TagModel, Tags } from "@egdata/core.schemas.tags";
 import { serve } from "@hono/node-server";
 import { swaggerUI } from "@hono/swagger-ui";
 import chalk from "chalk";
@@ -24,7 +14,6 @@ import { discord } from "./clients/discord.js";
 import { gaClient } from "./clients/ga.js";
 import client from "./clients/redis.js";
 import { db } from "./db/index.js";
-import { Event } from "./db/schemas/events.js";
 import { server } from "./graphql/index.js";
 import { honoMiddleware } from "./middlewares/apollo.js";
 import AccountsRoute from "./routes/accounts.js";
@@ -53,6 +42,19 @@ import { countries, regions } from "./utils/countries.js";
 import { getFeaturedGames } from "./utils/get-featured-games.js";
 import { consola } from "./utils/logger.js";
 import { orderOffersObject } from "./utils/order-offers-object.js";
+import {
+  Asset,
+  Changelog,
+  Event,
+  Item,
+  Offer,
+  type OfferType,
+  PriceEngine,
+  type PriceEngineType as PriceType,
+  Seller,
+  TagModel,
+  Tags,
+} from "./models/index.js";
 
 config();
 
@@ -143,7 +145,7 @@ app.get("/health", async (c) => {
   let mongoStatus = "ok";
   let mongoLatency = null;
   try {
-    await withTimeout(db.db.listCollections(), 5_000);
+    await withTimeout(db.db.command({ ping: 1 }), 5_000);
     mongoLatency = Date.now() - startMongo;
   } catch (e) {
     mongoStatus = "error";
@@ -1143,7 +1145,7 @@ app.post("/ping", async (c) => {
 
     console.log(`Tracking event from ${body.userId} (${body.event})`);
 
-    const event = new Event({
+    await Event.create({
       event: body.event,
       location: body.location,
       params: body.params,
@@ -1151,8 +1153,6 @@ app.post("/ping", async (c) => {
       session: body.session.id,
       timestamp: new Date(body.session.lastActiveAt),
     });
-
-    await event.save();
 
     await gaClient.track(body);
 

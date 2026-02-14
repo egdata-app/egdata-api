@@ -1,22 +1,26 @@
 import { createHash } from "node:crypto";
-import { Asset } from "@egdata/core.schemas.assets";
-import { Changelog, type ChangelogType } from "@egdata/core.schemas.changelog";
-import { Item } from "@egdata/core.schemas.items";
-import { Offer, type OfferType } from "@egdata/core.schemas.offers";
-import type { PriceEngineType } from "@egdata/core.schemas.price";
-import { Tags } from "@egdata/core.schemas.tags";
 import type { Types } from "@opensearch-project/opensearch";
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import { ObjectId } from "mongodb";
-import type { PipelineStage } from "mongoose";
 import { opensearch } from "../clients/opensearch.js";
 import client from "../clients/redis.js";
 import { db } from "../db/index.js";
+import {
+  Asset,
+  Changelog,
+  type ChangelogType,
+  Item,
+  Offer,
+  type OfferType,
+  type PriceEngineType,
+  Tags,
+} from "../models/index.js";
 import { regions } from "../utils/countries.js";
 import { orderOffersObject } from "../utils/order-offers-object.js";
 
 type AggregationContainer = Types.Common_Aggregations.AggregationContainer;
+type PipelineStage = Record<string, unknown>;
 
 interface SearchBody {
   title?: string;

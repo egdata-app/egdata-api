@@ -1,6 +1,5 @@
 import { db as dbInstance } from '../db/index.js';
-import { Offer } from '@egdata/core.schemas.offers';
-import { Sandbox } from '@egdata/core.schemas.sandboxes';
+import { Offer, Sandbox } from '../models/index.js';
 
 const { db } = dbInstance;
 
@@ -17,7 +16,6 @@ export const getProduct = async (offerId: string) => {
     return null;
   }
 
-  // @ts-expect-error - _id is a string
   const product = db.collection('products').findOne({ _id: sandbox.parent });
 
   return product;

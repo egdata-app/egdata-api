@@ -1,8 +1,6 @@
 import React from "react";
 import { Hono } from "hono";
-import { Offer } from "@egdata/core.schemas.offers";
-import { PriceEngine } from "@egdata/core.schemas.price";
-import { Collection, GamePosition } from "@egdata/core.schemas.collections";
+import { Collection, GamePosition, Offer, PriceEngine } from "../models/index.js";
 import { getCookie } from "hono/cookie";
 import { regions } from "../utils/countries.js";
 import client from "../clients/redis.js";

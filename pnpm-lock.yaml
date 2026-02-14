@@ -23,63 +23,6 @@ importers:
       '@discordjs/rest':
         specifier: ^2.6.0
         version: 2.6.0
-      '@egdata/core.schemas.achievements':
-        specifier: ^5.0.0
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.assets':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.bundles':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.changelog':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.collections':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.free-games':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.hltb':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.images':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.items':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.mappings':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.media':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.namespace':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.offers':
-        specifier: latest
-        version: 5.0.1(mongoose@9.2.1)
-      '@egdata/core.schemas.price':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.ratings':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.sandboxes':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.sellers':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
-      '@egdata/core.schemas.subitems':
-        specifier: ^5.0.0
-        version: 5.0.0
-      '@egdata/core.schemas.tags':
-        specifier: latest
-        version: 5.0.0(mongoose@9.2.1)
       '@graphql-tools/schema':
         specifier: ^10.0.31
         version: 10.0.31(graphql@16.11.0)
@@ -173,9 +116,6 @@ importers:
       mongodb:
         specifier: ^7.1.0
         version: 7.1.0
-      mongoose:
-        specifier: 9.2.1
-        version: 9.2.1
       nanoid:
         specifier: ^5.1.6
         version: 5.1.6
@@ -210,6 +150,63 @@ importers:
       '@biomejs/biome':
         specifier: 2.3.15
         version: 2.3.15
+      '@egdata/core.schemas.achievements':
+        specifier: ^5.0.0
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.assets':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.bundles':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.changelog':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.collections':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.free-games':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.hltb':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.images':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.items':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.mappings':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.media':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.namespace':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.offers':
+        specifier: latest
+        version: 5.0.1(mongoose@9.2.1)
+      '@egdata/core.schemas.price':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.ratings':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.sandboxes':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.sellers':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
+      '@egdata/core.schemas.subitems':
+        specifier: ^5.0.0
+        version: 5.0.0
+      '@egdata/core.schemas.tags':
+        specifier: latest
+        version: 5.0.0(mongoose@9.2.1)
       '@rslib/core':
         specifier: ^0.19.6
         version: 0.19.6(typescript@5.9.3)

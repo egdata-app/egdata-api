@@ -1,27 +1,31 @@
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
-import { AchievementSet } from "@egdata/core.schemas.achievements";
-import { Asset } from "@egdata/core.schemas.assets";
-import { Bundles } from "@egdata/core.schemas.bundles";
-import { Changelog } from "@egdata/core.schemas.changelog";
-import { Collection, GamePosition } from "@egdata/core.schemas.collections";
-import { FreeGames } from "@egdata/core.schemas.free-games";
-import { Hltb } from "@egdata/core.schemas.hltb";
-import { Item } from "@egdata/core.schemas.items";
-import { Mappings } from "@egdata/core.schemas.mappings";
-import { Media } from "@egdata/core.schemas.media";
-import { Offer, type OfferType } from "@egdata/core.schemas.offers";
 import {
+  AchievementSet,
+  Asset,
+  Bundles,
+  Changelog,
+  Collection,
+  FreeGames,
+  GamePosition,
+  Hltb,
+  Item,
+  Mappings,
+  Media,
+  Offer,
+  type OfferType,
   PriceEngine,
   PriceEngineHistorical,
   type PriceEngineType as PriceType,
-} from "@egdata/core.schemas.price";
-import { Ratings } from "@egdata/core.schemas.ratings";
-import { Sandbox } from "@egdata/core.schemas.sandboxes";
-import { TagModel, Tags } from "@egdata/core.schemas.tags";
+  Ratings,
+  Review,
+  type IReview,
+  Sandbox,
+  TagModel,
+  Tags,
+} from "../models/index.js";
 import { Queue } from "bullmq";
 import { db } from "../db/index.js";
-import { type IReview, Review } from "../db/schemas/reviews.js";
 import client, { ioredis } from "../clients/redis.js";
 import { ageRatingsCountries } from "../utils/age-ratings.js";
 import { attributesToObject } from "../utils/attributes-to-object.js";
