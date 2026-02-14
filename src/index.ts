@@ -1,59 +1,59 @@
-import { serve } from "@hono/node-server";
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { inspectRoutes } from "hono/dev";
-import { getCookie } from "hono/cookie";
-import { etag } from "hono/etag";
-import { swaggerUI } from "@hono/swagger-ui";
-import { db } from "./db/index.js";
-import { Offer, type OfferType } from "@egdata/core.schemas.offers";
-import { Item } from "@egdata/core.schemas.items";
-import { orderOffersObject } from "./utils/order-offers-object.js";
-import { getFeaturedGames } from "./utils/get-featured-games.js";
-import { countries, regions } from "./utils/countries.js";
-import { TagModel, Tags } from "@egdata/core.schemas.tags";
-import { attributesToObject } from "./utils/attributes-to-object.js";
 import { Asset } from "@egdata/core.schemas.assets";
+import { Changelog } from "@egdata/core.schemas.changelog";
+import { Item } from "@egdata/core.schemas.items";
+import { Offer, type OfferType } from "@egdata/core.schemas.offers";
 import {
   PriceEngine,
   type PriceEngineType as PriceType,
 } from "@egdata/core.schemas.price";
-import { Changelog } from "@egdata/core.schemas.changelog";
+import { Seller } from "@egdata/core.schemas.sellers";
+import { TagModel, Tags } from "@egdata/core.schemas.tags";
+import { serve } from "@hono/node-server";
+import { swaggerUI } from "@hono/swagger-ui";
+import chalk from "chalk";
+import { Routes } from "discord-api-types/v10";
+import { config } from "dotenv";
+import { Hono } from "hono";
+import { rateLimiter } from "hono-rate-limiter";
+import { getCookie } from "hono/cookie";
+import { cors } from "hono/cors";
+import { inspectRoutes } from "hono/dev";
+import { etag } from "hono/etag";
+import type { OpenAPIV3 } from "openapi-types";
+import { discord } from "./clients/discord.js";
+import { gaClient } from "./clients/ga.js";
+import { meiliSearchClient } from "./clients/meilisearch.js";
 import client from "./clients/redis.js";
-import SandboxRoute from "./routes/sandbox.js";
-import SearchRoute from "./routes/search.js";
-import OffersRoute from "./routes/offers.js";
-import PromotionsRoute from "./routes/promotions.js";
-import FreeGamesRoute from "./routes/free-games.js";
-import MultisearchRoute from "./routes/multisearch.js";
-import AuthRoute, { epic, type LauncherAuthTokens } from "./routes/auth.js";
+import { db } from "./db/index.js";
+import { Event } from "./db/schemas/events.js";
+import { server } from "./graphql/index.js";
+import { honoMiddleware } from "./middlewares/apollo.js";
 import AccountsRoute from "./routes/accounts.js";
-import UsersRoute from "./routes/users.js";
-import CollectionsRoute from "./routes/collections.js";
-import ProfilesRoute from "./routes/profiles.js";
-import ItemsRoute from "./routes/items.js";
-import SellersRoute from "./routes/sellers.js";
 import AdminRoute from "./routes/admin.js";
 import AssetsRoute from "./routes/assets.js";
+import AuthRoute, { epic, type LauncherAuthTokens } from "./routes/auth.js";
 import BuildsRoute from "./routes/builds.js";
-import LauncherRoute from "./routes/launcher.js";
-import UsersServiceRoute from "./routes/users-service.js";
-import StatsRoute from "./routes/stats.js";
-import PushRoute from "./routes/push.js";
+import CollectionsRoute from "./routes/collections.js";
+import FreeGamesRoute from "./routes/free-games.js";
 import GameAwardsRoute from "./routes/game-awards.js";
-import { config } from "dotenv";
-import { gaClient } from "./clients/ga.js";
-import { Event } from "./db/schemas/events.js";
-import { meiliSearchClient } from "./clients/meilisearch.js";
-import { Seller } from "@egdata/core.schemas.sellers";
-import chalk from "chalk";
-import { rateLimiter } from "hono-rate-limiter";
-import type { OpenAPIV3 } from "openapi-types";
+import ItemsRoute from "./routes/items.js";
+import LauncherRoute from "./routes/launcher.js";
+import MultisearchRoute from "./routes/multisearch.js";
+import OffersRoute from "./routes/offers.js";
+import ProfilesRoute from "./routes/profiles.js";
+import PromotionsRoute from "./routes/promotions.js";
+import PushRoute from "./routes/push.js";
+import SandboxRoute from "./routes/sandbox.js";
+import SearchRoute from "./routes/search.js";
+import SellersRoute from "./routes/sellers.js";
+import StatsRoute from "./routes/stats.js";
+import UsersServiceRoute from "./routes/users-service.js";
+import UsersRoute from "./routes/users.js";
+import { attributesToObject } from "./utils/attributes-to-object.js";
+import { countries, regions } from "./utils/countries.js";
+import { getFeaturedGames } from "./utils/get-featured-games.js";
 import { consola } from "./utils/logger.js";
-import { discord } from "./clients/discord.js";
-import { Routes } from "discord-api-types/v10";
-import { honoMiddleware } from "./middlewares/apollo.js";
-import { server } from "./graphql/index.js";
+import { orderOffersObject } from "./utils/order-offers-object.js";
 
 config();
 
@@ -97,7 +97,7 @@ app.use(
     allowHeaders: [],
     allowMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"],
     credentials: true,
-  })
+  }),
 );
 
 app.use("/*", etag());
@@ -109,14 +109,14 @@ app.use(
       db: db.db,
       logger: consola,
     }),
-  })
+  }),
 );
 
 app.get(
   "/ui",
   swaggerUI({
     url: "/doc",
-  })
+  }),
 );
 
 app.get("/health", async (c) => {
@@ -124,7 +124,7 @@ app.get("/health", async (c) => {
     return Promise.race([
       promise,
       new Promise<T>((_, reject) =>
-        setTimeout(() => reject(new Error("timeout")), ms)
+        setTimeout(() => reject(new Error("timeout")), ms),
       ),
     ]);
   }
@@ -161,7 +161,7 @@ app.get("/health", async (c) => {
         mongodb: { status: mongoStatus, latency: mongoLatency },
       },
     },
-    allOk ? 200 : 500
+    allOk ? 200 : 500,
   );
 });
 
@@ -171,7 +171,7 @@ app.get("/", (c) => {
     version: "0.0.1-alpha",
     endpoints: inspectRoutes(app)
       .filter(
-        (x) => !x.isMiddleware && x.name === "[handler]" && x.path !== "/"
+        (x) => !x.isMiddleware && x.name === "[handler]" && x.path !== "/",
       )
       .sort((a, b) => {
         if (a.path !== b.path) {
@@ -186,30 +186,33 @@ app.get("/", (c) => {
 
 app.get("/open-api.json", async (c) => {
   const endpoints = inspectRoutes(app).filter(
-    (x) => !x.isMiddleware && x.name === "[handler]"
+    (x) => !x.isMiddleware && x.name === "[handler]",
   );
 
-  const paths = endpoints.reduce((acc, endpoint) => {
-    if (!acc[endpoint.path]) {
-      acc[endpoint.path] = {};
-    }
-    acc[endpoint.path][endpoint.method.toLowerCase()] = {
-      summary: `Endpoint for ${endpoint.method} ${endpoint.path}`,
-      responses: {
-        "200": {
-          description: "Successful response",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
+  const paths = endpoints.reduce(
+    (acc, endpoint) => {
+      if (!acc[endpoint.path]) {
+        acc[endpoint.path] = {};
+      }
+      acc[endpoint.path][endpoint.method.toLowerCase()] = {
+        summary: `Endpoint for ${endpoint.method} ${endpoint.path}`,
+        responses: {
+          "200": {
+            description: "Successful response",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                },
               },
             },
           },
         },
-      },
-    };
-    return acc;
-  }, {} as Record<string, any>);
+      };
+      return acc;
+    },
+    {} as Record<string, any>,
+  );
 
   const result: OpenAPIV3.Document = {
     openapi: "3.0.0",
@@ -321,7 +324,7 @@ app.get("/sitemap.xml", async (c) => {
     (_, i) =>
       `<sitemap><loc>https://api.egdata.app/sitemap.xml?page=${
         i + 1
-      }</loc><lastmod>${new Date().toISOString()}</lastmod></sitemap>`
+      }</loc><lastmod>${new Date().toISOString()}</lastmod></sitemap>`,
   ).join("")}
 </sitemapindex>`;
 
@@ -359,7 +362,7 @@ app.get("/sitemap.xml", async (c) => {
         limit,
         skip: (Number.parseInt(page, 10) - 1) * limit,
         sort: { lastModifiedDate: -1 },
-      }
+      },
     );
 
     siteMap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -378,7 +381,7 @@ app.get("/sitemap.xml", async (c) => {
         <loc>${url}/${section}</loc>
         <lastmod>${(offer.lastModifiedDate as Date).toISOString()}</lastmod>
       </url>
-      `
+      `,
         )
         .join("\n")}
       `;
@@ -420,7 +423,7 @@ app.get("/promotions-sitemap.xml", async (c) => {
           limit: pageSize,
           skip: page * pageSize,
           sort: { updated: -1 },
-        }
+        },
       );
 
       hasMore = tags.length === pageSize;
@@ -560,7 +563,7 @@ app.get("/latest-games", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -591,7 +594,7 @@ app.get("/latest-games", async (c) => {
       sort: {
         creationDate: -1,
       },
-    }
+    },
   );
 
   const prices = await PriceEngine.find({
@@ -662,7 +665,7 @@ app.get("/featured", async (c) => {
       sort: {
         lastModifiedDate: -1,
       },
-    }
+    },
   );
 
   const result = offers.map((o) => orderOffersObject(o));
@@ -677,7 +680,7 @@ app.get("/featured", async (c) => {
       "Server-Timing": `db;dur=${
         GET_FEATURED_GAMES_END.getTime() - GET_FEATURED_GAMES_START.getTime()
       }`,
-    }
+    },
   );
 });
 
@@ -694,7 +697,7 @@ app.get("/autocomplete", async (c) => {
   const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 10);
 
   const cacheKey = `autocomplete:${Buffer.from(query).toString(
-    "base64"
+    "base64",
   )}:${limit}:v0.1`;
 
   const cached = await client.get(cacheKey);
@@ -731,7 +734,7 @@ app.get("/autocomplete", async (c) => {
         offerType: -1,
         lastModifiedDate: -1,
       },
-    }
+    },
   );
 
   const response = {
@@ -747,7 +750,7 @@ app.get("/autocomplete", async (c) => {
       },
       {
         collation: { locale: "en", strength: 1 },
-      }
+      },
     ),
   };
 
@@ -772,7 +775,7 @@ app.get("/sales", async (c) => {
   const selectedCountry = country ?? cookieCountry ?? "US";
 
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -875,7 +878,7 @@ app.get("/base-game/:namespace", async (c) => {
       {
         error: "Internal namespace",
       },
-      404
+      404,
     );
   }
 
@@ -932,7 +935,7 @@ app.get("/region", async (c) => {
   const selectedCountry = country ?? cookieCountry ?? "US";
 
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -949,7 +952,7 @@ app.get("/region", async (c) => {
     200,
     {
       "Cache-Control": "public, max-age=60",
-    }
+    },
   );
 });
 
@@ -987,7 +990,7 @@ app.get("/changelist", async (ctx) => {
       sort: {
         timestamp: -1,
       },
-    }
+    },
   );
 
   /**
@@ -1004,7 +1007,7 @@ app.get("/changelist", async (ctx) => {
               title: 1,
               keyImages: 1,
               offerType: 1,
-            }
+            },
           );
         case "item":
           return Item.findOne(
@@ -1013,7 +1016,7 @@ app.get("/changelist", async (ctx) => {
               id: 1,
               title: 1,
               keyImages: 1,
-            }
+            },
           );
         case "asset":
           return Asset.findOne(
@@ -1021,17 +1024,17 @@ app.get("/changelist", async (ctx) => {
             {
               id: 1,
               artifactId: 1,
-            }
+            },
           );
         default:
           return null;
       }
-    })
+    }),
   );
 
   const result = changelist.map((change) => {
     const element = elements.find(
-      (e) => e?.toObject().id === change.metadata.contextId
+      (e) => e?.toObject().id === change.metadata.contextId,
     );
 
     return {
@@ -1081,7 +1084,7 @@ app.get("/changelist/:id", async (ctx) => {
           keyImages: 1,
           offerType: 1,
           namespace: 1,
-        }
+        },
       );
       break;
     case "item":
@@ -1092,7 +1095,7 @@ app.get("/changelist/:id", async (ctx) => {
           title: 1,
           keyImages: 1,
           namespace: 1,
-        }
+        },
       );
       break;
     case "asset":
@@ -1102,7 +1105,7 @@ app.get("/changelist/:id", async (ctx) => {
           id: 1,
           artifactId: 1,
           namespace: 1,
-        }
+        },
       );
       break;
   }
@@ -1212,14 +1215,14 @@ async function refreshChangelogIndex() {
 
     totallogs += logs.length;
     console.log(
-      `Processing logs ${totallogs - logs.length + 1} to ${totallogs}`
+      `Processing logs ${totallogs - logs.length + 1} to ${totallogs}`,
     );
 
     await index.addDocuments(
       logs.map((o) => o.toObject()),
       {
         primaryKey: "_id",
-      }
+      },
     );
 
     page++;
@@ -1247,7 +1250,7 @@ async function refreshOffersIndex() {
 
     totalOffers += offers.length;
     console.log(
-      `Processing offers ${totalOffers - offers.length + 1} to ${totalOffers}`
+      `Processing offers ${totalOffers - offers.length + 1} to ${totalOffers}`,
     );
 
     await index.addDocuments(
@@ -1259,7 +1262,7 @@ async function refreshOffersIndex() {
       }),
       {
         primaryKey: "_id",
-      }
+      },
     );
 
     page++;
@@ -1269,75 +1272,19 @@ async function refreshOffersIndex() {
 }
 
 async function refreshItemsIndex() {
-  console.log("Refreshing MeiliSearch items index");
-  const index = meiliSearchClient.index("items");
-
-  let page = 0;
-  let totalItems = 0;
-  while (true) {
-    const items = await Item.find({}, undefined, {
-      sort: {
-        lastModifiedDate: -1,
-      },
-      skip: page * PAGE_SIZE,
-      limit: PAGE_SIZE,
-    });
-
-    if (items.length === 0) break;
-
-    totalItems += items.length;
-    console.log(
-      `Processing items ${totalItems - items.length + 1} to ${totalItems}`
-    );
-
-    await index.addDocuments(
-      items.map((o) => o.toObject()),
-      {
-        primaryKey: "_id",
-      }
-    );
-
-    page++;
-  }
-
-  console.log(`Total items processed: ${totalItems}`);
+  console.log(
+    "Skipping MeiliSearch items index refresh - migrated to OpenSearch",
+  );
+  // Items index migrated to OpenSearch (egdata.items)
+  // Real-time updates handled by Mongo change streams in src/jobs/opensearch.ts
 }
 
 async function refreshSellersIndex() {
-  console.log("Refreshing MeiliSearch sellers index");
-  const index = meiliSearchClient.index("sellers");
-
-  let page = 0;
-  let totalSellers = 0;
-  while (true) {
-    const sellers = await Seller.find({}, undefined, {
-      sort: {
-        updatedAt: -1,
-      },
-      skip: page * PAGE_SIZE,
-      limit: PAGE_SIZE,
-    });
-
-    if (sellers.length === 0) break;
-
-    totalSellers += sellers.length;
-    console.log(
-      `Processing sellers ${
-        totalSellers - sellers.length + 1
-      } to ${totalSellers}`
-    );
-
-    await index.addDocuments(
-      sellers.map((o) => o.toObject()),
-      {
-        primaryKey: "_id",
-      }
-    );
-
-    page++;
-  }
-
-  console.log(`Total sellers processed: ${totalSellers}`);
+  console.log(
+    "Skipping MeiliSearch sellers index refresh - migrated to OpenSearch",
+  );
+  // Sellers index migrated to OpenSearch (egdata.sellers)
+  // Real-time updates handled by Mongo change streams in src/jobs/opensearch.ts
 }
 
 app.patch("/refresh-meilisearch", async (c) => {
@@ -1403,7 +1350,7 @@ app.get("/active-sales", async (c) => {
   const selectedCountry = country ?? cookieCountry ?? "US";
 
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -1435,7 +1382,7 @@ app.get("/active-sales", async (c) => {
       sort: {
         updated: -1,
       },
-    }
+    },
   );
 
   const result: {
@@ -1455,7 +1402,7 @@ app.get("/active-sales", async (c) => {
           sort: {
             lastModifiedDate: -1,
           },
-        }
+        },
       );
 
       const prices = await PriceEngine.find({
@@ -1468,7 +1415,7 @@ app.get("/active-sales", async (c) => {
         t.id === "29899" ||
         (prices.length > 0 &&
           prices.every(
-            (p) => p.price.discount > 0 || p.price.originalPrice === 0
+            (p) => p.price.discount > 0 || p.price.originalPrice === 0,
           ));
 
       result.push({
@@ -1478,7 +1425,7 @@ app.get("/active-sales", async (c) => {
         // @ts-expect-error
         offers: offers.slice(0, 3).map((o) => orderOffersObject(o)),
       });
-    })
+    }),
   );
 
   await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
@@ -1525,7 +1472,7 @@ app.post("/donate/key/:code", epic, async (c) => {
   const url = new URL(
     "https://fulfillment-public-service-prod.ol.epicgames.com/fulfillment/api/public/accounts/:accountId/codes/:code"
       .replace(":accountId", process.env.ADMIN_ACCOUNT_ID as string)
-      .replace(":code", code)
+      .replace(":code", code),
   );
 
   console.log("Fetching code details from Epic Games");
@@ -1638,7 +1585,7 @@ app.route("/stats", StatsRoute);
 
 app.route("/push", PushRoute);
 
-app.route('/game-awards', GameAwardsRoute)
+app.route("/game-awards", GameAwardsRoute);
 
 app.get("/items-sitemap.xml", async (c) => {
   const cacheKey = "items-sitemap-index";
@@ -1663,7 +1610,7 @@ app.get("/items-sitemap.xml", async (c) => {
     (_, i) =>
       `<sitemap><loc>https://api.egdata.app/items-sitemap.xml?page=${
         i + 1
-      }</loc><lastmod>${new Date().toISOString()}</lastmod></sitemap>`
+      }</loc><lastmod>${new Date().toISOString()}</lastmod></sitemap>`,
   ).join("")}
 </sitemapindex>`;
 
@@ -1701,7 +1648,7 @@ app.get("/items-sitemap.xml", async (c) => {
         limit,
         skip: (Number.parseInt(page, 10) - 1) * limit,
         sort: { lastModifiedDate: -1 },
-      }
+      },
     );
 
     siteMap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -1720,7 +1667,7 @@ app.get("/items-sitemap.xml", async (c) => {
         <loc>${url}/${section}</loc>
         <lastmod>${(item.lastModifiedDate as Date).toISOString()}</lastmod>
       </url>
-      `
+      `,
         )
         .join("\n")}
       `;
@@ -1749,10 +1696,10 @@ async function startServer() {
     server.on("listening", () => {
       console.log(
         `${chalk.gray("Listening on")} ${chalk.green(
-          "http://localhost:4000"
+          "http://localhost:4000",
         )} (${chalk.gray("took")} ${chalk.magenta(
-          `${(process.uptime() * 1000).toFixed(2)}ms`
-        )})`
+          `${(process.uptime() * 1000).toFixed(2)}ms`,
+        )})`,
       );
     });
   } catch (error) {

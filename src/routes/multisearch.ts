@@ -1,74 +1,135 @@
-import { Hono } from 'hono';
-import { meiliSearchClient } from '../clients/meilisearch.js';
-import { orderOffersObject } from '../utils/order-offers-object.js';
-import { attributesToObject } from '../utils/attributes-to-object.js';
+import { Hono } from "hono";
+import { meiliSearchClient } from "../clients/meilisearch.js";
+import { opensearch } from "../clients/opensearch.js";
+import { attributesToObject } from "../utils/attributes-to-object.js";
+import { orderOffersObject } from "../utils/order-offers-object.js";
 
 const app = new Hono();
 
-app.get('/', (c) => {
-  return c.json({ message: 'Hello, World!' });
+app.get("/", (c) => {
+  return c.json({ message: "Hello, World!" });
 });
 
-app.get('/offers', async (c) => {
+app.get("/offers", async (c) => {
   let { query } = c.req.query();
 
-  if (query?.includes('store.epicgames.com')) {
+  if (query?.includes("store.epicgames.com")) {
     const isUrl = URL.canParse(query);
     if (isUrl) {
       const url = new URL(query);
-      const slug = url.pathname.split('/').pop();
+      const slug = url.pathname.split("/").pop();
       query = slug || query;
     }
   }
 
-  const search = await meiliSearchClient.index('offers').search(query, {
-    sort: ['offerTypeRank:asc', 'lastModifiedDate:desc'],
-    filter: ['namespace != "ue"']
+  const search = await meiliSearchClient.index("offers").search(query, {
+    sort: ["offerTypeRank:asc", "lastModifiedDate:desc"],
+    filter: ['namespace != "ue"'],
   });
 
   return c.json({
     ...search,
     hits: search.hits.map((hit) => {
       return {
-        ...orderOffersObject(hit as any),
+        ...orderOffersObject(hit as never),
         offerTypeRank: hit.offerTypeRank,
       };
     }),
   });
 });
 
-app.get('/items', async (c) => {
+app.get("/items", async (c) => {
   const { query, type: entitlementType } = c.req.query();
 
-  const filters = ['namespace != "ue"'];
-  if (entitlementType) {
-    filters.push(`entitlementType = ${entitlementType}`);
+  const must: Array<Record<string, unknown>> = [];
+  const filter: Array<Record<string, unknown>> = [
+    { bool: { must_not: { term: { "namespace.keyword": "ue" } } } },
+  ];
+
+  if (query) {
+    must.push({
+      multi_match: {
+        query,
+        fields: ["title^2", "description", "id"],
+      },
+    });
   }
 
-  const search = await meiliSearchClient.index('items').search(query, {
-    sort: ['lastModifiedDate:desc'],
-    filter: filters
+  if (entitlementType) {
+    filter.push({ term: { "entitlementType.keyword": entitlementType } });
+  }
+
+  const response = await opensearch.search({
+    index: "egdata.items",
+    body: {
+      query: { bool: { must, filter } },
+      sort: [{ lastModifiedDate: { order: "desc" } }],
+    },
   });
 
+  const hits = response.body.hits.hits.map((hit) => {
+    const source = hit._source || {};
+    return {
+      ...source,
+      _id: hit._id,
+      customAttributes: source.customAttributes
+        ? attributesToObject(source.customAttributes as never)
+        : {},
+    };
+  });
+
+  const total = response.body.hits.total;
+  const estimatedTotalHits =
+    typeof total === "number" ? total : total?.value ?? 0;
+
   return c.json({
-    ...search,
-    hits: search.hits.map((hit) => {
-      return {
-        ...hit,
-        customAttributes: hit.customAttributes
-          ? attributesToObject(hit.customAttributes as any)
-          : {},
-      };
-    }),
+    hits,
+    estimatedTotalHits,
+    processingTimeMs: response.body.took,
+    query: query || "",
   });
 });
 
-app.get('/sellers', async (c) => {
+app.get("/sellers", async (c) => {
   const { query } = c.req.query();
 
-  const search = await meiliSearchClient.index('sellers').search(query);
+  const must: Array<Record<string, unknown>> = [];
 
-  return c.json(search);
+  if (query) {
+    must.push({
+      multi_match: {
+        query,
+        fields: ["name^2", "id"],
+      },
+    });
+  }
+
+  const response = await opensearch.search({
+    index: "egdata.sellers",
+    body: {
+      query: must.length > 0 ? { bool: { must } } : { match_all: {} },
+      sort: [{ updatedAt: { order: "desc" } }],
+    },
+  });
+
+  const hits = response.body.hits.hits.map((hit) => {
+    const source = hit._source || {};
+    return {
+      ...source,
+      _id: hit._id,
+    };
+  });
+
+  const total = response.body.hits.total;
+  const estimatedTotalHits =
+    typeof total === "number" ? total : total?.value ?? 0;
+
+  return c.json({
+    hits,
+    estimatedTotalHits,
+    processingTimeMs: response.body.took,
+    query: query || "",
+  });
 });
 
 export default app;
