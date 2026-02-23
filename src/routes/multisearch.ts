@@ -28,16 +28,37 @@ app.get("/offers", async (c) => {
 
   if (query) {
     must.push({
-      multi_match: {
-        query,
-        fields: [
-          "title^3",
-          "description",
-          "id",
-          "developerDisplayName",
-          "publisherDisplayName",
-          "tags.name",
+      bool: {
+        should: [
+          // Broad search with fuzzy matching
+          {
+            multi_match: {
+              query,
+              fields: [
+                "title^4",
+                "title.synonym^3",
+                "developerDisplayName^2",
+                "publisherDisplayName^2",
+                "tags.name",
+                "description",
+              ],
+              type: "best_fields",
+              fuzziness: "AUTO",
+              operator: "and",
+            },
+          },
+          // Phrase boost for exact phrasing
+          {
+            match_phrase: {
+              title: {
+                query,
+                boost: 10,
+                slop: 2,
+              },
+            },
+          },
         ],
+        minimum_should_match: 1,
       },
     });
   }
