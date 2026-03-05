@@ -20,15 +20,20 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm run build
 
-FROM base
-
+FROM base AS prod-deps
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --prod --frozen-lockfile
+
+FROM oven/bun:1-alpine
+
+WORKDIR /app
+COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/src/static ./src/static
+COPY package.json ./
 
 EXPOSE 4000
 EXPOSE 9229
 
-CMD ["node", "dist/index.js"]
+CMD ["bun", "dist/index.js"]
