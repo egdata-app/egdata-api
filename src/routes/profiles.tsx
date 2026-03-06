@@ -942,7 +942,7 @@ app.get("/:id/achievements", async (c) => {
     namespace: {
       $in: playerUnlockedAchievements.map((r) => r.sandboxId),
     },
-    offerType: ["BASE_GAME", "DLC"],
+    offerType: { $in: ["BASE_GAME", "DLC"] },
     prePurchase: { $ne: true },
   });
 
