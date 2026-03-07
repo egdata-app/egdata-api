@@ -1769,7 +1769,7 @@ app.get("/:id/price-history", async (c) => {
 app.get("/:id/franchises", async (c) => {
   const { id } = c.req.param();
 
-  const cacheKey = `franchises:${id}:v0.1`;
+  const cacheKey = `franchises:${id}:v0.2`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -1782,9 +1782,40 @@ app.get("/:id/franchises", async (c) => {
     offers: id,
   });
 
-  await client.set(cacheKey, JSON.stringify(franchises), "EX", 3600);
+  if (franchises.length === 0) {
+    return c.json([], 200, {
+      "Cache-Control": "public, max-age=60",
+    });
+  }
 
-  return c.json(franchises, 200, {
+  // Get all unique offer IDs from the found franchises
+  const allOfferIds = Array.from(
+    new Set(franchises.flatMap((f) => f.offers || []))
+  );
+
+  // Fetch the namespaces for all these offers
+  const offersData = await Offer.find(
+    { id: { $in: allOfferIds } },
+    { id: 1, namespace: 1 }
+  );
+
+  const offerNamespaceMap = new Map(
+    offersData.map((o) => [o.id, o.namespace])
+  );
+
+  // Filter out franchises where all offers belong to the same namespace
+  const filteredFranchises = franchises.filter((franchise) => {
+    const namespaces = new Set(
+      (franchise.offers || [])
+        .map((offerId: string) => offerNamespaceMap.get(offerId))
+        .filter(Boolean)
+    );
+    return namespaces.size > 1;
+  });
+
+  await client.set(cacheKey, JSON.stringify(filteredFranchises), "EX", 3600);
+
+  return c.json(filteredFranchises, 200, {
     "Cache-Control": "public, max-age=60",
   });
 });
