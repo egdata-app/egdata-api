@@ -96,6 +96,7 @@ export const Seller = createMongoModel<Document>(() => db.db.collection("sellers
 export const Namespace = createMongoModel<Document>(() => db.db.collection("namespaces"));
 export const TagModel = createMongoModel<Document>(() => db.db.collection("tags"));
 export const Tags = createMongoModel<Document>(() => db.db.collection("tags"));
+export const Franchise = createMongoModel<Document>(() => db.db.collection("franchises"));
 
 export const User = createMongoModel<IUser & Document>(() => db.db.collection("users"));
 export const PushSubscription = createMongoModel<IPushSubscription & Document>(() =>

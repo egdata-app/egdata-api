@@ -23,6 +23,7 @@ import {
   Sandbox,
   TagModel,
   Tags,
+  Franchise,
 } from "../models/index.js";
 import { Queue } from "bullmq";
 import { db } from "../db/index.js";
@@ -1761,6 +1762,29 @@ app.get("/:id/price-history", async (c) => {
   await client.set(cacheKey, JSON.stringify(pricesByRegion), "EX", 3600);
 
   return c.json(pricesByRegion, 200, {
+    "Cache-Control": "public, max-age=60",
+  });
+});
+
+app.get("/:id/franchises", async (c) => {
+  const { id } = c.req.param();
+
+  const cacheKey = `franchises:${id}:v0.1`;
+  const cached = await client.get(cacheKey);
+
+  if (cached) {
+    return c.json(JSON.parse(cached), 200, {
+      "Cache-Control": "public, max-age=60",
+    });
+  }
+
+  const franchises = await Franchise.find({
+    offers: id,
+  });
+
+  await client.set(cacheKey, JSON.stringify(franchises), "EX", 3600);
+
+  return c.json(franchises, 200, {
     "Cache-Control": "public, max-age=60",
   });
 });
