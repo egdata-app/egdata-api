@@ -28,6 +28,7 @@ import ItemsRoute from "./routes/items.js";
 import LauncherRoute from "./routes/launcher.js";
 import MultisearchRoute from "./routes/multisearch.js";
 import OffersRoute from "./routes/offers.js";
+import FranchisesRoute from "./routes/franchises.js";
 import ProfilesRoute from "./routes/profiles.js";
 import PromotionsRoute from "./routes/promotions.js";
 import PushRoute from "./routes/push.js";
@@ -1490,6 +1491,8 @@ app.route("/sandboxes", SandboxRoute);
 app.route("/search", SearchRoute);
 
 app.route("/offers", OffersRoute);
+
+app.route("/franchises", FranchisesRoute);
 
 app.route("/promotions", PromotionsRoute);
 

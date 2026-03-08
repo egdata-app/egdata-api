@@ -78,6 +78,7 @@ export const FreeGames = createMongoModel<Document>(() =>
   db.db.collection("freegames"),
 );
 export const Hltb = createMongoModel<Document>(() => db.db.collection("hltbs"));
+export const Igdb = createMongoModel<Document>(() => db.db.collection("igdbs"));
 export const Item = createMongoModel<Document>(() => db.db.collection("items"));
 export const Mappings = createMongoModel<Document>(() => db.db.collection("mappings"));
 export const Media = createMongoModel<Document>(() => db.db.collection("media"));
