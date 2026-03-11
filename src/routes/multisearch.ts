@@ -4,6 +4,7 @@ import { opensearch } from "../clients/opensearch.js";
 import { attributesToObject } from "../utils/attributes-to-object.js";
 import { regions } from "../utils/countries.js";
 import { orderOffersObject } from "../utils/order-offers-object.js";
+import { Seller } from "../models/index.js";
 
 const app = new Hono();
 
@@ -327,41 +328,55 @@ app.get("/items", async (c) => {
 
 app.get("/sellers", async (c) => {
   const { query } = c.req.query();
+  const limit = Math.min(Number(c.req.query("limit")) || 10, 100);
 
-  const must: Array<Record<string, unknown>> = [];
+  const filter: Array<Record<string, unknown>> = [];
 
   if (query) {
-    must.push({
-      multi_match: {
-        query,
-        fields: ["name^2", "id"],
+    filter.push({
+      match: {
+        "seller.name": {
+          query,
+          fuzziness: "AUTO",
+        },
       },
     });
   }
 
   const response = await opensearch.search({
-    index: "egdata.sellers",
+    index: "egdata.offers",
     body: {
-      query: must.length > 0 ? { bool: { must } } : { match_all: {} },
-      sort: [{ updatedAt: { order: "desc" } }],
+      size: 0,
+      query: filter.length > 0 ? { bool: { must: filter } } : { match_all: {} },
+      aggs: {
+        sellers: {
+          terms: {
+            field: "seller.id.keyword",
+            size: limit,
+          },
+        },
+      },
     },
   });
 
-  const hits = response.body.hits.hits.map((hit) => {
-    const source = hit._source || {};
-    return {
-      ...source,
-      _id: hit._id,
-    };
-  });
+  const buckets = response.body.aggregations?.sellers?.buckets ?? [];
+  const sellerIds = buckets.map((b: { key: string }) => b.key);
 
-  const total = response.body.hits.total;
-  const estimatedTotalHits =
-    typeof total === "number" ? total : total?.value ?? 0;
+  const sellerDocs = sellerIds.length > 0
+    ? await Seller.find({ _id: { $in: sellerIds } })
+    : [];
+
+  const sellerMap = new Map(
+    sellerDocs.map((doc) => [doc._id.toString(), doc]),
+  );
+
+  const hits = sellerIds
+    .map((id: string) => sellerMap.get(id))
+    .filter(Boolean);
 
   return c.json({
     hits,
-    estimatedTotalHits,
+    estimatedTotalHits: buckets.length,
     processingTimeMs: response.body.took,
     query: query || "",
   });
