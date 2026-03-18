@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 type Document = Record<string, any>;
 type Filter<T> = Record<string, any>;
 type FindOptions = Record<string, any>;
@@ -206,6 +208,16 @@ export const createMongoModel = <T extends Document>(
     },
 
     findById(id: string, projection?: Projection, options?: FindOptions) {
+      if (ObjectId.isValid(id)) {
+        return this.findOne(
+          {
+            $or: [{ _id: new ObjectId(id) }, { _id: id }],
+          } as Filter<T>,
+          projection,
+          options,
+        );
+      }
+
       return this.findOne({ _id: id } as Filter<T>, projection, options);
     },
 
