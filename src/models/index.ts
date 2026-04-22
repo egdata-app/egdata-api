@@ -109,4 +109,7 @@ export const GoogleAuth = createMongoModel<IGoogleAuth & Document>(() =>
 export const Event = createMongoModel<Document>(() => db.db.collection("events"));
 export const Rank = createMongoModel<Document>(() => db.db.collection("ranks"));
 export const Review = createMongoModel<IReview & Document>(() => db.db.collection("reviews"));
+export const OfferCountryPricingScore = createMongoModel<Document>(() =>
+  db.db.collection("offer_country_pricing_scores"),
+);
 type Document = Record<string, any>;

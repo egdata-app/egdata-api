@@ -24,6 +24,7 @@ import {
   TagModel,
   Tags,
   Franchise,
+  OfferCountryPricingScore,
 } from "../models/index.js";
 import { Queue } from "bullmq";
 import { db } from "../db/index.js";
@@ -2019,6 +2020,42 @@ app.get("/:id/price", async (c) => {
   await client.set(cacheKey, JSON.stringify(price), "EX", 3600);
 
   return c.json(price, 200, {
+    "Cache-Control": "public, max-age=60",
+  });
+});
+
+app.get("/:id/price/fairness", async (c) => {
+  const { id } = c.req.param();
+  const country = c.req.query("country");
+  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
+
+  const selectedCountry = country ?? cookieCountry ?? "US";
+
+  const cacheKey = `price-fairness:${id}:${selectedCountry}:v0.1`;
+
+  const cached = await client.get(cacheKey);
+
+  if (cached) {
+    return c.json(JSON.parse(cached), 200, {
+      "Cache-Control": "public, max-age=60",
+    });
+  }
+
+  const score = await OfferCountryPricingScore.findOne({
+    offerId: id,
+    country: selectedCountry,
+  });
+
+  if (!score) {
+    c.status(404);
+    return c.json({
+      message: "Price fairness score not found",
+    });
+  }
+
+  await client.set(cacheKey, JSON.stringify(score), "EX", 3600);
+
+  return c.json(score, 200, {
     "Cache-Control": "public, max-age=60",
   });
 });
