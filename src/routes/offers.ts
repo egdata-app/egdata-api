@@ -1994,7 +1994,7 @@ app.get("/:id/price", async (c) => {
     });
   }
 
-  const cacheKey = `price:${id}:${region}:v0.1`;
+  const cacheKey = `price:${id}:${region}:v0.2`;
 
   console.log(`Requesting ${cacheKey}`);
 
