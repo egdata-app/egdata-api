@@ -37,6 +37,7 @@ import { getGameFeatures } from "../utils/game-features.js";
 import { getImage } from "../utils/get-image.js";
 import { getProduct } from "../utils/get-product.js";
 import { orderOffersObject } from "../utils/order-offers-object.js";
+import { toUsdCents } from "../utils/price-usd.js";
 import { verifyGameOwnership } from "../utils/verify-game-ownership.js";
 import consola from "consola";
 import satori from "satori";
@@ -2076,7 +2077,7 @@ app.get("/:id/regional-price", async (c) => {
       });
     }
 
-    const cacheKey = `regional-price:${id}:${region}:v0.2`;
+    const cacheKey = `regional-price:${id}:${region}:v0.3`;
     const cached = await client.get(cacheKey);
 
     if (cached) {
@@ -2125,10 +2126,20 @@ app.get("/:id/regional-price", async (c) => {
       }
     }
 
+    // USD figures use each historical row's own `payoutCurrencyExchangeRate` (point-in-time
+    // correct — the backend stamps the live rate at the moment of each snapshot), so
+    // min/max-USD reflect the cheapest/priciest *USD-equivalent* this offer ever was, not
+    // today's rate retroactively applied to old prices.
+    const usdValues = price.map((p) => toUsdCents(p.price)).filter((v): v is number => v != null);
+
     const result = {
       currentPrice: price[0],
       maxPrice: Math.max(...price.map((p) => p.price.discountPrice ?? 0)),
       minPrice: Math.min(...price.map((p) => p.price.discountPrice ?? 0)),
+      currentPriceUsd: toUsdCents(price[0].price),
+      currentOriginalPriceUsd: toUsdCents(price[0].price, "original"),
+      maxPriceUsd: usdValues.length ? Math.max(...usdValues) : null,
+      minPriceUsd: usdValues.length ? Math.min(...usdValues) : null,
     };
 
     await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
@@ -2138,7 +2149,7 @@ app.get("/:id/regional-price", async (c) => {
     });
   }
 
-  const cacheKey = `regional-price:${id}:all`;
+  const cacheKey = `regional-price:${id}:all:v0.3`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -2198,10 +2209,18 @@ app.get("/:id/regional-price", async (c) => {
       const maxPrice = Math.max(...allPrices);
       const minPrice = Math.min(...allPrices);
 
+      const usdValues = regionPrices
+        .map((p) => toUsdCents(p.price))
+        .filter((v): v is number => v != null);
+
       acc[r] = {
         currentPrice: lastPrice,
         maxPrice,
         minPrice,
+        currentPriceUsd: toUsdCents(lastPrice.price),
+        currentOriginalPriceUsd: toUsdCents(lastPrice.price, "original"),
+        maxPriceUsd: usdValues.length ? Math.max(...usdValues) : null,
+        minPriceUsd: usdValues.length ? Math.min(...usdValues) : null,
       };
 
       return acc;
@@ -2212,6 +2231,10 @@ app.get("/:id/regional-price", async (c) => {
         currentPrice: PriceType;
         maxPrice: number;
         minPrice: number;
+        currentPriceUsd: number | null;
+        currentOriginalPriceUsd: number | null;
+        maxPriceUsd: number | null;
+        minPriceUsd: number | null;
       }
     >
   );
