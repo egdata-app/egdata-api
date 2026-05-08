@@ -1,11 +1,19 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { Resvg } from "@resvg/resvg-js";
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
+import React from "react";
+import satori from "satori";
+import client from "../../clients/redis.js";
+import { db } from "../../db/index.js";
 import {
   AchievementSet,
   Asset,
   Bundles,
   Changelog,
   Collection,
+  Franchise,
   FreeGames,
   GamePosition,
   Hltb,
@@ -19,461 +27,31 @@ import {
   type PriceEngineType as PriceType,
   Ratings,
   Review,
-  type IReview,
   Sandbox,
   TagModel,
   Tags,
-  Franchise,
-  OfferCountryPricingScore,
-} from "../models/index.js";
-import { Queue } from "bullmq";
-import { db } from "../db/index.js";
-import client, { ioredis } from "../clients/redis.js";
-import { ageRatingsCountries } from "../utils/age-ratings.js";
-import { attributesToObject } from "../utils/attributes-to-object.js";
-import { regions } from "../utils/countries.js";
-import { epic, epicInfo } from "./auth.js";
-import { getGameFeatures } from "../utils/game-features.js";
-import { getImage } from "../utils/get-image.js";
-import { getProduct } from "../utils/get-product.js";
-import { orderOffersObject } from "../utils/order-offers-object.js";
-import { toUsdCents } from "../utils/price-usd.js";
-import { verifyGameOwnership } from "../utils/verify-game-ownership.js";
-import consola from "consola";
-import satori from "satori";
-import { Resvg } from "@resvg/resvg-js";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import React from "react";
-
-type RegenOfferQueueType =
-  | { slug: string }
-  | { id: string; namespace?: string };
-
-const regenOffersQueue = new Queue<RegenOfferQueueType>("regenOffersQueue", {
-  connection: ioredis,
-});
+} from "../../models/index.js";
+import { ageRatingsCountries } from "../../utils/age-ratings.js";
+import { attributesToObject } from "../../utils/attributes-to-object.js";
+import { regions } from "../../utils/countries.js";
+import { getGameFeatures } from "../../utils/game-features.js";
+import { getImage } from "../../utils/get-image.js";
+import { getOfferSubItems } from "../../utils/get-offer-sub-items.js";
+import { getProduct } from "../../utils/get-product.js";
+import { orderOffersObject } from "../../utils/order-offers-object.js";
+import { verifyGameOwnership } from "../../utils/verify-game-ownership.js";
+import { epic } from "../auth.js";
 
 const app = new Hono();
 
-type OfferSubItemsDoc = {
-  _id: string;
-  subItems: Array<{ id: string }>;
-};
-
-const getOfferSubItems = (query: Record<string, unknown>) =>
-  db.db
-    .collection<OfferSubItemsDoc>("offersubitems")
-    .find(query, {
-      projection: {
-        _id: 1,
-        subItems: 1,
-      },
-    })
-    .toArray();
-
-// Add memory tracking middleware
-app.use("*", async (c, next) => {
-  const startMemory = process.memoryUsage();
-  const start = new Date();
-
-  await next();
-
-  const endMemory = process.memoryUsage();
-  const end = new Date();
-
-  // Calculate memory differences
-  const memoryDiff = {
-    rss: endMemory.rss - startMemory.rss,
-    heapTotal: endMemory.heapTotal - startMemory.heapTotal,
-    heapUsed: endMemory.heapUsed - startMemory.heapUsed,
-    external: endMemory.external - startMemory.external,
-    arrayBuffers: endMemory.arrayBuffers - startMemory.arrayBuffers,
-    responseTime: end.getTime() - start.getTime(),
-  };
-
-  consola.info({
-    request: `[${c.req.method}] ${c.req.path}`,
-    memory: {
-      rss: `${(memoryDiff.rss / 1024 / 1024).toFixed(2)}MB`,
-      heapTotal: `${(memoryDiff.heapTotal / 1024 / 1024).toFixed(2)}MB`,
-      heapUsed: `${(memoryDiff.heapUsed / 1024 / 1024).toFixed(2)}MB`,
-      external: `${(memoryDiff.external / 1024 / 1024).toFixed(2)}MB`,
-      arrayBuffers: `${(memoryDiff.arrayBuffers / 1024 / 1024).toFixed(2)}MB`,
-    },
-    performance: {
-      responseTime: `${(memoryDiff.responseTime / 1000).toFixed(2)}s`,
-    },
-  });
-});
-
-app.get("/", async (c) => {
-  const start = new Date();
-  const country = c.req.query("country");
-  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
-
-  const selectedCountry = country ?? cookieCountry ?? "US";
-
-  // Get the region for the selected country
-  const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
-  );
-
-  if (!region) {
-    c.status(404);
-    return c.json({
-      message: "Country not found",
-    });
-  }
-
-  const MAX_LIMIT = 50;
-  const limit = Math.min(
-    Number.parseInt(c.req.query("limit") || "10"),
-    MAX_LIMIT
-  );
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
-
-  const cacheKey = `offers:${region}:${page}:${limit}`;
-
-  const cached = await client.get(cacheKey);
-
-  if (cached) {
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  const offers = await Offer.find({}, undefined, {
-    limit,
-    skip: (page - 1) * limit,
-    sort: {
-      lastModifiedDate: -1,
-    },
-  });
-
-  const prices = await PriceEngine.find({
-    offerId: { $in: offers.map((o) => o.id) },
-    region,
-  });
-
-  const result = {
-    elements: offers.map((o) => {
-      const price = prices.find((p) => p.offerId === o.id);
-      return {
-        ...orderOffersObject(o),
-        price: price ?? null,
-      };
-    }),
-    page,
-    limit,
-    total: await Offer.countDocuments(),
-  };
-
-  await client.set(cacheKey, JSON.stringify(result), "EX", 60);
-
-  return c.json(result, 200, {
-    "Cache-Control": "public, max-age=60",
-    "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
-  });
-});
-
-app.get("/events", async (c) => {
-  const events = await Tags.find({
-    groupName: "event",
-    status: "ACTIVE",
-  });
-
-  return c.json(events, 200, {
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.get("/events/:id", async (c) => {
-  // Same as the /promotions/:id endpoint
-  const { id } = c.req.param();
-  const country = c.req.query("country");
-  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
-
-  const selectedCountry = country ?? cookieCountry ?? "US";
-
-  const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
-  );
-
-  if (!region) {
-    c.status(404);
-    return c.json({
-      message: "Country not found",
-    });
-  }
-
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 50);
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
-  const skip = (page - 1) * limit;
-
-  const start = new Date();
-
-  const cacheKey = `event:${id}:${region}:${page}:${limit}`;
-
-  const cached = await client.get(cacheKey);
-
-  if (cached) {
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  const event = await Tags.findOne({
-    id,
-    groupName: "event",
-  });
-
-  if (!event) {
-    c.status(404);
-    return c.json({
-      message: "Event not found",
-    });
-  }
-
-  const offers = await Offer.aggregate([
-    { $match: { tags: { $elemMatch: { id } } } },
-    {
-      $lookup: {
-        from: "pricev2",
-        let: { offerId: "$id" },
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $and: [
-                  { $eq: ["$offerId", "$$offerId"] },
-                  { $eq: ["$region", region] },
-                ],
-              },
-            },
-          },
-          {
-            $sort: { updatedAt: -1 },
-          },
-          {
-            $limit: 1,
-          },
-        ],
-        as: "price",
-      },
-    },
-    {
-      $unwind: {
-        path: "$price",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $sort: { "price.price.discount": -1 },
-    },
-    {
-      $skip: skip,
-    },
-    {
-      $limit: limit,
-    },
-    {
-      $project: {
-        _id: 0,
-        id: 1,
-        namespace: 1,
-        title: 1,
-        seller: 1,
-        developerDisplayName: 1,
-        publisherDisplayName: 1,
-        keyImages: 1,
-        price: 1,
-      },
-    },
-  ]);
-
-  const result = {
-    elements: offers,
-    title: event.name ?? "",
-    limit,
-    start: skip,
-    page,
-    count: await Offer.countDocuments({
-      tags: { $elemMatch: { id } },
-    }),
-  };
-
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
-
-  return c.json(result, 200, {
-    "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.get("/upcoming", async (c) => {
-  const country = c.req.query("country");
-  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
-
-  const selectedCountry = country ?? cookieCountry ?? "US";
-
-  const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
-  );
-
-  if (!region) {
-    c.status(404);
-    return c.json({
-      message: "Country not found",
-    });
-  }
-
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "15"), 50);
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
-  const skip = (page - 1) * limit;
-
-  const start = new Date();
-
-  const cacheKey = `upcoming:${region}:${page}:${limit}:v0.1`;
-
-  const cached = await client.get(cacheKey);
-
-  if (cached) {
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  const offers = await Offer.aggregate([
-    {
-      $match: {
-        releaseDate: {
-          $gt: new Date(),
-          $ne: null,
-          $lt: new Date("2099-01-01"),
-        },
-        // Only show "BASE_GAME" and "DLC" offers
-        offerType: {
-          $in: ["BASE_GAME", "DLC"],
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: "pricev2",
-        let: { offerId: "$id" },
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $and: [
-                  { $eq: ["$offerId", "$$offerId"] },
-                  { $eq: ["$region", region] },
-                ],
-              },
-            },
-          },
-          {
-            $limit: 1,
-          },
-        ],
-        as: "price",
-      },
-    },
-    {
-      $unwind: {
-        path: "$price",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $sort: { releaseDate: 1 },
-    },
-    {
-      $skip: skip,
-    },
-    {
-      $limit: limit,
-    },
-  ]);
-
-  const result = {
-    elements: offers.map((o) => {
-      return {
-        ...orderOffersObject(o),
-        price: o.price ?? null,
-      };
-    }),
-    limit,
-    start: skip,
-    page,
-    count: await Offer.countDocuments({
-      effectiveDate: { $gt: new Date() },
-    }),
-  };
-
-  await client.set(cacheKey, JSON.stringify(result), "EX", 360);
-
-  return c.json(result, 200, {
-    "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.get("/genres", async (c) => {
-  const genres = await Tags.find({
-    groupName: "genre",
-    status: "ACTIVE",
-  });
-
-  const result = await Promise.all(
-    genres.map(async (genre) => {
-      const offers = await Offer.find(
-        {
-          tags: { $elemMatch: { id: genre.id } },
-          offerType: "BASE_GAME",
-          releaseDate: { $lte: new Date() },
-        },
-        undefined,
-        {
-          limit: 3,
-          sort: {
-            releaseDate: -1,
-          },
-        }
-      );
-
-      return {
-        genre,
-        offers: offers.map((o) => {
-          return {
-            id: o.id,
-            title: o.title,
-            image: getImage(o.keyImages, [
-              "OfferImageTall",
-              "Thumbnail",
-              "DieselGameBoxTall",
-              "DieselStoreFrontTall",
-            ]),
-          };
-        }),
-      };
-    })
-  );
-
-  return c.json(result, 200, {
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.get("/:id/og", async (c) => {
+app.get("/og", async (c) => {
   const { id } = c.req.param();
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
   const selectedCountry = country ?? cookieCountry ?? "US";
 
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -495,18 +73,18 @@ app.get("/:id/og", async (c) => {
     PriceEngineHistorical.findOne(
       { offerId: id, region, "price.discount": { $gt: 0 } },
       undefined,
-      { sort: { "price.discountPrice": 1 } }
+      { sort: { "price.discountPrice": 1 } },
     ),
     PriceEngineHistorical.findOne(
       { offerId: id, region, "price.discount": { $gt: 0 } },
       undefined,
-      { sort: { updatedAt: -1 } }
+      { sort: { updatedAt: -1 } },
     ),
   ]);
 
   const tagsIds = offer.tags.map((t) => t.id);
   const tagsInformation = await TagModel.find({ id: { $in: tagsIds } });
-  const genres = tagsInformation
+  const _genres = tagsInformation
     .filter((t) => t.groupName === "genre")
     .map((g) => g.name)
     .slice(0, 3);
@@ -560,22 +138,25 @@ app.get("/:id/og", async (c) => {
     .toArray();
 
   const latestBuilds = buildsAgg.map((b: any) => b.doc);
-  const technologies = latestBuilds
+  const _technologies = latestBuilds
     .flatMap((b: any) => b.technologies || [])
     .filter(Boolean)
-    .reduce((acc: Array<{ technology: string }>, tech: any) => {
-      if (!acc.find((a) => a.technology === tech.technology)) {
-        acc.push(tech);
-      }
-      return acc;
-    }, [] as Array<{ technology: string }>);
+    .reduce(
+      (acc: Array<{ technology: string }>, tech: any) => {
+        if (!acc.find((a) => a.technology === tech.technology)) {
+          acc.push(tech);
+        }
+        return acc;
+      },
+      [] as Array<{ technology: string }>,
+    );
 
   const sandboxData = await Sandbox.findOne({ _id: offer.namespace });
-  let ageRatingLabel: string | null = null;
+  let _ageRatingLabel: string | null = null;
   if (sandboxData && (sandboxData as any).ageGatings) {
     const selectedRating =
       Object.entries(ageRatingsCountries).find(([, rating]) =>
-        rating.includes(selectedCountry)
+        rating.includes(selectedCountry),
       )?.[0] ?? "Generic";
     const rating = (sandboxData as any).ageGatings[selectedRating];
     if (rating) {
@@ -586,7 +167,7 @@ app.get("/:id/og", async (c) => {
         (rating as any).level ||
         ""
       ).toString();
-      ageRatingLabel = `${selectedRating}${val ? ` ${val}` : ""}`;
+      _ageRatingLabel = `${selectedRating}${val ? ` ${val}` : ""}`;
     }
   }
 
@@ -596,15 +177,15 @@ app.get("/:id/og", async (c) => {
     endDate: { $gte: new Date() },
   });
 
-  const reviewsCount = await Review.countDocuments({ id });
+  const _reviewsCount = await Review.countDocuments({ id });
 
   const achievementSets = await AchievementSet.find({
     sandboxId: offer.namespace,
     isBase: offer.offerType === "BASE_GAME",
   });
-  const achievementsCount = achievementSets.reduce(
+  const _achievementsCount = achievementSets.reduce(
     (acc, curr) => acc + (curr.achievements?.length ?? 0),
-    0
+    0,
   );
 
   const product = sandboxData
@@ -622,14 +203,14 @@ app.get("/:id/og", async (c) => {
 
   const epicScoreRaw =
     (epicRatings as any)?.overallScore ?? (epicRatings as any)?.score ?? null;
-  const epicScore =
+  const _epicScore =
     typeof epicScoreRaw === "number" ? epicScoreRaw.toFixed(1) : null;
   const epicRecommendedRaw =
     (epicRatings as any)?.recommendedPercentage ??
     (epicRatings as any)?.recommendedPercent ??
     (epicRatings as any)?.recommended ??
     null;
-  const epicRecommended =
+  const _epicRecommended =
     typeof epicRecommendedRaw === "number"
       ? Math.round(epicRecommendedRaw)
       : null;
@@ -721,7 +302,7 @@ app.get("/:id/og", async (c) => {
                 objectFit: "cover",
               },
             }),
-          ]
+          ],
         ),
         React.createElement(
           "div",
@@ -745,7 +326,7 @@ app.get("/:id/og", async (c) => {
                   letterSpacing: "0.1em",
                 },
               },
-              "egdata.app"
+              "egdata.app",
             ),
             React.createElement(
               "div",
@@ -758,7 +339,7 @@ app.get("/:id/og", async (c) => {
                   lineHeight: "1.1",
                 },
               },
-              title
+              title,
             ),
             React.createElement(
               "div",
@@ -780,7 +361,7 @@ app.get("/:id/og", async (c) => {
                     developer ? `By ${developer}` : "",
                     developer && publisher ? " • " : "",
                     publisher ? `Published by ${publisher}` : "",
-                  ].join("")
+                  ].join(""),
                 ),
                 releaseDate && notReleased
                   ? React.createElement(
@@ -790,10 +371,10 @@ app.get("/:id/og", async (c) => {
                         year: "numeric",
                         month: "short",
                         day: "2-digit",
-                      })
+                      }),
                     )
                   : null,
-              ]
+              ],
             ),
             React.createElement(
               "div",
@@ -821,7 +402,7 @@ app.get("/:id/og", async (c) => {
                       letterSpacing: "0.08em",
                     },
                   },
-                  "Pricing"
+                  "Pricing",
                 ),
                 React.createElement(
                   "div",
@@ -845,7 +426,7 @@ app.get("/:id/og", async (c) => {
                               color: "#00D084",
                             },
                           },
-                          "Free"
+                          "Free",
                         )
                       : React.createElement(
                           "div",
@@ -859,7 +440,7 @@ app.get("/:id/og", async (c) => {
                           },
                           typeof discountPrice === "number"
                             ? formatter.format(discountPrice / 100)
-                            : ""
+                            : "",
                         ),
                     typeof originalPrice === "number" &&
                     discountPrice !== originalPrice
@@ -873,7 +454,7 @@ app.get("/:id/og", async (c) => {
                               textDecoration: "line-through",
                             },
                           },
-                          formatter.format(originalPrice / 100)
+                          formatter.format(originalPrice / 100),
                         )
                       : null,
                     typeof discountPercent === "number" && discountPercent > 0
@@ -890,10 +471,10 @@ app.get("/:id/og", async (c) => {
                               padding: "6px 10px",
                             },
                           },
-                          `-${discountPercent}%`
+                          `-${discountPercent}%`,
                         )
                       : null,
-                  ]
+                  ],
                 ),
                 React.createElement(
                   "div",
@@ -920,7 +501,7 @@ app.get("/:id/og", async (c) => {
                               padding: "6px 12px",
                             },
                           },
-                          "On Sale"
+                          "On Sale",
                         )
                       : null,
                     lowestPrice?.price?.discountPrice
@@ -938,8 +519,8 @@ app.get("/:id/og", async (c) => {
                             },
                           },
                           `Lowest: ${formatter.format(
-                            (lowestPrice.price.discountPrice || 0) / 100
-                          )}`
+                            (lowestPrice.price.discountPrice || 0) / 100,
+                          )}`,
                         )
                       : null,
                     lastDiscount?.updatedAt
@@ -957,12 +538,12 @@ app.get("/:id/og", async (c) => {
                             },
                           },
                           `Last discount: ${new Date(
-                            lastDiscount.updatedAt
+                            lastDiscount.updatedAt,
                           ).toLocaleDateString("en-US", {
                             month: "short",
                             day: "2-digit",
                             year: "numeric",
-                          })}`
+                          })}`,
                         )
                       : null,
                     activeGiveaway
@@ -980,16 +561,16 @@ app.get("/:id/og", async (c) => {
                             },
                           },
                           `Free until ${new Date(
-                            activeGiveaway.endDate
+                            activeGiveaway.endDate,
                           ).toLocaleDateString("en-US", {
                             month: "short",
                             day: "2-digit",
-                          })}`
+                          })}`,
                         )
                       : null,
-                  ]
+                  ],
                 ),
-              ]
+              ],
             ),
             React.createElement(
               "div",
@@ -1017,7 +598,7 @@ app.get("/:id/og", async (c) => {
                       letterSpacing: "0.08em",
                     },
                   },
-                  "Features"
+                  "Features",
                 ),
                 React.createElement(
                   "div",
@@ -1044,8 +625,8 @@ app.get("/:id/og", async (c) => {
                             padding: "6px 12px",
                           },
                         },
-                        f
-                      )
+                        f,
+                      ),
                     ),
                     ...(featuresData.epicFeatures || [])
                       .slice(0, 4)
@@ -1063,12 +644,12 @@ app.get("/:id/og", async (c) => {
                               padding: "6px 12px",
                             },
                           },
-                          f
-                        )
+                          f,
+                        ),
                       ),
-                  ]
+                  ],
                 ),
-              ]
+              ],
             ),
             React.createElement(
               "div",
@@ -1096,7 +677,7 @@ app.get("/:id/og", async (c) => {
                       letterSpacing: "0.08em",
                     },
                   },
-                  "Rankings"
+                  "Rankings",
                 ),
                 React.createElement(
                   "div",
@@ -1108,15 +689,13 @@ app.get("/:id/og", async (c) => {
                       flexWrap: "wrap",
                     },
                   },
-                  (
-                    await GamePosition.find({ offerId: id })
-                  )
+                  (await GamePosition.find({ offerId: id }))
                     .map((p) => ({
                       collectionId: p.collectionId,
                       position: p.position,
                     }))
                     .filter(
-                      (p) => typeof p.position === "number" && p.position > 0
+                      (p) => typeof p.position === "number" && p.position > 0,
                     )
                     .slice(0, 4)
                     .map((p, i) =>
@@ -1135,15 +714,15 @@ app.get("/:id/og", async (c) => {
                         },
                         `${p.collectionId[0].toUpperCase()}${p.collectionId
                           .substring(1)
-                          .replace(/-/g, " ")}: #${p.position}`
-                      )
-                    )
+                          .replace(/-/g, " ")}: #${p.position}`,
+                      ),
+                    ),
                 ),
-              ]
+              ],
             ),
-          ]
+          ],
         ),
-      ]
+      ],
     ),
     {
       width: 1200,
@@ -1156,7 +735,7 @@ app.get("/:id/og", async (c) => {
           style: "normal",
         },
       ],
-    }
+    },
   );
 
   const resvg = new Resvg(svg, {
@@ -1175,600 +754,7 @@ app.get("/:id/og", async (c) => {
   });
 });
 
-app.get("/top-wishlisted", async (c) => {
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 10);
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
-  const skip = (page - 1) * limit;
-  const start = new Date();
-  const cacheKey = `top-wishlisted:${page}:${limit}:v0.1`;
-  const cached = await client.get(cacheKey);
-
-  if (cached) {
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  const result = await GamePosition.find({
-    collectionId: "top-wishlisted",
-    position: { $gt: 0 },
-  })
-    .sort({ position: 1 })
-    .limit(limit)
-    .skip(skip);
-
-  const offers = await Offer.find({
-    id: { $in: result.map((o) => o.offerId) },
-  });
-
-  if (result.length > 0) {
-    const response = {
-      elements: offers
-        .map((o: OfferType) => {
-          return {
-            ...orderOffersObject(o),
-            position: result.find((r) => r.offerId === o.id)?.position,
-          };
-        })
-        .sort((a, b) => a.position - b.position),
-      page,
-      limit,
-      total: await GamePosition.countDocuments({
-        position: { $gt: 0 },
-      }),
-    };
-    await client.set(cacheKey, JSON.stringify(response), "EX", 3600);
-    return c.json(response, 200, {
-      "Cache-Control": "public, max-age=60",
-      "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
-    });
-  }
-
-  return c.json({ elements: [], page, limit, total: 0 }, 200, {
-    "Cache-Control": "public, max-age=60",
-    "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
-  });
-});
-
-app.get("/top-sellers", async (c) => {
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 10);
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
-  const skip = (page - 1) * limit;
-  const start = new Date();
-  const cacheKey = `top-sellers:${page}:${limit}:v0.1`;
-  const cached = await client.get(cacheKey);
-
-  if (cached) {
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  const result = await GamePosition.find({
-    collectionId: "top-sellers",
-    position: { $gt: 0 },
-  })
-    .sort({ position: 1 })
-    .limit(limit)
-    .skip(skip);
-
-  const offers = await Offer.find({
-    id: { $in: result.map((o) => o.offerId) },
-  });
-
-  if (result.length > 0) {
-    const response = {
-      elements: offers
-        .map((o: OfferType) => {
-          return {
-            ...orderOffersObject(o),
-            position: result.find((r) => r.offerId === o.id)?.position,
-          };
-        })
-        .sort((a, b) => a.position - b.position),
-      page,
-      limit,
-      total: await GamePosition.countDocuments({
-        collectionId: "top-sellers",
-        position: { $gt: 0 },
-      }),
-    };
-    await client.set(cacheKey, JSON.stringify(response), "EX", 3600);
-    return c.json(response, 200, {
-      "Cache-Control": "public, max-age=60",
-      "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
-    });
-  }
-
-  return c.json({ elements: [], page, limit, total: 0 }, 200, {
-    "Cache-Control": "public, max-age=60",
-    "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
-  });
-});
-
-app.get("/featured-discounts", async (c) => {
-  const country = c.req.query("country");
-  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
-  const selectedCountry = country ?? cookieCountry ?? "US";
-  const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
-  );
-  if (!region) {
-    c.status(404);
-    return c.json({
-      message: "Country not found",
-    });
-  }
-
-  const cacheKey = `featured-discounts:${region}:v0.3`;
-  const cached = await client.get(cacheKey);
-  if (cached) {
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  // First get the featured offers IDs with their positions
-  const featuredOffers = await GamePosition.find({
-    position: { $gt: 0 },
-  })
-    .sort({ position: 1 })
-    .limit(200) // Limit early to reduce data processing
-    .lean();
-
-  if (!featuredOffers.length) {
-    return c.json([], 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  const offerIds = featuredOffers.map((o) => o.offerId);
-
-  // Get offers and prices in parallel
-  const [offers, prices] = await Promise.all([
-    Offer.find({
-      id: { $in: offerIds },
-      offerType: { $in: ["BASE_GAME", "DLC"] },
-    }).lean(),
-    PriceEngine.find({
-      offerId: { $in: offerIds },
-      region,
-      "price.discount": { $gt: 0 },
-    })
-      .sort({ updatedAt: -1 })
-      .lean(),
-  ]);
-
-  // Create a map of prices for quick lookup
-  const priceMap = new Map(prices.map((p) => [p.offerId, p]));
-
-  // Create a map of positions for quick lookup
-  const positionMap = new Map(
-    featuredOffers.map((p) => [p.offerId, p.position])
-  );
-
-  // Combine the data and sort by position
-  const result = offers
-    .map((offer) => {
-      const price = priceMap.get(offer.id);
-      const position = positionMap.get(offer.id);
-
-      if (!price || position === undefined) return null;
-
-      return {
-        ...offer,
-        price,
-        position,
-      };
-    })
-    .filter((o): o is NonNullable<typeof o> => o !== null)
-    .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-    .slice(0, 20);
-
-  // Save the result in cache
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
-
-  return c.json(result, 200, {
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.get("/latest-achievements", async (c) => {
-  const country = c.req.query("country");
-  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
-  const selectedCountry = country ?? cookieCountry ?? "US";
-  const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
-  );
-  if (!region) {
-    c.status(404);
-    return c.json({
-      message: "Country not found",
-    });
-  }
-  const cacheKey = `latest-achievements:${region}:v0.1`;
-  const cached = await client.get(cacheKey);
-  if (cached) {
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-  const limit = 15; // Number of games to fetch per page
-  let skip = 0;
-  let result: any[] = [];
-  while (result.length < 20) {
-    const offers = await Offer.find({
-      offerType: { $in: ["BASE_GAME"] },
-      "tags.id": "19847",
-      effectiveDate: { $lte: new Date() },
-    })
-      .sort({ effectiveDate: -1 })
-      .skip(skip)
-      .limit(limit);
-    const [achievementsData, pricesData] = await Promise.allSettled([
-      AchievementSet.find({
-        sandboxId: { $in: offers.map((o) => o.namespace) },
-        isBase: true,
-      }),
-      PriceEngine.find({
-        offerId: { $in: offers.map((o) => o.id) },
-        region,
-      }),
-    ]);
-    const achievements =
-      achievementsData.status === "fulfilled" ? achievementsData.value : [];
-    const prices = pricesData.status === "fulfilled" ? pricesData.value : [];
-    const pageResults = offers
-      .map((o) => {
-        const price = prices.find((p) => p.offerId === o.id);
-        const achievement = achievements.find(
-          (a) => a.sandboxId === o.namespace
-        );
-        return {
-          ...orderOffersObject(o),
-          achievements: achievement,
-          price: price ?? null,
-        };
-      })
-      .filter((o) => o.achievements);
-    result = result.concat(pageResults);
-    skip += limit;
-    if (offers.length < limit) {
-      // Reached the end of the data
-      break;
-    }
-  }
-  result = result.slice(0, 20);
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
-  return c.json(result, 200, {
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.get("/latest-released", async (c) => {
-  const country = c.req.query("country");
-  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
-  const selectedCountry = country ?? cookieCountry ?? "US";
-  const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
-  );
-  if (!region) {
-    c.status(404);
-    return c.json({
-      message: "Country not found",
-    });
-  }
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 50);
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
-  const skip = (page - 1) * limit;
-  const cacheKey = `latest-released:${region}`;
-  const cached = await client.get(cacheKey);
-  if (cached) {
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-  const offers = await Offer.find(
-    {
-      effectiveDate: {
-        $lte: new Date(),
-      },
-      offerType: {
-        $in: ["BASE_GAME", "DLC"],
-      },
-      releaseDate: {
-        $ne: null,
-        $lte: new Date(),
-      },
-    },
-    undefined,
-    {
-      sort: {
-        releaseDate: -1,
-      },
-      limit,
-      skip,
-    }
-  );
-  const prices = await PriceEngine.find({
-    offerId: { $in: offers.map((o) => o.id) },
-    region,
-  });
-  const result = {
-    elements: offers.map((o) => {
-      const price = prices.find((p) => p.offerId === o.id);
-      return {
-        ...orderOffersObject(o),
-        price: price ?? null,
-      };
-    }),
-    limit,
-    start: skip,
-    page,
-    count: await Offer.countDocuments({
-      releaseDate: { $ne: null },
-      offerType: { $in: ["BASE_GAME"] },
-    }),
-  };
-  await client.set(cacheKey, JSON.stringify(result), "EX", 60);
-  return c.json(result, 200, {
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.put("/regen/:slug", async (c) => {
-  const { slug } = c.req.param();
-
-  await regenOffersQueue.add(`regenOffer-${slug}`, { slug });
-
-  return c.json({ message: "Offer regen requested" }, 200);
-});
-
-app.put("/regen-by-id/:id", async (c) => {
-  const { id } = c.req.param();
-
-  await regenOffersQueue.add(`regenOffer-${id}`, { id });
-
-  return c.json({ message: "Offer regen requested" }, 200);
-});
-
-app.post("/bulk-regen", async (c) => {
-  const { offers } = await c.req.json<{ offers: string[] }>();
-
-  await regenOffersQueue.addBulk(
-    offers.map((o) => ({
-      name: `regenOffer-${o}`,
-      data: { id: o },
-    }))
-  );
-
-  return c.json({ message: "Offer regen requested" }, 200);
-});
-
-app.post("/slugs", async (c) => {
-  const { slugs } = await c.req.json<{ slugs: string[] }>();
-
-  if (!slugs || !Array.isArray(slugs) || slugs.length === 0) {
-    c.status(400);
-    return c.json({
-      message:
-        "Missing or invalid slugs parameter. Expecting an array of strings.",
-    });
-  }
-
-  // Create an expanded list of slugs including their /home variants
-  const expandedSlugs = slugs.flatMap((slug) => [slug, `${slug}/home`]);
-
-  const offers = await Offer.find({
-    $and: [
-      {
-        $or: [
-          { productSlug: { $in: expandedSlugs } },
-          { urlSlug: { $in: expandedSlugs } },
-          { "offerMappings.pageSlug": { $in: expandedSlugs } },
-          {
-            customAttributes: {
-              $elemMatch: {
-                key: "com.epicgames.app.productSlug",
-                value: { $in: expandedSlugs },
-              },
-            },
-          },
-          {
-            customAttributes: {
-              $elemMatch: { key: "slug", value: { $in: expandedSlugs } }, // Keep generic slug check as well
-            },
-          },
-        ],
-      },
-      { prePurchase: { $ne: true } }, // Exclude pre-purchase offers
-    ],
-  }).select(
-    "id productSlug urlSlug offerMappings customAttributes prePurchase namespace"
-  );
-
-  const result = slugs.map((originalSlug) => {
-    const offer = offers.find((o) => {
-      const checkSlug = (s: string | undefined) =>
-        s === originalSlug || s === `${originalSlug}/home`;
-
-      if (checkSlug(o.productSlug)) return true;
-      if (checkSlug(o.urlSlug)) return true;
-      if (o.offerMappings?.some((m: any) => checkSlug(m.pageSlug))) return true;
-      if (
-        o.customAttributes?.some(
-          (attr: any) =>
-            attr.key === "com.epicgames.app.productSlug" &&
-            checkSlug(attr.value)
-        )
-      )
-        return true;
-      if (
-        o.customAttributes?.some(
-          (attr: any) => attr.key === "slug" && checkSlug(attr.value)
-        )
-      )
-        return true;
-      return false;
-    });
-    return {
-      slug: originalSlug,
-      id: offer ? offer.id : null,
-      namespace: offer ? offer.namespace : null,
-    };
-  });
-
-  return c.json(result, 200, {
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.post("/exists", async (c) => {
-  const { offers } = await c.req.json<{ offers: string[] }>();
-  // Return 2 arrays, the offers IDs that already exist and the ones that don't
-  const existingOffers = await Offer.find(
-    { id: { $in: offers } },
-    { id: 1, _id: 0 }
-  );
-  const existingIds = existingOffers.map((o) => o.id);
-  const nonExistingOffers = offers.filter(
-    (offer) => !existingIds.includes(offer)
-  );
-  return c.json({ existingOffers: existingIds, nonExistingOffers }, 200);
-});
-
-app.get("/:id", async (c) => {
-  const { id } = c.req.param();
-
-  if (!id) {
-    c.status(400);
-    return c.json({
-      message: "Missing id parameter",
-    });
-  }
-
-  const start = new Date();
-
-  const cacheKey = `offer:${id}:v0.1`;
-  const cached = await client.get(cacheKey);
-
-  if (cached) {
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  // Define the queries
-  const offerQuery = Offer.findOne({ id }).lean();
-
-  // Execute both queries in parallel
-  const [offer] = await Promise.all([offerQuery]);
-
-  if (!offer) {
-    c.status(404);
-    return c.json({
-      message: "Offer not found or Price not found",
-    });
-  }
-
-  // Combine the offer and price data
-  const result = {
-    ...offer,
-    customAttributes: attributesToObject(offer.customAttributes as any),
-  };
-
-  await client.set(cacheKey, JSON.stringify(result), "EX", 60);
-
-  return c.json(result, 200, {
-    "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
-  });
-});
-
-app.get("/:id/price-history", async (c) => {
-  const { id } = c.req.param();
-  const since = c.req.query("since");
-
-  const country = c.req.query("country");
-  const usrRegion = c.req.query("region");
-
-  const region =
-    usrRegion ||
-    Object.keys(regions).find((r) => regions[r].countries.includes(country));
-
-  if (region) {
-    const cacheKey = `price-history:${id}:${region}:${
-      since ?? "unlimited"
-    }:v0.1`;
-    const cached = await client.get(cacheKey);
-
-    if (cached) {
-      return c.json(JSON.parse(cached), 200, {
-        "Cache-Control": "public, max-age=60",
-      });
-    }
-
-    // Show just the prices for the selected region
-    const prices = await PriceEngineHistorical.find({
-      offerId: id,
-      region,
-      ...(since && {
-        updatedAt: { $gte: new Date(since) },
-      }),
-    }).sort({ date: -1 });
-
-    if (!prices) {
-      c.status(200);
-      return c.json({});
-    }
-
-    await client.set(cacheKey, JSON.stringify(prices), "EX", 3600);
-
-    return c.json(prices, 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  const cacheKey = `price-history:${id}:all:${since ?? "unlimited"}:v0.1`;
-  const cached = await client.get(cacheKey);
-
-  if (cached) {
-    return c.json(JSON.parse(cached));
-  }
-
-  const prices = await PriceEngineHistorical.find({
-    offerId: id,
-    region: { $in: Object.keys(regions) },
-    ...(since && {
-      updatedAt: { $gte: new Date(since) },
-    }),
-  }).sort({ date: -1 });
-
-  // Structure the data, Record<string, PriceHistoryType[]>
-  const pricesByRegion = prices.reduce((acc, price) => {
-    if (!price?.region) return acc;
-
-    if (!acc[price.region]) {
-      acc[price.region] = [];
-    }
-
-    acc[price.region].push(price);
-
-    return acc;
-  }, {} as Record<string, PriceType[]>);
-
-  if (!pricesByRegion || Object.keys(pricesByRegion).length === 0) {
-    c.status(200);
-    return c.json({});
-  }
-
-  await client.set(cacheKey, JSON.stringify(pricesByRegion), "EX", 3600);
-
-  return c.json(pricesByRegion, 200, {
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.get("/:id/franchises", async (c) => {
+app.get("/franchises", async (c) => {
   const { id } = c.req.param();
 
   const cacheKey = `franchises:${id}:v0.2`;
@@ -1792,25 +778,23 @@ app.get("/:id/franchises", async (c) => {
 
   // Get all unique offer IDs from the found franchises
   const allOfferIds = Array.from(
-    new Set(franchises.flatMap((f) => f.offers || []))
+    new Set(franchises.flatMap((f) => f.offers || [])),
   );
 
   // Fetch the namespaces for all these offers
   const offersData = await Offer.find(
     { id: { $in: allOfferIds } },
-    { id: 1, namespace: 1 }
+    { id: 1, namespace: 1 },
   );
 
-  const offerNamespaceMap = new Map(
-    offersData.map((o) => [o.id, o.namespace])
-  );
+  const offerNamespaceMap = new Map(offersData.map((o) => [o.id, o.namespace]));
 
   // Filter out franchises where all offers belong to the same namespace
   const filteredFranchises = franchises.filter((franchise) => {
     const namespaces = new Set(
       (franchise.offers || [])
         .map((offerId: string) => offerNamespaceMap.get(offerId))
-        .filter(Boolean)
+        .filter(Boolean),
     );
     return namespaces.size > 1;
   });
@@ -1822,7 +806,7 @@ app.get("/:id/franchises", async (c) => {
   });
 });
 
-app.get("/:id/features", async (c) => {
+app.get("/features", async (c) => {
   const { id } = c.req.param();
 
   // We need to get the offers and items for that offer
@@ -1871,7 +855,7 @@ app.get("/:id/features", async (c) => {
   return c.json(gameFeatures);
 });
 
-app.get("/:id/assets", async (c) => {
+app.get("/assets", async (c) => {
   const { id } = c.req.param();
 
   const cacheKey = `assets:offer:${id}:v0.2`;
@@ -1912,7 +896,7 @@ app.get("/:id/assets", async (c) => {
     },
     {
       id: 1,
-    }
+    },
   );
 
   const assets = await Asset.find({
@@ -1928,7 +912,7 @@ app.get("/:id/assets", async (c) => {
   });
 });
 
-app.get("/:id/items", async (c) => {
+app.get("/items", async (c) => {
   const { id } = c.req.param();
 
   const cacheKey = `items:offer:${id}`;
@@ -1975,282 +959,11 @@ app.get("/:id/items", async (c) => {
   });
 });
 
-app.get("/:id/price", async (c) => {
-  const { id } = c.req.param();
-  const country = c.req.query("country");
-  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
-
-  const selectedCountry = country ?? cookieCountry ?? "US";
-
-  // Get the region for the selected country
-  const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
-  );
-
-  if (!region) {
-    c.status(404);
-    return c.json({
-      message: "Country not found",
-    });
-  }
-
-  const cacheKey = `price:${id}:${region}:v0.2`;
-
-  console.log(`Requesting ${cacheKey}`);
-
-  const cached = await client.get(cacheKey);
-
-  if (cached) {
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  const price = await PriceEngine.findOne({
-    offerId: id,
-    region,
-  });
-
-  if (!price) {
-    c.status(404);
-    return c.json({
-      message: "Price not found",
-    });
-  }
-
-  await client.set(cacheKey, JSON.stringify(price), "EX", 3600);
-
-  return c.json(price, 200, {
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.get("/:id/price/fairness", async (c) => {
-  const { id } = c.req.param();
-  const country = c.req.query("country");
-  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
-
-  const selectedCountry = country ?? cookieCountry ?? "US";
-
-  const cacheKey = `price-fairness:${id}:${selectedCountry}:v0.1`;
-
-  const cached = await client.get(cacheKey);
-
-  if (cached) {
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  const score = await OfferCountryPricingScore.findOne({
-    offerId: id,
-    country: selectedCountry,
-  });
-
-  if (!score) {
-    c.status(404);
-    return c.json({
-      message: "Price fairness score not found",
-    });
-  }
-
-  await client.set(cacheKey, JSON.stringify(score), "EX", 3600);
-
-  return c.json(score, 200, {
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.get("/:id/regional-price", async (c) => {
-  const { id } = c.req.param();
-  const country = c.req.query("country");
-
-  if (country) {
-    const region = Object.keys(regions).find((r) =>
-      regions[r].countries.includes(country)
-    );
-
-    if (!region) {
-      c.status(404);
-      return c.json({
-        message: "Country not found",
-      });
-    }
-
-    const cacheKey = `regional-price:${id}:${region}:v0.3`;
-    const cached = await client.get(cacheKey);
-
-    if (cached) {
-      return c.json(JSON.parse(cached), 200, {
-        "Cache-Control": "public, max-age=60",
-      });
-    }
-
-    const offer = await Offer.findOne({ id }).lean();
-
-    const releaseDate = offer?.releaseDate ?? (offer?.effectiveDate as Date);
-    const currentDate = new Date();
-
-    let priceQuery = { offerId: id, region } as Record<string, unknown>;
-
-    if (releaseDate && releaseDate <= currentDate) {
-      priceQuery.updatedAt = { $gte: releaseDate, $lte: currentDate };
-    }
-
-    let price = await PriceEngineHistorical.find(priceQuery, undefined, {
-      sort: {
-        updatedAt: -1,
-      },
-    });
-
-    if (!price || price.length === 0) {
-      // Try to find the price in the historical data
-      price = await PriceEngineHistorical.find(
-        {
-          offerId: id,
-          region,
-        },
-        undefined,
-        {
-          sort: {
-            updatedAt: -1,
-          },
-        }
-      );
-
-      if (price.length === 0) {
-        c.status(404);
-        return c.json({
-          message: "Price not found",
-        });
-      }
-    }
-
-    // USD figures use each historical row's own `payoutCurrencyExchangeRate` (point-in-time
-    // correct — the backend stamps the live rate at the moment of each snapshot), so
-    // min/max-USD reflect the cheapest/priciest *USD-equivalent* this offer ever was, not
-    // today's rate retroactively applied to old prices.
-    const usdValues = price.map((p) => toUsdCents(p.price)).filter((v): v is number => v != null);
-
-    const result = {
-      currentPrice: price[0],
-      maxPrice: Math.max(...price.map((p) => p.price.discountPrice ?? 0)),
-      minPrice: Math.min(...price.map((p) => p.price.discountPrice ?? 0)),
-      currentPriceUsd: toUsdCents(price[0].price),
-      currentOriginalPriceUsd: toUsdCents(price[0].price, "original"),
-      maxPriceUsd: usdValues.length ? Math.max(...usdValues) : null,
-      minPriceUsd: usdValues.length ? Math.min(...usdValues) : null,
-    };
-
-    await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
-
-    return c.json(result, 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  const cacheKey = `regional-price:${id}:all:v0.3`;
-  const cached = await client.get(cacheKey);
-
-  if (cached) {
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  const offer = await Offer.findOne({ id }).lean();
-
-  const releaseDate = offer?.releaseDate ?? (offer?.effectiveDate as Date);
-  const currentDate = new Date();
-
-  let priceQuery = { offerId: id } as any;
-
-  if (releaseDate && releaseDate <= currentDate) {
-    priceQuery.updatedAt = { $gte: releaseDate };
-  }
-
-  let prices = await PriceEngineHistorical.find(priceQuery, undefined, {
-    sort: {
-      updatedAt: -1,
-    },
-  });
-
-  if (prices.length === 0) {
-    console.log("prices.length === 0");
-    prices = await PriceEngineHistorical.find(
-      {
-        offerId: id,
-      },
-      undefined,
-      {
-        sort: {
-          updatedAt: -1,
-        },
-      }
-    );
-  }
-
-  const regionsKeys = Object.keys(regions);
-
-  const result = regionsKeys.reduce(
-    (acc, r) => {
-      const regionPrices = prices.filter((p) => p?.region === r);
-
-      if (!regionPrices.length) {
-        return acc;
-      }
-
-      const lastPrice = regionPrices.sort(
-        (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
-      )[0];
-
-      const allPrices = regionPrices.map((p) => p.price.discountPrice ?? 0);
-
-      const maxPrice = Math.max(...allPrices);
-      const minPrice = Math.min(...allPrices);
-
-      const usdValues = regionPrices
-        .map((p) => toUsdCents(p.price))
-        .filter((v): v is number => v != null);
-
-      acc[r] = {
-        currentPrice: lastPrice,
-        maxPrice,
-        minPrice,
-        currentPriceUsd: toUsdCents(lastPrice.price),
-        currentOriginalPriceUsd: toUsdCents(lastPrice.price, "original"),
-        maxPriceUsd: usdValues.length ? Math.max(...usdValues) : null,
-        minPriceUsd: usdValues.length ? Math.min(...usdValues) : null,
-      };
-
-      return acc;
-    },
-    {} as Record<
-      string,
-      {
-        currentPrice: PriceType;
-        maxPrice: number;
-        minPrice: number;
-        currentPriceUsd: number | null;
-        currentOriginalPriceUsd: number | null;
-        maxPriceUsd: number | null;
-        minPriceUsd: number | null;
-      }
-    >
-  );
-
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
-
-  return c.json(result, 200, {
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.get("/:id/changelog", async (c) => {
+app.get("/changelog", async (c) => {
   const { id } = c.req.param();
 
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 50);
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
+  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 50);
+  const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
   const query = c.req.query("query");
   const changeType = c.req.query("type");
@@ -2427,7 +1140,7 @@ app.get("/:id/changelog", async (c) => {
  * - Change-types number
  * - Change field number
  */
-app.get("/:id/changelog/stats", async (c) => {
+app.get("/changelog/stats", async (c) => {
   const { id } = c.req.param();
   const { from, to } = c.req.query();
 
@@ -2470,50 +1183,62 @@ app.get("/:id/changelog/stats", async (c) => {
       sort: {
         timestamp: -1,
       },
-    }
+    },
   );
 
   // Corrected: Get the full date string (YYYY-MM-DD)
-  const dailyChanges = changes.reduce((acc, change) => {
-    const date = change.timestamp.toISOString().split("T")[0]; // Get YYYY-MM-DD
-    if (!acc[date]) {
-      acc[date] = 0;
-    }
-    acc[date]++;
-    return acc;
-  }, {} as Record<string, number>);
+  const dailyChanges = changes.reduce(
+    (acc, change) => {
+      const date = change.timestamp.toISOString().split("T")[0]; // Get YYYY-MM-DD
+      if (!acc[date]) {
+        acc[date] = 0;
+      }
+      acc[date]++;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
-  const weekdayChanges = changes.reduce((acc, change) => {
-    const day = change.timestamp.getDay();
-    if (!acc[day]) {
-      acc[day] = 0;
-    }
-    acc[day]++;
-    return acc;
-  }, {} as Record<number, number>);
+  const weekdayChanges = changes.reduce(
+    (acc, change) => {
+      const day = change.timestamp.getDay();
+      if (!acc[day]) {
+        acc[day] = 0;
+      }
+      acc[day]++;
+      return acc;
+    },
+    {} as Record<number, number>,
+  );
 
   // Corrected: Use change.metadata.changes[].changeType
-  const changeTypes = changes.reduce((acc, change) => {
-    change.metadata.changes.forEach((item) => {
-      if (!acc[item.changeType]) {
-        acc[item.changeType] = 0;
-      }
-      acc[item.changeType]++;
-    });
+  const changeTypes = changes.reduce(
+    (acc, change) => {
+      change.metadata.changes.forEach((item) => {
+        if (!acc[item.changeType]) {
+          acc[item.changeType] = 0;
+        }
+        acc[item.changeType]++;
+      });
 
-    return acc;
-  }, {} as Record<string, number>);
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   // Corrected: Use change.metadata.changes[].field
-  const changeFields = changes.reduce((acc, change) => {
-    change.metadata.changes.forEach((item) => {
-      if (!acc[item.field]) {
-        acc[item.field] = 0;
-      }
-      acc[item.field]++;
-    });
-    return acc;
-  }, {} as Record<string, number>);
+  const changeFields = changes.reduce(
+    (acc, change) => {
+      change.metadata.changes.forEach((item) => {
+        if (!acc[item.field]) {
+          acc[item.field] = 0;
+        }
+        acc[item.field]++;
+      });
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   await client.set(cacheKey, JSON.stringify(changeFields), "EX", 3600);
 
@@ -2525,7 +1250,7 @@ app.get("/:id/changelog/stats", async (c) => {
   });
 });
 
-app.get("/:id/achievements", async (c) => {
+app.get("/achievements", async (c) => {
   const { id } = c.req.param();
 
   if (!id) {
@@ -2540,7 +1265,7 @@ app.get("/:id/achievements", async (c) => {
     {
       namespace: 1,
       offerType: 1,
-    }
+    },
   );
 
   if (!offer) {
@@ -2576,7 +1301,7 @@ app.get("/:id/achievements", async (c) => {
   });
 });
 
-app.get("/:id/related", async (c) => {
+app.get("/related", async (c) => {
   const { id } = c.req.param();
 
   const country = c.req.query("country");
@@ -2585,7 +1310,7 @@ app.get("/:id/related", async (c) => {
   const selectedCountry = country ?? cookieCountry ?? "US";
 
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -2622,7 +1347,7 @@ app.get("/:id/related", async (c) => {
     undefined,
     {
       limit: 25,
-    }
+    },
   );
 
   const prices = await PriceEngine.find({
@@ -2645,7 +1370,7 @@ app.get("/:id/related", async (c) => {
   });
 });
 
-app.get("/:id/mappings", async (c) => {
+app.get("/mappings", async (c) => {
   const { id } = c.req.param();
 
   const cacheKey = `mappings:${id}`;
@@ -2676,7 +1401,7 @@ app.get("/:id/mappings", async (c) => {
   });
 });
 
-app.get("/:id/media", async (c) => {
+app.get("/media", async (c) => {
   const { id } = c.req.param();
 
   const cacheKey = `media:${id}`;
@@ -2707,7 +1432,7 @@ app.get("/:id/media", async (c) => {
   });
 });
 
-app.get("/:id/suggestions", async (c) => {
+app.get("/suggestions", async (c) => {
   const { id } = c.req.param();
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -2716,7 +1441,7 @@ app.get("/:id/suggestions", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -2765,7 +1490,7 @@ app.get("/:id/suggestions", async (c) => {
       sort: {
         lastModifiedDate: -1,
       },
-    }
+    },
   );
 
   const prices = await PriceEngine.find({
@@ -2788,7 +1513,7 @@ app.get("/:id/suggestions", async (c) => {
   });
 });
 
-app.get("/:id/age-rating", async (c) => {
+app.get("/age-rating", async (c) => {
   const { id } = c.req.param();
   const single = c.req.query("single");
   const country = c.req.query("country");
@@ -2838,7 +1563,7 @@ app.get("/:id/age-rating", async (c) => {
   if (single) {
     const selectedRating =
       Object.entries(ageRatingsCountries).find(([, rating]) =>
-        rating.includes(selectedCountry)
+        rating.includes(selectedCountry),
       )?.[0] ?? "Generic";
 
     const rating = ageRatings[selectedRating];
@@ -2857,7 +1582,7 @@ app.get("/:id/age-rating", async (c) => {
       200,
       {
         "Cache-Control": "public, max-age=60",
-      }
+      },
     );
   }
 
@@ -2868,7 +1593,7 @@ app.get("/:id/age-rating", async (c) => {
   });
 });
 
-app.get("/:id/giveaways", async (c) => {
+app.get("/giveaways", async (c) => {
   const { id } = c.req.param();
 
   const cacheKey = `giveaways:${id}`;
@@ -2890,7 +1615,7 @@ app.get("/:id/giveaways", async (c) => {
       sort: {
         startDate: -1,
       },
-    }
+    },
   );
 
   await client.set(cacheKey, JSON.stringify(giveaways), "EX", 3600);
@@ -2900,7 +1625,7 @@ app.get("/:id/giveaways", async (c) => {
   });
 });
 
-app.get("/:id/ratings", async (c) => {
+app.get("/ratings", async (c) => {
   const { id } = c.req.param();
 
   const offer = await Offer.findOne({ id });
@@ -2963,7 +1688,7 @@ app.get("/:id/ratings", async (c) => {
   });
 });
 
-app.get("/:id/tops", async (c) => {
+app.get("/tops", async (c) => {
   const { id } = c.req.param();
 
   const cacheKey = `tops:${id}:all`;
@@ -2980,10 +1705,13 @@ app.get("/:id/tops", async (c) => {
     offerId: id,
   });
 
-  const result = positions.reduce((acc, position) => {
-    acc[position.collectionId] = position.position;
-    return acc;
-  }, {} as Record<string, number>);
+  const result = positions.reduce(
+    (acc, position) => {
+      acc[position.collectionId] = position.position;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
 
@@ -2992,7 +1720,7 @@ app.get("/:id/tops", async (c) => {
   });
 });
 
-app.get("/:id/polls", async (c) => {
+app.get("/polls", async (c) => {
   const { id } = c.req.param();
 
   const cacheKey = `polls:${id}`;
@@ -3038,379 +1766,7 @@ app.get("/:id/polls", async (c) => {
   });
 });
 
-app.get("/:id/reviews", epicInfo, async (c) => {
-  const epic = c.var.epic;
-  const session = c.var.session;
-  const { id } = c.req.param();
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 25);
-  const skip = (page - 1) * limit;
-
-  const verifiedFilter = c.req.query("verified");
-
-  const currentUser = session?.user?.email.split("@")[0] ?? epic?.account_id;
-
-  const query: any = {
-    id: id,
-    userId: { $ne: currentUser },
-  };
-
-  if (verifiedFilter === "true") {
-    query.verified = true;
-  } else if (verifiedFilter === "false") {
-    query.verified = false;
-  }
-
-  const reviews = await Review.find(query, undefined, {
-    sort: {
-      createdAt: -1,
-    },
-    limit,
-    skip,
-  });
-
-  const userReview = currentUser
-    ? await Review.findOne({
-        userId: currentUser,
-        id,
-      })
-    : null;
-
-  if (userReview) {
-    reviews.unshift(userReview);
-  }
-
-  if (!reviews) {
-    c.status(200);
-    return c.json({
-      elements: [],
-      page: 1,
-      total: 0,
-      limit,
-    });
-  }
-
-  const users = await db.db
-    .collection("epic")
-    .find({
-      accountId: { $in: reviews.map((r) => r.userId) },
-    })
-    .toArray();
-
-  const result = {
-    elements: reviews.map((r) => {
-      const user = users.find((u) => u.accountId === r.userId);
-      return {
-        ...r.toObject(),
-        user: user ?? null,
-      };
-    }),
-    page,
-    total: await Review.countDocuments(query),
-    limit,
-  };
-
-  return c.json(result, 200, {
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.post("/:id/reviews", epic, async (c) => {
-  const { id } = c.req.param();
-  const body = await c.req.json<
-    Omit<IReview, "id" | "createdAt" | "verified" | "userId">
-  >();
-  const epic = c.var.epic;
-  const session = c.var.session;
-
-  if ((!epic || !epic.account_id) && !session) {
-    c.status(401);
-    return c.json({
-      message: "Unauthorized",
-    });
-  }
-
-  if (!body || !body.rating || !body.title || !body.content) {
-    c.status(400);
-    return c.json({
-      message: "Missing required fields",
-    });
-  }
-
-  // Check if the user already reviewed the product
-  const existingReview = await Review.findOne({
-    userId: session?.user?.email.split("@")[0] ?? epic?.account_id,
-    id,
-  });
-
-  if (existingReview) {
-    c.status(400);
-    return c.json({
-      message: "User already reviewed this product",
-    });
-  }
-
-  const offer = await Offer.findOne({ id });
-
-  if (
-    !offer ||
-    (offer.releaseDate || (offer.effectiveDate as Date)) > new Date()
-  ) {
-    c.status(400);
-    return c.json({
-      message: "Product not released",
-    });
-  }
-
-  const product = await getProduct(id);
-
-  if (!product) {
-    c.status(404);
-    return c.json({
-      message: "Product not found",
-    });
-  }
-
-  const isOwned =
-    session?.user?.email.split("@")[0] ?? epic?.account_id
-      ? await verifyGameOwnership(
-          session?.user?.email.split("@")[0] ?? (epic?.account_id as string),
-          product._id as unknown as string
-        )
-      : false;
-
-  const review: IReview = {
-    id,
-    rating: body.rating,
-    title: body.title,
-    content: body.content,
-    tags: body.tags.slice(0, 5),
-    verified: isOwned,
-    userId: (session?.user?.email.split("@")[0] ?? epic?.account_id) as string,
-    createdAt: new Date(),
-    recommended: body.recommended,
-    updatedAt: new Date(),
-  };
-
-  await Review.create(review);
-
-  return c.json(
-    {
-      status: "ok",
-    },
-    201
-  );
-});
-
-app.patch("/:id/reviews", epic, async (c) => {
-  const { id } = c.req.param();
-  const body = await c.req.json<Omit<IReview, "id" | "createdAt" | "userId">>();
-  const epic = c.var.epic;
-  const session = c.var.session;
-
-  if ((!epic || !epic.account_id) && !session) {
-    c.status(401);
-    return c.json({
-      message: "Unauthorized",
-    });
-  }
-
-  if (!body || !body.rating || !body.title || !body.content) {
-    c.status(400);
-    return c.json({
-      message: "Missing required fields",
-    });
-  }
-
-  const product = await getProduct(id);
-
-  if (!product) {
-    c.status(404);
-    return c.json({
-      message: "Product not found",
-    });
-  }
-
-  const isOwned = ((session?.user?.email.split("@")[0] ??
-    epic?.account_id) as string)
-    ? await verifyGameOwnership(
-        (session?.user?.email.split("@")[0] ?? epic?.account_id) as string,
-        product._id as unknown as string
-      )
-    : false;
-
-  const oldReview = await Review.findOne({
-    userId: (session?.user?.email.split("@")[0] ?? epic?.account_id) as string,
-    id,
-  });
-
-  if (!oldReview) {
-    c.status(404);
-    return c.json({
-      message: "Review not found",
-    });
-  }
-
-  const review: Omit<IReview, "id" | "createdAt" | "userId"> = {
-    rating: body.rating,
-    title: body.title,
-    content: body.content,
-    tags: body.tags.slice(0, 5),
-    verified: isOwned,
-    recommended: body.recommended,
-    updatedAt: new Date(),
-    editions: [
-      ...(oldReview.editions || []),
-      {
-        rating: oldReview.rating,
-        title: oldReview.title,
-        content: oldReview.content,
-        tags: oldReview.tags,
-        recommended: oldReview.recommended,
-        createdAt: oldReview.updatedAt,
-      },
-    ],
-  };
-
-  await Review.findOneAndUpdate(
-    {
-      userId: (session?.user?.email.split("@")[0] ??
-        epic?.account_id) as string,
-      id,
-    },
-    review
-  );
-
-  return c.json(
-    {
-      status: "ok",
-    },
-    200
-  );
-});
-
-app.delete("/:id/reviews", epic, async (c) => {
-  const { id } = c.req.param();
-  const epic = c.var.epic;
-  const session = c.var.session;
-
-  if ((!epic || !epic.account_id) && !session) {
-    c.status(401);
-    return c.json({
-      message: "Unauthorized",
-    });
-  }
-  const review = await Review.findOne({
-    userId: (session?.user?.email.split("@")[0] ?? epic?.account_id) as string,
-    id,
-  });
-
-  if (!review) {
-    c.status(404);
-    return c.json({
-      message: "Review not found",
-    });
-  }
-
-  await Review.deleteOne({
-    userId: (session?.user?.email.split("@")[0] ?? epic?.account_id) as string,
-    id,
-  });
-
-  return c.json(
-    {
-      status: "ok",
-    },
-    200
-  );
-});
-
-type ReviewSummary = {
-  overallScore: number;
-  recommendedPercentage: number;
-  notRecommendedPercentage: number;
-  totalReviews: number;
-};
-
-app.get("/:id/reviews-summary", async (c) => {
-  const { id } = c.req.param();
-  const verifiedFilter = c.req.query("verified");
-
-  const cacheKey = `reviews-summary:${id}:${verifiedFilter}`;
-
-  const cached = await client.get(cacheKey);
-
-  if (cached) {
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  const query: any = { id };
-
-  if (verifiedFilter === "true") {
-    query.verified = true;
-  } else if (verifiedFilter === "false") {
-    query.verified = false;
-  }
-
-  const reviews = await Review.find(query);
-
-  if (!reviews || reviews.length === 0) {
-    c.status(200);
-    return c.json({
-      totalReviews: 0,
-      averageRating: 0,
-      recommendedPercentage: 0,
-      notRecommendedPercentage: 0,
-    });
-  }
-
-  const totalReviews = reviews.length;
-  const averageRating =
-    reviews.reduce((acc, r) => acc + r.rating, 0) / totalReviews;
-  const recommendedPercentage =
-    reviews.filter((r) => r.recommended).length / totalReviews;
-  const notRecommendedPercentage =
-    reviews.filter((r) => !r.recommended).length / totalReviews;
-
-  const summary: ReviewSummary = {
-    overallScore: averageRating,
-    recommendedPercentage,
-    notRecommendedPercentage,
-    totalReviews,
-  };
-
-  await client.set(cacheKey, JSON.stringify(summary), "EX", 3600);
-
-  return c.json(summary, 200, {
-    "Cache-Control": "public, max-age=60",
-  });
-});
-
-app.get("/:id/reviews/permissions", epic, async (c) => {
-  const { id } = c.req.param();
-  const epic = c.var.epic;
-  const session = c.var.session;
-
-  if ((!epic || !epic.account_id) && !session) {
-    c.status(401);
-    return c.json({
-      message: "Unauthorized",
-    });
-  }
-
-  const existingReview = await Review.findOne({
-    userId: session?.user?.email.split("@")[0] ?? epic?.account_id,
-    id,
-  });
-
-  return c.json({
-    canReview: !existingReview,
-  });
-});
-
-app.get("/:id/ownership", epic, async (c) => {
+app.get("/ownership", epic, async (c) => {
   const { id } = c.req.param();
   const epic = c.var.epic;
   const session = c.var.session;
@@ -3432,10 +1788,10 @@ app.get("/:id/ownership", epic, async (c) => {
   }
 
   const isOwned =
-    session?.user?.email.split("@")[0] ?? epic?.account_id
+    (session?.user?.email.split("@")[0] ?? epic?.account_id)
       ? await verifyGameOwnership(
           session?.user?.email.split("@")[0] ?? (epic?.account_id as string),
-          product._id as unknown as string
+          product._id as unknown as string,
         )
       : false;
 
@@ -3444,7 +1800,7 @@ app.get("/:id/ownership", epic, async (c) => {
   });
 });
 
-app.get("/:id/hltb", async (c) => {
+app.get("/hltb", async (c) => {
   const { id } = c.req.param();
 
   if (!id) {
@@ -3454,7 +1810,7 @@ app.get("/:id/hltb", async (c) => {
     });
   }
 
-  const start = new Date();
+  const _start = new Date();
 
   const cacheKey = `hltb:${id}`;
   const cached = await client.get(cacheKey);
@@ -3485,7 +1841,7 @@ app.get("/:id/hltb", async (c) => {
       },
       {
         status: 404,
-      }
+      },
     );
   }
 
@@ -3496,7 +1852,7 @@ app.get("/:id/hltb", async (c) => {
   });
 });
 
-app.get("/:id/collection", async (c) => {
+app.get("/collection", async (c) => {
   const { id } = c.req.param();
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -3505,7 +1861,7 @@ app.get("/:id/collection", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -3526,7 +1882,7 @@ app.get("/:id/collection", async (c) => {
 
   const { categories, customAttributes } = offer;
 
-  if (!categories || !(categories.findIndex((c) => c === "collections") > -1)) {
+  if (!categories || !(categories.indexOf("collections") > -1)) {
     c.status(404);
     return c.json({
       message: "Selected offer does not have a collection",
@@ -3583,7 +1939,7 @@ app.get("/:id/collection", async (c) => {
   });
 });
 
-app.get("/:id/collections/:collection", async (c) => {
+app.get("/collections/:collection", async (c) => {
   const { id, collection } = c.req.param();
 
   const offer = await Offer.findOne({ id });
@@ -3616,7 +1972,7 @@ type BUNDLE_RESPONSE = {
   totalPrice: PriceType;
 };
 
-app.get("/:id/bundle", async (c) => {
+app.get("/bundle", async (c) => {
   const { id } = c.req.param();
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -3625,7 +1981,7 @@ app.get("/:id/bundle", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -3752,7 +2108,7 @@ app.get("/:id/bundle", async (c) => {
           payoutCurrencyExchangeRate: 1,
         },
         appliedRules: [] as any[],
-      }
+      },
     ),
     // @ts-expect-error
     bundlePrice: mainPrice,
@@ -3765,7 +2121,7 @@ app.get("/:id/bundle", async (c) => {
   });
 });
 
-app.get("/:id/in-bundle", async (c) => {
+app.get("/in-bundle", async (c) => {
   const { id } = c.req.param();
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -3774,7 +2130,7 @@ app.get("/:id/in-bundle", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -3822,7 +2178,7 @@ app.get("/:id/in-bundle", async (c) => {
         ...orderOffersObject(b),
         price: bp ?? null,
       };
-    })
+    }),
   );
 
   await client.set(cacheKey, JSON.stringify(bundles), "EX", 3600);
@@ -3832,7 +2188,7 @@ app.get("/:id/in-bundle", async (c) => {
   });
 });
 
-app.get("/:id/has-prepurchase", async (c) => {
+app.get("/has-prepurchase", async (c) => {
   const { id } = c.req.param();
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -3841,7 +2197,7 @@ app.get("/:id/has-prepurchase", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -3888,7 +2244,7 @@ app.get("/:id/has-prepurchase", async (c) => {
       200,
       {
         "Cache-Control": "public, max-age=60",
-      }
+      },
     );
   }
 
@@ -3912,7 +2268,7 @@ app.get("/:id/has-prepurchase", async (c) => {
   });
 });
 
-app.get("/:id/has-regular", async (c) => {
+app.get("/has-regular", async (c) => {
   const { id } = c.req.param();
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -3921,7 +2277,7 @@ app.get("/:id/has-regular", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -3980,7 +2336,7 @@ app.get("/:id/has-regular", async (c) => {
       200,
       {
         "Cache-Control": "public, max-age=60",
-      }
+      },
     );
   }
 
@@ -4004,7 +2360,7 @@ app.get("/:id/has-regular", async (c) => {
   });
 });
 
-app.get("/:id/genres", async (c) => {
+app.get("/genres", async (c) => {
   const { id } = c.req.param();
 
   const offer = await Offer.findOne({ id });
@@ -4019,88 +2375,13 @@ app.get("/:id/genres", async (c) => {
   });
 
   const result = offer.tags.filter((tag) =>
-    genres?.map((genre) => genre?.id).includes(tag?.id)
+    genres?.map((genre) => genre?.id).includes(tag?.id),
   );
 
   return c.json(result);
 });
 
-app.get("/:id/price-stats", async (c) => {
-  const { id } = c.req.param();
-  const country = c.req.query("country");
-  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
-
-  const selectedCountry = country ?? cookieCountry ?? "US";
-
-  const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
-  );
-
-  if (!region) {
-    c.status(404);
-    return c.json({
-      message: "Country not found",
-    });
-  }
-
-  const offer = await Offer.findOne({ id });
-
-  if (!offer) {
-    c.status(404);
-    return c.json({
-      message: "Offer not found",
-    });
-  }
-
-  const [currentPrice, lowestPrice, lastDiscountPrice] = await Promise.all([
-    PriceEngine.findOne(
-      {
-        offerId: id,
-        region,
-      },
-      undefined,
-      {
-        sort: {
-          updatedAt: -1,
-        },
-      }
-    ),
-    PriceEngineHistorical.findOne(
-      {
-        offerId: id,
-        region,
-        "price.discount": { $gt: 0 },
-      },
-      undefined,
-      {
-        sort: {
-          "price.discountPrice": 1,
-        },
-      }
-    ),
-    PriceEngineHistorical.findOne(
-      {
-        offerId: id,
-        region,
-        "price.discount": { $gt: 0 },
-      },
-      undefined,
-      {
-        sort: {
-          updatedAt: -1,
-        },
-      }
-    ),
-  ]);
-
-  return c.json({
-    current: currentPrice,
-    lowest: lowestPrice,
-    lastDiscount: lastDiscountPrice,
-  });
-});
-
-app.get("/:id/technologies", async (c) => {
+app.get("/technologies", async (c) => {
   const { id } = c.req.param();
 
   const offer = await Offer.findOne({ id });
@@ -4172,121 +2453,25 @@ app.get("/:id/technologies", async (c) => {
   const technologies = latestBuilds
     .flatMap((b) => b.technologies)
     .filter(Boolean)
-    .reduce((acc, tech) => {
-      if (
-        !acc.find(
-          (a: { section: string; technology: string }) =>
-            a.technology === tech.technology
-        )
-      ) {
-        acc.push(tech);
-      }
-      return acc;
-    }, [] as { section: string; technology: string }[]);
+    .reduce(
+      (acc, tech) => {
+        if (
+          !acc.find(
+            (a: { section: string; technology: string }) =>
+              a.technology === tech.technology,
+          )
+        ) {
+          acc.push(tech);
+        }
+        return acc;
+      },
+      [] as { section: string; technology: string }[],
+    );
 
   return c.json(technologies);
 });
 
-app.get("/:id/builds", async (c) => {
-  const { id } = c.req.param();
-
-  const offer = await Offer.findOne({ id });
-
-  if (!offer) {
-    return c.json({ error: "Offer not found" }, 404);
-  }
-
-  const itemsSpecified = offer.items.map((item) => item.id);
-
-  const subItems = await getOfferSubItems({
-    _id: id,
-  });
-
-  const items = await Item.find({
-    $or: [
-      {
-        id: {
-          $in: [
-            ...itemsSpecified,
-            ...subItems.flatMap((i) => i.subItems.map((s) => s.id)),
-          ],
-        },
-      },
-      { linkedOffers: id },
-    ],
-  });
-
-  const assets = await Asset.find({
-    itemId: { $in: items.map((i) => i.id) },
-  });
-
-  const builds = await db.db
-    .collection<{
-      appName: string;
-      labelName: string;
-      buildVersion: string;
-      hash: string;
-      metadata: {
-        installationPoolId: string;
-      };
-      createdAt: {
-        $date: string;
-      };
-      updatedAt: {
-        $date: string;
-      };
-      technologies: Array<{
-        section: string;
-        technology: string;
-      }>;
-      downloadSizeBytes: number;
-      installedSizeBytes: number;
-    }>("builds")
-    .find({
-      appName: { $in: assets.map((a) => a.artifactId) },
-    })
-    .toArray();
-
-  return c.json(builds);
-});
-
-app.get("/:id/assets", async (c) => {
-  const { id } = c.req.param();
-
-  const offer = await Offer.findOne({ id });
-
-  if (!offer) {
-    return c.json({ error: "Offer not found" }, 404);
-  }
-
-  const itemsSpecified = offer.items.map((item) => item.id);
-
-  const subItems = await getOfferSubItems({
-    _id: id,
-  });
-
-  const items = await Item.find({
-    $or: [
-      {
-        id: {
-          $in: [
-            ...itemsSpecified,
-            ...subItems.flatMap((i) => i.subItems.map((s) => s.id)),
-          ],
-        },
-      },
-      { linkedOffers: id },
-    ],
-  });
-
-  const assets = await Asset.find({
-    itemId: { $in: items.map((i) => i.id) },
-  });
-
-  return c.json(assets);
-});
-
-app.get("/:id/builds", async (c) => {
+app.get("/builds", async (c) => {
   const { id } = c.req.param();
 
   const cacheKey = `offer:builds:${id}`;
@@ -4353,7 +2538,7 @@ app.get("/:id/builds", async (c) => {
   });
 });
 
-app.get("/:id/igdb", async (c) => {
+app.get("/igdb", async (c) => {
   const { id } = c.req.param();
 
   const igdb = await db.db.collection("igdb").findOne({
@@ -4367,7 +2552,7 @@ app.get("/:id/igdb", async (c) => {
   return c.json(igdb);
 });
 
-app.get("/:id/overview", async (c) => {
+app.get("/overview", async (c) => {
   const { id } = c.req.param();
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -4375,7 +2560,7 @@ app.get("/:id/overview", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -4462,7 +2647,7 @@ app.get("/:id/overview", async (c) => {
   if (sandboxData && "ageGatings" in sandboxData) {
     const selectedRating =
       Object.entries(ageRatingsCountries).find(([, rating]) =>
-        rating.includes(selectedCountry)
+        rating.includes(selectedCountry),
       )?.[0] ?? "Generic";
 
     const ageGatings = sandboxData.ageGatings as Record<string, unknown>;
@@ -4510,7 +2695,7 @@ app.get("/:id/overview", async (c) => {
   // Filter genres from offer tags
   const genresData = genres.status === "fulfilled" ? genres.value : [];
   const offerGenres = offer.tags.filter((tag) =>
-    genresData?.map((genre) => genre?.id).includes(tag?.id)
+    genresData?.map((genre) => genre?.id).includes(tag?.id),
   );
 
   // Combine all data
@@ -4521,7 +2706,7 @@ app.get("/:id/overview", async (c) => {
         offer.customAttributes as unknown as Array<{
           key: string;
           value: string;
-        }>
+        }>,
       ),
     },
     price: price.status === "fulfilled" ? price.value : null,
@@ -4539,7 +2724,7 @@ app.get("/:id/overview", async (c) => {
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
-    "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
+    "Server-Timing": `db;dur=${Date.now() - start.getTime()}`,
   });
 });
 

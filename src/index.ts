@@ -4,7 +4,6 @@ import chalk from "chalk";
 import { Routes } from "discord-api-types/v10";
 import { config } from "dotenv";
 import { Hono } from "hono";
-import { rateLimiter } from "hono-rate-limiter";
 import { getCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import { inspectRoutes } from "hono/dev";
@@ -16,33 +15,6 @@ import client from "./clients/redis.js";
 import { db } from "./db/index.js";
 import { server } from "./graphql/index.js";
 import { honoMiddleware } from "./middlewares/apollo.js";
-import AccountsRoute from "./routes/accounts.js";
-import AdminRoute from "./routes/admin.js";
-import AssetsRoute from "./routes/assets.js";
-import AuthRoute, { epic, type LauncherAuthTokens } from "./routes/auth.js";
-import BuildsRoute from "./routes/builds.js";
-import CollectionsRoute from "./routes/collections.js";
-import FreeGamesRoute from "./routes/free-games.js";
-import GameAwardsRoute from "./routes/game-awards.js";
-import ItemsRoute from "./routes/items.js";
-import LauncherRoute from "./routes/launcher.js";
-import MultisearchRoute from "./routes/multisearch.js";
-import OffersRoute from "./routes/offers.js";
-import FranchisesRoute from "./routes/franchises.js";
-import ProfilesRoute from "./routes/profiles.js";
-import PromotionsRoute from "./routes/promotions.js";
-import PushRoute from "./routes/push.js";
-import SandboxRoute from "./routes/sandbox.js";
-import SearchRoute from "./routes/search.js";
-import SellersRoute from "./routes/sellers.js";
-import StatsRoute from "./routes/stats.js";
-import UsersServiceRoute from "./routes/users-service.js";
-import UsersRoute from "./routes/users.js";
-import { attributesToObject } from "./utils/attributes-to-object.js";
-import { countries, regions } from "./utils/countries.js";
-import { getFeaturedGames } from "./utils/get-featured-games.js";
-import { consola } from "./utils/logger.js";
-import { orderOffersObject } from "./utils/order-offers-object.js";
 import {
   Asset,
   Changelog,
@@ -52,10 +24,36 @@ import {
   type OfferType,
   PriceEngine,
   type PriceEngineType as PriceType,
-  Seller,
   TagModel,
   Tags,
 } from "./models/index.js";
+import AccountsRoute from "./routes/accounts.js";
+import AdminRoute from "./routes/admin.js";
+import AssetsRoute from "./routes/assets.js";
+import AuthRoute, { epic, type LauncherAuthTokens } from "./routes/auth.js";
+import BuildsRoute from "./routes/builds.js";
+import CollectionsRoute from "./routes/collections.js";
+import FranchisesRoute from "./routes/franchises.js";
+import FreeGamesRoute from "./routes/free-games.js";
+import GameAwardsRoute from "./routes/game-awards.js";
+import ItemsRoute from "./routes/items.js";
+import LauncherRoute from "./routes/launcher.js";
+import MultisearchRoute from "./routes/multisearch.js";
+import OffersRoute from "./routes/offers/index.js";
+import ProfilesRoute from "./routes/profiles.js";
+import PromotionsRoute from "./routes/promotions.js";
+import PushRoute from "./routes/push.js";
+import SandboxRoute from "./routes/sandbox.js";
+import SearchRoute from "./routes/search.js";
+import SellersRoute from "./routes/sellers.js";
+import StatsRoute from "./routes/stats.js";
+import UsersRoute from "./routes/users.js";
+import UsersServiceRoute from "./routes/users-service.js";
+import { attributesToObject } from "./utils/attributes-to-object.js";
+import { countries, regions } from "./utils/countries.js";
+import { getFeaturedGames } from "./utils/get-featured-games.js";
+import { consola } from "./utils/logger.js";
+import { orderOffersObject } from "./utils/order-offers-object.js";
 
 config();
 
@@ -137,7 +135,7 @@ app.get("/health", async (c) => {
   try {
     await withTimeout(client.ping(), 5_000);
     redisLatency = Date.now() - startRedis;
-  } catch (e) {
+  } catch (_e) {
     redisStatus = "error";
     redisLatency = null;
   }
@@ -148,7 +146,7 @@ app.get("/health", async (c) => {
   try {
     await withTimeout(db.db.command({ ping: 1 }), 5_000);
     mongoLatency = Date.now() - startMongo;
-  } catch (e) {
+  } catch (_e) {
     mongoStatus = "error";
     mongoLatency = null;
   }
@@ -696,7 +694,7 @@ app.get("/autocomplete", async (c) => {
     });
   }
 
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 10);
+  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 10);
 
   const cacheKey = `autocomplete:${Buffer.from(query).toString(
     "base64",
@@ -761,7 +759,7 @@ app.get("/autocomplete", async (c) => {
   }
 
   return c.json(response, 200, {
-    "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
+    "Server-Timing": `db;dur=${Date.now() - start.getTime()}`,
   });
 });
 
@@ -787,8 +785,8 @@ app.get("/sales", async (c) => {
     });
   }
 
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 30);
+  const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
+  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 30);
   const skip = (page - 1) * limit;
 
   const cacheKey = `sales:${region}:${page}:${limit}:v1.3`;
@@ -868,7 +866,7 @@ app.get("/sales", async (c) => {
 
   return c.json(res, 200, {
     "Cache-Control": "public, max-age=0",
-    "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
+    "Server-Timing": `db;dur=${Date.now() - start.getTime()}`,
   });
 });
 
@@ -913,8 +911,8 @@ app.get("/base-game/:namespace", async (c) => {
 });
 
 app.get("/changelog", async (c) => {
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 50);
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
+  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 50);
+  const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
 
   const changelist = await Changelog.find({}, undefined, {
@@ -967,8 +965,11 @@ app.get("/regions", async (c) => {
 app.get("/changelist", async (ctx) => {
   const start = Date.now();
 
-  const limit = Math.min(Number.parseInt(ctx.req.query("limit") || "10"), 50);
-  const page = Math.max(Number.parseInt(ctx.req.query("page") || "1"), 1);
+  const limit = Math.min(
+    Number.parseInt(ctx.req.query("limit") || "10", 10),
+    50,
+  );
+  const page = Math.max(Number.parseInt(ctx.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
 
   const cacheKey = `changelist:${page}:${limit}`;
@@ -1172,7 +1173,7 @@ app.options("/ping", async (c) => {
   return c.json({ message: "pong" });
 });
 
-const offerTypeRanks: {
+const _offerTypeRanks: {
   [key: string]: number;
 } = {
   BASE_GAME: 0,
@@ -1194,7 +1195,7 @@ const offerTypeRanks: {
   undefined: 16,
 };
 
-const PAGE_SIZE = 500;
+const _PAGE_SIZE = 500;
 
 async function refreshChangelogIndex() {
   console.log(

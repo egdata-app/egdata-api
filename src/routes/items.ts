@@ -154,6 +154,111 @@ app.post("/bulk", async (c) => {
     );
 });
 
+app.post("/bulk/offers", async (c) => {
+    const batch = (await c.req.json().catch((e) => {
+        console.error(e);
+        return {
+            items: [],
+        };
+    })) as BulkBody;
+
+    const ids = batch.items
+        .filter((id) => typeof id === "string" && id.trim().length > 0)
+        .map((id) => id.trim())
+        .slice(0, 100);
+
+    if (ids.length === 0) {
+        return c.json({});
+    }
+
+    const directOffers = await Offer.find({
+        "items.id": { $in: ids },
+    });
+
+    const subItems = await db.db
+        .collection<{ _id: string; subItems: Array<{ id: string }> }>(
+            "offersubitems",
+        )
+        .find(
+            {
+                "subItems.id": { $in: ids },
+            },
+            {
+                projection: {
+                    _id: 1,
+                    subItems: 1,
+                },
+            },
+        )
+        .toArray();
+
+    const subItemOfferIds = subItems.map((s) => s._id);
+    const subItemOffers =
+        subItemOfferIds.length === 0
+            ? []
+            : await Offer.find({
+                  id: { $in: subItemOfferIds },
+              });
+
+    const subItemOffersById = new Map(
+        subItemOffers.map((offer) => [offer.id, offer]),
+    );
+
+    const candidatesByItem = new Map<string, Array<Record<string, any>>>();
+    const addCandidate = (itemId: string, offer: Record<string, any>) => {
+        const candidates = candidatesByItem.get(itemId) ?? [];
+        candidates.push(offer);
+        candidatesByItem.set(itemId, candidates);
+    };
+
+    for (const offer of directOffers) {
+        for (const item of offer.items ?? []) {
+            if (ids.includes(item.id)) {
+                addCandidate(item.id, offer);
+            }
+        }
+    }
+
+    for (const subItem of subItems) {
+        const offer = subItemOffersById.get(subItem._id);
+        if (!offer) continue;
+        for (const item of subItem.subItems) {
+            if (ids.includes(item.id)) {
+                addCandidate(item.id, offer);
+            }
+        }
+    }
+
+    const offerTypeRank: Record<string, number> = {
+        BASE_GAME: 0,
+        DLC: 1,
+        ADD_ON: 2,
+        ADDON: 2,
+        EDITION: 3,
+        BUNDLE: 4,
+        CONSUMABLE: 5,
+    };
+
+    const rankOffer = (offer: Record<string, any>) => {
+        const type = `${offer.offerType ?? ""}`.toUpperCase();
+        const typeRank = offerTypeRank[type] ?? 99;
+        const prePurchaseRank = offer.prePurchase === true ? 1 : 0;
+        return prePurchaseRank * 100 + typeRank;
+    };
+
+    const result = Object.fromEntries(
+        ids.map((id) => {
+            const candidates = candidatesByItem.get(id) ?? [];
+            candidates.sort((a, b) => rankOffer(a) - rankOffer(b));
+            return [id, candidates[0] ?? null];
+        }),
+    );
+
+    return c.json(result, 200, {
+        "Cache-Control": "public, max-age=60",
+    });
+});
+
 app.get("/:id", async (c) => {
     const { id } = c.req.param();
     const item = await Item.findOne({
