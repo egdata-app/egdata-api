@@ -1,13 +1,10 @@
 overrides:
   "graphql": "16.11.0"
-onlyBuiltDependencies:
-  - "@apollo/protobufjs"
-  - "@biomejs/biome"
-  - esbuild
-  - heapdump
-  - sharp
-ignoredBuiltDependencies:
-  - core-js
-  - esbuild
-  - msgpackr-extract
-  - protobufjs
+allowBuilds:
+  "@apollo/protobufjs": true
+  core-js: false
+  esbuild: true
+  heapdump: true
+  msgpackr-extract: false
+  protobufjs: false
+  sharp: true
