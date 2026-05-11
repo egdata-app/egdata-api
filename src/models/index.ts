@@ -65,6 +65,7 @@ export const AchievementSet = createMongoModel<Document>(() =>
 );
 export const Asset = createMongoModel<Document>(() => db.db.collection("assets"));
 export const Bundles = createMongoModel<Document>(() => db.db.collection("bundles"));
+export const Build = createMongoModel<Document>(() => db.db.collection("builds"));
 export const Changelog = createMongoModel<ChangelogType & Document>(() =>
   db.db.collection("changelogs_v2"),
 );

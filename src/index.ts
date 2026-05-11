@@ -14,6 +14,7 @@ import { gaClient } from "./clients/ga.js";
 import client from "./clients/redis.js";
 import { db } from "./db/index.js";
 import { server } from "./graphql/index.js";
+import { createLoaders } from "./graphql/loaders.js";
 import { honoMiddleware } from "./middlewares/apollo.js";
 import {
   Asset,
@@ -108,6 +109,7 @@ app.use(
     context: async () => ({
       db: db.db,
       logger: consola,
+      loaders: createLoaders(db.db),
     }),
   }),
 );
