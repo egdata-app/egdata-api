@@ -89,22 +89,5 @@
   },
   "trigger.dev": {
     "endpointId": "egdata-api"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@apollo/protobufjs",
-      "@biomejs/biome",
-      "esbuild",
-      "heapdump",
-      "sharp"
-    ],
-    "ignoredBuiltDependencies": [
-      "core-js",
-      "msgpackr-extract",
-      "protobufjs"
-    ],
-    "overrides": {
-      "graphql": "16.11.0"
-    }
   }
 }
