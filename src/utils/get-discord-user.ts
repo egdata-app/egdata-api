@@ -1,9 +1,12 @@
 export const getDiscordUser = async (token: string) => {
-  const discordResponse = await fetch("https://discord.com/api/v10/oauth2/@me", {
-    headers: {
-      Authorization: `Bearer ${token}`,
+  const discordResponse = await fetch(
+    "https://discord.com/api/v10/oauth2/@me",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     },
-  });
+  );
 
   if (!discordResponse.ok) {
     throw new Error(`Failed to fetch Discord user: ${discordResponse.status}`);

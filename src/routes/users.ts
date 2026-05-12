@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import * as jwt from "jsonwebtoken";
-import { type IUser, User } from "../models/index.js";
 import jwkToPem from "jwk-to-pem";
 import { epicStoreClient } from "../clients/epic.js";
+import { type IUser, User } from "../models/index.js";
 
 const app = new Hono();
 
@@ -29,7 +29,9 @@ async function getGooglePublicKey(kid: string) {
     throw new Error(`Failed to fetch Google certs: ${response.status}`);
   }
 
-  const certs = (await response.json()) as { keys: Array<{ kid: string } & Record<string, unknown>> };
+  const certs = (await response.json()) as {
+    keys: Array<{ kid: string } & Record<string, unknown>>;
+  };
   const key = certs.keys.find((key) => key.kid === kid);
 
   if (!key) {
@@ -44,11 +46,14 @@ app.get("/", (c) => {
 });
 
 async function getDiscordOAuthMe(accessToken: string) {
-  const discordResponse = await fetch("https://discord.com/api/v10/oauth2/@me", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
+  const discordResponse = await fetch(
+    "https://discord.com/api/v10/oauth2/@me",
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     },
-  });
+  );
 
   if (!discordResponse.ok) {
     throw new Error(`Discord API request failed: ${discordResponse.status}`);
@@ -373,6 +378,5 @@ app.get("/check-epic", async (c) => {
     return c.json({ error: "Failed to check Epic account" }, 400);
   }
 });
-
 
 export default app;

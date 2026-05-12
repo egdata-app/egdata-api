@@ -62,5 +62,5 @@ export class GaClient {
 
 export const gaClient = new GaClient({
   id: "G-HB0VNVBEDQ",
-  secret: process.env["GA_SECRET"] as string,
+  secret: process.env.GA_SECRET as string,
 });
