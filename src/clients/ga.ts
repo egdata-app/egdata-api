@@ -1,5 +1,3 @@
-import axios, { AxiosInstance } from "axios";
-
 interface GaOptions {
   id: string;
   secret: string;
@@ -20,20 +18,7 @@ interface TrackOpts {
 }
 
 export class GaClient {
-  client: AxiosInstance;
-
-  constructor(private options: GaOptions) {
-    this.client = axios.create({
-      baseURL: "https://www.google-analytics.com/mp",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      params: {
-        measurement_id: options.id,
-        api_secret: options.secret,
-      },
-    });
-  }
+  constructor(private options: GaOptions) {}
 
   async track(opts: TrackOpts) {
     if (!this.options.secret) {
@@ -59,7 +44,17 @@ export class GaClient {
       ],
     };
 
-    await this.client.post("/collect", body).catch((err) => {
+    const url = new URL("https://www.google-analytics.com/mp/collect");
+    url.searchParams.set("measurement_id", this.options.id);
+    url.searchParams.set("api_secret", this.options.secret);
+
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }).catch((err) => {
       console.error(err);
     });
   }

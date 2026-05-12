@@ -1,7 +1,6 @@
 import { Hono } from "hono";
 import * as jwt from "jsonwebtoken";
 import { type IUser, User } from "../models/index.js";
-import axios from "axios";
 import jwkToPem from "jwk-to-pem";
 import { epicStoreClient } from "../clients/epic.js";
 
@@ -24,10 +23,14 @@ interface SimplifiedDiscordUser {
 }
 
 async function getGooglePublicKey(kid: string) {
-  const response = await axios.get(
-    "https://www.googleapis.com/oauth2/v3/certs",
-  );
-  const key = response.data.keys.find((key: any) => key.kid === kid);
+  const response = await fetch("https://www.googleapis.com/oauth2/v3/certs");
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch Google certs: ${response.status}`);
+  }
+
+  const certs = (await response.json()) as { keys: Array<{ kid: string } & Record<string, unknown>> };
+  const key = certs.keys.find((key) => key.kid === kid);
 
   if (!key) {
     throw new Error("Public key not found");
@@ -39,6 +42,37 @@ async function getGooglePublicKey(kid: string) {
 app.get("/", (c) => {
   return c.json({ message: "Hello, World!" });
 });
+
+async function getDiscordOAuthMe(accessToken: string) {
+  const discordResponse = await fetch("https://discord.com/api/v10/oauth2/@me", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!discordResponse.ok) {
+    throw new Error(`Discord API request failed: ${discordResponse.status}`);
+  }
+
+  const discordJson = (await discordResponse.json()) as {
+    user?: {
+      id: string;
+      username?: string;
+      avatar?: string;
+      discriminator?: string;
+      public_flags?: number;
+      flags?: number;
+      banner?: unknown;
+      accent_color?: number;
+      global_name?: string;
+      avatar_decoration_data?: unknown;
+      banner_color?: string;
+      clan?: unknown;
+    };
+  };
+
+  return discordJson.user ?? null;
+}
 
 app.post("/find-or-create", async (c) => {
   const body = await c.req.json<IUser>();
@@ -122,16 +156,7 @@ app.get("/discord", async (c) => {
     const accessToken = token.replace("Bearer ", "");
 
     // Fetch user info from Discord
-    const discordResponse = await axios.get(
-      "https://discord.com/api/v10/oauth2/@me",
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-
-    const discordData = discordResponse.data.user;
+    const discordData = await getDiscordOAuthMe(accessToken);
 
     if (!discordData) {
       console.error("Discord user data not found");
@@ -168,31 +193,7 @@ app.post("/discord", async (c) => {
     const accessToken = token.replace("Bearer ", "");
 
     // Fetch user info from Discord
-    const discordResponse = await axios.get(
-      "https://discord.com/api/v10/oauth2/@me",
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-
-    console.log("Discord response", discordResponse.data);
-
-    const discordData = discordResponse.data.user as {
-      id: string;
-      username: string;
-      avatar: string;
-      discriminator: string;
-      public_flags: number;
-      flags: number;
-      banner: any;
-      accent_color: number;
-      global_name: string;
-      avatar_decoration_data: any;
-      banner_color: string;
-      clan: any;
-    };
+    const discordData = await getDiscordOAuthMe(accessToken);
 
     if (!discordData) {
       return c.json({ error: "User information not found from Discord" }, 404);
@@ -247,16 +248,7 @@ app.put("/epic", async (c) => {
     const accessToken = token.replace("Bearer ", "");
 
     // Fetch user ID from Discord
-    const discordResponse = await axios.get(
-      "https://discord.com/api/v10/oauth2/@me",
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-
-    const discordData = discordResponse.data.user;
+    const discordData = await getDiscordOAuthMe(accessToken);
 
     if (!discordData) {
       console.error("Discord user data not found");
@@ -314,16 +306,7 @@ app.delete("/epic", async (c) => {
     const accessToken = token.replace("Bearer ", "");
 
     // Fetch user ID from Discord
-    const discordResponse = await axios.get(
-      "https://discord.com/api/v10/oauth2/@me",
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-
-    const discordData = discordResponse.data.user;
+    const discordData = await getDiscordOAuthMe(accessToken);
 
     if (!discordData) {
       console.error("Discord user data not found");
