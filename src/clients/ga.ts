@@ -54,9 +54,17 @@ export class GaClient {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-    }).catch((err) => {
-      console.error(err);
-    });
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(
+            `GA track request failed: ${response.status} ${response.statusText}`,
+          );
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 }
 

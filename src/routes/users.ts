@@ -3,6 +3,7 @@ import * as jwt from "jsonwebtoken";
 import jwkToPem from "jwk-to-pem";
 import { epicStoreClient } from "../clients/epic.js";
 import { type IUser, User } from "../models/index.js";
+import { getDiscordUser } from "../utils/get-discord-user.js";
 
 const app = new Hono();
 
@@ -44,40 +45,6 @@ async function getGooglePublicKey(kid: string) {
 app.get("/", (c) => {
   return c.json({ message: "Hello, World!" });
 });
-
-async function getDiscordOAuthMe(accessToken: string) {
-  const discordResponse = await fetch(
-    "https://discord.com/api/v10/oauth2/@me",
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
-  );
-
-  if (!discordResponse.ok) {
-    throw new Error(`Discord API request failed: ${discordResponse.status}`);
-  }
-
-  const discordJson = (await discordResponse.json()) as {
-    user?: {
-      id: string;
-      username?: string;
-      avatar?: string;
-      discriminator?: string;
-      public_flags?: number;
-      flags?: number;
-      banner?: unknown;
-      accent_color?: number;
-      global_name?: string;
-      avatar_decoration_data?: unknown;
-      banner_color?: string;
-      clan?: unknown;
-    };
-  };
-
-  return discordJson.user ?? null;
-}
 
 app.post("/find-or-create", async (c) => {
   const body = await c.req.json<IUser>();
@@ -161,7 +128,7 @@ app.get("/discord", async (c) => {
     const accessToken = token.replace("Bearer ", "");
 
     // Fetch user info from Discord
-    const discordData = await getDiscordOAuthMe(accessToken);
+    const discordData = await getDiscordUser(accessToken);
 
     if (!discordData) {
       console.error("Discord user data not found");
@@ -198,7 +165,7 @@ app.post("/discord", async (c) => {
     const accessToken = token.replace("Bearer ", "");
 
     // Fetch user info from Discord
-    const discordData = await getDiscordOAuthMe(accessToken);
+    const discordData = await getDiscordUser(accessToken);
 
     if (!discordData) {
       return c.json({ error: "User information not found from Discord" }, 404);
@@ -253,7 +220,7 @@ app.put("/epic", async (c) => {
     const accessToken = token.replace("Bearer ", "");
 
     // Fetch user ID from Discord
-    const discordData = await getDiscordOAuthMe(accessToken);
+    const discordData = await getDiscordUser(accessToken);
 
     if (!discordData) {
       console.error("Discord user data not found");
@@ -311,7 +278,7 @@ app.delete("/epic", async (c) => {
     const accessToken = token.replace("Bearer ", "");
 
     // Fetch user ID from Discord
-    const discordData = await getDiscordOAuthMe(accessToken);
+    const discordData = await getDiscordUser(accessToken);
 
     if (!discordData) {
       console.error("Discord user data not found");
