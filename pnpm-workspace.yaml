@@ -1,5 +1,10 @@
 overrides:
   "graphql": "16.11.0"
+  tough-cookie@<=4.1.3: 4.1.3
+  form-data@<=2.5.4: 2.5.4
+  systeminformation@<=5.31.6: 5.31.6
+  zod@<=4.4.0: 4.4.0
+  cjs-module-lexer@<=2.2.0: 2.2.0
 allowBuilds:
   "@apollo/protobufjs": true
   core-js: false
