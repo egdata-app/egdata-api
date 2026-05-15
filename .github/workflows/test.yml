@@ -83,6 +83,9 @@ jobs:
           JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
           MEILISEARCH_API_KEY: ${{ secrets.MEILISEARCH_API_KEY }}
           MEILISEARCH_INSTANCE: ${{ secrets.MEILISEARCH_INSTANCE }}
+          OPENSEARCH_URL: ${{ secrets.OPENSEARCH_URL }}
+          OPENSEARCH_USERNAME: ${{ secrets.OPENSEARCH_USERNAME }}
+          OPENSEARCH_PASSWORD: ${{ secrets.OPENSEARCH_PASSWORD }}
           EPIC_CLIENT_ID: ${{ secrets.EPIC_CLIENT_ID }}
           EPIC_CLIENT_SECRET: ${{ secrets.EPIC_CLIENT_SECRET }}
         run: |
