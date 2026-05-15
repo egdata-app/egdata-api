@@ -40,6 +40,16 @@ jobs:
     needs: lint-typecheck-build
     # Only run when secrets are available (skips on forks).
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'push' }}
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
 
@@ -73,12 +83,11 @@ jobs:
       - name: Run full test suite
         env:
           MONGO_URL: ${{ secrets.MONGO_URL }}
-          REDISHOST: ${{ secrets.REDISHOST }}
-          REDISPORT: ${{ secrets.REDISPORT }}
-          REDISPASSWORD: ${{ secrets.REDISPASSWORD }}
-          REDISUSER: ${{ secrets.REDISUSER }}
-          REDISTLS: ${{ secrets.REDISTLS }}
-          BULL_REDIS_URI: ${{ secrets.BULL_REDIS_URI }}
+          # Redis comes from the `services.redis` sidecar above — no prod
+          # creds needed. BULL_REDIS_URI points to the same instance.
+          REDISHOST: 127.0.0.1
+          REDISPORT: "6379"
+          BULL_REDIS_URI: redis://127.0.0.1:6379
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
           MEILISEARCH_API_KEY: ${{ secrets.MEILISEARCH_API_KEY }}
