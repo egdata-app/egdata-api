@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/health"
+  },
+  "status": 200,
+  "headers": {
+    "content-type": "application/json"
+  },
+  "body": {
+    "status": "ok",
+    "services": {
+      "redis": {
+        "status": "ok",
+        "latency": 1
+      },
+      "mongodb": {
+        "status": "ok",
+        "latency": 1
+      }
+    }
+  },
+  "capturedAt": "2026-05-15T09:17:30.806Z"
+}
