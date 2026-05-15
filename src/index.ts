@@ -76,6 +76,8 @@ const ALLOWED_ORIGINS = [
 
 const app = new Hono();
 
+export { app };
+
 await server
   .start()
   .then(() => {
@@ -1654,4 +1656,10 @@ async function startServer() {
   }
 }
 
-startServer();
+const invokedDirectly =
+  process.argv[1] !== undefined &&
+  import.meta.url === `file://${process.argv[1]}`;
+
+if (invokedDirectly) {
+  startServer();
+}
