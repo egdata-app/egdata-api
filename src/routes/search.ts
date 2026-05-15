@@ -771,8 +771,13 @@ app.get("/changelog", async (c) => {
             artifactId: { $eq: contextId },
           });
 
+          if (!asset?.itemId) {
+            hit.document = null;
+            return hit;
+          }
+
           hit.document = await Item.findOne({
-            id: { $eq: asset?.itemId },
+            id: { $eq: asset.itemId },
           });
         }
 
@@ -837,7 +842,12 @@ app.get("/changelog", async (c) => {
 
           if (contextType === "asset") {
             const asset = await Asset.findOne({ artifactId: { $eq: contextId } });
-            hit.document = await Item.findOne({ id: { $eq: asset?.itemId } });
+            if (!asset?.itemId) {
+              hit.document = null;
+              return hit;
+            }
+
+            hit.document = await Item.findOne({ id: { $eq: asset.itemId } });
           }
 
           if (contextType === "build") {
