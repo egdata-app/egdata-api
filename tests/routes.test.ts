@@ -41,7 +41,12 @@ describe.skipIf(!hasMongo)("route golden snapshots", () => {
         );
       }
 
-      const res = await app.request(entry.path, { method: entry.method });
+      const init: RequestInit = { method: entry.method };
+      if (entry.body !== undefined) {
+        init.headers = { "content-type": "application/json" };
+        init.body = JSON.stringify(entry.body);
+      }
+      const res = await app.request(entry.path, init);
       expect(res.status, `status mismatch for ${entry.path}`).toBe(
         snapshot.status,
       );

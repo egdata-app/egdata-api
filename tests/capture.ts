@@ -8,7 +8,7 @@ const SNAPSHOT_DIR = join(HERE, "__snapshots__");
 const PROD_BASE = process.env.PROD_BASE ?? "https://api.egdata.app";
 
 type Snapshot = {
-  request: { method: string; path: string };
+  request: { method: string; path: string; body?: unknown };
   status: number;
   headers: Record<string, string>;
   body: unknown;
@@ -17,7 +17,12 @@ type Snapshot = {
 
 async function captureOne(entry: (typeof corpus)[number]): Promise<void> {
   const url = `${PROD_BASE}${entry.path}`;
-  const res = await fetch(url, { method: entry.method });
+  const init: RequestInit = { method: entry.method };
+  if (entry.body !== undefined) {
+    init.headers = { "content-type": "application/json" };
+    init.body = JSON.stringify(entry.body);
+  }
+  const res = await fetch(url, init);
 
   const contentType = res.headers.get("content-type") ?? "";
   const body = contentType.includes("application/json")
@@ -25,7 +30,11 @@ async function captureOne(entry: (typeof corpus)[number]): Promise<void> {
     : await res.text();
 
   const snapshot: Snapshot = {
-    request: { method: entry.method, path: entry.path },
+    request: {
+      method: entry.method,
+      path: entry.path,
+      ...(entry.body !== undefined ? { body: entry.body } : {}),
+    },
     status: res.status,
     headers: {
       "content-type": contentType,
