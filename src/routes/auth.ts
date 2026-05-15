@@ -7,7 +7,7 @@ import { ObjectId } from "mongodb";
 import { db } from "../db/index.js";
 import { readFileSync } from "node:fs";
 import { telegramBotService } from "../clients/telegram.js";
-import crypto, { randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import client from "../clients/redis.js";
 import { auth } from "../utils/auth.js";
 import consola from "consola";
@@ -246,7 +246,7 @@ app.get("/", epic, async (c) => {
 
   // Save or create a new 'epic' entry in the database
   const epicEntry = await db.db.collection("epic").findOne({
-    accountId: epic.account_id,
+    accountId: { $eq: epic.account_id },
   });
 
   if (epicEntry) {
@@ -332,7 +332,7 @@ app.post("/avatar", epic, async (c) => {
 
   await db.db.collection("epic").updateOne(
     {
-      accountId: session.user?.email.split("@")[0] ?? epicVar.account_id,
+      accountId: { $eq: session.user?.email.split("@")[0] ?? epicVar.account_id },
     },
     {
       $set: {
@@ -433,7 +433,7 @@ app.post("/persist", epic, async (c) => {
 
   const entry = await db.db.collection("tokens").updateOne(
     {
-      tokenId,
+      tokenId: { $eq: tokenId },
     },
     {
       $set: {
@@ -521,7 +521,7 @@ app.get("/refresh", async (c) => {
     }>("tokens")
     .findOne({
       _id: new ObjectId(id),
-      accountId: decoded.sub,
+      accountId: { $eq: decoded.sub },
     });
 
   if (!token) {
@@ -624,9 +624,7 @@ app.patch("/refresh", async (c) => {
     return c.json({ error: "Missing token" }, 401);
   }
 
-  const actual = crypto.createHash('sha256').update(token).digest();
-  const expected = crypto.createHash('sha256').update(process.env.JWT_SECRET || '').digest();
-  if (!crypto.timingSafeEqual(actual, expected)) {
+  if (token !== process.env.JWT_SECRET) {
     console.error("Invalid token");
     return c.json({ error: "Invalid token" }, 401);
   }
@@ -753,7 +751,7 @@ app.patch("/refresh", async (c) => {
 });
 
 const launcherClient = "34a02cf8f4414e29b15921876da36f9a";
-const launcherSecret = "****76cf";
+const launcherSecret = "daafbccc737745039dffe53d94fc76cf";
 
 export type LauncherAuthTokens = {
   access_token: string;
@@ -789,9 +787,7 @@ app.patch("/refresh-admin", async (c) => {
   if (authorization.startsWith("Bearer ")) {
     const token = authorization.replace("Bearer ", "");
 
-    const actual = crypto.createHash('sha256').update(token).digest();
-    const expected = crypto.createHash('sha256').update(process.env.JWT_SECRET || '').digest();
-    if (!crypto.timingSafeEqual(actual, expected)) {
+    if (token !== process.env.JWT_SECRET) {
       console.error("Invalid JWT_SECRET token");
       return c.json({ error: "Invalid JWT_SECRET token" }, 401);
     }
@@ -947,7 +943,7 @@ app.post("/v2/persist", async (c) => {
     );
 
     const existingEntry = await db.db.collection("epic").findOne({
-      accountId: decoded.sub,
+      accountId: { $eq: decoded.sub },
     });
 
     if (!existingEntry) {
@@ -1032,7 +1028,7 @@ app.get("/v2/refresh", async (c) => {
         accountId: string;
       }>("tokens")
       .findOne({
-        tokenId: egdataJWT.jti,
+        tokenId: { $eq: egdataJWT.jti },
       });
 
     if (!dbtoken) {
@@ -1073,7 +1069,7 @@ app.get("/v2/refresh", async (c) => {
 
       await db.db.collection("tokens").updateOne(
         {
-          tokenId: egdataJWT.jti,
+          tokenId: { $eq: egdataJWT.jti },
         },
         {
           $set: {
@@ -1097,7 +1093,7 @@ app.get("/v2/refresh", async (c) => {
           accountId: string;
         }>("tokens")
         .findOne({
-          tokenId: egdataJWT.jti,
+          tokenId: { $eq: egdataJWT.jti },
         });
     }
 
@@ -1222,7 +1218,7 @@ app.get("/discord/callback", epic, async (c) => {
 
   await db.db.collection("epic").updateOne(
     {
-      accountId: session.user.email.split("@")[0],
+      accountId: { $eq: session.user.email.split("@")[0] },
     },
     {
       $set: {
@@ -1232,7 +1228,7 @@ app.get("/discord/callback", epic, async (c) => {
   );
 
   const isDonor = await db.db.collection("key-codes").findOne({
-    accountId: session.user.email.split("@")[0],
+    accountId: { $eq: session.user.email.split("@")[0] },
   });
 
   if (isDonor) {

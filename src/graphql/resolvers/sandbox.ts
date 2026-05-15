@@ -11,7 +11,7 @@ const resolvers: IResolvers<any, Context> = {
     Query: {
         sandbox: async (_, { id }, context, info) => {
             // Namespace model uses _id for namespace string
-            return Namespace.findOne({ _id: id }).lean();
+            return Namespace.findOne({ _id: { $eq: id } }).lean();
         },
         sandboxes: async (_, { limit = 10, page = 1 }) => {
             const skip = (page - 1) * limit;

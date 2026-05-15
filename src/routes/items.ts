@@ -262,7 +262,7 @@ app.post("/bulk/offers", async (c) => {
 app.get("/:id", async (c) => {
     const { id } = c.req.param();
     const item = await Item.findOne({
-        $or: [{ _id: id }, { id: id }],
+        $or: [{ _id: { $eq: id } }, { id: { $eq: id } }],
     });
 
     if (!item) {
@@ -294,7 +294,7 @@ app.get("/:id/builds", async (c) => {
     const { id } = c.req.param();
 
     const item = await Item.findOne({
-        id,
+        id: { $eq: id },
     });
 
     if (!item) {
@@ -313,8 +313,8 @@ app.get("/:id/builds", async (c) => {
     const assets = await Promise.all(
         builds.map(async (build) => {
             const asset = await Asset.findOne({
-                artifactId: build.appName,
-                platform: build.labelName.split("-")[1],
+                artifactId: { $eq: build.appName },
+                platform: { $eq: build.labelName.split("-")[1] },
             });
 
             return {
@@ -347,7 +347,7 @@ app.get("/:id/changelog", async (c) => {
     }
 
     // First get the item to ensure it exists
-    const item = await Item.findOne({ id });
+    const item = await Item.findOne({ id: { $eq: id } });
     if (!item) {
         c.status(404);
         return c.json({

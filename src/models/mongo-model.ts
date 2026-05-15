@@ -211,14 +211,14 @@ export const createMongoModel = <T extends Document>(
       if (ObjectId.isValid(id)) {
         return this.findOne(
           {
-            $or: [{ _id: new ObjectId(id) }, { _id: id }],
+            $or: [{ _id: new ObjectId(id) }, { _id: { $eq: id } }],
           } as Filter<T>,
           projection,
           options,
         );
       }
 
-      return this.findOne({ _id: id } as Filter<T>, projection, options);
+      return this.findOne({ _id: { $eq: id } } as Filter<T>, projection, options);
     },
 
     exists(filter: Filter<T>) {

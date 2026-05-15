@@ -374,14 +374,14 @@ app.get("/:id", async (c) => {
   try {
     const profile = await epicStoreClient.getUser(id);
     const dbProfile = await db.db.collection("epic").findOne({
-      accountId: id,
+      accountId: { $eq: id },
     });
 
     if (dbProfile && !dbProfile.creationDate) {
       dbProfile.creationDate = new Date();
       await db.db.collection("epic").updateOne(
         {
-          accountId: id,
+          accountId: { $eq: id },
         },
         {
           $set: {
@@ -412,7 +412,7 @@ app.get("/:id", async (c) => {
 
       await Promise.all(
         savedPlayerAchievements.map(async (entry) => {
-          const sandbox = await Sandbox.findOne({ _id: entry.sandboxId });
+          const sandbox = await Sandbox.findOne({ _id: { $eq: entry.sandboxId } });
 
           if (!sandbox) {
             console.error("Sandbox not found", entry.sandboxId);
@@ -422,9 +422,9 @@ app.get("/:id", async (c) => {
           const [product, offer, achievementsSets] = await Promise.all([
             db.db
               .collection("products")
-              .findOne({ _id: sandbox?.parent as unknown as Id }),
+              .findOne({ _id: { $eq: sandbox?.parent as unknown as Id } }),
             Offer.findOne({
-              namespace: entry.sandboxId,
+              namespace: { $eq: entry.sandboxId },
               offerType: "BASE_GAME",
             }),
             AchievementSet.find({
@@ -1015,12 +1015,12 @@ app.get("/:id/information", async (c) => {
     // Fetch user profile from the database (no caching)
     const [dbProfile, donations] = await Promise.all([
       db.db.collection("epic").findOne({
-        accountId: id,
+        accountId: { $eq: id },
       }),
       db.db
         .collection("key-codes")
         .find({
-          accountId: id,
+          accountId: { $eq: id },
         })
         .toArray(),
     ]);
@@ -1029,7 +1029,7 @@ app.get("/:id/information", async (c) => {
       dbProfile.creationDate = new Date();
       await db.db.collection("epic").updateOne(
         {
-          accountId: id,
+          accountId: { $eq: id },
         },
         {
           $set: {
@@ -1435,7 +1435,7 @@ app.get("/:id/random-game", async (c) => {
       // Override random logic: fetch the achievement for the provided sandbox
       savedPlayerAchievement = await db.db
         .collection("player-achievements")
-        .findOne({ epicAccountId: id, sandboxId: sandbox });
+        .findOne({ epicAccountId: { $eq: id }, sandboxId: { $eq: sandbox } });
     } else {
       // Fetch a random achievement
       const totalAchievements = await db.db
@@ -1470,7 +1470,7 @@ app.get("/:id/random-game", async (c) => {
 
     // Fetch the sandbox data
     const sandboxData = await Sandbox.findOne({
-      _id: savedPlayerAchievement.sandboxId,
+      _id: { $eq: savedPlayerAchievement.sandboxId },
     });
 
     if (!sandboxData) {
@@ -1483,7 +1483,7 @@ app.get("/:id/random-game", async (c) => {
 
     // Fetch the offer
     const offer = await Offer.findOne({
-      namespace: savedPlayerAchievement.sandboxId,
+      namespace: { $eq: savedPlayerAchievement.sandboxId },
       offerType: "BASE_GAME",
     });
 
@@ -1560,7 +1560,7 @@ app.get("/:id/refresh-status", async (c) => {
   const { id } = c.req.param();
 
   const isDonor = await db.db.collection("key-codes").findOne({
-    accountId: id,
+    accountId: { $eq: id },
   });
 
   const ttl = !isDonor ? 15 * 60 * 1000 : 2 * 60 * 1000;

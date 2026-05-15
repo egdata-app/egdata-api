@@ -127,8 +127,8 @@ app.get("/price", async (c) => {
   }
 
   const price = await PriceEngine.findOne({
-    offerId: id,
-    region,
+    offerId: { $eq: id },
+    region: { $eq: region },
   }).lean();
 
   if (!price) {
@@ -167,8 +167,8 @@ app.get("/price/fairness", async (c) => {
   }
 
   const score = await OfferCountryPricingScore.findOne({
-    offerId: id,
-    country: selectedCountry,
+    offerId: { $eq: id },
+    country: { $eq: selectedCountry },
   });
 
   if (!score) {
@@ -211,8 +211,8 @@ app.get("/regional-price", async (c) => {
     }
 
     const [offer, livePrice] = await Promise.all([
-      Offer.findOne({ id }).lean(),
-      PriceEngine.findOne({ offerId: id, region }).lean(),
+      Offer.findOne({ id: { $eq: id } }).lean(),
+      PriceEngine.findOne({ offerId: { $eq: id }, region: { $eq: region } }).lean(),
     ]);
 
     const releaseDate = offer?.releaseDate ?? (offer?.effectiveDate as Date);
@@ -307,8 +307,8 @@ app.get("/regional-price", async (c) => {
   }
 
   const [offer, livePrices] = await Promise.all([
-    Offer.findOne({ id }).lean(),
-    PriceEngine.find({ offerId: id }).lean(),
+    Offer.findOne({ id: { $eq: id } }).lean(),
+    PriceEngine.find({ offerId: { $eq: id } }).lean(),
   ]);
 
   const releaseDate = offer?.releaseDate ?? (offer?.effectiveDate as Date);
@@ -432,7 +432,7 @@ app.get("/price-stats", async (c) => {
     });
   }
 
-  const offer = await Offer.findOne({ id });
+  const offer = await Offer.findOne({ id: { $eq: id } });
 
   if (!offer) {
     c.status(404);
@@ -444,8 +444,8 @@ app.get("/price-stats", async (c) => {
   const [currentPrice, lowestPrice, lastDiscountPrice] = await Promise.all([
     PriceEngine.findOne(
       {
-        offerId: id,
-        region,
+        offerId: { $eq: id },
+        region: { $eq: region },
       },
       undefined,
       {
@@ -456,8 +456,8 @@ app.get("/price-stats", async (c) => {
     ).lean(),
     PriceEngineHistorical.findOne(
       {
-        offerId: id,
-        region,
+        offerId: { $eq: id },
+        region: { $eq: region },
         "price.discount": { $gt: 0 },
       },
       undefined,
@@ -469,8 +469,8 @@ app.get("/price-stats", async (c) => {
     ).lean(),
     PriceEngineHistorical.findOne(
       {
-        offerId: id,
-        region,
+        offerId: { $eq: id },
+        region: { $eq: region },
         "price.discount": { $gt: 0 },
       },
       undefined,

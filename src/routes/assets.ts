@@ -10,7 +10,7 @@ app.get('/:id', async (c) => {
     return c.json({ error: 'Missing id parameter' }, 400);
   }
 
-  const asset = await Asset.findOne({ artifactId: id });
+  const asset = await Asset.findOne({ artifactId: { $eq: id } });
   if (!asset) {
     return c.json({ error: 'Asset not found' }, 404);
   }

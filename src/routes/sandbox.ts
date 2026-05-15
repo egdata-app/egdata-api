@@ -458,7 +458,7 @@ app.get("/:sandboxId/base-game", async (c) => {
   }
 
   let baseGame = await Offer.findOne({
-    namespace: sandboxId,
+    namespace: { $eq: sandboxId },
     offerType: "BASE_GAME",
     prePurchase: { $ne: true },
     isCodeRedemptionOnly: false,
@@ -467,7 +467,7 @@ app.get("/:sandboxId/base-game", async (c) => {
   if (!baseGame) {
     // If no game found, try to find a pre-purchase game
     const prePurchaseGame = await Offer.findOne({
-      namespace: sandboxId,
+      namespace: { $eq: sandboxId },
       offerType: "BASE_GAME",
       prePurchase: true,
     });
@@ -477,7 +477,7 @@ app.get("/:sandboxId/base-game", async (c) => {
     } else {
       // Try to find an "EXECUTABLE" item, with at least one asset
       const executableGame = await Item.findOne({
-        namespace: sandboxId,
+        namespace: { $eq: sandboxId },
         entitlementType: "EXECUTABLE",
         "releaseInfo.0": { $exists: true },
       });
@@ -500,7 +500,7 @@ app.get("/:sandboxId/base-game", async (c) => {
   }
 
   const price = await PriceEngine.findOne({
-    offerId: baseGame.id,
+    offerId: { $eq: baseGame.id },
     region,
   });
 
@@ -563,7 +563,7 @@ app.get("/:sandboxId/changelog", async (c) => {
     // Get the sandbox
     const sandbox = await db.db.collection("sandboxes").findOne({
       // @ts-expect-error
-      _id: sandboxId,
+      _id: { $eq: sandboxId },
     });
 
     if (!sandbox) {
@@ -853,7 +853,7 @@ app.get("/:sandboxId/stats", async (c) => {
 
   const sandbox = await db.db.collection("sandboxes").findOne({
     // @ts-ignore
-    _id: sandboxId,
+    _id: { $eq: sandboxId },
   });
 
   if (!sandbox) {
