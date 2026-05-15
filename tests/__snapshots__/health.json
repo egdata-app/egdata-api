@@ -12,13 +12,13 @@
     "services": {
       "redis": {
         "status": "ok",
-        "latency": 1
+        "latency": 4
       },
       "mongodb": {
         "status": "ok",
-        "latency": 1
+        "latency": 0
       }
     }
   },
-  "capturedAt": "2026-05-15T09:17:30.806Z"
+  "capturedAt": "2026-05-15T11:38:50.850Z"
 }
