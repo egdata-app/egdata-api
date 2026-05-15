@@ -20,11 +20,11 @@ const resolvers: IResolvers<any, Context> = {
       const { contextId, contextType } = parent.metadata;
       switch (contextType) {
         case "offer":
-          return Offer.findOne({ id: contextId }).lean();
+          return Offer.findOne({ id: { $eq: contextId } }).lean();
         case "item":
-          return Item.findOne({ id: contextId }).lean();
+          return Item.findOne({ id: { $eq: contextId } }).lean();
         case "asset":
-          return Asset.findOne({ artifactId: contextId }).lean();
+          return Asset.findOne({ artifactId: { $eq: contextId } }).lean();
         default:
           return null;
       }

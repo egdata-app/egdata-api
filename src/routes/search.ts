@@ -759,20 +759,20 @@ app.get("/changelog", async (c) => {
         const contextId = hit.metadata.contextId;
 
         if (contextType === "offer") {
-          hit.document = await Offer.findOne({ id: contextId });
+          hit.document = await Offer.findOne({ id: { $eq: contextId } });
         }
 
         if (contextType === "item") {
-          hit.document = await Item.findOne({ id: contextId });
+          hit.document = await Item.findOne({ id: { $eq: contextId } });
         }
 
         if (contextType === "asset") {
           const asset = await Asset.findOne({
-            artifactId: contextId,
+            artifactId: { $eq: contextId },
           });
 
           hit.document = await Item.findOne({
-            id: asset?.itemId,
+            id: { $eq: asset?.itemId },
           });
         }
 
@@ -828,16 +828,16 @@ app.get("/changelog", async (c) => {
           const contextId = hit.metadata.contextId;
 
           if (contextType === "offer") {
-            hit.document = await Offer.findOne({ id: contextId });
+            hit.document = await Offer.findOne({ id: { $eq: contextId } });
           }
 
           if (contextType === "item") {
-            hit.document = await Item.findOne({ id: contextId });
+            hit.document = await Item.findOne({ id: { $eq: contextId } });
           }
 
           if (contextType === "asset") {
-            const asset = await Asset.findOne({ artifactId: contextId });
-            hit.document = await Item.findOne({ id: asset?.itemId });
+            const asset = await Asset.findOne({ artifactId: { $eq: contextId } });
+            hit.document = await Item.findOne({ id: { $eq: asset?.itemId } });
           }
 
           if (contextType === "build") {

@@ -8,7 +8,7 @@ const resolvers: IResolvers<any, Context> = {
     Query: {
         item: async (_, { id }, context, info) => {
             const projection = buildProjection(info, 'Item');
-            return Item.findOne({ id }, projection).lean();
+            return Item.findOne({ id: { $eq: id } }, projection).lean();
         },
         items: async (_, { limit = 10, page = 1 }) => {
             const skip = (page - 1) * limit;

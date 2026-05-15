@@ -885,7 +885,7 @@ app.get("/base-game/:namespace", async (c) => {
   }
 
   const game = await Offer.findOne({
-    namespace,
+    namespace: { $eq: namespace },
     offerType: "BASE_GAME",
     // Either null or false
     prePurchase: { $ne: true },
@@ -894,7 +894,7 @@ app.get("/base-game/:namespace", async (c) => {
   if (!game) {
     // Try again with prePurchase = true
     const gameWithPrePurchase = await Offer.findOne({
-      namespace,
+      namespace: { $eq: namespace },
       offerType: "BASE_GAME",
       prePurchase: true,
     });
@@ -1105,7 +1105,7 @@ app.get("/changelist/:id", async (ctx) => {
       break;
     case "asset":
       element = await Asset.findOne(
-        { id: change.metadata.contextId },
+        { id: { $eq: change.metadata.contextId } },
         {
           id: 1,
           artifactId: 1,
@@ -1272,7 +1272,7 @@ app.get("/offer-by-slug/:slug", async (c) => {
   const { slug } = c.req.param();
 
   const offer = await Offer.findOne({
-    "offerMappings.pageSlug": slug,
+    "offerMappings.pageSlug": { $eq: slug },
   });
 
   if (!offer) {
@@ -1400,7 +1400,7 @@ app.post("/donate/key/:code", epic, async (c) => {
 
   // Check if the code is already in the DB
   const existingDonation = await db.db.collection("key-codes").findOne({
-    code,
+    code: { $eq: code },
   });
 
   if (existingDonation) {
@@ -1457,7 +1457,7 @@ app.post("/donate/key/:code", epic, async (c) => {
   });
 
   const userData = await db.db.collection("epic").findOne({
-    accountId: id,
+    accountId: { $eq: id },
   });
 
   if (userData?.discordId) {
@@ -1479,7 +1479,7 @@ app.get("/donate/key/:code", async (c) => {
   const { code } = c.req.param();
 
   const codeInfo = await db.db.collection("key-codes").findOne({
-    code,
+    code: { $eq: code },
   });
 
   if (!codeInfo) {

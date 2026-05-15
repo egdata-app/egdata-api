@@ -211,11 +211,11 @@ const resolvers: IResolvers<any, Context> = {
           regions[r].countries.includes(country),
         ) || "US";
 
-      const event = await Tags.findOne({ id, groupName: "event" }).lean();
+      const event = await Tags.findOne({ id: { $eq: id }, groupName: "event" }).lean();
       if (!event) return null;
 
       const elements = await Offer.aggregate([
-        { $match: { tags: { $elemMatch: { id } } } },
+        { $match: { tags: { $elemMatch: { id: { $eq: id } } } } },
         {
           $lookup: {
             from: "pricev2",
@@ -245,7 +245,7 @@ const resolvers: IResolvers<any, Context> = {
 
       return {
         elements: elements.map(orderOffersObject),
-        total: await Offer.countDocuments({ tags: { $elemMatch: { id } } }),
+        total: await Offer.countDocuments({ tags: { $elemMatch: { id: { $eq: id } } } }),
         page,
         limit,
       };
@@ -388,17 +388,17 @@ const resolvers: IResolvers<any, Context> = {
       if (!sandbox || !sandbox.parent) return null;
       const product = await db.db
         .collection("products")
-        .findOne({ _id: sandbox.parent });
+        .findOne({ _id: { $eq: sandbox.parent } });
       if (!product) return null;
       return Ratings.findOne({ _id: product.slug }).lean();
     },
     polls: async (parent) => {
       return db.db
         .collection("ratings_polls")
-        .findOne({ _id: parent.namespace });
+        .findOne({ _id: { $eq: parent.namespace } });
     },
     hltb: async (parent) => {
-      return Hltb.findOne({ _id: parent.id }).lean();
+      return Hltb.findOne({ _id: { $eq: parent.id } }).lean();
     },
     sandbox: async (parent, _, { loaders }) => {
       return loaders.sandbox.load(parent.namespace);
@@ -408,7 +408,7 @@ const resolvers: IResolvers<any, Context> = {
       return Object.fromEntries(pos.map((p) => [p.collectionId, p.position]));
     },
     ageRating: async (parent, { country = "US" }) => {
-      const sandbox = await Sandbox.findOne({ _id: parent.namespace }).lean();
+      const sandbox = await Sandbox.findOne({ _id: { $eq: parent.namespace } }).lean();
       if (!sandbox || !sandbox.ageGatings) return null;
 
       const selectedRating =
