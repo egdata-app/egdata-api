@@ -1,3 +1,5 @@
+import "@aikidosec/firewall";
+import Zen from "@aikidosec/firewall";
 import { serve } from "@hono/node-server";
 import { swaggerUI } from "@hono/swagger-ui";
 import chalk from "chalk";
@@ -75,6 +77,8 @@ const ALLOWED_ORIGINS = [
 ];
 
 const app = new Hono();
+
+Zen.addHonoMiddleware(app);
 
 export { app };
 

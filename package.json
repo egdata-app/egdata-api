@@ -11,6 +11,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@aikidosec/firewall": "1.8.26",
     "@apollo/server": "^5.4.0",
     "@apollo/utils.withrequired": "^3.0.0",
     "@aws-sdk/client-s3": "^3.990.0",
