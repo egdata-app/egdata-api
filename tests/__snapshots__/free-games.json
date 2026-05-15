@@ -1,0 +1,1340 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/free-games"
+  },
+  "status": 200,
+  "headers": {
+    "content-type": "application/json"
+  },
+  "body": [
+    {
+      "_id": "9172503597",
+      "id": "73a4416d5cdb42f682d504fdf48e987b",
+      "namespace": "d5241c76f178492ea1540fce45616757",
+      "title": "The Telltale Batman Shadows Edition",
+      "description": "The Telltale Batman Shadows Edition",
+      "offerType": "OTHERS",
+      "effectiveDate": "2026-05-14T15:00:00.000Z",
+      "creationDate": "2026-05-05T20:33:00.155Z",
+      "lastModifiedDate": "2026-05-14T14:11:57.488Z",
+      "isCodeRedemptionOnly": true,
+      "keyImages": [
+        {
+          "type": "DieselStoreFrontWide",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/TheTelltaleBatmanShadowsEdition-2560x1440-1ababb36a948b5c732ab85a330787e85_2560x1440-8542c9faaf034219973add17b0749b9a",
+          "md5": "1ababb36a948b5c732ab85a330787e85"
+        },
+        {
+          "type": "OfferImageTall",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/TheTelltaleBatmanShadowsEdition_Tall-510x680-24368ffb56983936896f0a7d908667ec_510x680-a02b4d44f752434fae7005118347f599",
+          "md5": "24368ffb56983936896f0a7d908667ec"
+        },
+        {
+          "type": "OfferImageWide",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/TheTelltaleBatmanShadowsEdition-2560x1440-1ababb36a948b5c732ab85a330787e85_2560x1440-a85c5724ba30499ba5a81a9f2125e5d4",
+          "md5": "1ababb36a948b5c732ab85a330787e85"
+        },
+        {
+          "type": "VaultClosed",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/image24_1200x1600-22d04473c1b145ca885d2867c05f5ea3",
+          "md5": "86259f0de302486754595f2eb496cc35"
+        }
+      ],
+      "seller": {
+        "id": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+        "name": "Epic Dev Test Account"
+      },
+      "productSlug": "the-telltale-batman",
+      "urlSlug": "megasale-mysterygame-2026-02",
+      "url": null,
+      "tags": [],
+      "items": [
+        {
+          "_id": "5693856767",
+          "id": "8341d7c7e4534db7848cc428aa4cbe5a",
+          "namespace": "d5241c76f178492ea1540fce45616757",
+          "title": "Atmosphere Dummy",
+          "description": "Atmosphere Dummy",
+          "keyImages": [],
+          "categories": [
+            {
+              "path": "games",
+              "_id": "69d46d29935df8cf5ec918ad"
+            },
+            {
+              "path": "applications",
+              "_id": "69d46d29935df8cf5ec918ae"
+            }
+          ],
+          "status": "ACTIVE",
+          "creationDate": "2020-05-05T15:39:39.301Z",
+          "lastModifiedDate": "2026-01-01T15:10:37.710Z",
+          "customAttributes": [],
+          "entitlementName": "8341d7c7e4534db7848cc428aa4cbe5a",
+          "entitlementType": "EXECUTABLE",
+          "itemType": "DURABLE",
+          "releaseInfo": [],
+          "developer": "Epic Dev Test Account",
+          "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+          "eulaIds": [
+            "egstore"
+          ],
+          "installModes": [],
+          "endOfSupport": false,
+          "applicationId": "",
+          "unsearchable": true,
+          "linkedOffers": [
+            "1c325be6572b4cb2ad27ce8583764ec7"
+          ],
+          "__v": 731
+        }
+      ],
+      "customAttributes": {
+        "com.epicgames.app.freegames.vault.close": {
+          "type": "STRING",
+          "value": "[]"
+        },
+        "com.epicgames.app.freegames.vault.slug": {
+          "type": "STRING",
+          "value": "free-games"
+        },
+        "com.epicgames.app.freegames.vault.open": {
+          "type": "STRING",
+          "value": "[]"
+        },
+        "com.epicgames.app.productSlug": {
+          "type": "STRING",
+          "value": "the-telltale-batman"
+        }
+      },
+      "categories": [
+        "freegames/vaulted",
+        "freegames",
+        "games",
+        "applications"
+      ],
+      "developerDisplayName": "LCG Entertainment, Inc. Telltale",
+      "publisherDisplayName": "Telltale",
+      "prePurchase": null,
+      "releaseDate": "2099-05-06T18:36:00.000Z",
+      "pcReleaseDate": null,
+      "viewableDate": "2026-05-07T14:15:00.000Z",
+      "countriesBlacklist": [
+        "RU",
+        "KR"
+      ],
+      "countriesWhitelist": null,
+      "refundType": "NON_REFUNDABLE",
+      "giveaway": {
+        "_id": "69fd3b30175a0ecbe8df46b5",
+        "id": "73a4416d5cdb42f682d504fdf48e987b",
+        "namespace": "d5241c76f178492ea1540fce45616757",
+        "startDate": "2026-05-14T15:00:00.000Z",
+        "endDate": "2026-05-21T15:00:00.000Z",
+        "title": "The Telltale Batman Shadows Edition",
+        "__v": 0,
+        "historical": [
+          {
+            "_id": "69fd3b30175a0ecbe8df46b5",
+            "id": "73a4416d5cdb42f682d504fdf48e987b",
+            "namespace": "d5241c76f178492ea1540fce45616757",
+            "startDate": "2026-05-14T15:00:00.000Z",
+            "endDate": "2026-05-21T15:00:00.000Z",
+            "title": "The Telltale Batman Shadows Edition",
+            "__v": 0
+          }
+        ]
+      },
+      "price": {
+        "_id": "69fc9ea310b09f5aa804ad41",
+        "offerId": "73a4416d5cdb42f682d504fdf48e987b",
+        "country": "US",
+        "namespace": "d5241c76f178492ea1540fce45616757",
+        "__v": 0,
+        "appliedRules": [],
+        "price": {
+          "currencyCode": "USD",
+          "discount": 0,
+          "discountPrice": 0,
+          "originalPrice": 0,
+          "basePayoutCurrencyCode": "USD",
+          "basePayoutPrice": 0,
+          "payoutCurrencyExchangeRate": 1,
+          "_id": "69fc9ea2175a0ecbe8df2d42"
+        },
+        "region": "US",
+        "updatedAt": "2026-05-07T14:16:02.838Z"
+      }
+    },
+    {
+      "_id": "9171469124",
+      "id": "190cb955f17f48dcb8576aa8288c887f",
+      "namespace": "d5241c76f178492ea1540fce45616757",
+      "title": "Sunderfolk - Standard Edition",
+      "description": "Sunderfolk - Standard Edition",
+      "offerType": "OTHERS",
+      "effectiveDate": "2026-05-14T15:00:00.000Z",
+      "creationDate": "2026-05-04T23:28:09.935Z",
+      "lastModifiedDate": "2026-05-14T14:10:43.902Z",
+      "isCodeRedemptionOnly": true,
+      "keyImages": [
+        {
+          "type": "DieselStoreFrontWide",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/OfferImageWide_2560x1440-05350f0fffad4da3945dc0871f2d2b24",
+          "md5": "f92c007294d188bf4f37190633b55970"
+        },
+        {
+          "type": "OfferImageTall",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/OfferImageTall_1200x1600-ff1e19193cb54accadbf4d552ea24746",
+          "md5": "129763062cf261e3a0f6c9885d666a36"
+        },
+        {
+          "type": "OfferImageWide",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/OfferImageWide_2560x1440-a500d7236c364c0bb373e3b6b9a6ee8b",
+          "md5": "f92c007294d188bf4f37190633b55970"
+        },
+        {
+          "type": "VaultClosed",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/image23_1920x1080-7f8d2dae22e6486db16ad13b361228f7_1200x1600-6acfe6d0b07c425bb228790e9a30777a",
+          "md5": "86259f0de302486754595f2eb496cc35"
+        }
+      ],
+      "seller": {
+        "id": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+        "name": "Epic Dev Test Account"
+      },
+      "productSlug": "sunderfolk-standard-edition-83c05e",
+      "urlSlug": "megasale-mysterygame-2026",
+      "url": null,
+      "tags": [],
+      "items": [
+        {
+          "_id": "5693856767",
+          "id": "8341d7c7e4534db7848cc428aa4cbe5a",
+          "namespace": "d5241c76f178492ea1540fce45616757",
+          "title": "Atmosphere Dummy",
+          "description": "Atmosphere Dummy",
+          "keyImages": [],
+          "categories": [
+            {
+              "path": "games",
+              "_id": "69d46d29935df8cf5ec918ad"
+            },
+            {
+              "path": "applications",
+              "_id": "69d46d29935df8cf5ec918ae"
+            }
+          ],
+          "status": "ACTIVE",
+          "creationDate": "2020-05-05T15:39:39.301Z",
+          "lastModifiedDate": "2026-01-01T15:10:37.710Z",
+          "customAttributes": [],
+          "entitlementName": "8341d7c7e4534db7848cc428aa4cbe5a",
+          "entitlementType": "EXECUTABLE",
+          "itemType": "DURABLE",
+          "releaseInfo": [],
+          "developer": "Epic Dev Test Account",
+          "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+          "eulaIds": [
+            "egstore"
+          ],
+          "installModes": [],
+          "endOfSupport": false,
+          "applicationId": "",
+          "unsearchable": true,
+          "linkedOffers": [
+            "1c325be6572b4cb2ad27ce8583764ec7"
+          ],
+          "__v": 731
+        }
+      ],
+      "customAttributes": {
+        "com.epicgames.app.freegames.vault.close": {
+          "type": "STRING",
+          "value": "[]"
+        },
+        "com.epicgames.app.freegames.vault.slug": {
+          "type": "STRING",
+          "value": "free-games"
+        },
+        "com.epicgames.app.freegames.vault.open": {
+          "type": "STRING",
+          "value": "[]"
+        },
+        "com.epicgames.app.productSlug": {
+          "type": "STRING",
+          "value": "sunderfolk-standard-edition-83c05e"
+        }
+      },
+      "categories": [
+        "freegames/vaulted",
+        "freegames",
+        "games",
+        "applications"
+      ],
+      "developerDisplayName": "Secret Door",
+      "publisherDisplayName": "Dreamhaven, Inc.",
+      "prePurchase": null,
+      "releaseDate": "2099-05-01T16:34:00.000Z",
+      "pcReleaseDate": null,
+      "viewableDate": "2026-05-07T14:15:00.000Z",
+      "countriesBlacklist": [
+        "CN"
+      ],
+      "countriesWhitelist": null,
+      "refundType": "NON_REFUNDABLE",
+      "giveaway": {
+        "_id": "69fc9eac175a0ecbe8df2f32",
+        "id": "190cb955f17f48dcb8576aa8288c887f",
+        "namespace": "d5241c76f178492ea1540fce45616757",
+        "startDate": "2026-05-14T15:00:00.000Z",
+        "endDate": "2026-05-21T15:00:00.000Z",
+        "title": "Sunderfolk - Standard Edition",
+        "__v": 0,
+        "historical": [
+          {
+            "_id": "69fc9eac175a0ecbe8df2f32",
+            "id": "190cb955f17f48dcb8576aa8288c887f",
+            "namespace": "d5241c76f178492ea1540fce45616757",
+            "startDate": "2026-05-14T15:00:00.000Z",
+            "endDate": "2026-05-21T15:00:00.000Z",
+            "title": "Sunderfolk - Standard Edition",
+            "__v": 0
+          }
+        ]
+      },
+      "price": {
+        "_id": "69fc9eab10b09f5aa804ad75",
+        "offerId": "190cb955f17f48dcb8576aa8288c887f",
+        "country": "US",
+        "namespace": "d5241c76f178492ea1540fce45616757",
+        "__v": 0,
+        "appliedRules": [],
+        "price": {
+          "currencyCode": "USD",
+          "discount": 0,
+          "discountPrice": 0,
+          "originalPrice": 0,
+          "basePayoutCurrencyCode": "USD",
+          "basePayoutPrice": 0,
+          "payoutCurrencyExchangeRate": 1,
+          "_id": "69fc9eab175a0ecbe8df2e88"
+        },
+        "region": "US",
+        "updatedAt": "2026-05-07T14:16:11.161Z"
+      }
+    },
+    {
+      "_id": "6491650093",
+      "id": "9e2567e57e61458686d53f5aeaf1e2e0",
+      "namespace": "d5241c76f178492ea1540fce45616757",
+      "title": "Mystery Game Week 21 Game 1",
+      "description": "Mystery Game Week 21 Game 1",
+      "offerType": "OTHERS",
+      "effectiveDate": "2026-05-21T15:00:00.000Z",
+      "creationDate": "2026-05-05T21:10:13.284Z",
+      "lastModifiedDate": "2026-05-14T14:15:06.059Z",
+      "isCodeRedemptionOnly": true,
+      "keyImages": [
+        {
+          "type": "DieselStoreFrontWide",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/image23_1920x1080-570394ae470a43859ce7366ea875532f",
+          "md5": "48b8f8a8488976e1aa8ae04b39c94930"
+        },
+        {
+          "type": "OfferImageTall",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/image24_1200x1600-bdc90908480d4d5a96ec4535855aeff3",
+          "md5": "86259f0de302486754595f2eb496cc35"
+        },
+        {
+          "type": "OfferImageWide",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/image23_1920x1080-80a010b5958f4d898f9e454840c790a1",
+          "md5": "48b8f8a8488976e1aa8ae04b39c94930"
+        },
+        {
+          "type": "VaultClosed",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/image24_1200x1600-43ff50cec0da4a7599a9e1ae07f3811e",
+          "md5": "86259f0de302486754595f2eb496cc35"
+        }
+      ],
+      "seller": {
+        "id": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+        "name": "Epic Dev Test Account"
+      },
+      "productSlug": "[]",
+      "urlSlug": "megasale-mysterygame-2026-week21-game1",
+      "url": null,
+      "tags": [],
+      "items": [
+        {
+          "_id": "5693856767",
+          "id": "8341d7c7e4534db7848cc428aa4cbe5a",
+          "namespace": "d5241c76f178492ea1540fce45616757",
+          "title": "Atmosphere Dummy",
+          "description": "Atmosphere Dummy",
+          "keyImages": [],
+          "categories": [
+            {
+              "path": "games",
+              "_id": "69d46d29935df8cf5ec918ad"
+            },
+            {
+              "path": "applications",
+              "_id": "69d46d29935df8cf5ec918ae"
+            }
+          ],
+          "status": "ACTIVE",
+          "creationDate": "2020-05-05T15:39:39.301Z",
+          "lastModifiedDate": "2026-01-01T15:10:37.710Z",
+          "customAttributes": [],
+          "entitlementName": "8341d7c7e4534db7848cc428aa4cbe5a",
+          "entitlementType": "EXECUTABLE",
+          "itemType": "DURABLE",
+          "releaseInfo": [],
+          "developer": "Epic Dev Test Account",
+          "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+          "eulaIds": [
+            "egstore"
+          ],
+          "installModes": [],
+          "endOfSupport": false,
+          "applicationId": "",
+          "unsearchable": true,
+          "linkedOffers": [
+            "1c325be6572b4cb2ad27ce8583764ec7"
+          ],
+          "__v": 731
+        }
+      ],
+      "customAttributes": {
+        "com.epicgames.app.freegames.vault.close": {
+          "type": "STRING",
+          "value": "[]"
+        },
+        "com.epicgames.app.freegames.vault.slug": {
+          "type": "STRING",
+          "value": "free-games"
+        },
+        "com.epicgames.app.freegames.vault.open": {
+          "type": "STRING",
+          "value": "[]"
+        },
+        "com.epicgames.app.productSlug": {
+          "type": "STRING",
+          "value": "[]"
+        }
+      },
+      "categories": [
+        "freegames/vaulted",
+        "freegames",
+        "games",
+        "applications"
+      ],
+      "developerDisplayName": "",
+      "publisherDisplayName": "",
+      "prePurchase": null,
+      "releaseDate": "2099-05-21T15:00:00.000Z",
+      "pcReleaseDate": null,
+      "viewableDate": "2026-05-14T14:15:00.000Z",
+      "countriesBlacklist": [
+        "KR"
+      ],
+      "countriesWhitelist": null,
+      "refundType": "NON_REFUNDABLE",
+      "giveaway": {
+        "_id": "6a05da4c175a0ecbe8e09397",
+        "id": "9e2567e57e61458686d53f5aeaf1e2e0",
+        "namespace": "d5241c76f178492ea1540fce45616757",
+        "startDate": "2026-05-21T15:00:00.000Z",
+        "endDate": "2026-05-28T15:00:00.000Z",
+        "title": "Mystery Game Week 21 Game 1",
+        "__v": 0,
+        "historical": [
+          {
+            "_id": "6a05da4c175a0ecbe8e09397",
+            "id": "9e2567e57e61458686d53f5aeaf1e2e0",
+            "namespace": "d5241c76f178492ea1540fce45616757",
+            "startDate": "2026-05-21T15:00:00.000Z",
+            "endDate": "2026-05-28T15:00:00.000Z",
+            "title": "Mystery Game Week 21 Game 1",
+            "__v": 0
+          }
+        ]
+      },
+      "price": {
+        "_id": "6a05e55310b09f5aa804fb95",
+        "offerId": "9e2567e57e61458686d53f5aeaf1e2e0",
+        "country": "US",
+        "namespace": "d5241c76f178492ea1540fce45616757",
+        "__v": 0,
+        "appliedRules": [],
+        "price": {
+          "currencyCode": "USD",
+          "discount": 0,
+          "discountPrice": 0,
+          "originalPrice": 0,
+          "basePayoutCurrencyCode": "USD",
+          "basePayoutPrice": 0,
+          "payoutCurrencyExchangeRate": 1,
+          "_id": "6a05e55315a4d3137b39d02c"
+        },
+        "region": "US",
+        "updatedAt": "2026-05-14T15:08:03.701Z"
+      }
+    },
+    {
+      "_id": "1090508387",
+      "id": "cd37ebd7ce804df9b51b84578e631b8a",
+      "namespace": "d5241c76f178492ea1540fce45616757",
+      "title": "Mystery Game Week 21 Game 2",
+      "description": "Mystery Game Week 21 Game 2",
+      "offerType": "OTHERS",
+      "effectiveDate": "2026-05-21T15:00:00.000Z",
+      "creationDate": "2026-05-05T21:11:21.970Z",
+      "lastModifiedDate": "2026-05-14T14:03:36.870Z",
+      "isCodeRedemptionOnly": true,
+      "keyImages": [
+        {
+          "type": "DieselStoreFrontWide",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/image23_1920x1080-570394ae470a43859ce7366ea875532f",
+          "md5": "48b8f8a8488976e1aa8ae04b39c94930"
+        },
+        {
+          "type": "OfferImageTall",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/image24_1200x1600-bdc90908480d4d5a96ec4535855aeff3",
+          "md5": "86259f0de302486754595f2eb496cc35"
+        },
+        {
+          "type": "OfferImageWide",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/image23_1920x1080-80a010b5958f4d898f9e454840c790a1",
+          "md5": "48b8f8a8488976e1aa8ae04b39c94930"
+        },
+        {
+          "type": "VaultClosed",
+          "url": "https://cdn1.epicgames.com/offer/d5241c76f178492ea1540fce45616757/vault_portrait_1200x1600-38e3b896e00941b6b80d7ff9705f9fbe",
+          "md5": "86259f0de302486754595f2eb496cc35"
+        }
+      ],
+      "seller": {
+        "id": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+        "name": "Epic Dev Test Account"
+      },
+      "productSlug": "[]",
+      "urlSlug": "megasale-mysterygame-2026-week21-game2",
+      "url": null,
+      "tags": [],
+      "items": [
+        {
+          "_id": "5693856767",
+          "id": "8341d7c7e4534db7848cc428aa4cbe5a",
+          "namespace": "d5241c76f178492ea1540fce45616757",
+          "title": "Atmosphere Dummy",
+          "description": "Atmosphere Dummy",
+          "keyImages": [],
+          "categories": [
+            {
+              "path": "games",
+              "_id": "69d46d29935df8cf5ec918ad"
+            },
+            {
+              "path": "applications",
+              "_id": "69d46d29935df8cf5ec918ae"
+            }
+          ],
+          "status": "ACTIVE",
+          "creationDate": "2020-05-05T15:39:39.301Z",
+          "lastModifiedDate": "2026-01-01T15:10:37.710Z",
+          "customAttributes": [],
+          "entitlementName": "8341d7c7e4534db7848cc428aa4cbe5a",
+          "entitlementType": "EXECUTABLE",
+          "itemType": "DURABLE",
+          "releaseInfo": [],
+          "developer": "Epic Dev Test Account",
+          "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+          "eulaIds": [
+            "egstore"
+          ],
+          "installModes": [],
+          "endOfSupport": false,
+          "applicationId": "",
+          "unsearchable": true,
+          "linkedOffers": [
+            "1c325be6572b4cb2ad27ce8583764ec7"
+          ],
+          "__v": 731
+        }
+      ],
+      "customAttributes": {
+        "com.epicgames.app.freegames.vault.close": {
+          "type": "STRING",
+          "value": "[]"
+        },
+        "com.epicgames.app.freegames.vault.slug": {
+          "type": "STRING",
+          "value": "free-games"
+        },
+        "com.epicgames.app.freegames.vault.open": {
+          "type": "STRING",
+          "value": "[]"
+        },
+        "com.epicgames.app.productSlug": {
+          "type": "STRING",
+          "value": "[]"
+        }
+      },
+      "categories": [
+        "freegames/vaulted",
+        "freegames",
+        "games",
+        "applications"
+      ],
+      "developerDisplayName": "",
+      "publisherDisplayName": "",
+      "prePurchase": null,
+      "releaseDate": null,
+      "pcReleaseDate": null,
+      "viewableDate": "2026-05-14T14:15:00.000Z",
+      "countriesBlacklist": null,
+      "countriesWhitelist": null,
+      "refundType": "NON_REFUNDABLE",
+      "giveaway": {
+        "_id": "6a05d95f175a0ecbe8e09358",
+        "id": "cd37ebd7ce804df9b51b84578e631b8a",
+        "namespace": "d5241c76f178492ea1540fce45616757",
+        "startDate": "2026-05-21T15:00:00.000Z",
+        "endDate": "2026-05-28T15:00:00.000Z",
+        "title": "Mystery Game Week 21 Game 2",
+        "__v": 0,
+        "historical": [
+          {
+            "_id": "6a05d95f175a0ecbe8e09358",
+            "id": "cd37ebd7ce804df9b51b84578e631b8a",
+            "namespace": "d5241c76f178492ea1540fce45616757",
+            "startDate": "2026-05-21T15:00:00.000Z",
+            "endDate": "2026-05-28T15:00:00.000Z",
+            "title": "Mystery Game Week 21 Game 2",
+            "__v": 0
+          }
+        ]
+      },
+      "price": {
+        "_id": "6a05d95e10b09f5aa804fb5b",
+        "namespace": "d5241c76f178492ea1540fce45616757",
+        "country": "US",
+        "offerId": "cd37ebd7ce804df9b51b84578e631b8a",
+        "__v": 0,
+        "appliedRules": [],
+        "price": {
+          "currencyCode": "USD",
+          "discount": 0,
+          "discountPrice": 0,
+          "originalPrice": 0,
+          "basePayoutCurrencyCode": "USD",
+          "basePayoutPrice": 0,
+          "payoutCurrencyExchangeRate": 1,
+          "_id": "6a05d95e175a0ecbe8e092ae"
+        },
+        "region": "US",
+        "updatedAt": "2026-05-14T14:17:02.648Z"
+      }
+    },
+    {
+      "_id": "5110131722",
+      "id": "f89357d455fe4038a5376ce601c29e6c",
+      "namespace": "2df8b055a5674c8e9211fc51f8efd210",
+      "title": "Arranger: A Role-Puzzling Adventure",
+      "description": "Find your way in a world of breezy, thoughtful puzzles, along a charming journey of self-discovery.",
+      "offerType": "BASE_GAME",
+      "effectiveDate": "2026-05-14T15:00:00.000Z",
+      "creationDate": "2026-03-23T22:15:25.102Z",
+      "lastModifiedDate": "2026-05-14T14:12:30.562Z",
+      "isCodeRedemptionOnly": false,
+      "keyImages": [
+        {
+          "type": "OfferImageWide",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-32mby.jpg",
+          "md5": "789995eb4b64180dc32315fbb522eec1"
+        },
+        {
+          "type": "OfferImageTall",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1v4ha.jpg",
+          "md5": "1dea5154aa255229ba57736c47a4c0da"
+        },
+        {
+          "type": "Thumbnail",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1v4ha.jpg",
+          "md5": "1dea5154aa255229ba57736c47a4c0da"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-3emhw.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-12fzp.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-vx0b2.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-ieo2u.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-cgc2q.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1ip7g.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1tuq5.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        }
+      ],
+      "seller": {
+        "id": "o-p9n3xscghng3b46flmblxu3ngmgju5",
+        "name": "Furniture & Mattress LLC"
+      },
+      "productSlug": null,
+      "urlSlug": "arranger-a-role-puzzling-adventure",
+      "url": null,
+      "tags": [
+        {
+          "id": "1298",
+          "name": "Puzzle"
+        },
+        {
+          "id": "1370",
+          "name": "Single Player"
+        },
+        {
+          "id": "1117",
+          "name": "Adventure"
+        },
+        {
+          "id": "39071",
+          "name": "Android"
+        }
+      ],
+      "items": [
+        {
+          "_id": "c483a8c28df943c399af59f1801f315e",
+          "id": "c483a8c28df943c399af59f1801f315e",
+          "namespace": "2df8b055a5674c8e9211fc51f8efd210",
+          "title": "Arranger: A Role-Puzzling Adventure",
+          "description": "Arranger: A Role-Puzzling Adventure",
+          "keyImages": [
+            {
+              "type": "DieselGameBox",
+              "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1vtvi.jpg",
+              "md5": "789995eb4b64180dc32315fbb522eec1"
+            },
+            {
+              "type": "DieselGameBoxTall",
+              "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1mpte.jpg",
+              "md5": "1dea5154aa255229ba57736c47a4c0da"
+            }
+          ],
+          "categories": [
+            {
+              "path": "games",
+              "_id": "6a06e3e887fea85be3462878"
+            },
+            {
+              "path": "applications",
+              "_id": "6a06e3e887fea85be3462879"
+            }
+          ],
+          "status": "ACTIVE",
+          "creationDate": "2026-03-23T22:15:24.968Z",
+          "lastModifiedDate": "2026-04-14T18:46:56.014Z",
+          "customAttributes": [
+            {
+              "key": "FolderName",
+              "type": "STRING",
+              "value": "ArrangerARolePuzzlinca5c9"
+            }
+          ],
+          "entitlementName": "c483a8c28df943c399af59f1801f315e",
+          "entitlementType": "EXECUTABLE",
+          "itemType": "DURABLE",
+          "releaseInfo": [
+            {
+              "id": "38d1a3c8-4b9f-45b3-98eb-f6297683ce95",
+              "appId": "45fb7b65fe234d5aa8924330387d819f",
+              "platform": [
+                "Android"
+              ],
+              "_id": "6a06e3e887fea85be346287a"
+            }
+          ],
+          "developer": "Furniture & Mattress LLC",
+          "developerId": "o-p9n3xscghng3b46flmblxu3ngmgju5",
+          "eulaIds": [],
+          "installModes": [],
+          "endOfSupport": false,
+          "applicationId": "fghi4567b1ZWl1HSho8w6igz4GvYQVNy",
+          "unsearchable": false,
+          "requiresSecureAccount": false,
+          "linkedOffers": [],
+          "__v": 146
+        },
+        {
+          "_id": "7d21ffcce0324cb5b2860aef0d2cf5f1",
+          "id": "7d21ffcce0324cb5b2860aef0d2cf5f1",
+          "namespace": "2df8b055a5674c8e9211fc51f8efd210",
+          "title": "Arranger: A Role-Puzzling Adventure_Android_BaseGameAudience",
+          "description": "Arranger: A Role-Puzzling Adventure_Android_BaseGameAudience",
+          "categories": [
+            {
+              "path": "audience",
+              "_id": "6a06c43ca94d690e14c4aacd"
+            },
+            {
+              "path": "public",
+              "_id": "6a06c43ca94d690e14c4aace"
+            }
+          ],
+          "status": "ACTIVE",
+          "creationDate": "2026-03-23T22:15:24.891Z",
+          "lastModifiedDate": "2026-04-14T18:46:56.014Z",
+          "customAttributes": [],
+          "entitlementName": "7d21ffcce0324cb5b2860aef0d2cf5f1",
+          "entitlementType": "AUDIENCE",
+          "itemType": "DURABLE",
+          "developer": "Furniture & Mattress LLC",
+          "developerId": "o-p9n3xscghng3b46flmblxu3ngmgju5",
+          "eulaIds": [],
+          "installModes": [],
+          "endOfSupport": false,
+          "unsearchable": false,
+          "requiresSecureAccount": false,
+          "linkedOffers": [],
+          "keyImages": [],
+          "releaseInfo": [],
+          "__v": 145
+        }
+      ],
+      "customAttributes": {
+        "autoGeneratedPrice": {
+          "type": "STRING",
+          "value": "false"
+        },
+        "isManuallySetViewableDate": {
+          "type": "STRING",
+          "value": "true"
+        },
+        "isPromotionalContentUsed": {
+          "type": "STRING",
+          "value": "false"
+        },
+        "androidCatalogItemId": {
+          "type": "STRING",
+          "value": "c483a8c28df943c399af59f1801f315e"
+        },
+        "isManuallySetPCReleaseDate": {
+          "type": "STRING",
+          "value": "false"
+        },
+        "isBlockchainUsed": {
+          "type": "STRING",
+          "value": "false"
+        }
+      },
+      "categories": [
+        "freegames",
+        "games",
+        "games/edition",
+        "games/edition/base"
+      ],
+      "developerDisplayName": "Furniture & Mattress LLC",
+      "publisherDisplayName": "Furniture & Mattress LLC",
+      "prePurchase": null,
+      "releaseDate": "2026-05-14T15:00:00.000Z",
+      "pcReleaseDate": "2026-05-14T15:00:00.000Z",
+      "viewableDate": "2026-05-14T15:00:00.000Z",
+      "countriesBlacklist": null,
+      "countriesWhitelist": null,
+      "refundType": "SELF_REFUNDABLE",
+      "giveaway": {
+        "_id": "6a05f1830c6d0d9852cc65f7",
+        "platform": "android",
+        "offerId": "f89357d455fe4038a5376ce601c29e6c",
+        "startDate": "2026-05-14T15:48:00.000Z",
+        "endDate": "2026-05-21T15:00:00.000Z",
+        "historical": {
+          "_id": "6a05f1830c6d0d9852cc65f7",
+          "platform": "android",
+          "offerId": "f89357d455fe4038a5376ce601c29e6c",
+          "startDate": "2026-05-14T15:48:00.000Z",
+          "endDate": "2026-05-21T15:00:00.000Z"
+        }
+      },
+      "price": {
+        "_id": "69f3ae1e10b09f5aa803fcb1",
+        "namespace": "2df8b055a5674c8e9211fc51f8efd210",
+        "country": "US",
+        "offerId": "f89357d455fe4038a5376ce601c29e6c",
+        "__v": 0,
+        "appliedRules": [
+          {
+            "id": "a445cf244e274306ba4599a760647454",
+            "name": "Free Games Promotion Mobile (MS)",
+            "namespace": "2df8b055a5674c8e9211fc51f8efd210",
+            "promotionStatus": "ACTIVE",
+            "startDate": "2026-05-14T15:00:00.000Z",
+            "endDate": "2026-05-21T15:00:00.000Z",
+            "saleType": "REGULAR",
+            "regionIds": [
+              "AE",
+              "AFRICA",
+              "ANZ",
+              "AR",
+              "AU",
+              "BG",
+              "BR2",
+              "CA",
+              "CH",
+              "CIS",
+              "CL2",
+              "CN2",
+              "CO2",
+              "CR2",
+              "CZ",
+              "DK",
+              "EAST",
+              "EURO",
+              "GB",
+              "HK2",
+              "HU",
+              "ID2",
+              "IL",
+              "IN2",
+              "JP",
+              "KR2",
+              "KZ",
+              "LATAM",
+              "MIDEAST",
+              "MX2",
+              "MY2",
+              "NO",
+              "NZ",
+              "PE2",
+              "PH2",
+              "PL",
+              "QA",
+              "RO",
+              "ROW",
+              "RU",
+              "SA",
+              "SE",
+              "SEA",
+              "SG2",
+              "TH2",
+              "TR",
+              "TW2",
+              "UA",
+              "US",
+              "UY2",
+              "VN2",
+              "ZA2"
+            ],
+            "discountSetting": {
+              "discountType": "PERCENTAGE",
+              "discountValue": null,
+              "discountPercentage": 0,
+              "_id": "6a05e7c4fd5bb3b38a72f5d7"
+            },
+            "promotionSetting": {
+              "promotionType": "SIMPLE",
+              "discountOffers": [
+                {
+                  "offerId": "f89357d455fe4038a5376ce601c29e6c",
+                  "_id": "6a05e7c4fd5bb3b38a72f5d9"
+                },
+                {
+                  "offerId": "8c451d7863c44c32b7e9250291e45de2",
+                  "_id": "6a05e7c4fd5bb3b38a72f5da"
+                }
+              ],
+              "_id": "6a05e7c4fd5bb3b38a72f5d8"
+            },
+            "_id": "6a05e7c4fd5bb3b38a72f5d6"
+          }
+        ],
+        "price": {
+          "currencyCode": "USD",
+          "discount": 999,
+          "discountPrice": 0,
+          "originalPrice": 999,
+          "basePayoutCurrencyCode": "USD",
+          "basePayoutPrice": 0,
+          "payoutCurrencyExchangeRate": 1,
+          "_id": "6a05e7c4fd5bb3b38a72f5d5"
+        },
+        "region": "US",
+        "updatedAt": "2026-05-14T15:18:28.665Z"
+      }
+    },
+    {
+      "_id": "2683064028",
+      "id": "8c451d7863c44c32b7e9250291e45de2",
+      "namespace": "2df8b055a5674c8e9211fc51f8efd210",
+      "title": "Arranger: A Role-Puzzling Adventure",
+      "description": "Find your way in a world of breezy, thoughtful puzzles, along a charming journey of self-discovery.",
+      "offerType": "BASE_GAME",
+      "effectiveDate": "2026-05-14T15:00:00.000Z",
+      "creationDate": "2026-03-23T22:15:32.109Z",
+      "lastModifiedDate": "2026-05-14T14:12:41.002Z",
+      "isCodeRedemptionOnly": false,
+      "keyImages": [
+        {
+          "type": "OfferImageWide",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-3fkzq.jpg",
+          "md5": "789995eb4b64180dc32315fbb522eec1"
+        },
+        {
+          "type": "OfferImageTall",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1lfcb.jpg",
+          "md5": "1dea5154aa255229ba57736c47a4c0da"
+        },
+        {
+          "type": "Thumbnail",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1lfcb.jpg",
+          "md5": "1dea5154aa255229ba57736c47a4c0da"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1ymol.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1qps1.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1hhjj.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1tlf2.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-15kwb.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-aex1e.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        },
+        {
+          "type": "featuredMedia",
+          "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1g21g.jpg",
+          "md5": "098f6bcd4621d373cade4e832627b4f6"
+        }
+      ],
+      "seller": {
+        "id": "o-p9n3xscghng3b46flmblxu3ngmgju5",
+        "name": "Furniture & Mattress LLC"
+      },
+      "productSlug": null,
+      "urlSlug": "arranger-a-role-puzzling-adventure-01",
+      "url": null,
+      "tags": [
+        {
+          "id": "1298",
+          "name": "Puzzle"
+        },
+        {
+          "id": "1370",
+          "name": "Single Player"
+        },
+        {
+          "id": "1117",
+          "name": "Adventure"
+        },
+        {
+          "id": "39070",
+          "name": "iOS"
+        }
+      ],
+      "items": [
+        {
+          "_id": "fd1a65eeba504428a760e568a7f7f4ab",
+          "id": "fd1a65eeba504428a760e568a7f7f4ab",
+          "namespace": "2df8b055a5674c8e9211fc51f8efd210",
+          "title": "Arranger: A Role-Puzzling Adventure_IOS_BaseGameAudience",
+          "description": "Arranger: A Role-Puzzling Adventure_IOS_BaseGameAudience",
+          "categories": [
+            {
+              "path": "audience",
+              "_id": "6a06c43ca94d690e14c4aabf"
+            },
+            {
+              "path": "public",
+              "_id": "6a06c43ca94d690e14c4aac0"
+            }
+          ],
+          "status": "ACTIVE",
+          "creationDate": "2026-03-23T22:15:31.907Z",
+          "lastModifiedDate": "2026-04-14T18:46:56.014Z",
+          "customAttributes": [],
+          "entitlementName": "fd1a65eeba504428a760e568a7f7f4ab",
+          "entitlementType": "AUDIENCE",
+          "itemType": "DURABLE",
+          "developer": "Furniture & Mattress LLC",
+          "developerId": "o-p9n3xscghng3b46flmblxu3ngmgju5",
+          "eulaIds": [],
+          "installModes": [],
+          "endOfSupport": false,
+          "unsearchable": false,
+          "requiresSecureAccount": false,
+          "linkedOffers": [],
+          "keyImages": [],
+          "releaseInfo": [],
+          "__v": 145
+        },
+        {
+          "_id": "651f1fd4c7714697b2bf5313574f6fac",
+          "id": "651f1fd4c7714697b2bf5313574f6fac",
+          "namespace": "2df8b055a5674c8e9211fc51f8efd210",
+          "title": "Arranger: A Role-Puzzling Adventure",
+          "description": "Arranger: A Role-Puzzling Adventure",
+          "keyImages": [
+            {
+              "type": "DieselGameBox",
+              "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-1qzf2.jpg",
+              "md5": "789995eb4b64180dc32315fbb522eec1"
+            },
+            {
+              "type": "DieselGameBoxTall",
+              "url": "https://cdn1.epicgames.com/spt-assets/fee7dc25f12c4400a5182c864fd89c66/arranger-a-rolepuzzling-adventure-3yvei.jpg",
+              "md5": "1dea5154aa255229ba57736c47a4c0da"
+            }
+          ],
+          "categories": [
+            {
+              "path": "games",
+              "_id": "6a06e3e887fea85be3462871"
+            },
+            {
+              "path": "applications",
+              "_id": "6a06e3e887fea85be3462872"
+            }
+          ],
+          "status": "ACTIVE",
+          "creationDate": "2026-03-23T22:15:31.984Z",
+          "lastModifiedDate": "2026-04-14T18:46:56.014Z",
+          "customAttributes": [
+            {
+              "key": "FolderName",
+              "type": "STRING",
+              "value": "ArrangerARolePuzzlince8b2"
+            }
+          ],
+          "entitlementName": "651f1fd4c7714697b2bf5313574f6fac",
+          "entitlementType": "EXECUTABLE",
+          "itemType": "DURABLE",
+          "releaseInfo": [
+            {
+              "id": "b656085f-509a-44b2-bff5-f89690fd9df7",
+              "appId": "74b5d036bf104e92be0b94caacca312b",
+              "platform": [
+                "iOS"
+              ],
+              "_id": "6a06e3e887fea85be3462873"
+            }
+          ],
+          "developer": "Furniture & Mattress LLC",
+          "developerId": "o-p9n3xscghng3b46flmblxu3ngmgju5",
+          "eulaIds": [],
+          "installModes": [],
+          "endOfSupport": false,
+          "applicationId": "fghi4567b1ZWl1HSho8w6igz4GvYQVNy",
+          "unsearchable": false,
+          "requiresSecureAccount": false,
+          "linkedOffers": [],
+          "__v": 146
+        }
+      ],
+      "customAttributes": {
+        "autoGeneratedPrice": {
+          "type": "STRING",
+          "value": "false"
+        },
+        "iosCatalogItemId": {
+          "type": "STRING",
+          "value": "651f1fd4c7714697b2bf5313574f6fac"
+        },
+        "isManuallySetViewableDate": {
+          "type": "STRING",
+          "value": "true"
+        },
+        "isPromotionalContentUsed": {
+          "type": "STRING",
+          "value": "false"
+        },
+        "isManuallySetPCReleaseDate": {
+          "type": "STRING",
+          "value": "false"
+        },
+        "isBlockchainUsed": {
+          "type": "STRING",
+          "value": "false"
+        }
+      },
+      "categories": [
+        "freegames",
+        "games",
+        "games/edition",
+        "games/edition/base"
+      ],
+      "developerDisplayName": "Furniture & Mattress LLC",
+      "publisherDisplayName": "Furniture & Mattress LLC",
+      "prePurchase": null,
+      "releaseDate": "2026-05-14T15:00:00.000Z",
+      "pcReleaseDate": "2026-05-14T15:00:00.000Z",
+      "viewableDate": "2026-05-14T15:00:00.000Z",
+      "countriesBlacklist": null,
+      "countriesWhitelist": null,
+      "refundType": "SELF_REFUNDABLE",
+      "giveaway": {
+        "_id": "6a05f1c45244f775c409fe34",
+        "platform": "ios",
+        "offerId": "8c451d7863c44c32b7e9250291e45de2",
+        "startDate": "2026-05-14T15:58:00.000Z",
+        "endDate": "2026-05-21T15:00:00.000Z",
+        "historical": {
+          "_id": "6a05f1c45244f775c409fe34",
+          "platform": "ios",
+          "offerId": "8c451d7863c44c32b7e9250291e45de2",
+          "startDate": "2026-05-14T15:58:00.000Z",
+          "endDate": "2026-05-21T15:00:00.000Z"
+        }
+      },
+      "price": {
+        "_id": "69f3ae5510b09f5aa803fda9",
+        "offerId": "8c451d7863c44c32b7e9250291e45de2",
+        "country": "US",
+        "namespace": "2df8b055a5674c8e9211fc51f8efd210",
+        "__v": 0,
+        "appliedRules": [
+          {
+            "id": "a445cf244e274306ba4599a760647454",
+            "name": "Free Games Promotion Mobile (MS)",
+            "namespace": "2df8b055a5674c8e9211fc51f8efd210",
+            "promotionStatus": "ACTIVE",
+            "startDate": "2026-05-14T15:00:00.000Z",
+            "endDate": "2026-05-21T15:00:00.000Z",
+            "saleType": "REGULAR",
+            "regionIds": [
+              "AE",
+              "AFRICA",
+              "ANZ",
+              "AR",
+              "AU",
+              "BG",
+              "BR2",
+              "CA",
+              "CH",
+              "CIS",
+              "CL2",
+              "CN2",
+              "CO2",
+              "CR2",
+              "CZ",
+              "DK",
+              "EAST",
+              "EURO",
+              "GB",
+              "HK2",
+              "HU",
+              "ID2",
+              "IL",
+              "IN2",
+              "JP",
+              "KR2",
+              "KZ",
+              "LATAM",
+              "MIDEAST",
+              "MX2",
+              "MY2",
+              "NO",
+              "NZ",
+              "PE2",
+              "PH2",
+              "PL",
+              "QA",
+              "RO",
+              "ROW",
+              "RU",
+              "SA",
+              "SE",
+              "SEA",
+              "SG2",
+              "TH2",
+              "TR",
+              "TW2",
+              "UA",
+              "US",
+              "UY2",
+              "VN2",
+              "ZA2"
+            ],
+            "discountSetting": {
+              "discountType": "PERCENTAGE",
+              "discountValue": null,
+              "discountPercentage": 0,
+              "_id": "6a05e7c4fd5bb3b38a72f5cc"
+            },
+            "promotionSetting": {
+              "promotionType": "SIMPLE",
+              "discountOffers": [
+                {
+                  "offerId": "f89357d455fe4038a5376ce601c29e6c",
+                  "_id": "6a05e7c4fd5bb3b38a72f5ce"
+                },
+                {
+                  "offerId": "8c451d7863c44c32b7e9250291e45de2",
+                  "_id": "6a05e7c4fd5bb3b38a72f5cf"
+                }
+              ],
+              "_id": "6a05e7c4fd5bb3b38a72f5cd"
+            },
+            "_id": "6a05e7c4fd5bb3b38a72f5cb"
+          }
+        ],
+        "price": {
+          "currencyCode": "USD",
+          "discount": 999,
+          "discountPrice": 0,
+          "originalPrice": 999,
+          "basePayoutCurrencyCode": "USD",
+          "basePayoutPrice": 0,
+          "payoutCurrencyExchangeRate": 1,
+          "_id": "6a05e7c4fd5bb3b38a72f5ca"
+        },
+        "region": "US",
+        "updatedAt": "2026-05-14T15:18:28.646Z"
+      }
+    }
+  ],
+  "capturedAt": "2026-05-15T11:38:51.039Z"
+}

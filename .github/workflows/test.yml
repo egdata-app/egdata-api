@@ -1,0 +1,105 @@
+name: Test
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+jobs:
+  lint-typecheck-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # NOTE: `pnpm biome check .` and `pnpm typecheck` are intentionally
+      # not gated in CI yet — the repo has pre-existing lint/type errors
+      # that need a separate cleanup pass. Run them locally when working
+      # in the affected areas. CI gates on build + unit tests.
+
+      - name: Build
+        run: pnpm build
+
+      - name: Unit tests (no infra required)
+        run: pnpm test:unit
+
+  integration:
+    runs-on: ubuntu-latest
+    needs: lint-typecheck-build
+    # Only run when secrets are available (skips on forks).
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'push' }}
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Write Mongo TLS files
+        env:
+          MONGO_CA_B64: ${{ secrets.MONGO_CA_B64 }}
+          MONGO_CERT_B64: ${{ secrets.MONGO_CERT_B64 }}
+        run: |
+          if [ -z "$MONGO_CA_B64" ] || [ -z "$MONGO_CERT_B64" ]; then
+            echo "Mongo TLS secrets not set — skipping."
+            exit 0
+          fi
+          mkdir -p .secrets
+          echo "$MONGO_CA_B64" | base64 -d > .secrets/mongo-ca.pem
+          echo "$MONGO_CERT_B64" | base64 -d > .secrets/mongo-cert.pem
+          echo "MONGO_CA=$PWD/.secrets/mongo-ca.pem" >> "$GITHUB_ENV"
+          echo "MONGO_CERT=$PWD/.secrets/mongo-cert.pem" >> "$GITHUB_ENV"
+
+      - name: Run full test suite
+        env:
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+          # Redis comes from the `services.redis` sidecar above — no prod
+          # creds needed. BULL_REDIS_URI points to the same instance.
+          REDISHOST: 127.0.0.1
+          REDISPORT: "6379"
+          BULL_REDIS_URI: redis://127.0.0.1:6379
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
+          MEILISEARCH_API_KEY: ${{ secrets.MEILISEARCH_API_KEY }}
+          MEILISEARCH_INSTANCE: ${{ secrets.MEILISEARCH_INSTANCE }}
+          OPENSEARCH_URL: ${{ secrets.OPENSEARCH_URL }}
+          OPENSEARCH_USERNAME: ${{ secrets.OPENSEARCH_USERNAME }}
+          OPENSEARCH_PASSWORD: ${{ secrets.OPENSEARCH_PASSWORD }}
+          EPIC_CLIENT_ID: ${{ secrets.EPIC_CLIENT_ID }}
+          EPIC_CLIENT_SECRET: ${{ secrets.EPIC_CLIENT_SECRET }}
+        run: |
+          if [ -z "$MONGO_URL" ]; then
+            echo "MONGO_URL not set — skipping integration suite."
+            exit 0
+          fi
+          pnpm test

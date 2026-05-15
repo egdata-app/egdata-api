@@ -17,5 +17,8 @@
     "enabled": true,
     "formatWithErrors": false,
     "indentStyle": "space"
+  },
+  "files": {
+    "includes": ["**", "!**/tests/__snapshots__/**"]
   }
 }
