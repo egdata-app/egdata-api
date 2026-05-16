@@ -49,9 +49,14 @@ function getJwtHeader(token: string): jwt.JwtHeader & { kid: string } {
     throw new Error("Invalid token header");
   }
 
-  const parsedHeader = JSON.parse(
-    Buffer.from(header, "base64url").toString("utf-8"),
-  ) as jwt.JwtHeader;
+  let parsedHeader: jwt.JwtHeader;
+  try {
+    parsedHeader = JSON.parse(
+      Buffer.from(header, "base64url").toString("utf-8"),
+    ) as jwt.JwtHeader;
+  } catch {
+    throw new Error("Invalid token header");
+  }
 
   if (!parsedHeader.kid) {
     throw new Error("Invalid token header");
