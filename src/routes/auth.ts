@@ -8,6 +8,7 @@ import { db } from "../db/index.js";
 import { readFileSync } from "node:fs";
 import { telegramBotService } from "../clients/telegram.js";
 import { randomUUID } from "node:crypto";
+import crypto from "node:crypto";
 import client from "../clients/redis.js";
 import { auth } from "../utils/auth.js";
 import consola from "consola";
@@ -624,7 +625,9 @@ app.patch("/refresh", async (c) => {
     return c.json({ error: "Missing token" }, 401);
   }
 
-  if (token !== process.env.JWT_SECRET) {
+  const actual = crypto.createHash('sha256').update(token).digest();
+  const expected = crypto.createHash('sha256').update(process.env.JWT_SECRET || '').digest();
+  if (!crypto.timingSafeEqual(actual, expected)) {
     console.error("Invalid token");
     return c.json({ error: "Invalid token" }, 401);
   }
@@ -751,7 +754,7 @@ app.patch("/refresh", async (c) => {
 });
 
 const launcherClient = "34a02cf8f4414e29b15921876da36f9a";
-const launcherSecret = "daafbccc737745039dffe53d94fc76cf";
+const launcherSecret = "****76cf";
 
 export type LauncherAuthTokens = {
   access_token: string;
@@ -787,7 +790,9 @@ app.patch("/refresh-admin", async (c) => {
   if (authorization.startsWith("Bearer ")) {
     const token = authorization.replace("Bearer ", "");
 
-    if (token !== process.env.JWT_SECRET) {
+    const actual = crypto.createHash('sha256').update(token).digest();
+    const expected = crypto.createHash('sha256').update(process.env.JWT_SECRET || '').digest();
+    if (!crypto.timingSafeEqual(actual, expected)) {
       console.error("Invalid JWT_SECRET token");
       return c.json({ error: "Invalid JWT_SECRET token" }, 401);
     }
