@@ -42,6 +42,24 @@ async function getGooglePublicKey(kid: string) {
   return jwkToPem(key);
 }
 
+function getJwtHeader(token: string): jwt.JwtHeader & { kid: string } {
+  const [header] = token.split(".");
+
+  if (!header) {
+    throw new Error("Invalid token header");
+  }
+
+  const parsedHeader = JSON.parse(
+    Buffer.from(header, "base64url").toString("utf-8"),
+  ) as jwt.JwtHeader;
+
+  if (!parsedHeader.kid) {
+    throw new Error("Invalid token header");
+  }
+
+  return parsedHeader as jwt.JwtHeader & { kid: string };
+}
+
 app.get("/", (c) => {
   return c.json({ message: "Hello, World!" });
 });
@@ -56,20 +74,8 @@ app.post("/find-or-create", async (c) => {
 
   try {
     const jwtToken = token.replace("Bearer ", "");
-
-    const decodedHeader = jwt.decode(jwtToken, {
-      complete: true,
-    }) as unknown as jwt.JwtHeader & { header: { kid: string } };
-
-    if (!decodedHeader || !decodedHeader.header.kid) {
-      console.error("Invalid token header", {
-        decodedHeader,
-      });
-
-      throw new Error("Invalid token header");
-    }
-
-    const publicKey = await getGooglePublicKey(decodedHeader.header.kid);
+    const decodedHeader = getJwtHeader(jwtToken);
+    const publicKey = await getGooglePublicKey(decodedHeader.kid);
 
     const decodedToken = jwt.verify(jwtToken, publicKey, {
       algorithms: ["RS256"], // Google tokens are typically signed with RS256
