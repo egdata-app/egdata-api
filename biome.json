@@ -19,6 +19,14 @@
     "indentStyle": "space"
   },
   "files": {
-    "includes": ["**", "!**/tests/__snapshots__/**"]
+    "includes": [
+      "**",
+      "!**/tests/__snapshots__",
+      "!apps/docs/.source",
+      "!apps/docs/.tanstack",
+      "!apps/docs/.wrangler",
+      "!apps/docs/dist",
+      "!apps/docs/routeTree.gen.ts"
+    ]
   }
 }

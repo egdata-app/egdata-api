@@ -1,5 +1,4 @@
-import { readFileSync } from "node:fs";
-import { openapiSpecPath } from "@/lib/openapi";
+import { openapiDocument } from "@/lib/openapi";
 
 type Operation = {
   operationId?: string;
@@ -7,7 +6,10 @@ type Operation = {
 };
 
 type OpenApiDocument = {
-  paths?: Record<string, Partial<Record<(typeof httpMethods)[number], Operation>>>;
+  paths?: Record<
+    string,
+    Partial<Record<(typeof httpMethods)[number], Operation>>
+  >;
 };
 
 const httpMethods = [
@@ -35,9 +37,7 @@ function routePathToLegacySegments(path: string): string[] {
 }
 
 function buildRedirectMap() {
-  const document = JSON.parse(
-    readFileSync(openapiSpecPath, "utf8"),
-  ) as OpenApiDocument;
+  const document = openapiDocument as OpenApiDocument;
   const redirects = new Map<string, string>();
 
   for (const [path, pathItem] of Object.entries(document.paths ?? {})) {

@@ -1,17 +1,13 @@
-import { existsSync } from "node:fs";
-import { resolve } from "node:path";
+import type { OpenAPIOptions } from "fumadocs-openapi/server";
 import { createOpenAPI } from "fumadocs-openapi/server";
+import openapiDocument from "../../../openapi/egdata.openapi.json";
 
-const repositoryOpenAPIPath = resolve(
-  process.cwd(),
-  "../../openapi/egdata.openapi.json",
-);
-const fallbackOpenAPIPath = resolve(process.cwd(), "openapi/fallback.openapi.json");
+export { openapiDocument };
 
-export const openapiSpecPath = existsSync(repositoryOpenAPIPath)
-  ? repositoryOpenAPIPath
-  : fallbackOpenAPIPath;
+const input: NonNullable<OpenAPIOptions["input"]> = () => ({
+  "egdata.openapi.json": openapiDocument as never,
+});
 
 export const openapi = createOpenAPI({
-  input: [openapiSpecPath],
+  input,
 });
