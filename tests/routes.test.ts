@@ -10,6 +10,11 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const SNAPSHOT_DIR = join(HERE, "__snapshots__");
 
 const hasMongo = Boolean(process.env.MONGO_URL);
+const runOpenSearchSnapshots = process.env.RUN_OPENSEARCH_SNAPSHOTS === "true";
+const activeCorpus = corpus.filter(
+  (entry) => entry.requires !== "opensearch" || runOpenSearchSnapshots,
+);
+const skippedOpenSearchSnapshots = corpus.length - activeCorpus.length;
 
 describe.skipIf(!hasMongo)("route golden snapshots", () => {
   let app: import("hono").Hono;
@@ -25,7 +30,13 @@ describe.skipIf(!hasMongo)("route golden snapshots", () => {
     // process exit. Add explicit close here if leaked handles surface in CI.
   });
 
-  for (const entry of corpus) {
+  if (skippedOpenSearchSnapshots > 0) {
+    it("skips live OpenSearch snapshots by default", () => {
+      expect(skippedOpenSearchSnapshots).toBeGreaterThan(0);
+    });
+  }
+
+  for (const entry of activeCorpus) {
     it(`${entry.method} ${entry.path}`, async () => {
       const snapshotPath = join(SNAPSHOT_DIR, `${entry.name}.json`);
       let snapshot: {
