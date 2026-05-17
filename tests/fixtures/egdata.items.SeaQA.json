@@ -1,0 +1,6140 @@
+[
+  {
+    "_id": "7541861703",
+    "id": "5c342732d6844d7d960ab272b5b4a806",
+    "namespace": "SeaQA",
+    "title": "SmokeTest Item For Any Offer",
+    "description": "SmokeTest Item For Any Offer",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671f8fc2d497bcbe10b4"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-07-23T10:29:28.141Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-08-04T02:21:06.907Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "5c342732d6844d7d960ab272b5b4a806",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "baf15c879c5f409ca8344736a1604897",
+        "appId": "testappid",
+        "platform": ["HTML5"],
+        "_id": {
+          "$oid": "6a09671f8fc2d497bcbe10b5"
+        }
+      }
+    ],
+    "developer": "johnsonwu",
+    "developerId": "o-9wzc54qv7a2kzu9yas6rd4geu5f66f",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": false,
+    "requiresSecureAccount": false,
+    "longDescription": "SmokeTest Item For Any Offer",
+    "technicalDetails": "technical information",
+    "linkedOffers": [
+      "55d109db6c2347e6a308cb26e97b4dd6",
+      "3afc678187c044e2b7ffb547938f0751",
+      "620b1dc8a8b54cfda56ffbae32946f70",
+      "f85b0d111a644835acaf7a12118e21c0"
+    ],
+    "__v": 1746
+  },
+  {
+    "_id": "2146462049",
+    "id": "1040403ae8aa4a79be5ceb8570c20ca1",
+    "namespace": "SeaQA",
+    "title": "SmokeTest Item Not Delete",
+    "description": "SmokeTest Item",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69d46d78935df8cf5ec94ac1"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-03-09T10:43:42.269Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-02-26T03:08:54.959Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "1040403ae8aa4a79be5ceb8570c20ca1",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "test",
+    "developerId": "o-2hc7fmdbe58vaetf22ear4jsvrjw7a",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "longDescription": "SmokeTest Item",
+    "technicalDetails": "technical information",
+    "linkedOffers": [
+      "1a399e95e17843b8a7ae63a3c88946e8",
+      "3d65d0f07ac6413c9a07c15c069e34eb",
+      "60932b09c7b046f0bc2b424a50784f8a"
+    ],
+    "__v": 928,
+    "applicationId": ""
+  },
+  {
+    "_id": "9268620984",
+    "id": "9b5926e02ddc4cb8bf46575bb09671bc",
+    "namespace": "SeaQA",
+    "title": "compatibleWith and platform test -Don't Delete it",
+    "description": "SmokeTest Item",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69d46dc0935df8cf5ec97972"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2023-05-22T10:39:59.651Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-03-31T07:35:52.937Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "9b5926e02ddc4cb8bf46575bb09671bc",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "a2e9d80fbe88454fa9dfdeb505a33612",
+        "appId": "testappid",
+        "platform": ["HTML5"],
+        "_id": {
+          "$oid": "69d46dc0935df8cf5ec97973"
+        }
+      }
+    ],
+    "developer": "Test",
+    "developerId": "o-f6sd9ely7z2xgbcabk5uwqmbmsff9z",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "longDescription": "SmokeTest Item",
+    "technicalDetails": "technical information",
+    "linkedOffers": ["20b01060f4bb48aeaaa88db9cb4c9554"],
+    "__v": 755
+  },
+  {
+    "_id": "1066238993",
+    "id": "22aa590ed05943ad9e657188a68aff6d",
+    "namespace": "SeaQA",
+    "title": "Test compatible list",
+    "description": "item description",
+    "keyImages": [
+      {
+        "type": "Screenshot",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/Penguins-1024x768-9d377b10ce778c4938b3c7e2c63a229a.jpg",
+        "md5": "9d377b10ce778c4938b3c7e2c63a229a"
+      },
+      {
+        "type": "ESRB",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/M-200x104-5499a8120d532a2940edfd816fd72567.png",
+        "md5": "5499a8120d532a2940edfd816fd72567"
+      }
+    ],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a0967208fc2d497bcbe1146"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T06:44:54.791Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2019-04-25T09:23:59.093Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "22aa590ed05943ad9e657188a68aff6d",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "b9cbe7cd340f4c659087a3d646d60f47",
+        "appId": "1",
+        "platform": ["Mac", "PS4"],
+        "_id": {
+          "$oid": "6a0967208fc2d497bcbe1147"
+        }
+      }
+    ],
+    "developer": "Landy Tian",
+    "developerId": "o-dc32abc22b45c7ab6a291d60d51863",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "longDescription": "long item description",
+    "technicalDetails": "technical information",
+    "linkedOffers": ["061f452968604bceaf75f96df18acfaf"],
+    "__v": 1483
+  },
+  {
+    "_id": "1031551525",
+    "id": "75cbf00e7bbb45f383367197b94e816a",
+    "namespace": "SeaQA",
+    "title": "Emergent Test Item - 1",
+    "description": "Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1",
+    "keyImages": [
+      {
+        "type": "Thumbnail",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/Desert-1024x768-ba45c8f60456a672e003a875e469d0eb.jpg",
+        "md5": "ba45c8f60456a672e003a875e469d0eb"
+      }
+    ],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a09671e8fc2d497bcbe1080"
+        }
+      },
+      {
+        "path": "assets/characters",
+        "_id": {
+          "$oid": "6a09671e8fc2d497bcbe1081"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2016-02-04T00:06:19.815Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2019-04-25T09:25:53.972Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "75cbf00e7bbb45f383367197b94e816a",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementStartDate": {
+      "$date": "2016-02-03T00:00:00.000Z"
+    },
+    "longDescription": "Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1Emergent Test Item - 1",
+    "linkedOffers": ["061f452968604bceaf75f96df18acfaf"],
+    "releaseInfo": [],
+    "__v": 1478
+  },
+  {
+    "_id": "5891537429",
+    "id": "f847a4e677c3417aaa59760c0eeebfa9",
+    "namespace": "SeaQA",
+    "title": "Test offer for Junit Smoke Test(Don't delete)",
+    "description": "Test offer for Junit Smoke Test(Don't delete)",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967188fc2d497bcbe0e98"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2016-08-16T07:52:48.800Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-11-30T14:27:13.215Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "f847a4e677c3417aaa59760c0eeebfa9",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": false,
+    "useCount": 10,
+    "linkedOffers": ["59707be31b4545dca95e00f86797f594"],
+    "__v": 1482
+  },
+  {
+    "_id": "5807876433",
+    "id": "42fa0d48bc8f400ba98e48c753fee239",
+    "namespace": "SeaQA",
+    "title": "SmokeTest",
+    "description": "SmokeTest",
+    "keyImages": [
+      {
+        "type": "image name",
+        "url": "url",
+        "md5": "ed076287532e86365e841e92bfc50d8c"
+      },
+      {
+        "type": "Thumbnail",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/test-45x47-abdb9633e5983ce0a6b51e25cb1adf6b.png",
+        "md5": "abdb9633e5983ce0a6b51e25cb1adf6b"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671f8fc2d497bcbe10d9"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2016-09-06T07:37:06.689Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-03-04T09:30:09.287Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "CheckEntitlement2",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "developer": "Landy Tian",
+    "developerId": "o-dc32abc22b45c7ab6a291d60d51863",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "longDescription": "SmokeTest",
+    "technicalDetails": "technical information",
+    "linkedOffers": ["d479f21542054860a457548352a6a176"],
+    "releaseInfo": [],
+    "__v": 1481
+  },
+  {
+    "_id": "2411561793",
+    "id": "b9b526c0b6854ae091caf0466170f2bf",
+    "namespace": "SeaQA",
+    "title": "Test Item1",
+    "description": "creating an item by making an api call",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "projects",
+        "_id": {
+          "$oid": "6a09671c8fc2d497bcbe0fb3"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-01T20:59:16.471Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-05-18T14:26:16.323Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "checkingTheEntitlement",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "developer": "allantest1",
+    "developerId": "o-cpa2a6m9f2zgmksvkxlvcru9udy9w8",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "useCount": 10,
+    "longDescription": "Calling AdminItemResource of Catalog Service and making a POST to create an item",
+    "linkedOffers": ["d479f21542054860a457548352a6a176"],
+    "releaseInfo": [],
+    "__v": 1478
+  },
+  {
+    "_id": "6876315356",
+    "id": "d28bdde489d144a684949b9b74386f34",
+    "namespace": "SeaQA",
+    "title": "Test multiple locale",
+    "description": "A collection of realistic assets from Epic's Open World demo shown at GDC 2015. Use them to create new levels or add them to existing ones.",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671b8fc2d497bcbe0f4b"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T18:16:33.899Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2020-07-03T21:25:34.816Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "EntitlmentType-1",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2027-10-01T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2014-10-26T00:00:00.000Z"
+    },
+    "longDescription": "About this pack:\nEach asset has been created using photographs of a real world object.\nOur Process:\nFor larger assets such as rocks, ground tiles, cliffs faces and tree trunks, reconstruction was performed directly from photographs using a process called photogrammetry. These assets were then put through a proprietary 'de-lighting' process to make them suitable for use in any lighting scenario. Specular and roughness maps where then created to take full advantage of Unreal Engine 4's Physically Based Rendering architecture. Finally game-optimized assets were generated with normal maps, LODs and collision meshes. \n\nFor vegetation such as flowers, bushes and grass we used color calibrated reference photography shot in the field to more accurately model and texture these assets.\n\nCurious about our photo-reconstruction process? Watch our GDC 2015 session <a href=\"https://youtu.be/clakekAHQx0\">here!</>here!\n\nThe assets in this pack are designed for extremely high end systems. Load times of up to an hour are expected when opening the maps for the first time. Please also have 4GB of free space on your Harddrive to accommodate the DerivedDataCache created by this content.\n\nThis pack includes:\n\n-42 Photo-realistic meshes with LODs\n\t-17 Foliage\n\t-21 Rocks\n\t- 4 Trees\t\n-138 Textures from 2048 up to 8192\n-14 Tiling Ground Materials with Normal and Displacement maps\n\n<Emphasis>Licensed for Use Only with Unreal Engine-based Products</>",
+    "technicalDetails": "68 audio files provided in lossless format - 24 bit 192kHz wav\n 3 base materials with 7 material instances\n • 21 Textures at 2048x2048 \n • 4 Textures at 1024x1024\n 7 Blueprints: \n • 4 character blueprints with walk mode (1P, 1P with equipment rattle, 3P, 3P with equipment rattle) \n • Gamemode, spectator and HUD blueprints for spawning characters. Multiplayer enabled.\n 2 anim blueprints - standard and with equipment rattle.\n 2 Meshes: \n • Floodlight \n • Surface catwalk\n \n Compatible with \n 4.10 \n 4.11 \n 4.12\n\nThey are in \"\"\\Content\\Zombie_01\\Source\\FBX\\\"\" (not visible in the editor).",
+    "linkedOffers": ["d479f21542054860a457548352a6a176"],
+    "releaseInfo": [],
+    "__v": 1478
+  },
+  {
+    "_id": "9852584328",
+    "id": "e2c6436fd8f349198780cd6349509958",
+    "namespace": "SeaQA",
+    "title": "Free offer for Junit Smoke Test(Don't delete)",
+    "description": "Free offer for Junit Smoke Test(Don't delete)",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671a8fc2d497bcbe0f25"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2016-08-11T09:36:52.746Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-11-30T14:26:06.707Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "e2c6436fd8f349198780cd6349509958",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": false,
+    "useCount": 10,
+    "linkedOffers": ["a3dcddc55452496e803a354423f0769c"],
+    "__v": 1482
+  },
+  {
+    "_id": "0d31a0b98bc04dbebf975f7e1264da94",
+    "id": "0d31a0b98bc04dbebf975f7e1264da94",
+    "namespace": "SeaQA",
+    "title": "WalletCashItemTestin-001",
+    "description": "WalletCash Item",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a0967218fc2d497bcbe1192"
+        }
+      },
+      {
+        "path": "assets/characters",
+        "_id": {
+          "$oid": "6a0967218fc2d497bcbe1193"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2015-02-20T20:02:24.760Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2015-02-20T20:02:24.760Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "0d31a0b98bc04dbebf975f7e1264da94",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "WALLETCASH",
+    "developer": "sk;sgkl;",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "longDescription": "Testing Wallet Cash Item",
+    "linkedOffers": ["2ce02cbe6ec64b0aa42bf28986dbd1e6"],
+    "releaseInfo": [],
+    "__v": 1475
+  },
+  {
+    "_id": "2def63e0111c44d78272b35fc9dcb5b8",
+    "id": "2def63e0111c44d78272b35fc9dcb5b8",
+    "namespace": "SeaQA",
+    "title": "DynamicItemTesting - Major Item",
+    "description": "DynamicItemTesting - Major Item",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967208fc2d497bcbe1139"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2020-05-26T05:36:16.132Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2020-05-26T05:37:46.971Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "MajorItemChrisZ",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "selfRefundable": true,
+    "unsearchable": false,
+    "linkedOffers": [],
+    "__v": 1466
+  },
+  {
+    "_id": "852b6c7e23f940db88c5e3711031ab43",
+    "id": "852b6c7e23f940db88c5e3711031ab43",
+    "namespace": "SeaQA",
+    "title": "item title",
+    "description": "description",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671d8fc2d497bcbe1043"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-24T06:19:06.904Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-24T06:19:06.904Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "852b6c7e23f940db88c5e3711031ab43",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "developer": "AYI",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2014-10-26T00:00:00.000Z"
+    },
+    "useCount": 3,
+    "entitlementStartDate": {
+      "$date": "2014-10-23T00:00:00.000Z"
+    },
+    "longDescription": "long description",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1466
+  },
+  {
+    "_id": "d89137ffceff480fa25fb322a0137817",
+    "id": "d89137ffceff480fa25fb322a0137817",
+    "namespace": "SeaQA",
+    "title": "Testing Title-123",
+    "description": "Testing the title with numbers and alphabets",
+    "keyImages": [
+      {
+        "type": "OfferImageWide",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/79937-700x700-700x700-7411907ae56fced82ef1c5bb2a21e38e.png",
+        "md5": "7411907ae56fced82ef1c5bb2a21e38e"
+      }
+    ],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a09671a8fc2d497bcbe0f32"
+        }
+      },
+      {
+        "path": "assets/testing",
+        "_id": {
+          "$oid": "6a09671a8fc2d497bcbe0f33"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T23:08:14.252Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-03-31T07:35:52.401Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "seaqatest",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "requiresSecureAccount": true,
+    "entitlementEndDate": {
+      "$date": "2021-10-01T00:00:00.000Z"
+    },
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1466
+  },
+  {
+    "_id": "c99a285d4578430c84cde1cb3708633b",
+    "id": "c99a285d4578430c84cde1cb3708633b",
+    "namespace": "SeaQA",
+    "title": "testLocaleAugItem",
+    "description": "testLocaleAugItem",
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671b8fc2d497bcbe0f65"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-08-16T06:56:20.597Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-08-16T07:00:19.174Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "test",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Chucklefish LTD",
+    "developerId": "o-6j7ccxetmselhp9nxwbfq9pszcytn4",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": false,
+    "requiresSecureAccount": false,
+    "entitlementStartDate": {
+      "$date": "2021-08-01T06:55:55.454Z"
+    },
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 1466
+  },
+  {
+    "_id": "7a2fd19a4dc44e689f477db83f0cca3b",
+    "id": "7a2fd19a4dc44e689f477db83f0cca3b",
+    "namespace": "SeaQA",
+    "title": "Test  Item For Price Engine Junit Smoke Test(Don't Delete)",
+    "description": "Test  Item For Price Engine Junit Smoke Test(Don't Delete)",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a09671e8fc2d497bcbe1073"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2016-08-16T06:12:50.548Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2019-11-07T09:33:42.283Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "7a2fd19a4dc44e689f477db83f0cca3b",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "developer": "Changyu",
+    "developerId": "o-3dc272215a40f1b217332dd191b39d",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1466
+  },
+  {
+    "_id": "4245f08eeca24317a164e17e5782dace",
+    "id": "4245f08eeca24317a164e17e5782dace",
+    "namespace": "SeaQA",
+    "title": "Test Item1",
+    "description": "creating an item by making an api call",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "engines",
+        "_id": {
+          "$oid": "6a09671f8fc2d497bcbe10e6"
+        }
+      },
+      {
+        "path": "engines/ue4",
+        "_id": {
+          "$oid": "6a09671f8fc2d497bcbe10e7"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T05:47:12.225Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2017-02-16T08:46:56.733Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "checkingTheEntitlement",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "developer": "Epic Games Staff Account - Do NOT Delete",
+    "developerId": "o-rgm583e9ckq9xd827fhhysnm7vy6lk",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "longDescription": "Calling AdminItemResource of Catalog Service and making a POST to create an item",
+    "technicalDetails": "aa",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1466
+  },
+  {
+    "_id": "0d57c52cc5e04be48c77e72a7f2f98df",
+    "id": "0d57c52cc5e04be48c77e72a7f2f98df",
+    "namespace": "SeaQA",
+    "title": "Expired game for smoke test not delete",
+    "description": "Description for expired game for smoke test not delete",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a0967218fc2d497bcbe1185"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-03-18T05:01:54.163Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-03-18T11:29:12.005Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "0d57c52cc5e04be48c77e72a7f2f98df",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "johnsonwu",
+    "developerId": "o-9wzc54qv7a2kzu9yas6rd4geu5f66f",
+    "eulaIds": ["ABC"],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "requiresSecureAccount": false,
+    "longDescription": "Long Description for expired game for smoke test not delete",
+    "linkedOffers": [],
+    "__v": 1466
+  },
+  {
+    "_id": "045d4055f27f47e39788bcd4aebd7e25",
+    "id": "045d4055f27f47e39788bcd4aebd7e25",
+    "namespace": "SeaQA",
+    "title": "TestSeaQA-7",
+    "description": "Entitlement Start Date test",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967228fc2d497bcbe11b7"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T18:14:14.387Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2020-04-27T21:53:14.531Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "EntitlmentType-1",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "SUBSCRIPTION",
+    "developer": "shaveta67-test",
+    "developerId": "o-5d0c7fec03094bceac537084ab535b",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2025-10-28T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2014-10-25T00:00:00.000Z"
+    },
+    "longDescription": "Entitlement type is entitlement, item type is Subscription, entitlement start date is in past",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1467
+  },
+  {
+    "_id": "eb3fe22f7ea84684b847f50d5a703cf7",
+    "id": "eb3fe22f7ea84684b847f50d5a703cf7",
+    "namespace": "SeaQA",
+    "title": "test offer for upgrading common 2+",
+    "description": "UNKNOWN",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a09671a8fc2d497bcbe0ef4"
+        }
+      },
+      {
+        "path": "assets/characters",
+        "_id": {
+          "$oid": "6a09671a8fc2d497bcbe0ef5"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2017-11-01T10:24:06.870Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-04-11T07:51:55.530Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "eb3fe22f7ea84684b847f50d5a703cf7",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "ece1272a9e8645c68998364dc41db637",
+        "appId": "1",
+        "platform": ["PS4"],
+        "_id": {
+          "$oid": "6a09671a8fc2d497bcbe0ef6"
+        }
+      }
+    ],
+    "developer": "mpurdchu25b2dmbw",
+    "developerId": "o-569b3b228844a48801edff12bc30cb",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "longDescription": "UNKNOWN",
+    "technicalDetails": "UNKNOWN",
+    "linkedOffers": [],
+    "__v": 1466
+  },
+  {
+    "_id": "16f0f6f5f52c46b4a7aff29d9d55927f",
+    "id": "16f0f6f5f52c46b4a7aff29d9d55927f",
+    "namespace": "SeaQA",
+    "title": "Landy Test Item",
+    "description": "This is a test items created by Landy",
+    "keyImages": [
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/Desert-1024x768-ba45c8f60456a672e003a875e469d0eb.jpg",
+        "md5": "ba45c8f60456a672e003a875e469d0eb"
+      },
+      {
+        "type": "ComingSoon",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/Chrysanthemum-1024x768-076e3caed758a1c18c91a0e9cae3368f.jpg",
+        "md5": "076e3caed758a1c18c91a0e9cae3368f"
+      },
+      {
+        "type": "ComingSoon_Small",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/Hydrangeas-1024x768-bdf3bf1da3405725be763540d6601144.jpg",
+        "md5": "bdf3bf1da3405725be763540d6601144"
+      }
+    ],
+    "categories": [
+      {
+        "path": "engines",
+        "_id": {
+          "$oid": "6a095db78fc2d497bcbc2b0f"
+        }
+      },
+      {
+        "path": "engines/ue4",
+        "_id": {
+          "$oid": "6a095db78fc2d497bcbc2b10"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T07:55:50.195Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-08-01T09:03:14.392Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "16f0f6f5f52c46b4a7aff29d9d55927f",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "ccbe6c86782c48d99876ab53fa8eea7e",
+        "appId": "a",
+        "platform": ["Mac", "PS4"],
+        "_id": {
+          "$oid": "6a095db78fc2d497bcbc2b11"
+        }
+      }
+    ],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": false,
+    "useCount": 100,
+    "longDescription": "This is a test items created by Landy",
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "bf12a3b8c97a431abaaff49b41ae7f30",
+    "id": "bf12a3b8c97a431abaaff49b41ae7f30",
+    "namespace": "SeaQA",
+    "title": "Test Item Anita",
+    "description": "UNKNOWN",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a09671c8fc2d497bcbe0fa5"
+        }
+      },
+      {
+        "path": "assets/testing",
+        "_id": {
+          "$oid": "6a09671c8fc2d497bcbe0fa6"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2015-09-17T22:39:25.843Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-08-18T09:57:15.496Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "test-item-ent-Anita",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "releaseInfo": [
+      {
+        "id": "58687b4f813d4860bb577ab1d24bda30",
+        "appId": "app-name",
+        "platform": ["Windows"],
+        "_id": {
+          "$oid": "6a09671c8fc2d497bcbe0fa7"
+        }
+      }
+    ],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "useCount": 10,
+    "entitlementStartDate": {
+      "$date": "2015-09-16T00:00:00.000Z"
+    },
+    "longDescription": "UNKNOWN",
+    "technicalDetails": "UNKNOWN",
+    "linkedOffers": [],
+    "__v": 1466
+  },
+  {
+    "_id": "f722d5e3f1e84ff1b2fc2c8f032fd35e",
+    "id": "f722d5e3f1e84ff1b2fc2c8f032fd35e",
+    "namespace": "SeaQA",
+    "title": "Create Item For PriceEngine",
+    "description": "item description",
+    "keyImages": [
+      {
+        "type": "image name",
+        "url": "url",
+        "md5": "ed076287532e86365e841e92bfc50d8c"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967198fc2d497bcbe0eb3"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2018-09-20T23:36:05.461Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-11-13T10:04:49.173Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "Consumable_Entitlement",
+    "entitlementType": "AUDIENCE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "19c183a347414f9d9b1fba77f1a264ed",
+        "appId": "test",
+        "platform": ["Windows"],
+        "_id": {
+          "$oid": "6a0967198fc2d497bcbe0eb4"
+        }
+      }
+    ],
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "selfRefundable": true,
+    "applicationId": "",
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2099-12-31T00:00:00.000Z"
+    },
+    "useCount": 1,
+    "entitlementStartDate": {
+      "$date": "2010-01-01T00:00:00.000Z"
+    },
+    "longDescription": "Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.",
+    "technicalDetails": "technical informatioin",
+    "linkedOffers": [],
+    "__v": 1466
+  },
+  {
+    "_id": "edcc2a3ebd4b430da0f24809e4ff68d0",
+    "id": "edcc2a3ebd4b430da0f24809e4ff68d0",
+    "namespace": "SeaQA",
+    "title": "TestSeaQA-2",
+    "description": "Entitlement Start Date test",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967198fc2d497bcbe0eda"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T18:09:47.022Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-27T18:09:47.022Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "EntitlmentType-1",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2014-10-28T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2014-10-27T00:00:00.000Z"
+    },
+    "longDescription": "Entitlement type is executable, item type is Subscription, entitlement start date is today",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "ac71729cce6d4478aa9b54eef77e0a29",
+    "id": "ac71729cce6d4478aa9b54eef77e0a29",
+    "namespace": "SeaQA",
+    "title": "test admin api",
+    "description": "test admin api",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a09671c8fc2d497bcbe0fe7"
+        }
+      },
+      {
+        "path": "assets/testing",
+        "_id": {
+          "$oid": "6a09671c8fc2d497bcbe0fe8"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2017-12-20T06:53:16.946Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2017-12-20T06:53:16.946Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "ac71729cce6d4478aa9b54eef77e0a29",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "e6a3c8cb979c4fc1ac94f8cc356697ff",
+        "appId": "1",
+        "platform": ["Mac", "iOS"],
+        "_id": {
+          "$oid": "6a09671c8fc2d497bcbe0fe9"
+        }
+      }
+    ],
+    "developer": "landytianfr",
+    "developerId": "o-569b3b228844a48801edff12bc30cb",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "c26dfb7090bb441e881f33a814ec7a90",
+    "id": "c26dfb7090bb441e881f33a814ec7a90",
+    "namespace": "SeaQA",
+    "title": "TestSeaQA-4",
+    "description": "Entitlement Start Date test",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671b8fc2d497bcbe0f97"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T18:10:32.120Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-27T18:13:01.245Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "EntitlmentType-1",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2015-10-28T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2014-10-26T00:00:00.000Z"
+    },
+    "longDescription": "Entitlement type is executable, item type is Subscription, entitlement start date is in future",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "accd23b295784ef4b34e3864468ff839",
+    "id": "accd23b295784ef4b34e3864468ff839",
+    "namespace": "SeaQA",
+    "title": "item title a",
+    "description": "item description",
+    "keyImages": [
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/ue/item/YughuesGroundMatsFeatured-476x248-7f1a2ff0eefe285cce5dc8af4305d02b.png",
+        "md5": "7f1a2ff0eefe285cce5dc8af4305d02b"
+      }
+    ],
+    "categories": [
+      {
+        "path": "projects",
+        "_id": {
+          "$oid": "6a09671c8fc2d497bcbe0fd9"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T04:38:13.155Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-20T05:43:05.513Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "ENTITLEMENT_NAME",
+    "entitlementType": "TEST",
+    "itemType": "SUBSCRIPTION",
+    "developer": "Epic Games",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2014-12-12T00:00:00.000Z"
+    },
+    "useCount": 3,
+    "longDescription": "long item description",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "7fadd23e9744495bbbb9bfbf5f44c629",
+    "id": "7fadd23e9744495bbbb9bfbf5f44c629",
+    "namespace": "SeaQA",
+    "title": "item title",
+    "description": "description",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671e8fc2d497bcbe104f"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2020-04-20T07:48:24.954Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2020-04-20T07:48:24.954Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "7fadd23e9744495bbbb9bfbf5f44c629",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2023-10-05T00:00:00.000Z"
+    },
+    "useCount": 3,
+    "entitlementStartDate": {
+      "$date": "2014-10-23T00:00:00.000Z"
+    },
+    "longDescription": "long description",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "4e5f3a1188314e96971a431a102f9af2",
+    "id": "4e5f3a1188314e96971a431a102f9af2",
+    "namespace": "SeaQA",
+    "title": "DynamicItemTesting - Sub Item",
+    "description": "DynamicItemTesting - Sub Item",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671f8fc2d497bcbe10cd"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2020-05-26T05:38:48.184Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2020-05-26T06:43:29.494Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "SubItemChrisZ",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "selfRefundable": true,
+    "unsearchable": false,
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "ce87bcfe393747929078584a0ab7d580",
+    "id": "ce87bcfe393747929078584a0ab7d580",
+    "namespace": "SeaQA",
+    "title": "TestingTest12",
+    "description": "Testing the entitlement type- edit executable to entitlement",
+    "keyImages": [
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/Chrysanthemum-1024x768-076e3caed758a1c18c91a0e9cae3368f.jpg",
+        "md5": "076e3caed758a1c18c91a0e9cae3368f"
+      }
+    ],
+    "categories": [
+      {
+        "path": "engines",
+        "_id": {
+          "$oid": "6a09671b8fc2d497bcbe0f58"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T17:46:47.255Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-27T17:47:25.414Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "8a36143e0f374e03bb5d140a20ca5985",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "SUBSCRIPTION",
+    "releaseInfo": [
+      {
+        "id": "be693b4b71a74efcb46c5e0ab8057afc",
+        "appId": "TestTestApp11",
+        "platform": ["Mac"],
+        "_id": {
+          "$oid": "6a09671b8fc2d497bcbe0f59"
+        }
+      }
+    ],
+    "developer": "SeaTest1",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2014-10-28T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2014-10-27T00:00:00.000Z"
+    },
+    "longDescription": "Testing entitlement type with item type as subscription and entitlement type as executable",
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "c5d07b0a53d24181beb0bfdc37fa104e",
+    "id": "c5d07b0a53d24181beb0bfdc37fa104e",
+    "namespace": "SeaQA",
+    "title": "TestSeaQA-8",
+    "description": "Entitlement Start Date test",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671b8fc2d497bcbe0f7f"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T18:14:30.250Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-27T18:14:30.250Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "EntitlmentType-1",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "SUBSCRIPTION",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2015-10-28T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2015-10-25T00:00:00.000Z"
+    },
+    "longDescription": "Entitlement type is entitlement, item type is Subscription, entitlement start date is in future",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "d2a050f415ce412182c0b6943120f238",
+    "id": "d2a050f415ce412182c0b6943120f238",
+    "namespace": "SeaQA",
+    "title": "TestSeaQA-13",
+    "description": "Entitlement Start Date test",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671a8fc2d497bcbe0f3f"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T18:16:17.355Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-27T18:16:17.355Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "EntitlmentType-1",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "CONSUMABLE",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2015-10-28T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2013-10-28T00:00:00.000Z"
+    },
+    "longDescription": "Entitlement type is entitlement, item type is consumable, entitlement start date is in past",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "7d420f550e3a47c89ac87f20586611a9",
+    "id": "7d420f550e3a47c89ac87f20586611a9",
+    "namespace": "SeaQA",
+    "title": "Landy Durable item",
+    "description": "Entitlement type edited from entitlement type to executable",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671e8fc2d497bcbe105b"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T17:48:41.651Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-12-08T08:43:58.231Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "21df848a246b4444ad6906d778832b1c",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games Staff Account - Do NOT Delete",
+    "developerId": "o-rgm583e9ckq9xd827fhhysnm7vy6lk",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": false,
+    "entitlementStartDate": {
+      "$date": "2014-10-27T00:00:00.000Z"
+    },
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "fc286f0d23e947f19d15bac7ae3aee1a",
+    "id": "fc286f0d23e947f19d15bac7ae3aee1a",
+    "namespace": "SeaQA",
+    "title": "Junit smoke test",
+    "description": "UNKNOWN",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967188fc2d497bcbe0e8c"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2016-08-04T08:36:14.413Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-04-21T02:03:01.157Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "fc286f0d23e947f19d15bac7ae3aee1a",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "cdq9gtgvcljppepp",
+    "developerId": "o-48fdeb720e4875863337a6f5bb8c48",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "longDescription": "UNKNOWN",
+    "technicalDetails": "UNKNOWN",
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "122fa4034457419d943afe298b7a0d0d",
+    "id": "122fa4034457419d943afe298b7a0d0d",
+    "namespace": "SeaQA",
+    "title": "Junit Smoke Test FulfillOfferForGift",
+    "description": "UNKNOWN",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967218fc2d497bcbe1179"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2016-08-04T08:39:23.843Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-04-21T02:03:01.991Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "122fa4034457419d943afe298b7a0d0d",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "cdq9gtgvcljppepp",
+    "developerId": "o-48fdeb720e4875863337a6f5bb8c48",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "longDescription": "UNKNOWN",
+    "technicalDetails": "UNKNOWN",
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "1781a570eaf94176a2adbdf493285af8",
+    "id": "1781a570eaf94176a2adbdf493285af8",
+    "namespace": "SeaQA",
+    "title": "SmokeTest",
+    "description": "SmokeTest",
+    "keyImages": [
+      {
+        "type": "image name",
+        "url": "url",
+        "md5": "ed076287532e86365e841e92bfc50d8c"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967218fc2d497bcbe1160"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2023-07-26T03:39:27.145Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-07-26T03:39:27.145Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "1781a570eaf94176a2adbdf493285af8",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "620c8382c9854223ab8d0c48a05eb7c2",
+        "appId": "testappid",
+        "platform": [],
+        "_id": {
+          "$oid": "6a0967218fc2d497bcbe1161"
+        }
+      }
+    ],
+    "developer": "landy tian",
+    "developerId": "9cdc32abc22b45c7ab6a291d60d51863",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "requiresSecureAccount": false,
+    "longDescription": "SmokeTest",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "a427d1f19f0246b7a02dc7931e1b5c42",
+    "id": "a427d1f19f0246b7a02dc7931e1b5c42",
+    "namespace": "SeaQA",
+    "title": "test compatible list 4.1",
+    "description": "description",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671d8fc2d497bcbe1002"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T08:39:20.069Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2016-08-29T11:44:48.753Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "a427d1f19f0246b7a02dc7931e1b5c42",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "releaseInfo": [
+      {
+        "id": "17b40553802045919f7a028d46ea9fc4",
+        "appId": "1",
+        "platform": ["Mac"],
+        "_id": {
+          "$oid": "6a09671d8fc2d497bcbe1003"
+        }
+      }
+    ],
+    "developer": "Landy Tian",
+    "developerId": "o-dc32abc22b45c7ab6a291d60d51863",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2018-10-17T00:00:00.000Z"
+    },
+    "longDescription": "long description",
+    "technicalDetails": "info",
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "ebc4a6491ed24a42831bb155d7818254",
+    "id": "ebc4a6491ed24a42831bb155d7818254",
+    "namespace": "SeaQA",
+    "title": "tester",
+    "description": "tester",
+    "keyImages": [
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/Tulips-1024x768-fafa5efeaf3cbe3b23b2748d13e629a1.jpg",
+        "md5": "fafa5efeaf3cbe3b23b2748d13e629a1"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967198fc2d497bcbe0ee6"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2015-07-28T01:57:49.215Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2016-09-06T08:06:27.051Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "ebc4a6491ed24a42831bb155d7818254",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "developer": "Landy Tian",
+    "developerId": "o-dc32abc22b45c7ab6a291d60d51863",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "6e9856389bdf4b44a3644fa69c27cfd5",
+    "id": "6e9856389bdf4b44a3644fa69c27cfd5",
+    "namespace": "SeaQA",
+    "title": "Title-123",
+    "description": "Some Description",
+    "keyImages": [
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/MD5Field-GameDev 201-10-20-1627x568-24cce39d3225a4dd87e3d08a5028be7e.jpg",
+        "md5": "24cce39d3225a4dd87e3d08a5028be7e"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671f8fc2d497bcbe109b"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T23:06:56.721Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-20T23:06:56.721Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "6e9856389bdf4b44a3644fa69c27cfd5",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "developer": "",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "076164c95194437fb9544409a426c424",
+    "id": "076164c95194437fb9544409a426c424",
+    "namespace": "SeaQA",
+    "title": "item title a",
+    "description": "item description",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "projects",
+        "_id": {
+          "$oid": "6a0967228fc2d497bcbe11ab"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-24T02:24:26.852Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-24T02:24:26.852Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "ENTITLEMENT_NAME",
+    "entitlementType": "TEST",
+    "itemType": "SUBSCRIPTION",
+    "developer": "Epic Games",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2014-11-12T00:00:00.000Z"
+    },
+    "useCount": 2,
+    "entitlementStartDate": {
+      "$date": "2014-09-12T00:00:00.000Z"
+    },
+    "longDescription": "long item description",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "c5cfed23576c41f9bbd97f6fe4150374",
+    "id": "c5cfed23576c41f9bbd97f6fe4150374",
+    "namespace": "SeaQA",
+    "title": "item title a",
+    "description": "item description",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "projects",
+        "_id": {
+          "$oid": "6a09671b8fc2d497bcbe0f8b"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-24T02:26:41.755Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-03-31T07:35:52.402Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "ENTITLEMENT_NAME",
+    "entitlementType": "TEST",
+    "itemType": "SUBSCRIPTION",
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2022-12-15T00:00:00.000Z"
+    },
+    "useCount": 2,
+    "longDescription": "long item description",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "fd16f160d1b84c5ea482bbb14eb8da5a",
+    "id": "fd16f160d1b84c5ea482bbb14eb8da5a",
+    "namespace": "SeaQA",
+    "title": "TestSeaQA-3",
+    "description": "Entitlement Start Date test",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967188fc2d497bcbe0e80"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T18:10:01.931Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-27T18:10:01.931Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "EntitlmentType-1",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2014-10-28T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2014-10-26T00:00:00.000Z"
+    },
+    "longDescription": "Entitlement type is executable, item type is Subscription, entitlement start date is today",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "a309cf1417074bc0afc7b58cb6d5d463",
+    "id": "a309cf1417074bc0afc7b58cb6d5d463",
+    "namespace": "SeaQA",
+    "title": "CDN verification",
+    "description": "Testing the S3 to Cloudfront changes",
+    "keyImages": [
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/Chrysanthemum-1024x768-076e3caed758a1c18c91a0e9cae3368f.jpg",
+        "md5": "076e3caed758a1c18c91a0e9cae3368f"
+      },
+      {
+        "type": "Thumbnail",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/Penguins-1024x768-9d377b10ce778c4938b3c7e2c63a229a.jpg",
+        "md5": "9d377b10ce778c4938b3c7e2c63a229a"
+      }
+    ],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a09671d8fc2d497bcbe1010"
+        }
+      },
+      {
+        "path": "assets/testing",
+        "_id": {
+          "$oid": "6a09671d8fc2d497bcbe1011"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2015-07-27T22:44:56.905Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2015-07-27T22:44:56.905Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "a309cf1417074bc0afc7b58cb6d5d463",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "developer": "sdfdfdsf",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "longDescription": "Testing S3 to cloudfront changes from Catalog Admin Website",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "398f36875f2c4666968eca0b7bda95d4",
+    "id": "398f36875f2c4666968eca0b7bda95d4",
+    "namespace": "SeaQA",
+    "title": "SmokeTest",
+    "description": "SmokeTest",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967208fc2d497bcbe1101"
+        }
+      },
+      {
+        "path": "testing/test1",
+        "_id": {
+          "$oid": "6a0967208fc2d497bcbe1102"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-03-19T08:16:12.852Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-03-19T08:16:12.852Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "398f36875f2c4666968eca0b7bda95d4",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "887a03f1365443c6b776d4627ac27563",
+        "appId": "testappid",
+        "platform": [],
+        "_id": {
+          "$oid": "6a0967208fc2d497bcbe1103"
+        }
+      }
+    ],
+    "developer": "landy tian",
+    "developerId": "9cdc32abc22b45c7ab6a291d60d51863",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "requiresSecureAccount": false,
+    "longDescription": "SmokeTest",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "388a171973f14814a4aba10485a90366",
+    "id": "388a171973f14814a4aba10485a90366",
+    "namespace": "SeaQA",
+    "title": "Landy consumable item",
+    "description": "Entitlement is edited from executable to entitlement and item type is consumable",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a0967208fc2d497bcbe110f"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T17:56:05.914Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-08-16T03:37:58.961Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "0e2000e3b75c46ec970934ed96539fd3",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "CONSUMABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games Staff Account - Do NOT Delete",
+    "developerId": "o-rgm583e9ckq9xd827fhhysnm7vy6lk",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": false,
+    "useCount": 12,
+    "entitlementStartDate": {
+      "$date": "2014-10-27T00:00:00.000Z"
+    },
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "3d22d79ccad148b8b8391cf7f9bcc3e6",
+    "id": "3d22d79ccad148b8b8391cf7f9bcc3e6",
+    "namespace": "SeaQA",
+    "title": "TestSeaQA-6",
+    "description": "Entitlement Start Date test",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967208fc2d497bcbe10f3"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T18:13:51.137Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-27T18:13:51.137Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "EntitlmentType-1",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "SUBSCRIPTION",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2015-10-28T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2014-10-27T00:00:00.000Z"
+    },
+    "longDescription": "Entitlement type is entitlement, item type is Subscription, entitlement start date is today",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "e7e791ab851444e58933d259b28ab4c7",
+    "id": "e7e791ab851444e58933d259b28ab4c7",
+    "namespace": "SeaQA",
+    "title": "Testing Title*",
+    "description": "Testing title with special characters",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a09671a8fc2d497bcbe0efe"
+        }
+      },
+      {
+        "path": "assets/testing",
+        "_id": {
+          "$oid": "6a09671a8fc2d497bcbe0eff"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T23:08:52.128Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-20T23:08:52.128Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "e7e791ab851444e58933d259b28ab4c7",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "developer": "",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "365b7fe19c65417fa61230d92ba8b223",
+    "id": "365b7fe19c65417fa61230d92ba8b223",
+    "namespace": "SeaQA",
+    "title": "TestSeaQA-10",
+    "description": "Entitlement Start Date test",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967208fc2d497bcbe111c"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T18:15:20.928Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2016-09-08T05:57:42.019Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "EntitlmentType-1",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "d686faf0aea943dcb4c4d0f0b9d29c30",
+        "appId": "12",
+        "platform": ["PS4"],
+        "_id": {
+          "$oid": "6a0967208fc2d497bcbe111d"
+        }
+      }
+    ],
+    "developer": "Landy Tian",
+    "developerId": "o-dc32abc22b45c7ab6a291d60d51863",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2019-10-17T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2013-10-25T00:00:00.000Z"
+    },
+    "longDescription": "Entitlement type is entitlement, item type is durable, entitlement start date is in past",
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "b84dbf3bb7c9475692bcefb4d21851ff",
+    "id": "b84dbf3bb7c9475692bcefb4d21851ff",
+    "namespace": "SeaQA",
+    "title": "Item Without Entitlement Name",
+    "description": "Testing to create an item without giving entitlement name",
+    "keyImages": [
+      {
+        "type": "Featured",
+        "url": "/api/image/preview/01c98c54815d4eefbed8c65118a3c877",
+        "md5": "076e3caed758a1c18c91a0e9cae3368f"
+      }
+    ],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a09671c8fc2d497bcbe0fc0"
+        }
+      },
+      {
+        "path": "assets/testing",
+        "_id": {
+          "$oid": "6a09671c8fc2d497bcbe0fc1"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T23:16:32.294Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-20T23:16:32.294Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "b84dbf3bb7c9475692bcefb4d21851ff",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "longDescription": "Calling the REST API - POST to create an item by not giving the entitlement name in the request",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "8967ef4fa6c546dda4000824dfcefc8b",
+    "id": "8967ef4fa6c546dda4000824dfcefc8b",
+    "namespace": "SeaQA",
+    "title": "item title a",
+    "description": "item description",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "projects",
+        "_id": {
+          "$oid": "6a09671d8fc2d497bcbe1037"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T05:46:05.737Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2019-05-13T17:38:19.847Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "8967ef4fa6c546dda4000824dfcefc8b",
+    "entitlementType": "TEST",
+    "itemType": "SUBSCRIPTION",
+    "developer": "epic seller",
+    "developerId": "o-4zmjmft6kbeexuhpk39pcxvdwapa8x",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2020-12-08T00:00:00.000Z"
+    },
+    "useCount": 1,
+    "longDescription": "long item description",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "57d37356ef55443ca77252c0b4eb9f98",
+    "id": "57d37356ef55443ca77252c0b4eb9f98",
+    "namespace": "SeaQA",
+    "title": "item title",
+    "description": "description",
+    "keyImages": [
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/Hydrangeas-1024x768-bdf3bf1da3405725be763540d6601144.jpg",
+        "md5": "bdf3bf1da3405725be763540d6601144"
+      },
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/Desert-1024x768-ba45c8f60456a672e003a875e469d0eb.jpg",
+        "md5": "ba45c8f60456a672e003a875e469d0eb"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671f8fc2d497bcbe10c1"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T07:15:41.959Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2017-03-21T03:24:40.271Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "seaqatest",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "developer": "Landy Tian",
+    "developerId": "o-dc32abc22b45c7ab6a291d60d51863",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2017-10-31T00:00:00.000Z"
+    },
+    "useCount": 3,
+    "longDescription": "long description",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "9c27eedb5cd1412c9cdba4182a742140",
+    "id": "9c27eedb5cd1412c9cdba4182a742140",
+    "namespace": "SeaQA",
+    "title": "TestSeaQA-11",
+    "description": "Entitlement Start Date test",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671d8fc2d497bcbe101d"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T18:15:41.147Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-27T18:15:41.147Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "EntitlmentType-1",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2015-10-28T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2014-10-28T00:00:00.000Z"
+    },
+    "longDescription": "Entitlement type is entitlement, item type is durable, entitlement start date is today",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "21df848a246b4444ad6906d778832b1c",
+    "id": "21df848a246b4444ad6906d778832b1c",
+    "namespace": "SeaQA",
+    "title": "Entitlement-11",
+    "description": "Entitlement type is entitlement and item type is durable",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967218fc2d497bcbe1153"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T17:48:31.251Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2015-07-27T21:02:52.573Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "21df848a246b4444ad6906d778832b1c",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "developer": "SeaTest1",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2016-10-28T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2014-10-27T00:00:00.000Z"
+    },
+    "longDescription": "Long description here",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "e7d6212191c44bc5a9f83934dafa846b",
+    "id": "e7d6212191c44bc5a9f83934dafa846b",
+    "namespace": "SeaQA",
+    "title": "Create Item For PriceEngine",
+    "description": "item description",
+    "keyImages": [
+      {
+        "type": "image name",
+        "url": "url",
+        "md5": "ed076287532e86365e841e92bfc50d8c"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671a8fc2d497bcbe0f0b"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2017-05-16T07:11:26.912Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2020-03-09T12:26:10.139Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "Consumable_Entitlement",
+    "entitlementType": "TEST",
+    "itemType": "CONSUMABLE",
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2099-12-30T00:00:00.000Z"
+    },
+    "useCount": 2,
+    "entitlementStartDate": {
+      "$date": "2009-12-31T00:00:00.000Z"
+    },
+    "longDescription": "long item description",
+    "technicalDetails": "technical informatioin",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "a492dd908f4f46048d5356d730a174ab",
+    "id": "a492dd908f4f46048d5356d730a174ab",
+    "namespace": "SeaQA",
+    "title": "item title a",
+    "description": "item description",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "projects",
+        "_id": {
+          "$oid": "6a09671d8fc2d497bcbe0ff5"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T04:32:23.751Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-20T04:32:23.751Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "ENTITLEMENT_NAME",
+    "entitlementType": "TEST",
+    "itemType": "SUBSCRIPTION",
+    "developer": "Epic Games",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2014-12-12T00:00:00.000Z"
+    },
+    "useCount": 2,
+    "longDescription": "long item description",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "e49d686d1cc24d96b591fa230e75c5c3",
+    "id": "e49d686d1cc24d96b591fa230e75c5c3",
+    "namespace": "SeaQA",
+    "title": "SmokeTest",
+    "description": "SmokeTest",
+    "keyImages": [
+      {
+        "type": "image name",
+        "url": "url",
+        "md5": "ed076287532e86365e841e92bfc50d8c"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671a8fc2d497bcbe0f18"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-03-19T08:17:14.380Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-03-19T08:17:14.380Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "e49d686d1cc24d96b591fa230e75c5c3",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "2edae41ead6a4a63a9dd0ec4696d790c",
+        "appId": "testappid",
+        "platform": [],
+        "_id": {
+          "$oid": "6a09671a8fc2d497bcbe0f19"
+        }
+      }
+    ],
+    "developer": "landy tian",
+    "developerId": "9cdc32abc22b45c7ab6a291d60d51863",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "requiresSecureAccount": false,
+    "longDescription": "SmokeTest",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "8a36143e0f374e03bb5d140a20ca5985",
+    "id": "8a36143e0f374e03bb5d140a20ca5985",
+    "namespace": "SeaQA",
+    "title": "TestingTest11",
+    "description": "Testing the entitlement type",
+    "keyImages": [
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/Chrysanthemum-1024x768-076e3caed758a1c18c91a0e9cae3368f.jpg",
+        "md5": "076e3caed758a1c18c91a0e9cae3368f"
+      },
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/SeaQA/item/Hydrangeas-1024x768-bdf3bf1da3405725be763540d6601144.jpg",
+        "md5": "bdf3bf1da3405725be763540d6601144"
+      }
+    ],
+    "categories": [
+      {
+        "path": "engines",
+        "_id": {
+          "$oid": "6a09671d8fc2d497bcbe102a"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T17:46:36.605Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2015-07-27T22:42:14.069Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "8a36143e0f374e03bb5d140a20ca5985",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "releaseInfo": [
+      {
+        "id": "e2a336c67f444bec95dfd28847c1020c",
+        "appId": "TestTestApp11",
+        "platform": ["Mac"],
+        "_id": {
+          "$oid": "6a09671d8fc2d497bcbe102b"
+        }
+      }
+    ],
+    "developer": "SeaTest1",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2020-10-01T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2014-10-27T00:00:00.000Z"
+    },
+    "longDescription": "Testing entitlement type with item type as subscription and entitlement type as executable",
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "7b9de2aabbbd440ab92709678800dc9c",
+    "id": "7b9de2aabbbd440ab92709678800dc9c",
+    "namespace": "SeaQA",
+    "title": "Test to promote offer to public",
+    "description": "Test to promote offer to public",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671e8fc2d497bcbe1067"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2015-10-08T06:49:55.561Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2017-05-25T08:13:25.053Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "7b9de2aabbbd440ab92709678800dc9c",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementStartDate": {
+      "$date": "2015-10-08T00:00:00.000Z"
+    },
+    "longDescription": "Test to promote offer to public",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "67df1c0ff45e4856bd4aa91513d9cdff",
+    "id": "67df1c0ff45e4856bd4aa91513d9cdff",
+    "namespace": "SeaQA",
+    "title": "TestJan",
+    "description": "TestJan",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a09671f8fc2d497bcbe10a7"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2020-01-20T03:17:48.757Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2020-01-20T03:20:39.958Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "67df1c0ff45e4856bd4aa91513d9cdff",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "edcd5eda782444159353ec3cc3e5980d",
+    "id": "edcd5eda782444159353ec3cc3e5980d",
+    "namespace": "SeaQA",
+    "title": "TestSeaQA-9",
+    "description": "Entitlement Start Date test",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967198fc2d497bcbe0ece"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T18:15:03.927Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-27T18:15:03.927Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "EntitlmentType-1",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2015-10-28T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2015-10-25T00:00:00.000Z"
+    },
+    "longDescription": "Entitlement type is entitlement, item type is durable, entitlement start date is in future",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "0418359c3cbc4daebbc3a6eaf060c71a",
+    "id": "0418359c3cbc4daebbc3a6eaf060c71a",
+    "namespace": "SeaQA",
+    "title": "TestSeaQA-1",
+    "description": "Entitlement Start Date test",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967228fc2d497bcbe11c3"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-27T18:08:47.118Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-27T18:08:47.118Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "EntitlmentType-1",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2014-10-28T00:00:00.000Z"
+    },
+    "longDescription": "Entitlement type is executable, item type is Subscription, entitlement start date is today",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1466
+  },
+  {
+    "_id": "b4e6be743c8d4d1bbc87c819d49a876b",
+    "id": "b4e6be743c8d4d1bbc87c819d49a876b",
+    "namespace": "SeaQA",
+    "title": "item title a",
+    "description": "item description",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "projects",
+        "_id": {
+          "$oid": "6a09671c8fc2d497bcbe0fcd"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-24T02:27:27.004Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-24T06:16:43.370Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "ENTITLEMENT_NAME",
+    "entitlementType": "TEST",
+    "itemType": "SUBSCRIPTION",
+    "developer": "Epic Games",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2014-10-25T00:00:00.000Z"
+    },
+    "useCount": 2,
+    "entitlementStartDate": {
+      "$date": "2014-10-24T00:00:00.000Z"
+    },
+    "longDescription": "long item description",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "700e2be7675b452fbd0739b7fe8c68b6",
+    "id": "700e2be7675b452fbd0739b7fe8c68b6",
+    "namespace": "SeaQA",
+    "title": "Update",
+    "description": "Updating the item",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a09671e8fc2d497bcbe108e"
+        }
+      },
+      {
+        "path": "assets/testing",
+        "_id": {
+          "$oid": "6a09671e8fc2d497bcbe108f"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T17:32:06.618Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2014-10-20T17:38:25.842Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "Something",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "linkedOffers": [],
+    "releaseInfo": [],
+    "__v": 1465
+  },
+  {
+    "_id": "f26edb776d464188b864daf3e75228c5",
+    "id": "f26edb776d464188b864daf3e75228c5",
+    "namespace": "SeaQA",
+    "title": "test for sync product",
+    "description": "UNKNOWN",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "6a0967198fc2d497bcbe0ec1"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2017-10-18T10:38:15.887Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-04-11T07:51:54.228Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "f26edb776d464188b864daf3e75228c5",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "da2735a4bcbc4b83ade30cca3a479d42",
+        "appId": "1",
+        "platform": ["PS4"],
+        "_id": {
+          "$oid": "6a0967198fc2d497bcbe0ec2"
+        }
+      }
+    ],
+    "developer": "mpurdchu25b2dmbw",
+    "developerId": "o-569b3b228844a48801edff12bc30cb",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "longDescription": "UNKNOWN",
+    "technicalDetails": "UNKNOWN",
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "3625713c4fb94ea9b40b14dc5a1a2ca4",
+    "id": "3625713c4fb94ea9b40b14dc5a1a2ca4",
+    "namespace": "SeaQA",
+    "title": "DeveloperTest",
+    "description": "UNKNOWN",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "projects/tutorials",
+        "_id": {
+          "$oid": "6a0967208fc2d497bcbe112b"
+        }
+      },
+      {
+        "path": "projects",
+        "_id": {
+          "$oid": "6a0967208fc2d497bcbe112c"
+        }
+      },
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967208fc2d497bcbe112d"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2015-01-19T23:06:32.771Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-04-21T02:03:00.038Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "3625713c4fb94ea9b40b14dc5a1a2ca4",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "releaseInfo": [],
+    "developer": "cdq9gtgvcljppepp",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "longDescription": "UNKNOWN",
+    "technicalDetails": "UNKNOWN",
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "0a5ef16df23e435d91464c48e66cd256",
+    "id": "0a5ef16df23e435d91464c48e66cd256",
+    "namespace": "SeaQA",
+    "title": "Create Item For PriceEngine",
+    "description": "item description",
+    "keyImages": [
+      {
+        "type": "image name",
+        "url": "url",
+        "md5": "ed076287532e86365e841e92bfc50d8c"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967228fc2d497bcbe119f"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2018-11-27T08:02:53.022Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-03-31T07:35:52.514Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "Consumable_Entitlement",
+    "entitlementType": "TEST",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2099-12-30T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2009-12-31T00:00:00.000Z"
+    },
+    "longDescription": "long item description",
+    "technicalDetails": "technical informatioin",
+    "linkedOffers": [],
+    "__v": 1465
+  },
+  {
+    "_id": "7c393834ab8e412ea6734bd41a41fc48",
+    "id": "7c393834ab8e412ea6734bd41a41fc48",
+    "namespace": "SeaQA",
+    "title": "testitemforcache",
+    "description": "testitemforcache",
+    "categories": [
+      {
+        "path": "testing/testcache",
+        "_id": {
+          "$oid": "66a88d1cf69e44b63a1d8fd1"
+        }
+      },
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "66a88d1cf69e44b63a1d8fd2"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2024-07-30T03:11:09.540Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2024-07-30T03:11:09.540Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "7c393834ab8e412ea6734bd41a41fc48",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "test",
+    "developerId": "o-fexyj3z2g9b5svkxcc2llh9y7sfqg9",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": false,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 0
+  },
+  {
+    "_id": "b2dbf7e8872b469c982df87d7862515d",
+    "id": "b2dbf7e8872b469c982df87d7862515d",
+    "namespace": "SeaQA",
+    "title": "Aug",
+    "description": "test multiple august",
+    "keyImages": [
+      {
+        "type": "ESRB",
+        "url": "https://cdn1.epicgames.com/item/SeaQA/tom-jerry_400x396-315a5092a57548387e39c155dcf18c9d",
+        "md5": "315a5092a57548387e39c155dcf18c9d"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a095d118fc2d497bcbc0a84"
+        }
+      },
+      {
+        "path": "games",
+        "_id": {
+          "$oid": "6a095d118fc2d497bcbc0a85"
+        }
+      },
+      {
+        "path": "applications",
+        "_id": {
+          "$oid": "6a095d118fc2d497bcbc0a86"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2022-01-12T04:26:20.035Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-03-31T07:35:52.552Z"
+    },
+    "customAttributes": [
+      {
+        "key": "CanRunOffline",
+        "type": "STRING",
+        "value": "true"
+      },
+      {
+        "key": "FolderName",
+        "type": "STRING",
+        "value": "test"
+      }
+    ],
+    "entitlementName": "Aug",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "62acb7f17aa94fd1a75f89f4aaa63e93",
+        "appId": "65844713cc9b425fadffc982195f96bf",
+        "platform": ["Windows"],
+        "_id": {
+          "$oid": "6a095d118fc2d497bcbc0a87"
+        }
+      }
+    ],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": ["egstore"],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": ["6beefe4e337443d896e1c6667f3ef57f"],
+    "__v": 968
+  },
+  {
+    "_id": "00cb903628564e2e8f234b509c32afb5",
+    "id": "00cb903628564e2e8f234b509c32afb5",
+    "namespace": "SeaQA",
+    "title": "ChuckTestFreeOffer",
+    "description": "ChuckTestFreeOffer",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "69d46e3d935df8cf5ec9d140"
+        }
+      },
+      {
+        "path": "assets/testing",
+        "_id": {
+          "$oid": "69d46e3d935df8cf5ec9d141"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2017-03-02T02:40:02.282Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-02-04T01:55:19.912Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "00cb903628564e2e8f234b509c32afb5",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": ["NANANA"],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "useCount": 1,
+    "longDescription": "ChuckTestFreeOffer",
+    "technicalDetails": "ChuckTestFreeOffer",
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "052685dc6f554423923ee4042f7f3ac3",
+    "id": "052685dc6f554423923ee4042f7f3ac3",
+    "namespace": "SeaQA",
+    "title": "July2",
+    "description": "July test992",
+    "keyImages": [
+      {
+        "type": "ESRB",
+        "url": "https://cdn1.epicgames.com/item/SeaQA/tom-jerry_400x396-315a5092a57548387e39c155dcf18c9d",
+        "md5": "315a5092a57548387e39c155dcf18c9d"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a095ef18fc2d497bcbc62ee"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2022-07-06T07:09:43.081Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-03-31T07:35:52.700Z"
+    },
+    "customAttributes": [
+      {
+        "key": "CanRunOffline",
+        "type": "STRING",
+        "value": "true"
+      },
+      {
+        "key": "FolderName",
+        "type": "STRING",
+        "value": "test"
+      }
+    ],
+    "entitlementName": "july",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "WALLETCASH",
+    "releaseInfo": [
+      {
+        "id": "f08a0049589a4ae29f8fed13ec0d013a",
+        "appId": "65844713cc9b425fadffc982195f96bf",
+        "platform": ["Windows"],
+        "_id": {
+          "$oid": "6a095ef18fc2d497bcbc62ef"
+        }
+      }
+    ],
+    "developer": "test",
+    "developerId": "o-gfnswe4clx7s9glyrfcaedkgj3c464",
+    "eulaIds": ["egstore"],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "test",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "useCount": 1,
+    "longDescription": "",
+    "technicalDetails": "",
+    "linkedOffers": [],
+    "__v": 834,
+    "entitlementEndDate": {
+      "$date": "2025-03-31T09:26:58.631Z"
+    }
+  },
+  {
+    "_id": "0712d12492f845b3a215ddcad9cb67b8",
+    "id": "0712d12492f845b3a215ddcad9cb67b8",
+    "namespace": "SeaQA",
+    "title": "Chuck Test BaseGame",
+    "description": "Chuck Test BaseGame",
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "69d46e40935df8cf5ec9d2fb"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-09-16T06:33:24.017Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-09-16T06:33:24.017Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "0712d12492f845b3a215ddcad9cb67b8",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "383a721416b44056ba808749b45353a3",
+        "appId": "chucktestbasegame",
+        "platform": [],
+        "_id": {
+          "$oid": "69d46e40935df8cf5ec9d2fc"
+        }
+      }
+    ],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "longDescription": "Chuck Test BaseGame",
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "09504fe08d014cc8a98532d2cb9b9471",
+    "id": "09504fe08d014cc8a98532d2cb9b9471",
+    "namespace": "SeaQA",
+    "title": "testDLCWithArtifact",
+    "description": "testDLCWithArtifact",
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e41935df8cf5ec9d38f"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2022-01-12T04:49:43.907Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2022-01-12T04:49:43.907Z"
+    },
+    "customAttributes": [
+      {
+        "key": "CanRunOffline",
+        "type": "STRING",
+        "value": "true"
+      }
+    ],
+    "entitlementName": "09504fe08d014cc8a98532d2cb9b9471",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "ef9fd598c6894b20ae1ff7ff674f7053",
+        "appId": "eedbbc42b8d4467bb77b6f37e1f0ce63",
+        "platform": ["Windows"],
+        "_id": {
+          "$oid": "69d46e41935df8cf5ec9d390"
+        }
+      }
+    ],
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": ["egstore"],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 494
+  },
+  {
+    "_id": "0a29e72a163244a1b35afc4fb3570135",
+    "id": "0a29e72a163244a1b35afc4fb3570135",
+    "namespace": "SeaQA",
+    "title": "OPSmokeTestDiscount2Free(PLS DON'T DELETE)",
+    "description": "OPSmokeTestDiscount2Free(PLS DON'T DELETE)",
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "69d46e41935df8cf5ec9d3b9"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2023-04-15T06:29:51.718Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-04-27T01:53:21.765Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "0a29e72a163244a1b35afc4fb3570135",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "releaseInfo": [
+      {
+        "id": "57f05f987e95477ea7cab4416b68d29e",
+        "appId": "Chucktest",
+        "platform": [],
+        "_id": {
+          "$oid": "69d46e41935df8cf5ec9d3ba"
+        }
+      }
+    ],
+    "developer": "Chuck Gu",
+    "developerId": "o-4f29485a1f4fd9aa5d9abdbc152e7a",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "useCount": 1,
+    "longDescription": "OPSmokeTestDiscount2Free(PLS DON'T DELETE)",
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 494
+  },
+  {
+    "_id": "0c63715f2222416f8a4b2a4696593422",
+    "id": "0c63715f2222416f8a4b2a4696593422",
+    "namespace": "SeaQA",
+    "title": "chucktest 0504-with promotion",
+    "description": "chucktest 0504-with promotion",
+    "categories": [
+      {
+        "path": "application",
+        "_id": {
+          "$oid": "69d46e42935df8cf5ec9d468"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2023-05-03T11:57:52.001Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-05-03T11:57:52.001Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "0c63715f2222416f8a4b2a4696593422",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "releaseInfo": [
+      {
+        "id": "437ef69a310641ba83f5de79b485bf6b",
+        "appId": "chucktest",
+        "platform": [],
+        "_id": {
+          "$oid": "69d46e42935df8cf5ec9d469"
+        }
+      }
+    ],
+    "developer": "epic games",
+    "developerId": "o-trybbjedgjcf4st9ubu9ptr2h5hj33",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "useCount": 1,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "11704563d549475197051eeeb2559148",
+    "id": "11704563d549475197051eeeb2559148",
+    "namespace": "SeaQA",
+    "title": "Test offer B for subscription",
+    "description": "Test offer B for subscription",
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "69d46e44935df8cf5ec9d5ac"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2023-08-01T04:02:30.027Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-08-01T04:02:30.027Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "11704563d549475197051eeeb2559148",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "1429bc7d20a74ce1994e369449acc4e7",
+    "id": "1429bc7d20a74ce1994e369449acc4e7",
+    "namespace": "SeaQA",
+    "title": "New Dawn CLONE ",
+    "description": "New Dawn CLONE",
+    "keyImages": [
+      {
+        "type": "ComingSoon_Small",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/test image_500x375-454310f321a473cd4ce8823537a644ed",
+        "md5": "454310f321a473cd4ce8823537a644ed"
+      }
+    ],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e45935df8cf5ec9d651"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "69d46e45935df8cf5ec9d652"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-05-27T07:10:50.092Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-05-27T07:14:43.524Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "1429bc7d20a74ce1994e369449acc4e7",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 551
+  },
+  {
+    "_id": "17ae905a858e4800ac74ffe46855dd48",
+    "id": "17ae905a858e4800ac74ffe46855dd48",
+    "namespace": "SeaQA",
+    "title": "Feb",
+    "description": "Feb",
+    "keyImages": [
+      {
+        "type": "ESRB",
+        "url": "https://cdn1.epicgames.com/item/SeaQA/tom-jerry_400x396-315a5092a57548387e39c155dcf18c9d",
+        "md5": "315a5092a57548387e39c155dcf18c9d"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69d46e46935df8cf5ec9d742"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2023-02-07T06:31:09.905Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-03-04T09:25:51.626Z"
+    },
+    "customAttributes": [
+      {
+        "key": "CanRunOffline",
+        "type": "STRING",
+        "value": "true"
+      },
+      {
+        "key": "FolderName",
+        "type": "STRING",
+        "value": "test"
+      }
+    ],
+    "entitlementName": "Feb",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "releaseInfo": [
+      {
+        "id": "09770b3f6b0446d28db7df7e0b778b1e",
+        "appId": "65844713cc9b425fadffc982195f96bf",
+        "platform": ["Windows"],
+        "_id": {
+          "$oid": "69d46e46935df8cf5ec9d743"
+        }
+      }
+    ],
+    "developer": "testtest",
+    "developerId": "o-2hcf7r5fz7uht7nhxycknmkt2g8zqz",
+    "eulaIds": ["egstore"],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "24c516e8aa3e4c9a9279692736a5cd99",
+    "id": "24c516e8aa3e4c9a9279692736a5cd99",
+    "namespace": "SeaQA",
+    "title": "applicationIdNotExistTest",
+    "description": "applicationIdNotExistTest",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e4b935df8cf5ec9da61"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2020-11-10T09:44:48.602Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2020-11-10T10:02:57.769Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "24c516e8aa3e4c9a9279692736a5cd99",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "266210b21f3e43d7b893bfbcd6802889",
+    "id": "266210b21f3e43d7b893bfbcd6802889",
+    "namespace": "SeaQA",
+    "title": "Item check",
+    "description": "Item check",
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "6a095d318fc2d497bcbc10d8"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "6a095d318fc2d497bcbc10d9"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-05-12T11:48:45.663Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-05-12T11:49:41.441Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "266210b21f3e43d7b893bfbcd6802889",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 867
+  },
+  {
+    "_id": "290b8cf25a1d4c9ead7fef2cf1c03c56",
+    "id": "290b8cf25a1d4c9ead7fef2cf1c03c56",
+    "namespace": "SeaQA",
+    "title": "testDLC",
+    "description": "testDLC",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e4c935df8cf5ec9db73"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2022-01-12T04:34:27.586Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-02-16T06:57:04.838Z"
+    },
+    "customAttributes": [
+      {
+        "key": "CanRunOffline",
+        "type": "STRING",
+        "value": "true"
+      }
+    ],
+    "entitlementName": "290b8cf25a1d4c9ead7fef2cf1c03c56",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": ["egstore"],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "2a1ea8235b2c45db8e6d56108089f652",
+    "id": "2a1ea8235b2c45db8e6d56108089f652",
+    "namespace": "SeaQA",
+    "title": "March 1",
+    "description": "March 1",
+    "keyImages": [
+      {
+        "type": "ComingSoon",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/test image_500x375-454310f321a473cd4ce8823537a644ed",
+        "md5": "454310f321a473cd4ce8823537a644ed"
+      },
+      {
+        "type": "ComingSoon_Small",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/u=1561204147,3725236709&fm=26&gp=0_500x313-ec9ae5b4f893810ec2ceac2fb6270baf",
+        "md5": "ec9ae5b4f893810ec2ceac2fb6270baf"
+      }
+    ],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e4d935df8cf5ec9dbc1"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "69d46e4d935df8cf5ec9dbc2"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-05-21T08:09:11.349Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-05-06T02:27:23.115Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "2a1ea8235b2c45db8e6d56108089f652",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "2f9e9535e7cb4405b7399bf886318eea",
+    "id": "2f9e9535e7cb4405b7399bf886318eea",
+    "namespace": "SeaQA",
+    "title": "Apr 22 test CLONE",
+    "description": "Apr 22 test CLONE",
+    "keyImages": [
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/u=1561204147,3725236709&fm=26&gp=0_500x313-ec9ae5b4f893810ec2ceac2fb6270baf",
+        "md5": "ec9ae5b4f893810ec2ceac2fb6270baf"
+      },
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/u=3720617554,1457625423&fm=26&gp=0_500x313-06b2a42933c86975377cd1f3f1866fa9",
+        "md5": "06b2a42933c86975377cd1f3f1866fa9"
+      }
+    ],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "6a095c678fc2d497bcbbef86"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "6a095c678fc2d497bcbbef87"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-04-22T06:01:20.168Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-04-22T06:03:14.531Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "2f9e9535e7cb4405b7399bf886318eea",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "196ce450ef9b437aa502f83d1fbb80cd",
+        "appId": "app",
+        "platform": ["Mac"],
+        "_id": {
+          "$oid": "6a095c678fc2d497bcbbef88"
+        }
+      }
+    ],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "longDescription": "Apr 22 test CLONE",
+    "linkedOffers": [],
+    "__v": 904
+  },
+  {
+    "_id": "379e48e4986a49fe9fe6511d122f11c6",
+    "id": "379e48e4986a49fe9fe6511d122f11c6",
+    "namespace": "SeaQA",
+    "title": "Landy Test DLC 1",
+    "description": "Landy Test DLC 1",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e52935df8cf5ec9df22"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2020-07-31T02:41:01.676Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2024-04-02T02:36:14.059Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "379e48e4986a49fe9fe6511d122f11c6",
+    "entitlementType": "AUDIENCE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "3818cfeaf8d94e93a2fdaa03045bc444",
+    "id": "3818cfeaf8d94e93a2fdaa03045bc444",
+    "namespace": "SeaQA",
+    "title": "chucktest 0504-no promotion",
+    "description": "chucktest 0504-no promotion",
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e52935df8cf5ec9df55"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2023-05-03T11:38:50.027Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-05-03T11:38:50.027Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "3818cfeaf8d94e93a2fdaa03045bc444",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "releaseInfo": [
+      {
+        "id": "8654153c5e43470bac650c224e571918",
+        "appId": "chucktest",
+        "platform": [],
+        "_id": {
+          "$oid": "69d46e52935df8cf5ec9df56"
+        }
+      }
+    ],
+    "developer": "EPIC GAMES",
+    "developerId": "o-cp28yv7kljjqv5xn7ssnupg58s8g28",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "useCount": 1,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "3889fd17f0ff4ae380a08bf7e1214ca2",
+    "id": "3889fd17f0ff4ae380a08bf7e1214ca2",
+    "namespace": "SeaQA",
+    "title": "sherwinLocaleTest4",
+    "description": "sherwinLocaleTest4",
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69d46e52935df8cf5ec9df74"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-07-13T07:28:10.549Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-07-13T07:28:10.549Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "3889fd17f0ff4ae380a08bf7e1214ca2",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "38e7516a43e241da866507d0f9a13870",
+    "id": "38e7516a43e241da866507d0f9a13870",
+    "namespace": "SeaQA",
+    "title": "test personal plus offer",
+    "description": "test personal plus offer",
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "69d46e53935df8cf5ec9df89"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2023-08-08T07:55:13.111Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-08-08T07:55:13.111Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "38e7516a43e241da866507d0f9a13870",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "3b54d05ffa514e1d98b7aededef74a11",
+    "id": "3b54d05ffa514e1d98b7aededef74a11",
+    "namespace": "SeaQA",
+    "title": "testDLCWithArtifact audience",
+    "description": "testDLCWithArtifact audience",
+    "categories": [
+      {
+        "path": "audience",
+        "_id": {
+          "$oid": "69d46e54935df8cf5ec9e034"
+        }
+      },
+      {
+        "path": "public",
+        "_id": {
+          "$oid": "69d46e54935df8cf5ec9e035"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2022-01-12T04:49:43.804Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2022-01-12T04:49:43.804Z"
+    },
+    "customAttributes": [
+      {
+        "key": "SupportedPlatforms",
+        "type": "STRING",
+        "value": "Windows"
+      }
+    ],
+    "entitlementName": "3b54d05ffa514e1d98b7aededef74a11",
+    "entitlementType": "AUDIENCE",
+    "itemType": "DURABLE",
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": ["egstore"],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "releaseInfo": [],
+    "__v": 495
+  },
+  {
+    "_id": "3e5651b831c0470799c377557098f264",
+    "id": "3e5651b831c0470799c377557098f264",
+    "namespace": "SeaQA",
+    "title": "sherwinLocaleTest1",
+    "description": "sherwinLocaleTest1",
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69d46e55935df8cf5ec9e12a"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-07-13T07:20:32.278Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2022-06-28T08:23:39.600Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "3e5651b831c0470799c377557098f264",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "40acfc2e2c49499bab28d86e26d05442",
+    "id": "40acfc2e2c49499bab28d86e26d05442",
+    "namespace": "SeaQA",
+    "title": "testDLC audience",
+    "description": "testDLC audience",
+    "categories": [
+      {
+        "path": "audience",
+        "_id": {
+          "$oid": "69d46e56935df8cf5ec9e1bc"
+        }
+      },
+      {
+        "path": "public",
+        "_id": {
+          "$oid": "69d46e56935df8cf5ec9e1bd"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2022-01-12T04:34:27.474Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2022-01-12T04:34:27.474Z"
+    },
+    "customAttributes": [
+      {
+        "key": "SupportedPlatforms",
+        "type": "STRING",
+        "value": "Windows"
+      }
+    ],
+    "entitlementName": "40acfc2e2c49499bab28d86e26d05442",
+    "entitlementType": "AUDIENCE",
+    "itemType": "DURABLE",
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": ["egstore"],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "releaseInfo": [],
+    "__v": 495
+  },
+  {
+    "_id": "41c0a75e2ab5414283e2e74ac9792665",
+    "id": "41c0a75e2ab5414283e2e74ac9792665",
+    "namespace": "SeaQA",
+    "title": "Apr 22 test 01 IMPORT",
+    "description": "Apr 22 test 01",
+    "keyImages": [
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/u=1561204147,3725236709&fm=26&gp=0_500x313-ec9ae5b4f893810ec2ceac2fb6270baf",
+        "md5": "ec9ae5b4f893810ec2ceac2fb6270baf"
+      },
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/u=3720617554,1457625423&fm=26&gp=0_500x313-06b2a42933c86975377cd1f3f1866fa9",
+        "md5": "06b2a42933c86975377cd1f3f1866fa9"
+      }
+    ],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e56935df8cf5ec9e1f2"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "69d46e56935df8cf5ec9e1f3"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-04-22T06:03:55.045Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-04-22T06:34:23.590Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "41c0a75e2ab5414283e2e74ac9792665",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "196ce450ef9b437aa502f83d1fbb80cd",
+        "appId": "app",
+        "platform": ["Mac"],
+        "_id": {
+          "$oid": "69d46e56935df8cf5ec9e1f4"
+        }
+      }
+    ],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "longDescription": "Apr 22 test 01",
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "41e85f00eadf418eb2652882819dc202",
+    "id": "41e85f00eadf418eb2652882819dc202",
+    "namespace": "SeaQA",
+    "title": "Apr 29",
+    "description": "Apr  a critical examination, observation, or evaluation : trial. specifically : the procedure of submitting a statement to such conditions or operations as will lead to its proof or disproof or to its acceptance or rejection. a test of a statistical hypothesis. (2) : a basis for evaluation : criterion a critical examination, observation, or evaluation : trial. specifically : the procedure of submitting a statement to such conditions or operations as will lead to its proof or disproof or to its acceptance or rejection. a test of a statistical hypothesis. (2) : a basis for evaluation : criterion a critical examination, observation, or evaluation : trial. specifically : the procedure of submitting a statement to such conditions or operations as will lead to its proof or disproof or to its a1x",
+    "keyImages": [
+      {
+        "type": "ComingSoon_Small",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/u=1561204147,3725236709&fm=26&gp=0_500x313-ec9ae5b4f893810ec2ceac2fb6270baf",
+        "md5": "ec9ae5b4f893810ec2ceac2fb6270baf"
+      },
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/test image_500x375-454310f321a473cd4ce8823537a644ed",
+        "md5": "454310f321a473cd4ce8823537a644ed"
+      }
+    ],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e56935df8cf5ec9e205"
+        }
+      },
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69d46e56935df8cf5ec9e206"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-04-29T07:37:34.981Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-03-31T07:35:52.404Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "41e85f00eadf418eb2652882819dc202",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "197ed9456eb44ca5b64d794520306584",
+        "appId": "test",
+        "platform": ["Mac"],
+        "_id": {
+          "$oid": "69d46e56935df8cf5ec9e207"
+        }
+      }
+    ],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "4b503c1ac22a441eb7086bd4674a1a12",
+    "id": "4b503c1ac22a441eb7086bd4674a1a12",
+    "namespace": "SeaQA",
+    "title": "Test offer A for subscription",
+    "description": "Test offer A for subscription",
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "69d46e5a935df8cf5ec9e448"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2023-08-01T04:01:58.676Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-08-01T04:01:58.676Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "4b503c1ac22a441eb7086bd4674a1a12",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "4d20dc804a154f84b01033a62412e01b",
+    "id": "4d20dc804a154f84b01033a62412e01b",
+    "namespace": "SeaQA",
+    "title": "aug 24",
+    "description": "aug 24",
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e5b935df8cf5ec9e4d7"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "69d46e5b935df8cf5ec9e4d8"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-08-24T07:22:59.306Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-09-04T03:11:36.041Z"
+    },
+    "customAttributes": [
+      {
+        "key": "parentPartnerLinkId",
+        "type": "STRING",
+        "value": "[]"
+      }
+    ],
+    "entitlementName": "4d20dc804a154f84b01033a62412e01b",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games Publishing",
+    "developerId": "o-e2xslu4mlqqaavphzl6927vtjqamhj",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "4e8a1cdf982343c79f25b850be8c78bc",
+    "id": "4e8a1cdf982343c79f25b850be8c78bc",
+    "namespace": "SeaQA",
+    "title": "Subscription offer in SeaQA",
+    "description": "Subscription offer in SeaQA",
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "69d46e5b935df8cf5ec9e510"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2023-08-01T03:58:35.326Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-08-01T03:58:35.326Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "4e8a1cdf982343c79f25b850be8c78bc",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "SUBSCRIPTION",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "540dde0b4dd446b5abc9c7704a961b8c",
+    "id": "540dde0b4dd446b5abc9c7704a961b8c",
+    "namespace": "SeaQA",
+    "title": "5/12",
+    "description": "5/12",
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "6a095d308fc2d497bcbc10be"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "6a095d308fc2d497bcbc10bf"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-05-12T08:09:46.129Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-03-31T07:35:52.497Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "540dde0b4dd446b5abc9c7704a961b8c",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 857
+  },
+  {
+    "_id": "5c82351159744bedb6d11527362018a4",
+    "id": "5c82351159744bedb6d11527362018a4",
+    "namespace": "SeaQA",
+    "title": "May 19",
+    "description": "May 19",
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e60935df8cf5ec9e86f"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "69d46e60935df8cf5ec9e870"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-05-19T10:16:06.290Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-05-19T12:40:57.489Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "5c82351159744bedb6d11527362018a4",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "5d6f6e29b4c4400490905396891306f8",
+    "id": "5d6f6e29b4c4400490905396891306f8",
+    "namespace": "SeaQA",
+    "title": "Apr 27 CLONE",
+    "description": "Apr 27 CLONE",
+    "keyImages": [
+      {
+        "type": "ComingSoon_Small",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/test image_500x375-454310f321a473cd4ce8823537a644ed",
+        "md5": "454310f321a473cd4ce8823537a644ed"
+      },
+      {
+        "type": "ComingSoon_Small",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/u=1561204147,3725236709&fm=26&gp=0_500x313-ec9ae5b4f893810ec2ceac2fb6270baf",
+        "md5": "ec9ae5b4f893810ec2ceac2fb6270baf"
+      }
+    ],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e60935df8cf5ec9e896"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "69d46e60935df8cf5ec9e897"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-04-27T08:38:35.972Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-03-31T07:35:52.404Z"
+    },
+    "customAttributes": [
+      {
+        "key": "a.b.c",
+        "type": "STRING",
+        "value": "test"
+      }
+    ],
+    "entitlementName": "5d6f6e29b4c4400490905396891306f8",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "longDescription": "Apr 27 CLONE",
+    "technicalDetails": "Apr 27",
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "5ee58e555c6540a2b3e07875bbd5eba2",
+    "id": "5ee58e555c6540a2b3e07875bbd5eba2",
+    "namespace": "SeaQA",
+    "title": "5/12",
+    "description": "5/12",
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "6a095d308fc2d497bcbc10ad"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "6a095d308fc2d497bcbc10ae"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-05-12T08:07:51.350Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-03-31T07:35:52.412Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "5ee58e555c6540a2b3e07875bbd5eba2",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 884
+  },
+  {
+    "_id": "60f826d4b69345708662fd82b59c61a3",
+    "id": "60f826d4b69345708662fd82b59c61a3",
+    "namespace": "SeaQA",
+    "title": "chucktest 0504-free free offer",
+    "description": "chucktest 0504-free free offer",
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e62935df8cf5ec9e975"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2023-05-03T11:54:53.320Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-05-03T11:54:53.320Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "60f826d4b69345708662fd82b59c61a3",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "releaseInfo": [
+      {
+        "id": "b2ceb194a98648979f4e25f1d432170c",
+        "appId": "chucktest",
+        "platform": [],
+        "_id": {
+          "$oid": "69d46e62935df8cf5ec9e976"
+        }
+      }
+    ],
+    "developer": "epic games",
+    "developerId": "o-trybbjedgjcf4st9ubu9ptr2h5hj33",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "useCount": 1,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "635f46d747b54e228542132e46fc6219",
+    "id": "635f46d747b54e228542132e46fc6219",
+    "namespace": "SeaQA",
+    "title": "Landy Durable item 2",
+    "description": "Entitlement type edited from entitlement type to executable",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69d46e63935df8cf5ec9ea26"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-08-30T08:26:24.197Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-03-31T07:35:52.545Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "635f46d747b54e228542132e46fc6219",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games Staff Account - Do NOT Delete",
+    "developerId": "o-rgm583e9ckq9xd827fhhysnm7vy6lk",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "entitlementStartDate": {
+      "$date": "2014-10-27T00:00:00.000Z"
+    },
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "666cd40005214331867420b4ab3085f6",
+    "id": "666cd40005214331867420b4ab3085f6",
+    "namespace": "SeaQA",
+    "title": "chuck test standard offer",
+    "description": "chuck test standard offer",
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "69d46e64935df8cf5ec9eace"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2022-02-23T06:13:09.821Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2022-02-23T06:13:32.982Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "666cd40005214331867420b4ab3085f6",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "6ce36633b8c645a186cb4c5625e68487",
+    "id": "6ce36633b8c645a186cb4c5625e68487",
+    "namespace": "SeaQA",
+    "title": "Apr 22 test",
+    "description": "Apr 22 test",
+    "keyImages": [
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/u=1561204147,3725236709&fm=26&gp=0_500x313-ec9ae5b4f893810ec2ceac2fb6270baf",
+        "md5": "ec9ae5b4f893810ec2ceac2fb6270baf"
+      },
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/u=3720617554,1457625423&fm=26&gp=0_500x313-06b2a42933c86975377cd1f3f1866fa9",
+        "md5": "06b2a42933c86975377cd1f3f1866fa9"
+      }
+    ],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e66935df8cf5ec9ec7b"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "69d46e66935df8cf5ec9ec7c"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-04-22T06:00:18.679Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-04-22T06:00:18.679Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "6ce36633b8c645a186cb4c5625e68487",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "longDescription": "Apr 22 test",
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "6e8f90d95fcf4f229bb4650af562e7b1",
+    "id": "6e8f90d95fcf4f229bb4650af562e7b1",
+    "namespace": "SeaQA",
+    "title": "item title",
+    "description": "UNKNOWN",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69d46e67935df8cf5ec9ed0e"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2014-10-20T07:26:40.606Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-06-12T06:45:22.389Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "57d37356ef55443ca77252c0b4eb9f98",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "releaseInfo": [],
+    "developer": "Test",
+    "developerId": "o-d6mlvstfmhuw55x5s9ekqgzwrm98pg",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "entitlementEndDate": {
+      "$date": "2023-10-06T00:00:00.000Z"
+    },
+    "useCount": 3,
+    "longDescription": "UNKNOWN",
+    "technicalDetails": "UNKNOWN",
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "7193861dad4a43aa991037644d5313ab",
+    "id": "7193861dad4a43aa991037644d5313ab",
+    "namespace": "SeaQA",
+    "title": "trail benefit entitlement offer",
+    "description": "trail benefit entitlement offer",
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "69d46e69935df8cf5ec9ede9"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2024-06-07T08:46:30.635Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2024-06-07T08:46:30.635Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "7193861dad4a43aa991037644d5313ab",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-7357znxdte2nuaxqb65dt497m2bcyc",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "77d6b720a9cc4d3993492a6711aab31d",
+    "id": "77d6b720a9cc4d3993492a6711aab31d",
+    "namespace": "SeaQA",
+    "title": "test_create_landy",
+    "description": "UNKNOWN",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "69d46e6b935df8cf5ec9ef50"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2017-10-18T10:42:47.668Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-09-08T06:22:12.311Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "77d6b720a9cc4d3993492a6711aab31d",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "8ef66060998e40658d5102bde9b5f7b2",
+        "appId": "1",
+        "platform": ["PS4"],
+        "_id": {
+          "$oid": "69d46e6b935df8cf5ec9ef51"
+        }
+      }
+    ],
+    "developer": "testorg0908",
+    "developerId": "o-mgwwx8wucukhyk8vre5494sxegttjh",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "longDescription": "UNKNOWN",
+    "technicalDetails": "UNKNOWN",
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "7a8645fba30f45b196e29fb89b9221f9",
+    "id": "7a8645fba30f45b196e29fb89b9221f9",
+    "namespace": "SeaQA",
+    "title": "Jun 4",
+    "description": "Jun 4",
+    "keyImages": [
+      {
+        "type": "OfferImageTall",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/10300AC_2560x1440-4659e7cd5d14edfd20f2ca9058b1c5c8 (1)_2560x1440-4659e7cd5d14edfd20f2ca9058b1c5c8",
+        "md5": "4659e7cd5d14edfd20f2ca9058b1c5c8"
+      },
+      {
+        "type": "OfferImageWide",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/10300AC_2560x1440-4659e7cd5d14edfd20f2ca9058b1c5c8_2560x1440-4659e7cd5d14edfd20f2ca9058b1c5c8",
+        "md5": "4659e7cd5d14edfd20f2ca9058b1c5c8"
+      },
+      {
+        "type": "DieselGameBoxTall",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/10300AC2_1200x1600-d90ddadd34a59871541d09f7dd0da177 (1)_1200x1600-d90ddadd34a59871541d09f7dd0da177",
+        "md5": "d90ddadd34a59871541d09f7dd0da177"
+      },
+      {
+        "type": "ThirdPartyInstallerImage",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/10300AC2_1200x1600-d90ddadd34a59871541d09f7dd0da177 (2)_1200x1600-d90ddadd34a59871541d09f7dd0da177",
+        "md5": "d90ddadd34a59871541d09f7dd0da177"
+      },
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/10300AC2_1200x1600-d90ddadd34a59871541d09f7dd0da177 (3)_1200x1600-d90ddadd34a59871541d09f7dd0da177",
+        "md5": "d90ddadd34a59871541d09f7dd0da177"
+      },
+      {
+        "type": "ComingSoon",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/10300AC2_1200x1600-d90ddadd34a59871541d09f7dd0da177_1200x1600-d90ddadd34a59871541d09f7dd0da177",
+        "md5": "d90ddadd34a59871541d09f7dd0da177"
+      },
+      {
+        "type": "ComingSoon_Small",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/10300AC2_1200x1600-d90ddadd34a59871541d09f7dd0da177_1200x1600-d90ddadd34a59871541d09f7dd0da177",
+        "md5": "d90ddadd34a59871541d09f7dd0da177"
+      },
+      {
+        "type": "Thumbnail",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/hng_default_boxart_1200x1600-dc171589db3ba0d099fcdd5cf3f57e5b",
+        "md5": "dc171589db3ba0d099fcdd5cf3f57e5b"
+      },
+      {
+        "type": "ESRB",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/C1510363-2935-40A0-B3AE-3C89AFB06ECF_1561x837-31bc05bf27321ecf87861164ee5f74f6",
+        "md5": "31bc05bf27321ecf87861164ee5f74f6"
+      }
+    ],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e6c935df8cf5ec9eff2"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "69d46e6c935df8cf5ec9eff3"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-06-04T09:12:54.485Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-06-04T09:12:54.485Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "7a8645fba30f45b196e29fb89b9221f9",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "7ec34b38c65f4161a8ad5ecc1187ecca",
+    "id": "7ec34b38c65f4161a8ad5ecc1187ecca",
+    "namespace": "SeaQA",
+    "title": "New Dawn",
+    "description": "New Dawn",
+    "keyImages": [
+      {
+        "type": "ComingSoon_Small",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/test image_500x375-454310f321a473cd4ce8823537a644ed",
+        "md5": "454310f321a473cd4ce8823537a644ed"
+      }
+    ],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e6d935df8cf5ec9f106"
+        }
+      },
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69d46e6d935df8cf5ec9f107"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "69d46e6d935df8cf5ec9f108"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-05-27T07:09:32.509Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-05-08T07:57:12.496Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "7ec34b38c65f4161a8ad5ecc1187ecca",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 585,
+    "useCount": 1
+  },
+  {
+    "_id": "7ff39e4df27f4c84aa8d18f15e7a3da5",
+    "id": "7ff39e4df27f4c84aa8d18f15e7a3da5",
+    "namespace": "SeaQA",
+    "title": "Item check clone",
+    "description": "Item check",
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "6a095d318fc2d497bcbc10e2"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "6a095d318fc2d497bcbc10e3"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-05-12T11:50:12.168Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-05-19T10:12:32.975Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "7ff39e4df27f4c84aa8d18f15e7a3da5",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 860
+  },
+  {
+    "_id": "8a35d1e9bda549fabd970475de87b27b",
+    "id": "8a35d1e9bda549fabd970475de87b27b",
+    "namespace": "SeaQA",
+    "title": "Test offer D for subscription",
+    "description": "Test offer D for subscription",
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "69d46e71935df8cf5ec9f3a1"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2023-08-01T04:03:53.161Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2023-08-01T04:03:53.161Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "8a35d1e9bda549fabd970475de87b27b",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "8bf7479e063d4b33bc5fc270aece7dc1",
+    "id": "8bf7479e063d4b33bc5fc270aece7dc1",
+    "namespace": "SeaQA",
+    "title": "Landy Test BaseGame",
+    "description": "Landy Test BaseGame",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "application",
+        "_id": {
+          "$oid": "69d46e72935df8cf5ec9f423"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2020-07-31T02:45:11.632Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-08-16T06:54:09.915Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "8bf7479e063d4b33bc5fc270aece7dc1",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "f7f6dc90b51c4191a2c97ab8ae6ba071",
+        "appId": "Landy Test Basegame",
+        "platform": [],
+        "_id": {
+          "$oid": "69d46e72935df8cf5ec9f424"
+        }
+      }
+    ],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "954dc0f4e35d4fe8bf008afbe4d39b4a",
+    "id": "954dc0f4e35d4fe8bf008afbe4d39b4a",
+    "namespace": "SeaQA",
+    "title": "Jun 4 clone",
+    "description": "Jun 4",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e76935df8cf5ec9f6cf"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "69d46e76935df8cf5ec9f6d0"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-06-04T09:13:52.895Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-01-13T05:51:45.556Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "954dc0f4e35d4fe8bf008afbe4d39b4a",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "955e408d78274bd7958674fdac41e81a",
+    "id": "955e408d78274bd7958674fdac41e81a",
+    "namespace": "SeaQA",
+    "title": "In Game Purchase audience",
+    "description": "In Game Purchase audience",
+    "categories": [
+      {
+        "path": "audience",
+        "_id": {
+          "$oid": "69d46e76935df8cf5ec9f6d2"
+        }
+      },
+      {
+        "path": "public",
+        "_id": {
+          "$oid": "69d46e76935df8cf5ec9f6d3"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2022-01-12T04:39:23.822Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2022-01-12T04:39:23.822Z"
+    },
+    "customAttributes": [
+      {
+        "key": "SupportedPlatforms",
+        "type": "STRING",
+        "value": "Windows"
+      }
+    ],
+    "entitlementName": "955e408d78274bd7958674fdac41e81a",
+    "entitlementType": "AUDIENCE",
+    "itemType": "CONSUMABLE",
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": ["egstore"],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "useCount": 1,
+    "linkedOffers": [],
+    "keyImages": [],
+    "releaseInfo": [],
+    "__v": 495
+  },
+  {
+    "_id": "9696d60e3767435aa2852c4e587612be",
+    "id": "9696d60e3767435aa2852c4e587612be",
+    "namespace": "SeaQA",
+    "title": "Nov",
+    "description": "Nov",
+    "keyImages": [
+      {
+        "type": "ESRB",
+        "url": "https://cdn1.epicgames.com/item/SeaQA/tom-jerry_400x396-315a5092a57548387e39c155dcf18c9d",
+        "md5": "315a5092a57548387e39c155dcf18c9d"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69d46e77935df8cf5ec9f71a"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2022-11-15T07:02:25.846Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-03-04T09:30:09.287Z"
+    },
+    "customAttributes": [
+      {
+        "key": "CanRunOffline",
+        "type": "STRING",
+        "value": "true"
+      },
+      {
+        "key": "FolderName",
+        "type": "STRING",
+        "value": "test"
+      }
+    ],
+    "entitlementName": "Nov",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "09770b3f6b0446d28db7df7e0b778b1e",
+        "appId": "65844713cc9b425fadffc982195f96bf",
+        "platform": ["Windows"],
+        "_id": {
+          "$oid": "69d46e77935df8cf5ec9f71b"
+        }
+      }
+    ],
+    "developer": "test",
+    "developerId": "o-xkmn9eu3usarnfldektyjxd5fd43jr",
+    "eulaIds": ["egstore"],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "9703f1cc6bd64509bc7c420d1f4a71e0",
+    "id": "9703f1cc6bd64509bc7c420d1f4a71e0",
+    "namespace": "SeaQA",
+    "title": "chuck test dlc 1",
+    "description": "chuck test dlc 1",
+    "categories": [
+      {
+        "path": "application",
+        "_id": {
+          "$oid": "69d46e77935df8cf5ec9f754"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-09-16T06:41:09.313Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-09-16T06:41:09.313Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "9703f1cc6bd64509bc7c420d1f4a71e0",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "bceb8ea0cd6d4a06a256f378f5a1c66e",
+        "appId": "chuck test dlc 1",
+        "platform": [],
+        "_id": {
+          "$oid": "69d46e77935df8cf5ec9f755"
+        }
+      }
+    ],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "longDescription": "chuck test dlc 1",
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "9adb28f33c1040cab3306827150057b3",
+    "id": "9adb28f33c1040cab3306827150057b3",
+    "namespace": "SeaQA",
+    "title": "testPureDLC",
+    "description": "testPureDLC",
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e78935df8cf5ec9f848"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2022-01-12T04:37:50.550Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2022-01-12T04:37:50.550Z"
+    },
+    "customAttributes": [
+      {
+        "key": "CanRunOffline",
+        "type": "STRING",
+        "value": "true"
+      }
+    ],
+    "entitlementName": "9adb28f33c1040cab3306827150057b3",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": ["egstore"],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "a1a3135127dd469baf5670862770279f",
+    "id": "a1a3135127dd469baf5670862770279f",
+    "namespace": "SeaQA",
+    "title": "chucktestoffer1215A",
+    "description": "chucktestoffer1215A",
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e7b935df8cf5ec9fa3a"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-12-15T06:02:24.167Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-12-15T06:02:24.167Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "a1a3135127dd469baf5670862770279f",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Dev Test Account",
+    "developerId": "o-ufmrk5furrrxgsp5tdngefzt5rxdcn",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "ae32bca7a1cf4b8fbab9f60efa78f7be",
+    "id": "ae32bca7a1cf4b8fbab9f60efa78f7be",
+    "namespace": "SeaQA",
+    "title": "trail benefit display offer",
+    "description": "trail benefit display offer",
+    "categories": [
+      {
+        "path": "assets",
+        "_id": {
+          "$oid": "69d46e80935df8cf5ec9fd66"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2024-06-07T08:48:10.543Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2024-06-07T08:48:10.543Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "ae32bca7a1cf4b8fbab9f60efa78f7be",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-7357znxdte2nuaxqb65dt497m2bcyc",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "ae971e7e1b8d4ec1b390b796eb0f1ce8",
+    "id": "ae971e7e1b8d4ec1b390b796eb0f1ce8",
+    "namespace": "SeaQA",
+    "title": "test audience",
+    "description": "test audience",
+    "categories": [
+      {
+        "path": "audience",
+        "_id": {
+          "$oid": "69d46e80935df8cf5ec9fd89"
+        }
+      },
+      {
+        "path": "public",
+        "_id": {
+          "$oid": "69d46e80935df8cf5ec9fd8a"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2022-01-12T04:26:19.921Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2022-11-15T06:51:39.132Z"
+    },
+    "customAttributes": [
+      {
+        "key": "SupportedPlatforms",
+        "type": "STRING",
+        "value": "Windows"
+      }
+    ],
+    "entitlementName": "ae971e7e1b8d4ec1b390b796eb0f1ce8",
+    "entitlementType": "AUDIENCE",
+    "itemType": "DURABLE",
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": ["egstore"],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "releaseInfo": [],
+    "__v": 495
+  },
+  {
+    "_id": "b5e70efda3454dfe9c2d6d7f6789a5f3",
+    "id": "b5e70efda3454dfe9c2d6d7f6789a5f3",
+    "namespace": "SeaQA",
+    "title": "Duan",
+    "description": "abcmkddkkdkdkkp 28838383abcmkddkkdkdkkp 28838383abcmkddkkdkdkkp 28838383abcmkddkkdkdkkp 28838383 abcmkddkkdkdkkp 28838383abcmkddkkdkdkkp 28838383 abcmkddkkdkdkkp 28838383abcmkddkkdkdkkp 28838383 abcmkddkkdkdkkp 28838383abcmkddkkdkdkkp 28838383 abcmkddkkdkdkkp 28838383abcmkddkkdkdkkp 28838383 abcmkddkkdkdkkp 28838383abcmkddkkdkdkkp 28838383 abcmkddkkdkdkkp 28838383abcmkddkkdkdkkp 28838383 abcmkdd28",
+    "keyImages": [
+      {
+        "type": "Featured",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/10300AC_2560x1440-4659e7cd5d14edfd20f2ca9058b1c5c8_2560x1440-4659e7cd5d14edfd20f2ca9058b1c5c8",
+        "md5": "4659e7cd5d14edfd20f2ca9058b1c5c8"
+      },
+      {
+        "type": "ComingSoon",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/10300AC2_1200x1600-d90ddadd34a59871541d09f7dd0da177 (2)_1200x1600-d90ddadd34a59871541d09f7dd0da177",
+        "md5": "d90ddadd34a59871541d09f7dd0da177"
+      }
+    ],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46e83935df8cf5ec9ff9d"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "69d46e83935df8cf5ec9ff9e"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-06-10T07:58:11.804Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2021-06-10T07:58:11.804Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "b5e70efda3454dfe9c2d6d7f6789a5f3",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "b9ba8e2b69c84e66afe1b91ab21d0ef6",
+    "id": "b9ba8e2b69c84e66afe1b91ab21d0ef6",
+    "namespace": "SeaQA",
+    "title": "chucktest",
+    "description": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69d46e84935df8cf5eca00b2"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2020-10-14T08:34:13.816Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-01-13T05:51:45.556Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "b9ba8e2b69c84e66afe1b91ab21d0ef6",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "CONSUMABLE",
+    "releaseInfo": [
+      {
+        "id": "79eaf2df60984afaace6a14dc0539d35",
+        "appId": "chucktest",
+        "platform": [],
+        "_id": {
+          "$oid": "69d46e84935df8cf5eca00b3"
+        }
+      }
+    ],
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "useCount": 1,
+    "longDescription": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "linkedOffers": [],
+    "__v": 495
+  },
+  {
+    "_id": "c1afe88510c04541a10b572a5c517567",
+    "id": "c1afe88510c04541a10b572a5c517567",
+    "namespace": "SeaQA",
+    "title": "testPureDLC audience",
+    "description": "testPureDLC audience",
+    "categories": [
+      {
+        "path": "audience",
+        "_id": {
+          "$oid": "69d46e87935df8cf5eca02da"
+        }
+      },
+      {
+        "path": "public",
+        "_id": {
+          "$oid": "69d46e87935df8cf5eca02db"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2022-01-12T04:37:50.418Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2022-01-12T04:37:50.418Z"
+    },
+    "customAttributes": [
+      {
+        "key": "SupportedPlatforms",
+        "type": "STRING",
+        "value": "Windows"
+      }
+    ],
+    "entitlementName": "c1afe88510c04541a10b572a5c517567",
+    "entitlementType": "AUDIENCE",
+    "itemType": "DURABLE",
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": ["egstore"],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "keyImages": [],
+    "releaseInfo": [],
+    "__v": 495
+  },
+  {
+    "_id": "c9853aa1b0164ea8a160c53e99fa97d4",
+    "id": "c9853aa1b0164ea8a160c53e99fa97d4",
+    "namespace": "SeaQA",
+    "title": "sherwinLocaleTest2",
+    "description": "sherwinLocaleTest2",
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69d46e8a935df8cf5eca04e9"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-07-13T07:24:33.582Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2022-04-22T19:02:58.842Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "c9853aa1b0164ea8a160c53e99fa97d4",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "longDescription": "test",
+    "linkedOffers": [],
+    "keyImages": [],
+    "__v": 495
+  },
+  {
+    "_id": "f722d5e3f1e84ff1b2fc2c8f032fd35f",
+    "id": "f722d5e3f1e84ff1b2fc2c8f032fd35f",
+    "namespace": "SeaQA",
+    "title": "Create Item For PriceEngine",
+    "description": "item description",
+    "keyImages": [
+      {
+        "type": "image name",
+        "url": "url",
+        "md5": "ed076287532e86365e841e92bfc50d8c"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967198fc2d497bcbe0ea5"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2018-09-20T23:36:05.461Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-03-18T07:38:31.284Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "Consumable_Entitlement",
+    "entitlementType": "AUDIENCE",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "19c183a347414f9d9b1fba77f1a264ed",
+        "appId": "test",
+        "platform": ["Windows"],
+        "_id": {
+          "$oid": "6a0967198fc2d497bcbe0ea6"
+        }
+      }
+    ],
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": false,
+    "entitlementEndDate": {
+      "$date": "2099-12-31T00:00:00.000Z"
+    },
+    "useCount": 1000,
+    "entitlementStartDate": {
+      "$date": "2010-01-01T00:00:00.000Z"
+    },
+    "longDescription": "Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.Note: Tax Sku Id maps to the Tax Code defined in Avalara, the default value represents the Games - streaming / electronic download which should cover most of our business. Don't make changes unless you've obtained new Tax Code from Finance team.",
+    "technicalDetails": "technical informatioin",
+    "linkedOffers": [],
+    "__v": 952
+  },
+  {
+    "_id": "9733381c26fa48d5858207f0a5caef10",
+    "id": "9733381c26fa48d5858207f0a5caef10",
+    "namespace": "SeaQA",
+    "title": "testdeleteitem",
+    "description": "description",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6819b82c18dcc11a0df0a0ca"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2025-05-06T06:55:04.589Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-05-06T07:06:26.316Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "9733381c26fa48d5858207f0a5caef10",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "sherwin",
+    "developerId": "o-rqk79rza3x3zmczn8flqfjevu7rkkd",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": false,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 0
+  },
+  {
+    "_id": "f86d1ad7187c48389f853cb42a3d3871",
+    "id": "f86d1ad7187c48389f853cb42a3d3871",
+    "namespace": "SeaQA",
+    "title": "New Dawn CLONE 11",
+    "description": "New Dawn CLONE 11",
+    "keyImages": [
+      {
+        "type": "ComingSoon_Small",
+        "url": "https://cdn1.epicgames.com/salesEvent/salesEvent/test image_500x375-454310f321a473cd4ce8823537a644ed",
+        "md5": "454310f321a473cd4ce8823537a644ed"
+      }
+    ],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46f31935df8cf5eca86d3"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "69d46f31935df8cf5eca86d4"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2021-05-27T07:11:32.891Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-08-28T08:07:04.604Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "f86d1ad7187c48389f853cb42a3d3871",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 284
+  },
+  {
+    "_id": "b8807621bb7241a59c80d37d73f947fd",
+    "id": "b8807621bb7241a59c80d37d73f947fd",
+    "namespace": "SeaQA",
+    "title": "Mon",
+    "description": "Mon",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "addons",
+        "_id": {
+          "$oid": "69d46f31935df8cf5eca86d9"
+        }
+      },
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69d46f31935df8cf5eca86da"
+        }
+      },
+      {
+        "path": "addons/bundle",
+        "_id": {
+          "$oid": "69d46f31935df8cf5eca86db"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2025-01-13T05:51:02.170Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-08-28T08:04:57.785Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "b8807621bb7241a59c80d37d73f947fd",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-63xw9bf4aa9wjw84hnm5du9n5yj56j",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 284
+  },
+  {
+    "_id": "3b43ee7203ba416683761091ef8ab830",
+    "id": "3b43ee7203ba416683761091ef8ab830",
+    "namespace": "SeaQA",
+    "title": "deleteitem2",
+    "description": "for testing and delete",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "68f709f9f79f49fb4c5f475e"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2025-10-20T14:06:32.200Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2025-10-20T14:07:07.925Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "3b43ee7203ba416683761091ef8ab830",
+    "entitlementType": "EXECUTABLE",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "TEST",
+    "developerId": "o-kmv66v2kx4jh82m5pck6dygecqcpwb",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "",
+    "unsearchable": true,
+    "requiresSecureAccount": false,
+    "linkedOffers": [],
+    "__v": 8
+  },
+  {
+    "_id": "16f1258a86124c26a862d55fb5b6373e",
+    "id": "16f1258a86124c26a862d55fb5b6373e",
+    "namespace": "SeaQA",
+    "title": "Item for search release offer do not delete",
+    "description": "Item for search release offer do not deletee",
+    "keyImages": [],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a0967218fc2d497bcbe116d"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2025-04-03T07:14:11.616Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-01-05T13:13:10.844Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "16f1258a86124c26a862d55fb5b6373e",
+    "entitlementType": "entitlement",
+    "itemType": "DURABLE",
+    "releaseInfo": [],
+    "developer": "Epic Games",
+    "developerId": "o-aa83a0a9bc45e98c80c1b1c9d92e9e",
+    "eulaIds": ["qpMjr"],
+    "installModes": [],
+    "endOfSupport": false,
+    "applicationId": "appId",
+    "unsearchable": false,
+    "requiresSecureAccount": false,
+    "entitlementEndDate": {
+      "$date": "2025-04-16T00:00:00.000Z"
+    },
+    "entitlementStartDate": {
+      "$date": "2025-04-11T00:00:00.000Z"
+    },
+    "longDescription": "Item for search release offer do not delete",
+    "technicalDetails": "Item for search release offer do not delete",
+    "linkedOffers": [],
+    "__v": 355
+  },
+  {
+    "_id": "c5e8ee6fd92f4aa295d013121423d281",
+    "id": "c5e8ee6fd92f4aa295d013121423d281",
+    "namespace": "SeaQA",
+    "title": "SmokeTest",
+    "description": "SmokeTest",
+    "keyImages": [
+      {
+        "type": "image name",
+        "url": "url",
+        "md5": "ed076287532e86365e841e92bfc50d8c"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "6a09671b8fc2d497bcbe0f72"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2026-03-31T11:40:23.834Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-03-31T11:40:23.834Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "c5e8ee6fd92f4aa295d013121423d281",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "c23d4375fafb4ad0a768d6b2f582a8cb",
+        "appId": "testappid",
+        "platform": [],
+        "_id": {
+          "$oid": "6a09671b8fc2d497bcbe0f73"
+        }
+      }
+    ],
+    "developer": "landy tian",
+    "developerId": "9cdc32abc22b45c7ab6a291d60d51863",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "requiresSecureAccount": false,
+    "longDescription": "SmokeTest",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "__v": 196
+  },
+  {
+    "_id": "28dc4a9dc0e4457ca9599188666bcb0a",
+    "id": "28dc4a9dc0e4457ca9599188666bcb0a",
+    "namespace": "SeaQA",
+    "title": "SmokeTest",
+    "description": "SmokeTest",
+    "keyImages": [
+      {
+        "type": "image name",
+        "url": "url",
+        "md5": "ed076287532e86365e841e92bfc50d8c"
+      }
+    ],
+    "categories": [
+      {
+        "path": "testing",
+        "_id": {
+          "$oid": "69cbb9acfe178294df68b6bc"
+        }
+      }
+    ],
+    "status": "ACTIVE",
+    "creationDate": {
+      "$date": "2026-03-31T12:10:03.653Z"
+    },
+    "lastModifiedDate": {
+      "$date": "2026-03-31T12:10:03.653Z"
+    },
+    "customAttributes": [],
+    "entitlementName": "28dc4a9dc0e4457ca9599188666bcb0a",
+    "entitlementType": "ENTITLEMENT",
+    "itemType": "DURABLE",
+    "releaseInfo": [
+      {
+        "id": "ef1d61309a5948aeb0df858758d1e180",
+        "appId": "testappid",
+        "platform": [],
+        "_id": {
+          "$oid": "69cbb9acfe178294df68b6bd"
+        }
+      }
+    ],
+    "developer": "landy tian",
+    "developerId": "9cdc32abc22b45c7ab6a291d60d51863",
+    "eulaIds": [],
+    "installModes": [],
+    "endOfSupport": false,
+    "unsearchable": false,
+    "requiresSecureAccount": false,
+    "longDescription": "SmokeTest",
+    "technicalDetails": "technical information",
+    "linkedOffers": [],
+    "__v": 0
+  }
+]

@@ -56,8 +56,9 @@ The Fumadocs app lives in `apps/docs` and consumes the generated OpenAPI artifac
 
 The test suite is split into two tiers:
 
-- Unit tests (`tests/utils/`, `tests/diff.test.ts`) are pure helpers and need no infrastructure.
-- Route golden-snapshot tests (`tests/routes.test.ts`) replay a curated corpus of routes against the local Hono app and structurally diff responses against snapshots captured from `https://api.egdata.app`.
+- **Unit tests** (`tests/utils/`, `tests/diff.test.ts`) — pure helpers, no infra required.
+- **Route golden-snapshot tests** (`tests/routes.test.ts`) — replay a curated corpus of stable routes against the local Hono app and structurally diff the response against a snapshot captured from `https://api.egdata.app`.
+- **Fixture-backed route tests** (`tests/search-route.test.ts`, `tests/items-route.test.ts`) — use committed SeaQA offer/item fixtures and mocked infrastructure for deterministic route coverage.
 
 ```sh
 # Unit tests only, no env required
@@ -69,7 +70,14 @@ pnpm test:routes
 # Full suite, needs .env with MongoDB and Redis settings
 pnpm test
 
-# Recapture golden snapshots from production
+# Opt into live OpenSearch golden snapshots (PowerShell)
+$env:RUN_OPENSEARCH_SNAPSHOTS="true"; pnpm test tests/routes.test.ts
+
+# Opt into live OpenSearch golden snapshots (sh)
+RUN_OPENSEARCH_SNAPSHOTS=true pnpm test tests/routes.test.ts
+
+# (Re)capture golden snapshots from prod
+# Edit tests/corpus.ts to add real IDs, then:
 pnpm test:capture
 ```
 

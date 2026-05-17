@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { getCookie } from 'hono/cookie';
 import { createMiddleware } from 'hono/factory';
-import * as jwt from 'jsonwebtoken';
 import { db } from '../db/index.js';
 import type { EpicTokenInfo } from './auth.js';
 
@@ -53,32 +52,6 @@ const admin = createMiddleware<{
       authCookie: splitted[0].replace(/=+$/, ''),
       decoded,
     });
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
-
-  const epicToken = jwt.decode(decoded.user.accessToken) as {
-    sub: string;
-    iss: string;
-    dn: string;
-    nonce: string;
-    pfpid: string;
-    sec: number;
-    aud: string;
-    t: string;
-    scope: string;
-    appid: string;
-    exp: number;
-    iat: number;
-    jti: string;
-  };
-
-  if (!epicToken.dn || !epicToken.nonce || !epicToken.pfpid) {
-    console.error('Invalid EPIC_AUTH token');
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
-
-  if (epicToken.iss !== 'https://api.epicgames.dev/epic/oauth/v1') {
-    console.error('Invalid EPIC_AUTH token');
     return c.json({ error: 'Unauthorized' }, 401);
   }
 
