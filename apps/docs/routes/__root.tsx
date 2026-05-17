@@ -1,0 +1,68 @@
+import {
+  createRootRoute,
+  HeadContent,
+  Outlet,
+  Scripts,
+} from "@tanstack/react-router";
+import { RootProvider } from "fumadocs-ui/provider/tanstack";
+import type { ReactNode } from "react";
+import appCss from "../global.css?url";
+
+export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      {
+        charSet: "utf-8",
+      },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1",
+      },
+      {
+        title: "egdata API Docs",
+      },
+      {
+        name: "description",
+        content: "Reference and integration notes for the egdata REST API.",
+      },
+    ],
+    links: [
+      {
+        rel: "stylesheet",
+        href: appCss,
+      },
+    ],
+  }),
+  component: RootComponent,
+});
+
+function RootComponent() {
+  return (
+    <RootDocument>
+      <Outlet />
+    </RootDocument>
+  );
+}
+
+function RootDocument({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <HeadContent />
+      </head>
+      <body className="flex min-h-screen flex-col">
+        <RootProvider
+          search={{
+            options: {
+              api: "/api/search",
+              type: "static",
+            },
+          }}
+        >
+          {children}
+        </RootProvider>
+        <Scripts />
+      </body>
+    </html>
+  );
+}

@@ -1,0 +1,28 @@
+---
+title: Changelog and Deprecations
+description: How API changes, deprecated fields, and retired endpoints are communicated.
+---
+
+The API evolves with Epic Games Store data and with the internal schemas used by egdata. Clients should be tolerant of new response fields and should avoid depending on undocumented ordering.
+
+## Changelog Data
+
+Changelog endpoints expose observed changes in catalog data, including offer and item updates. Use these routes when you need to sync downstream systems without polling every resource.
+
+## Deprecations
+
+Deprecated fields and endpoints remain available only for a compatibility window. Prefer replacement fields from the OpenAPI reference as soon as they are documented.
+
+## Client Policy
+
+Use these defaults for resilient integrations:
+
+- Ignore unknown JSON properties.
+- Prefer stable identifiers such as namespace, offer id, and catalog item id.
+- Treat nullable fields as optional even if your current sample data always contains a value.
+- Monitor `deprecated: true` operations in the OpenAPI reference.
+
+## Breaking Changes
+
+Breaking changes should be reflected in the OpenAPI schema before clients are expected to migrate. Pin generated clients to a known schema revision when reproducibility matters.
+

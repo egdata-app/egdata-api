@@ -10,7 +10,6 @@ import { getCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import { inspectRoutes } from "hono/dev";
 import { etag } from "hono/etag";
-import type { OpenAPIV3 } from "openapi-types";
 import { discord } from "./clients/discord.js";
 import { gaClient } from "./clients/ga.js";
 import client from "./clients/redis.js";
@@ -30,6 +29,7 @@ import {
   TagModel,
   Tags,
 } from "./models/index.js";
+import { buildOpenApiDocument } from "./openapi/index.js";
 import AccountsRoute from "./routes/accounts.js";
 import AdminRoute from "./routes/admin.js";
 import AssetsRoute from "./routes/assets.js";
@@ -57,6 +57,7 @@ import { countries, regions } from "./utils/countries.js";
 import { getFeaturedGames } from "./utils/get-featured-games.js";
 import { consola } from "./utils/logger.js";
 import { orderOffersObject } from "./utils/order-offers-object.js";
+import { API_VERSION } from "./version.js";
 
 config();
 
@@ -77,6 +78,7 @@ const ALLOWED_ORIGINS = [
 ];
 
 const app = new Hono();
+const openApiDocument = buildOpenApiDocument();
 
 Zen.addHonoMiddleware(app);
 
@@ -123,7 +125,7 @@ app.use(
 app.get(
   "/ui",
   swaggerUI({
-    url: "/doc",
+    url: "/open-api.json",
   }),
 );
 
@@ -176,7 +178,7 @@ app.get("/health", async (c) => {
 app.get("/", (c) => {
   return c.json({
     app: "egdata",
-    version: "0.0.1-alpha",
+    version: API_VERSION,
     endpoints: inspectRoutes(app)
       .filter(
         (x) => !x.isMiddleware && x.name === "[handler]" && x.path !== "/",
@@ -193,100 +195,11 @@ app.get("/", (c) => {
 });
 
 app.get("/open-api.json", async (c) => {
-  const endpoints = inspectRoutes(app).filter(
-    (x) => !x.isMiddleware && x.name === "[handler]",
-  );
-
-  const paths = endpoints.reduce(
-    (acc, endpoint) => {
-      if (!acc[endpoint.path]) {
-        acc[endpoint.path] = {};
-      }
-      acc[endpoint.path][endpoint.method.toLowerCase()] = {
-        summary: `Endpoint for ${endpoint.method} ${endpoint.path}`,
-        responses: {
-          "200": {
-            description: "Successful response",
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                },
-              },
-            },
-          },
-        },
-      };
-      return acc;
-    },
-    {} as Record<string, any>,
-  );
-
-  const result: OpenAPIV3.Document = {
-    openapi: "3.0.0",
-    info: {
-      title: "egdata.app API",
-      version: "0.0.1-alpha",
-    },
-    servers: [
-      {
-        url: "https://api.egdata.app",
-      },
-      {
-        url: "https://api-gcp.egdata.app",
-      },
-    ],
-    paths,
-  };
-
-  return c.json(result);
+  return c.json(openApiDocument);
 });
 
 app.get("/doc", async (c) => {
-  const endpoints = inspectRoutes(app);
-
-  // Format endpoints to match OpenAPI paths structure
-  const paths = endpoints.reduce((acc, endpoint) => {
-    if (endpoint.name === "[handler]" && !endpoint.isMiddleware) {
-      // Initialize the path object if it doesn't exist
-      if (!acc[endpoint.path]) {
-        acc[endpoint.path] = {};
-      }
-
-      // Add the method to the path
-      acc[endpoint.path][endpoint.method.toLowerCase()] = {
-        summary: `Endpoint for ${endpoint.method} ${endpoint.path}`,
-        responses: {
-          "200": {
-            description: "Successful response",
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  properties: {
-                    message: {
-                      type: "string",
-                      example: `Response for ${endpoint.method} ${endpoint.path}`,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      };
-    }
-    return acc;
-  }, {});
-
-  return c.json({
-    openapi: "3.0.0",
-    info: {
-      title: "Egdata API",
-      version: "1.0.0",
-    },
-    paths: paths,
-  });
+  return c.json(openApiDocument);
 });
 
 app.get("/robots.txt", async (c) => {

@@ -1,0 +1,281 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "egdata API",
+    "version": "0.0.0",
+    "description": "Fallback schema used by the docs app when ../../openapi/egdata.openapi.json is not present."
+  },
+  "servers": [
+    {
+      "url": "https://egdata.app/api",
+      "description": "Production"
+    },
+    {
+      "url": "http://localhost:4000",
+      "description": "Local development"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Offers",
+      "description": "Game offer and catalog metadata."
+    },
+    {
+      "name": "Prices",
+      "description": "Regional pricing data."
+    },
+    {
+      "name": "Free Games",
+      "description": "Free game promotions."
+    },
+    {
+      "name": "Users",
+      "description": "Authenticated user and profile data."
+    }
+  ],
+  "paths": {
+    "/offers/{id}": {
+      "get": {
+        "operationId": "getOffer",
+        "summary": "Get an offer",
+        "description": "Returns a single offer by id.",
+        "tags": ["Offers"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/OfferId"
+          },
+          {
+            "$ref": "#/components/parameters/Region"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Offer details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Offer"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/prices/{namespace}/{offerId}": {
+      "get": {
+        "operationId": "getOfferPrice",
+        "summary": "Get regional price",
+        "description": "Returns regional pricing for an offer.",
+        "tags": ["Prices"],
+        "parameters": [
+          {
+            "name": "namespace",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Region"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Price data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Price"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/free-games": {
+      "get": {
+        "operationId": "listFreeGames",
+        "summary": "List free games",
+        "description": "Returns current and upcoming free game promotions.",
+        "tags": ["Free Games"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Region"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Free game promotions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Offer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "operationId": "getCurrentUser",
+        "summary": "Get current user",
+        "description": "Returns profile information for the authenticated user.",
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authenticated user profile.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "parameters": {
+      "OfferId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Region": {
+        "name": "region",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 2,
+          "default": "US"
+        }
+      }
+    },
+    "responses": {
+      "NotFound": {
+        "description": "The requested resource was not found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Authentication is required.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Offer": {
+        "type": "object",
+        "required": ["id", "title"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          }
+        }
+      },
+      "Price": {
+        "type": "object",
+        "required": ["currencyCode"],
+        "properties": {
+          "currencyCode": {
+            "type": "string"
+          },
+          "originalPrice": {
+            "type": "number"
+          },
+          "discountPrice": {
+            "type": "number"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["message"],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
+

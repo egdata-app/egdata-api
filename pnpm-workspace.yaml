@@ -1,10 +1,6 @@
-overrides:
-  "graphql": "16.11.0"
-  tough-cookie@<=4.1.3: 4.1.3
-  form-data@<=2.5.4: 2.5.4
-  systeminformation@<=5.31.6: 5.31.6
-  zod@<=4.4.0: 4.4.0
-  cjs-module-lexer@<=2.2.0: 2.2.0
+packages:
+  - "apps/*"
+  - "packages/*"
 allowBuilds:
   "@apollo/protobufjs": true
   core-js: false
@@ -13,3 +9,16 @@ allowBuilds:
   msgpackr-extract: false
   protobufjs: false
   sharp: true
+  vue-demi: false
+  workerd: true
+
+overrides:
+  "@tanstack/router-generator>zod": ^3.24.2
+  "@tanstack/router-plugin>zod": ^3.24.2
+  "@tanstack/start-plugin-core>zod": ^3.24.2
+  cjs-module-lexer@<=2.2.0: 2.2.0
+  form-data@<=2.5.4: 2.5.4
+  "graphql": "16.11.0"
+  systeminformation@<=5.31.6: 5.31.6
+  tough-cookie@<=4.1.3: 4.1.3
+  zod@<=4.4.0: 4.4.0

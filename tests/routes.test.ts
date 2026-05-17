@@ -69,6 +69,12 @@ describe.skipIf(!hasMongo)("route golden snapshots", () => {
       }
 
       const body = await res.json();
+      if (entry.path === "/" && Array.isArray((snapshot.body as any).endpoints)) {
+        expect((body as any).endpoints, "route inventory changed").toEqual(
+          (snapshot.body as any).endpoints,
+        );
+      }
+
       const diffs = diffShape(snapshot.body, body);
       if (diffs.length > 0) {
         const summary = diffs
