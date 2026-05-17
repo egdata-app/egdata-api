@@ -10,7 +10,7 @@ import type { MDXContent } from "mdx/types";
 import type { ComponentProps } from "react";
 import { APIPage } from "@/components/api-page";
 import { getApiReferenceRedirect } from "@/lib/api-reference-redirects";
-import { source } from "@/lib/source";
+import { getSource } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
 type MdxPageData = {
@@ -33,7 +33,8 @@ export function slugFromSplat(splat?: string) {
   return splat?.split("/").filter(Boolean);
 }
 
-export function ensureDocsPage(slug?: string[]) {
+export async function ensureDocsPage(slug?: string[]) {
+  const source = await getSource();
   const page = source.getPage(slug);
 
   if (!page) {
@@ -49,7 +50,8 @@ export function ensureDocsPage(slug?: string[]) {
   return page;
 }
 
-export function getDocsHead(slug?: string[]): DocsHead {
+export async function getDocsHead(slug?: string[]): Promise<DocsHead> {
+  const source = await getSource();
   const page = source.getPage(slug);
 
   if (!page) {
@@ -69,8 +71,8 @@ export function getDocsHead(slug?: string[]): DocsHead {
   };
 }
 
-export function DocsPageServer({ slug }: { slug?: string[] }) {
-  const page = ensureDocsPage(slug);
+export async function DocsPageServer({ slug }: { slug?: string[] }) {
+  const page = await ensureDocsPage(slug);
 
   if (page.type === "openapi") {
     const apiPage = page.data as OpenAPIPageData;

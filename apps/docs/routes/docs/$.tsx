@@ -11,7 +11,7 @@ const getDocsSplatPage = createServerFn()
     const slug = slugFromSplat(data);
 
     return {
-      head: getDocsHead(slug),
+      head: await getDocsHead(slug),
       page: await renderServerComponent(<DocsPageServer slug={slug} />),
     };
   });

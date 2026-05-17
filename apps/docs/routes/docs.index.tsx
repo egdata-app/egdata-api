@@ -8,7 +8,7 @@ const getDocsIndexPage = createServerFn().handler(async () => {
   );
 
   return {
-    head: getDocsHead(),
+    head: await getDocsHead(),
     page: await renderServerComponent(<DocsPageServer />),
   };
 });
