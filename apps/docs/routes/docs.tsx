@@ -1,29 +1,29 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import {
-  CompositeComponent,
-  createCompositeComponent,
-} from "@tanstack/react-start/rsc";
+import { useFumadocsLoader } from "fumadocs-core/source/client";
+import { DocsLayout } from "fumadocs-ui/layouts/docs";
+import { baseOptions } from "@/lib/layout.shared";
 
 const getDocsLayout = createServerFn().handler(async () => {
-  const { DocsLayoutServer } = await import("@/components/docs-layout.server");
+  const { getSource } = await import("@/lib/source");
+  const source = await getSource();
 
-  return createCompositeComponent(DocsLayoutServer);
+  return {
+    tree: await source.serializePageTree(source.getPageTree()),
+  };
 });
 
 export const Route = createFileRoute("/docs")({
-  loader: async () => ({
-    layout: await getDocsLayout(),
-  }),
+  loader: () => getDocsLayout(),
   component: DocsRootLayout,
 });
 
 function DocsRootLayout() {
-  const { layout } = Route.useLoaderData();
+  const { tree } = useFumadocsLoader(Route.useLoaderData());
 
   return (
-    <CompositeComponent src={layout}>
+    <DocsLayout {...baseOptions()} tree={tree}>
       <Outlet />
-    </CompositeComponent>
+    </DocsLayout>
   );
 }

@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { renderServerComponent } from "@tanstack/react-start/rsc";
 import type { ClientApiPageProps } from "fumadocs-openapi/ui/create-client";
 import {
   DocsBody,
@@ -8,13 +7,16 @@ import {
   DocsTitle,
   DocsPage as FumadocsPage,
 } from "fumadocs-ui/layouts/docs/page";
+import { Suspense } from "react";
 import { ClientAPIPage } from "@/components/api-page";
+import { docsClientLoader } from "@/components/docs-mdx-page";
 
 const getDocsSplatPage = createServerFn()
   .inputValidator((splat?: string) => splat)
   .handler(async ({ data }) => {
-    const { DocsPageServer, ensureDocsPage, getDocsHead, slugFromSplat } =
-      await import("@/components/docs-page.server");
+    const { ensureDocsPage, getDocsHead, slugFromSplat } = await import(
+      "@/lib/docs-pages"
+    );
     const slug = slugFromSplat(data);
     const page = await ensureDocsPage(slug);
     const head = await getDocsHead(slug);
@@ -32,12 +34,20 @@ const getDocsSplatPage = createServerFn()
     return {
       type: "mdx" as const,
       head,
-      page: await renderServerComponent(<DocsPageServer slug={slug} />),
+      path: page.path,
     };
   });
 
 export const Route = createFileRoute("/docs/$")({
-  loader: ({ params }) => getDocsSplatPage({ data: params._splat }),
+  loader: async ({ params }) => {
+    const data = await getDocsSplatPage({ data: params._splat });
+
+    if (data.type === "mdx") {
+      await docsClientLoader.preload(data.path);
+    }
+
+    return data;
+  },
   head: ({ loaderData }) => loaderData?.head ?? {},
   component: DocsSplatPage,
 });
@@ -59,5 +69,9 @@ function DocsSplatPage() {
     );
   }
 
-  return <>{data.page}</>;
+  return <MdxDocsPage path={data.path} />;
+}
+
+function MdxDocsPage({ path }: { path: string }) {
+  return <Suspense>{docsClientLoader.useContent(path)}</Suspense>;
 }

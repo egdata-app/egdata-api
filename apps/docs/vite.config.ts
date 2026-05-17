@@ -3,7 +3,6 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
-import rsc from "@vitejs/plugin-rsc";
 import mdx from "fumadocs-mdx/vite";
 import { defineConfig } from "vite";
 
@@ -31,16 +30,12 @@ export default defineConfig({
   plugins: [
     mdx(),
     cloudflare({
-      viteEnvironment: { name: "ssr", childEnvironments: ["rsc"] },
+      viteEnvironment: { name: "ssr" },
     }),
     tailwindcss(),
     tanstackStart({
-      rsc: {
-        enabled: true,
-      },
       srcDirectory: ".",
     }),
-    rsc(),
     viteReact(),
   ],
 });

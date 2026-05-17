@@ -1,26 +1,32 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { renderServerComponent } from "@tanstack/react-start/rsc";
+import { Suspense } from "react";
+import { docsClientLoader } from "@/components/docs-mdx-page";
 
 const getDocsIndexPage = createServerFn().handler(async () => {
-  const { DocsPageServer, getDocsHead } = await import(
-    "@/components/docs-page.server"
-  );
+  const { ensureDocsPage, getDocsHead } = await import("@/lib/docs-pages");
+  const page = await ensureDocsPage();
 
   return {
     head: await getDocsHead(),
-    page: await renderServerComponent(<DocsPageServer />),
+    path: page.path,
   };
 });
 
 export const Route = createFileRoute("/docs/")({
-  loader: () => getDocsIndexPage(),
+  loader: async () => {
+    const data = await getDocsIndexPage();
+
+    await docsClientLoader.preload(data.path);
+
+    return data;
+  },
   head: ({ loaderData }) => loaderData?.head ?? {},
   component: DocsIndexPage,
 });
 
 function DocsIndexPage() {
-  const { page } = Route.useLoaderData();
+  const { path } = Route.useLoaderData();
 
-  return <>{page}</>;
+  return <Suspense>{docsClientLoader.useContent(path)}</Suspense>;
 }
