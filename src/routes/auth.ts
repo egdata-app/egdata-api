@@ -754,7 +754,7 @@ app.patch("/refresh", async (c) => {
 });
 
 const launcherClient = "34a02cf8f4414e29b15921876da36f9a";
-const launcherSecret = "****76cf";
+const launcherSecret = "daafbccc737745039dffe53d94fc76cf";
 
 export type LauncherAuthTokens = {
   access_token: string;

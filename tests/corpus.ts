@@ -4,6 +4,8 @@ export type CorpusEntry = {
   path: string;
   /** JSON body for POST requests. Capture + replay both send it as application/json. */
   body?: unknown;
+  /** External service needed for this live golden snapshot. */
+  requires?: "opensearch";
 };
 
 // Curated list of routes to snapshot from prod and replay locally.
@@ -24,54 +26,63 @@ export const corpus: CorpusEntry[] = [
     method: "POST",
     path: "/search/v2/search",
     body: { limit: 10 },
+    requires: "opensearch",
   },
   {
     name: "search-title-fuzzy",
     method: "POST",
     path: "/search/v2/search",
     body: { title: "Civilization", limit: 5 },
+    requires: "opensearch",
   },
   {
     name: "search-by-offer-type",
     method: "POST",
     path: "/search/v2/search",
     body: { offerType: "BASE_GAME", limit: 10 },
+    requires: "opensearch",
   },
   {
     name: "search-sort-price-asc-us",
     method: "POST",
     path: "/search/v2/search?country=US",
     body: { sortBy: "price", sortDir: "asc", limit: 10 },
+    requires: "opensearch",
   },
   {
     name: "search-sort-price-desc-euro",
     method: "POST",
     path: "/search/v2/search?country=FR",
     body: { sortBy: "price", sortDir: "desc", limit: 10 },
+    requires: "opensearch",
   },
   {
     name: "search-sort-discount-on-sale-us",
     method: "POST",
     path: "/search/v2/search?country=US",
     body: { sortBy: "discount", sortDir: "desc", onSale: true, limit: 10 },
+    requires: "opensearch",
   },
   {
     name: "search-release-date-desc",
     method: "POST",
     path: "/search/v2/search",
     body: { sortBy: "releaseDate", sortDir: "desc", limit: 10 },
+    requires: "opensearch",
   },
   {
     name: "search-upcoming",
     method: "POST",
     path: "/search/v2/search",
     body: { sortBy: "upcoming", sortDir: "asc", limit: 10 },
+    requires: "opensearch",
   },
   {
     name: "search-price-range-euro",
     method: "POST",
     path: "/search/v2/search?country=FR",
     body: { price: { min: 0, max: 2000 }, limit: 10 },
+    requires: "opensearch",
   },
   {
     name: "search-region-fallback-zz",
@@ -80,12 +91,14 @@ export const corpus: CorpusEntry[] = [
     // resolution branch in the route handler.
     path: "/search/v2/search?country=ZZ",
     body: { limit: 5 },
+    requires: "opensearch",
   },
   {
     name: "search-pagination",
     method: "POST",
     path: "/search/v2/search",
     body: { limit: 10, page: 2 },
+    requires: "opensearch",
   },
 
   // --- ID-bound routes (uncomment once real IDs are pasted in) ---
