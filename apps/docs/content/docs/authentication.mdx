@@ -1,0 +1,37 @@
+---
+title: Authentication
+description: How clients authenticate against protected egdata API endpoints.
+---
+
+Most catalog and storefront endpoints are public. Endpoints that act on a user account, private profile data, saved state, admin actions, or push subscriptions require route-specific credentials.
+
+## Browser Sessions
+
+egdata.app browser flows use the API's session cookie after the user signs in through Epic. These routes are documented as private while the public REST contract is being stabilized.
+
+## API Keys
+
+Push notification routes use `X-API-Key` for user subscriptions. Admin push routes accept the configured admin key through `X-API-Key` or `Authorization`.
+
+```http
+X-API-Key: <key>
+```
+
+Do not send API keys in query strings. Query strings are easier to leak through logs, browser history, and analytics tooling.
+
+## Public Data
+
+Public endpoints are designed for read-only Epic Games Store data such as offers, items, free games, prices, tags, sellers, builds, and search results.
+
+## User Data
+
+Authenticated routes validate the bearer token before returning account-specific data. Treat tokens as user secrets and store them server-side whenever possible.
+
+## Failed Authentication
+
+Authentication failures use standard HTTP status codes:
+
+| Status | Meaning |
+| --- | --- |
+| `401` | Missing, malformed, expired, or invalid token |
+| `403` | Token is valid but cannot access the requested resource |

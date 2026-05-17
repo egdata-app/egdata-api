@@ -1,0 +1,44 @@
+---
+title: Regions, Pagination, and Errors
+description: Request conventions for regional data, paginated lists, and error handling.
+---
+
+Several endpoints return region-specific store data. Region-aware routes accept ISO-style country or locale inputs depending on the endpoint.
+
+## Regions
+
+Use store regions consistently across a request flow. Price and promotion results can differ by region, currency, availability, and local catalog rules.
+
+Common region examples:
+
+| Region | Store context |
+| --- | --- |
+| `US` | United States |
+| `GB` | United Kingdom |
+| `DE` | Germany |
+| `FR` | France |
+| `ES` | Spain |
+
+If a region is unsupported or unavailable, routes may fall back to a default region or return an empty result, depending on the endpoint.
+
+## Pagination
+
+Paginated endpoints use query parameters such as `page`, `limit`, `offset`, or route-specific cursors. Prefer the names documented on each OpenAPI operation.
+
+Keep page sizes conservative. Large responses increase API latency and can be harder for clients to cache safely.
+
+## Errors
+
+Error responses use HTTP status codes and a JSON body when the route can provide one.
+
+| Status | Meaning |
+| --- | --- |
+| `400` | Invalid query string, path parameter, or request body |
+| `401` | Authentication required or token rejected |
+| `403` | Authenticated client cannot access the resource |
+| `404` | Resource was not found |
+| `429` | Rate limit exceeded |
+| `500` | Unexpected server error |
+
+Clients should branch on the HTTP status first and treat the response body as diagnostic detail.
+

@@ -1,0 +1,43 @@
+---
+title: Overview
+description: Start here for the egdata REST API documentation.
+---
+
+egdata API exposes Epic Games Store catalog, pricing, search, profile, and promotional data through JSON endpoints.
+
+## Base URL
+
+Production requests use:
+
+```txt
+https://api.egdata.app
+```
+
+For local development, the API server runs on port `4000` by default:
+
+```txt
+http://localhost:4000
+```
+
+## OpenAPI Reference
+
+The API reference is generated from `../../openapi/egdata.openapi.json` when that file is present. This docs app ships a small fallback schema so the app can build before the generated schema exists in a checkout.
+
+Browse the documented public endpoints in the [API Reference](/docs/api-reference).
+
+## Common Resources
+
+The REST API groups data around these resource families:
+
+| Area | Use |
+| --- | --- |
+| Offers | Game products, editions, bundles, and catalog metadata |
+| Items | Store items and related content |
+| Prices | Regional prices, discounts, and promotions |
+| Search | Queryable catalog and merchandising data |
+| Profiles | Public and authenticated profile data |
+| Free games | Current and upcoming free promotions |
+
+## Response Format
+
+Responses are JSON. Collection endpoints use pagination fields where the underlying route supports paging.

@@ -1,0 +1,35 @@
+{
+  "name": "@egdata/docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 4001",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "generate": "fumadocs-mdx"
+  },
+  "dependencies": {
+    "@scalar/api-client-react": "2.0.1",
+    "fumadocs-core": "16.8.11",
+    "fumadocs-mdx": "15.0.5",
+    "fumadocs-openapi": "10.8.3",
+    "fumadocs-ui": "16.8.11",
+    "json-schema-typed": "8.0.2",
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "shiki": "4.0.2",
+    "tailwindcss": "4.3.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.0",
+    "@types/mdast": "4.0.4",
+    "@types/mdx": "2.0.13",
+    "@types/node": "25.2.3",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "mdast-util-directive": "3.1.0",
+    "typescript": "5.9.3"
+  }
+}
