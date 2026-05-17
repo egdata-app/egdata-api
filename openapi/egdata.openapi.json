@@ -41,12 +41,24 @@
       "description": "Epic Games Store offer data."
     },
     {
+      "name": "Offer Details",
+      "description": "Offer subresources such as items, media, builds, ratings, and related data."
+    },
+    {
+      "name": "Offer Reviews",
+      "description": "Read-only public review data for offers."
+    },
+    {
       "name": "Prices",
       "description": "Regional pricing and price history."
     },
     {
       "name": "Items",
       "description": "Epic catalog item data."
+    },
+    {
+      "name": "Sandboxes",
+      "description": "Epic namespace and sandbox resources."
     },
     {
       "name": "Free Games",
@@ -1498,12 +1510,19 @@
           "Prices"
         ],
         "summary": "Get historical regional prices for an offer",
+        "description": "Returns price history for a country-derived region, an explicit region, or all regions when neither is provided.",
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
           },
           {
             "$ref": "#/components/parameters/country"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/since"
           }
         ],
         "x-egdata-visibility": "public",
@@ -1564,6 +1583,9 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/country"
           }
         ],
         "x-egdata-visibility": "public",
@@ -1730,6 +1752,2045 @@
         }
       }
     },
+    "/offers/{id}/franchises": {
+      "get": {
+        "operationId": "listOfferFranchises",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "List franchises for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "Franchise metadata.",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/features": {
+      "get": {
+        "operationId": "getOfferFeatures",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Get feature flags for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Derived store feature flags.",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/assets": {
+      "get": {
+        "operationId": "listOfferAssets",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "List assets for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Asset"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/items": {
+      "get": {
+        "operationId": "listOfferItems",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "List items for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Item"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/changelog": {
+      "get": {
+        "operationId": "listOfferChangelog",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "List changelog entries for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "description": "Optional full-text changelog search.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "Optional change type filter.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "required": false,
+            "description": "Optional changed field filter.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "elements",
+                    "page",
+                    "limit",
+                    "totalCount",
+                    "totalPages",
+                    "hasNextPage",
+                    "hasPreviousPage"
+                  ],
+                  "properties": {
+                    "elements": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ChangelogEntry"
+                      }
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "totalCount": {
+                      "type": "integer"
+                    },
+                    "totalPages": {
+                      "type": "integer"
+                    },
+                    "hasNextPage": {
+                      "type": "boolean"
+                    },
+                    "hasPreviousPage": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/changelog/stats": {
+      "get": {
+        "operationId": "getOfferChangelogStats",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Get offer changelog statistics",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "description": "Start timestamp for the stats window.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "description": "End timestamp for the stats window.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Changelog counts by day, weekday, type, and field.",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/achievements": {
+      "get": {
+        "operationId": "listOfferAchievements",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "List achievement sets for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AchievementSet"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/related": {
+      "get": {
+        "operationId": "listRelatedOffers",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "List related offers in the same sandbox",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/country"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Offer"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/mappings": {
+      "get": {
+        "operationId": "getOfferMappings",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Get store mappings for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Store mapping metadata.",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/media": {
+      "get": {
+        "operationId": "getOfferMedia",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Get media metadata for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Screenshots, trailers, and other media metadata.",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/suggestions": {
+      "get": {
+        "operationId": "listOfferSuggestions",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "List suggested offers",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/country"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Offer"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/age-rating": {
+      "get": {
+        "operationId": "getOfferAgeRating",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Get age rating metadata for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/country"
+          },
+          {
+            "name": "single",
+            "in": "query",
+            "required": false,
+            "description": "When present, return the country-specific rating only.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Age rating metadata keyed by rating authority.",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/giveaways": {
+      "get": {
+        "operationId": "listOfferGiveaways",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "List free-game promotions for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "Free-game promotion record.",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/ratings": {
+      "get": {
+        "operationId": "getOfferRatings",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Get external ratings for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "External ratings metadata.",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/tops": {
+      "get": {
+        "operationId": "getOfferTopPositions",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Get top-list positions for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/polls": {
+      "get": {
+        "operationId": "getOfferPolls",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Get community poll data for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Community poll data.",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/hltb": {
+      "get": {
+        "operationId": "getOfferHowLongToBeat",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Get HowLongToBeat data for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "HowLongToBeat metadata.",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/collection": {
+      "get": {
+        "operationId": "listOfferCollectionOffers",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "List collection offers for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/country"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Offer"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/collections/{collection}": {
+      "get": {
+        "operationId": "getOfferCollectionPosition",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Get an offer position within a collection",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/collection"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Collection position metadata.",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/bundle": {
+      "get": {
+        "operationId": "getOfferBundle",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Get bundle contents and prices",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/country"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "offers",
+                    "bundlePrice",
+                    "totalPrice"
+                  ],
+                  "properties": {
+                    "offers": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Offer"
+                      }
+                    },
+                    "bundlePrice": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/Price"
+                        }
+                      ],
+                      "nullable": true
+                    },
+                    "totalPrice": {
+                      "$ref": "#/components/schemas/Price"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/in-bundle": {
+      "get": {
+        "operationId": "listBundlesContainingOffer",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "List bundles that contain an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/country"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "Bundle offer and regional price data.",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/has-prepurchase": {
+      "get": {
+        "operationId": "getOfferPrepurchaseAlternative",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Check whether an offer has a pre-purchase alternative",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/country"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "hasPrepurchase"
+                  ],
+                  "properties": {
+                    "hasPrepurchase": {
+                      "type": "boolean"
+                    },
+                    "offer": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/Offer"
+                        }
+                      ],
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/has-regular": {
+      "get": {
+        "operationId": "getOfferRegularAlternative",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Check whether a pre-purchase offer has a regular alternative",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/country"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "isPrepurchase"
+                  ],
+                  "properties": {
+                    "isPrepurchase": {
+                      "type": "boolean"
+                    },
+                    "offer": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/Offer"
+                        }
+                      ],
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/genres": {
+      "get": {
+        "operationId": "listOfferDetailGenres",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "List genre tags for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "Genre tag metadata.",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/technologies": {
+      "get": {
+        "operationId": "listOfferTechnologies",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "List technologies detected in offer builds",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "Detected technology metadata.",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/builds": {
+      "get": {
+        "operationId": "listOfferBuilds",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "List recent builds for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Build"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/igdb": {
+      "get": {
+        "operationId": "getOfferIgdb",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Get IGDB metadata for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "IGDB metadata.",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/overview": {
+      "get": {
+        "operationId": "getOfferOverview",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Get consolidated overview data for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/country"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties": {
+                    "offer": {
+                      "$ref": "#/components/schemas/Offer"
+                    },
+                    "price": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/Price"
+                        }
+                      ],
+                      "nullable": true
+                    },
+                    "media": {
+                      "type": "object",
+                      "description": "Media metadata.",
+                      "additionalProperties": true
+                    },
+                    "igdb": {
+                      "type": "object",
+                      "description": "IGDB metadata.",
+                      "additionalProperties": true
+                    },
+                    "features": {
+                      "type": "object",
+                      "description": "Derived feature flags.",
+                      "additionalProperties": true
+                    },
+                    "ageRating": {
+                      "type": "object",
+                      "description": "Age rating metadata.",
+                      "additionalProperties": true
+                    },
+                    "giveaways": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "Free-game promotion record.",
+                        "additionalProperties": true
+                      }
+                    },
+                    "polls": {
+                      "type": "object",
+                      "description": "Community poll data.",
+                      "additionalProperties": true
+                    },
+                    "genres": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "Genre tag metadata.",
+                        "additionalProperties": true
+                      }
+                    },
+                    "technologies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "Detected technology metadata.",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/reviews": {
+      "get": {
+        "operationId": "listOfferReviews",
+        "tags": [
+          "Offer Reviews"
+        ],
+        "summary": "List public reviews for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/verified"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/reviews-summary": {
+      "get": {
+        "operationId": "getOfferReviewsSummary",
+        "tags": [
+          "Offer Reviews"
+        ],
+        "summary": "Get review summary for an offer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "$ref": "#/components/parameters/verified"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewSummary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/items": {
       "get": {
         "operationId": "listItems",
@@ -1737,6 +3798,7 @@
           "Items"
         ],
         "summary": "List catalog items",
+        "description": "Returns paginated Epic catalog items sorted by last modification date.",
         "parameters": [
           {
             "$ref": "#/components/parameters/page"
@@ -1797,6 +3859,7 @@
           "Items"
         ],
         "summary": "Get an item by ID",
+        "description": "Looks up an item by Mongo document ID or Epic item ID and expands custom attributes.",
         "parameters": [
           {
             "$ref": "#/components/parameters/itemId"
@@ -1854,6 +3917,7 @@
           "Items"
         ],
         "summary": "Fetch multiple items by ID",
+        "description": "Fetches up to 100 item IDs in one request.",
         "requestBody": {
           "required": true,
           "description": "Item IDs to fetch.",
@@ -1931,7 +3995,8 @@
         "tags": [
           "Items"
         ],
-        "summary": "Fetch offer candidates for multiple items",
+        "summary": "Resolve the best offer for multiple items",
+        "description": "Returns an object keyed by requested item ID. Each value is the best matching offer or null when no offer can be resolved.",
         "requestBody": {
           "required": true,
           "description": "Item IDs to resolve.",
@@ -1962,10 +4027,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
+                  "type": "object",
+                  "additionalProperties": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Offer"
+                      }
+                    ],
+                    "nullable": true
                   }
                 }
               }
@@ -2025,8 +4094,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "additionalProperties": true
+                    "$ref": "#/components/schemas/Asset"
                   }
                 }
               }
@@ -2086,8 +4154,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "additionalProperties": true
+                    "$ref": "#/components/schemas/Build"
                   }
                 }
               }
@@ -2212,6 +4279,739 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Offer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sandboxes": {
+      "get": {
+        "operationId": "listSandboxes",
+        "tags": [
+          "Sandboxes"
+        ],
+        "summary": "List sandboxes",
+        "description": "Returns paginated Epic namespaces/sandboxes known to egdata.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sandboxes/{sandboxId}": {
+      "get": {
+        "operationId": "getSandbox",
+        "tags": [
+          "Sandboxes"
+        ],
+        "summary": "Get a sandbox",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/sandboxId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sandbox"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sandboxes/{sandboxId}/items": {
+      "get": {
+        "operationId": "listSandboxItems",
+        "tags": [
+          "Sandboxes"
+        ],
+        "summary": "List items in a sandbox",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/sandboxId"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/entitlementType"
+          },
+          {
+            "$ref": "#/components/parameters/status"
+          },
+          {
+            "$ref": "#/components/parameters/platforms"
+          },
+          {
+            "$ref": "#/components/parameters/title"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "elements",
+                    "page",
+                    "limit",
+                    "count"
+                  ],
+                  "properties": {
+                    "elements": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Item"
+                      }
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sandboxes/{sandboxId}/offers": {
+      "get": {
+        "operationId": "listSandboxOffers",
+        "tags": [
+          "Sandboxes"
+        ],
+        "summary": "List offers in a sandbox",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/sandboxId"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/sandboxOfferType"
+          },
+          {
+            "$ref": "#/components/parameters/title"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "elements",
+                    "page",
+                    "limit",
+                    "count"
+                  ],
+                  "properties": {
+                    "elements": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Offer"
+                      }
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sandboxes/{sandboxId}/assets": {
+      "get": {
+        "operationId": "listSandboxAssets",
+        "tags": [
+          "Sandboxes"
+        ],
+        "summary": "List assets in a sandbox",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/sandboxId"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/platform"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "elements",
+                    "page",
+                    "limit",
+                    "count"
+                  ],
+                  "properties": {
+                    "elements": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Asset"
+                      }
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sandboxes/{sandboxId}/base-game": {
+      "get": {
+        "operationId": "getSandboxBaseGame",
+        "tags": [
+          "Sandboxes"
+        ],
+        "summary": "Get the base game for a sandbox",
+        "description": "Returns the base game offer for a sandbox, or an executable item fallback when no offer exists.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/sandboxId"
+          },
+          {
+            "$ref": "#/components/parameters/country"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Base game offer or executable item fallback.",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sandboxes/{sandboxId}/achievements": {
+      "get": {
+        "operationId": "listSandboxAchievements",
+        "tags": [
+          "Sandboxes"
+        ],
+        "summary": "List achievement sets for a sandbox",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/sandboxId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AchievementSet"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sandboxes/{sandboxId}/changelog": {
+      "get": {
+        "operationId": "listSandboxChangelog",
+        "tags": [
+          "Sandboxes"
+        ],
+        "summary": "List changelog entries for a sandbox",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/sandboxId"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangelogSearchResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sandboxes/{sandboxId}/builds": {
+      "get": {
+        "operationId": "listSandboxBuilds",
+        "tags": [
+          "Sandboxes"
+        ],
+        "summary": "List builds for a sandbox",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/sandboxId"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/platform"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "elements",
+                    "page",
+                    "limit",
+                    "count"
+                  ],
+                  "properties": {
+                    "elements": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Build"
+                      }
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sandboxes/{sandboxId}/stats": {
+      "get": {
+        "operationId": "getSandboxStats",
+        "tags": [
+          "Sandboxes"
+        ],
+        "summary": "Get sandbox statistics",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/sandboxId"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxStatsResponse"
                 }
               }
             }
@@ -3966,6 +6766,25 @@
           "type": "string"
         }
       },
+      "sandboxId": {
+        "name": "sandboxId",
+        "in": "path",
+        "required": true,
+        "description": "Epic namespace or sandbox identifier.",
+        "schema": {
+          "type": "string",
+          "example": "fn"
+        }
+      },
+      "collection": {
+        "name": "collection",
+        "in": "path",
+        "required": true,
+        "description": "egdata collection identifier.",
+        "schema": {
+          "type": "string"
+        }
+      },
       "sellerId": {
         "name": "id",
         "in": "path",
@@ -3973,6 +6792,99 @@
         "description": "Seller identifier.",
         "schema": {
           "type": "string"
+        }
+      },
+      "region": {
+        "name": "region",
+        "in": "query",
+        "required": false,
+        "description": "Epic pricing region code. When present it takes precedence over country on routes that support both.",
+        "schema": {
+          "type": "string",
+          "example": "US"
+        }
+      },
+      "since": {
+        "name": "since",
+        "in": "query",
+        "required": false,
+        "description": "Only return records at or after this timestamp.",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "verified": {
+        "name": "verified",
+        "in": "query",
+        "required": false,
+        "description": "Filter reviews by verified ownership status.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "true",
+            "false"
+          ]
+        }
+      },
+      "entitlementType": {
+        "name": "entitlementType",
+        "in": "query",
+        "required": false,
+        "description": "Comma-separated entitlement types for sandbox item filtering.",
+        "schema": {
+          "type": "string",
+          "example": "EXECUTABLE,DLC"
+        }
+      },
+      "status": {
+        "name": "status",
+        "in": "query",
+        "required": false,
+        "description": "Comma-separated item statuses for sandbox item filtering.",
+        "schema": {
+          "type": "string",
+          "example": "ACTIVE"
+        }
+      },
+      "platforms": {
+        "name": "platforms",
+        "in": "query",
+        "required": false,
+        "description": "Comma-separated platforms for sandbox item filtering.",
+        "schema": {
+          "type": "string",
+          "example": "Windows,Mac"
+        }
+      },
+      "platform": {
+        "name": "platform",
+        "in": "query",
+        "required": false,
+        "description": "Comma-separated platforms for sandbox asset or build filtering.",
+        "schema": {
+          "type": "string",
+          "example": "Windows"
+        }
+      },
+      "title": {
+        "name": "title",
+        "in": "query",
+        "required": false,
+        "description": "Case-insensitive title filter.",
+        "schema": {
+          "type": "string",
+          "example": "Fortnite"
+        }
+      },
+      "sandboxOfferType": {
+        "name": "offerType",
+        "in": "query",
+        "required": false,
+        "description": "Comma-separated offer types for sandbox offer filtering.",
+        "schema": {
+          "type": "string",
+          "example": "BASE_GAME,DLC"
         }
       }
     },
@@ -4367,6 +7279,312 @@
             "type": "integer"
           },
           "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "Asset": {
+        "type": "object",
+        "description": "Epic asset or generated virtual asset.",
+        "additionalProperties": true,
+        "properties": {
+          "artifactId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string",
+            "nullable": true
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true
+          },
+          "platform": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "downloadSizeBytes": {
+            "type": "number",
+            "nullable": true
+          },
+          "installedSizeBytes": {
+            "type": "number",
+            "nullable": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "Build": {
+        "type": "object",
+        "description": "Build metadata associated with an Epic app or asset.",
+        "additionalProperties": true,
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "appName": {
+            "type": "string",
+            "nullable": true
+          },
+          "labelName": {
+            "type": "string",
+            "nullable": true
+          },
+          "buildVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "hash": {
+            "type": "string",
+            "nullable": true
+          },
+          "technologies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "AchievementSet": {
+        "type": "object",
+        "description": "Epic achievement set for a sandbox.",
+        "additionalProperties": true,
+        "properties": {
+          "sandboxId": {
+            "type": "string"
+          },
+          "achievements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "description": "Public user review for an offer.",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "recommended": {
+            "type": "boolean"
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": true
+          }
+        }
+      },
+      "ReviewListResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "elements",
+          "page",
+          "total",
+          "limit"
+        ],
+        "properties": {
+          "elements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            }
+          },
+          "page": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        }
+      },
+      "ReviewSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "totalReviews",
+          "recommendedPercentage",
+          "notRecommendedPercentage"
+        ],
+        "properties": {
+          "overallScore": {
+            "type": "number"
+          },
+          "averageRating": {
+            "type": "number"
+          },
+          "recommendedPercentage": {
+            "type": "number"
+          },
+          "notRecommendedPercentage": {
+            "type": "number"
+          },
+          "totalReviews": {
+            "type": "integer"
+          }
+        }
+      },
+      "Sandbox": {
+        "type": "object",
+        "description": "Epic namespace/sandbox metadata.",
+        "additionalProperties": true,
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "updated": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "SandboxListResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "elements",
+          "page",
+          "limit",
+          "count"
+        ],
+        "properties": {
+          "elements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Sandbox"
+            }
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      },
+      "SandboxStatsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "offers",
+          "items",
+          "assets",
+          "builds",
+          "achievements"
+        ],
+        "properties": {
+          "offers": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "integer"
+          },
+          "assets": {
+            "type": "integer"
+          },
+          "builds": {
+            "type": "integer"
+          },
+          "achievements": {
+            "type": "integer"
+          }
+        }
+      },
+      "ChangelogSearchResponse": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "hits",
+          "estimatedTotalHits"
+        ],
+        "properties": {
+          "hits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChangelogEntry"
+            }
+          },
+          "estimatedTotalHits": {
+            "type": "integer"
+          },
+          "processingTimeMs": {
+            "type": "number"
+          },
+          "query": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
             "type": "integer"
           }
         }

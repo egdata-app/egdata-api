@@ -7,7 +7,10 @@ const stringDate: OpenAPIV3.SchemaObject = {
 
 const flexibleObject = (
   description: string,
-  properties: Record<string, OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject>,
+  properties: Record<
+    string,
+    OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject
+  >,
 ): OpenAPIV3.SchemaObject => ({
   type: "object",
   description,
@@ -33,7 +36,8 @@ export const commonParameters = {
     name: "limit",
     in: "query",
     required: false,
-    description: "Maximum number of records to return. Most list endpoints cap this server-side.",
+    description:
+      "Maximum number of records to return. Most list endpoints cap this server-side.",
     schema: {
       type: "integer",
       minimum: 1,
@@ -70,6 +74,25 @@ export const commonParameters = {
       type: "string",
     },
   },
+  sandboxId: {
+    name: "sandboxId",
+    in: "path",
+    required: true,
+    description: "Epic namespace or sandbox identifier.",
+    schema: {
+      type: "string",
+      example: "fn",
+    },
+  },
+  collection: {
+    name: "collection",
+    in: "path",
+    required: true,
+    description: "egdata collection identifier.",
+    schema: {
+      type: "string",
+    },
+  },
   sellerId: {
     name: "id",
     in: "path",
@@ -77,6 +100,98 @@ export const commonParameters = {
     description: "Seller identifier.",
     schema: {
       type: "string",
+    },
+  },
+  region: {
+    name: "region",
+    in: "query",
+    required: false,
+    description:
+      "Epic pricing region code. When present it takes precedence over country on routes that support both.",
+    schema: {
+      type: "string",
+      example: "US",
+    },
+  },
+  since: {
+    name: "since",
+    in: "query",
+    required: false,
+    description: "Only return records at or after this timestamp.",
+    schema: {
+      ...stringDate,
+    },
+  },
+  verified: {
+    name: "verified",
+    in: "query",
+    required: false,
+    description: "Filter reviews by verified ownership status.",
+    schema: {
+      type: "string",
+      enum: ["true", "false"],
+    },
+  },
+  entitlementType: {
+    name: "entitlementType",
+    in: "query",
+    required: false,
+    description:
+      "Comma-separated entitlement types for sandbox item filtering.",
+    schema: {
+      type: "string",
+      example: "EXECUTABLE,DLC",
+    },
+  },
+  status: {
+    name: "status",
+    in: "query",
+    required: false,
+    description: "Comma-separated item statuses for sandbox item filtering.",
+    schema: {
+      type: "string",
+      example: "ACTIVE",
+    },
+  },
+  platforms: {
+    name: "platforms",
+    in: "query",
+    required: false,
+    description: "Comma-separated platforms for sandbox item filtering.",
+    schema: {
+      type: "string",
+      example: "Windows,Mac",
+    },
+  },
+  platform: {
+    name: "platform",
+    in: "query",
+    required: false,
+    description:
+      "Comma-separated platforms for sandbox asset or build filtering.",
+    schema: {
+      type: "string",
+      example: "Windows",
+    },
+  },
+  title: {
+    name: "title",
+    in: "query",
+    required: false,
+    description: "Case-insensitive title filter.",
+    schema: {
+      type: "string",
+      example: "Fortnite",
+    },
+  },
+  sandboxOfferType: {
+    name: "offerType",
+    in: "query",
+    required: false,
+    description: "Comma-separated offer types for sandbox offer filtering.",
+    schema: {
+      type: "string",
+      example: "BASE_GAME,DLC",
     },
   },
 } satisfies Record<string, OpenAPIV3.ParameterObject>;
@@ -168,7 +283,8 @@ export const components: OpenAPIV3.ComponentsObject = {
     },
     CountryMap: {
       type: "object",
-      description: "Map of ISO country codes to display names and region metadata.",
+      description:
+        "Map of ISO country codes to display names and region metadata.",
       additionalProperties: true,
     },
     Offer: flexibleObject("Public Epic Games Store offer DTO.", {
@@ -336,6 +452,152 @@ export const components: OpenAPIV3.ComponentsObject = {
         total: { type: "integer" },
       },
     },
+    Asset: flexibleObject("Epic asset or generated virtual asset.", {
+      artifactId: { type: "string" },
+      itemId: { type: "string", nullable: true },
+      namespace: { type: "string", nullable: true },
+      platform: { type: "string", nullable: true },
+      title: { type: "string", nullable: true },
+      downloadSizeBytes: { type: "number", nullable: true },
+      installedSizeBytes: { type: "number", nullable: true },
+      updatedAt: {
+        ...stringDate,
+        nullable: true,
+      },
+    }),
+    Build: flexibleObject(
+      "Build metadata associated with an Epic app or asset.",
+      {
+        _id: { type: "string" },
+        appName: { type: "string", nullable: true },
+        labelName: { type: "string", nullable: true },
+        buildVersion: { type: "string", nullable: true },
+        hash: { type: "string", nullable: true },
+        technologies: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: true,
+          },
+        },
+        updatedAt: {
+          ...stringDate,
+          nullable: true,
+        },
+      },
+    ),
+    AchievementSet: flexibleObject("Epic achievement set for a sandbox.", {
+      sandboxId: { type: "string" },
+      achievements: {
+        type: "array",
+        items: {
+          type: "object",
+          additionalProperties: true,
+        },
+      },
+    }),
+    Review: flexibleObject("Public user review for an offer.", {
+      id: { type: "string" },
+      rating: { type: "number" },
+      title: { type: "string" },
+      content: { type: "string" },
+      tags: {
+        type: "array",
+        items: { type: "string" },
+      },
+      recommended: { type: "boolean" },
+      verified: { type: "boolean" },
+      createdAt: stringDate,
+      updatedAt: stringDate,
+      user: {
+        type: "object",
+        nullable: true,
+        additionalProperties: true,
+      },
+    }),
+    ReviewListResponse: {
+      type: "object",
+      additionalProperties: false,
+      required: ["elements", "page", "total", "limit"],
+      properties: {
+        elements: {
+          type: "array",
+          items: { $ref: "#/components/schemas/Review" },
+        },
+        page: { type: "integer" },
+        total: { type: "integer" },
+        limit: { type: "integer" },
+      },
+    },
+    ReviewSummary: {
+      type: "object",
+      additionalProperties: false,
+      required: [
+        "totalReviews",
+        "recommendedPercentage",
+        "notRecommendedPercentage",
+      ],
+      properties: {
+        overallScore: { type: "number" },
+        averageRating: { type: "number" },
+        recommendedPercentage: { type: "number" },
+        notRecommendedPercentage: { type: "number" },
+        totalReviews: { type: "integer" },
+      },
+    },
+    Sandbox: flexibleObject("Epic namespace/sandbox metadata.", {
+      _id: { type: "string" },
+      id: { type: "string" },
+      namespace: { type: "string" },
+      title: { type: "string", nullable: true },
+      displayName: { type: "string", nullable: true },
+      updated: {
+        ...stringDate,
+        nullable: true,
+      },
+    }),
+    SandboxListResponse: {
+      type: "object",
+      additionalProperties: false,
+      required: ["elements", "page", "limit", "count"],
+      properties: {
+        elements: {
+          type: "array",
+          items: { $ref: "#/components/schemas/Sandbox" },
+        },
+        page: { type: "integer" },
+        limit: { type: "integer" },
+        count: { type: "integer" },
+      },
+    },
+    SandboxStatsResponse: {
+      type: "object",
+      additionalProperties: false,
+      required: ["offers", "items", "assets", "builds", "achievements"],
+      properties: {
+        offers: { type: "integer" },
+        items: { type: "integer" },
+        assets: { type: "integer" },
+        builds: { type: "integer" },
+        achievements: { type: "integer" },
+      },
+    },
+    ChangelogSearchResponse: {
+      type: "object",
+      additionalProperties: true,
+      required: ["hits", "estimatedTotalHits"],
+      properties: {
+        hits: {
+          type: "array",
+          items: { $ref: "#/components/schemas/ChangelogEntry" },
+        },
+        estimatedTotalHits: { type: "integer" },
+        processingTimeMs: { type: "number" },
+        query: { type: "string" },
+        limit: { type: "integer" },
+        offset: { type: "integer" },
+      },
+    },
     Price: flexibleObject("Regional offer price from the price engine.", {
       offerId: { type: "string" },
       region: { type: "string" },
@@ -382,14 +644,17 @@ export const components: OpenAPIV3.ComponentsObject = {
         allOf: [{ $ref: "#/components/schemas/Offer" }],
       },
     },
-    ChangelogEntry: flexibleObject("Change record for an offer, item, asset, or build.", {
-      _id: { type: "string" },
-      timestamp: stringDate,
-      metadata: {
-        type: "object",
-        additionalProperties: true,
+    ChangelogEntry: flexibleObject(
+      "Change record for an offer, item, asset, or build.",
+      {
+        _id: { type: "string" },
+        timestamp: stringDate,
+        metadata: {
+          type: "object",
+          additionalProperties: true,
+        },
       },
-    }),
+    ),
     StatsResponse: {
       type: "object",
       description: "Aggregate site and catalog statistics.",

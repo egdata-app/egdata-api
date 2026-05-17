@@ -1,12 +1,30 @@
 import type { OpenAPIV3 } from "openapi-types";
-import { arrayOf, ok, operation, parameterRef, ref, stringQuery } from "./helpers.js";
+import {
+  arrayOf,
+  operation,
+  parameterRef,
+  ref,
+  stringQuery,
+} from "./helpers.js";
 import type { EgdataPaths } from "./types.js";
 
 const pagination = [parameterRef("page"), parameterRef("limit")];
 const regionalPagination = [parameterRef("country"), ...pagination];
 const offerId = [parameterRef("offerId")];
 const itemId = [parameterRef("itemId")];
+const sandboxId = [parameterRef("sandboxId")];
 const sellerId = [parameterRef("sellerId")];
+const flexibleObjectResponse = (
+  description?: string,
+): OpenAPIV3.SchemaObject => ({
+  type: "object",
+  ...(description ? { description } : {}),
+  additionalProperties: true,
+});
+const nullableOffer = {
+  allOf: [{ $ref: "#/components/schemas/Offer" }],
+  nullable: true,
+} satisfies OpenAPIV3.SchemaObject;
 
 const jsonBody = (
   description: string,
@@ -306,7 +324,14 @@ export const paths: EgdataPaths = {
       operationId: "getOfferPriceHistory",
       tags: ["Prices"],
       summary: "Get historical regional prices for an offer",
-      parameters: [...offerId, parameterRef("country")],
+      description:
+        "Returns price history for a country-derived region, an explicit region, or all regions when neither is provided.",
+      parameters: [
+        ...offerId,
+        parameterRef("country"),
+        parameterRef("region"),
+        parameterRef("since"),
+      ],
       response: arrayOf(ref("Price")),
     }),
   },
@@ -315,7 +340,7 @@ export const paths: EgdataPaths = {
       operationId: "getOfferRegionalPrices",
       tags: ["Prices"],
       summary: "Get prices for an offer across regions",
-      parameters: offerId,
+      parameters: [...offerId, parameterRef("country")],
       response: arrayOf(ref("Price")),
     }),
   },
@@ -343,11 +368,395 @@ export const paths: EgdataPaths = {
       },
     }),
   },
+  "/offers/{id}/franchises": {
+    get: operation({
+      operationId: "listOfferFranchises",
+      tags: ["Offer Details"],
+      summary: "List franchises for an offer",
+      parameters: offerId,
+      response: arrayOf(flexibleObjectResponse("Franchise metadata.")),
+    }),
+  },
+  "/offers/{id}/features": {
+    get: operation({
+      operationId: "getOfferFeatures",
+      tags: ["Offer Details"],
+      summary: "Get feature flags for an offer",
+      parameters: offerId,
+      response: flexibleObjectResponse("Derived store feature flags."),
+    }),
+  },
+  "/offers/{id}/assets": {
+    get: operation({
+      operationId: "listOfferAssets",
+      tags: ["Offer Details"],
+      summary: "List assets for an offer",
+      parameters: offerId,
+      response: arrayOf(ref("Asset")),
+    }),
+  },
+  "/offers/{id}/items": {
+    get: operation({
+      operationId: "listOfferItems",
+      tags: ["Offer Details"],
+      summary: "List items for an offer",
+      parameters: offerId,
+      response: arrayOf(ref("Item")),
+    }),
+  },
+  "/offers/{id}/changelog": {
+    get: operation({
+      operationId: "listOfferChangelog",
+      tags: ["Offer Details"],
+      summary: "List changelog entries for an offer",
+      parameters: [
+        ...offerId,
+        ...pagination,
+        stringQuery("query", "Optional full-text changelog search."),
+        stringQuery("type", "Optional change type filter."),
+        stringQuery("field", "Optional changed field filter."),
+      ],
+      response: {
+        type: "object",
+        additionalProperties: false,
+        required: [
+          "elements",
+          "page",
+          "limit",
+          "totalCount",
+          "totalPages",
+          "hasNextPage",
+          "hasPreviousPage",
+        ],
+        properties: {
+          elements: {
+            type: "array",
+            items: ref("ChangelogEntry"),
+          },
+          page: { type: "integer" },
+          limit: { type: "integer" },
+          totalCount: { type: "integer" },
+          totalPages: { type: "integer" },
+          hasNextPage: { type: "boolean" },
+          hasPreviousPage: { type: "boolean" },
+        },
+      },
+    }),
+  },
+  "/offers/{id}/changelog/stats": {
+    get: operation({
+      operationId: "getOfferChangelogStats",
+      tags: ["Offer Details"],
+      summary: "Get offer changelog statistics",
+      parameters: [
+        ...offerId,
+        stringQuery("from", "Start timestamp for the stats window."),
+        stringQuery("to", "End timestamp for the stats window."),
+      ],
+      response: flexibleObjectResponse(
+        "Changelog counts by day, weekday, type, and field.",
+      ),
+    }),
+  },
+  "/offers/{id}/achievements": {
+    get: operation({
+      operationId: "listOfferAchievements",
+      tags: ["Offer Details"],
+      summary: "List achievement sets for an offer",
+      parameters: offerId,
+      response: arrayOf(ref("AchievementSet")),
+    }),
+  },
+  "/offers/{id}/related": {
+    get: operation({
+      operationId: "listRelatedOffers",
+      tags: ["Offer Details"],
+      summary: "List related offers in the same sandbox",
+      parameters: [...offerId, parameterRef("country")],
+      response: arrayOf(ref("Offer")),
+    }),
+  },
+  "/offers/{id}/mappings": {
+    get: operation({
+      operationId: "getOfferMappings",
+      tags: ["Offer Details"],
+      summary: "Get store mappings for an offer",
+      parameters: offerId,
+      response: flexibleObjectResponse("Store mapping metadata."),
+    }),
+  },
+  "/offers/{id}/media": {
+    get: operation({
+      operationId: "getOfferMedia",
+      tags: ["Offer Details"],
+      summary: "Get media metadata for an offer",
+      parameters: offerId,
+      response: flexibleObjectResponse(
+        "Screenshots, trailers, and other media metadata.",
+      ),
+    }),
+  },
+  "/offers/{id}/suggestions": {
+    get: operation({
+      operationId: "listOfferSuggestions",
+      tags: ["Offer Details"],
+      summary: "List suggested offers",
+      parameters: [...offerId, parameterRef("country")],
+      response: arrayOf(ref("Offer")),
+    }),
+  },
+  "/offers/{id}/age-rating": {
+    get: operation({
+      operationId: "getOfferAgeRating",
+      tags: ["Offer Details"],
+      summary: "Get age rating metadata for an offer",
+      parameters: [
+        ...offerId,
+        parameterRef("country"),
+        stringQuery(
+          "single",
+          "When present, return the country-specific rating only.",
+        ),
+      ],
+      response: flexibleObjectResponse(
+        "Age rating metadata keyed by rating authority.",
+      ),
+    }),
+  },
+  "/offers/{id}/giveaways": {
+    get: operation({
+      operationId: "listOfferGiveaways",
+      tags: ["Offer Details"],
+      summary: "List free-game promotions for an offer",
+      parameters: offerId,
+      response: arrayOf(flexibleObjectResponse("Free-game promotion record.")),
+    }),
+  },
+  "/offers/{id}/ratings": {
+    get: operation({
+      operationId: "getOfferRatings",
+      tags: ["Offer Details"],
+      summary: "Get external ratings for an offer",
+      parameters: offerId,
+      response: flexibleObjectResponse("External ratings metadata."),
+    }),
+  },
+  "/offers/{id}/tops": {
+    get: operation({
+      operationId: "getOfferTopPositions",
+      tags: ["Offer Details"],
+      summary: "Get top-list positions for an offer",
+      parameters: offerId,
+      response: {
+        type: "object",
+        additionalProperties: { type: "integer" },
+      },
+    }),
+  },
+  "/offers/{id}/polls": {
+    get: operation({
+      operationId: "getOfferPolls",
+      tags: ["Offer Details"],
+      summary: "Get community poll data for an offer",
+      parameters: offerId,
+      response: flexibleObjectResponse("Community poll data."),
+    }),
+  },
+  "/offers/{id}/hltb": {
+    get: operation({
+      operationId: "getOfferHowLongToBeat",
+      tags: ["Offer Details"],
+      summary: "Get HowLongToBeat data for an offer",
+      parameters: offerId,
+      response: flexibleObjectResponse("HowLongToBeat metadata."),
+    }),
+  },
+  "/offers/{id}/collection": {
+    get: operation({
+      operationId: "listOfferCollectionOffers",
+      tags: ["Offer Details"],
+      summary: "List collection offers for an offer",
+      parameters: [...offerId, parameterRef("country")],
+      response: arrayOf(ref("Offer")),
+    }),
+  },
+  "/offers/{id}/collections/{collection}": {
+    get: operation({
+      operationId: "getOfferCollectionPosition",
+      tags: ["Offer Details"],
+      summary: "Get an offer position within a collection",
+      parameters: [...offerId, parameterRef("collection")],
+      response: flexibleObjectResponse("Collection position metadata."),
+    }),
+  },
+  "/offers/{id}/bundle": {
+    get: operation({
+      operationId: "getOfferBundle",
+      tags: ["Offer Details"],
+      summary: "Get bundle contents and prices",
+      parameters: [...offerId, parameterRef("country")],
+      response: {
+        type: "object",
+        additionalProperties: false,
+        required: ["offers", "bundlePrice", "totalPrice"],
+        properties: {
+          offers: {
+            type: "array",
+            items: ref("Offer"),
+          },
+          bundlePrice: {
+            allOf: [{ $ref: "#/components/schemas/Price" }],
+            nullable: true,
+          },
+          totalPrice: ref("Price"),
+        },
+      },
+    }),
+  },
+  "/offers/{id}/in-bundle": {
+    get: operation({
+      operationId: "listBundlesContainingOffer",
+      tags: ["Offer Details"],
+      summary: "List bundles that contain an offer",
+      parameters: [...offerId, parameterRef("country")],
+      response: arrayOf(
+        flexibleObjectResponse("Bundle offer and regional price data."),
+      ),
+    }),
+  },
+  "/offers/{id}/has-prepurchase": {
+    get: operation({
+      operationId: "getOfferPrepurchaseAlternative",
+      tags: ["Offer Details"],
+      summary: "Check whether an offer has a pre-purchase alternative",
+      parameters: [...offerId, parameterRef("country")],
+      response: {
+        type: "object",
+        additionalProperties: false,
+        required: ["hasPrepurchase"],
+        properties: {
+          hasPrepurchase: { type: "boolean" },
+          offer: nullableOffer,
+        },
+      },
+    }),
+  },
+  "/offers/{id}/has-regular": {
+    get: operation({
+      operationId: "getOfferRegularAlternative",
+      tags: ["Offer Details"],
+      summary: "Check whether a pre-purchase offer has a regular alternative",
+      parameters: [...offerId, parameterRef("country")],
+      response: {
+        type: "object",
+        additionalProperties: false,
+        required: ["isPrepurchase"],
+        properties: {
+          isPrepurchase: { type: "boolean" },
+          offer: nullableOffer,
+        },
+      },
+    }),
+  },
+  "/offers/{id}/genres": {
+    get: operation({
+      operationId: "listOfferDetailGenres",
+      tags: ["Offer Details"],
+      summary: "List genre tags for an offer",
+      parameters: offerId,
+      response: arrayOf(flexibleObjectResponse("Genre tag metadata.")),
+    }),
+  },
+  "/offers/{id}/technologies": {
+    get: operation({
+      operationId: "listOfferTechnologies",
+      tags: ["Offer Details"],
+      summary: "List technologies detected in offer builds",
+      parameters: offerId,
+      response: arrayOf(
+        flexibleObjectResponse("Detected technology metadata."),
+      ),
+    }),
+  },
+  "/offers/{id}/builds": {
+    get: operation({
+      operationId: "listOfferBuilds",
+      tags: ["Offer Details"],
+      summary: "List recent builds for an offer",
+      parameters: offerId,
+      response: arrayOf(ref("Build")),
+    }),
+  },
+  "/offers/{id}/igdb": {
+    get: operation({
+      operationId: "getOfferIgdb",
+      tags: ["Offer Details"],
+      summary: "Get IGDB metadata for an offer",
+      parameters: offerId,
+      response: flexibleObjectResponse("IGDB metadata."),
+    }),
+  },
+  "/offers/{id}/overview": {
+    get: operation({
+      operationId: "getOfferOverview",
+      tags: ["Offer Details"],
+      summary: "Get consolidated overview data for an offer",
+      parameters: [...offerId, parameterRef("country")],
+      response: {
+        type: "object",
+        additionalProperties: true,
+        properties: {
+          offer: ref("Offer"),
+          price: {
+            allOf: [{ $ref: "#/components/schemas/Price" }],
+            nullable: true,
+          },
+          media: flexibleObjectResponse("Media metadata."),
+          igdb: flexibleObjectResponse("IGDB metadata."),
+          features: flexibleObjectResponse("Derived feature flags."),
+          ageRating: flexibleObjectResponse("Age rating metadata."),
+          giveaways: {
+            type: "array",
+            items: flexibleObjectResponse("Free-game promotion record."),
+          },
+          polls: flexibleObjectResponse("Community poll data."),
+          genres: {
+            type: "array",
+            items: flexibleObjectResponse("Genre tag metadata."),
+          },
+          technologies: {
+            type: "array",
+            items: flexibleObjectResponse("Detected technology metadata."),
+          },
+        },
+      },
+    }),
+  },
+  "/offers/{id}/reviews": {
+    get: operation({
+      operationId: "listOfferReviews",
+      tags: ["Offer Reviews"],
+      summary: "List public reviews for an offer",
+      parameters: [...offerId, ...pagination, parameterRef("verified")],
+      response: ref("ReviewListResponse"),
+    }),
+  },
+  "/offers/{id}/reviews-summary": {
+    get: operation({
+      operationId: "getOfferReviewsSummary",
+      tags: ["Offer Reviews"],
+      summary: "Get review summary for an offer",
+      parameters: [...offerId, parameterRef("verified")],
+      response: ref("ReviewSummary"),
+    }),
+  },
   "/items": {
     get: operation({
       operationId: "listItems",
       tags: ["Items"],
       summary: "List catalog items",
+      description:
+        "Returns paginated Epic catalog items sorted by last modification date.",
       parameters: pagination,
       response: ref("ItemListResponse"),
     }),
@@ -357,6 +766,8 @@ export const paths: EgdataPaths = {
       operationId: "getItem",
       tags: ["Items"],
       summary: "Get an item by ID",
+      description:
+        "Looks up an item by Mongo document ID or Epic item ID and expands custom attributes.",
       parameters: itemId,
       response: ref("Item"),
     }),
@@ -366,6 +777,7 @@ export const paths: EgdataPaths = {
       operationId: "getItemsBulk",
       tags: ["Items"],
       summary: "Fetch multiple items by ID",
+      description: "Fetches up to 100 item IDs in one request.",
       requestBody: jsonBody("Item IDs to fetch.", stringArrayBody("items")),
       response: arrayOf(ref("Item")),
     }),
@@ -374,12 +786,14 @@ export const paths: EgdataPaths = {
     post: operation({
       operationId: "getOffersForItemsBulk",
       tags: ["Items"],
-      summary: "Fetch offer candidates for multiple items",
+      summary: "Resolve the best offer for multiple items",
+      description:
+        "Returns an object keyed by requested item ID. Each value is the best matching offer or null when no offer can be resolved.",
       requestBody: jsonBody("Item IDs to resolve.", stringArrayBody("items")),
-      response: arrayOf({
+      response: {
         type: "object",
-        additionalProperties: true,
-      }),
+        additionalProperties: nullableOffer,
+      },
     }),
   },
   "/items/{id}/assets": {
@@ -388,10 +802,7 @@ export const paths: EgdataPaths = {
       tags: ["Items"],
       summary: "List assets for an item",
       parameters: itemId,
-      response: arrayOf({
-        type: "object",
-        additionalProperties: true,
-      }),
+      response: arrayOf(ref("Asset")),
     }),
   },
   "/items/{id}/builds": {
@@ -400,10 +811,7 @@ export const paths: EgdataPaths = {
       tags: ["Items"],
       summary: "List builds associated with an item",
       parameters: itemId,
-      response: arrayOf({
-        type: "object",
-        additionalProperties: true,
-      }),
+      response: arrayOf(ref("Build")),
     }),
   },
   "/items/{id}/changelog": {
@@ -422,6 +830,166 @@ export const paths: EgdataPaths = {
       summary: "Get the offer associated with an item",
       parameters: itemId,
       response: ref("Offer"),
+    }),
+  },
+  "/sandboxes": {
+    get: operation({
+      operationId: "listSandboxes",
+      tags: ["Sandboxes"],
+      summary: "List sandboxes",
+      description:
+        "Returns paginated Epic namespaces/sandboxes known to egdata.",
+      parameters: pagination,
+      response: ref("SandboxListResponse"),
+    }),
+  },
+  "/sandboxes/{sandboxId}": {
+    get: operation({
+      operationId: "getSandbox",
+      tags: ["Sandboxes"],
+      summary: "Get a sandbox",
+      parameters: sandboxId,
+      response: ref("Sandbox"),
+    }),
+  },
+  "/sandboxes/{sandboxId}/items": {
+    get: operation({
+      operationId: "listSandboxItems",
+      tags: ["Sandboxes"],
+      summary: "List items in a sandbox",
+      parameters: [
+        ...sandboxId,
+        ...pagination,
+        parameterRef("entitlementType"),
+        parameterRef("status"),
+        parameterRef("platforms"),
+        parameterRef("title"),
+      ],
+      response: {
+        type: "object",
+        additionalProperties: false,
+        required: ["elements", "page", "limit", "count"],
+        properties: {
+          elements: {
+            type: "array",
+            items: ref("Item"),
+          },
+          page: { type: "integer" },
+          limit: { type: "integer" },
+          count: { type: "integer" },
+        },
+      },
+    }),
+  },
+  "/sandboxes/{sandboxId}/offers": {
+    get: operation({
+      operationId: "listSandboxOffers",
+      tags: ["Sandboxes"],
+      summary: "List offers in a sandbox",
+      parameters: [
+        ...sandboxId,
+        ...pagination,
+        parameterRef("sandboxOfferType"),
+        parameterRef("title"),
+      ],
+      response: {
+        type: "object",
+        additionalProperties: false,
+        required: ["elements", "page", "limit", "count"],
+        properties: {
+          elements: {
+            type: "array",
+            items: ref("Offer"),
+          },
+          page: { type: "integer" },
+          limit: { type: "integer" },
+          count: { type: "integer" },
+        },
+      },
+    }),
+  },
+  "/sandboxes/{sandboxId}/assets": {
+    get: operation({
+      operationId: "listSandboxAssets",
+      tags: ["Sandboxes"],
+      summary: "List assets in a sandbox",
+      parameters: [...sandboxId, ...pagination, parameterRef("platform")],
+      response: {
+        type: "object",
+        additionalProperties: false,
+        required: ["elements", "page", "limit", "count"],
+        properties: {
+          elements: {
+            type: "array",
+            items: ref("Asset"),
+          },
+          page: { type: "integer" },
+          limit: { type: "integer" },
+          count: { type: "integer" },
+        },
+      },
+    }),
+  },
+  "/sandboxes/{sandboxId}/base-game": {
+    get: operation({
+      operationId: "getSandboxBaseGame",
+      tags: ["Sandboxes"],
+      summary: "Get the base game for a sandbox",
+      description:
+        "Returns the base game offer for a sandbox, or an executable item fallback when no offer exists.",
+      parameters: [...sandboxId, parameterRef("country")],
+      response: flexibleObjectResponse(
+        "Base game offer or executable item fallback.",
+      ),
+    }),
+  },
+  "/sandboxes/{sandboxId}/achievements": {
+    get: operation({
+      operationId: "listSandboxAchievements",
+      tags: ["Sandboxes"],
+      summary: "List achievement sets for a sandbox",
+      parameters: sandboxId,
+      response: arrayOf(ref("AchievementSet")),
+    }),
+  },
+  "/sandboxes/{sandboxId}/changelog": {
+    get: operation({
+      operationId: "listSandboxChangelog",
+      tags: ["Sandboxes"],
+      summary: "List changelog entries for a sandbox",
+      parameters: [...sandboxId, ...pagination],
+      response: ref("ChangelogSearchResponse"),
+    }),
+  },
+  "/sandboxes/{sandboxId}/builds": {
+    get: operation({
+      operationId: "listSandboxBuilds",
+      tags: ["Sandboxes"],
+      summary: "List builds for a sandbox",
+      parameters: [...sandboxId, ...pagination, parameterRef("platform")],
+      response: {
+        type: "object",
+        additionalProperties: false,
+        required: ["elements", "page", "limit", "count"],
+        properties: {
+          elements: {
+            type: "array",
+            items: ref("Build"),
+          },
+          page: { type: "integer" },
+          limit: { type: "integer" },
+          count: { type: "integer" },
+        },
+      },
+    }),
+  },
+  "/sandboxes/{sandboxId}/stats": {
+    get: operation({
+      operationId: "getSandboxStats",
+      tags: ["Sandboxes"],
+      summary: "Get sandbox statistics",
+      parameters: sandboxId,
+      response: ref("SandboxStatsResponse"),
     }),
   },
   "/free-games": {
@@ -490,7 +1058,10 @@ export const paths: EgdataPaths = {
       tags: ["Search"],
       summary: "Search offers with OpenSearch-backed filters and aggregations",
       parameters: [parameterRef("country")],
-      requestBody: jsonBody("Search filters and sort options.", ref("SearchBody")),
+      requestBody: jsonBody(
+        "Search filters and sort options.",
+        ref("SearchBody"),
+      ),
       response: ref("SearchResponse"),
     }),
   },
@@ -502,7 +1073,10 @@ export const paths: EgdataPaths = {
       description:
         "Legacy search endpoint retained for compatibility. New integrations should prefer POST /search/v2/search.",
       parameters: [parameterRef("country")],
-      requestBody: jsonBody("Search filters and sort options.", ref("SearchBody")),
+      requestBody: jsonBody(
+        "Search filters and sort options.",
+        ref("SearchBody"),
+      ),
       response: {
         type: "object",
         required: ["elements", "page", "limit", "query"],
@@ -608,7 +1182,9 @@ export const paths: EgdataPaths = {
       operationId: "listSearchDevelopers",
       tags: ["Search"],
       summary: "List developer facet values",
-      parameters: [stringQuery("query", "Optional case-insensitive name filter.")],
+      parameters: [
+        stringQuery("query", "Optional case-insensitive name filter."),
+      ],
       response: arrayOf({
         type: "object",
         properties: {
@@ -624,7 +1200,9 @@ export const paths: EgdataPaths = {
       operationId: "listSearchPublishers",
       tags: ["Search"],
       summary: "List publisher facet values",
-      parameters: [stringQuery("query", "Optional case-insensitive name filter.")],
+      parameters: [
+        stringQuery("query", "Optional case-insensitive name filter."),
+      ],
       response: arrayOf({
         type: "object",
         properties: {

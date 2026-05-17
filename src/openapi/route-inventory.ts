@@ -31,7 +31,8 @@ export const routeClassifications: RouteClassification[] = [
   {
     path: "/graphql",
     visibility: "public-deferred",
-    reason: "GraphQL documentation is intentionally deferred until the REST contract is stable.",
+    reason:
+      "GraphQL documentation is intentionally deferred until the REST contract is stable.",
   },
   {
     path: "/ping",
@@ -41,7 +42,8 @@ export const routeClassifications: RouteClassification[] = [
   {
     path: "/search",
     visibility: "diagnostic",
-    reason: "Legacy placeholder GET and legacy POST search; v2 is the documented public search API.",
+    reason:
+      "Legacy placeholder GET and legacy POST search; v2 is the documented public search API.",
   },
   {
     path: "/multisearch",
@@ -278,7 +280,8 @@ export const routeClassifications: RouteClassification[] = [
   {
     path: "/items-from-offer/**",
     visibility: "public-deferred",
-    reason: "Public catalog lookup; alias needs consolidation with /offers/{id}/items.",
+    reason:
+      "Public catalog lookup; alias needs consolidation with /offers/{id}/items.",
   },
   {
     path: "/multisearch/**",
@@ -291,9 +294,27 @@ export const routeClassifications: RouteClassification[] = [
     reason: "Public lookup route; outside first documentation slice.",
   },
   {
-    path: "/offers/{id}/reviews/**",
-    visibility: "public-deferred",
-    reason: "User review routes require auth/security documentation.",
+    method: "POST",
+    path: "/offers/{id}/reviews",
+    visibility: "private",
+    reason: "Authenticated review creation route.",
+  },
+  {
+    method: "PATCH",
+    path: "/offers/{id}/reviews",
+    visibility: "private",
+    reason: "Authenticated review update route.",
+  },
+  {
+    method: "DELETE",
+    path: "/offers/{id}/reviews",
+    visibility: "private",
+    reason: "Authenticated review deletion route.",
+  },
+  {
+    path: "/offers/{id}/reviews/permissions",
+    visibility: "private",
+    reason: "Authenticated review permission route.",
   },
   {
     path: "/offers/{id}/ownership",
@@ -304,11 +325,6 @@ export const routeClassifications: RouteClassification[] = [
     path: "/offers/{id}/og",
     visibility: "non-json",
     reason: "Generated OG image response.",
-  },
-  {
-    path: "/offers/{id}/**",
-    visibility: "public-deferred",
-    reason: "Offer detail subresource outside first stable slice.",
   },
   {
     path: "/profiles/**",
@@ -329,16 +345,6 @@ export const routeClassifications: RouteClassification[] = [
     path: "/sales",
     visibility: "public-deferred",
     reason: "Public catalog listing; outside first documentation slice.",
-  },
-  {
-    path: "/sandboxes/**",
-    visibility: "public-deferred",
-    reason: "Public sandbox data; outside first documentation slice.",
-  },
-  {
-    path: "/sandboxes",
-    visibility: "public-deferred",
-    reason: "Public sandbox data; outside first documentation slice.",
   },
   {
     path: "/tags",

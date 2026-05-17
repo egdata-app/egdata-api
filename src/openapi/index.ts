@@ -48,12 +48,25 @@ export function buildOpenApiDocument(): OpenAPIV3.Document {
         description: "Epic Games Store offer data.",
       },
       {
+        name: "Offer Details",
+        description:
+          "Offer subresources such as items, media, builds, ratings, and related data.",
+      },
+      {
+        name: "Offer Reviews",
+        description: "Read-only public review data for offers.",
+      },
+      {
         name: "Prices",
         description: "Regional pricing and price history.",
       },
       {
         name: "Items",
         description: "Epic catalog item data.",
+      },
+      {
+        name: "Sandboxes",
+        description: "Epic namespace and sandbox resources.",
       },
       {
         name: "Free Games",
