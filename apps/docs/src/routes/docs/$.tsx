@@ -1,7 +1,8 @@
 import { APIPage } from "@/components/api-page";
 import { getApiReferenceRedirect } from "@/lib/api-reference-redirects";
-import { getMDXComponents } from "@/mdx-components";
 import { source } from "@/lib/source";
+import { getMDXComponents } from "@/mdx-components";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import {
   DocsBody,
   DocsDescription,
@@ -10,8 +11,6 @@ import {
 } from "fumadocs-ui/layouts/docs/page";
 import type { OpenAPIPageData } from "fumadocs-openapi/server";
 import type { MDXContent } from "mdx/types";
-import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
 import type { ComponentProps } from "react";
 
 type MdxPageData = {
@@ -22,25 +21,32 @@ type MdxPageData = {
   toc?: ComponentProps<typeof DocsPage>["toc"];
 };
 
-type PageProps = {
-  params: Promise<{
-    slug?: string[];
-  }>;
-};
+export const Route = createFileRoute("/docs/$")({
+  loader: ({ params }) => {
+    const slug = params._splat?.split("/").filter(Boolean);
+    const page = source.getPage(slug);
 
-export default async function Page({ params }: PageProps) {
-  const { slug } = await params;
-  const page = source.getPage(slug);
-
-  if (!page) {
-    const redirectTo = getApiReferenceRedirect(slug);
-
-    if (redirectTo) {
-      redirect(redirectTo);
+    if (!page) {
+      const redirectTo = getApiReferenceRedirect(slug);
+      if (redirectTo) {
+        throw redirect({ href: redirectTo });
+      }
+      throw notFound();
     }
 
-    notFound();
-  }
+    return { page };
+  },
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData.page.data.title} - egdata API Docs` },
+      { name: "description", content: loaderData.page.data.description },
+    ],
+  }),
+  component: RouteComponent,
+});
+
+function RouteComponent() {
+  const { page } = Route.useLoaderData();
 
   if (page.type === "openapi") {
     const apiPage = page.data as OpenAPIPageData;
@@ -68,28 +74,4 @@ export default async function Page({ params }: PageProps) {
       </DocsBody>
     </DocsPage>
   );
-}
-
-export function generateStaticParams() {
-  return source.generateParams();
-}
-
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const page = source.getPage(slug);
-
-  if (!page) {
-    const redirectTo = getApiReferenceRedirect(slug);
-
-    if (redirectTo) {
-      redirect(redirectTo);
-    }
-
-    notFound();
-  }
-
-  return {
-    title: page.data.title,
-    description: page.data.description,
-  };
 }

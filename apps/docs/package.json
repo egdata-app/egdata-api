@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --port 4001",
-    "build": "next build",
-    "start": "next start",
+    "dev": "vinxi dev --port 4001",
+    "build": "vinxi build",
+    "start": "vinxi start",
     "typecheck": "tsc --noEmit",
     "generate": "fumadocs-mdx"
   },
@@ -16,20 +16,25 @@
     "fumadocs-openapi": "10.8.3",
     "fumadocs-ui": "16.8.11",
     "json-schema-typed": "8.0.2",
-    "next": "16.2.6",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "shiki": "4.0.2",
-    "tailwindcss": "4.3.0"
+    "tailwindcss": "4.3.0",
+    "@tanstack/react-router": "^1.132.0",
+    "@tanstack/react-start": "^1.132.0",
+    "@vitejs/plugin-react": "^5.1.0",
+    "vinxi": "^0.5.7",
+    "vite": "^7.1.7",
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "4.3.0",
     "@types/mdast": "4.0.4",
     "@types/mdx": "2.0.13",
     "@types/node": "25.2.3",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "mdast-util-directive": "3.1.0",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "@tailwindcss/vite": "^4.1.11"
   }
 }

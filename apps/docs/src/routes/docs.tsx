@@ -1,13 +1,16 @@
 import { baseOptions } from "@/lib/layout.shared";
 import { source } from "@/lib/source";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
-import type { ReactNode } from "react";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
-export default function DocsRootLayout({ children }: { children: ReactNode }) {
+export const Route = createFileRoute("/docs")({
+  component: RouteComponent,
+});
+
+function RouteComponent() {
   return (
     <DocsLayout {...baseOptions()} tree={source.getPageTree()}>
-      {children}
+      <Outlet />
     </DocsLayout>
   );
 }
-
