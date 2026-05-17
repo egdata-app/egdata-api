@@ -9,6 +9,12 @@ import { defineConfig } from "vite";
 
 const appDirectory = fileURLToPath(new URL(".", import.meta.url));
 const collectionsDirectory = fileURLToPath(new URL(".source", import.meta.url));
+const ajv2020Compat = fileURLToPath(
+  new URL("lib/ajv-2020.ts", import.meta.url),
+);
+const xmlJsJs2xmlCompat = fileURLToPath(
+  new URL("lib/xml-js-js2xml.ts", import.meta.url),
+);
 
 export default defineConfig({
   server: {
@@ -17,7 +23,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": appDirectory,
+      "ajv/dist/2020.js": ajv2020Compat,
       collections: collectionsDirectory,
+      "xml-js/lib/js2xml.js": xmlJsJs2xmlCompat,
     },
   },
   plugins: [

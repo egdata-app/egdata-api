@@ -1,5 +1,4 @@
 import { notFound, redirect } from "@tanstack/react-router";
-import type { OpenAPIPageData } from "fumadocs-openapi/server";
 import {
   DocsBody,
   DocsDescription,
@@ -8,7 +7,6 @@ import {
 } from "fumadocs-ui/layouts/docs/page";
 import type { MDXContent } from "mdx/types";
 import type { ComponentProps } from "react";
-import { APIPage } from "@/components/api-page";
 import { getApiReferenceRedirect } from "@/lib/api-reference-redirects";
 import { getSource } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
@@ -75,17 +73,7 @@ export async function DocsPageServer({ slug }: { slug?: string[] }) {
   const page = await ensureDocsPage(slug);
 
   if (page.type === "openapi") {
-    const apiPage = page.data as OpenAPIPageData;
-
-    return (
-      <FumadocsPage full>
-        <DocsTitle>{apiPage.title}</DocsTitle>
-        <DocsDescription>{apiPage.description}</DocsDescription>
-        <DocsBody>
-          <APIPage {...apiPage.getAPIPageProps()} />
-        </DocsBody>
-      </FumadocsPage>
-    );
+    throw new Error("OpenAPI pages must be rendered with ClientAPIPage.");
   }
 
   const mdxPage = page.data as MdxPageData;

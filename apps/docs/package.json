@@ -15,6 +15,7 @@
     "@scalar/api-client-react": "2.0.1",
     "@tanstack/react-router": "^1.132.2",
     "@tanstack/react-start": "^1.132.2",
+    "ajv": "8.20.0",
     "fumadocs-core": "16.8.11",
     "fumadocs-mdx": "15.0.5",
     "fumadocs-openapi": "10.8.3",
@@ -23,7 +24,8 @@
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "shiki": "4.0.2",
-    "tailwindcss": "4.3.0"
+    "tailwindcss": "4.3.0",
+    "xml-js": "1.6.11"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.11.6",
