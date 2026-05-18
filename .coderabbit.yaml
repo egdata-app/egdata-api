@@ -1,0 +1,68 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+language: "en-US"
+tone_instructions: "Be direct, concise, and specific. Prioritize correctness, public API compatibility, security, and missing documentation."
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: true
+  high_level_summary: true
+  review_status: true
+  review_details: true
+  poem: false
+  in_progress_fortune: false
+  auto_review:
+    enabled: true
+    drafts: false
+  path_filters:
+    - "!dist/**"
+    - "!apps/docs/dist/**"
+    - "!apps/docs/.wrangler/**"
+    - "!apps/docs/node_modules/**"
+    - "!apps/docs/.source/**"
+  path_instructions:
+    - path: "src/routes/**/*.{ts,tsx}"
+      instructions: |
+        Treat these files as public REST endpoint handlers. Focus on request validation, authentication behavior, cache key correctness, response shape stability, status codes, pagination, filtering, sorting, regional behavior, and error semantics.
+
+        For any structural public endpoint change, require matching documentation updates in `apps/docs/`, OpenAPI updates under `openapi/` or `src/openapi/`, and a `CHANGELOG.md` entry under `Unreleased`. Structural changes include adding, removing, or renaming routes, methods, query/path/body parameters, filters, sort options, response fields, response status codes, auth requirements, documented error behavior, pagination behavior, or deprecations.
+    - path: "src/openapi/**/*.{ts,json}"
+      instructions: |
+        Ensure the OpenAPI contract stays synchronized with the route implementation and the public docs in `apps/docs/`. Flag missing request parameters, response fields, auth metadata, visibility metadata, examples, and stale generated output.
+    - path: "openapi/**/*.json"
+      instructions: |
+        Review generated OpenAPI output for consistency with `src/openapi/`, route behavior, and `apps/docs/`. Flag stale or incomplete contract snapshots.
+    - path: "apps/docs/**/*.{md,mdx,ts,tsx,json,jsonc}"
+      instructions: |
+        Review documentation for public API accuracy. When endpoint structure changes, verify the docs describe the new request parameters, filters, response fields, auth requirements, errors, pagination, deprecations, and examples. Cross-check against OpenAPI where applicable.
+    - path: "CHANGELOG.md"
+      instructions: |
+        Keep entries concise and user-facing. New entries should go under `Unreleased` and mention public API, documentation, release policy, and maintenance changes that affect users or maintainers.
+  pre_merge_checks:
+    custom_checks:
+      - mode: "error"
+        name: "Changelog updated"
+        instructions: |
+          Fail if the PR changes application code, public API contracts, documentation, scripts, CI/workflow files, release policy, repository instructions, or CodeRabbit configuration without also changing `CHANGELOG.md`.
+
+          Pass if `CHANGELOG.md` is changed, or if the PR only changes test fixtures/snapshots, generated build output, dependency install artifacts, or formatting with no user-facing or maintainer-facing effect. If the PR uses a skip-changelog label, mention that CI may allow it but still report whether `CHANGELOG.md` is missing.
+      - mode: "error"
+        name: "Endpoint docs updated"
+        instructions: |
+          Fail if the PR changes `src/routes/**` or `src/openapi/**` in a way that changes public endpoint structure and does not also update both:
+          - documentation under `apps/docs/`
+          - the OpenAPI contract under `openapi/` or `src/openapi/`
+
+          Public endpoint structure includes routes, HTTP methods, query/path/body parameters, filters, sort options, request validation, response fields, status codes, authentication behavior, pagination behavior, documented errors, and deprecations.
+
+          Pass if the route/OpenAPI changes are internal refactors with no public request, response, auth, error, or documentation impact. If evidence is mixed, mark the check Inconclusive and explain exactly which docs or contract files appear to be missing.
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "AGENTS.md"
+      - "docs/release-policy.md"
+
+chat:
+  auto_reply: true

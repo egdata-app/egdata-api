@@ -47,26 +47,26 @@ const policyRelevant = changed.filter((file) =>
     /^scripts\//,
     /^apps\/docs\//,
     /^openapi\//,
+    /^AGENTS\.md$/,
+    /^README\.md$/,
+    /^docs\/release-policy\.md$/,
     /^package\.json$/,
     /^pnpm-lock\.yaml$/,
     /^pnpm-workspace\.yaml$/,
+    /^\.coderabbit\.yaml$/,
+    /^\.github\/pull_request_template\.md$/,
     /^Dockerfile/,
     /^\.github\/workflows\//,
   ].some((pattern) => pattern.test(file)),
 );
 
-const hasReleaseNote = changed.some(
-  (file) =>
-    file === "CHANGELOG.md" ||
-    file === "docs/release-policy.md" ||
-    /^\.changeset\/.+\.md$/.test(file),
-);
+const hasReleaseNote = changed.includes("CHANGELOG.md");
 
 if (policyRelevant.length > 0 && !hasReleaseNote) {
   console.error(
     [
       "Release policy check failed.",
-      "Changes that can affect users or maintainers need a CHANGELOG.md update, docs/release-policy.md update, or .changeset/*.md note.",
+      "Changes that can affect users or maintainers need a CHANGELOG.md update under Unreleased.",
       "Relevant files:",
       ...policyRelevant.map((file) => `- ${file}`),
       "Use the skip-changelog PR label only for intentionally exempt maintenance changes.",
