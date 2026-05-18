@@ -2,13 +2,19 @@
 
 egdata API uses a lightweight release process while the public contract is being stabilized.
 
+## Changelog
+
+Every user-facing or maintainer-facing change must include a concise `CHANGELOG.md` entry under `Unreleased`. Use the `skip-changelog` PR label only for intentionally exempt maintenance changes.
+
 ## Public API Changes
 
-Any change to a public endpoint response shape, request shape, authentication behavior, or documented error behavior must include one of:
+Any structural public endpoint change must include all of:
 
-- a `CHANGELOG.md` entry,
-- a `.changeset/*.md` note, or
-- a `docs/release-policy.md` update when the policy itself changes.
+- a `CHANGELOG.md` entry under `Unreleased`,
+- documentation updates under `apps/docs/`,
+- OpenAPI source or generated contract updates under `src/openapi/` or `openapi/`.
+
+Structural endpoint changes include adding, removing, or renaming routes, HTTP methods, query/path/body parameters, filters, sort options, request validation, response fields, status codes, authentication behavior, pagination behavior, documented errors, or deprecations.
 
 Use PR labels to make intent visible:
 
@@ -24,7 +30,7 @@ Prefer additive changes first. For removals or incompatible behavior changes:
 - document the replacement,
 - keep the old route or field working when practical,
 - add deprecation notes before removing behavior,
-- update OpenAPI and contract snapshots in the same PR.
+- update `apps/docs/`, OpenAPI, and contract snapshots in the same PR.
 
 ## Versioning
 

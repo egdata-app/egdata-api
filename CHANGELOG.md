@@ -4,7 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added CodeRabbit configuration to enforce changelog updates and docs/OpenAPI coverage for public endpoint structure changes.
+- Tightened the release policy so user-facing and maintainer-facing changes require `CHANGELOG.md` entries.
 - Added an API-owned OpenAPI contract for the first public REST documentation slice.
 - Added an in-repo Fumadocs docs app scaffold under `apps/docs`.
 - Added OpenAPI, route coverage, README command, and lightweight release policy checks.
-
