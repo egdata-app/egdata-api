@@ -31,7 +31,7 @@ pnpm biome check --write .
 
 ## Documentation & Release Policy
 
-Every user-facing or maintainer-facing change should add a concise entry to `CHANGELOG.md` under `Unreleased`.
+Every user-facing or maintainer-facing change must include a concise entry to `CHANGELOG.md` under `Unreleased`.
 
 Any structural public endpoint change must also update the public docs in `apps/docs/` and the OpenAPI contract in `src/openapi/` or `openapi/`. Structural endpoint changes include adding, removing, or renaming routes, HTTP methods, query/path/body parameters, filters, sort options, request validation, response fields, status codes, authentication requirements, pagination behavior, documented errors, or deprecations.
 
