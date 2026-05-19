@@ -29,6 +29,7 @@ const MAX_UPDATE_LIMIT = 24;
 const DEFAULT_PAGE_LIMIT = 10;
 const MAX_PAGE_LIMIT = 100;
 const MAX_PAGE = 10_000;
+const CHANGELOG_BUILD_CONTEXT_LIMIT = 500;
 const SANDBOX_HUB_CACHE_TTL_SECONDS = 3600;
 
 const offerTypeRank: Record<string, number> = {
@@ -631,7 +632,9 @@ const resolvers: IResolvers<any, Context> = {
           $or: [
             {
               id: {
-                $in: offers.flatMap((o: any) => o.items.map((i: any) => i.id)),
+                $in: offers.flatMap((o: any) =>
+                  (o.items ?? []).map((i: any) => i.id),
+                ),
               },
             },
             { namespace: sandboxId },
@@ -650,6 +653,8 @@ const resolvers: IResolvers<any, Context> = {
       const builds = await db.db
         .collection("builds")
         .find({ appName: { $in: buildAppIds } })
+        .sort({ updatedAt: -1 })
+        .limit(CHANGELOG_BUILD_CONTEXT_LIMIT)
         .toArray();
 
       const allIds = [
