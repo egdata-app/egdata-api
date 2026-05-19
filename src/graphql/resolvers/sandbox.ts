@@ -556,15 +556,17 @@ const resolvers: IResolvers<any, Context> = {
       }
 
       const items = await Item.find(itemQuery, { releaseInfo: 1 }).lean();
-      const appIds = items.flatMap((i: any) =>
-        (i.releaseInfo || [])
-          .filter(
-            (r: any) =>
-              platforms.length === 0 ||
-              (r.platform || []).some((p: string) => platforms.includes(p)),
-          )
-          .map((r: any) => r.appId),
-      );
+      const appIds = items
+        .flatMap((i: any) =>
+          (i.releaseInfo || [])
+            .filter(
+              (r: any) =>
+                platforms.length === 0 ||
+                (r.platform || []).some((p: string) => platforms.includes(p)),
+            )
+            .map((r: any) => r.appId),
+        )
+        .filter(Boolean);
       const query: any = { appName: { $in: appIds } };
       const elements = await db.db
         .collection("builds")
