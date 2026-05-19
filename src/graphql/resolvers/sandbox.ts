@@ -1,5 +1,6 @@
 import type { IResolvers } from "@graphql-tools/utils";
 import { ObjectId } from "mongodb";
+import client from "../../clients/redis.js";
 import { db } from "../../db/index.js";
 import {
   AchievementSet,
@@ -24,6 +25,7 @@ const DEFAULT_OFFER_LIMIT = 8;
 const DEFAULT_UPDATE_LIMIT = 8;
 const MAX_OFFER_LIMIT = 24;
 const MAX_UPDATE_LIMIT = 24;
+const SANDBOX_HUB_CACHE_TTL_SECONDS = 3600;
 
 const offerTypeRank: Record<string, number> = {
   BASE_GAME: 0,
@@ -52,6 +54,15 @@ function resolveRegion(country: string | undefined) {
       regions[region].countries.includes(selectedCountry),
     ) || DEFAULT_COUNTRY
   );
+}
+
+function createSandboxHubCacheKey(
+  id: string,
+  country: string,
+  offerLimit: number,
+  updateLimit: number,
+) {
+  return `sandboxHub:${id}:${country}:${offerLimit}:${updateLimit}`;
 }
 
 async function findPrimaryContent(sandboxId: string) {
@@ -242,12 +253,6 @@ const resolvers: IResolvers<any, Context> = {
       return Namespace.findOne({ _id: { $eq: id } }).lean();
     },
     sandboxHub: async (_, { id, country, offerLimit, updateLimit }) => {
-      const sandbox = await SandboxModel.findOne({ _id: { $eq: id } }).lean();
-
-      if (!sandbox) {
-        return null;
-      }
-
       const resolvedOfferLimit = clampLimit(
         offerLimit,
         DEFAULT_OFFER_LIMIT,
@@ -258,14 +263,39 @@ const resolvers: IResolvers<any, Context> = {
         DEFAULT_UPDATE_LIMIT,
         MAX_UPDATE_LIMIT,
       );
-      const region = resolveRegion(country);
+      const selectedCountry = country || DEFAULT_COUNTRY;
+      const cacheKey = createSandboxHubCacheKey(
+        id,
+        selectedCountry,
+        resolvedOfferLimit,
+        resolvedUpdateLimit,
+      );
+      const cached = await client.get(cacheKey);
+
+      if (cached) {
+        return JSON.parse(cached);
+      }
+
+      const sandbox = await SandboxModel.findOne({ _id: { $eq: id } }).lean();
+
+      if (!sandbox) {
+        await client.set(
+          cacheKey,
+          JSON.stringify(null),
+          "EX",
+          SANDBOX_HUB_CACHE_TTL_SECONDS,
+        );
+        return null;
+      }
+
+      const region = resolveRegion(selectedCountry);
       const primary = await findPrimaryContent(id);
 
       const [items, achievements, rawOffers] = await Promise.all([
         Item.find({ namespace: id }).lean(),
         AchievementSet.find({ sandboxId: id }).lean(),
         Offer.find({ namespace: id }, undefined, {
-          limit: Math.max(resolvedOfferLimit * 3, resolvedOfferLimit),
+          limit: resolvedOfferLimit * 3,
           sort: { lastModifiedDate: -1 },
         }).lean(),
       ]);
@@ -324,7 +354,7 @@ const resolvers: IResolvers<any, Context> = {
         sandbox.displayName ||
         "";
 
-      return {
+      const hub = {
         id,
         namespace: id,
         title,
@@ -345,7 +375,7 @@ const resolvers: IResolvers<any, Context> = {
         featuredOffers,
         recentBuilds,
         recentChanges,
-        ageRating: getAgeRating(sandbox, country),
+        ageRating: getAgeRating(sandbox, selectedCountry),
         achievements: summarizeAchievements(achievements),
         created:
           sandbox.created ||
@@ -358,6 +388,15 @@ const resolvers: IResolvers<any, Context> = {
           primaryOffer?.lastModifiedDate ||
           primaryItem?.lastModifiedDate,
       };
+
+      await client.set(
+        cacheKey,
+        JSON.stringify(hub),
+        "EX",
+        SANDBOX_HUB_CACHE_TTL_SECONDS,
+      );
+
+      return hub;
     },
     sandboxes: async (_, { limit = 10, page = 1 }) => {
       const skip = (page - 1) * limit;
@@ -373,7 +412,7 @@ const resolvers: IResolvers<any, Context> = {
       const skip = (page - 1) * limit;
       const query = { namespace: parent._id };
       const elements = await Item.find(query)
-        .sort({ lastModified: -1 })
+        .sort({ lastModifiedDate: -1 })
         .skip(skip)
         .limit(limit)
         .lean();
@@ -383,7 +422,7 @@ const resolvers: IResolvers<any, Context> = {
       const skip = (page - 1) * limit;
       const query = { namespace: parent._id };
       const elements = await Offer.find(query)
-        .sort({ lastModified: -1 })
+        .sort({ lastModifiedDate: -1 })
         .skip(skip)
         .limit(limit)
         .lean();
@@ -456,15 +495,26 @@ const resolvers: IResolvers<any, Context> = {
     },
     builds: async (parent, { limit = 10, page = 1, platform }) => {
       const skip = (page - 1) * limit;
-      const items = await Item.find(
-        { namespace: parent._id },
-        { releaseInfo: 1 },
-      ).lean();
+      const platforms = platform?.split(",").filter(Boolean) ?? [];
+      const itemQuery: Document = { namespace: parent._id };
+
+      if (platforms.length > 0) {
+        itemQuery.releaseInfo = {
+          $elemMatch: { platform: { $in: platforms } },
+        };
+      }
+
+      const items = await Item.find(itemQuery, { releaseInfo: 1 }).lean();
       const appIds = items.flatMap((i: any) =>
-        (i.releaseInfo || []).map((r: any) => r.appId),
+        (i.releaseInfo || [])
+          .filter(
+            (r: any) =>
+              platforms.length === 0 ||
+              (r.platform || []).some((p: string) => platforms.includes(p)),
+          )
+          .map((r: any) => r.appId),
       );
       const query: any = { appName: { $in: appIds } };
-      // Platform filter for builds might need mapping appId to builds
       const elements = await db.db
         .collection("builds")
         .find(query)
@@ -479,32 +529,14 @@ const resolvers: IResolvers<any, Context> = {
         limit,
       };
     },
-    baseGame: async (parent, { country = "US" }) => {
-      const region =
-        Object.keys(regions).find((r) =>
-          regions[r].countries.includes(country),
-        ) || "US";
-      let baseGame = await Offer.findOne({
-        namespace: parent._id,
-        offerType: "BASE_GAME",
-        prePurchase: { $ne: true },
-        isCodeRedemptionOnly: false,
-      }).lean();
-      if (!baseGame)
-        baseGame = await Offer.findOne({
-          namespace: parent._id,
-          offerType: "BASE_GAME",
-          prePurchase: true,
-        }).lean();
-      if (!baseGame) {
-        const executable = await Item.findOne({
-          namespace: parent._id,
-          entitlementType: "EXECUTABLE",
-          "releaseInfo.0": { $exists: true },
-        }).lean();
-        return executable;
+    baseGame: async (parent) => {
+      const primary = await findPrimaryContent(parent._id);
+
+      if (primary.offer) {
+        return orderOffersObject(primary.offer);
       }
-      return orderOffersObject(baseGame);
+
+      return primary.item;
     },
     achievements: async (parent, _, { loaders }) => {
       return loaders.achievementSet.load(parent._id);

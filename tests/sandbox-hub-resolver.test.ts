@@ -34,6 +34,13 @@ type SandboxHubResolver = (
   info: unknown,
 ) => Promise<SandboxHubResult | null>;
 
+type OfferFindOneQuery = {
+  isCodeRedemptionOnly?: boolean;
+  namespace?: { $eq?: string } | string;
+  offerType?: string;
+  prePurchase?: boolean | { $ne?: boolean };
+};
+
 const mocks = vi.hoisted(() => ({
   achievementSetFind: vi.fn(),
   assetFind: vi.fn(),
@@ -46,6 +53,8 @@ const mocks = vi.hoisted(() => ({
   offerFind: vi.fn(),
   offerFindOne: vi.fn(),
   priceFindOne: vi.fn(),
+  redisGet: vi.fn(),
+  redisSet: vi.fn(),
   sandboxFindOne: vi.fn(),
   tagsFind: vi.fn(),
 }));
@@ -91,6 +100,13 @@ vi.mock("../src/models/index.js", () => ({
   },
   Tags: {
     find: mocks.tagsFind,
+  },
+}));
+
+vi.mock("../src/clients/redis.js", () => ({
+  default: {
+    get: mocks.redisGet,
+    set: mocks.redisSet,
   },
 }));
 
@@ -205,6 +221,45 @@ function mockRecentChanges(changes: unknown[]) {
   });
 }
 
+function isReleasedBaseGameQuery(query: OfferFindOneQuery) {
+  return (
+    query.namespace &&
+    typeof query.namespace === "object" &&
+    query.namespace.$eq === "sandbox-1" &&
+    query.offerType === "BASE_GAME" &&
+    typeof query.prePurchase === "object" &&
+    query.prePurchase.$ne === true &&
+    query.isCodeRedemptionOnly === false
+  );
+}
+
+function isPrepurchaseBaseGameQuery(query: OfferFindOneQuery) {
+  return (
+    query.namespace &&
+    typeof query.namespace === "object" &&
+    query.namespace.$eq === "sandbox-1" &&
+    query.offerType === "BASE_GAME" &&
+    query.prePurchase === true
+  );
+}
+
+function mockPrimaryOffers(
+  releasedBaseGame: typeof baseOffer | null,
+  prepurchaseBaseGame: typeof baseOffer | null,
+) {
+  mocks.offerFindOne.mockImplementation((query: OfferFindOneQuery) => {
+    if (isReleasedBaseGameQuery(query)) {
+      return lean(releasedBaseGame);
+    }
+
+    if (isPrepurchaseBaseGameQuery(query)) {
+      return lean(prepurchaseBaseGame);
+    }
+
+    throw new Error(`Unexpected Offer.findOne query: ${JSON.stringify(query)}`);
+  });
+}
+
 async function sandboxHub(args: Record<string, unknown> = {}) {
   const resolver = (sandboxResolvers.Query as Record<string, unknown>)
     .sandboxHub as SandboxHubResolver;
@@ -230,10 +285,10 @@ async function requireSandboxHub(args: Record<string, unknown> = {}) {
 beforeEach(() => {
   vi.clearAllMocks();
 
+  mocks.redisGet.mockResolvedValue(null);
+  mocks.redisSet.mockResolvedValue("OK");
   mocks.sandboxFindOne.mockReturnValue(lean(sandbox));
-  mocks.offerFindOne.mockImplementation((query) =>
-    lean(query.prePurchase === true ? null : baseOffer),
-  );
+  mockPrimaryOffers(baseOffer, null);
   mocks.itemFindOne.mockReturnValue(lean(null));
   mocks.itemFind.mockReturnValue(chain([executableItem]));
   mocks.achievementSetFind.mockReturnValue(
@@ -282,6 +337,33 @@ beforeEach(() => {
 });
 
 describe("sandboxHub GraphQL resolver", () => {
+  it("returns cached hub data before running database work", async () => {
+    const cachedHub: SandboxHubResult = {
+      achievements: {},
+      ageRating: null,
+      description: "Cached description",
+      developer: null,
+      featuredOffers: [],
+      id: "sandbox-1",
+      platforms: [],
+      price: null,
+      primaryItem: null,
+      primaryKind: "offer",
+      primaryOffer: null,
+      publisher: null,
+      recentBuilds: [],
+      recentChanges: [],
+      stats: {},
+      title: "Cached Hub",
+    };
+    mocks.redisGet.mockResolvedValue(JSON.stringify(cachedHub));
+
+    await expect(sandboxHub()).resolves.toEqual(cachedHub);
+    expect(mocks.redisGet).toHaveBeenCalledWith("sandboxHub:sandbox-1:US:4:3");
+    expect(mocks.sandboxFindOne).not.toHaveBeenCalled();
+    expect(mocks.offerFindOne).not.toHaveBeenCalled();
+  });
+
   it("uses a non-prepurchase base game as the primary product", async () => {
     const hub = await requireSandboxHub();
 
@@ -320,9 +402,7 @@ describe("sandboxHub GraphQL resolver", () => {
   });
 
   it("falls back to a prepurchase base game when no released base game exists", async () => {
-    mocks.offerFindOne.mockImplementation((query) =>
-      lean(query.prePurchase === true ? prepurchaseOffer : null),
-    );
+    mockPrimaryOffers(null, prepurchaseOffer);
     mocks.priceFindOne.mockReturnValue(
       lean({
         offerId: "prepurchase-offer",
@@ -344,7 +424,7 @@ describe("sandboxHub GraphQL resolver", () => {
   });
 
   it("falls back to an executable item when no base game offer exists", async () => {
-    mocks.offerFindOne.mockReturnValue(lean(null));
+    mockPrimaryOffers(null, null);
     mocks.itemFindOne.mockReturnValue(lean(executableItem));
 
     const hub = await requireSandboxHub();
@@ -357,7 +437,7 @@ describe("sandboxHub GraphQL resolver", () => {
   });
 
   it("returns a sparse hub for an empty sandbox", async () => {
-    mocks.offerFindOne.mockReturnValue(lean(null));
+    mockPrimaryOffers(null, null);
     mocks.itemFindOne.mockReturnValue(lean(null));
     mocks.itemFind.mockReturnValue(chain([]));
     mocks.achievementSetFind.mockReturnValue(chain([]));
@@ -385,6 +465,9 @@ describe("sandboxHub GraphQL resolver", () => {
         achievements: 0,
       },
     });
+    expect(hub.price).toBeNull();
+    expect(hub.primaryOffer).toBeNull();
+    expect(hub.primaryItem).toBeNull();
   });
 
   it("returns null for a missing sandbox", async () => {
@@ -393,5 +476,7 @@ describe("sandboxHub GraphQL resolver", () => {
     await expect(sandboxHub()).resolves.toBeNull();
     expect(mocks.offerFindOne).not.toHaveBeenCalled();
     expect(mocks.itemFind).not.toHaveBeenCalled();
+    expect(mocks.itemFindOne).not.toHaveBeenCalled();
+    expect(mocks.priceFindOne).not.toHaveBeenCalled();
   });
 });
