@@ -15,6 +15,7 @@ import {
 } from "../../models/index.js";
 import { ageRatingsCountries } from "../../utils/age-ratings.js";
 import { regions } from "../../utils/countries.js";
+import { consola } from "../../utils/logger.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
 import type { Context } from "../index.js";
 
@@ -25,6 +26,9 @@ const DEFAULT_OFFER_LIMIT = 8;
 const DEFAULT_UPDATE_LIMIT = 8;
 const MAX_OFFER_LIMIT = 24;
 const MAX_UPDATE_LIMIT = 24;
+const DEFAULT_PAGE_LIMIT = 10;
+const MAX_PAGE_LIMIT = 100;
+const MAX_PAGE = 10_000;
 const SANDBOX_HUB_CACHE_TTL_SECONDS = 3600;
 
 const offerTypeRank: Record<string, number> = {
@@ -45,6 +49,26 @@ function clampLimit(value: number | undefined, fallback: number, max: number) {
   }
 
   return Math.min(Math.max(value, 1), max);
+}
+
+function clampPage(value: number | undefined) {
+  return clampLimit(value, 1, MAX_PAGE);
+}
+
+function resolvePagination(
+  limit: number | undefined,
+  page: number | undefined,
+  fallbackLimit = DEFAULT_PAGE_LIMIT,
+  maxLimit = MAX_PAGE_LIMIT,
+) {
+  const resolvedLimit = clampLimit(limit, fallbackLimit, maxLimit);
+  const resolvedPage = clampPage(page);
+
+  return {
+    limit: resolvedLimit,
+    page: resolvedPage,
+    skip: (resolvedPage - 1) * resolvedLimit,
+  };
 }
 
 function resolveRegion(country: string | undefined) {
@@ -279,7 +303,14 @@ const resolvers: IResolvers<any, Context> = {
       const cached = await client.get(cacheKey);
 
       if (cached) {
-        return JSON.parse(cached);
+        try {
+          return JSON.parse(cached);
+        } catch (error) {
+          consola.warn("Ignoring malformed sandboxHub cache payload", {
+            cacheKey,
+            error,
+          });
+        }
       }
 
       const sandbox = await SandboxModel.findOne({ _id: { $eq: id } }).lean();
@@ -405,42 +436,52 @@ const resolvers: IResolvers<any, Context> = {
       return hub;
     },
     sandboxes: async (_, { limit = 10, page = 1 }) => {
-      const skip = (page - 1) * limit;
+      const pagination = resolvePagination(limit, page);
       const elements = await Namespace.find({}, undefined, {
-        skip,
-        limit,
+        skip: pagination.skip,
+        limit: pagination.limit,
       }).lean();
-      return { elements, total: await Namespace.countDocuments(), page, limit };
+      return {
+        elements,
+        total: await Namespace.countDocuments(),
+        page: pagination.page,
+        limit: pagination.limit,
+      };
     },
   },
   Sandbox: {
     items: async (parent, { limit = 10, page = 1 }) => {
-      const skip = (page - 1) * limit;
+      const pagination = resolvePagination(limit, page);
       const query = { namespace: parent._id };
       const elements = await Item.find(query)
         .sort({ lastModifiedDate: -1 })
-        .skip(skip)
-        .limit(limit)
+        .skip(pagination.skip)
+        .limit(pagination.limit)
         .lean();
-      return { elements, total: await Item.countDocuments(query), page, limit };
+      return {
+        elements,
+        total: await Item.countDocuments(query),
+        page: pagination.page,
+        limit: pagination.limit,
+      };
     },
     offers: async (parent, { limit = 10, page = 1 }) => {
-      const skip = (page - 1) * limit;
+      const pagination = resolvePagination(limit, page);
       const query = { namespace: parent._id };
       const elements = await Offer.find(query)
         .sort({ lastModifiedDate: -1 })
-        .skip(skip)
-        .limit(limit)
+        .skip(pagination.skip)
+        .limit(pagination.limit)
         .lean();
       return {
         elements: elements.map(orderOffersObject),
         total: await Offer.countDocuments(query),
-        page,
-        limit,
+        page: pagination.page,
+        limit: pagination.limit,
       };
     },
     assets: async (parent, { limit = 10, page = 1, platform }) => {
-      const skip = (page - 1) * limit;
+      const pagination = resolvePagination(limit, page);
       const sandboxId = parent._id;
 
       // Logic from src/routes/sandbox.ts
@@ -489,18 +530,21 @@ const resolvers: IResolvers<any, Context> = {
         );
       }
 
-      const elements = allAssets.slice(skip, skip + limit);
+      const elements = allAssets.slice(
+        pagination.skip,
+        pagination.skip + pagination.limit,
+      );
 
       return {
         elements,
         total: allAssets.length,
-        page,
-        limit,
+        page: pagination.page,
+        limit: pagination.limit,
         count: allAssets.length,
       };
     },
     builds: async (parent, { limit = 10, page = 1, platform }) => {
-      const skip = (page - 1) * limit;
+      const pagination = resolvePagination(limit, page);
       const platforms = platform?.split(",").filter(Boolean) ?? [];
       const itemQuery: Document = { namespace: parent._id };
 
@@ -525,14 +569,14 @@ const resolvers: IResolvers<any, Context> = {
         .collection("builds")
         .find(query)
         .sort({ updatedAt: -1 })
-        .skip(skip)
-        .limit(limit)
+        .skip(pagination.skip)
+        .limit(pagination.limit)
         .toArray();
       return {
         elements,
         total: await db.db.collection("builds").countDocuments(query),
-        page,
-        limit,
+        page: pagination.page,
+        limit: pagination.limit,
       };
     },
     baseGame: async (parent) => {
@@ -573,7 +617,7 @@ const resolvers: IResolvers<any, Context> = {
       };
     },
     changelog: async (parent, { limit = 10, page = 1 }) => {
-      const skip = (page - 1) * limit;
+      const pagination = resolvePagination(limit, page);
       const sandboxId = parent._id;
 
       const offers = await db.db
@@ -624,16 +668,16 @@ const resolvers: IResolvers<any, Context> = {
         .collection("changelogs_v2")
         .find(matchQuery)
         .sort({ timestamp: -1 })
-        .skip(skip)
-        .limit(limit)
+        .skip(pagination.skip)
+        .limit(pagination.limit)
         .toArray();
 
       return {
         elements,
         totalCount,
-        totalPages: Math.ceil(totalCount / limit),
-        hasNextPage: page * limit < totalCount,
-        hasPreviousPage: page > 1,
+        totalPages: Math.ceil(totalCount / pagination.limit),
+        hasNextPage: pagination.page * pagination.limit < totalCount,
+        hasPreviousPage: pagination.page > 1,
       };
     },
   },

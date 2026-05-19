@@ -53,6 +53,7 @@ const mocks = vi.hoisted(() => ({
   offerFind: vi.fn(),
   offerFindOne: vi.fn(),
   priceFindOne: vi.fn(),
+  loggerWarn: vi.fn(),
   redisGet: vi.fn(),
   redisSet: vi.fn(),
   sandboxFindOne: vi.fn(),
@@ -107,6 +108,12 @@ vi.mock("../src/clients/redis.js", () => ({
   default: {
     get: mocks.redisGet,
     set: mocks.redisSet,
+  },
+}));
+
+vi.mock("../src/utils/logger.js", () => ({
+  consola: {
+    warn: mocks.loggerWarn,
   },
 }));
 
@@ -362,6 +369,19 @@ describe("sandboxHub GraphQL resolver", () => {
     expect(mocks.redisGet).toHaveBeenCalledWith("sandboxHub:sandbox-1:US:4:3");
     expect(mocks.sandboxFindOne).not.toHaveBeenCalled();
     expect(mocks.offerFindOne).not.toHaveBeenCalled();
+  });
+
+  it("recomputes hub data when cached hub data is malformed", async () => {
+    mocks.redisGet.mockResolvedValue("{malformed");
+
+    const hub = await requireSandboxHub();
+
+    expect(hub.title).toBe("Base Game");
+    expect(mocks.loggerWarn).toHaveBeenCalledWith(
+      "Ignoring malformed sandboxHub cache payload",
+      expect.objectContaining({ cacheKey: "sandboxHub:sandbox-1:US:4:3" }),
+    );
+    expect(mocks.sandboxFindOne).toHaveBeenCalled();
   });
 
   it("uses a non-prepurchase base game as the primary product", async () => {
