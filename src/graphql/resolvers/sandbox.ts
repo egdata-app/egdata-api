@@ -206,6 +206,23 @@ function summarizeAchievements(sets: Document[]) {
   };
 }
 
+function countVirtualAssets(items: Document[], assets: Document[]) {
+  const assetArtifactIds = new Set(
+    assets.map((asset: Document) => asset.artifactId),
+  );
+  let virtualAssetsCount = 0;
+
+  for (const item of items) {
+    for (const releaseInfo of item.releaseInfo || []) {
+      if (!assetArtifactIds.has(releaseInfo.appId)) {
+        virtualAssetsCount += releaseInfo.platform?.length || 0;
+      }
+    }
+  }
+
+  return virtualAssetsCount;
+}
+
 async function getSandboxStats(
   sandboxId: string,
   items: Document[],
@@ -216,18 +233,7 @@ async function getSandboxStats(
     Asset.find({ namespace: sandboxId }).lean(),
   ]);
 
-  const assetsMap = new Map(
-    assets.map((asset: Document) => [asset.artifactId, asset]),
-  );
-  let virtualAssetsCount = 0;
-
-  for (const item of items) {
-    for (const releaseInfo of item.releaseInfo || []) {
-      if (!assetsMap.has(releaseInfo.appId)) {
-        virtualAssetsCount += releaseInfo.platform?.length || 0;
-      }
-    }
-  }
+  const virtualAssetsCount = countVirtualAssets(items, assets);
 
   const builds = await Build.countDocuments({
     appName: {
@@ -549,21 +555,11 @@ const resolvers: IResolvers<any, Context> = {
         Asset.find({ namespace: parent._id }).lean(),
       ]);
 
-      const assetsMap = new Map(assets.map((a: any) => [a.artifactId, a]));
-      let virtualAssetsCount = 0;
-      for (const item of items as any[]) {
-        for (const releaseInfo of item.releaseInfo || []) {
-          if (!assetsMap.has(releaseInfo.appId)) {
-            virtualAssetsCount += releaseInfo.platform?.length || 0;
-          }
-        }
-      }
+      const virtualAssetsCount = countVirtualAssets(items, assets);
 
       const builds = await Build.countDocuments({
         appName: {
-          $in: items.flatMap((i: any) =>
-            (i.releaseInfo || []).map((r: any) => r.appId),
-          ),
+          $in: collectAppIds(items),
         },
       });
 
