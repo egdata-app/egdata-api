@@ -4,6 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added a GraphQL `sandboxHub` query that aggregates sandbox product data for user-facing product pages.
 - Added CodeRabbit configuration to enforce changelog updates and docs/OpenAPI coverage for public endpoint structure changes.
 - Tightened the release policy so user-facing and maintainer-facing changes require `CHANGELOG.md` entries.
 - Added an API-owned OpenAPI contract for the first public REST documentation slice.

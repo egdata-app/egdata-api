@@ -18,6 +18,7 @@ export const typeDefs = `#graphql
 
         # Sandboxes
         sandbox(id: ID!): Sandbox
+        sandboxHub(id: ID!, country: String, offerLimit: Int, updateLimit: Int): SandboxHub
         sandboxes(limit: Int, page: Int): SandboxConnection
 
         # Misc
@@ -243,9 +244,13 @@ export const typeDefs = `#graphql
     type Sandbox {
         _id: ID
         name: String
+        displayName: String
         namespace: String
         parent: String
+        store: String
+        status: String
         ageGatings: JSON
+        created: Date
         updated: Date
         items(limit: Int, page: Int): ItemConnection
         offers(limit: Int, page: Int): OfferConnection
@@ -255,6 +260,39 @@ export const typeDefs = `#graphql
         achievements: [AchievementSet]
         stats: SandboxStats
         changelog(limit: Int, page: Int): ChangelogConnection
+    }
+
+    type SandboxHub {
+        id: ID
+        namespace: String
+        title: String
+        description: String
+        primaryKind: String
+        primaryOffer: Offer
+        primaryItem: Item
+        sandbox: Sandbox
+        price: Price
+        seller: Seller
+        developer: String
+        publisher: String
+        keyImages: [KeyImage]
+        genres: [Tag]
+        platforms: [String]
+        stats: SandboxStats
+        featuredOffers: [Offer]
+        recentBuilds: [Build]
+        recentChanges: [Changelog]
+        ageRating: JSON
+        achievements: SandboxAchievementSummary
+        created: Date
+        updated: Date
+    }
+
+    type SandboxAchievementSummary {
+        sets: Int
+        total: Int
+        baseTotal: Int
+        xp: Int
     }
 
     type AssetConnection {
