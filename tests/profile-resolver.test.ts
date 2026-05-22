@@ -9,6 +9,7 @@ type Resolver = (
 ) => Promise<unknown>;
 
 type ProfileAchievementResult = {
+  description: string | null;
   displayName: string;
   iconUrl: string;
   rarityPercent: number;
@@ -219,9 +220,9 @@ const achievementSets = [
     achievements: [
       {
         name: "rare-a",
-        displayName: "Rare Alpha",
-        description: "Rare Alpha description",
-        unlockedIcon: "https://example.test/rare-alpha.png",
+        unlockedDisplayName: "Rare Alpha",
+        unlockedDescription: "Rare Alpha description",
+        unlockedIconLink: "https://example.test/rare-alpha.png",
         completedPercent: 1.5,
         xp: 100,
       },
@@ -396,6 +397,7 @@ describe("profile GraphQL resolver", () => {
     expect(achievements[0]).toMatchObject({
       sandboxId: "sandbox-a",
       gameTitle: "Alpha Game",
+      description: "Rare Alpha description",
       iconUrl: "https://example.test/rare-alpha.png",
       rarityPercent: 1.5,
       xp: 100,

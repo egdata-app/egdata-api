@@ -117,7 +117,7 @@ type ProfileAggregationData = {
   activity: ProfileActivityItem[];
 };
 
-const PROFILE_CACHE_VERSION = "v1";
+const PROFILE_CACHE_VERSION = "v2";
 const PROFILE_IDENTITY_TTL_SECONDS = 3600;
 const PROFILE_HIGHLIGHTS_TTL_SECONDS = 300;
 const PROFILE_GAMES_TTL_SECONDS = 60;
@@ -207,22 +207,46 @@ function getAchievementXP(achievement: Document) {
   return Number.isFinite(xp) ? xp : 0;
 }
 
+function firstNonEmptyString(...values: unknown[]) {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim()) {
+      return value;
+    }
+  }
+
+  return null;
+}
+
 function getAchievementIconUrl(achievement: Document) {
-  return (
-    achievement.unlockedIcon ??
-    achievement.lockedIcon ??
-    achievement.iconUrl ??
-    achievement.icon ??
-    null
+  return firstNonEmptyString(
+    achievement.unlockedIconLink,
+    achievement.unlockedIcon,
+    achievement.iconUrl,
+    achievement.icon,
+    achievement.iconLink,
+    achievement.lockedIconLink,
+    achievement.lockedIcon,
   );
 }
 
 function getAchievementDisplayName(achievement: Document) {
   return (
-    achievement.displayName ??
-    achievement.title ??
-    achievement.name ??
-    "Unknown achievement"
+    firstNonEmptyString(
+      achievement.unlockedDisplayName,
+      achievement.displayName,
+      achievement.title,
+      achievement.lockedDisplayName,
+      achievement.name,
+    ) ?? "Unknown achievement"
+  );
+}
+
+function getAchievementDescription(achievement: Document) {
+  return firstNonEmptyString(
+    achievement.unlockedDescription,
+    achievement.description,
+    achievement.lockedDescription,
+    achievement.flavorText,
   );
 }
 
@@ -439,7 +463,7 @@ function buildAchievement(
   return {
     name,
     displayName: String(getAchievementDisplayName(achievementDetails)),
-    description: achievementDetails.description ?? null,
+    description: getAchievementDescription(achievementDetails),
     iconUrl: getAchievementIconUrl(achievementDetails),
     rarityPercent: normalizeRarityPercent(achievementDetails.completedPercent),
     xp: getAchievementXP(achievementDetails),
