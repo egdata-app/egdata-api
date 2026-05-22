@@ -21,6 +21,9 @@ export const typeDefs = `#graphql
         sandboxHub(id: ID!, country: String, offerLimit: Int, updateLimit: Int): SandboxHub
         sandboxes(limit: Int, page: Int): SandboxConnection
 
+        # Profiles
+        profile(id: ID!): Profile
+
         # Misc
         build(id: ID!): Build
         builds(limit: Int, page: Int, sortBy: String, sortDir: String): [Build]
@@ -59,6 +62,112 @@ export const typeDefs = `#graphql
 
     type SandboxConnection {
         elements: [Sandbox]
+        total: Int
+        page: Int
+        limit: Int
+    }
+
+    enum ProfileGameSort {
+        COMPLETION
+        ALPHABETICAL
+        XP
+        ACHIEVEMENTS
+    }
+
+    enum ProfileGameFilter {
+        ALL
+        COMPLETED
+        NEAR_PLATINUM
+        IN_PROGRESS
+        PLATINUM
+    }
+
+    enum ProfileActivityType {
+        ACHIEVEMENT_UNLOCKED
+        PLATINUM_EARNED
+    }
+
+    type Profile {
+        accountId: ID
+        displayName: String
+        avatar: ProfileAvatar
+        linkedAccounts: JSON
+        creationDate: Date
+        reviewsCount: Int
+        highlights: ProfileHighlights
+        heroGame: ProfileHeroGame
+        featuredAchievements(limit: Int = 8): [ProfileAchievement]
+        featuredGames(limit: Int = 6, filter: ProfileGameFilter = ALL, sort: ProfileGameSort = COMPLETION): [ProfileGame]
+        recentActivity(limit: Int = 12, page: Int = 1): [ProfileActivityItem]
+        games(limit: Int = 12, page: Int = 1, filter: ProfileGameFilter = ALL, sort: ProfileGameSort = COMPLETION): ProfileGameConnection
+        achievements(limit: Int = 25, page: Int = 1): ProfileAchievementConnection
+    }
+
+    type ProfileAvatar {
+        small: String
+        medium: String
+        large: String
+    }
+
+    type ProfileHighlights {
+        level: Int
+        totalXP: Int
+        totalGames: Int
+        totalAchievements: Int
+        totalPlatinums: Int
+        reviewsCount: Int
+    }
+
+    type ProfileHeroGame {
+        sandboxId: String
+        title: String
+        imageUrl: String
+        completionPercent: Float
+    }
+
+    type ProfileGame {
+        sandboxId: String
+        title: String
+        imageUrl: String
+        completionPercent: Float
+        unlocked: Int
+        total: Int
+        earnedXP: Int
+        totalXP: Int
+        hasPlatinum: Boolean
+        rarestAchievements: [ProfileAchievement]
+    }
+
+    type ProfileAchievement {
+        name: String
+        displayName: String
+        description: String
+        iconUrl: String
+        rarityPercent: Float
+        xp: Int
+        sandboxId: String
+        gameTitle: String
+        unlockedAt: Date
+    }
+
+    type ProfileActivityItem {
+        type: ProfileActivityType
+        sandboxId: String
+        gameTitle: String
+        achievementName: String
+        achievementIconUrl: String
+        occurredAt: Date
+    }
+
+    type ProfileGameConnection {
+        elements: [ProfileGame]
+        total: Int
+        page: Int
+        limit: Int
+    }
+
+    type ProfileAchievementConnection {
+        elements: [ProfileAchievement]
         total: Int
         page: Int
         limit: Int

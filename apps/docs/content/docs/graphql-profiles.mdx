@@ -1,0 +1,61 @@
+---
+title: GraphQL Profiles
+description: Fetch public profile showcase data with field-level GraphQL selection.
+---
+
+The GraphQL endpoint is available at:
+
+```txt
+https://api.egdata.app/graphql
+```
+
+Use `profile(id: ID!)` to fetch public player identity, showcase highlights, featured games, rare achievements, and recent activity without calling multiple REST profile routes.
+
+```graphql
+query ProfileShowcase($id: ID!) {
+  profile(id: $id) {
+    accountId
+    displayName
+    avatar {
+      large
+    }
+    highlights {
+      level
+      totalXP
+      totalGames
+      totalAchievements
+      totalPlatinums
+      reviewsCount
+    }
+    heroGame {
+      sandboxId
+      title
+      imageUrl
+      completionPercent
+    }
+    featuredGames(limit: 6, filter: ALL, sort: COMPLETION) {
+      sandboxId
+      title
+      imageUrl
+      completionPercent
+      earnedXP
+      totalXP
+      hasPlatinum
+      rarestAchievements {
+        displayName
+        iconUrl
+        rarityPercent
+      }
+    }
+    recentActivity(limit: 8) {
+      type
+      gameTitle
+      achievementName
+      achievementIconUrl
+      occurredAt
+    }
+  }
+}
+```
+
+`profile` returns `null` when the Epic profile is unavailable. Profiles with no imported achievement data return empty game, achievement, and activity lists.
