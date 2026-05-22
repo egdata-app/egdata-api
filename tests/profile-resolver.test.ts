@@ -119,7 +119,7 @@ const playerAchievementRows = [
   {
     epicAccountId: "player-1",
     sandboxId: "sandbox-a",
-    totalXP: 600,
+    totalXP: 225,
     totalUnlocked: 3,
     playerAwards: [
       {
@@ -164,7 +164,7 @@ const playerAchievementRows = [
   {
     epicAccountId: "player-1",
     sandboxId: "sandbox-b",
-    totalXP: 100,
+    totalXP: 25,
     totalUnlocked: 1,
     playerAwards: [],
     playerAchievements: [
@@ -350,13 +350,32 @@ describe("profile GraphQL resolver", () => {
     );
 
     expect(highlights).toEqual({
-      level: 3,
-      totalXP: 950,
+      level: 2,
+      totalXP: 500,
       totalGames: 2,
       totalAchievements: 4,
       totalPlatinums: 1,
       reviewsCount: 2,
     });
+
+    const refreshedProfile = {
+      ...(profile as Record<string, unknown>),
+      reviewsCount: 3,
+    };
+    const refreshedHighlights = await profileResolver("highlights")(
+      refreshedProfile,
+      {},
+      context,
+      {},
+    );
+
+    expect(refreshedHighlights).toMatchObject({ reviewsCount: 3 });
+    expect(mocks.redisGet).toHaveBeenCalledWith(
+      expect.stringContaining("graphql:profile:player-1:highlights:reviews:2:"),
+    );
+    expect(mocks.redisGet).toHaveBeenCalledWith(
+      expect.stringContaining("graphql:profile:player-1:highlights:reviews:3:"),
+    );
   });
 
   it("returns featured achievements sorted by rarity, XP, and unlock date", async () => {
@@ -412,7 +431,7 @@ describe("profile GraphQL resolver", () => {
       completionPercent: 100,
       unlocked: 3,
       total: 3,
-      earnedXP: 600,
+      earnedXP: 225,
       totalXP: 225,
       hasPlatinum: true,
     });

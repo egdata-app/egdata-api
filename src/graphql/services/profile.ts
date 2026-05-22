@@ -768,38 +768,41 @@ export async function getProfileHighlights(
   reviewsCount: number,
   requestCache?: ProfileRequestCache,
 ) {
-  return memoize(requestCache, `profile:${accountId}:highlights`, () =>
-    readCached<ProfileHighlights>(
-      `graphql:profile:${accountId}:highlights:${PROFILE_CACHE_VERSION}`,
-      PROFILE_HIGHLIGHTS_TTL_SECONDS,
-      async () => {
-        const games = await getProfileGames(
-          accountId,
-          { filter: "ALL", sort: "COMPLETION" },
-          requestCache,
-        );
-        const totalPlatinums = games.reduce(
-          (sum, game) =>
-            sum + (game.platinumCount ?? (game.hasPlatinum ? 1 : 0)),
-          0,
-        );
-        const totalXP =
-          games.reduce((sum, game) => sum + game.earnedXP, 0) +
-          totalPlatinums * PLATINUM_XP;
-
-        return {
-          level: Math.floor(totalXP / PLATINUM_XP),
-          totalXP,
-          totalGames: games.length,
-          totalAchievements: games.reduce(
-            (sum, game) => sum + game.unlocked,
+  return memoize(
+    requestCache,
+    `profile:${accountId}:highlights:reviews:${reviewsCount}`,
+    () =>
+      readCached<ProfileHighlights>(
+        `graphql:profile:${accountId}:highlights:reviews:${reviewsCount}:${PROFILE_CACHE_VERSION}`,
+        PROFILE_HIGHLIGHTS_TTL_SECONDS,
+        async () => {
+          const games = await getProfileGames(
+            accountId,
+            { filter: "ALL", sort: "COMPLETION" },
+            requestCache,
+          );
+          const totalPlatinums = games.reduce(
+            (sum, game) =>
+              sum + (game.platinumCount ?? (game.hasPlatinum ? 1 : 0)),
             0,
-          ),
-          totalPlatinums,
-          reviewsCount,
-        };
-      },
-    ),
+          );
+          const totalXP =
+            games.reduce((sum, game) => sum + game.earnedXP, 0) +
+            totalPlatinums * PLATINUM_XP;
+
+          return {
+            level: Math.floor(totalXP / PLATINUM_XP),
+            totalXP,
+            totalGames: games.length,
+            totalAchievements: games.reduce(
+              (sum, game) => sum + game.unlocked,
+              0,
+            ),
+            totalPlatinums,
+            reviewsCount,
+          };
+        },
+      ),
   );
 }
 

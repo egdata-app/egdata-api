@@ -9,7 +9,56 @@ The GraphQL endpoint is available at:
 https://api.egdata.app/graphql
 ```
 
-Use `profile(id: ID!)` to fetch public player identity, showcase highlights, featured games, rare achievements, and recent activity without calling multiple REST profile routes.
+Use `profile(id: ID!)` to fetch public player identity, showcase highlights, featured games, rare achievements, and recent activity without calling multiple REST profile routes. The query is public: it does not require an `Authorization` header, bearer token, or token scopes.
+
+## Arguments
+
+`profile` accepts the Epic account id as `id`.
+
+| Argument | Type | Required | Behavior |
+| --- | --- | --- | --- |
+| `id` | `ID!` | Yes | Epic account id to resolve. Returns `null` when the Epic profile cannot be found or is unavailable. |
+
+Profile list fields accept these arguments:
+
+| Field | Arguments | Defaults | Maximum `limit` |
+| --- | --- | --- | --- |
+| `featuredAchievements` | `limit` | `limit: 8` | `100` |
+| `featuredGames` | `limit`, `filter`, `sort` | `limit: 6`, `filter: ALL`, `sort: COMPLETION` | `100` |
+| `recentActivity` | `limit`, `page` | `limit: 12`, `page: 1` | `100` |
+| `games` | `limit`, `page`, `filter`, `sort` | `limit: 12`, `page: 1`, `filter: ALL`, `sort: COMPLETION` | `100` |
+| `achievements` | `limit`, `page` | `limit: 25`, `page: 1` | `100` |
+
+Pagination uses 1-based `page` values. `page: 2` returns the next `limit` results after page 1. Non-positive `page` values are normalized to the first page, and large `limit` values are capped at `100`.
+
+## Game Filters
+
+`featuredGames` and `games` support the same `filter` values:
+
+| Value | Meaning |
+| --- | --- |
+| `ALL` | All games with imported achievement data. |
+| `COMPLETED` | Games where every achievement is unlocked. |
+| `NEAR_PLATINUM` | Games at high completion that are not complete or platinumed yet. |
+| `IN_PROGRESS` | Games with at least one unlock and less than full completion. |
+| `PLATINUM` | Games with a platinum/player award. |
+
+## Game Sorts
+
+`featuredGames` and `games` support the same `sort` values:
+
+| Value | Meaning |
+| --- | --- |
+| `COMPLETION` | Highest completion first, then XP and unlock count. |
+| `ALPHABETICAL` | Game title ascending. |
+| `XP` | Highest earned XP first. |
+| `ACHIEVEMENTS` | Highest unlocked achievement count first. |
+
+`completionPercent` is returned from `0` to `100`. `level` is calculated as `Math.floor(totalXP / 250)`, and profile `totalXP` includes earned achievement XP plus `250` XP for each platinum/player award.
+
+`recentActivity` currently returns only `ACHIEVEMENT_UNLOCKED` and `PLATINUM_EARNED` items because those records have reliable timestamps.
+
+## Showcase Query
 
 ```graphql
 query ProfileShowcase($id: ID!) {
@@ -19,6 +68,9 @@ query ProfileShowcase($id: ID!) {
     avatar {
       large
     }
+    linkedAccounts
+    creationDate
+    reviewsCount
     highlights {
       level
       totalXP
@@ -32,6 +84,19 @@ query ProfileShowcase($id: ID!) {
       title
       imageUrl
       completionPercent
+      earnedXP
+      totalXP
+      hasPlatinum
+    }
+    featuredAchievements(limit: 8) {
+      displayName
+      description
+      iconUrl
+      rarityPercent
+      xp
+      sandboxId
+      gameTitle
+      unlockedAt
     }
     featuredGames(limit: 6, filter: ALL, sort: COMPLETION) {
       sandboxId
@@ -47,8 +112,9 @@ query ProfileShowcase($id: ID!) {
         rarityPercent
       }
     }
-    recentActivity(limit: 8) {
+    recentActivity(limit: 8, page: 1) {
       type
+      sandboxId
       gameTitle
       achievementName
       achievementIconUrl
@@ -58,4 +124,48 @@ query ProfileShowcase($id: ID!) {
 }
 ```
 
-`profile` returns `null` when the Epic profile is unavailable. Profiles with no imported achievement data return empty game, achievement, and activity lists.
+## Library Query
+
+Use the `games` and `achievements` connections when a page needs paginated library data.
+
+```graphql
+query ProfileLibrary($id: ID!, $page: Int!) {
+  profile(id: $id) {
+    games(limit: 12, page: $page, filter: IN_PROGRESS, sort: ALPHABETICAL) {
+      total
+      page
+      limit
+      elements {
+        sandboxId
+        title
+        completionPercent
+        unlocked
+        total
+        earnedXP
+        totalXP
+        hasPlatinum
+      }
+    }
+    achievements(limit: 25, page: $page) {
+      total
+      page
+      limit
+      elements {
+        displayName
+        iconUrl
+        rarityPercent
+        xp
+        sandboxId
+        gameTitle
+        unlockedAt
+      }
+    }
+  }
+}
+```
+
+## Errors
+
+`profile` returns `null` when the Epic profile lookup fails. Profiles with no imported achievement data return empty game, achievement, and activity lists.
+
+Invalid GraphQL documents, missing required variables, or invalid enum values such as an unknown `filter` or `sort` return standard GraphQL errors. The `profile` query itself is public, so `401` and `403` responses are not expected for valid profile requests. Clients may still receive `429` if platform rate limits are exceeded, or `5xx` responses for unexpected upstream or server failures.
