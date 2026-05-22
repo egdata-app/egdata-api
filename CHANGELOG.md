@@ -5,6 +5,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 ## Unreleased
 
 - Added a public GraphQL `profile(id)` query for profile identity, highlights, featured games, achievements, and recent activity.
+- Fixed GraphQL profile achievements to read Epic unlocked achievement names, descriptions, and icon links from stored achievement metadata.
 - Added a GraphQL `sandboxHub` query that aggregates sandbox product data for user-facing product pages.
 - Added CodeRabbit configuration to enforce changelog updates and docs/OpenAPI coverage for public endpoint structure changes.
 - Tightened the release policy so user-facing and maintainer-facing changes require `CHANGELOG.md` entries.
