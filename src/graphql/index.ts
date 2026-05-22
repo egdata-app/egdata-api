@@ -5,6 +5,7 @@ import items from "./resolvers/item.js";
 import builds from "./resolvers/build.js";
 import changelogs from "./resolvers/changelog.js";
 import sandboxes from "./resolvers/sandbox.js";
+import profiles from "./resolvers/profile.js";
 import type { ConsolaInstance } from "consola";
 import { GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
 import { createLoaders } from './loaders.js';
@@ -22,7 +23,7 @@ export type Context = {
 
 export const server = new ApolloServer<Context>({
     typeDefs,
-    resolvers: [offers, items, builds, changelogs, sandboxes, resolvers],
+    resolvers: [offers, items, builds, changelogs, sandboxes, profiles, resolvers],
     introspection: true,
     plugins: [
         {
