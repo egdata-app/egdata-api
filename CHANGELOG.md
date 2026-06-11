@@ -4,6 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Fixed changelog search responses to hydrate old/new change values and made changelist detail context enrichment more resilient.
 - Added a public GraphQL `profile(id)` query for profile identity, highlights, featured games, achievements, and recent activity.
 - Added a GraphQL `sandboxHub` query that aggregates sandbox product data for user-facing product pages.
 - Added CodeRabbit configuration to enforce changelog updates and docs/OpenAPI coverage for public endpoint structure changes.

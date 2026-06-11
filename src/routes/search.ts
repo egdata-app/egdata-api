@@ -106,6 +106,127 @@ interface PriceQuery {
   "price.discount"?: { $gt: number };
 }
 
+type ChangelogChange = Record<string, unknown> & {
+  oldValue?: unknown;
+  newValue?: unknown;
+  oldValueRaw?: unknown;
+  newValueRaw?: unknown;
+};
+
+type ChangelogSearchHit = ChangelogType & {
+  _id: string;
+  document?: unknown;
+  metadata?: Record<string, unknown> & {
+    contextType?: string;
+    contextId?: string;
+    changes?: ChangelogChange[];
+  };
+};
+
+const hasOwn = (value: object, key: string) => Object.hasOwn(value, key);
+
+const parseChangelogRawValue = (rawValue: unknown) => {
+  if (rawValue === null || rawValue === undefined) {
+    return null;
+  }
+
+  if (typeof rawValue !== "string") {
+    return rawValue;
+  }
+
+  try {
+    return JSON.parse(rawValue);
+  } catch {
+    return rawValue;
+  }
+};
+
+const normalizeChangelogValue = (
+  currentValue: unknown,
+  rawValue: unknown,
+) => {
+  if (currentValue !== null && currentValue !== undefined) {
+    return currentValue;
+  }
+
+  return parseChangelogRawValue(rawValue);
+};
+
+const toPlainChangelog = (
+  document: ChangelogType & { toObject?: () => ChangelogType },
+) => {
+  if (typeof document.toObject === "function") {
+    return document.toObject();
+  }
+
+  return document;
+};
+
+const toMongoIdCandidates = (ids: string[]) => [
+  ...ids
+    .filter((id) => ObjectId.isValid(id))
+    .map((id) => new ObjectId(id)),
+  ...ids,
+];
+
+const hydrateChangelogValues = async (hits: ChangelogSearchHit[]) => {
+  if (hits.length === 0) {
+    return hits;
+  }
+
+  const ids = Array.from(new Set(hits.map((hit) => hit._id).filter(Boolean)));
+  let mongoChangesById = new Map<string, ChangelogType>();
+
+  if (ids.length > 0) {
+    try {
+      const mongoChanges = await Changelog.find({
+        _id: { $in: toMongoIdCandidates(ids) },
+      });
+      mongoChangesById = new Map(
+        mongoChanges.map((change) => {
+          const plainChange = toPlainChangelog(change);
+          return [String(plainChange._id), plainChange];
+        }),
+      );
+    } catch {
+      mongoChangesById = new Map();
+    }
+  }
+
+  for (const hit of hits) {
+    const changes = hit.metadata?.changes;
+    if (!Array.isArray(changes)) {
+      continue;
+    }
+
+    const mongoChange = mongoChangesById.get(String(hit._id));
+    const mongoChangeItems = Array.isArray(mongoChange?.metadata?.changes)
+      ? (mongoChange.metadata.changes as ChangelogChange[])
+      : [];
+
+    hit.metadata = {
+      ...hit.metadata,
+      changes: changes.map((change, index) => {
+        const mongoChangeItem = mongoChangeItems[index];
+        const hydratedChange = { ...change };
+
+        hydratedChange.oldValue =
+          mongoChangeItem && hasOwn(mongoChangeItem, "oldValue")
+            ? mongoChangeItem.oldValue
+            : normalizeChangelogValue(change.oldValue, change.oldValueRaw);
+        hydratedChange.newValue =
+          mongoChangeItem && hasOwn(mongoChangeItem, "newValue")
+            ? mongoChangeItem.newValue
+            : normalizeChangelogValue(change.newValue, change.newValueRaw);
+
+        return hydratedChange;
+      }),
+    };
+  }
+
+  return hits;
+};
+
 function buildBaseQuery(query: SearchBody): MongoQuery {
   const mongoQuery: MongoQuery = {};
 
@@ -211,7 +332,7 @@ function buildPriceQuery(query: SearchBody): PriceQuery {
 function buildSortParams(
   query: SearchBody,
   sort: string,
-  dir: number,
+  dir: 1 | -1,
 ): Record<string, 1 | -1 | { $meta: string }> {
   let sortParams: Record<string, 1 | -1 | { $meta: string }> = {};
 
@@ -314,7 +435,7 @@ app.post("/", async (c) => {
 
   const sort = query.sortBy || "lastModifiedDate";
   const sortDir = query.sortDir || "desc";
-  const dir = sortDir === "asc" ? 1 : -1;
+  const dir: 1 | -1 = sortDir === "asc" ? 1 : -1;
 
   const mongoQuery = buildBaseQuery(query);
   const priceQuery = buildPriceQuery(query);
@@ -746,51 +867,61 @@ app.get("/changelog", async (c) => {
     },
   });
 
-  const hits = response.body.hits.hits.map((hit) => ({
+  const responseHits = response.body.hits.hits as unknown as Array<{
+    _id: string;
+    _source?: ChangelogType;
+  }>;
+  const hits = responseHits.map((hit) => ({
     ...hit._source,
     _id: hit._id,
-  })) as Array<ChangelogType & { _id: string; document?: unknown }>;
+  })) as ChangelogSearchHit[];
+
+  await hydrateChangelogValues(hits);
 
   await Promise.all(
-    hits
-      .filter((hit) => hit.metadata)
-      .map(async (hit) => {
-        const contextType = hit.metadata.contextType;
-        const contextId = hit.metadata.contextId;
-
-        if (contextType === "offer") {
-          hit.document = await Offer.findOne({ id: { $eq: contextId } });
-        }
-
-        if (contextType === "item") {
-          hit.document = await Item.findOne({ id: { $eq: contextId } });
-        }
-
-        if (contextType === "asset") {
-          const asset = await Asset.findOne({
-            artifactId: { $eq: contextId },
-          });
-
-          if (!asset?.itemId) {
-            hit.document = null;
-            return hit;
-          }
-
-          hit.document = await Item.findOne({
-            id: { $eq: asset.itemId },
-          });
-        }
-
-        if (contextType === "build") {
-          const build = await db.db.collection("builds").findOne({
-            _id: new ObjectId(contextId),
-          });
-
-          hit.document = build;
-        }
-
+    hits.map(async (hit) => {
+      if (!hit.metadata?.contextId) {
         return hit;
-      }),
+      }
+
+      const contextType = hit.metadata.contextType;
+      const contextId = hit.metadata.contextId;
+
+      if (contextType === "offer") {
+        hit.document = await Offer.findOne({ id: { $eq: contextId } });
+      }
+
+      if (contextType === "item") {
+        hit.document = await Item.findOne({ id: { $eq: contextId } });
+      }
+
+      if (contextType === "asset") {
+        const asset = await Asset.findOne({
+          artifactId: { $eq: contextId },
+        });
+
+        if (!asset?.itemId) {
+          hit.document = null;
+          return hit;
+        }
+
+        hit.document = await Item.findOne({
+          id: { $eq: asset.itemId },
+        });
+      }
+
+      if (contextType === "build") {
+        const build = ObjectId.isValid(contextId)
+          ? await db.db.collection("builds").findOne({
+              _id: new ObjectId(contextId),
+            })
+          : null;
+
+        hit.document = build;
+      }
+
+      return hit;
+    }),
   );
 
   const total = response.body.hits.total;
