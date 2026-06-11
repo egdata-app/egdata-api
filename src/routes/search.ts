@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import type { Types } from "@opensearch-project/opensearch";
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
-import { ObjectId } from "mongodb";
+import { type Document, type Filter, ObjectId } from "mongodb";
 import { opensearch } from "../clients/opensearch.js";
 import client from "../clients/redis.js";
 import { db } from "../db/index.js";
@@ -223,6 +223,84 @@ const hydrateChangelogValues = async (hits: ChangelogSearchHit[]) => {
       }),
     };
   }
+
+  return hits;
+};
+
+const resolveChangelogSearchDocument = async (
+  contextType?: string,
+  contextId?: string,
+) => {
+  if (!contextType || !contextId) {
+    return null;
+  }
+
+  if (contextType === "offer") {
+    return Offer.findOne({ id: { $eq: contextId } });
+  }
+
+  if (contextType === "item") {
+    return Item.findOne({ id: { $eq: contextId } });
+  }
+
+  if (contextType === "asset") {
+    const asset = await Asset.findOne({
+      $or: [
+        { artifactId: { $eq: contextId } },
+        { id: { $eq: contextId } },
+      ],
+    });
+
+    if (!asset?.itemId) {
+      return null;
+    }
+
+    return Item.findOne({
+      id: { $eq: asset.itemId },
+    });
+  }
+
+  if (contextType === "build") {
+    const filter = (
+      ObjectId.isValid(contextId)
+        ? {
+            $or: [
+              { _id: new ObjectId(contextId) },
+              { _id: { $eq: contextId } },
+            ],
+          }
+        : { _id: { $eq: contextId } }
+    ) as unknown as Filter<Document>;
+
+    return db.db.collection("builds").findOne(filter, {
+      projection: {
+        _id: 1,
+        appName: 1,
+        buildVersion: 1,
+      },
+    });
+  }
+
+  return null;
+};
+
+const enrichChangelogSearchDocuments = async (
+  hits: ChangelogSearchHit[],
+) => {
+  await Promise.all(
+    hits.map(async (hit) => {
+      try {
+        hit.document = await resolveChangelogSearchDocument(
+          hit.metadata?.contextType,
+          hit.metadata?.contextId,
+        );
+      } catch {
+        hit.document = null;
+      }
+
+      return hit;
+    }),
+  );
 
   return hits;
 };
@@ -878,51 +956,7 @@ app.get("/changelog", async (c) => {
 
   await hydrateChangelogValues(hits);
 
-  await Promise.all(
-    hits.map(async (hit) => {
-      if (!hit.metadata?.contextId) {
-        return hit;
-      }
-
-      const contextType = hit.metadata.contextType;
-      const contextId = hit.metadata.contextId;
-
-      if (contextType === "offer") {
-        hit.document = await Offer.findOne({ id: { $eq: contextId } });
-      }
-
-      if (contextType === "item") {
-        hit.document = await Item.findOne({ id: { $eq: contextId } });
-      }
-
-      if (contextType === "asset") {
-        const asset = await Asset.findOne({
-          artifactId: { $eq: contextId },
-        });
-
-        if (!asset?.itemId) {
-          hit.document = null;
-          return hit;
-        }
-
-        hit.document = await Item.findOne({
-          id: { $eq: asset.itemId },
-        });
-      }
-
-      if (contextType === "build") {
-        const build = ObjectId.isValid(contextId)
-          ? await db.db.collection("builds").findOne({
-              _id: new ObjectId(contextId),
-            })
-          : null;
-
-        hit.document = build;
-      }
-
-      return hit;
-    }),
-  );
+  await enrichChangelogSearchDocuments(hits);
 
   const total = response.body.hits.total;
   const estimatedTotalHits =
@@ -954,43 +988,9 @@ app.get("/changelog", async (c) => {
     const fallbackResponseHits = fallbackHits.map((hit) => ({
       ...hit.toObject(),
       _id: String(hit._id),
-    })) as Array<ChangelogType & { _id: string; document?: unknown }>;
+    })) as ChangelogSearchHit[];
 
-    await Promise.all(
-      fallbackResponseHits
-        .filter((hit) => hit.metadata)
-        .map(async (hit) => {
-          const contextType = hit.metadata.contextType;
-          const contextId = hit.metadata.contextId;
-
-          if (contextType === "offer") {
-            hit.document = await Offer.findOne({ id: { $eq: contextId } });
-          }
-
-          if (contextType === "item") {
-            hit.document = await Item.findOne({ id: { $eq: contextId } });
-          }
-
-          if (contextType === "asset") {
-            const asset = await Asset.findOne({ artifactId: { $eq: contextId } });
-            if (!asset?.itemId) {
-              hit.document = null;
-              return hit;
-            }
-
-            hit.document = await Item.findOne({ id: { $eq: asset.itemId } });
-          }
-
-          if (contextType === "build") {
-            const build = await db.db.collection("builds").findOne({
-              _id: new ObjectId(contextId),
-            });
-            hit.document = build;
-          }
-
-          return hit;
-        }),
-    );
+    await enrichChangelogSearchDocuments(fallbackResponseHits);
 
     return c.json(
       {

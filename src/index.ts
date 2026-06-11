@@ -918,58 +918,23 @@ app.get("/changelist", async (ctx) => {
     },
   );
 
-  /**
-   * Returns the affected offer, item, asset for each changelog
-   */
-  const elements = await Promise.all(
+  const result = await Promise.all(
     changelist.map(async (change) => {
-      switch (change.metadata.contextType) {
-        case "offer":
-          return Offer.findOne(
-            { id: change.metadata.contextId },
-            {
-              id: 1,
-              title: 1,
-              keyImages: 1,
-              offerType: 1,
-            },
-          );
-        case "item":
-          return Item.findOne(
-            { id: change.metadata.contextId },
-            {
-              id: 1,
-              title: 1,
-              keyImages: 1,
-            },
-          );
-        case "asset":
-          return Asset.findOne(
-            { id: change.metadata.contextId },
-            {
-              id: 1,
-              artifactId: 1,
-            },
-          );
-        default:
-          return null;
-      }
+      const changeObject = change.toObject();
+      const context = await resolveChangelogContextSafely(
+        changeObject.metadata?.contextType,
+        changeObject.metadata?.contextId,
+      );
+
+      return {
+        ...changeObject,
+        metadata: {
+          ...changeObject.metadata,
+          context,
+        },
+      };
     }),
   );
-
-  const result = changelist.map((change) => {
-    const element = elements.find(
-      (e) => e?.toObject().id === change.metadata.contextId,
-    );
-
-    return {
-      ...change.toObject(),
-      metadata: {
-        ...change.toObject().metadata,
-        context: element?.toObject(),
-      },
-    };
-  });
 
   await client.set(cacheKey, JSON.stringify(result), "EX", 60);
 

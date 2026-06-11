@@ -66,6 +66,7 @@ export const resolveChangelogContext = async (
       return toPlainContext(
         await Asset.findOne(
           {
+            // Changelog producers may store either asset.artifactId or asset.id.
             $or: [
               { artifactId: { $eq: contextId } },
               { id: { $eq: contextId } },
@@ -80,7 +81,13 @@ export const resolveChangelogContext = async (
       );
     case "build":
       return toPlainContext(
-        await db.db.collection("builds").findOne(buildIdFilter(contextId)),
+        await db.db.collection("builds").findOne(buildIdFilter(contextId), {
+          projection: {
+            _id: 1,
+            appName: 1,
+            buildVersion: 1,
+          },
+        }),
       );
     default:
       return null;

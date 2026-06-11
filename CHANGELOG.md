@@ -5,6 +5,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 ## Unreleased
 
 - Normalized free-game promotion responses so `countriesBlacklist`, `giveaway.offerId`, and `giveaway.platform` keep a stable shape.
+- Documented changelog context/search enrichment fields and made changelist list context enrichment use the shared safe resolver.
 - Fixed changelog search responses to hydrate old/new change values and made changelist detail context enrichment more resilient.
 - Added a public GraphQL `profile(id)` query for profile identity, highlights, featured games, achievements, and recent activity.
 - Added a GraphQL `sandboxHub` query that aggregates sandbox product data for user-facing product pages.

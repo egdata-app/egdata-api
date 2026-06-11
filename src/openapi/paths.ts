@@ -1213,11 +1213,46 @@ export const paths: EgdataPaths = {
       }),
     }),
   },
+  "/changelist": {
+    get: operation({
+      operationId: "listChangelist",
+      tags: ["Changelog"],
+      summary: "List recent changelog records",
+      description:
+        "Returns recent changelog entries with best-effort `metadata.context` enrichment. Context is null when unavailable.",
+      parameters: pagination,
+      response: arrayOf(ref("ChangelogEntry")),
+    }),
+  },
+  "/changelist/{id}": {
+    get: operation({
+      operationId: "getChangelistEntry",
+      tags: ["Changelog"],
+      summary: "Get a changelog record",
+      description:
+        "Returns a single changelog entry with best-effort `metadata.context` enrichment. Missing changelog IDs return 404.",
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          required: true,
+          description: "Mongo changelog document identifier.",
+          schema: {
+            type: "string",
+            example: "6a2ac641bfc3cf2a0efc8507",
+          },
+        },
+      ],
+      response: ref("ChangelogEntry"),
+    }),
+  },
   "/search/changelog": {
     get: operation({
       operationId: "searchChangelog",
       tags: ["Search"],
       summary: "Search changelog records",
+      description:
+        "Searches changelog entries and hydrates `metadata.changes[].oldValue` and `newValue` from canonical Mongo records or raw OpenSearch values. Search hits include best-effort `document` enrichment.",
       parameters: [
         stringQuery("query", "Search text."),
         stringQuery("type", "Optional context type filter.", "offer"),

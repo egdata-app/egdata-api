@@ -8,7 +8,7 @@ import {
   it,
   vi,
 } from "vitest";
-import { Changelog } from "../src/models/index.js";
+import { Changelog, Offer } from "../src/models/index.js";
 import SearchRoute from "../src/routes/search.js";
 import { loadSeaQaOffers, type SeaQaOffer } from "./fixtures/seaqa.js";
 
@@ -327,5 +327,32 @@ describe("search route with SeaQA fixtures", () => {
     expect(deleteChange.oldValue).toBe(42);
     expect(deleteChange.newValue).toBeNull();
     expect(arrayChange.oldValueRaw).toBe("[1,2]");
+  });
+
+  it("keeps /search/changelog available when document enrichment fails", async () => {
+    const id = "6a2abf73cdd9e513e4910af1";
+    mocks.opensearchSearch.mockResolvedValueOnce(
+      changelogSearchResponse([
+        {
+          _id: id,
+          _source: {
+            timestamp: "2026-06-11T14:00:00.000Z",
+            metadata: {
+              contextType: "offer",
+              contextId: "offer-1",
+              changes: [],
+            },
+          },
+        },
+      ]),
+    );
+    mockChangelogFind([]);
+    vi.spyOn(Offer, "findOne").mockRejectedValue(new Error("lookup timed out"));
+
+    const res = await app.request("/search/changelog?query=&page=1&limit=1");
+    expect(res.status).toBe(200);
+
+    const body = await res.json();
+    expect(body.hits[0].document).toBeNull();
   });
 });

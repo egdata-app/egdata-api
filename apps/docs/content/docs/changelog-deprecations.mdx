@@ -9,6 +9,10 @@ The API evolves with Epic Games Store data and with the internal schemas used by
 
 Changelog endpoints expose observed changes in catalog data, including offer and item updates. Use these routes when you need to sync downstream systems without polling every resource.
 
+`GET /search/changelog` is the search-optimized route. Each hit includes `metadata.changes[]` entries where `oldValue` and `newValue` are hydrated from canonical changelog records when available, or parsed from `oldValueRaw` and `newValueRaw` when the search index only has raw values. Raw fields may still be present for compatibility.
+
+`GET /changelist` and `GET /changelist/{id}` return recent or specific changelog records with best-effort `metadata.context` enrichment. Context lookups cover offer, item, asset, and build records; asset context IDs may match either `artifactId` or `id`. When enrichment is unavailable or times out, the changelog record is still returned with `metadata.context` set to `null`.
+
 ## Deprecations
 
 Deprecated fields and endpoints remain available only for a compatibility window. Prefer replacement fields from the OpenAPI reference as soon as they are documented.

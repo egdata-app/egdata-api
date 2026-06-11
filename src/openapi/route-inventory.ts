@@ -248,16 +248,6 @@ export const routeClassifications: RouteClassification[] = [
     reason: "Legacy changelog route; search/changelog is documented first.",
   },
   {
-    path: "/changelist/**",
-    visibility: "public-deferred",
-    reason: "Public changelog route; deferred to changelog docs pass.",
-  },
-  {
-    path: "/changelist",
-    visibility: "public-deferred",
-    reason: "Public changelog route; deferred to changelog docs pass.",
-  },
-  {
     path: "/collections/**",
     visibility: "public-deferred",
     reason: "Public collection data; outside first documentation slice.",
