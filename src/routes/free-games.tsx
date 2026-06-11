@@ -25,6 +25,69 @@ import { orderOffersObject } from "../utils/order-offers-object.js";
 
 const app = new Hono();
 
+const toPlainObject = (value: unknown): Record<string, unknown> => {
+  if (!value || typeof value !== "object") {
+    return {};
+  }
+
+  const candidate = value as { toObject?: unknown };
+  if (typeof candidate.toObject === "function") {
+    return candidate.toObject() as Record<string, unknown>;
+  }
+
+  return value as Record<string, unknown>;
+};
+
+const normalizeCountriesBlacklist = (value: unknown) => {
+  if (Array.isArray(value)) {
+    return value.filter(
+      (country): country is string => typeof country === "string",
+    );
+  }
+
+  if (typeof value === "string" && value.length > 0) {
+    return [value];
+  }
+
+  return [];
+};
+
+const normalizeFreeGamesOffer = (offer: OfferType) => {
+  const orderedOffer = orderOffersObject(offer);
+
+  return {
+    ...orderedOffer,
+    countriesBlacklist: normalizeCountriesBlacklist(
+      orderedOffer.countriesBlacklist,
+    ),
+  };
+};
+
+const normalizeGiveaway = (
+  giveaway: unknown,
+  offerId: string,
+  historical?: unknown,
+) => {
+  const giveawayObject = toPlainObject(giveaway);
+  const normalized: Record<string, unknown> = {
+    ...giveawayObject,
+    offerId:
+      typeof giveawayObject.offerId === "string"
+        ? giveawayObject.offerId
+        : offerId,
+    platform:
+      typeof giveawayObject.platform === "string"
+        ? giveawayObject.platform
+        : null,
+  };
+
+  if (historical !== undefined) {
+    normalized.historical = historical;
+  }
+
+  return normalized;
+};
+
 app.get("/", async (c) => {
   const now = new Date();
   const country = c.req.query("country");
@@ -45,7 +108,7 @@ app.get("/", async (c) => {
 
   const fetchOfferAndPriceAndHistory = async <H,>(
     offerId: string,
-    getHistory: () => Promise<H>,
+    getHistory: () => PromiseLike<H>,
   ) => {
     const [offerR, priceR, histR] = await Promise.allSettled([
       Offer.findOne({ id: offerId }),
@@ -105,26 +168,29 @@ app.get("/", async (c) => {
   const freeGames = unwrap(freeGamesR) ?? [];
   const mobileFreebies = unwrap(mobileFreebiesR) ?? [];
 
-  type Source<G, H> = {
-    list: G[];
-    getOfferId: (g: G) => string;
-    getHistory: (offerId: string) => Promise<H>;
-    toPojo: (g: G) => any;
+  type Source = {
+    list: Array<Record<string, unknown>>;
+    getOfferId: (g: Record<string, unknown>) => string;
+    getHistory: (offerId: string) => PromiseLike<unknown>;
+    toPojo: (g: unknown) => Record<string, unknown>;
   };
 
-  const sources: Array<Source<any, any>> = [
+  const getStringField = (record: Record<string, unknown>, key: string) =>
+    typeof record[key] === "string" ? record[key] : "";
+
+  const sources: Source[] = [
     {
-      list: freeGames,
-      getOfferId: (g: any) => g.id,
+      list: freeGames as Array<Record<string, unknown>>,
+      getOfferId: (g) => getStringField(g, "id"),
       getHistory: (id: string) => FreeGames.find({ id }),
-      toPojo: (g: any) => (typeof g.toObject === "function" ? g.toObject() : g),
+      toPojo: toPlainObject,
     },
     {
-      list: mobileFreebies,
-      getOfferId: (g: any) => g.offerId,
+      list: mobileFreebies as Array<Record<string, unknown>>,
+      getOfferId: (g) => getStringField(g, "offerId"),
       getHistory: (offerId: string) =>
         db.db.collection("mobile-freebies").findOne({ offerId }),
-      toPojo: (g: any) => g, // already POJO
+      toPojo: toPlainObject,
     },
   ];
 
@@ -138,20 +204,23 @@ app.get("/", async (c) => {
         );
 
         if (!offer) {
-          return { giveaway: game };
+          return {
+            giveaway: normalizeGiveaway(
+              src.toPojo(game),
+              offerId,
+              historical ?? null,
+            ),
+          };
         }
 
         const items = await fetchItemsForOffer(offer);
 
         return {
-          ...orderOffersObject(
+          ...normalizeFreeGamesOffer(
             typeof offer.toObject === "function" ? offer.toObject() : offer,
           ),
           items,
-          giveaway: {
-            ...src.toPojo(game),
-            historical: historical ?? (Array.isArray(historical) ? [] : null),
-          },
+          giveaway: normalizeGiveaway(src.toPojo(game), offerId, historical ?? null),
           price: price ?? null,
         };
       }),
@@ -910,8 +979,8 @@ app.get("/mobile", async (c) => {
       });
 
       return {
-        ...orderOffersObject(offer?.toObject()),
-        giveaway: game,
+        ...normalizeFreeGamesOffer(offer?.toObject()),
+        giveaway: normalizeGiveaway(game, game.offerId),
         price: price ?? null,
       };
     }),

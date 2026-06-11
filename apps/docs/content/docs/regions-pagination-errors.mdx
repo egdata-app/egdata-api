@@ -21,6 +21,8 @@ Common region examples:
 
 If a region is unsupported or unavailable, routes may fall back to a default region or return an empty result, depending on the endpoint.
 
+Free-game promotion routes normalize availability metadata for clients. `countriesBlacklist` is always an array, `giveaway.offerId` is always present, and `giveaway.platform` is a string for platform-specific promotions or `null` otherwise.
+
 ## Pagination
 
 Paginated endpoints use query parameters such as `page`, `limit`, `offset`, or route-specific cursors. Prefer the names documented on each OpenAPI operation.

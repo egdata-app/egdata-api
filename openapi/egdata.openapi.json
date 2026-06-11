@@ -5997,6 +5997,135 @@
         }
       }
     },
+    "/changelist": {
+      "get": {
+        "operationId": "listChangelist",
+        "tags": [
+          "Changelog"
+        ],
+        "summary": "List recent changelog records",
+        "description": "Returns recent changelog entries with best-effort `metadata.context` enrichment. Context is null when unavailable.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChangelogEntry"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/changelist/{id}": {
+      "get": {
+        "operationId": "getChangelistEntry",
+        "tags": [
+          "Changelog"
+        ],
+        "summary": "Get a changelog record",
+        "description": "Returns a single changelog entry with best-effort `metadata.context` enrichment. Missing changelog IDs return 404.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Mongo changelog document identifier.",
+            "schema": {
+              "type": "string",
+              "example": "6a2ac641bfc3cf2a0efc8507"
+            }
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangelogEntry"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/search/changelog": {
       "get": {
         "operationId": "searchChangelog",
@@ -6004,6 +6133,7 @@
           "Search"
         ],
         "summary": "Search changelog records",
+        "description": "Searches changelog entries and hydrates `metadata.changes[].oldValue` and `newValue` from canonical Mongo records or raw OpenSearch values. Search hits include best-effort `document` enrichment.",
         "parameters": [
           {
             "name": "query",
@@ -7042,6 +7172,82 @@
           }
         }
       },
+      "Giveaway": {
+        "type": "object",
+        "description": "Free-game promotion metadata.",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "offerId": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "historical": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "FreeGameOffer": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Offer"
+          },
+          {
+            "type": "object",
+            "additionalProperties": true,
+            "required": [
+              "countriesBlacklist",
+              "giveaway"
+            ],
+            "properties": {
+              "countriesBlacklist": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "giveaway": {
+                "$ref": "#/components/schemas/Giveaway"
+              },
+              "price": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Price"
+                  }
+                ],
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
       "OfferListResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -7589,6 +7795,106 @@
           }
         }
       },
+      "ChangelogChange": {
+        "type": "object",
+        "description": "Single field-level changelog delta.",
+        "additionalProperties": true,
+        "properties": {
+          "changeType": {
+            "type": "string",
+            "nullable": true
+          },
+          "action": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "field": {
+            "type": "string",
+            "nullable": true
+          },
+          "oldValue": {
+            "description": "Parsed changelog value. May be an object, array, boolean, number, string, or null.",
+            "nullable": true
+          },
+          "newValue": {
+            "description": "Parsed changelog value. May be an object, array, boolean, number, string, or null.",
+            "nullable": true
+          },
+          "oldValueRaw": {
+            "description": "Raw OpenSearch value retained for compatibility when present.",
+            "nullable": true
+          },
+          "newValueRaw": {
+            "description": "Raw OpenSearch value retained for compatibility when present.",
+            "nullable": true
+          }
+        }
+      },
+      "ChangelogContext": {
+        "type": "object",
+        "description": "Best-effort context document for a changelog entry. Null when enrichment is unavailable.",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "artifactId": {
+            "type": "string",
+            "nullable": true
+          },
+          "appName": {
+            "type": "string",
+            "nullable": true
+          },
+          "buildVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ChangelogMetadata": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "contextType": {
+            "type": "string",
+            "nullable": true,
+            "description": "Kind of document that changed, such as offer, item, asset, product-home, or build."
+          },
+          "contextId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Identifier used to resolve the changed document or context."
+          },
+          "context": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ChangelogContext"
+              }
+            ],
+            "nullable": true
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChangelogChange"
+            }
+          }
+        }
+      },
       "Price": {
         "type": "object",
         "description": "Regional offer price from the price engine.",
@@ -7682,11 +7988,7 @@
         "type": "array",
         "description": "Current and upcoming Epic free game promotions, enriched with giveaway and regional price data.",
         "items": {
-          "allOf": [
-            {
-              "$ref": "#/components/schemas/Offer"
-            }
-          ]
+          "$ref": "#/components/schemas/FreeGameOffer"
         }
       },
       "ChangelogEntry": {
@@ -7702,8 +8004,29 @@
             "format": "date-time"
           },
           "metadata": {
-            "type": "object",
-            "additionalProperties": true
+            "$ref": "#/components/schemas/ChangelogMetadata"
+          },
+          "document": {
+            "description": "Best-effort document associated with search results. Null when enrichment is unavailable.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Offer"
+              },
+              {
+                "$ref": "#/components/schemas/Item"
+              },
+              {
+                "$ref": "#/components/schemas/Asset"
+              },
+              {
+                "$ref": "#/components/schemas/Build"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              }
+            ]
           }
         }
       },

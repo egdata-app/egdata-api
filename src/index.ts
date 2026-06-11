@@ -54,6 +54,7 @@ import UsersRoute from "./routes/users.js";
 import UsersServiceRoute from "./routes/users-service.js";
 import { attributesToObject } from "./utils/attributes-to-object.js";
 import { countries, regions } from "./utils/countries.js";
+import { resolveChangelogContextSafely } from "./utils/changelog-context.js";
 import { getFeaturedGames } from "./utils/get-featured-games.js";
 import { consola } from "./utils/logger.js";
 import { orderOffersObject } from "./utils/order-offers-object.js";
@@ -917,58 +918,23 @@ app.get("/changelist", async (ctx) => {
     },
   );
 
-  /**
-   * Returns the affected offer, item, asset for each changelog
-   */
-  const elements = await Promise.all(
+  const result = await Promise.all(
     changelist.map(async (change) => {
-      switch (change.metadata.contextType) {
-        case "offer":
-          return Offer.findOne(
-            { id: change.metadata.contextId },
-            {
-              id: 1,
-              title: 1,
-              keyImages: 1,
-              offerType: 1,
-            },
-          );
-        case "item":
-          return Item.findOne(
-            { id: change.metadata.contextId },
-            {
-              id: 1,
-              title: 1,
-              keyImages: 1,
-            },
-          );
-        case "asset":
-          return Asset.findOne(
-            { id: change.metadata.contextId },
-            {
-              id: 1,
-              artifactId: 1,
-            },
-          );
-        default:
-          return null;
-      }
+      const changeObject = change.toObject();
+      const context = await resolveChangelogContextSafely(
+        changeObject.metadata?.contextType,
+        changeObject.metadata?.contextId,
+      );
+
+      return {
+        ...changeObject,
+        metadata: {
+          ...changeObject.metadata,
+          context,
+        },
+      };
     }),
   );
-
-  const result = changelist.map((change) => {
-    const element = elements.find(
-      (e) => e?.toObject().id === change.metadata.contextId,
-    );
-
-    return {
-      ...change.toObject(),
-      metadata: {
-        ...change.toObject().metadata,
-        context: element?.toObject(),
-      },
-    };
-  });
 
   await client.set(cacheKey, JSON.stringify(result), "EX", 60);
 
@@ -997,48 +963,17 @@ app.get("/changelist/:id", async (ctx) => {
     return ctx.json({ message: "Change not found" }, 404);
   }
 
-  let element = null;
-  switch (change.metadata.contextType) {
-    case "offer":
-      element = await Offer.findOne(
-        { id: change.metadata.contextId },
-        {
-          id: 1,
-          title: 1,
-          keyImages: 1,
-          offerType: 1,
-          namespace: 1,
-        },
-      );
-      break;
-    case "item":
-      element = await Item.findOne(
-        { id: change.metadata.contextId },
-        {
-          id: 1,
-          title: 1,
-          keyImages: 1,
-          namespace: 1,
-        },
-      );
-      break;
-    case "asset":
-      element = await Asset.findOne(
-        { id: { $eq: change.metadata.contextId } },
-        {
-          id: 1,
-          artifactId: 1,
-          namespace: 1,
-        },
-      );
-      break;
-  }
+  const changeObject = change.toObject();
+  const context = await resolveChangelogContextSafely(
+    changeObject.metadata?.contextType,
+    changeObject.metadata?.contextId,
+  );
 
   const result = {
-    ...change.toObject(),
+    ...changeObject,
     metadata: {
-      ...change.toObject().metadata,
-      context: element?.toObject(),
+      ...changeObject.metadata,
+      context,
     },
   };
 

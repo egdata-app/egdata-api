@@ -8,6 +8,7 @@ import {
   it,
   vi,
 } from "vitest";
+import { Changelog, Offer } from "../src/models/index.js";
 import SearchRoute from "../src/routes/search.js";
 import { loadSeaQaOffers, type SeaQaOffer } from "./fixtures/seaqa.js";
 
@@ -22,6 +23,26 @@ const mocks = vi.hoisted(() => ({
   opensearchSearch: vi.fn(),
   redisSet: vi.fn(),
 }));
+
+const changelogSearchResponse = (
+  hits: Array<{ _id: string; _source: Record<string, unknown> }>,
+) => ({
+  body: {
+    took: 5,
+    timed_out: false,
+    hits: {
+      total: { value: hits.length, relation: "eq" },
+      hits,
+    },
+  },
+});
+
+const mockChangelogFind = (documents: unknown[]) =>
+  vi
+    .spyOn(Changelog, "find")
+    .mockReturnValue(
+      Promise.resolve(documents) as unknown as ReturnType<typeof Changelog.find>,
+    );
 
 vi.mock("../src/clients/opensearch.js", () => ({
   opensearch: {
@@ -89,6 +110,7 @@ describe("search route with SeaQA fixtures", () => {
 
   afterEach(() => {
     consoleLogSpy.mockRestore();
+    vi.restoreAllMocks();
   });
 
   it("maps fixture-backed OpenSearch hits through /search/v2/search", async () => {
@@ -190,5 +212,147 @@ describe("search route with SeaQA fixtures", () => {
         }),
       }),
     );
+  });
+
+  it("hydrates /search/changelog old and new values from Mongo", async () => {
+    const id = "6a2ac641bfc3cf2a0efc8507";
+    mocks.opensearchSearch.mockResolvedValueOnce(
+      changelogSearchResponse([
+        {
+          _id: id,
+          _source: {
+            timestamp: "2026-06-11T14:29:00.000Z",
+            metadata: {
+              contextType: "product-home",
+              contextId: "home-page",
+              changes: [
+                {
+                  changeType: "update",
+                  field: "hero",
+                  oldValue: null,
+                  newValue: null,
+                  oldValueRaw: '{"title":"indexed old"}',
+                  newValueRaw: '{"title":"indexed new"}',
+                },
+              ],
+            },
+          },
+        },
+      ]),
+    );
+    mockChangelogFind([
+      {
+        _id: id,
+        metadata: {
+          changes: [
+            {
+              changeType: "update",
+              field: "hero",
+              oldValue: { title: "mongo old" },
+              newValue: { title: "mongo new" },
+            },
+          ],
+        },
+        toObject() {
+          return this;
+        },
+      },
+    ]);
+
+    const res = await app.request("/search/changelog?query=&page=1&limit=1");
+    expect(res.status).toBe(200);
+
+    const body = await res.json();
+    const change = body.hits[0].metadata.changes[0];
+    expect(change.oldValue).toEqual({ title: "mongo old" });
+    expect(change.newValue).toEqual({ title: "mongo new" });
+    expect(change.oldValueRaw).toBe('{"title":"indexed old"}');
+    expect(change.newValueRaw).toBe('{"title":"indexed new"}');
+  });
+
+  it("hydrates /search/changelog values from raw OpenSearch values", async () => {
+    const id = "6a2abf73cdd9e513e4910af0";
+    mocks.opensearchSearch.mockResolvedValueOnce(
+      changelogSearchResponse([
+        {
+          _id: id,
+          _source: {
+            timestamp: "2026-06-11T14:00:00.000Z",
+            metadata: {
+              contextType: "product-home",
+              contextId: "home-page",
+              changes: [
+                {
+                  changeType: "update",
+                  field: "array",
+                  oldValue: null,
+                  newValue: null,
+                  oldValueRaw: "[1,2]",
+                  newValueRaw: '{"ok":true}',
+                },
+                {
+                  changeType: "update",
+                  field: "string",
+                  oldValue: null,
+                  newValue: null,
+                  oldValueRaw: '"quoted"',
+                  newValueRaw: "plain text",
+                },
+                {
+                  changeType: "delete",
+                  field: "removed",
+                  oldValue: null,
+                  newValue: null,
+                  oldValueRaw: "42",
+                  newValueRaw: null,
+                },
+              ],
+            },
+          },
+        },
+      ]),
+    );
+    mockChangelogFind([]);
+
+    const res = await app.request("/search/changelog?query=&page=1&limit=1");
+    expect(res.status).toBe(200);
+
+    const body = await res.json();
+    const [arrayChange, stringChange, deleteChange] =
+      body.hits[0].metadata.changes;
+    expect(arrayChange.oldValue).toEqual([1, 2]);
+    expect(arrayChange.newValue).toEqual({ ok: true });
+    expect(stringChange.oldValue).toBe("quoted");
+    expect(stringChange.newValue).toBe("plain text");
+    expect(deleteChange.oldValue).toBe(42);
+    expect(deleteChange.newValue).toBeNull();
+    expect(arrayChange.oldValueRaw).toBe("[1,2]");
+  });
+
+  it("keeps /search/changelog available when document enrichment fails", async () => {
+    const id = "6a2abf73cdd9e513e4910af1";
+    mocks.opensearchSearch.mockResolvedValueOnce(
+      changelogSearchResponse([
+        {
+          _id: id,
+          _source: {
+            timestamp: "2026-06-11T14:00:00.000Z",
+            metadata: {
+              contextType: "offer",
+              contextId: "offer-1",
+              changes: [],
+            },
+          },
+        },
+      ]),
+    );
+    mockChangelogFind([]);
+    vi.spyOn(Offer, "findOne").mockRejectedValue(new Error("lookup timed out"));
+
+    const res = await app.request("/search/changelog?query=&page=1&limit=1");
+    expect(res.status).toBe(200);
+
+    const body = await res.json();
+    expect(body.hits[0].document).toBeNull();
   });
 });

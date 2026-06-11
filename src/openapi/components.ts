@@ -18,6 +18,12 @@ const flexibleObject = (
   properties,
 });
 
+const changelogValue: OpenAPIV3.SchemaObject = {
+  description:
+    "Parsed changelog value. May be an object, array, boolean, number, string, or null.",
+  nullable: true,
+};
+
 export const commonParameters = {
   country: {
     name: "country",
@@ -311,6 +317,44 @@ export const components: OpenAPIV3.ComponentsObject = {
         nullable: true,
       },
     }),
+    Giveaway: flexibleObject("Free-game promotion metadata.", {
+      id: { type: "string", nullable: true },
+      offerId: { type: "string" },
+      platform: { type: "string", nullable: true },
+      title: { type: "string", nullable: true },
+      namespace: { type: "string", nullable: true },
+      startDate: stringDate,
+      endDate: stringDate,
+      historical: {
+        type: "array",
+        nullable: true,
+        items: {
+          type: "object",
+          additionalProperties: true,
+        },
+      },
+    }),
+    FreeGameOffer: {
+      allOf: [
+        { $ref: "#/components/schemas/Offer" },
+        {
+          type: "object",
+          additionalProperties: true,
+          required: ["countriesBlacklist", "giveaway"],
+          properties: {
+            countriesBlacklist: {
+              type: "array",
+              items: { type: "string" },
+            },
+            giveaway: { $ref: "#/components/schemas/Giveaway" },
+            price: {
+              allOf: [{ $ref: "#/components/schemas/Price" }],
+              nullable: true,
+            },
+          },
+        },
+      ],
+    },
     OfferListResponse: {
       type: "object",
       additionalProperties: false,
@@ -598,6 +642,61 @@ export const components: OpenAPIV3.ComponentsObject = {
         offset: { type: "integer" },
       },
     },
+    ChangelogChange: flexibleObject("Single field-level changelog delta.", {
+      changeType: { type: "string", nullable: true },
+      action: { type: "string", nullable: true },
+      type: { type: "string", nullable: true },
+      field: { type: "string", nullable: true },
+      oldValue: changelogValue,
+      newValue: changelogValue,
+      oldValueRaw: {
+        description:
+          "Raw OpenSearch value retained for compatibility when present.",
+        nullable: true,
+      },
+      newValueRaw: {
+        description:
+          "Raw OpenSearch value retained for compatibility when present.",
+        nullable: true,
+      },
+    }),
+    ChangelogContext: flexibleObject(
+      "Best-effort context document for a changelog entry. Null when enrichment is unavailable.",
+      {
+        id: { type: "string", nullable: true },
+        artifactId: { type: "string", nullable: true },
+        appName: { type: "string", nullable: true },
+        buildVersion: { type: "string", nullable: true },
+        title: { type: "string", nullable: true },
+        namespace: { type: "string", nullable: true },
+      },
+    ),
+    ChangelogMetadata: {
+      type: "object",
+      additionalProperties: true,
+      properties: {
+        contextType: {
+          type: "string",
+          nullable: true,
+          description:
+            "Kind of document that changed, such as offer, item, asset, product-home, or build.",
+        },
+        contextId: {
+          type: "string",
+          nullable: true,
+          description:
+            "Identifier used to resolve the changed document or context.",
+        },
+        context: {
+          allOf: [{ $ref: "#/components/schemas/ChangelogContext" }],
+          nullable: true,
+        },
+        changes: {
+          type: "array",
+          items: { $ref: "#/components/schemas/ChangelogChange" },
+        },
+      },
+    },
     Price: flexibleObject("Regional offer price from the price engine.", {
       offerId: { type: "string" },
       region: { type: "string" },
@@ -641,7 +740,7 @@ export const components: OpenAPIV3.ComponentsObject = {
       description:
         "Current and upcoming Epic free game promotions, enriched with giveaway and regional price data.",
       items: {
-        allOf: [{ $ref: "#/components/schemas/Offer" }],
+        $ref: "#/components/schemas/FreeGameOffer",
       },
     },
     ChangelogEntry: flexibleObject(
@@ -650,8 +749,22 @@ export const components: OpenAPIV3.ComponentsObject = {
         _id: { type: "string" },
         timestamp: stringDate,
         metadata: {
-          type: "object",
-          additionalProperties: true,
+          $ref: "#/components/schemas/ChangelogMetadata",
+        },
+        document: {
+          description:
+            "Best-effort document associated with search results. Null when enrichment is unavailable.",
+          nullable: true,
+          oneOf: [
+            { $ref: "#/components/schemas/Offer" },
+            { $ref: "#/components/schemas/Item" },
+            { $ref: "#/components/schemas/Asset" },
+            { $ref: "#/components/schemas/Build" },
+            {
+              type: "object",
+              additionalProperties: true,
+            },
+          ],
         },
       },
     ),
