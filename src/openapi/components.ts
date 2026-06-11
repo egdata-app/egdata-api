@@ -311,6 +311,44 @@ export const components: OpenAPIV3.ComponentsObject = {
         nullable: true,
       },
     }),
+    Giveaway: flexibleObject("Free-game promotion metadata.", {
+      id: { type: "string", nullable: true },
+      offerId: { type: "string" },
+      platform: { type: "string", nullable: true },
+      title: { type: "string", nullable: true },
+      namespace: { type: "string", nullable: true },
+      startDate: stringDate,
+      endDate: stringDate,
+      historical: {
+        type: "array",
+        nullable: true,
+        items: {
+          type: "object",
+          additionalProperties: true,
+        },
+      },
+    }),
+    FreeGameOffer: {
+      allOf: [
+        { $ref: "#/components/schemas/Offer" },
+        {
+          type: "object",
+          additionalProperties: true,
+          required: ["countriesBlacklist", "giveaway"],
+          properties: {
+            countriesBlacklist: {
+              type: "array",
+              items: { type: "string" },
+            },
+            giveaway: { $ref: "#/components/schemas/Giveaway" },
+            price: {
+              allOf: [{ $ref: "#/components/schemas/Price" }],
+              nullable: true,
+            },
+          },
+        },
+      ],
+    },
     OfferListResponse: {
       type: "object",
       additionalProperties: false,
@@ -641,7 +679,7 @@ export const components: OpenAPIV3.ComponentsObject = {
       description:
         "Current and upcoming Epic free game promotions, enriched with giveaway and regional price data.",
       items: {
-        allOf: [{ $ref: "#/components/schemas/Offer" }],
+        $ref: "#/components/schemas/FreeGameOffer",
       },
     },
     ChangelogEntry: flexibleObject(
