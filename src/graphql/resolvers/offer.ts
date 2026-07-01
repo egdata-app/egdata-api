@@ -1,39 +1,53 @@
+import type { IResolvers } from "@graphql-tools/utils";
+import { db } from "../../db/index.js";
 import {
-  Offer,
-  type OfferType,
-  Item,
-  Build,
+  AchievementSet,
   Franchise,
   FreeGames,
-  Ratings,
-  Hltb,
   GamePosition,
-  TagModel,
+  Hltb,
+  Item,
+  Offer,
   PriceEngine,
-  PriceEngineHistorical,
-  Tags,
+  Ratings,
   Sandbox,
-  AchievementSet,
+  TagModel,
+  Tags,
 } from "../../models/index.js";
-import type { IResolvers } from "@graphql-tools/utils";
-import type { Context } from "../index.js";
-import { buildProjection } from "../../utils/projection.js";
-import { regions } from "../../utils/countries.js";
-import { orderOffersObject } from "../../utils/order-offers-object.js";
-import { db } from "../../db/index.js";
-import { attributesToObject } from "../../utils/attributes-to-object.js";
-import { getGameFeatures } from "../../utils/game-features.js";
-import { getOfferSubItems } from "../../utils/get-offer-sub-items.js";
-import { getImage } from "../../utils/get-image.js";
 import { ageRatingsCountries } from "../../utils/age-ratings.js";
+import { attributesToObject } from "../../utils/attributes-to-object.js";
+import { regions } from "../../utils/countries.js";
+import { getGameFeatures } from "../../utils/game-features.js";
+import { getImage } from "../../utils/get-image.js";
+import { getOfferSubItems } from "../../utils/get-offer-sub-items.js";
+import {
+  localizeOffer,
+  localizeOffers,
+} from "../../utils/offer-localization.js";
+import { orderOffersObject } from "../../utils/order-offers-object.js";
+import { buildProjection } from "../../utils/projection.js";
+import type { Context } from "../index.js";
+import {
+  resolveGraphqlLocale,
+  withOfferLocalizationProjection,
+} from "../locale.js";
 
 const resolvers: IResolvers<any, Context> = {
   Query: {
-    offer: async (_, { id }, context, info) => {
-      const projection = buildProjection(info, "Offer");
-      return Offer.findOne({ id }, projection).lean();
+    offer: async (_, { id, locale: requestedLocale }, _context, info) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale });
+      const projection = withOfferLocalizationProjection(
+        buildProjection(info, "Offer"),
+      );
+      const offer = await Offer.findOne({ id }, projection).lean();
+      if (!offer) return null;
+      return localizeOffer(offer, locale);
     },
-    offers: async (_, { limit = 10, page = 1, country = "US" }) => {
+    offers: async (
+      _,
+      { limit = 10, page = 1, country = "US", locale: requestedLocale },
+    ) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale });
       const skip = (page - 1) * limit;
       const region =
         Object.keys(regions).find((r) =>
@@ -52,24 +66,24 @@ const resolvers: IResolvers<any, Context> = {
       }).lean();
 
       return {
-        elements: elements.map((o) => {
-          const price = prices.find((p) => p.offerId === o.id);
-          return {
-            ...orderOffersObject(o),
-            price: price ?? null,
-          };
-        }),
+        elements: await localizeOffers(
+          elements.map((o) => {
+            const price = prices.find((p) => p.offerId === o.id);
+            return {
+              ...orderOffersObject(o),
+              price: price ?? null,
+            };
+          }),
+          locale,
+        ),
         total: await Offer.countDocuments(),
         page,
         limit,
       };
     },
-    upcoming: async (_, { limit = 15, page = 1, country = "US" }) => {
+    upcoming: async (_, { limit = 15, page = 1, locale: requestedLocale }) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale });
       const skip = (page - 1) * limit;
-      const region =
-        Object.keys(regions).find((r) =>
-          regions[r].countries.includes(country),
-        ) || "US";
 
       const elements = await Offer.aggregate([
         {
@@ -88,7 +102,7 @@ const resolvers: IResolvers<any, Context> = {
       ]);
 
       return {
-        elements: elements.map(orderOffersObject),
+        elements: await localizeOffers(elements.map(orderOffersObject), locale),
         total: await Offer.countDocuments({
           releaseDate: { $gt: new Date() },
         }),
@@ -96,7 +110,11 @@ const resolvers: IResolvers<any, Context> = {
         limit,
       };
     },
-    latestReleased: async (_, { limit = 10, page = 1, country = "US" }) => {
+    latestReleased: async (
+      _,
+      { limit = 10, page = 1, locale: requestedLocale },
+    ) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale });
       const skip = (page - 1) * limit;
       const elements = await Offer.find(
         {
@@ -108,7 +126,7 @@ const resolvers: IResolvers<any, Context> = {
         { sort: { releaseDate: -1 }, limit, skip },
       ).lean();
       return {
-        elements: elements.map(orderOffersObject),
+        elements: await localizeOffers(elements.map(orderOffersObject), locale),
         total: await Offer.countDocuments({
           releaseDate: { $ne: null },
           offerType: { $in: ["BASE_GAME"] },
@@ -117,7 +135,11 @@ const resolvers: IResolvers<any, Context> = {
         limit,
       };
     },
-    topSellers: async (_, { limit = 10, page = 1 }) => {
+    topSellers: async (
+      _,
+      { limit = 10, page = 1, locale: requestedLocale },
+    ) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale });
       const skip = (page - 1) * limit;
       const positions = await GamePosition.find({
         collectionId: "top-sellers",
@@ -130,12 +152,15 @@ const resolvers: IResolvers<any, Context> = {
       const offers = await Offer.find({
         id: { $in: positions.map((p) => p.offerId) },
       }).lean();
-      const elements = offers
-        .map((o) => ({
-          ...orderOffersObject(o),
-          position: positions.find((p) => p.offerId === o.id)?.position,
-        }))
-        .sort((a, b) => a.position - b.position);
+      const elements = await localizeOffers(
+        offers
+          .map((o) => ({
+            ...orderOffersObject(o),
+            position: positions.find((p) => p.offerId === o.id)?.position,
+          }))
+          .sort((a, b) => a.position - b.position),
+        locale,
+      );
       return {
         elements,
         total: await GamePosition.countDocuments({
@@ -146,7 +171,11 @@ const resolvers: IResolvers<any, Context> = {
         limit,
       };
     },
-    topWishlisted: async (_, { limit = 10, page = 1 }) => {
+    topWishlisted: async (
+      _,
+      { limit = 10, page = 1, locale: requestedLocale },
+    ) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale });
       const skip = (page - 1) * limit;
       const positions = await GamePosition.find({
         collectionId: "top-wishlisted",
@@ -159,12 +188,15 @@ const resolvers: IResolvers<any, Context> = {
       const offers = await Offer.find({
         id: { $in: positions.map((p) => p.offerId) },
       }).lean();
-      const elements = offers
-        .map((o) => ({
-          ...orderOffersObject(o),
-          position: positions.find((p) => p.offerId === o.id)?.position,
-        }))
-        .sort((a, b) => a.position - b.position);
+      const elements = await localizeOffers(
+        offers
+          .map((o) => ({
+            ...orderOffersObject(o),
+            position: positions.find((p) => p.offerId === o.id)?.position,
+          }))
+          .sort((a, b) => a.position - b.position),
+        locale,
+      );
       return {
         elements,
         total: await GamePosition.countDocuments({
@@ -175,7 +207,11 @@ const resolvers: IResolvers<any, Context> = {
         limit,
       };
     },
-    featuredDiscounts: async (_, { country = "US" }) => {
+    featuredDiscounts: async (
+      _,
+      { country = "US", locale: requestedLocale },
+    ) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale });
       const region =
         Object.keys(regions).find((r) =>
           regions[r].countries.includes(country),
@@ -196,22 +232,32 @@ const resolvers: IResolvers<any, Context> = {
           "price.discount": { $gt: 0 },
         }).lean(),
       ]);
-      return offers
-        .filter((o) => prices.some((p) => p.offerId === o.id))
-        .slice(0, 20)
-        .map(orderOffersObject);
+      return localizeOffers(
+        offers
+          .filter((o) => prices.some((p) => p.offerId === o.id))
+          .slice(0, 20)
+          .map(orderOffersObject),
+        locale,
+      );
     },
     events: async () => {
       return Tags.find({ groupName: "event", status: "ACTIVE" }).lean();
     },
-    event: async (_, { id, limit = 10, page = 1, country = "US" }) => {
+    event: async (
+      _,
+      { id, limit = 10, page = 1, country = "US", locale: requestedLocale },
+    ) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale });
       const skip = (page - 1) * limit;
       const region =
         Object.keys(regions).find((r) =>
           regions[r].countries.includes(country),
         ) || "US";
 
-      const event = await Tags.findOne({ id: { $eq: id }, groupName: "event" }).lean();
+      const event = await Tags.findOne({
+        id: { $eq: id },
+        groupName: "event",
+      }).lean();
       if (!event) return null;
 
       const elements = await Offer.aggregate([
@@ -244,13 +290,16 @@ const resolvers: IResolvers<any, Context> = {
       ]);
 
       return {
-        elements: elements.map(orderOffersObject),
-        total: await Offer.countDocuments({ tags: { $elemMatch: { id: { $eq: id } } } }),
+        elements: await localizeOffers(elements.map(orderOffersObject), locale),
+        total: await Offer.countDocuments({
+          tags: { $elemMatch: { id: { $eq: id } } },
+        }),
         page,
         limit,
       };
     },
-    genres: async () => {
+    genres: async (_, { locale: requestedLocale }) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale });
       const genres = await Tags.find({
         groupName: "genre",
         status: "ACTIVE",
@@ -266,9 +315,10 @@ const resolvers: IResolvers<any, Context> = {
             undefined,
             { limit: 3, sort: { releaseDate: -1 } },
           ).lean();
+          const localizedOffers = await localizeOffers(offers, locale);
           return {
             genre,
-            offers: offers.map((o) => ({
+            offers: localizedOffers.map((o) => ({
               id: o.id,
               title: o.title,
               image: getImage(o.keyImages, [
@@ -282,7 +332,11 @@ const resolvers: IResolvers<any, Context> = {
         }),
       );
     },
-    latestAchievements: async (_, { country = "US" }) => {
+    latestAchievements: async (
+      _,
+      { country = "US", locale: requestedLocale },
+    ) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale });
       const region =
         Object.keys(regions).find((r) =>
           regions[r].countries.includes(country),
@@ -303,7 +357,7 @@ const resolvers: IResolvers<any, Context> = {
 
         if (offers.length === 0) break;
 
-        const [achievements, prices] = await Promise.all([
+        const [achievements, _prices] = await Promise.all([
           AchievementSet.find({
             sandboxId: { $in: offers.map((o) => o.namespace) },
             isBase: true,
@@ -328,15 +382,17 @@ const resolvers: IResolvers<any, Context> = {
         skip += limit;
         if (offers.length < limit) break;
       }
-      return result.slice(0, 20);
+      return localizeOffers(result.slice(0, 20), locale);
     },
   },
   Offer: {
     items: async (parent, _, { loaders }) => {
       if (!parent.items || parent.items.length === 0) {
-        const subItemsDoc = await loaders.offerSubItems.load(parent.id);
+        const subItemsDoc = (await loaders.offerSubItems.load(parent.id)) as {
+          subItems?: Array<{ id: string }>;
+        } | null;
         if (!subItemsDoc || !subItemsDoc.subItems) return [];
-        const subItemIds = subItemsDoc.subItems.map((s: any) => s.id);
+        const subItemIds = subItemsDoc.subItems.map((s) => s.id);
         return loaders.item.loadMany(subItemIds);
       }
       return loaders.item.loadMany(parent.items.map((i: any) => i.id));
@@ -355,16 +411,18 @@ const resolvers: IResolvers<any, Context> = {
     giveaways: async (parent) => {
       return FreeGames.find({ id: parent.id }).sort({ startDate: -1 }).lean();
     },
-    related: async (parent, { country }) => {
+    related: async (parent, { locale: requestedLocale }) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale }, parent);
       const related = await Offer.find({
         namespace: parent.namespace,
         id: { $ne: parent.id },
       })
         .limit(25)
         .lean();
-      return related.map(orderOffersObject);
+      return localizeOffers(related.map(orderOffersObject), locale);
     },
-    suggestions: async (parent, { country }) => {
+    suggestions: async (parent, { locale: requestedLocale }) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale }, parent);
       const tagsIds = parent.tags?.map((t: any) => t.id) || [];
       if (tagsIds.length === 0) return [];
       const tagsInfo = await TagModel.find({
@@ -381,7 +439,7 @@ const resolvers: IResolvers<any, Context> = {
         .sort({ lastModifiedDate: -1 })
         .limit(25)
         .lean();
-      return suggestions.map(orderOffersObject);
+      return localizeOffers(suggestions.map(orderOffersObject), locale);
     },
     ratings: async (parent) => {
       const sandbox = await Sandbox.findOne({ _id: parent.namespace }).lean();
@@ -408,7 +466,9 @@ const resolvers: IResolvers<any, Context> = {
       return Object.fromEntries(pos.map((p) => [p.collectionId, p.position]));
     },
     ageRating: async (parent, { country = "US" }) => {
-      const sandbox = await Sandbox.findOne({ _id: { $eq: parent.namespace } }).lean();
+      const sandbox = await Sandbox.findOne({
+        _id: { $eq: parent.namespace },
+      }).lean();
       if (!sandbox || !sandbox.ageGatings) return null;
 
       const selectedRating =
@@ -450,6 +510,16 @@ const resolvers: IResolvers<any, Context> = {
         attributes: customAttributes,
         tags: tagsObject,
       });
+    },
+  },
+  Franchise: {
+    allOffers: async (parent, { locale: requestedLocale }) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale });
+      const offers = await Offer.find({
+        id: { $in: parent.offers || [] },
+      }).lean();
+
+      return localizeOffers(offers.map(orderOffersObject), locale);
     },
   },
 };

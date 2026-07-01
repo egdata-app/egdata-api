@@ -4,7 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
-- Added `?locale=...` overlays for REST offer DTO responses, including exact-locale fallback metadata.
+- Added `locale` overlays for REST and GraphQL offer DTO responses, including exact-locale fallback metadata.
 - Normalized free-game promotion responses so `countriesBlacklist`, `giveaway.offerId`, and `giveaway.platform` keep a stable shape.
 - Documented changelog context/search enrichment fields and made changelist list context enrichment use the shared safe resolver.
 - Fixed changelog search responses to hydrate old/new change values and made changelist detail context enrichment more resilient.

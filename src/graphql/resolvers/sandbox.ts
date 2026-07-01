@@ -16,8 +16,15 @@ import {
 import { ageRatingsCountries } from "../../utils/age-ratings.js";
 import { regions } from "../../utils/countries.js";
 import { consola } from "../../utils/logger.js";
+import {
+  getLocalizedCacheTtlSeconds,
+  localeCacheSegment,
+  localizeOffer,
+  localizeOffers,
+} from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
 import type { Context } from "../index.js";
+import { resolveGraphqlLocale } from "../locale.js";
 
 type Document = Record<string, any>;
 
@@ -86,8 +93,9 @@ function createSandboxHubCacheKey(
   country: string,
   offerLimit: number,
   updateLimit: number,
+  locale: string,
 ) {
-  return `sandboxHub:${id}:${country}:${offerLimit}:${updateLimit}`;
+  return `sandboxHub:${id}:${country}:${offerLimit}:${updateLimit}:${localeCacheSegment(locale)}`;
 }
 
 async function findPrimaryContent(sandboxId: string) {
@@ -283,7 +291,11 @@ const resolvers: IResolvers<any, Context> = {
       // Namespace model uses _id for namespace string
       return Namespace.findOne({ _id: { $eq: id } }).lean();
     },
-    sandboxHub: async (_, { id, country, offerLimit, updateLimit }) => {
+    sandboxHub: async (
+      _,
+      { id, country, offerLimit, updateLimit, locale: requestedLocale },
+    ) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale });
       const resolvedOfferLimit = clampLimit(
         offerLimit,
         DEFAULT_OFFER_LIMIT,
@@ -300,6 +312,7 @@ const resolvers: IResolvers<any, Context> = {
         selectedCountry,
         resolvedOfferLimit,
         resolvedUpdateLimit,
+        locale,
       );
       const cached = await client.get(cacheKey);
 
@@ -377,7 +390,13 @@ const resolvers: IResolvers<any, Context> = {
           collectGenres(rawOffers),
         ]);
 
-      const primaryOffer = (primary.offer ?? null) as Document | null;
+      const primaryOffer = primary.offer
+        ? await localizeOffer(primary.offer as Document, locale)
+        : null;
+      const localizedFeaturedOffers = await localizeOffers(
+        featuredOffers as Document[],
+        locale,
+      );
       const primaryItem = (primary.item ?? null) as Document | null;
       const title =
         primaryOffer?.title ||
@@ -400,7 +419,10 @@ const resolvers: IResolvers<any, Context> = {
         primaryKind: primary.kind,
         primaryOffer,
         primaryItem,
-        sandbox,
+        sandbox: {
+          ...sandbox,
+          locale,
+        },
         price,
         seller: primaryOffer?.seller ?? null,
         developer:
@@ -410,7 +432,7 @@ const resolvers: IResolvers<any, Context> = {
         genres,
         platforms: collectPlatforms(primary.offer, items),
         stats,
-        featuredOffers,
+        featuredOffers: localizedFeaturedOffers,
         recentBuilds,
         recentChanges,
         ageRating: getAgeRating(sandbox, selectedCountry),
@@ -431,7 +453,7 @@ const resolvers: IResolvers<any, Context> = {
         cacheKey,
         JSON.stringify(hub),
         "EX",
-        SANDBOX_HUB_CACHE_TTL_SECONDS,
+        getLocalizedCacheTtlSeconds(hub, SANDBOX_HUB_CACHE_TTL_SECONDS),
       );
 
       return hub;
@@ -466,7 +488,11 @@ const resolvers: IResolvers<any, Context> = {
         limit: pagination.limit,
       };
     },
-    offers: async (parent, { limit = 10, page = 1 }) => {
+    offers: async (
+      parent,
+      { limit = 10, page = 1, locale: requestedLocale },
+    ) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale }, parent);
       const pagination = resolvePagination(limit, page);
       const query = { namespace: parent._id };
       const elements = await Offer.find(query)
@@ -475,7 +501,7 @@ const resolvers: IResolvers<any, Context> = {
         .limit(pagination.limit)
         .lean();
       return {
-        elements: elements.map(orderOffersObject),
+        elements: await localizeOffers(elements.map(orderOffersObject), locale),
         total: await Offer.countDocuments(query),
         page: pagination.page,
         limit: pagination.limit,
@@ -582,11 +608,12 @@ const resolvers: IResolvers<any, Context> = {
         limit: pagination.limit,
       };
     },
-    baseGame: async (parent) => {
+    baseGame: async (parent, { locale: requestedLocale }) => {
+      const locale = resolveGraphqlLocale({ locale: requestedLocale }, parent);
       const primary = await findPrimaryContent(parent._id);
 
       if (primary.offer) {
-        return orderOffersObject(primary.offer);
+        return localizeOffer(orderOffersObject(primary.offer), locale);
       }
 
       return primary.item;

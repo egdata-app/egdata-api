@@ -366,7 +366,9 @@ describe("sandboxHub GraphQL resolver", () => {
     mocks.redisGet.mockResolvedValue(JSON.stringify(cachedHub));
 
     await expect(sandboxHub()).resolves.toEqual(cachedHub);
-    expect(mocks.redisGet).toHaveBeenCalledWith("sandboxHub:sandbox-1:US:4:3");
+    expect(mocks.redisGet).toHaveBeenCalledWith(
+      "sandboxHub:sandbox-1:US:4:3:locale:en-US",
+    );
     expect(mocks.sandboxFindOne).not.toHaveBeenCalled();
     expect(mocks.offerFindOne).not.toHaveBeenCalled();
   });
@@ -379,7 +381,9 @@ describe("sandboxHub GraphQL resolver", () => {
     expect(hub.title).toBe("Base Game");
     expect(mocks.loggerWarn).toHaveBeenCalledWith(
       "Ignoring malformed sandboxHub cache payload",
-      expect.objectContaining({ cacheKey: "sandboxHub:sandbox-1:US:4:3" }),
+      expect.objectContaining({
+        cacheKey: "sandboxHub:sandbox-1:US:4:3:locale:en-US",
+      }),
     );
     expect(mocks.sandboxFindOne).toHaveBeenCalled();
   });

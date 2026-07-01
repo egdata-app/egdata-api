@@ -4,13 +4,13 @@ export const typeDefs = `#graphql
 
     type Query {
         # Offers
-        offer(id: ID!): Offer
-        offers(limit: Int, page: Int, country: String): OfferConnection
-        upcoming(limit: Int, page: Int, country: String): OfferConnection
-        latestReleased(limit: Int, page: Int, country: String): OfferConnection
-        topSellers(limit: Int, page: Int): OfferConnection
-        topWishlisted(limit: Int, page: Int): OfferConnection
-        featuredDiscounts(country: String): [Offer]
+        offer(id: ID!, locale: String): Offer
+        offers(limit: Int, page: Int, country: String, locale: String): OfferConnection
+        upcoming(limit: Int, page: Int, country: String, locale: String): OfferConnection
+        latestReleased(limit: Int, page: Int, country: String, locale: String): OfferConnection
+        topSellers(limit: Int, page: Int, locale: String): OfferConnection
+        topWishlisted(limit: Int, page: Int, locale: String): OfferConnection
+        featuredDiscounts(country: String, locale: String): [Offer]
 
         # Items
         item(id: ID!): Item
@@ -18,7 +18,7 @@ export const typeDefs = `#graphql
 
         # Sandboxes
         sandbox(id: ID!): Sandbox
-        sandboxHub(id: ID!, country: String, offerLimit: Int, updateLimit: Int): SandboxHub
+        sandboxHub(id: ID!, country: String, offerLimit: Int, updateLimit: Int, locale: String): SandboxHub
         sandboxes(limit: Int, page: Int): SandboxConnection
 
         # Profiles
@@ -29,9 +29,9 @@ export const typeDefs = `#graphql
         builds(limit: Int, page: Int, sortBy: String, sortDir: String): [Build]
         changelog(id: ID!): Changelog
         events: [Tag]
-        event(id: ID!, limit: Int, page: Int, country: String): OfferConnection
-        genres: [GenreResult]
-        latestAchievements(country: String): [Offer]
+        event(id: ID!, limit: Int, page: Int, country: String, locale: String): OfferConnection
+        genres(locale: String): [GenreResult]
+        latestAchievements(country: String, locale: String): [Offer]
     }
 
     type GenreResult {
@@ -292,7 +292,7 @@ export const typeDefs = `#graphql
         _id: ID
         metadata: ChangelogMetadata
         timestamp: Date
-        document: ChangelogDocument
+        document(locale: String): ChangelogDocument
     }
 
     type ChangelogMetadata {
@@ -333,11 +333,11 @@ export const typeDefs = `#graphql
         applicationId: String
         unsearchable: Boolean
         requiresSecureAccount: Boolean
-        offers: [Offer]
+        offers(locale: String): [Offer]
         assets: [Asset]
         builds: [Build]
         changelog(limit: Int, page: Int): ChangelogConnection
-        mainOffer: Offer
+        mainOffer(locale: String): Offer
     }
 
     type ItemCategory {
@@ -362,10 +362,10 @@ export const typeDefs = `#graphql
         created: Date
         updated: Date
         items(limit: Int, page: Int): ItemConnection
-        offers(limit: Int, page: Int): OfferConnection
+        offers(limit: Int, page: Int, locale: String): OfferConnection
         assets(limit: Int, page: Int, platform: String): AssetConnection
         builds(limit: Int, page: Int, platform: String): BuildConnection
-        baseGame(country: String): BaseGameResult
+        baseGame(country: String, locale: String): BaseGameResult
         achievements: [AchievementSet]
         stats: SandboxStats
         changelog(limit: Int, page: Int): ChangelogConnection
@@ -452,7 +452,7 @@ export const typeDefs = `#graphql
         id: String
         name: String
         offers: [String]
-        allOffers: [Offer]
+        allOffers(locale: String): [Offer]
     }
 
     type Giveaway {
@@ -525,8 +525,8 @@ export const typeDefs = `#graphql
         changelog(limit: Int, page: Int): ChangelogConnection
         franchises: [Franchise]
         giveaways: [Giveaway]
-        related(country: String): [Offer]
-        suggestions(country: String): [Offer]
+        related(country: String, locale: String): [Offer]
+        suggestions(country: String, locale: String): [Offer]
         ratings: Rating
         polls: Poll
         hltb: Hltb
@@ -534,6 +534,16 @@ export const typeDefs = `#graphql
         positions: JSON # Map of collectionId -> position
         ageRating(country: String): JSON
         features: OfferFeatures
+        locale: String
+        localeStatus: String
+        canonicalLocale: String
+        localization: OfferLocalizationMetadata
+    }
+
+    type OfferLocalizationMetadata {
+        source: String
+        fetchedAt: Date
+        sourceUpdatedAt: Date
     }
 
     type OfferFeatures {
