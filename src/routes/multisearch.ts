@@ -1,10 +1,13 @@
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import { opensearch } from "../clients/opensearch.js";
+import { Seller } from "../models/index.js";
 import { attributesToObject } from "../utils/attributes-to-object.js";
 import { regions } from "../utils/countries.js";
-import { orderOffersObject } from "../utils/order-offers-object.js";
-import { Seller } from "../models/index.js";
+import {
+  getLocaleOrErrorResponse,
+  localizeOffers,
+} from "../utils/offer-localization.js";
 
 const app = new Hono();
 
@@ -13,12 +16,16 @@ app.get("/", (c) => {
 });
 
 app.get("/offers", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country =
     c.req.query("country") ?? getCookie(c, "EGDATA_COUNTRY") ?? "US";
   const region =
-    Object.keys(regions).find((r) =>
-      regions[r].countries.includes(country),
-    ) ?? "US";
+    Object.keys(regions).find((r) => regions[r].countries.includes(country)) ??
+    "US";
 
   let query = c.req.query("query");
   const offerType = c.req.query("offerType");
@@ -129,8 +136,7 @@ app.get("/offers", async (c) => {
     filter.push({
       term: { "publisherDisplayName.keyword": publisherDisplayName },
     });
-  if (refundType)
-    filter.push({ term: { "refundType.keyword": refundType } });
+  if (refundType) filter.push({ term: { "refundType.keyword": refundType } });
   if (isCodeRedemptionOnly === "true")
     filter.push({ term: { isCodeRedemptionOnly: true } });
 
@@ -264,10 +270,10 @@ app.get("/offers", async (c) => {
 
   const total = response.body.hits.total;
   const estimatedTotalHits =
-    typeof total === "number" ? total : total?.value ?? 0;
+    typeof total === "number" ? total : (total?.value ?? 0);
 
   return c.json({
-    hits,
+    hits: await localizeOffers(hits, locale),
     estimatedTotalHits,
     processingTimeMs: response.body.took,
     query: query || "",
@@ -316,7 +322,7 @@ app.get("/items", async (c) => {
 
   const total = response.body.hits.total;
   const estimatedTotalHits =
-    typeof total === "number" ? total : total?.value ?? 0;
+    typeof total === "number" ? total : (total?.value ?? 0);
 
   return c.json({
     hits,
@@ -362,17 +368,12 @@ app.get("/sellers", async (c) => {
   const buckets = response.body.aggregations?.sellers?.buckets ?? [];
   const sellerIds = buckets.map((b: { key: string }) => b.key);
 
-  const sellerDocs = sellerIds.length > 0
-    ? await Seller.find({ _id: { $in: sellerIds } })
-    : [];
+  const sellerDocs =
+    sellerIds.length > 0 ? await Seller.find({ _id: { $in: sellerIds } }) : [];
 
-  const sellerMap = new Map(
-    sellerDocs.map((doc) => [doc._id.toString(), doc]),
-  );
+  const sellerMap = new Map(sellerDocs.map((doc) => [doc._id.toString(), doc]));
 
-  const hits = sellerIds
-    .map((id: string) => sellerMap.get(id))
-    .filter(Boolean);
+  const hits = sellerIds.map((id: string) => sellerMap.get(id)).filter(Boolean);
 
   return c.json({
     hits,

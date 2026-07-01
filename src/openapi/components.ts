@@ -38,6 +38,17 @@ export const commonParameters = {
       example: "US",
     },
   },
+  locale: {
+    name: "locale",
+    in: "query",
+    required: false,
+    description:
+      "Exact BCP-47-style locale used to overlay localized public offer text fields. Defaults to en-US.",
+    schema: {
+      type: "string",
+      example: "es-ES",
+    },
+  },
   limit: {
     name: "limit",
     in: "query",
@@ -298,8 +309,30 @@ export const components: OpenAPIV3.ComponentsObject = {
       namespace: { type: "string", nullable: true },
       title: { type: "string", nullable: true },
       description: { type: "string", nullable: true },
+      longDescription: { type: "string", nullable: true },
       offerType: { type: "string", nullable: true },
+      developerDisplayName: { type: "string", nullable: true },
+      publisherDisplayName: { type: "string", nullable: true },
       seller: { $ref: "#/components/schemas/SellerSummary" },
+      tags: {
+        type: "array",
+        nullable: true,
+        items: {
+          type: "object",
+          additionalProperties: true,
+        },
+      },
+      offerMappings: {
+        type: "array",
+        nullable: true,
+        items: {
+          type: "object",
+          additionalProperties: true,
+        },
+      },
+      productSlug: { type: "string", nullable: true },
+      urlSlug: { type: "string", nullable: true },
+      url: { type: "string", nullable: true },
       keyImages: {
         type: "array",
         items: { $ref: "#/components/schemas/Image" },
@@ -316,7 +349,46 @@ export const components: OpenAPIV3.ComponentsObject = {
         ...stringDate,
         nullable: true,
       },
+      locale: {
+        type: "string",
+        description: "Requested locale applied to this offer response.",
+        example: "es-ES",
+      },
+      localeStatus: {
+        type: "string",
+        description:
+          "Whether this offer is canonical en-US data, localized with an exact locale record, or fell back to canonical text.",
+        enum: ["canonical", "localized", "fallback"],
+      },
+      canonicalLocale: {
+        type: "string",
+        nullable: true,
+        description:
+          "Canonical source locale, present on non-canonical responses.",
+        example: "en-US",
+      },
+      localization: {
+        allOf: [{ $ref: "#/components/schemas/OfferLocalizationMetadata" }],
+        nullable: true,
+      },
     }),
+    OfferLocalizationMetadata: {
+      type: "object",
+      description:
+        "Metadata from the exact offer localization record used for this response.",
+      additionalProperties: true,
+      properties: {
+        source: { type: "string", nullable: true },
+        fetchedAt: {
+          ...stringDate,
+          nullable: true,
+        },
+        sourceUpdatedAt: {
+          ...stringDate,
+          nullable: true,
+        },
+      },
+    },
     Giveaway: flexibleObject("Free-game promotion metadata.", {
       id: { type: "string", nullable: true },
       offerId: { type: "string" },

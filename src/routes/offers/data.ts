@@ -38,6 +38,13 @@ import { getGameFeatures } from "../../utils/game-features.js";
 import { getImage } from "../../utils/get-image.js";
 import { getOfferSubItems } from "../../utils/get-offer-sub-items.js";
 import { getProduct } from "../../utils/get-product.js";
+import {
+  getLocaleOrErrorResponse,
+  getLocalizedCacheTtlSeconds,
+  localeCacheSegment,
+  localizeOffer,
+  localizeOffers,
+} from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
 import { verifyGameOwnership } from "../../utils/verify-game-ownership.js";
 import { epic } from "../auth.js";
@@ -1088,14 +1095,17 @@ app.get("/changelog", async (c) => {
               branches: [
                 {
                   case: { $eq: ["$metadata.contextType", "offer"] },
+                  // biome-ignore lint/suspicious/noThenProperty: MongoDB $switch branches use a then field.
                   then: { $arrayElemAt: ["$offerDoc", 0] },
                 },
                 {
                   case: { $eq: ["$metadata.contextType", "item"] },
+                  // biome-ignore lint/suspicious/noThenProperty: MongoDB $switch branches use a then field.
                   then: { $arrayElemAt: ["$itemDoc", 0] },
                 },
                 {
                   case: { $eq: ["$metadata.contextType", "asset"] },
+                  // biome-ignore lint/suspicious/noThenProperty: MongoDB $switch branches use a then field.
                   then: { $arrayElemAt: ["$assetDoc", 0] },
                 },
               ],
@@ -1303,6 +1313,11 @@ app.get("/achievements", async (c) => {
 
 app.get("/related", async (c) => {
   const { id } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
 
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -1320,7 +1335,7 @@ app.get("/related", async (c) => {
     });
   }
 
-  const cacheKey = `related-offers:${id}:${region}`;
+  const cacheKey = `related-offers:${id}:${region}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -1355,15 +1370,23 @@ app.get("/related", async (c) => {
     region,
   });
 
-  const result = related.map((o) => {
-    const price = prices.find((p) => p.offerId === o.id);
-    return {
-      ...orderOffersObject(o),
-      price: price ?? null,
-    };
-  });
+  const result = await localizeOffers(
+    related.map((o) => {
+      const price = prices.find((p) => p.offerId === o.id);
+      return {
+        ...orderOffersObject(o),
+        price: price ?? null,
+      };
+    }),
+    locale,
+  );
 
-  await client.set(cacheKey, JSON.stringify(related), "EX", 60);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 60),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
@@ -1434,6 +1457,11 @@ app.get("/media", async (c) => {
 
 app.get("/suggestions", async (c) => {
   const { id } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -1451,7 +1479,7 @@ app.get("/suggestions", async (c) => {
     });
   }
 
-  const cacheKey = `suggestions:${id}:${region}`;
+  const cacheKey = `suggestions:${id}:${region}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -1498,15 +1526,23 @@ app.get("/suggestions", async (c) => {
     region: region,
   });
 
-  const result = suggestions.map((o) => {
-    const price = prices.find((p) => p.offerId === o.id);
-    return {
-      ...orderOffersObject(o),
-      price: price ?? null,
-    };
-  });
+  const result = await localizeOffers(
+    suggestions.map((o) => {
+      const price = prices.find((p) => p.offerId === o.id);
+      return {
+        ...orderOffersObject(o),
+        price: price ?? null,
+      };
+    }),
+    locale,
+  );
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 60);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 60),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
@@ -1854,6 +1890,11 @@ app.get("/hltb", async (c) => {
 
 app.get("/collection", async (c) => {
   const { id } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -1889,7 +1930,7 @@ app.get("/collection", async (c) => {
     });
   }
 
-  const cacheKey = `collection-offers:${id}:${region}`;
+  const cacheKey = `collection-offers:${id}:${region}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -1924,15 +1965,23 @@ app.get("/collection", async (c) => {
   const offers = offersData.status === "fulfilled" ? offersData.value : [];
   const prices = pricesData.status === "fulfilled" ? pricesData.value : [];
 
-  const result = offers.map((o) => {
-    const price = prices.find((p) => p.offerId === o.id);
-    return {
-      ...orderOffersObject(o),
-      price: price ?? null,
-    };
-  });
+  const result = await localizeOffers(
+    offers.map((o) => {
+      const price = prices.find((p) => p.offerId === o.id);
+      return {
+        ...orderOffersObject(o),
+        price: price ?? null,
+      };
+    }),
+    locale,
+  );
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
@@ -1974,6 +2023,11 @@ type BUNDLE_RESPONSE = {
 
 app.get("/bundle", async (c) => {
   const { id } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -1991,7 +2045,7 @@ app.get("/bundle", async (c) => {
     });
   }
 
-  const cacheKey = `bundle:${id}:${region}`;
+  const cacheKey = `bundle:${id}:${region}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -2056,13 +2110,16 @@ app.get("/bundle", async (c) => {
   const bundlePrices =
     bundlePricesData.status === "fulfilled" ? bundlePricesData.value : [];
 
-  const offers = bundleOffers.map((o) => {
-    const price = bundlePrices.find((p) => p.offerId === o.id);
-    return {
-      ...orderOffersObject(o),
-      price: price ?? null,
-    };
-  });
+  const offers = await localizeOffers(
+    bundleOffers.map((o) => {
+      const price = bundlePrices.find((p) => p.offerId === o.id);
+      return {
+        ...orderOffersObject(o),
+        price: price ?? null,
+      };
+    }),
+    locale,
+  );
 
   const result: BUNDLE_RESPONSE = {
     offers: offers,
@@ -2114,7 +2171,12 @@ app.get("/bundle", async (c) => {
     bundlePrice: mainPrice,
   };
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
@@ -2123,6 +2185,11 @@ app.get("/bundle", async (c) => {
 
 app.get("/in-bundle", async (c) => {
   const { id } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -2140,7 +2207,7 @@ app.get("/in-bundle", async (c) => {
     });
   }
 
-  const cacheKey = `in-bundle:${id}:${region}`;
+  const cacheKey = `in-bundle:${id}:${region}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -2180,16 +2247,27 @@ app.get("/in-bundle", async (c) => {
       };
     }),
   );
+  const localizedBundles = await localizeOffers(bundles, locale);
 
-  await client.set(cacheKey, JSON.stringify(bundles), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(localizedBundles),
+    "EX",
+    getLocalizedCacheTtlSeconds(localizedBundles, 3600),
+  );
 
-  return c.json(bundles, 200, {
+  return c.json(localizedBundles, 200, {
     "Cache-Control": "public, max-age=60",
   });
 });
 
 app.get("/has-prepurchase", async (c) => {
   const { id } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -2207,7 +2285,7 @@ app.get("/has-prepurchase", async (c) => {
     });
   }
 
-  const cacheKey = `has-prepurchase:${id}:${region}`;
+  const cacheKey = `has-prepurchase:${id}:${region}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -2255,13 +2333,21 @@ app.get("/has-prepurchase", async (c) => {
 
   const result = {
     hasPrepurchase: true,
-    offer: {
-      ...orderOffersObject(prePurchaseOffer),
-      price: price ?? null,
-    },
+    offer: await localizeOffer(
+      {
+        ...orderOffersObject(prePurchaseOffer),
+        price: price ?? null,
+      },
+      locale,
+    ),
   };
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
@@ -2270,6 +2356,11 @@ app.get("/has-prepurchase", async (c) => {
 
 app.get("/has-regular", async (c) => {
   const { id } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -2287,7 +2378,7 @@ app.get("/has-regular", async (c) => {
     });
   }
 
-  const cacheKey = `has-regular:${id}:${region}`;
+  const cacheKey = `has-regular:${id}:${region}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -2347,13 +2438,21 @@ app.get("/has-regular", async (c) => {
 
   const result = {
     isPrepurchase: true,
-    offer: {
-      ...orderOffersObject(prePurchaseOffer),
-      price: price ?? null,
-    },
+    offer: await localizeOffer(
+      {
+        ...orderOffersObject(prePurchaseOffer),
+        price: price ?? null,
+      },
+      locale,
+    ),
   };
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
@@ -2554,6 +2653,11 @@ app.get("/igdb", async (c) => {
 
 app.get("/overview", async (c) => {
   const { id } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
   const selectedCountry = country ?? cookieCountry ?? "US";
@@ -2571,7 +2675,7 @@ app.get("/overview", async (c) => {
   }
 
   const start = new Date();
-  const cacheKey = `overview:${id}:${region}:v0.1`;
+  const cacheKey = `overview:${id}:${region}:${localeCacheSegment(locale)}:v0.1`;
   const cached = false; // await client.get(cacheKey);
 
   if (cached) {
@@ -2700,15 +2804,18 @@ app.get("/overview", async (c) => {
 
   // Combine all data
   const result = {
-    offer: {
-      ...orderOffersObject(offer),
-      customAttributes: attributesToObject(
-        offer.customAttributes as unknown as Array<{
-          key: string;
-          value: string;
-        }>,
-      ),
-    },
+    offer: await localizeOffer(
+      {
+        ...orderOffersObject(offer),
+        customAttributes: attributesToObject(
+          offer.customAttributes as unknown as Array<{
+            key: string;
+            value: string;
+          }>,
+        ),
+      },
+      locale,
+    ),
     price: price.status === "fulfilled" ? price.value : null,
     media: media.status === "fulfilled" ? media.value : null,
     igdb: igdb.status === "fulfilled" ? igdb.value : null,
@@ -2720,7 +2827,12 @@ app.get("/overview", async (c) => {
     technologies,
   };
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",

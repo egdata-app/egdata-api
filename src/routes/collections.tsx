@@ -1,50 +1,35 @@
-import React from "react";
-import { Hono } from "hono";
-import { Collection, GamePosition, Offer, PriceEngine } from "../models/index.js";
-import { getCookie } from "hono/cookie";
-import { regions } from "../utils/countries.js";
-import client from "../clients/redis.js";
-import { readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
-import { getImage } from "../utils/get-image.js";
-import satori from "satori";
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { Resvg } from "@resvg/resvg-js";
+import { Hono } from "hono";
+import { getCookie } from "hono/cookie";
+import satori from "satori";
+import client from "../clients/redis.js";
 import { db } from "../db/index.js";
-import consola from "consola";
-import { writeFile } from "node:fs/promises";
-
-/**
- * This function converts a week string (e.g. 2022W01) to a start and end date.
- * @param week A string in the format YYYYWNN (e.g., "2022W01").
- * @returns An object with the start and end dates of the given week.
- */
-function getWeek(week: `${number}W${number}`): { start: Date; end: Date } {
-  const [year, weekNumber] = week.split("W").map(Number);
-
-  // Jan 4th of the given year is always in week 1 according to ISO-8601
-  const jan4 = new Date(Date.UTC(year, 0, 4));
-
-  // Find the first Monday of the ISO week year
-  const dayOfWeek = jan4.getUTCDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  const firstMonday = new Date(jan4);
-  firstMonday.setUTCDate(jan4.getUTCDate() - ((dayOfWeek + 6) % 7)); // Adjust to the previous Monday if necessary
-
-  // Calculate the start date of the given week
-  const start = new Date(firstMonday);
-  start.setUTCDate(firstMonday.getUTCDate() + (weekNumber - 1) * 7);
-
-  // Calculate the end date of the given week
-  const end = new Date(start);
-  end.setUTCDate(start.getUTCDate() + 6);
-
-  return { start, end };
-}
+import {
+  Collection,
+  GamePosition,
+  Offer,
+  PriceEngine,
+} from "../models/index.js";
+import { regions } from "../utils/countries.js";
+import {
+  getLocaleOrErrorResponse,
+  getLocalizedCacheTtlSeconds,
+  localeCacheSegment,
+  localizeOffers,
+} from "../utils/offer-localization.js";
 
 const app = new Hono();
 
 app.get("/:slug", async (c) => {
   const { slug } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
 
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -62,11 +47,11 @@ app.get("/:slug", async (c) => {
     });
   }
 
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 50);
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
+  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 50);
+  const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
 
-  const cacheKey = `collections:${slug}:${region}:${page}:${limit}:v0.1`;
+  const cacheKey = `collections:${slug}:${region}:${page}:${limit}:${localeCacheSegment(locale)}:v0.1`;
 
   const cached = await client.get(cacheKey);
 
@@ -115,8 +100,8 @@ app.get("/:slug", async (c) => {
   const offers = offersData.status === "fulfilled" ? offersData.value : [];
   const prices = pricesData.status === "fulfilled" ? pricesData.value : [];
 
-  const result = {
-    elements: offers
+  const elements = await localizeOffers(
+    offers
       .map((o) => {
         const price = prices.find((p) => p.offerId === o.id);
         const collectionOffer = offersList.find(
@@ -139,6 +124,11 @@ app.get("/:slug", async (c) => {
         (a, b) =>
           (a.position ?? totalOffersCount) - (b.position ?? totalOffersCount),
       ),
+    locale,
+  );
+
+  const result = {
+    elements,
     page,
     limit,
     title: collection.name,
@@ -146,7 +136,12 @@ app.get("/:slug", async (c) => {
     updatedAt: collection.updatedAt.toISOString(),
   };
 
-  await client.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
@@ -159,6 +154,11 @@ app.get("/:slug", async (c) => {
  */
 app.get("/:slug/:week", async (c) => {
   const { slug, week } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
   const selectedCountry = country ?? cookieCountry ?? "US";
@@ -171,11 +171,11 @@ app.get("/:slug/:week", async (c) => {
     return c.json({ message: "Country not found" });
   }
 
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 50);
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
+  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 50);
+  const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
 
-  const cacheKey = `collections:${week}:${slug}:${region}:${page}:${limit}`;
+  const cacheKey = `collections:${week}:${slug}:${region}:${page}:${limit}:${localeCacheSegment(locale)}`;
 
   // const cached = await client.get(cacheKey);
   // if (cached) {
@@ -199,15 +199,15 @@ app.get("/:slug/:week", async (c) => {
   // Keep offers that have at least one position in the week
   const offersWithPositions = offers
     .map((offer) => {
-      const positionsInWeek = offer.positions.filter((p) =>
-        inWeek(new Date(p.date)) && Number(p.position) > 0
+      const positionsInWeek = offer.positions.filter(
+        (p) => inWeek(new Date(p.date)) && Number(p.position) > 0,
       );
 
       if (positionsInWeek.length === 0) return null;
 
       // Most recent position within the week (already > 0)
       const latest = positionsInWeek.reduce((a, b) =>
-        new Date(a.date).getTime() >= new Date(b.date).getTime() ? a : b
+        new Date(a.date).getTime() >= new Date(b.date).getTime() ? a : b,
       );
 
       return {
@@ -217,7 +217,7 @@ app.get("/:slug/:week", async (c) => {
       };
     })
     .filter(Boolean)
-    .filter((o) => o !== null)
+    .filter((o) => o !== null);
 
   const ranked = offersWithPositions
     .filter((o) => typeof o.position === "number" && (o.position as number) > 0)
@@ -245,10 +245,10 @@ app.get("/:slug/:week", async (c) => {
         price: priceData.toJSON(),
       };
     })
-    .filter(Boolean);
+    .filter((offer): offer is NonNullable<typeof offer> => Boolean(offer));
 
   const result = {
-    elements: offersWithMetadata,
+    elements: await localizeOffers(offersWithMetadata, locale),
     page,
     limit,
     title: collection.name,
@@ -258,14 +258,20 @@ app.get("/:slug/:week", async (c) => {
     end: endExclusive,
   };
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
   return c.json(result, 200, { "Cache-Control": "public, max-age=60" });
 });
 
 /** Helper: ISO week range (UTC), end is exclusive */
 function getIsoWeekRangeUTC(week: string) {
   const m = /^(\d{4})W(\d{2})$/.exec(week);
-  if (!m) throw new Error("Invalid week format, expected YYYYWNN (e.g., 2025W31)");
+  if (!m)
+    throw new Error("Invalid week format, expected YYYYWNN (e.g., 2025W31)");
   const year = Number(m[1]);
   const wn = Number(m[2]);
 
@@ -273,10 +279,12 @@ function getIsoWeekRangeUTC(week: string) {
   const jan4 = Date.UTC(year, 0, 4);
   const jan4Day = new Date(jan4).getUTCDay(); // 0=Sun..6=Sat
   const isoMonOfWeek1 = new Date(
-    jan4 - ((jan4Day === 0 ? 6 : jan4Day - 1) * 24 * 3600 * 1000),
+    jan4 - (jan4Day === 0 ? 6 : jan4Day - 1) * 24 * 3600 * 1000,
   ); // back to Monday
 
-  const start = new Date(isoMonOfWeek1.getTime() + (wn - 1) * 7 * 24 * 3600 * 1000);
+  const start = new Date(
+    isoMonOfWeek1.getTime() + (wn - 1) * 7 * 24 * 3600 * 1000,
+  );
   const endExclusive = new Date(start.getTime() + 7 * 24 * 3600 * 1000);
   return { start, endExclusive };
 }
@@ -301,7 +309,7 @@ app.get("/:slug/:week/og", async (c) => {
   const page = 1;
   const skip = 0; // first page only for OG
 
-  const cacheKey = `collections:${week}:${slug}:${region}:${page}:${limit}:og`;
+  const _cacheKey = `collections:${week}:${slug}:${region}:${page}:${limit}:og`;
 
   // const cached = await client.get(cacheKey);
   // if (cached && !render) {
@@ -309,7 +317,9 @@ app.get("/:slug/:week/og", async (c) => {
   // }
 
   // Use ISO week with endExclusive
-  const { start, endExclusive } = getIsoWeekRangeUTC(week as `${number}W${number}`);
+  const { start, endExclusive } = getIsoWeekRangeUTC(
+    week as `${number}W${number}`,
+  );
 
   const collection = await Collection.findOne({ _id: slug });
   if (!collection) {
@@ -325,13 +335,13 @@ app.get("/:slug/:week/og", async (c) => {
   const weeklyRanked = offers
     .map((offer) => {
       // ✅ filter by week AND position > 0
-      const positionsInWeek = offer.positions.filter((p) =>
-        inWeek(new Date(p.date)) && Number(p.position) > 0
+      const positionsInWeek = offer.positions.filter(
+        (p) => inWeek(new Date(p.date)) && Number(p.position) > 0,
       );
       if (positionsInWeek.length === 0) return null;
 
       const latest = positionsInWeek.reduce((a, b) =>
-        new Date(a.date).getTime() >= new Date(b.date).getTime() ? a : b
+        new Date(a.date).getTime() >= new Date(b.date).getTime() ? a : b,
       );
 
       return {
@@ -340,7 +350,9 @@ app.get("/:slug/:week/og", async (c) => {
         positions: positionsInWeek,
       };
     })
-    .filter((o) => o && typeof o.position === "number" && (o.position as number) > 0)
+    .filter(
+      (o) => o && typeof o.position === "number" && (o.position as number) > 0,
+    )
     .filter((o) => o !== null)
     .sort((a, b) => (a.position as number) - (b.position as number));
 
@@ -369,7 +381,6 @@ app.get("/:slug/:week/og", async (c) => {
     .filter(Boolean)
     .filter((o) => o !== null);
 
-
   // Stable OG hash tied to week+region+top10 IDs/positions/prices
   const hash = createHash("sha256");
   hash.update(
@@ -393,7 +404,7 @@ app.get("/:slug/:week/og", async (c) => {
     ? await db.db.collection("tops-og").findOne({ hash: hex })
     : null;
 
-  if (existingImage && (!direct && !render)) {
+  if (existingImage && !direct && !render) {
     return c.json(
       {
         id: existingImage.imageId,
@@ -406,26 +417,26 @@ app.get("/:slug/:week/og", async (c) => {
   // ---- FLEX TABLE LAYOUT (Satori) ----
   // Use the same column spec for header and rows
   const COLS = [
-    { key: 'rank', label: 'Rank', flex: 0.6 },
-    { key: 'title', label: 'Title', flex: 3.0 },
-    { key: 'discount', label: 'Discount', flex: 1.0 },
-    { key: 'original', label: 'Original', flex: 1.0 },
-    { key: 'price', label: 'Price', flex: 1.3 },
+    { key: "rank", label: "Rank", flex: 0.6 },
+    { key: "title", label: "Title", flex: 3.0 },
+    { key: "discount", label: "Discount", flex: 1.0 },
+    { key: "original", label: "Original", flex: 1.0 },
+    { key: "price", label: "Price", flex: 1.3 },
   ];
 
   const headerCell = (text: string, flex = 1) => (
     <div
       style={{
-        display: 'flex',
+        display: "flex",
         flexGrow: flex,
         flexShrink: 1,
         flexBasis: 0,
         minWidth: 0,
-        fontWeight: 'bold',
-        color: 'white',
-        fontSize: '24px',
-        padding: '10px 14px',
-        alignItems: 'center',
+        fontWeight: "bold",
+        color: "white",
+        fontSize: "24px",
+        padding: "10px 14px",
+        alignItems: "center",
       }}
     >
       {text}
@@ -435,15 +446,15 @@ app.get("/:slug/:week/og", async (c) => {
   const cell = (content: unknown, flex = 1) => (
     <div
       style={{
-        display: 'flex',
+        display: "flex",
         flexGrow: flex,
         flexShrink: 1,
         flexBasis: 0,
         minWidth: 0,
-        fontSize: '20px',
-        color: '#ddd',
-        padding: '10px 14px',
-        alignItems: 'center',
+        fontSize: "20px",
+        color: "#ddd",
+        padding: "10px 14px",
+        alignItems: "center",
       }}
     >
       {content}
@@ -455,47 +466,49 @@ app.get("/:slug/:week/og", async (c) => {
     const game = offersWithMetadata[i];
     const visible = Boolean(game);
 
-    const currencyFmtr = Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: game?.price?.price?.currencyCode ?? 'USD',
+    const currencyFmtr = Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: game?.price?.price?.currencyCode ?? "USD",
     });
 
     return (
       <div
         key={game._id}
         style={{
-          display: visible ? 'flex' : 'none',
-          flexDirection: 'row',
-          alignItems: 'center',
-          width: '100%',
-          borderTop: '1px solid #3a3a6e', // row divider
-          backgroundColor: i % 2 === 0 ? '#1a1a3e' : '#20204a',
+          display: visible ? "flex" : "none",
+          flexDirection: "row",
+          alignItems: "center",
+          width: "100%",
+          borderTop: "1px solid #3a3a6e", // row divider
+          backgroundColor: i % 2 === 0 ? "#1a1a3e" : "#20204a",
         }}
       >
         {cell(`#${i + 1}`, COLS[0].flex)}
-        {cell(game?.title ?? 'N/A', COLS[1].flex)}
+        {cell(game?.title ?? "N/A", COLS[1].flex)}
         {cell(
           game?.price?.price?.originalPrice &&
             game?.price?.price?.discountPrice &&
             game.price.price.originalPrice !== game.price.price.discountPrice
             ? `-${Math.round(((game.price.price.originalPrice - game.price.price.discountPrice) / game.price.price.originalPrice) * 100)}%`
-            : '',
-          COLS[2].flex
+            : "",
+          COLS[2].flex,
         )}
         {cell(
           game?.price?.price?.originalPrice &&
             game.price.price.originalPrice !== game.price.price.discountPrice
             ? currencyFmtr.format(game.price.price.originalPrice / 100)
-            : '',
-          COLS[3].flex
+            : "",
+          COLS[3].flex,
         )}
         {cell(
           game
             ? game.price?.price?.discountPrice === 0
-              ? 'Free'
-              : currencyFmtr.format((game.price?.price?.discountPrice ?? 0) / 100)
-            : '',
-          COLS[4].flex
+              ? "Free"
+              : currencyFmtr.format(
+                  (game.price?.price?.discountPrice ?? 0) / 100,
+                )
+            : "",
+          COLS[4].flex,
         )}
       </div>
     );
@@ -505,34 +518,34 @@ app.get("/:slug/:week/og", async (c) => {
     // @ts-expect-error
     <div
       style={{
-        height: '630px',
-        width: '1200px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'stretch',
-        justifyContent: 'flex-start',
-        backgroundColor: '#0f0f23',
-        backgroundImage: 'linear-gradient(45deg, #0f0f23 0%, #1a1a3e 100%)',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-        padding: '32px',
-        boxSizing: 'border-box',
-        gap: '16px',
+        height: "630px",
+        width: "1200px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "stretch",
+        justifyContent: "flex-start",
+        backgroundColor: "#0f0f23",
+        backgroundImage: "linear-gradient(45deg, #0f0f23 0%, #1a1a3e 100%)",
+        fontFamily: "system-ui, -apple-system, sans-serif",
+        padding: "32px",
+        boxSizing: "border-box",
+        gap: "16px",
       }}
     >
       {/* Header */}
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          color: 'white',
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+          color: "white",
         }}
       >
-        <div style={{ display: 'flex', fontSize: '40px' }}>🎮</div>
-        <div style={{ display: 'flex', fontSize: '36px', fontWeight: 'bold' }}>
+        <div style={{ display: "flex", fontSize: "40px" }}>🎮</div>
+        <div style={{ display: "flex", fontSize: "36px", fontWeight: "bold" }}>
           Epic Games Store — Top Sellers
         </div>
-        <div style={{ display: 'flex', marginLeft: 'auto', color: '#aaa' }}>
+        <div style={{ display: "flex", marginLeft: "auto", color: "#aaa" }}>
           {String(week)} · {region}
         </div>
       </div>
@@ -540,22 +553,22 @@ app.get("/:slug/:week/og", async (c) => {
       {/* Table (single outer border fixes header artifact) */}
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          border: '2px solid #3a3a6e',
-          borderRadius: '10px',
-          overflow: 'hidden',
-          width: '100%',
-          backgroundColor: '#20204a',
+          display: "flex",
+          flexDirection: "column",
+          border: "2px solid #3a3a6e",
+          borderRadius: "10px",
+          overflow: "hidden",
+          width: "100%",
+          backgroundColor: "#20204a",
         }}
       >
         {/* Table header row */}
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            backgroundColor: '#2a2a4e',
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: "#2a2a4e",
           }}
         >
           {headerCell(COLS[0].label, COLS[0].flex)}
@@ -566,7 +579,9 @@ app.get("/:slug/:week/og", async (c) => {
         </div>
 
         {/* Table body */}
-        <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+        <div
+          style={{ display: "flex", flexDirection: "column", width: "100%" }}
+        >
           {rows}
         </div>
       </div>
@@ -574,17 +589,24 @@ app.get("/:slug/:week/og", async (c) => {
       {/* Footer */}
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          color: '#999',
-          fontSize: '14px',
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          color: "#999",
+          fontSize: "14px",
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
-          {start.toLocaleDateString('en-GB')}
-          <span style={{ color: '#666' }}>•</span>
-          {endExclusive.toLocaleDateString('en-GB')}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          {start.toLocaleDateString("en-GB")}
+          <span style={{ color: "#666" }}>•</span>
+          {endExclusive.toLocaleDateString("en-GB")}
         </div>
       </div>
     </div>,
@@ -593,10 +615,10 @@ app.get("/:slug/:week/og", async (c) => {
       height: 630,
       fonts: [
         {
-          name: 'Roboto',
-          data: readFileSync(resolve('./src/static/Roboto-Light.ttf')),
+          name: "Roboto",
+          data: readFileSync(resolve("./src/static/Roboto-Light.ttf")),
           weight: 400,
-          style: 'normal',
+          style: "normal",
         },
       ],
     },
@@ -644,11 +666,13 @@ app.get("/:slug/:week/og", async (c) => {
 
   const responseData = (await response.json()) as { result: { id: string } };
 
-  await db.db.collection("tops-og").updateOne(
-    { imageId: responseData.result.id },
-    { $set: { imageId: responseData.result.id, hash: hex } },
-    { upsert: true },
-  );
+  await db.db
+    .collection("tops-og")
+    .updateOne(
+      { imageId: responseData.result.id },
+      { $set: { imageId: responseData.result.id, hash: hex } },
+      { upsert: true },
+    );
 
   const payload = {
     id: responseData.result.id,

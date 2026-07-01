@@ -9,8 +9,19 @@ import {
 import type { EgdataPaths } from "./types.js";
 
 const pagination = [parameterRef("page"), parameterRef("limit")];
-const regionalPagination = [parameterRef("country"), ...pagination];
+const localizedPagination = [parameterRef("locale"), ...pagination];
+const regionalLocalizedPagination = [
+  parameterRef("country"),
+  parameterRef("locale"),
+  ...pagination,
+];
 const offerId = [parameterRef("offerId")];
+const localizedOfferId = [...offerId, parameterRef("locale")];
+const regionalLocalizedOfferId = [
+  ...offerId,
+  parameterRef("country"),
+  parameterRef("locale"),
+];
 const itemId = [parameterRef("itemId")];
 const sandboxId = [parameterRef("sandboxId")];
 const sellerId = [parameterRef("sellerId")];
@@ -94,7 +105,7 @@ export const paths: EgdataPaths = {
       operationId: "listLatestGames",
       tags: ["Catalog"],
       summary: "List recently created catalog offers",
-      parameters: [parameterRef("country")],
+      parameters: [parameterRef("country"), parameterRef("locale")],
       response: arrayOf(ref("Offer")),
     }),
   },
@@ -103,6 +114,7 @@ export const paths: EgdataPaths = {
       operationId: "listFeaturedGames",
       tags: ["Catalog"],
       summary: "List featured offers",
+      parameters: [parameterRef("locale")],
       response: arrayOf(ref("Offer")),
     }),
   },
@@ -114,6 +126,7 @@ export const paths: EgdataPaths = {
       parameters: [
         stringQuery("query", "Search text to autocomplete.", "civilization"),
         parameterRef("limit"),
+        parameterRef("locale"),
       ],
       response: {
         type: "object",
@@ -134,7 +147,7 @@ export const paths: EgdataPaths = {
       operationId: "listActiveSales",
       tags: ["Catalog"],
       summary: "List active sale events with representative offers",
-      parameters: [parameterRef("country")],
+      parameters: [parameterRef("country"), parameterRef("locale")],
       response: arrayOf({
         type: "object",
         additionalProperties: true,
@@ -146,7 +159,7 @@ export const paths: EgdataPaths = {
       operationId: "listOffers",
       tags: ["Offers"],
       summary: "List offers with regional price data",
-      parameters: regionalPagination,
+      parameters: regionalLocalizedPagination,
       response: ref("OfferListResponse"),
     }),
   },
@@ -155,7 +168,7 @@ export const paths: EgdataPaths = {
       operationId: "getOffer",
       tags: ["Offers"],
       summary: "Get an offer by ID",
-      parameters: offerId,
+      parameters: localizedOfferId,
       response: ref("Offer"),
     }),
   },
@@ -205,7 +218,7 @@ export const paths: EgdataPaths = {
       operationId: "listUpcomingOffers",
       tags: ["Offers"],
       summary: "List upcoming games and add-ons",
-      parameters: regionalPagination,
+      parameters: regionalLocalizedPagination,
       response: ref("OfferListResponse"),
     }),
   },
@@ -214,7 +227,7 @@ export const paths: EgdataPaths = {
       operationId: "listLatestReleasedOffers",
       tags: ["Offers"],
       summary: "List recently released offers",
-      parameters: regionalPagination,
+      parameters: regionalLocalizedPagination,
       response: ref("OfferListResponse"),
     }),
   },
@@ -223,7 +236,7 @@ export const paths: EgdataPaths = {
       operationId: "listLatestAchievementOffers",
       tags: ["Offers"],
       summary: "List recently released base games with achievements",
-      parameters: [parameterRef("country")],
+      parameters: [parameterRef("country"), parameterRef("locale")],
       response: arrayOf({
         allOf: [{ $ref: "#/components/schemas/Offer" }],
       }),
@@ -234,7 +247,7 @@ export const paths: EgdataPaths = {
       operationId: "listTopSellersOffers",
       tags: ["Offers"],
       summary: "List top-selling offers",
-      parameters: pagination,
+      parameters: localizedPagination,
       response: ref("OfferListResponse"),
     }),
   },
@@ -243,7 +256,7 @@ export const paths: EgdataPaths = {
       operationId: "listTopWishlistedOffers",
       tags: ["Offers"],
       summary: "List top-wishlisted offers",
-      parameters: pagination,
+      parameters: localizedPagination,
       response: ref("OfferListResponse"),
     }),
   },
@@ -252,7 +265,7 @@ export const paths: EgdataPaths = {
       operationId: "listFeaturedDiscounts",
       tags: ["Offers"],
       summary: "List featured discounted offers",
-      parameters: [parameterRef("country")],
+      parameters: [parameterRef("country"), parameterRef("locale")],
       response: arrayOf(ref("Offer")),
     }),
   },
@@ -280,7 +293,7 @@ export const paths: EgdataPaths = {
           description: "Event tag ID.",
           schema: { type: "string" },
         },
-        ...regionalPagination,
+        ...regionalLocalizedPagination,
       ],
       response: {
         type: "object",
@@ -304,6 +317,7 @@ export const paths: EgdataPaths = {
       operationId: "listOfferGenres",
       tags: ["Offers"],
       summary: "List active genres with representative offers",
+      parameters: [parameterRef("locale")],
       response: arrayOf({
         type: "object",
         additionalProperties: true,
@@ -472,7 +486,7 @@ export const paths: EgdataPaths = {
       operationId: "listRelatedOffers",
       tags: ["Offer Details"],
       summary: "List related offers in the same sandbox",
-      parameters: [...offerId, parameterRef("country")],
+      parameters: regionalLocalizedOfferId,
       response: arrayOf(ref("Offer")),
     }),
   },
@@ -501,7 +515,7 @@ export const paths: EgdataPaths = {
       operationId: "listOfferSuggestions",
       tags: ["Offer Details"],
       summary: "List suggested offers",
-      parameters: [...offerId, parameterRef("country")],
+      parameters: regionalLocalizedOfferId,
       response: arrayOf(ref("Offer")),
     }),
   },
@@ -576,7 +590,7 @@ export const paths: EgdataPaths = {
       operationId: "listOfferCollectionOffers",
       tags: ["Offer Details"],
       summary: "List collection offers for an offer",
-      parameters: [...offerId, parameterRef("country")],
+      parameters: regionalLocalizedOfferId,
       response: arrayOf(ref("Offer")),
     }),
   },
@@ -594,7 +608,7 @@ export const paths: EgdataPaths = {
       operationId: "getOfferBundle",
       tags: ["Offer Details"],
       summary: "Get bundle contents and prices",
-      parameters: [...offerId, parameterRef("country")],
+      parameters: regionalLocalizedOfferId,
       response: {
         type: "object",
         additionalProperties: false,
@@ -618,7 +632,7 @@ export const paths: EgdataPaths = {
       operationId: "listBundlesContainingOffer",
       tags: ["Offer Details"],
       summary: "List bundles that contain an offer",
-      parameters: [...offerId, parameterRef("country")],
+      parameters: regionalLocalizedOfferId,
       response: arrayOf(
         flexibleObjectResponse("Bundle offer and regional price data."),
       ),
@@ -629,7 +643,7 @@ export const paths: EgdataPaths = {
       operationId: "getOfferPrepurchaseAlternative",
       tags: ["Offer Details"],
       summary: "Check whether an offer has a pre-purchase alternative",
-      parameters: [...offerId, parameterRef("country")],
+      parameters: regionalLocalizedOfferId,
       response: {
         type: "object",
         additionalProperties: false,
@@ -646,7 +660,7 @@ export const paths: EgdataPaths = {
       operationId: "getOfferRegularAlternative",
       tags: ["Offer Details"],
       summary: "Check whether a pre-purchase offer has a regular alternative",
-      parameters: [...offerId, parameterRef("country")],
+      parameters: regionalLocalizedOfferId,
       response: {
         type: "object",
         additionalProperties: false,
@@ -701,7 +715,7 @@ export const paths: EgdataPaths = {
       operationId: "getOfferOverview",
       tags: ["Offer Details"],
       summary: "Get consolidated overview data for an offer",
-      parameters: [...offerId, parameterRef("country")],
+      parameters: regionalLocalizedOfferId,
       response: {
         type: "object",
         additionalProperties: true,
@@ -789,6 +803,7 @@ export const paths: EgdataPaths = {
       summary: "Resolve the best offer for multiple items",
       description:
         "Returns an object keyed by requested item ID. Each value is the best matching offer or null when no offer can be resolved.",
+      parameters: [parameterRef("locale")],
       requestBody: jsonBody("Item IDs to resolve.", stringArrayBody("items")),
       response: {
         type: "object",
@@ -828,7 +843,7 @@ export const paths: EgdataPaths = {
       operationId: "getItemOffer",
       tags: ["Items"],
       summary: "Get the offer associated with an item",
-      parameters: itemId,
+      parameters: [...itemId, parameterRef("locale")],
       response: ref("Offer"),
     }),
   },
@@ -889,6 +904,7 @@ export const paths: EgdataPaths = {
       parameters: [
         ...sandboxId,
         ...pagination,
+        parameterRef("locale"),
         parameterRef("sandboxOfferType"),
         parameterRef("title"),
       ],
@@ -937,7 +953,11 @@ export const paths: EgdataPaths = {
       summary: "Get the base game for a sandbox",
       description:
         "Returns the base game offer for a sandbox, or an executable item fallback when no offer exists.",
-      parameters: [...sandboxId, parameterRef("country")],
+      parameters: [
+        ...sandboxId,
+        parameterRef("country"),
+        parameterRef("locale"),
+      ],
       response: flexibleObjectResponse(
         "Base game offer or executable item fallback.",
       ),
@@ -997,6 +1017,7 @@ export const paths: EgdataPaths = {
       operationId: "getFreeGames",
       tags: ["Free Games"],
       summary: "Get current and upcoming free games",
+      parameters: [parameterRef("locale")],
       response: ref("FreeGamesResponse"),
     }),
   },
@@ -1005,7 +1026,7 @@ export const paths: EgdataPaths = {
       operationId: "listFreeGamesHistory",
       tags: ["Free Games"],
       summary: "List historical free game promotions",
-      parameters: pagination,
+      parameters: localizedPagination,
       response: {
         type: "object",
         additionalProperties: true,
@@ -1019,6 +1040,7 @@ export const paths: EgdataPaths = {
       summary: "Search historical free game promotions",
       parameters: [
         stringQuery("query", "Search text.", "fallout"),
+        parameterRef("locale"),
         ...pagination,
       ],
       response: {
@@ -1040,7 +1062,7 @@ export const paths: EgdataPaths = {
       operationId: "listMobileFreeGames",
       tags: ["Free Games"],
       summary: "List current mobile free games",
-      parameters: [parameterRef("country")],
+      parameters: [parameterRef("country"), parameterRef("locale")],
       response: ref("FreeGamesResponse"),
     }),
   },
@@ -1057,7 +1079,7 @@ export const paths: EgdataPaths = {
       operationId: "searchOffersV2",
       tags: ["Search"],
       summary: "Search offers with OpenSearch-backed filters and aggregations",
-      parameters: [parameterRef("country")],
+      parameters: [parameterRef("country"), parameterRef("locale")],
       requestBody: jsonBody(
         "Search filters and sort options.",
         ref("SearchBody"),
@@ -1072,7 +1094,7 @@ export const paths: EgdataPaths = {
       summary: "Search offers with the legacy Mongo-backed implementation",
       description:
         "Legacy search endpoint retained for compatibility. New integrations should prefer POST /search/v2/search.",
-      parameters: [parameterRef("country")],
+      parameters: [parameterRef("country"), parameterRef("locale")],
       requestBody: jsonBody(
         "Search filters and sort options.",
         ref("SearchBody"),
@@ -1290,7 +1312,7 @@ export const paths: EgdataPaths = {
       summary: "List offers for a seller",
       parameters: [
         ...sellerId,
-        ...regionalPagination,
+        ...regionalLocalizedPagination,
         stringQuery("offerType", "Optional offer type filter.", "BASE_GAME"),
         stringQuery(
           "ignoredSandboxes",
@@ -1305,7 +1327,11 @@ export const paths: EgdataPaths = {
       operationId: "getSellerCoverOffers",
       tags: ["Sellers"],
       summary: "Get representative cover offers for a seller",
-      parameters: [...sellerId, parameterRef("country")],
+      parameters: [
+        ...sellerId,
+        parameterRef("country"),
+        parameterRef("locale"),
+      ],
       response: arrayOf(ref("Offer")),
     }),
   },

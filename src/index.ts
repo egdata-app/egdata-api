@@ -1,4 +1,6 @@
 import "@aikidosec/firewall";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import Zen from "@aikidosec/firewall";
 import { serve } from "@hono/node-server";
 import { swaggerUI } from "@hono/swagger-ui";
@@ -53,10 +55,17 @@ import StatsRoute from "./routes/stats.js";
 import UsersRoute from "./routes/users.js";
 import UsersServiceRoute from "./routes/users-service.js";
 import { attributesToObject } from "./utils/attributes-to-object.js";
-import { countries, regions } from "./utils/countries.js";
 import { resolveChangelogContextSafely } from "./utils/changelog-context.js";
+import { countries, regions } from "./utils/countries.js";
 import { getFeaturedGames } from "./utils/get-featured-games.js";
 import { consola } from "./utils/logger.js";
+import {
+  getLocaleOrErrorResponse,
+  getLocalizedCacheTtlSeconds,
+  localeCacheSegment,
+  localizeOffer,
+  localizeOffers,
+} from "./utils/offer-localization.js";
 import { orderOffersObject } from "./utils/order-offers-object.js";
 import { API_VERSION } from "./version.js";
 
@@ -478,6 +487,11 @@ app.get("/items-from-offer/:id", async (c) => {
 
 app.get("/latest-games", async (c) => {
   const start = new Date();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -495,7 +509,7 @@ app.get("/latest-games", async (c) => {
     });
   }
 
-  const cacheKey = `latest-games:${region}`;
+  const cacheKey = `latest-games:${region}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -526,15 +540,23 @@ app.get("/latest-games", async (c) => {
 
   const end = new Date();
 
-  const result = items.map((i) => {
-    const price = prices.find((p) => p.offerId === i.id);
-    return {
-      ...orderOffersObject(i),
-      price: price,
-    };
-  });
+  const result = await localizeOffers(
+    items.map((i) => {
+      const price = prices.find((p) => p.offerId === i.id);
+      return {
+        ...orderOffersObject(i),
+        price: price,
+      };
+    }),
+    locale,
+  );
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 60);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 60),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
@@ -543,10 +565,15 @@ app.get("/latest-games", async (c) => {
 });
 
 app.get("/featured", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const GET_FEATURED_GAMES_START = new Date();
 
   const cacheKey = `featured:v0.1`;
-  const responseCacheKey = `featured-response:v0.1`;
+  const responseCacheKey = `featured-response:${localeCacheSegment(locale)}:v0.1`;
 
   console.log(`[CACHE] ${cacheKey}`);
 
@@ -590,23 +617,32 @@ app.get("/featured", async (c) => {
     },
   );
 
-  const result = offers.map((o) => orderOffersObject(o));
-
-  await client.set(responseCacheKey, JSON.stringify(result), "EX", 3600);
-
-  return c.json(
+  const result = await localizeOffers(
     offers.map((o) => orderOffersObject(o)),
-    200,
-    {
-      "Cache-Control": "public, max-age=60",
-      "Server-Timing": `db;dur=${
-        GET_FEATURED_GAMES_END.getTime() - GET_FEATURED_GAMES_START.getTime()
-      }`,
-    },
+    locale,
   );
+
+  await client.set(
+    responseCacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
+
+  return c.json(result, 200, {
+    "Cache-Control": "public, max-age=60",
+    "Server-Timing": `db;dur=${
+      GET_FEATURED_GAMES_END.getTime() - GET_FEATURED_GAMES_START.getTime()
+    }`,
+  });
 });
 
 app.get("/autocomplete", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const query = c.req.query("query");
 
   if (!query) {
@@ -620,7 +656,7 @@ app.get("/autocomplete", async (c) => {
 
   const cacheKey = `autocomplete:${Buffer.from(query).toString(
     "base64",
-  )}:${limit}:v0.1`;
+  )}:${limit}:${localeCacheSegment(locale)}:v0.1`;
 
   const cached = await client.get(cacheKey);
 
@@ -660,7 +696,10 @@ app.get("/autocomplete", async (c) => {
   );
 
   const response = {
-    elements: offers.map((o) => orderOffersObject(o)),
+    elements: await localizeOffers(
+      offers.map((o) => orderOffersObject(o)),
+      locale,
+    ),
     total: await Offer.countDocuments(
       {
         $text: {
@@ -692,6 +731,11 @@ app.get("/countries", async (c) => {
 });
 
 app.get("/sales", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
   const selectedCountry = country ?? cookieCountry ?? "US";
@@ -711,7 +755,7 @@ app.get("/sales", async (c) => {
   const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 30);
   const skip = (page - 1) * limit;
 
-  const cacheKey = `sales:${region}:${page}:${limit}:v1.3`;
+  const cacheKey = `sales:${region}:${page}:${limit}:${localeCacheSegment(locale)}:v1.3`;
 
   const cached = await client.get(cacheKey);
 
@@ -773,18 +817,26 @@ app.get("/sales", async (c) => {
   });
 
   const res = {
-    elements: result.map((r) => {
-      return {
-        ...r.offer,
-        price: r.price,
-      };
-    }),
+    elements: await localizeOffers(
+      result.map((r) => {
+        return {
+          ...r.offer,
+          price: r.price,
+        };
+      }),
+      locale,
+    ),
     page,
     limit,
     total: count,
   };
 
-  await client.set(cacheKey, JSON.stringify(res), "EX", 60);
+  await client.set(
+    cacheKey,
+    JSON.stringify(res),
+    "EX",
+    getLocalizedCacheTtlSeconds(res, 60),
+  );
 
   return c.json(res, 200, {
     "Cache-Control": "public, max-age=0",
@@ -794,6 +846,11 @@ app.get("/sales", async (c) => {
 
 app.get("/base-game/:namespace", async (c) => {
   const { namespace } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
 
   if (internalNamespaces.includes(namespace)) {
     return c.json(
@@ -820,7 +877,9 @@ app.get("/base-game/:namespace", async (c) => {
     });
 
     if (gameWithPrePurchase) {
-      return c.json(orderOffersObject(gameWithPrePurchase));
+      return c.json(
+        await localizeOffer(orderOffersObject(gameWithPrePurchase), locale),
+      );
     }
 
     c.status(404);
@@ -829,7 +888,7 @@ app.get("/base-game/:namespace", async (c) => {
     });
   }
 
-  return c.json(orderOffersObject(game));
+  return c.json(await localizeOffer(orderOffersObject(game), locale));
 });
 
 app.get("/changelog", async (c) => {
@@ -1142,6 +1201,11 @@ app.get("/offer-by-slug/:slug", async (c) => {
 });
 
 app.get("/active-sales", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -1158,7 +1222,7 @@ app.get("/active-sales", async (c) => {
     });
   }
 
-  const cacheKey = "active-sales";
+  const cacheKey = `active-sales:${region}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -1221,12 +1285,20 @@ app.get("/active-sales", async (c) => {
         name: t.name,
         active: everyPriceIsOnSale,
         // @ts-expect-error
-        offers: offers.slice(0, 3).map((o) => orderOffersObject(o)),
+        offers: await localizeOffers(
+          offers.slice(0, 3).map((o) => orderOffersObject(o)),
+          locale,
+        ),
       });
     }),
   );
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
@@ -1510,7 +1582,7 @@ async function startServer() {
 
 const invokedDirectly =
   process.argv[1] !== undefined &&
-  import.meta.url === `file://${process.argv[1]}`;
+  fileURLToPath(import.meta.url) === resolve(process.argv[1]);
 
 if (invokedDirectly) {
   startServer();

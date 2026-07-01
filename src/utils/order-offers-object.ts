@@ -1,5 +1,5 @@
-import type { OfferType } from '../models/index.js';
-import { attributesToObject } from './attributes-to-object.js';
+import type { OfferType } from "../models/index.js";
+import { attributesToObject } from "./attributes-to-object.js";
 
 export const orderOffersObject = (offer: OfferType) => {
   const {
@@ -8,6 +8,7 @@ export const orderOffersObject = (offer: OfferType) => {
     namespace,
     title,
     description,
+    longDescription,
     offerType,
     effectiveDate,
     creationDate,
@@ -17,6 +18,7 @@ export const orderOffersObject = (offer: OfferType) => {
     currentPrice,
     seller,
     productSlug,
+    offerMappings,
     urlSlug,
     url,
     tags,
@@ -40,6 +42,7 @@ export const orderOffersObject = (offer: OfferType) => {
     namespace,
     title,
     description,
+    longDescription,
     offerType,
     effectiveDate,
     creationDate,
@@ -49,6 +52,7 @@ export const orderOffersObject = (offer: OfferType) => {
     currentPrice,
     seller,
     productSlug,
+    offerMappings,
     urlSlug,
     url,
     tags,

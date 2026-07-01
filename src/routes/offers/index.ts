@@ -14,6 +14,13 @@ import {
 import { attributesToObject } from "../../utils/attributes-to-object.js";
 import { regions } from "../../utils/countries.js";
 import { getImage } from "../../utils/get-image.js";
+import {
+  getLocaleOrErrorResponse,
+  getLocalizedCacheTtlSeconds,
+  localeCacheSegment,
+  localizeOffer,
+  localizeOffers,
+} from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
 import OfferDataRoute from "./data.js";
 import OfferPriceRoute from "./price.js";
@@ -64,6 +71,11 @@ app.use("*", async (c, next) => {
 
 app.get("/", async (c) => {
   const start = new Date();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -87,7 +99,7 @@ app.get("/", async (c) => {
   );
   const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
 
-  const cacheKey = `offers:${region}:${page}:${limit}`;
+  const cacheKey = `offers:${region}:${page}:${limit}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -110,20 +122,30 @@ app.get("/", async (c) => {
     region,
   });
 
-  const result = {
-    elements: offers.map((o) => {
+  const elements = await localizeOffers(
+    offers.map((o) => {
       const price = prices.find((p) => p.offerId === o.id);
       return {
         ...orderOffersObject(o),
         price: price ?? null,
       };
     }),
+    locale,
+  );
+
+  const result = {
+    elements,
     page,
     limit,
     total: await Offer.countDocuments(),
   };
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 60);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 60),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
@@ -144,6 +166,11 @@ app.get("/events", async (c) => {
 
 app.get("/events/:id", async (c) => {
   const { id } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -166,7 +193,7 @@ app.get("/events/:id", async (c) => {
 
   const start = new Date();
 
-  const cacheKey = `event:${id}:${region}:${page}:${limit}`;
+  const cacheKey = `event:${id}:${region}:${page}:${limit}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -246,7 +273,7 @@ app.get("/events/:id", async (c) => {
   ]);
 
   const result = {
-    elements: offers,
+    elements: await localizeOffers(offers, locale),
     title: event.name ?? "",
     limit,
     start: skip,
@@ -256,7 +283,12 @@ app.get("/events/:id", async (c) => {
     }),
   };
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result, 200, {
     "Server-Timing": `db;dur=${Date.now() - start.getTime()}`,
@@ -265,6 +297,11 @@ app.get("/events/:id", async (c) => {
 });
 
 app.get("/upcoming", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -287,7 +324,7 @@ app.get("/upcoming", async (c) => {
 
   const start = new Date();
 
-  const cacheKey = `upcoming:${region}:${page}:${limit}:v0.1`;
+  const cacheKey = `upcoming:${region}:${page}:${limit}:${localeCacheSegment(locale)}:v0.1`;
 
   const cached = await client.get(cacheKey);
 
@@ -349,13 +386,18 @@ app.get("/upcoming", async (c) => {
     },
   ]);
 
-  const result = {
-    elements: offers.map((o) => {
+  const elements = await localizeOffers(
+    offers.map((o) => {
       return {
         ...orderOffersObject(o),
         price: o.price ?? null,
       };
     }),
+    locale,
+  );
+
+  const result = {
+    elements,
     limit,
     start: skip,
     page,
@@ -364,7 +406,12 @@ app.get("/upcoming", async (c) => {
     }),
   };
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 360);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 360),
+  );
 
   return c.json(result, 200, {
     "Server-Timing": `db;dur=${Date.now() - start.getTime()}`,
@@ -373,6 +420,11 @@ app.get("/upcoming", async (c) => {
 });
 
 app.get("/genres", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const genres = await Tags.find({
     groupName: "genre",
     status: "ACTIVE",
@@ -395,20 +447,24 @@ app.get("/genres", async (c) => {
         },
       );
 
+      const localizedOffers = await localizeOffers(
+        offers.map((o) => ({
+          id: o.id,
+          namespace: o.namespace,
+          title: o.title,
+          image: getImage(o.keyImages, [
+            "OfferImageTall",
+            "Thumbnail",
+            "DieselGameBoxTall",
+            "DieselStoreFrontTall",
+          ]),
+        })),
+        locale,
+      );
+
       return {
         genre,
-        offers: offers.map((o) => {
-          return {
-            id: o.id,
-            title: o.title,
-            image: getImage(o.keyImages, [
-              "OfferImageTall",
-              "Thumbnail",
-              "DieselGameBoxTall",
-              "DieselStoreFrontTall",
-            ]),
-          };
-        }),
+        offers: localizedOffers.map(({ namespace: _namespace, ...o }) => o),
       };
     }),
   );
@@ -419,11 +475,16 @@ app.get("/genres", async (c) => {
 });
 
 app.get("/top-wishlisted", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 10);
   const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
   const start = new Date();
-  const cacheKey = `top-wishlisted:${page}:${limit}:v0.1`;
+  const cacheKey = `top-wishlisted:${page}:${limit}:${localeCacheSegment(locale)}:v0.1`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -445,8 +506,8 @@ app.get("/top-wishlisted", async (c) => {
   });
 
   if (result.length > 0) {
-    const response = {
-      elements: offers
+    const elements = await localizeOffers(
+      offers
         .map((o: OfferType) => {
           return {
             ...orderOffersObject(o),
@@ -454,13 +515,22 @@ app.get("/top-wishlisted", async (c) => {
           };
         })
         .sort((a, b) => a.position - b.position),
+      locale,
+    );
+    const response = {
+      elements,
       page,
       limit,
       total: await GamePosition.countDocuments({
         position: { $gt: 0 },
       }),
     };
-    await client.set(cacheKey, JSON.stringify(response), "EX", 3600);
+    await client.set(
+      cacheKey,
+      JSON.stringify(response),
+      "EX",
+      getLocalizedCacheTtlSeconds(response, 3600),
+    );
     return c.json(response, 200, {
       "Cache-Control": "public, max-age=60",
       "Server-Timing": `db;dur=${Date.now() - start.getTime()}`,
@@ -474,11 +544,16 @@ app.get("/top-wishlisted", async (c) => {
 });
 
 app.get("/top-sellers", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 10);
   const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
   const start = new Date();
-  const cacheKey = `top-sellers:${page}:${limit}:v0.1`;
+  const cacheKey = `top-sellers:${page}:${limit}:${localeCacheSegment(locale)}:v0.1`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -500,8 +575,8 @@ app.get("/top-sellers", async (c) => {
   });
 
   if (result.length > 0) {
-    const response = {
-      elements: offers
+    const elements = await localizeOffers(
+      offers
         .map((o: OfferType) => {
           return {
             ...orderOffersObject(o),
@@ -509,6 +584,10 @@ app.get("/top-sellers", async (c) => {
           };
         })
         .sort((a, b) => a.position - b.position),
+      locale,
+    );
+    const response = {
+      elements,
       page,
       limit,
       total: await GamePosition.countDocuments({
@@ -516,7 +595,12 @@ app.get("/top-sellers", async (c) => {
         position: { $gt: 0 },
       }),
     };
-    await client.set(cacheKey, JSON.stringify(response), "EX", 3600);
+    await client.set(
+      cacheKey,
+      JSON.stringify(response),
+      "EX",
+      getLocalizedCacheTtlSeconds(response, 3600),
+    );
     return c.json(response, 200, {
       "Cache-Control": "public, max-age=60",
       "Server-Timing": `db;dur=${Date.now() - start.getTime()}`,
@@ -530,6 +614,11 @@ app.get("/top-sellers", async (c) => {
 });
 
 app.get("/featured-discounts", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
   const selectedCountry = country ?? cookieCountry ?? "US";
@@ -543,7 +632,7 @@ app.get("/featured-discounts", async (c) => {
     });
   }
 
-  const cacheKey = `featured-discounts:${region}:v0.3`;
+  const cacheKey = `featured-discounts:${region}:${localeCacheSegment(locale)}:v0.3`;
   const cached = await client.get(cacheKey);
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
@@ -586,24 +675,32 @@ app.get("/featured-discounts", async (c) => {
     featuredOffers.map((p) => [p.offerId, p.position]),
   );
 
-  const result = offers
-    .map((offer) => {
-      const price = priceMap.get(offer.id);
-      const position = positionMap.get(offer.id);
+  const result = await localizeOffers(
+    offers
+      .map((offer) => {
+        const price = priceMap.get(offer.id);
+        const position = positionMap.get(offer.id);
 
-      if (!price || position === undefined) return null;
+        if (!price || position === undefined) return null;
 
-      return {
-        ...offer,
-        price,
-        position,
-      };
-    })
-    .filter((o): o is NonNullable<typeof o> => o !== null)
-    .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-    .slice(0, 20);
+        return {
+          ...offer,
+          price,
+          position,
+        };
+      })
+      .filter((o): o is NonNullable<typeof o> => o !== null)
+      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+      .slice(0, 20),
+    locale,
+  );
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
@@ -611,6 +708,11 @@ app.get("/featured-discounts", async (c) => {
 });
 
 app.get("/latest-achievements", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
   const selectedCountry = country ?? cookieCountry ?? "US";
@@ -623,7 +725,7 @@ app.get("/latest-achievements", async (c) => {
       message: "Country not found",
     });
   }
-  const cacheKey = `latest-achievements:${region}:v0.1`;
+  const cacheKey = `latest-achievements:${region}:${localeCacheSegment(locale)}:v0.1`;
   const cached = await client.get(cacheKey);
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
@@ -674,14 +776,24 @@ app.get("/latest-achievements", async (c) => {
       break;
     }
   }
-  result = result.slice(0, 20);
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  result = await localizeOffers(result.slice(0, 20), locale);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
   });
 });
 
 app.get("/latest-released", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
   const selectedCountry = country ?? cookieCountry ?? "US";
@@ -697,7 +809,7 @@ app.get("/latest-released", async (c) => {
   const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 50);
   const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
-  const cacheKey = `latest-released:${region}`;
+  const cacheKey = `latest-released:${region}:${localeCacheSegment(locale)}`;
   const cached = await client.get(cacheKey);
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
@@ -730,14 +842,18 @@ app.get("/latest-released", async (c) => {
     offerId: { $in: offers.map((o) => o.id) },
     region,
   });
-  const result = {
-    elements: offers.map((o) => {
+  const elements = await localizeOffers(
+    offers.map((o) => {
       const price = prices.find((p) => p.offerId === o.id);
       return {
         ...orderOffersObject(o),
         price: price ?? null,
       };
     }),
+    locale,
+  );
+  const result = {
+    elements,
     limit,
     start: skip,
     page,
@@ -746,7 +862,12 @@ app.get("/latest-released", async (c) => {
       offerType: { $in: ["BASE_GAME"] },
     }),
   };
-  await client.set(cacheKey, JSON.stringify(result), "EX", 60);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 60),
+  );
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
   });
@@ -873,6 +994,11 @@ app.post("/exists", async (c) => {
 
 app.get("/:id", async (c) => {
   const { id } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
 
   if (!id) {
     c.status(400);
@@ -883,7 +1009,7 @@ app.get("/:id", async (c) => {
 
   const start = new Date();
 
-  const cacheKey = `offer:${id}:v0.1`;
+  const cacheKey = `offer:${id}:${localeCacheSegment(locale)}:v0.1`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -903,12 +1029,20 @@ app.get("/:id", async (c) => {
     });
   }
 
-  const result = {
-    ...offer,
-    customAttributes: attributesToObject(offer.customAttributes as any),
-  };
+  const result = await localizeOffer(
+    {
+      ...offer,
+      customAttributes: attributesToObject(offer.customAttributes as any),
+    },
+    locale,
+  );
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 60);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 60),
+  );
 
   return c.json(result, 200, {
     "Server-Timing": `db;dur=${Date.now() - start.getTime()}`,

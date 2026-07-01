@@ -1,10 +1,22 @@
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
-import { regions } from "../utils/countries.js";
 import client from "../clients/redis.js";
-import { orderOffersObject } from "../utils/order-offers-object.js";
 import { db } from "../db/index.js";
-import { GamePosition, Item, Offer, PriceEngine, Seller } from "../models/index.js";
+import {
+  GamePosition,
+  Item,
+  Offer,
+  PriceEngine,
+  Seller,
+} from "../models/index.js";
+import { regions } from "../utils/countries.js";
+import {
+  getLocaleOrErrorResponse,
+  getLocalizedCacheTtlSeconds,
+  localeCacheSegment,
+  localizeOffers,
+} from "../utils/offer-localization.js";
+import { orderOffersObject } from "../utils/order-offers-object.js";
 
 const app = new Hono();
 
@@ -16,9 +28,14 @@ app.get("/", async (c) => {
 
 app.get("/:id", async (c) => {
   const { id } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
-  const limit = Number.parseInt(c.req.query("limit") || "0");
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
+  const limit = Number.parseInt(c.req.query("limit") || "0", 10);
+  const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const offerType = c.req.query("offerType");
   const ignoredSandboxes = (c.req.query("ignoredSandboxes") || "").split(",");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -26,7 +43,7 @@ app.get("/:id", async (c) => {
   const selectedCountry = country ?? cookieCountry ?? "US";
 
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -37,8 +54,8 @@ app.get("/:id", async (c) => {
   }
 
   const cacheKey = `sellers:${id}:${region}:${page}:${limit}:${offerType}:${ignoredSandboxes.join(
-    ","
-  )}`;
+    ",",
+  )}:${localeCacheSegment(locale)}`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -63,7 +80,7 @@ app.get("/:id", async (c) => {
       sort: {
         lastModifiedDate: -1,
       },
-    }
+    },
   );
 
   const prices = await PriceEngine.find({
@@ -71,27 +88,40 @@ app.get("/:id", async (c) => {
     region,
   });
 
-  const result = offers.map((o) => {
-    const price = prices.find((p) => p.offerId === o.id);
-    return {
-      ...orderOffersObject(o),
-      price,
-    };
-  });
+  const result = await localizeOffers(
+    offers.map((o) => {
+      const price = prices.find((p) => p.offerId === o.id);
+      return {
+        ...orderOffersObject(o),
+        price,
+      };
+    }),
+    locale,
+  );
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result);
 });
 
 app.get("/:id/cover", async (c) => {
   const { id } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
   const selectedCountry = country ?? cookieCountry ?? "US";
 
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -101,7 +131,7 @@ app.get("/:id/cover", async (c) => {
     });
   }
 
-  const cacheKey = `sellers:${id}:cover:${region}`;
+  const cacheKey = `sellers:${id}:cover:${region}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -133,7 +163,7 @@ app.get("/:id/cover", async (c) => {
       sort: {
         lastModifiedDate: -1,
       },
-    }
+    },
   );
 
   let offers = offersInTopSellers.slice(0, 5);
@@ -150,7 +180,7 @@ app.get("/:id/cover", async (c) => {
         sort: {
           lastModifiedDate: -1,
         },
-      }
+      },
     );
   }
 
@@ -159,15 +189,23 @@ app.get("/:id/cover", async (c) => {
     region,
   });
 
-  const result = offers.map((o) => {
-    const price = prices.find((p) => p.offerId === o.id);
-    return {
-      ...orderOffersObject(o),
-      price,
-    };
-  });
+  const result = await localizeOffers(
+    offers.map((o) => {
+      const price = prices.find((p) => p.offerId === o.id);
+      return {
+        ...orderOffersObject(o),
+        price,
+      };
+    }),
+    locale,
+  );
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result);
 });
@@ -226,7 +264,7 @@ app.get("/:id/stats", async (c) => {
         { $group: { _id: "$id" } },
         { $count: "count" },
       ],
-      { allowDiskUse: true }
+      { allowDiskUse: true },
     )
     .toArray();
 
@@ -252,7 +290,7 @@ app.get("/:id/stats", async (c) => {
         { $group: { _id: "$offerId" } },
         { $count: "count" },
       ],
-      { allowDiskUse: true }
+      { allowDiskUse: true },
     )
     .toArray();
 

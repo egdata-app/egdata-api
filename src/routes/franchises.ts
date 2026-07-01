@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
+import client from "../clients/redis.js";
 import {
   AchievementSet,
   Franchise,
@@ -7,14 +8,24 @@ import {
   Offer,
   PriceEngine,
 } from "../models/index.js";
-import client from "../clients/redis.js";
 import { regions } from "../utils/countries.js";
+import {
+  getLocaleOrErrorResponse,
+  getLocalizedCacheTtlSeconds,
+  localeCacheSegment,
+  localizeOffers,
+} from "../utils/offer-localization.js";
 import { orderOffersObject } from "../utils/order-offers-object.js";
 
 const app = new Hono();
 
 app.get("/:slug", async (c) => {
   const { slug } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -22,7 +33,7 @@ app.get("/:slug", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -32,12 +43,12 @@ app.get("/:slug", async (c) => {
     });
   }
 
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "20"), 50);
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
+  const limit = Math.min(Number.parseInt(c.req.query("limit") || "20", 10), 50);
+  const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
 
   const start = new Date();
-  const cacheKey = `franchises:${slug}:${region}:${page}:${limit}:v0.1`;
+  const cacheKey = `franchises:${slug}:${region}:${page}:${limit}:${localeCacheSegment(locale)}:v0.1`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -79,23 +90,21 @@ app.get("/:slug", async (c) => {
   }
 
   // Fetch offers for the current page
-  const offers = await Offer.find(
-    { id: { $in: offerIds } },
-    undefined,
-    {
-      limit,
-      skip,
-      sort: { releaseDate: -1 },
-    }
-  );
+  const offers = await Offer.find({ id: { $in: offerIds } }, undefined, {
+    limit,
+    skip,
+    sort: { releaseDate: -1 },
+  });
 
   // Also get the namespaces of all offers to fetch achievements
   // To get stats, we should fetch all offers basic info (namespaces)
   const allOffersBasic = await Offer.find(
     { id: { $in: offerIds } },
-    { id: 1, namespace: 1 }
+    { id: 1, namespace: 1 },
   );
-  const allNamespaces = Array.from(new Set(allOffersBasic.map(o => o.namespace).filter(Boolean)));
+  const allNamespaces = Array.from(
+    new Set(allOffersBasic.map((o) => o.namespace).filter(Boolean)),
+  );
 
   // Fetch prices for the paginated offers
   const prices = await PriceEngine.find({
@@ -104,13 +113,16 @@ app.get("/:slug", async (c) => {
   });
 
   // Map offers with prices
-  const elements = offers.map((o) => {
-    const price = prices.find((p) => p.offerId === o.id);
-    return {
-      ...orderOffersObject(o),
-      price: price ?? null,
-    };
-  });
+  const elements = await localizeOffers(
+    offers.map((o) => {
+      const price = prices.find((p) => p.offerId === o.id);
+      return {
+        ...orderOffersObject(o),
+        price: price ?? null,
+      };
+    }),
+    locale,
+  );
 
   // Calculate stats for all offers in the franchise
   // 1. Achievements
@@ -121,11 +133,16 @@ app.get("/:slug", async (c) => {
 
   const totalAchievements = achievements.reduce(
     (acc, set) => acc + (set.achievements?.length || 0),
-    0
+    0,
   );
   const totalXp = achievements.reduce(
-    (acc, set) => acc + (set.achievements?.reduce((sum: number, a: any) => sum + (a.xp || 0), 0) || 0),
-    0
+    (acc, set) =>
+      acc +
+      (set.achievements?.reduce(
+        (sum: number, a: any) => sum + (a.xp || 0),
+        0,
+      ) || 0),
+    0,
   );
 
   // 2. IGDB Time to beat
@@ -167,7 +184,12 @@ app.get("/:slug", async (c) => {
     total: offerIds.length,
   };
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",

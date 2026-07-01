@@ -1,11 +1,8 @@
 import { Hono } from "hono";
+import { getCookie } from "hono/cookie";
+import { ObjectId } from "mongodb";
 import client from "../clients/redis.js";
 import { db } from "../db/index.js";
-import { regions } from "../utils/countries.js";
-import { getCookie } from "hono/cookie";
-import { orderOffersObject } from "../utils/order-offers-object.js";
-import { ObjectId } from "mongodb";
-import { consola } from "../utils/logger.js";
 import {
   AchievementSet,
   Asset,
@@ -15,6 +12,16 @@ import {
   Offer,
   PriceEngine,
 } from "../models/index.js";
+import { regions } from "../utils/countries.js";
+import { consola } from "../utils/logger.js";
+import {
+  getLocaleOrErrorResponse,
+  getLocalizedCacheTtlSeconds,
+  localeCacheSegment,
+  localizeOffer,
+  localizeOffers,
+} from "../utils/offer-localization.js";
+import { orderOffersObject } from "../utils/order-offers-object.js";
 
 const app = new Hono();
 
@@ -23,7 +30,7 @@ app.get("/", async (ctx) => {
   const page = Number.parseInt(ctx.req.query("page") || "1", 10);
   const limit = Math.min(
     Number.parseInt(ctx.req.query("limit") || "10", 10),
-    100
+    100,
   );
   const skip = (page - 1) * limit;
 
@@ -45,7 +52,7 @@ app.get("/", async (ctx) => {
     {
       skip,
       limit,
-    }
+    },
   );
 
   const count = await Namespace.countDocuments();
@@ -79,7 +86,7 @@ app.get("/sitemap.xml", async (c) => {
     (_, i) =>
       `<sitemap><loc>https://api.egdata.app/sandboxes/sitemap.xml?page=${
         i + 1
-      }</loc></sitemap>`
+      }</loc></sitemap>`,
   ).join("")}
 </sitemapindex>`;
 
@@ -98,7 +105,7 @@ app.get("/sitemap.xml", async (c) => {
         sort: {
           lastModified: -1,
         },
-      }
+      },
     )
     .toArray();
 
@@ -120,7 +127,7 @@ app.get("/sitemap.xml", async (c) => {
               <loc>${url}${section}</loc>
               <lastmod>${(sandbox.updated as Date).toISOString()}</lastmod>
             </url>
-            `
+            `,
               )
               .join("\n")}
             `;
@@ -143,7 +150,7 @@ app.get("/:sandboxId", async (c) => {
   }
 
   const sandbox = await db.db.collection("sandboxes").findOne({
-    // @ts-ignore
+    // @ts-expect-error
     _id: sandboxId,
   });
 
@@ -163,7 +170,7 @@ app.get("/:sandboxId/items", async (ctx) => {
   const page = Number.parseInt(ctx.req.query("page") || "1", 10);
   const limit = Math.min(
     Number.parseInt(ctx.req.query("limit") || "10", 10),
-    100
+    100,
   );
   const skip = (page - 1) * limit;
 
@@ -179,7 +186,7 @@ app.get("/:sandboxId/items", async (ctx) => {
   }
 
   const sandbox = await db.db.collection("sandboxes").findOne({
-    // @ts-ignore
+    // @ts-expect-error
     _id: sandboxId,
   });
 
@@ -242,16 +249,21 @@ app.get("/:sandboxId/items", async (ctx) => {
 
 app.get("/:sandboxId/offers", async (ctx) => {
   const { sandboxId } = ctx.req.param();
+  const localeResult = getLocaleOrErrorResponse(ctx);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const page = Number.parseInt(ctx.req.query("page") || "1", 10);
   const limit = Math.min(
     Number.parseInt(ctx.req.query("limit") || "10", 10),
-    100
+    100,
   );
   const skip = (page - 1) * limit;
 
   const { offerType, title } = ctx.req.query();
 
-  const cacheKey = `sandbox:${sandboxId}:offers:${page}:${limit}:${offerType}:${title}`;
+  const cacheKey = `sandbox:${sandboxId}:offers:${page}:${limit}:${offerType}:${title}:${localeCacheSegment(locale)}`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -259,7 +271,7 @@ app.get("/:sandboxId/offers", async (ctx) => {
   }
 
   const sandbox = await db.db.collection("sandboxes").findOne({
-    // @ts-ignore
+    // @ts-expect-error
     _id: sandboxId,
   });
 
@@ -294,13 +306,21 @@ app.get("/:sandboxId/offers", async (ctx) => {
   ]);
 
   const response = {
-    elements: offers,
+    elements: await localizeOffers(
+      offers.map((offer) => offer.toObject()),
+      locale,
+    ),
     page,
     limit,
     count,
   };
 
-  await client.set(cacheKey, JSON.stringify(response), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(response),
+    "EX",
+    getLocalizedCacheTtlSeconds(response, 3600),
+  );
 
   return ctx.json(response);
 });
@@ -310,7 +330,7 @@ app.get("/:sandboxId/assets", async (ctx) => {
   const page = Number.parseInt(ctx.req.query("page") || "1", 10);
   const limit = Math.min(
     Number.parseInt(ctx.req.query("limit") || "10", 10),
-    100
+    100,
   );
   const skip = (page - 1) * limit;
 
@@ -326,7 +346,7 @@ app.get("/:sandboxId/assets", async (ctx) => {
   }
 
   const sandbox = await db.db.collection("sandboxes").findOne({
-    // @ts-ignore
+    // @ts-expect-error
     _id: sandboxId,
   });
 
@@ -341,7 +361,7 @@ app.get("/:sandboxId/assets", async (ctx) => {
     // Get all items with their releaseInfo
     const items = await Item.find(
       { namespace: sandboxId },
-      { id: 1, namespace: 1, releaseInfo: 1, title: 1 }
+      { id: 1, namespace: 1, releaseInfo: 1, title: 1 },
     ).lean();
 
     // Get all real assets
@@ -373,9 +393,9 @@ app.get("/:sandboxId/assets", async (ctx) => {
               title: item.title,
               __v: 0,
               updatedAt: new Date(0),
-            } as typeof Asset.prototype)
+            }) as typeof Asset.prototype,
         );
-      })
+      }),
     );
 
     // Combine and sort all assets
@@ -388,7 +408,7 @@ app.get("/:sandboxId/assets", async (ctx) => {
     // Apply platform filter if specified
     const filteredAssets = platform
       ? allAssets.filter((asset) =>
-          platform.split(",").includes(asset.platform)
+          platform.split(",").includes(asset.platform),
         )
       : allAssets;
 
@@ -418,6 +438,11 @@ app.get("/:sandboxId/assets", async (ctx) => {
 
 app.get("/:sandboxId/base-game", async (c) => {
   const { sandboxId } = c.req.param();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -425,7 +450,7 @@ app.get("/:sandboxId/base-game", async (c) => {
 
   // Get the region for the selected country
   const region = Object.keys(regions).find((r) =>
-    regions[r].countries.includes(selectedCountry)
+    regions[r].countries.includes(selectedCountry),
   );
 
   if (!region) {
@@ -435,7 +460,7 @@ app.get("/:sandboxId/base-game", async (c) => {
     });
   }
 
-  const cacheKey = `base-game:${sandboxId}:${region}:v0.1`;
+  const cacheKey = `base-game:${sandboxId}:${region}:${localeCacheSegment(locale)}:v0.1`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -445,7 +470,7 @@ app.get("/:sandboxId/base-game", async (c) => {
   }
 
   const sandbox = await db.db.collection("sandboxes").findOne({
-    // @ts-ignore
+    // @ts-expect-error
     _id: sandboxId,
   });
 
@@ -504,12 +529,20 @@ app.get("/:sandboxId/base-game", async (c) => {
     region,
   });
 
-  const response = {
-    ...orderOffersObject(baseGame),
-    price: price ?? null,
-  };
+  const response = await localizeOffer(
+    {
+      ...orderOffersObject(baseGame),
+      price: price ?? null,
+    },
+    locale,
+  );
 
-  await client.set(cacheKey, JSON.stringify(response), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(response),
+    "EX",
+    getLocalizedCacheTtlSeconds(response, 3600),
+  );
 
   return c.json(response);
 });
@@ -524,7 +557,7 @@ app.get("/:sandboxId/achievements", async (c) => {
   }
 
   const sandbox = await db.db.collection("sandboxes").findOne({
-    // @ts-ignore
+    // @ts-expect-error
     _id: sandboxId,
   });
 
@@ -546,8 +579,8 @@ app.get("/:sandboxId/achievements", async (c) => {
 
 app.get("/:sandboxId/changelog", async (c) => {
   const { sandboxId } = c.req.param();
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 50);
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
+  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 50);
+  const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
   const cacheKey = `changelog:${sandboxId}:${page}:${limit}`;
 
@@ -587,7 +620,7 @@ app.get("/:sandboxId/changelog", async (c) => {
           {
             id: {
               $in: offers.flatMap((o) =>
-                o.items.map((i: { id: string }) => i.id)
+                o.items.map((i: { id: string }) => i.id),
               ),
             },
           },
@@ -605,7 +638,7 @@ app.get("/:sandboxId/changelog", async (c) => {
           lastModifiedDate: -1,
         },
         limit: 100,
-      }
+      },
     );
 
     // Get all assets from the items
@@ -696,18 +729,22 @@ app.get("/:sandboxId/changelog", async (c) => {
                 branches: [
                   {
                     case: { $eq: ["$metadata.contextType", "offer"] },
+                    // biome-ignore lint/suspicious/noThenProperty: MongoDB $switch branches use a then field.
                     then: { $arrayElemAt: ["$offerDoc", 0] },
                   },
                   {
                     case: { $eq: ["$metadata.contextType", "item"] },
+                    // biome-ignore lint/suspicious/noThenProperty: MongoDB $switch branches use a then field.
                     then: { $arrayElemAt: ["$itemDoc", 0] },
                   },
                   {
                     case: { $eq: ["$metadata.contextType", "asset"] },
+                    // biome-ignore lint/suspicious/noThenProperty: MongoDB $switch branches use a then field.
                     then: { $arrayElemAt: ["$assetDoc", 0] },
                   },
                   {
                     case: { $eq: ["$metadata.contextType", "build"] },
+                    // biome-ignore lint/suspicious/noThenProperty: MongoDB $switch branches use a then field.
                     then: { $arrayElemAt: ["$buildDoc", 0] },
                   },
                 ],
@@ -741,7 +778,7 @@ app.get("/:sandboxId/changelog", async (c) => {
         offset: skip,
       }),
       "EX",
-      60
+      60,
     );
 
     consola.log(`changelog ${sandboxId} in ${performance.now() - start} ms`);
@@ -755,7 +792,7 @@ app.get("/:sandboxId/changelog", async (c) => {
       200,
       {
         "Cache-Control": "public, max-age=60",
-      }
+      },
     );
   } catch (err) {
     console.error("Error in changelog endpoint:", err);
@@ -768,7 +805,7 @@ app.get("/:sandboxId/builds", async (c) => {
   const page = Number.parseInt(c.req.query("page") || "1", 10);
   const limit = Math.min(
     Number.parseInt(c.req.query("limit") || "10", 10),
-    100
+    100,
   );
   const skip = (page - 1) * limit;
 
@@ -782,7 +819,7 @@ app.get("/:sandboxId/builds", async (c) => {
   }
 
   const sandbox = await db.db.collection("sandboxes").findOne({
-    // @ts-ignore
+    // @ts-expect-error
     _id: sandboxId,
   });
 
@@ -852,7 +889,7 @@ app.get("/:sandboxId/stats", async (c) => {
   }
 
   const sandbox = await db.db.collection("sandboxes").findOne({
-    // @ts-ignore
+    // @ts-expect-error
     _id: { $eq: sandboxId },
   });
 

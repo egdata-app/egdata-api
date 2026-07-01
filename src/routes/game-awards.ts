@@ -1,106 +1,119 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { Resvg } from "@resvg/resvg-js";
+import { Hono } from "hono";
+import { getCookie } from "hono/cookie";
+import React from "react";
+import satori from "satori";
+import { db } from "../db/index.js";
 import {
   Offer,
   type OfferType,
   PriceEngine,
   type PriceEngineType,
 } from "../models/index.js";
-import { Hono } from "hono";
-import { db } from "../db/index.js";
-import { getCookie } from "hono/cookie";
 import { regions } from "../utils/countries.js";
-import satori from "satori";
-import { Resvg } from "@resvg/resvg-js";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import React from "react";
+import {
+  getLocaleOrErrorResponse,
+  localizeOffers,
+} from "../utils/offer-localization.js";
 
 const app = new Hono();
 
 export interface Root {
-  _id: string
-  eventSlug: string
-  moduleIndex: number
-  moduleType: string
-  title: string
-  data: Data
-  offers: Offer2[]
-  lastUpdated: LastUpdated
-  __v: number
+  _id: string;
+  eventSlug: string;
+  moduleIndex: number;
+  moduleType: string;
+  title: string;
+  data: Data;
+  offers: Offer2[];
+  lastUpdated: LastUpdated;
+  __v: number;
 }
 
 export interface Data {
-  __typename: string
-  type: string
-  title: string
-  offerPresentation: string
-  offerType: string
-  titleIcon: string
-  groupStyle: string
-  hideTitle: boolean
-  cardType: string
-  link: string
-  offers: IOffer[]
+  __typename: string;
+  type: string;
+  title: string;
+  offerPresentation: string;
+  offerType: string;
+  titleIcon: string;
+  groupStyle: string;
+  hideTitle: boolean;
+  cardType: string;
+  link: string;
+  offers: IOffer[];
 }
 
 export interface IOffer {
-  namespace: string
-  id: string
+  namespace: string;
+  id: string;
 }
 
 export interface Offer2 {
-  namespace: string
-  id: string
-  _id: Id
+  namespace: string;
+  id: string;
+  _id: Id;
 }
 
 export interface Id {
-  $oid: string
+  $oid: string;
 }
 
 export interface LastUpdated {
-  $date: string
+  $date: string;
 }
 
 app.get("/", async (c) => {
-    const country = c.req.query("country");
-    const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
-  
-    const selectedCountry = country ?? cookieCountry ?? "US";
-  
-    // Get the region for the selected country
-    const region = Object.keys(regions).find((r) =>
-      regions[r].countries.includes(selectedCountry)
-    );
-  
-    if (!region) {
-      c.status(404);
-      return c.json({
-        message: "Country not found",
-      });
-    }
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
+  const country = c.req.query("country");
+  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
-    const modules = await db.db.collection<Root>("storefront-modules").find({
-        eventSlug: "the-game-awards"
-    }).toArray();
+  const selectedCountry = country ?? cookieCountry ?? "US";
 
-    const offers = await Offer.find({
-        id: {
-          $in: modules.flatMap((x) => x.offers.map((y) => y.id))
-        }
+  // Get the region for the selected country
+  const region = Object.keys(regions).find((r) =>
+    regions[r].countries.includes(selectedCountry),
+  );
+
+  if (!region) {
+    c.status(404);
+    return c.json({
+      message: "Country not found",
     });
+  }
 
-    const offersMap = new Map(offers.map((x) => [x.id, x]));
+  const modules = await db.db
+    .collection<Root>("storefront-modules")
+    .find({
+      eventSlug: "the-game-awards",
+    })
+    .toArray();
 
-    type OfferWithPrice = OfferType & {
-        price: PriceEngineType | null
-    };
+  const offers = await Offer.find({
+    id: {
+      $in: modules.flatMap((x) => x.offers.map((y) => y.id)),
+    },
+  });
 
-    const result: {
-      title: string,
-      offers: OfferWithPrice[]
-    }[] = [];
+  const offersMap = new Map(offers.map((x) => [x.id, x]));
 
-    await Promise.all(modules.map(async (module) => {
+  type OfferWithPrice = OfferType & {
+    price: PriceEngineType | null;
+  };
+
+  const result: {
+    title: string;
+    offers: OfferWithPrice[];
+  }[] = [];
+
+  await Promise.all(
+    modules.map(async (module) => {
       const offers: OfferWithPrice[] = [];
 
       if (!module.offers.length) {
@@ -111,27 +124,28 @@ app.get("/", async (c) => {
       for (const offerId of module.offers) {
         const offer = offersMap.get(offerId.id);
         if (!offer) {
-            continue;
+          continue;
         }
 
         const price = await PriceEngine.findOne({
-            offerId: offer.id,
-            region
+          offerId: offer.id,
+          region,
         });
 
         offers.push({
-            ...offer.toObject(),
-            price: price?.toObject() ?? null
+          ...offer.toObject(),
+          price: price?.toObject() ?? null,
         });
       }
 
       result.push({
         title: module.title.trim(),
-        offers
+        offers: await localizeOffers(offers, locale),
       });
-    }));
+    }),
+  );
 
-    return c.json(result);
+  return c.json(result);
 });
 
 app.get("/og", async (c) => {
@@ -210,19 +224,16 @@ app.get("/og", async (c) => {
                 React.createElement("path", {
                   d,
                   fill: "#FF9F59",
-                })
-              )
+                }),
+              ),
             ),
             // Egdata Icon
-            React.createElement(
-              "img",
-              {
-                src: "https://cdn.egdata.app/logo_simple_white_clean.png",
-                width: 160,
-                height: 160,
-              }
-            ),
-          ]
+            React.createElement("img", {
+              src: "https://cdn.egdata.app/logo_simple_white_clean.png",
+              width: 160,
+              height: 160,
+            }),
+          ],
         ),
         // Subtitle
         React.createElement(
@@ -253,7 +264,7 @@ app.get("/og", async (c) => {
                 new Date() < new Date("2025-12-11")
                   ? "Nominees"
                   : "Announcements and winners"
-              } for`
+              } for`,
             ),
             React.createElement(
               "div",
@@ -267,9 +278,9 @@ app.get("/og", async (c) => {
                   marginTop: "8px",
                 },
               },
-              "The Game Awards 2025"
+              "The Game Awards 2025",
             ),
-          ]
+          ],
         ),
         // Link
         React.createElement(
@@ -284,9 +295,9 @@ app.get("/og", async (c) => {
               letterSpacing: "0.05em",
             },
           },
-          "egdata.app/the-game-awards"
+          "egdata.app/the-game-awards",
         ),
-      ]
+      ],
     ),
     {
       width: 1200,
@@ -305,7 +316,7 @@ app.get("/og", async (c) => {
           style: "normal",
         },
       ],
-    }
+    },
   );
 
   const resvg = new Resvg(svg, {

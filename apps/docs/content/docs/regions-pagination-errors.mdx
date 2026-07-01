@@ -23,6 +23,23 @@ If a region is unsupported or unavailable, routes may fall back to a default reg
 
 Free-game promotion routes normalize availability metadata for clients. `countriesBlacklist` is always an array, `giveaway.offerId` is always present, and `giveaway.platform` is a string for platform-specific promotions or `null` otherwise.
 
+## Localization
+
+REST endpoints that return public offer DTOs accept a `locale` query parameter. Missing or blank `locale` values default to `en-US`.
+
+Offer localization uses exact locale matches only. For example, `locale=es-MX` checks only `es-MX`; it does not fall back to `es-ES` or another regional variant. If no matching localization record exists for an offer, the response keeps the canonical `en-US` offer text for that offer.
+
+Only public offer text and content fields are localized: `title`, `description`, `longDescription`, `developerDisplayName`, `publisherDisplayName`, `seller`, `tags`, `offerMappings`, `productSlug`, `urlSlug`, and `url`. Prices, availability, countries, assets, builds, manifests, binary sizes, reviews, and other operational data remain canonical.
+
+Each offer includes localization metadata:
+
+| Field | Meaning |
+| --- | --- |
+| `locale` | Requested locale used for the offer response |
+| `localeStatus` | `canonical` for `en-US`, `localized` when an exact localization record was applied, or `fallback` when canonical text was returned for a non-canonical locale |
+| `canonicalLocale` | `en-US` on non-canonical responses |
+| `localization` | Metadata from the applied localization record when `localeStatus` is `localized` |
+
 ## Pagination
 
 Paginated endpoints use query parameters such as `page`, `limit`, `offset`, or route-specific cursors. Prefer the names documented on each OpenAPI operation.

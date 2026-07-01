@@ -17,6 +17,12 @@ import {
   Tags,
 } from "../models/index.js";
 import { regions } from "../utils/countries.js";
+import {
+  getLocaleOrErrorResponse,
+  getLocalizedCacheTtlSeconds,
+  localeCacheSegment,
+  localizeOffers,
+} from "../utils/offer-localization.js";
 import { orderOffersObject } from "../utils/order-offers-object.js";
 
 type AggregationContainer = Types.Common_Aggregations.AggregationContainer;
@@ -141,10 +147,7 @@ const parseChangelogRawValue = (rawValue: unknown) => {
   }
 };
 
-const normalizeChangelogValue = (
-  currentValue: unknown,
-  rawValue: unknown,
-) => {
+const normalizeChangelogValue = (currentValue: unknown, rawValue: unknown) => {
   if (currentValue !== null && currentValue !== undefined) {
     return currentValue;
   }
@@ -163,9 +166,7 @@ const toPlainChangelog = (
 };
 
 const toMongoIdCandidates = (ids: string[]) => [
-  ...ids
-    .filter((id) => ObjectId.isValid(id))
-    .map((id) => new ObjectId(id)),
+  ...ids.filter((id) => ObjectId.isValid(id)).map((id) => new ObjectId(id)),
   ...ids,
 ];
 
@@ -245,10 +246,7 @@ const resolveChangelogSearchDocument = async (
 
   if (contextType === "asset") {
     const asset = await Asset.findOne({
-      $or: [
-        { artifactId: { $eq: contextId } },
-        { id: { $eq: contextId } },
-      ],
+      $or: [{ artifactId: { $eq: contextId } }, { id: { $eq: contextId } }],
     });
 
     if (!asset?.itemId) {
@@ -261,16 +259,11 @@ const resolveChangelogSearchDocument = async (
   }
 
   if (contextType === "build") {
-    const filter = (
-      ObjectId.isValid(contextId)
-        ? {
-            $or: [
-              { _id: new ObjectId(contextId) },
-              { _id: { $eq: contextId } },
-            ],
-          }
-        : { _id: { $eq: contextId } }
-    ) as unknown as Filter<Document>;
+    const filter = (ObjectId.isValid(contextId)
+      ? {
+          $or: [{ _id: new ObjectId(contextId) }, { _id: { $eq: contextId } }],
+        }
+      : { _id: { $eq: contextId } }) as unknown as Filter<Document>;
 
     return db.db.collection("builds").findOne(filter, {
       projection: {
@@ -284,9 +277,7 @@ const resolveChangelogSearchDocument = async (
   return null;
 };
 
-const enrichChangelogSearchDocuments = async (
-  hits: ChangelogSearchHit[],
-) => {
+const enrichChangelogSearchDocuments = async (hits: ChangelogSearchHit[]) => {
   await Promise.all(
     hits.map(async (hit) => {
       try {
@@ -450,6 +441,11 @@ app.get("/", (c) => c.json("Hello, World!"));
 
 app.post("/", async (c) => {
   const start = new Date();
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
 
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -484,7 +480,7 @@ app.post("/", async (c) => {
     )
     .digest("hex");
 
-  const cacheKey = `offers:search:${queryId}:${region}:${query.page}:${query.limit}:v0.1`;
+  const cacheKey = `offers:search:${queryId}:${region}:${query.page}:${query.limit}:${localeCacheSegment(locale)}:v0.1`;
 
   const cached = await client.get(cacheKey);
 
@@ -718,23 +714,30 @@ app.post("/", async (c) => {
 
   const offersData = await aggregation.toArray();
 
-  const result = {
-    elements: offersData.sort((a, b) => {
-      if (query.sortBy === "price" && query.title) {
-        if (sortDir === "asc") {
-          return a.price.price.discountPrice - b.price.price.discountPrice;
-        }
-        return b.price.price.discountPrice - a.price.price.discountPrice;
+  const sortedElements = offersData.sort((a, b) => {
+    if (query.sortBy === "price" && query.title) {
+      if (sortDir === "asc") {
+        return a.price.price.discountPrice - b.price.price.discountPrice;
       }
+      return b.price.price.discountPrice - a.price.price.discountPrice;
+    }
 
-      return 0;
-    }),
+    return 0;
+  });
+
+  const result = {
+    elements: await localizeOffers(sortedElements, locale),
     page,
     limit,
     query: queryId,
   };
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result, 200, {
     "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
@@ -889,7 +892,9 @@ app.get("/changelog", async (c) => {
     ];
 
     if (relatedContextIds.length > 0) {
-      should.push({ terms: { "metadata.contextId.keyword": relatedContextIds } });
+      should.push({
+        terms: { "metadata.contextId.keyword": relatedContextIds },
+      });
       should.push({ terms: { "metadata.contextId": relatedContextIds } });
     }
 
@@ -917,7 +922,7 @@ app.get("/changelog", async (c) => {
   // Build query with match_all fallback when no must clauses
   let queryBody: Record<string, unknown>;
   if (must.length > 0) {
-    const boolQuery: Record<string, unknown> = { 
+    const boolQuery: Record<string, unknown> = {
       must_not: mustNot,
       must,
     };
@@ -927,11 +932,11 @@ app.get("/changelog", async (c) => {
     queryBody = { bool: boolQuery };
   } else {
     // No search term - use match_all
-    queryBody = { 
-      bool: { 
+    queryBody = {
+      bool: {
         must_not: mustNot,
         ...(filter.length > 0 ? { filter } : {}),
-      } 
+      },
     };
   }
 
@@ -960,7 +965,7 @@ app.get("/changelog", async (c) => {
 
   const total = response.body.hits.total;
   const estimatedTotalHits =
-    typeof total === "number" ? total : total?.value ?? 0;
+    typeof total === "number" ? total : (total?.value ?? 0);
 
   if (query && estimatedTotalHits === 0 && relatedContextIds.length > 0) {
     const mongoFilter: Record<string, unknown> = {
@@ -1016,14 +1021,13 @@ app.get("/changelog", async (c) => {
     );
   }
 
-  const debugInfo =
-    debug
-      ? {
-          relatedContextIdsCount: relatedContextIds.length,
-          relatedContextIdsSample: relatedContextIds.slice(0, 10),
-          queryBody,
-        }
-      : undefined;
+  const debugInfo = debug
+    ? {
+        relatedContextIdsCount: relatedContextIds.length,
+        relatedContextIdsSample: relatedContextIds.slice(0, 10),
+        queryBody,
+      }
+    : undefined;
 
   // Return the changelogs with MeiliSearch-compatible format
   return c.json(
@@ -1042,6 +1046,11 @@ app.get("/changelog", async (c) => {
 });
 
 app.post("/v2/search", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
   const selectedCountry = country ?? cookieCountry ?? "US";
@@ -1283,7 +1292,7 @@ app.post("/v2/search", async (c) => {
     )
     .digest("hex");
 
-  const cacheKey = `search:v2:${hash}`;
+  const cacheKey = `search:v2:${hash}:${localeCacheSegment(locale)}`;
 
   const cached = false; //await client.get(cacheKey);
 
@@ -1314,17 +1323,21 @@ app.post("/v2/search", async (c) => {
       ? osResponse.body.hits.total
       : osResponse.body.hits.total?.value;
 
-  const offers = hits.map((hit) => {
-    const doc = hit._source as OfferType & {
-      prices: Record<string, PriceEngineType> | undefined;
-    };
-    const regionalPrice: PriceEngineType | null = doc.prices?.[region] ?? null;
-    doc.prices = undefined;
-    return {
-      ...orderOffersObject(doc),
-      price: regionalPrice,
-    };
-  });
+  const offers = await localizeOffers(
+    hits.map((hit) => {
+      const doc = hit._source as OfferType & {
+        prices: Record<string, PriceEngineType> | undefined;
+      };
+      const regionalPrice: PriceEngineType | null =
+        doc.prices?.[region] ?? null;
+      doc.prices = undefined;
+      return {
+        ...orderOffersObject(doc),
+        price: regionalPrice,
+      };
+    }),
+    locale,
+  );
 
   const result = {
     total,
@@ -1339,7 +1352,12 @@ app.post("/v2/search", async (c) => {
     },
   };
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result, 200, { "Cache-Control": "public, max-age=60" });
 });

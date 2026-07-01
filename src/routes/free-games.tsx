@@ -21,6 +21,13 @@ import {
 } from "../models/index.js";
 import { regions } from "../utils/countries.js";
 import { getImage } from "../utils/get-image.js";
+import {
+  getLocaleOrErrorResponse,
+  getLocalizedCacheTtlSeconds,
+  localeCacheSegment,
+  localizeOffer,
+  localizeOffers,
+} from "../utils/offer-localization.js";
 import { orderOffersObject } from "../utils/order-offers-object.js";
 
 const app = new Hono();
@@ -89,6 +96,11 @@ const normalizeGiveaway = (
 };
 
 app.get("/", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const now = new Date();
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -216,11 +228,18 @@ app.get("/", async (c) => {
         const items = await fetchItemsForOffer(offer);
 
         return {
-          ...normalizeFreeGamesOffer(
-            typeof offer.toObject === "function" ? offer.toObject() : offer,
-          ),
+          ...(await localizeOffer(
+            normalizeFreeGamesOffer(
+              typeof offer.toObject === "function" ? offer.toObject() : offer,
+            ),
+            locale,
+          )),
           items,
-          giveaway: normalizeGiveaway(src.toPojo(game), offerId, historical ?? null),
+          giveaway: normalizeGiveaway(
+            src.toPojo(game),
+            offerId,
+            historical ?? null,
+          ),
           price: price ?? null,
         };
       }),
@@ -231,10 +250,15 @@ app.get("/", async (c) => {
 });
 
 app.get("/history", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
-  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10"), 25);
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1"), 1);
+  const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 25);
+  const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
 
   const selectedCountry = country ?? cookieCountry ?? "US";
@@ -251,7 +275,7 @@ app.get("/history", async (c) => {
     });
   }
 
-  const cacheKey = `giveaways-history:${region}:${page}:${limit}`;
+  const cacheKey = `giveaways-history:${region}:${page}:${limit}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -294,14 +318,19 @@ app.get("/history", async (c) => {
       }
 
       return {
-        ...orderOffersObject(offer?.toObject()),
+        ...(await localizeOffer(orderOffersObject(offer?.toObject()), locale)),
         price: price ?? null,
         giveaway: game,
       };
     }),
   );
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 3600),
+  );
 
   return c.json(result, 200, {
     "Cache-Control": "private, max-age=0",
@@ -356,6 +385,11 @@ interface FreeGamesSearchQuery {
 }
 
 app.get("/search", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const query = c.req.query() as FreeGamesSearchQuery;
 
   const country = c.req.query("country");
@@ -375,14 +409,14 @@ app.get("/search", async (c) => {
     });
   }
 
-  const limit = Math.min(Number.parseInt(query.limit || "10"), 50);
-  const page = Math.max(Number.parseInt(query.page || "1"), 1);
+  const limit = Math.min(Number.parseInt(query.limit || "10", 10), 50);
+  const page = Math.max(Number.parseInt(query.page || "1", 10), 1);
   const skip = (page - 1) * limit;
   const sortDir = query.sortDir || "desc";
 
   const cacheKey = `free-games-search:${Buffer.from(
     JSON.stringify(query),
-  ).toString("base64")}:${limit}:${page}`;
+  ).toString("base64")}:${limit}:${page}:${localeCacheSegment(locale)}`;
 
   const cached = await client.get(cacheKey);
 
@@ -467,22 +501,30 @@ app.get("/search", async (c) => {
   });
 
   const total = response.body.hits.total;
-  const totalHits = typeof total === "number" ? total : total?.value ?? 0;
+  const totalHits = typeof total === "number" ? total : (total?.value ?? 0);
 
   const result = {
-    elements: hits.map((h) => {
-      const price = prices.find((p) => p.offerId === h.id);
-      return {
-        ...orderOffersObject(h),
-        price: price ?? null,
-      };
-    }),
+    elements: await localizeOffers(
+      hits.map((h) => {
+        const price = prices.find((p) => p.offerId === h.id);
+        return {
+          ...orderOffersObject(h),
+          price: price ?? null,
+        };
+      }),
+      locale,
+    ),
     page,
     limit,
     total: totalHits,
   };
 
-  await client.set(cacheKey, JSON.stringify(result), "EX", 60);
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 60),
+  );
 
   return c.json(result, 200, {
     "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
@@ -773,84 +815,100 @@ app.get("/og", async (c) => {
             gap: "20px",
           }}
         >
-          {games.map((game, index) => (
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flex: 1,
-                background: "rgba(255, 255, 255, 0.05)",
-                borderRadius: "12px",
-                padding: "24px",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3)",
-              }}
-            >
+          {games.map((game) => {
+            const gameRecord = game as Record<string, any>;
+            const giveawayRecord = gameRecord.giveaway as Record<string, any>;
+            const gameTitle =
+              gameRecord.title ?? giveawayRecord?.title ?? "Free game";
+            const gameKey =
+              gameRecord.id ??
+              giveawayRecord?.id ??
+              giveawayRecord?.offerId ??
+              gameTitle;
+            const keyImages = Array.isArray(gameRecord.keyImages)
+              ? gameRecord.keyImages
+              : [];
+
+            return (
               <div
+                key={String(gameKey)}
                 style={{
-                  width: "100%",
-                  height: "200px",
-                  background: "rgba(0, 120, 242, 0.1)",
-                  borderRadius: "8px",
-                  marginBottom: "16px",
                   display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "48px",
-                  color: "#0078F2",
-                  fontWeight: "bold",
+                  flexDirection: "column",
+                  flex: 1,
+                  background: "rgba(255, 255, 255, 0.05)",
+                  borderRadius: "12px",
+                  padding: "24px",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3)",
                 }}
               >
-                <img
-                  src={
-                    getImage(game?.keyImages || [], [
-                      "DieselGameBoxWide",
-                      "OfferImageWide",
-                      "Featured",
-                      "DieselStoreFrontWide",
-                      "VaultClosed",
-                    ])?.url
-                  }
+                <div
                   style={{
                     width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
+                    height: "200px",
+                    background: "rgba(0, 120, 242, 0.1)",
                     borderRadius: "8px",
+                    marginBottom: "16px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "48px",
+                    color: "#0078F2",
+                    fontWeight: "bold",
                   }}
-                />
+                >
+                  <img
+                    alt={gameTitle}
+                    src={
+                      getImage(keyImages, [
+                        "DieselGameBoxWide",
+                        "OfferImageWide",
+                        "Featured",
+                        "DieselStoreFrontWide",
+                        "VaultClosed",
+                      ])?.url
+                    }
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </div>
+                <div
+                  style={{
+                    fontSize: "24px",
+                    fontWeight: "bold",
+                    color: "white",
+                    marginBottom: "8px",
+                  }}
+                >
+                  {gameTitle}
+                </div>
+                <div
+                  style={{
+                    fontSize: "16px",
+                    color: "rgba(255, 255, 255, 1)",
+                    display: "flex",
+                  }}
+                >
+                  {giveawayRecord.startDate.toLocaleString("en-UK", {
+                    month: "short",
+                    day: "numeric",
+                    year: undefined,
+                  })}{" "}
+                  -{" "}
+                  {giveawayRecord.endDate.toLocaleString("en-UK", {
+                    month: "short",
+                    day: "numeric",
+                    year: undefined,
+                  })}
+                </div>
               </div>
-              <div
-                style={{
-                  fontSize: "24px",
-                  fontWeight: "bold",
-                  color: "white",
-                  marginBottom: "8px",
-                }}
-              >
-                {game.title}
-              </div>
-              <div
-                style={{
-                  fontSize: "16px",
-                  color: "rgba(255, 255, 255, 1)",
-                  display: "flex",
-                }}
-              >
-                {game.giveaway.startDate.toLocaleString("en-UK", {
-                  month: "short",
-                  day: "numeric",
-                  year: undefined,
-                })}{" "}
-                -{" "}
-                {game.giveaway.endDate.toLocaleString("en-UK", {
-                  month: "short",
-                  day: "numeric",
-                  year: undefined,
-                })}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>,
@@ -933,6 +991,11 @@ app.get("/og", async (c) => {
 });
 
 app.get("/mobile", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+  const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
 
@@ -979,7 +1042,10 @@ app.get("/mobile", async (c) => {
       });
 
       return {
-        ...normalizeFreeGamesOffer(offer?.toObject()),
+        ...(await localizeOffer(
+          normalizeFreeGamesOffer(offer?.toObject()),
+          locale,
+        )),
         giveaway: normalizeGiveaway(game, game.offerId),
         price: price ?? null,
       };
