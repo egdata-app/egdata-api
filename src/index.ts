@@ -67,7 +67,7 @@ import {
   localizeOffers,
 } from "./utils/offer-localization.js";
 import {
-  getOfferSitemapUrls,
+  getOfferSitemapEntries,
   OFFER_SITEMAP_PAGE_LIMIT,
 } from "./utils/offer-sitemap.js";
 import { orderOffersObject } from "./utils/order-offers-object.js";
@@ -237,7 +237,7 @@ Allow: /items/sitemap.xml?*
 });
 
 app.get("/sitemap.xml", async (c) => {
-  const cacheKey = "sitemap-index-localized-v1";
+  const cacheKey = "sitemap-index-localized-v2";
   const cacheTimeInSec = 3600 * 24; // 1 day
   const cacheStaleTimeInSec = cacheTimeInSec * 7; // 7 days
   const cached = false;
@@ -273,7 +273,7 @@ app.get("/sitemap.xml", async (c) => {
   }
 
   // Generate individual sitemap page
-  const cacheKeyPage = `sitemap-page-localized-v1-${page}`;
+  const cacheKeyPage = `sitemap-page-localized-v2-${page}`;
   const cachedPage = await client.get(cacheKeyPage);
   let siteMap = "";
 
@@ -291,15 +291,21 @@ app.get("/sitemap.xml", async (c) => {
     );
 
     siteMap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   ${offers
     .map((offer) => {
       const lastmod = (offer.lastModifiedDate as Date).toISOString();
-      return getOfferSitemapUrls(offer.id)
+      return getOfferSitemapEntries(offer.id)
         .map(
-          (url) => `
+          (entry) => `
       <url>
-        <loc>${url}</loc>
+        <loc>${entry.loc}</loc>
+        ${entry.alternates
+          .map(
+            (alternate) =>
+              `<xhtml:link rel="alternate" hreflang="${alternate.hreflang}" href="${alternate.href}" />`,
+          )
+          .join("\n        ")}
         <lastmod>${lastmod}</lastmod>
       </url>
       `,

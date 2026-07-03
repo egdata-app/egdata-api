@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  getOfferSitemapEntries,
   getOfferSitemapUrls,
   OFFER_SITEMAP_LOCALES,
   OFFER_SITEMAP_PAGE_LIMIT,
@@ -9,7 +10,7 @@ import {
 } from "../../src/utils/offer-sitemap.js";
 
 describe("offer sitemap URL generation", () => {
-  it("builds base and locale-prefixed offer section URLs", () => {
+  it("builds base and locale-prefixed offer section entries", () => {
     const urls = getOfferSitemapUrls("offer-1");
 
     expect(urls).toContain("https://egdata.app/offers/offer-1");
@@ -19,6 +20,23 @@ describe("offer sitemap URL generation", () => {
     expect(urls).toHaveLength(
       (OFFER_SITEMAP_SECTIONS.length + 1) * (OFFER_SITEMAP_LOCALES.length + 1),
     );
+  });
+
+  it("adds hreflang alternates for every localized URL", () => {
+    const [entry] = getOfferSitemapEntries("offer-1");
+
+    expect(entry).toMatchObject({
+      loc: "https://egdata.app/offers/offer-1",
+    });
+    expect(entry?.alternates).toContainEqual({
+      hreflang: "x-default",
+      href: "https://egdata.app/offers/offer-1",
+    });
+    expect(entry?.alternates).toContainEqual({
+      hreflang: "es-ES",
+      href: "https://egdata.app/es-ES/offers/offer-1",
+    });
+    expect(entry?.alternates).toHaveLength(OFFER_SITEMAP_LOCALES.length + 1);
   });
 
   it("keeps each generated sitemap page below the URL limit", () => {
