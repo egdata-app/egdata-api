@@ -237,7 +237,7 @@ Allow: /items/sitemap.xml?*
 });
 
 app.get("/sitemap.xml", async (c) => {
-  const cacheKey = "sitemap-index-localized-v2";
+  const cacheKey = "sitemap-index-localized-v3";
   const cacheTimeInSec = 3600 * 24; // 1 day
   const cacheStaleTimeInSec = cacheTimeInSec * 7; // 7 days
   const cached = false;
@@ -273,7 +273,7 @@ app.get("/sitemap.xml", async (c) => {
   }
 
   // Generate individual sitemap page
-  const cacheKeyPage = `sitemap-page-localized-v2-${page}`;
+  const cacheKeyPage = `sitemap-page-localized-v3-${page}`;
   const cachedPage = await client.get(cacheKeyPage);
   let siteMap = "";
 

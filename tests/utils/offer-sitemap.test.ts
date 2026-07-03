@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   getOfferSitemapEntries,
   getOfferSitemapUrls,
+  OFFER_SITEMAP_FILE_SIZE_SAFE_PAGE_LIMIT,
   OFFER_SITEMAP_LOCALES,
   OFFER_SITEMAP_PAGE_LIMIT,
   OFFER_SITEMAP_SECTIONS,
@@ -43,5 +44,12 @@ describe("offer sitemap URL generation", () => {
     expect(
       OFFER_SITEMAP_PAGE_LIMIT * OFFER_SITEMAP_URLS_PER_OFFER,
     ).toBeLessThanOrEqual(SITEMAP_URL_LIMIT);
+  });
+
+  it("caps offer sitemap pages to a small file-size-safe offer count", () => {
+    expect(OFFER_SITEMAP_PAGE_LIMIT).toBeLessThanOrEqual(
+      OFFER_SITEMAP_FILE_SIZE_SAFE_PAGE_LIMIT,
+    );
+    expect(OFFER_SITEMAP_FILE_SIZE_SAFE_PAGE_LIMIT).toBe(5);
   });
 });

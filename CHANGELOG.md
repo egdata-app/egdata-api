@@ -4,6 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Reduced offer sitemap pages to 5 offers each to keep localized `hreflang` sitemap XML responses smaller.
 - Added locale-prefixed offer URLs with `hreflang` alternates to the public offer sitemap pages.
 - Added `locale` overlays for REST and GraphQL offer DTO responses, including exact-locale fallback metadata.
 - Normalized free-game promotion responses so `countriesBlacklist`, `giveaway.offerId`, and `giveaway.platform` keep a stable shape.
