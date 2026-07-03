@@ -4,6 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added locale-prefixed offer URLs to the public offer sitemap pages.
 - Added `locale` overlays for REST and GraphQL offer DTO responses, including exact-locale fallback metadata.
 - Normalized free-game promotion responses so `countriesBlacklist`, `giveaway.offerId`, and `giveaway.platform` keep a stable shape.
 - Documented changelog context/search enrichment fields and made changelist list context enrichment use the shared safe resolver.

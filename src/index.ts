@@ -66,6 +66,10 @@ import {
   localizeOffer,
   localizeOffers,
 } from "./utils/offer-localization.js";
+import {
+  getOfferSitemapUrls,
+  OFFER_SITEMAP_PAGE_LIMIT,
+} from "./utils/offer-sitemap.js";
 import { orderOffersObject } from "./utils/order-offers-object.js";
 import { API_VERSION } from "./version.js";
 
@@ -233,12 +237,12 @@ Allow: /items/sitemap.xml?*
 });
 
 app.get("/sitemap.xml", async (c) => {
-  const cacheKey = "sitemap-index";
+  const cacheKey = "sitemap-index-localized-v1";
   const cacheTimeInSec = 3600 * 24; // 1 day
   const cacheStaleTimeInSec = cacheTimeInSec * 7; // 7 days
   const cached = false;
   const { page } = c.req.query();
-  const limit = 1000;
+  const limit = OFFER_SITEMAP_PAGE_LIMIT;
 
   if (!page) {
     // Show the sitemap index, which contains the other sitemaps for all pages
@@ -269,23 +273,13 @@ app.get("/sitemap.xml", async (c) => {
   }
 
   // Generate individual sitemap page
-  const cacheKeyPage = `sitemap-page-${page}`;
+  const cacheKeyPage = `sitemap-page-localized-v1-${page}`;
   const cachedPage = await client.get(cacheKeyPage);
   let siteMap = "";
 
   if (cachedPage) {
     siteMap = cachedPage;
   } else {
-    const sections = [
-      "price",
-      "items",
-      "achievements",
-      "related",
-      "metadata",
-      "changelog",
-      "media",
-    ];
-
     const offers = await Offer.find(
       {},
       { id: 1, lastModifiedDate: 1 },
@@ -300,22 +294,17 @@ app.get("/sitemap.xml", async (c) => {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${offers
     .map((offer) => {
-      const url = `https://egdata.app/offers/${offer.id}`;
-      return `<url>
-        <loc>${url}</loc>
-        <lastmod>${(offer.lastModifiedDate as Date).toISOString()}</lastmod>
-      </url>
-      ${sections
+      const lastmod = (offer.lastModifiedDate as Date).toISOString();
+      return getOfferSitemapUrls(offer.id)
         .map(
-          (section) => `
+          (url) => `
       <url>
-        <loc>${url}/${section}</loc>
-        <lastmod>${(offer.lastModifiedDate as Date).toISOString()}</lastmod>
+        <loc>${url}</loc>
+        <lastmod>${lastmod}</lastmod>
       </url>
       `,
         )
-        .join("\n")}
-      `;
+        .join("\n");
     })
     .join("\n")}
 </urlset>`;
