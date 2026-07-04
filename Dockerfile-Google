@@ -7,6 +7,7 @@ ARG PNPM_VERSION
 ENV PNPM_HOME="/pnpm"
 ENV PNPM_STORE_PATH="/pnpm-store"
 ENV PATH="$PNPM_HOME/bin:$PATH"
+ENV CI=true
 
 # Install build tools required for node-gyp
 RUN apk add --no-cache \
@@ -26,7 +27,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm-store pnpm install --frozen-lockfile --store-dir "$PNPM_STORE_PATH"
 COPY . .
-RUN pnpm run build
+RUN pnpm --config.verify-deps-before-run=false run build
 
 FROM base AS prod-deps
 WORKDIR /app
