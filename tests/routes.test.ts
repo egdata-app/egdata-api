@@ -23,7 +23,7 @@ describe.skipIf(!hasMongo)("route golden snapshots", () => {
     await db.connect();
     // Import after env + db connect so route handlers find what they need.
     ({ app } = await import("../src/index.js"));
-  });
+  }, 120_000);
 
   afterAll(async () => {
     // Best-effort: Hono has no teardown; Mongo client cleanup is left to
@@ -69,7 +69,10 @@ describe.skipIf(!hasMongo)("route golden snapshots", () => {
       }
 
       const body = await res.json();
-      if (entry.path === "/" && Array.isArray((snapshot.body as any).endpoints)) {
+      if (
+        entry.path === "/" &&
+        Array.isArray((snapshot.body as any).endpoints)
+      ) {
         expect((body as any).endpoints, "route inventory changed").toEqual(
           (snapshot.body as any).endpoints,
         );

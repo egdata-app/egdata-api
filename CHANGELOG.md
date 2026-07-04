@@ -4,6 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Increased the route snapshot test setup timeout to reduce CI failures during slow live MongoDB connections.
 - Removed Redis caching from sitemap XML responses to avoid storing large generated sitemap payloads in Redis.
 - Reduced offer sitemap pages to 5 offers each to keep localized `hreflang` sitemap XML responses smaller.
 - Added locale-prefixed offer URLs with `hreflang` alternates to the public offer sitemap pages.
