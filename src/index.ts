@@ -237,22 +237,15 @@ Allow: /items/sitemap.xml?*
 });
 
 app.get("/sitemap.xml", async (c) => {
-  const cacheKey = "sitemap-index-localized-v3";
   const cacheTimeInSec = 3600 * 24; // 1 day
   const cacheStaleTimeInSec = cacheTimeInSec * 7; // 7 days
-  const cached = false;
   const { page } = c.req.query();
   const limit = OFFER_SITEMAP_PAGE_LIMIT;
 
   if (!page) {
     // Show the sitemap index, which contains the other sitemaps for all pages
-    let siteMapIndex = "";
-
-    if (cached) {
-      siteMapIndex = cached;
-    } else {
-      const count = await Offer.countDocuments();
-      siteMapIndex = `<?xml version="1.0" encoding="UTF-8"?>
+    const count = await Offer.countDocuments();
+    const siteMapIndex = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${Array.from(
     { length: Math.ceil(count / limit) },
@@ -263,9 +256,6 @@ app.get("/sitemap.xml", async (c) => {
   ).join("")}
 </sitemapindex>`;
 
-      await client.set(cacheKey, siteMapIndex, "EX", cacheTimeInSec);
-    }
-
     return c.text(siteMapIndex, 200, {
       "Content-Type": "application/xml",
       "Cache-Control": `max-age=${cacheTimeInSec}, stale-while-revalidate=${cacheStaleTimeInSec}`,
@@ -273,24 +263,17 @@ app.get("/sitemap.xml", async (c) => {
   }
 
   // Generate individual sitemap page
-  const cacheKeyPage = `sitemap-page-localized-v3-${page}`;
-  const cachedPage = await client.get(cacheKeyPage);
-  let siteMap = "";
+  const offers = await Offer.find(
+    {},
+    { id: 1, lastModifiedDate: 1 },
+    {
+      limit,
+      skip: (Number.parseInt(page, 10) - 1) * limit,
+      sort: { lastModifiedDate: -1 },
+    },
+  );
 
-  if (cachedPage) {
-    siteMap = cachedPage;
-  } else {
-    const offers = await Offer.find(
-      {},
-      { id: 1, lastModifiedDate: 1 },
-      {
-        limit,
-        skip: (Number.parseInt(page, 10) - 1) * limit,
-        sort: { lastModifiedDate: -1 },
-      },
-    );
-
-    siteMap = `<?xml version="1.0" encoding="UTF-8"?>
+  const siteMap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   ${offers
     .map((offer) => {
@@ -315,9 +298,6 @@ app.get("/sitemap.xml", async (c) => {
     .join("\n")}
 </urlset>`;
 
-    await client.set(cacheKeyPage, siteMap, "EX", cacheTimeInSec);
-  }
-
   return c.text(siteMap, 200, {
     "Content-Type": "application/xml",
     "Cache-Control": `max-age=${cacheTimeInSec}, stale-while-revalidate=${cacheStaleTimeInSec}`,
@@ -325,51 +305,41 @@ app.get("/sitemap.xml", async (c) => {
 });
 
 app.get("/promotions-sitemap.xml", async (c) => {
-  const cacheKey = "promotions-sitemap";
   const cacheTimeInSec = 3600 * 24; // 1 day
   const cacheStaleTimeInSec = cacheTimeInSec * 7; // 7 days
-  const cached = await client.get(cacheKey);
-  let siteMap = "";
-
-  if (cached) {
-    siteMap = cached;
-  } else {
-    siteMap = `<?xml version="1.0" encoding="UTF-8"?>
+  let siteMap = `<?xml version="1.0" encoding="UTF-8"?>
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
 
-    const pageSize = 1000;
-    let page = 0;
-    let hasMore = true;
+  const pageSize = 1000;
+  let page = 0;
+  let hasMore = true;
 
-    while (hasMore) {
-      const tags = await TagModel.find(
-        { groupName: "event", referenceCount: { $gt: 0 } },
-        undefined,
-        {
-          limit: pageSize,
-          skip: page * pageSize,
-          sort: { updated: -1 },
-        },
-      );
+  while (hasMore) {
+    const tags = await TagModel.find(
+      { groupName: "event", referenceCount: { $gt: 0 } },
+      undefined,
+      {
+        limit: pageSize,
+        skip: page * pageSize,
+        sort: { updated: -1 },
+      },
+    );
 
-      hasMore = tags.length === pageSize;
+    hasMore = tags.length === pageSize;
 
-      if (0 < tags.length) {
-        tags.forEach((tag) => {
-          siteMap += `
+    if (0 < tags.length) {
+      tags.forEach((tag) => {
+        siteMap += `
         <url>
           <loc>https://egdata.app/promotions/${tag.id}</loc>
         </url>`;
-        });
+      });
 
-        page++;
-      }
+      page++;
     }
-
-    siteMap += "</urlset>";
-
-    await client.set(cacheKey, siteMap, "EX", cacheTimeInSec);
   }
+
+  siteMap += "</urlset>";
 
   return c.text(siteMap, 200, {
     "Content-Type": "application/xml",
@@ -1455,22 +1425,15 @@ app.route("/push", PushRoute);
 app.route("/game-awards", GameAwardsRoute);
 
 app.get("/items-sitemap.xml", async (c) => {
-  const cacheKey = "items-sitemap-index";
   const cacheTimeInSec = 3600 * 24; // 1 day
   const cacheStaleTimeInSec = cacheTimeInSec * 7; // 7 days
-  const cached = false;
   const { page } = c.req.query();
   const limit = 1000;
 
   if (!page) {
     // Show the sitemap index, which contains the other sitemaps for all pages
-    let siteMapIndex = "";
-
-    if (cached) {
-      siteMapIndex = cached;
-    } else {
-      const count = await Item.countDocuments();
-      siteMapIndex = `<?xml version="1.0" encoding="UTF-8"?>
+    const count = await Item.countDocuments();
+    const siteMapIndex = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${Array.from(
     { length: Math.ceil(count / limit) },
@@ -1481,9 +1444,6 @@ app.get("/items-sitemap.xml", async (c) => {
   ).join("")}
 </sitemapindex>`;
 
-      await client.set(cacheKey, siteMapIndex, "EX", cacheTimeInSec);
-    }
-
     return c.text(siteMapIndex, 200, {
       "Content-Type": "application/xml",
       "Cache-Control": `max-age=${cacheTimeInSec}, stale-while-revalidate=${cacheStaleTimeInSec}`,
@@ -1491,34 +1451,27 @@ app.get("/items-sitemap.xml", async (c) => {
   }
 
   // Generate individual sitemap page
-  const cacheKeyPage = `items-sitemap-page-${page}`;
-  const cachedPage = await client.get(cacheKeyPage);
-  let siteMap = "";
+  const sections = [
+    "offers",
+    "assets",
+    "achievements",
+    "related",
+    "metadata",
+    "changelog",
+    "media",
+  ];
 
-  if (cachedPage) {
-    siteMap = cachedPage;
-  } else {
-    const sections = [
-      "offers",
-      "assets",
-      "achievements",
-      "related",
-      "metadata",
-      "changelog",
-      "media",
-    ];
+  const items = await Item.find(
+    {},
+    { id: 1, lastModifiedDate: 1 },
+    {
+      limit,
+      skip: (Number.parseInt(page, 10) - 1) * limit,
+      sort: { lastModifiedDate: -1 },
+    },
+  );
 
-    const items = await Item.find(
-      {},
-      { id: 1, lastModifiedDate: 1 },
-      {
-        limit,
-        skip: (Number.parseInt(page, 10) - 1) * limit,
-        sort: { lastModifiedDate: -1 },
-      },
-    );
-
-    siteMap = `<?xml version="1.0" encoding="UTF-8"?>
+  const siteMap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${items
     .map((item) => {
@@ -1541,9 +1494,6 @@ app.get("/items-sitemap.xml", async (c) => {
     })
     .join("\n")}
 </urlset>`;
-
-    await client.set(cacheKeyPage, siteMap, "EX", cacheTimeInSec);
-  }
 
   return c.text(siteMap, 200, {
     "Content-Type": "application/xml",
