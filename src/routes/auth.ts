@@ -1,19 +1,18 @@
+import crypto, { randomUUID } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { Routes } from "discord-api-types/v10";
 import { Hono } from "hono";
 import { deleteCookie, getCookie } from "hono/cookie";
-import { createMiddleware } from "hono/factory";
 import { cors } from "hono/cors";
+import { createMiddleware } from "hono/factory";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
-import { db } from "../db/index.js";
-import { readFileSync } from "node:fs";
-import { telegramBotService } from "../clients/telegram.js";
-import { randomUUID } from "node:crypto";
-import crypto from "node:crypto";
-import client from "../clients/redis.js";
-import { auth } from "../utils/auth.js";
-import consola from "consola";
-import { Routes } from "discord-api-types/v10";
 import { discord } from "../clients/discord.js";
+import client from "../clients/redis.js";
+import { telegramBotService } from "../clients/telegram.js";
+import { db } from "../db/index.js";
+import { auth } from "../utils/auth.js";
+import { consola } from "../utils/logger.js";
 
 interface EpicProfileResponse {
   accountId: string;
@@ -67,7 +66,7 @@ app.use(
     allowMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"],
     credentials: true,
     maxAge: 86400,
-  })
+  }),
 );
 
 export interface EpicTokenInfo {
@@ -100,7 +99,7 @@ export const epic = createMiddleware<EpicAuthMiddleware>(async (c, next) => {
     return next();
   }
 
-  console.log("No session found");
+  consola.debug("No session found");
 
   // Get the authorization header or cookie "EPIC_AUTH"
   let epicAuth = c.req.header("Authorization") || getCookie(c, "EPIC_AUTH");
@@ -138,13 +137,13 @@ export const epic = createMiddleware<EpicAuthMiddleware>(async (c, next) => {
         body: new URLSearchParams({
           token: epicAuth,
         }),
-      }
+      },
     );
 
     if (!epicTokenInfo.ok) {
       console.error(
         "Failed to verify EPIC_AUTH token",
-        await epicTokenInfo.json()
+        await epicTokenInfo.json(),
       );
       return c.json({ error: "Failed to verify EPIC_AUTH token" }, 401);
     }
@@ -206,13 +205,13 @@ export const epicInfo = createMiddleware<EpicAuthMiddleware>(
           body: new URLSearchParams({
             token: epicAuth,
           }),
-        }
+        },
       );
 
       if (!epicTokenInfo.ok) {
         console.error(
           "Failed to verify EPIC_AUTH token",
-          await epicTokenInfo.json()
+          await epicTokenInfo.json(),
         );
         return next();
       }
@@ -234,7 +233,7 @@ export const epicInfo = createMiddleware<EpicAuthMiddleware>(
       console.error("Error verifying EPIC_AUTH token", err);
       return next();
     }
-  }
+  },
 );
 
 app.get("/", epic, async (c) => {
@@ -254,7 +253,7 @@ app.get("/", epic, async (c) => {
     return c.json(epicEntry);
   }
 
-  console.warn("No epic entry found, fetching from Epic Games", {
+  consola.warn("No epic entry found, fetching from Epic Games", {
     accountId: epic.account_id,
   });
 
@@ -286,7 +285,7 @@ app.post("/avatar", epic, async (c) => {
     return c.json({ error: "Missing EPIC_ACCOUNT_ID" }, 401);
   }
 
-  console.info("Content type:", c.req.header("Content-Type"));
+  consola.debug("Content type:", c.req.header("Content-Type"));
 
   const body = await c.req.parseBody();
 
@@ -309,7 +308,7 @@ app.post("/avatar", epic, async (c) => {
     file,
     `${session?.user?.email.split("@")[0] ?? epicVar?.account_id}.${file.name
       .split(".")
-      .pop()}`
+      .pop()}`,
   );
 
   consola.info("Form data for Cloudflare Images", formData);
@@ -333,13 +332,15 @@ app.post("/avatar", epic, async (c) => {
 
   await db.db.collection("epic").updateOne(
     {
-      accountId: { $eq: session.user?.email.split("@")[0] ?? epicVar.account_id },
+      accountId: {
+        $eq: session.user?.email.split("@")[0] ?? epicVar.account_id,
+      },
     },
     {
       $set: {
         avatarUrl: responseData.result,
       },
-    }
+    },
   );
 
   consola.success("Avatar updated in database", responseData.result);
@@ -380,7 +381,7 @@ app.post("/persist", epic, async (c) => {
       body: new URLSearchParams({
         token: epicVar.access_token,
       }),
-    }
+    },
   ).then(
     (r) =>
       r.json() as Promise<{
@@ -392,7 +393,7 @@ app.post("/persist", epic, async (c) => {
         account_id: string;
         client_id: string;
         application_id: string;
-      }>
+      }>,
   );
 
   const refreshTokenIntrospection = await fetch(
@@ -405,7 +406,7 @@ app.post("/persist", epic, async (c) => {
       body: new URLSearchParams({
         token: refreshToken,
       }),
-    }
+    },
   ).then(
     (r) =>
       r.json() as Promise<{
@@ -417,7 +418,7 @@ app.post("/persist", epic, async (c) => {
         account_id: string;
         client_id: string;
         application_id: string;
-      }>
+      }>,
   );
 
   if (!accessTokenIntrospection.active || !refreshTokenIntrospection.active) {
@@ -441,17 +442,17 @@ app.post("/persist", epic, async (c) => {
         accessToken: epicVar.access_token,
         refreshToken: refreshToken,
         expiresAt: new Date(
-          Date.now() + accessTokenIntrospection.expires_in * 1000
+          Date.now() + accessTokenIntrospection.expires_in * 1000,
         ),
         refreshExpiresAt: new Date(
-          Date.now() + refreshTokenIntrospection.expires_in * 1000
+          Date.now() + refreshTokenIntrospection.expires_in * 1000,
         ),
         accountId: epicVar.account_id,
       },
     },
     {
       upsert: true,
-    }
+    },
   );
 
   return c.json(
@@ -459,7 +460,7 @@ app.post("/persist", epic, async (c) => {
       id: entry.upsertedId,
       status: "ok",
     },
-    200
+    200,
   );
 });
 
@@ -542,7 +543,7 @@ app.get("/refresh", async (c) => {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         Authorization: `Basic ${Buffer.from(
-          `${clientId}:${clientSecret}`
+          `${clientId}:${clientSecret}`,
         ).toString("base64")}`,
       },
       body: new URLSearchParams({
@@ -578,7 +579,7 @@ app.get("/refresh", async (c) => {
       },
       {
         upsert: true,
-      }
+      },
     );
   }
 
@@ -596,7 +597,7 @@ app.get("/refresh", async (c) => {
       });
   }
 
-  console.log(`Refreshed token for ${decoded.sub}`);
+  consola.debug(`Refreshed token for ${decoded.sub}`);
 
   return c.json(
     {
@@ -605,7 +606,7 @@ app.get("/refresh", async (c) => {
       expiresAt: token?.expiresAt,
       refreshExpiresAt: token?.refreshExpiresAt,
     },
-    200
+    200,
   );
 });
 
@@ -625,8 +626,11 @@ app.patch("/refresh", async (c) => {
     return c.json({ error: "Missing token" }, 401);
   }
 
-  const actual = crypto.createHash('sha256').update(token).digest();
-  const expected = crypto.createHash('sha256').update(process.env.JWT_SECRET || '').digest();
+  const actual = crypto.createHash("sha256").update(token).digest();
+  const expected = crypto
+    .createHash("sha256")
+    .update(process.env.JWT_SECRET || "")
+    .digest();
   if (!crypto.timingSafeEqual(actual, expected)) {
     console.error("Invalid token");
     return c.json({ error: "Invalid token" }, 401);
@@ -644,10 +648,10 @@ app.patch("/refresh", async (c) => {
   const clientSecret = process.env.EPIC_CLIENT_SECRET;
 
   for (const token of tokens) {
-    console.log("Refreshing token", token.tokenId);
+    consola.debug("Refreshing token", token.tokenId);
 
     if (token.refreshExpiresAt < new Date()) {
-      console.log("Refresh token expired, removing from DB");
+      consola.debug("Refresh token expired, removing from DB");
       await db.db.collection("tokens").deleteOne({
         tokenId: token.tokenId,
       });
@@ -662,7 +666,7 @@ app.patch("/refresh", async (c) => {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           Authorization: `Basic ${Buffer.from(
-            `${clientId}:${clientSecret}`
+            `${clientId}:${clientSecret}`,
           ).toString("base64")}`,
         },
         body: new URLSearchParams({
@@ -679,7 +683,7 @@ app.patch("/refresh", async (c) => {
         await telegramBotService.sendMessage(
           `Failed to refresh token for ${token.tokenId}
           \`\`\`${JSON.stringify(error)}\`\`\`
-          `
+          `,
         );
 
         // Remove the token from the DB
@@ -714,15 +718,15 @@ app.patch("/refresh", async (c) => {
         },
         {
           upsert: false,
-        }
+        },
       );
 
-      console.log(`Refreshed token ${token.tokenId}`);
+      consola.debug(`Refreshed token ${token.tokenId}`);
     } catch (e) {
       await telegramBotService.sendMessage(
         `Failed to refresh token for ${token.tokenId}
         ${e}
-        `
+        `,
       );
       // Revoke the token and delete it from the database
       const url = new URL("https://api.epicgames.dev/epic/oauth/v2/revoke");
@@ -749,7 +753,7 @@ app.patch("/refresh", async (c) => {
     {
       status: "ok",
     },
-    200
+    200,
   );
 });
 
@@ -790,8 +794,11 @@ app.patch("/refresh-admin", async (c) => {
   if (authorization.startsWith("Bearer ")) {
     const token = authorization.replace("Bearer ", "");
 
-    const actual = crypto.createHash('sha256').update(token).digest();
-    const expected = crypto.createHash('sha256').update(process.env.JWT_SECRET || '').digest();
+    const actual = crypto.createHash("sha256").update(token).digest();
+    const expected = crypto
+      .createHash("sha256")
+      .update(process.env.JWT_SECRET || "")
+      .digest();
     if (!crypto.timingSafeEqual(actual, expected)) {
       console.error("Invalid JWT_SECRET token");
       return c.json({ error: "Invalid JWT_SECRET token" }, 401);
@@ -818,7 +825,7 @@ app.patch("/refresh-admin", async (c) => {
   }
 
   const url = new URL(
-    "https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token"
+    "https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token",
   );
 
   const response = await fetch(url.toString(), {
@@ -826,7 +833,7 @@ app.patch("/refresh-admin", async (c) => {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization: `Basic ${Buffer.from(
-        `${launcherClient}:${launcherSecret}`
+        `${launcherClient}:${launcherSecret}`,
       ).toString("base64")}`,
     },
     body: new URLSearchParams({
@@ -838,7 +845,7 @@ app.patch("/refresh-admin", async (c) => {
   if (!response.ok) {
     console.error("Failed to refresh admin user tokens", await response.json());
     telegramBotService.sendMessage(
-      `Failed to refresh admin user tokens, the bot won't be able to get new data from Epic Games.`
+      `Failed to refresh admin user tokens, the bot won't be able to get new data from Epic Games.`,
     );
     return c.json({ error: "Failed to refresh admin user tokens" }, 401);
   }
@@ -856,14 +863,14 @@ app.patch("/refresh-admin", async (c) => {
         expires_at: new Date(responseData.expires_at),
         refresh_expires_at: new Date(responseData.refresh_expires_at),
       },
-    }
+    },
   );
 
   return c.json(
     {
       status: "ok",
     },
-    200
+    200,
   );
 });
 
@@ -944,7 +951,7 @@ app.post("/v2/persist", async (c) => {
       },
       {
         upsert: true,
-      }
+      },
     );
 
     const existingEntry = await db.db.collection("epic").findOne({
@@ -967,7 +974,7 @@ app.post("/v2/persist", async (c) => {
         },
         {
           upsert: true,
-        }
+        },
       );
     }
 
@@ -976,7 +983,7 @@ app.post("/v2/persist", async (c) => {
         id: egdataJWT.jti,
         status: "ok",
       },
-      200
+      200,
     );
   } catch (err) {
     console.error("Error verifying JWT", err);
@@ -1050,7 +1057,7 @@ app.get("/v2/refresh", async (c) => {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           Authorization: `Basic ${Buffer.from(
-            `${process.env.EPIC_CLIENT_ID}:${process.env.EPIC_CLIENT_SECRET}`
+            `${process.env.EPIC_CLIENT_ID}:${process.env.EPIC_CLIENT_SECRET}`,
           ).toString("base64")}`,
         },
         body: new URLSearchParams({
@@ -1086,7 +1093,7 @@ app.get("/v2/refresh", async (c) => {
         },
         {
           upsert: false,
-        }
+        },
       );
 
       dbtoken = await db.db
@@ -1109,7 +1116,7 @@ app.get("/v2/refresh", async (c) => {
         expiresAt: dbtoken?.expiresAt,
         refreshExpiresAt: dbtoken?.refreshExpiresAt,
       },
-      200
+      200,
     );
   } catch (err) {
     console.error("Error verifying JWT", err);
@@ -1160,7 +1167,7 @@ app.get("/discord/link", epic, async (c) => {
   url.searchParams.append("response_type", "code");
   url.searchParams.append(
     "redirect_uri",
-    "https://api-gcp.egdata.app/auth/discord/callback"
+    "https://api-gcp.egdata.app/auth/discord/callback",
   );
   url.searchParams.append("scope", "identify");
 
@@ -1229,7 +1236,7 @@ app.get("/discord/callback", epic, async (c) => {
       $set: {
         discordId: userData.id,
       },
-    }
+    },
   );
 
   const isDonor = await db.db.collection("key-codes").findOne({
@@ -1258,10 +1265,10 @@ app.get("/discord/callback", epic, async (c) => {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         Authorization: `Basic ${Buffer.from(
-          `${process.env.DISCORD_CLIENT_ID}:${process.env.DISCORD_CLIENT_SECRET}`
+          `${process.env.DISCORD_CLIENT_ID}:${process.env.DISCORD_CLIENT_SECRET}`,
         ).toString("base64")}`,
       },
-    }
+    },
   );
 
   if (!revoke.ok) {

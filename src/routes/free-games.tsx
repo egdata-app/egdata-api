@@ -21,6 +21,7 @@ import {
 } from "../models/index.js";
 import { regions } from "../utils/countries.js";
 import { getImage } from "../utils/get-image.js";
+import { consola } from "../utils/logger.js";
 import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
@@ -338,7 +339,7 @@ app.get("/history", async (c) => {
 });
 
 app.patch("/index", async (c) => {
-  console.log(
+  consola.info(
     "Skipping MeiliSearch free-games index refresh - now using egdata.offers",
   );
   // Free games search now uses the egdata.offers OpenSearch index

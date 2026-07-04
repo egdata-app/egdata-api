@@ -4,6 +4,9 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added a PowerShell helper script for quoting dotenv values before pasting them into deployment environments.
+- Made OpenSearch client configuration lazy and added clear errors for missing, blank, or partial credentials.
+- Reduced normal request-path logging volume, removed offer RAM usage logs, and added debug-level request logging with Cloudflare location headers.
 - Decoupled production deployment from the live MongoDB integration job while keeping build, docs, and release checks as deploy gates.
 - Increased the route snapshot test setup timeout to reduce CI failures during slow live MongoDB connections.
 - Removed Redis caching from sitemap XML responses to avoid storing large generated sitemap payloads in Redis.

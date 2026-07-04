@@ -13,6 +13,7 @@ import {
   type PriceEngineType,
 } from "../models/index.js";
 import { regions } from "../utils/countries.js";
+import { consola } from "../utils/logger.js";
 import {
   getLocaleOrErrorResponse,
   localizeOffers,
@@ -117,7 +118,7 @@ app.get("/", async (c) => {
       const offers: OfferWithPrice[] = [];
 
       if (!module.offers.length) {
-        console.log("No offers for module", module.title);
+        consola.debug("No offers for module", module.title);
         return;
       }
 

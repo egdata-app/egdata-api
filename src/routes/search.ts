@@ -17,6 +17,7 @@ import {
   Tags,
 } from "../models/index.js";
 import { regions } from "../utils/countries.js";
+import { consola } from "../utils/logger.js";
 import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
@@ -485,23 +486,23 @@ app.post("/", async (c) => {
   const cached = await client.get(cacheKey);
 
   if (cached) {
-    console.warn(`Cache hit for ${cacheKey}`);
+    consola.debug(`Cache hit for ${cacheKey}`);
     return c.json(JSON.parse(cached), 200, {
       "Cache-Control": "public, max-age=60",
     });
   }
 
-  console.warn(`Cache miss for ${cacheKey}`);
+  consola.debug(`Cache miss for ${cacheKey}`);
 
   const queryCache = `q:${queryId}`;
 
   const cachedQuery = await client.get(queryCache);
 
   if (!cachedQuery) {
-    console.warn(`Cache miss for ${queryCache}`);
+    consola.debug(`Cache miss for ${queryCache}`);
     await client.set(queryCache, JSON.stringify(query));
   } else {
-    console.warn(`Cache hit for ${queryCache}`);
+    consola.debug(`Cache hit for ${queryCache}`);
   }
 
   const limit = Math.min(query.limit || 10, 50);
@@ -1304,7 +1305,7 @@ app.post("/v2/search", async (c) => {
     });
   }
 
-  console.log(must, filter, sort, aggregations);
+  consola.debug("OpenSearch query", { must, filter, sort, aggregations });
 
   const osResponse = await opensearch.search({
     index: "egdata.offers",
@@ -1610,7 +1611,7 @@ app.get("/:id/count", async (c) => {
       "Cache-Control": "public, max-age=60",
     });
   } catch (err) {
-    console.error("Error in count endpoint:", err);
+    consola.error("Error in count endpoint:", err);
     c.status(500);
     return c.json({ message: "Error while counting results" });
   }

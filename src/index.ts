@@ -19,8 +19,8 @@ import { db } from "./db/index.js";
 import { server } from "./graphql/index.js";
 import { createLoaders } from "./graphql/loaders.js";
 import { honoMiddleware } from "./middlewares/apollo.js";
+import { requestDebugLogger } from "./middlewares/request-logger.js";
 import {
-  Asset,
   Changelog,
   Event,
   Item,
@@ -124,6 +124,7 @@ app.use(
 );
 
 app.use("/*", etag());
+app.use("/*", requestDebugLogger);
 
 app.use(
   "/graphql",
@@ -355,13 +356,13 @@ app.get("/items-from-offer/:id", async (c) => {
   const cached = await client.get(cacheKey);
 
   if (cached) {
-    console.log(`[CACHE] ${cacheKey} found`);
+    consola.debug(`[CACHE] ${cacheKey} found`);
     return c.json(JSON.parse(cached), 200, {
       "Cache-Control": "public, max-age=60",
     });
   }
 
-  console.log(`[CACHE] ${cacheKey} not found`);
+  consola.debug(`[CACHE] ${cacheKey} not found`);
 
   const result = await Offer.aggregate([
     {
@@ -540,27 +541,27 @@ app.get("/featured", async (c) => {
   const cacheKey = `featured:v0.1`;
   const responseCacheKey = `featured-response:${localeCacheSegment(locale)}:v0.1`;
 
-  console.log(`[CACHE] ${cacheKey}`);
+  consola.debug(`[CACHE] ${cacheKey}`);
 
   const cachedResponse = await client.get(responseCacheKey);
 
-  console.log(`[CACHE] ${responseCacheKey}`);
+  consola.debug(`[CACHE] ${responseCacheKey}`);
 
   if (cachedResponse) {
-    console.log(`[CACHE] ${responseCacheKey} found`);
+    consola.debug(`[CACHE] ${responseCacheKey} found`);
     return c.json(JSON.parse(cachedResponse), 200, {
       "Cache-Control": "public, max-age=60",
     });
   }
 
-  console.log(`[CACHE] ${responseCacheKey} not found`);
+  consola.debug(`[CACHE] ${responseCacheKey} not found`);
 
   const cached = await client.get(cacheKey);
 
   let featuredGames: { id: string; namespace: string }[] = [];
 
   if (cached) {
-    console.log(`[CACHE] ${cacheKey} found`);
+    consola.debug(`[CACHE] ${cacheKey} found`);
     featuredGames = JSON.parse(cached);
   } else {
     featuredGames = await getFeaturedGames();
@@ -626,7 +627,7 @@ app.get("/autocomplete", async (c) => {
   const cached = await client.get(cacheKey);
 
   if (cached) {
-    console.log(`[CACHE] ${cacheKey} found`);
+    consola.debug(`[CACHE] ${cacheKey} found`);
     return c.json(JSON.parse(cached));
   }
 
@@ -1025,7 +1026,7 @@ app.post("/ping", async (c) => {
       return c.json({ message: "pong" });
     }
 
-    console.log(`Tracking event from ${body.userId} (${body.event})`);
+    consola.debug(`Tracking event from ${body.userId} (${body.event})`);
 
     await Event.create({
       event: body.event,
@@ -1040,7 +1041,7 @@ app.post("/ping", async (c) => {
 
     return c.json({ message: "pong" });
   } catch (e) {
-    console.error(e);
+    consola.error(e);
     return c.json({ message: "error" }, 500);
   }
 });
@@ -1078,7 +1079,7 @@ const _offerTypeRanks: {
 const _PAGE_SIZE = 500;
 
 async function refreshChangelogIndex() {
-  console.log(
+  consola.info(
     "Skipping MeiliSearch changelog index refresh - migrated to OpenSearch",
   );
   // Changelog index migrated to OpenSearch (egdata.changelog)
@@ -1086,7 +1087,7 @@ async function refreshChangelogIndex() {
 }
 
 async function refreshOffersIndex() {
-  console.log(
+  consola.info(
     "Skipping MeiliSearch offers index refresh - migrated to OpenSearch",
   );
   // Offers index migrated to OpenSearch (egdata.offers)
@@ -1094,7 +1095,7 @@ async function refreshOffersIndex() {
 }
 
 async function refreshItemsIndex() {
-  console.log(
+  consola.info(
     "Skipping MeiliSearch items index refresh - migrated to OpenSearch",
   );
   // Items index migrated to OpenSearch (egdata.items)
@@ -1102,7 +1103,7 @@ async function refreshItemsIndex() {
 }
 
 async function refreshSellersIndex() {
-  console.log(
+  consola.info(
     "Skipping MeiliSearch sellers index refresh - migrated to OpenSearch",
   );
   // Sellers index migrated to OpenSearch (egdata.sellers)
@@ -1110,7 +1111,7 @@ async function refreshSellersIndex() {
 }
 
 app.patch("/refresh-meilisearch", async (c) => {
-  console.log("Refreshing MeiliSearch index");
+  consola.info("Refreshing MeiliSearch index");
 
   await Promise.allSettled([
     refreshChangelogIndex(),
@@ -1279,13 +1280,13 @@ app.post("/donate/key/:code", epic, async (c) => {
 
   const { code } = c.req.param();
 
-  console.log("Received donation code", code);
+  consola.debug("Received donation code", code);
 
   if (!code || code.length !== 20) {
     return c.json({ error: "Invalid code" }, 400);
   }
 
-  console.log("Verifying code");
+  consola.debug("Verifying code");
 
   const id = session.user?.email.split("@")[0] ?? c.var.epic?.account_id;
 
@@ -1310,7 +1311,7 @@ app.post("/donate/key/:code", epic, async (c) => {
       .replace(":code", code),
   );
 
-  console.log("Fetching code details from Epic Games");
+  consola.debug("Fetching code details from Epic Games");
 
   const response = await fetch(url.toString(), {
     method: "POST",
@@ -1337,7 +1338,7 @@ app.post("/donate/key/:code", epic, async (c) => {
     }[];
   };
 
-  console.log("Code details", parsedResponse);
+  consola.debug("Code details", parsedResponse);
 
   await db.db.collection("key-codes").insertOne({
     code,
@@ -1511,7 +1512,7 @@ async function startServer() {
     });
 
     server.on("listening", () => {
-      console.log(
+      consola.success(
         `${chalk.gray("Listening on")} ${chalk.green(
           "http://localhost:4000",
         )} (${chalk.gray("took")} ${chalk.magenta(

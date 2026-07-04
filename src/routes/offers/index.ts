@@ -1,5 +1,4 @@
 import { Queue } from "bullmq";
-import consola from "consola";
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import client, { ioredis } from "../../clients/redis.js";
@@ -35,39 +34,6 @@ const regenOffersQueue = new Queue<RegenOfferQueueType>("regenOffersQueue", {
 });
 
 const app = new Hono();
-
-app.use("*", async (c, next) => {
-  const startMemory = process.memoryUsage();
-  const start = new Date();
-
-  await next();
-
-  const endMemory = process.memoryUsage();
-  const end = new Date();
-
-  const memoryDiff = {
-    rss: endMemory.rss - startMemory.rss,
-    heapTotal: endMemory.heapTotal - startMemory.heapTotal,
-    heapUsed: endMemory.heapUsed - startMemory.heapUsed,
-    external: endMemory.external - startMemory.external,
-    arrayBuffers: endMemory.arrayBuffers - startMemory.arrayBuffers,
-    responseTime: end.getTime() - start.getTime(),
-  };
-
-  consola.info({
-    request: `[${c.req.method}] ${c.req.path}`,
-    memory: {
-      rss: `${(memoryDiff.rss / 1024 / 1024).toFixed(2)}MB`,
-      heapTotal: `${(memoryDiff.heapTotal / 1024 / 1024).toFixed(2)}MB`,
-      heapUsed: `${(memoryDiff.heapUsed / 1024 / 1024).toFixed(2)}MB`,
-      external: `${(memoryDiff.external / 1024 / 1024).toFixed(2)}MB`,
-      arrayBuffers: `${(memoryDiff.arrayBuffers / 1024 / 1024).toFixed(2)}MB`,
-    },
-    performance: {
-      responseTime: `${(memoryDiff.responseTime / 1000).toFixed(2)}s`,
-    },
-  });
-});
 
 app.get("/", async (c) => {
   const start = new Date();

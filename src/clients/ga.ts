@@ -1,3 +1,5 @@
+import { consola } from "../utils/logger.js";
+
 interface GaOptions {
   id: string;
   secret: string;
@@ -22,7 +24,7 @@ export class GaClient {
 
   async track(opts: TrackOpts) {
     if (!this.options.secret) {
-      console.warn("No GA secret provided, skipping GA tracking");
+      consola.warn("No GA secret provided, skipping GA tracking");
       return;
     }
 

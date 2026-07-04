@@ -14,6 +14,7 @@ import {
   PriceEngine,
 } from "../models/index.js";
 import { regions } from "../utils/countries.js";
+import { consola } from "../utils/logger.js";
 import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
@@ -108,7 +109,7 @@ app.get("/:slug", async (c) => {
           (i) => i.toJSON().offerId === o.id,
         );
 
-        console.log(
+        consola.debug(
           `Offer ${o.title} has position ${collectionOffer?.position}`,
         );
 

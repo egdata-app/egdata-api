@@ -1,14 +1,14 @@
-import { Db, MongoClient } from "mongodb";
+import { type Db, MongoClient } from "mongodb";
+import { consola } from "../utils/logger.js";
 
 export class DB {
   db!: Db;
   private client!: MongoClient;
 
-  constructor() {
-  }
+  constructor() {}
 
   async connect() {
-    console.log("Connecting to MongoDB", {
+    consola.info("Connecting to MongoDB", {
       url: process.env["MONGO_URL"],
       ca: process.env["MONGO_CA"]?.substring(0, 100),
       cert: process.env["MONGO_CERT"]?.substring(0, 100),
@@ -26,18 +26,21 @@ export class DB {
       throw new Error("MONGO_CERT is required");
     }
 
-    this.client = new MongoClient(`mongodb+srv://${process.env["MONGO_URL"]}/egdata`, {
-      tls: true,
-      authMechanism: "MONGODB-X509",
-      authSource: "$external",
-      tlsCAFile: process.env.MONGO_CA,
-      tlsCertificateKeyFile: process.env.MONGO_CERT,
-    });
+    this.client = new MongoClient(
+      `mongodb+srv://${process.env["MONGO_URL"]}/egdata`,
+      {
+        tls: true,
+        authMechanism: "MONGODB-X509",
+        authSource: "$external",
+        tlsCAFile: process.env.MONGO_CA,
+        tlsCertificateKeyFile: process.env.MONGO_CERT,
+      },
+    );
 
     await this.client.connect();
     this.db = this.client.db("egdata");
 
-    console.log("Connected to MongoDB");
+    consola.success("Connected to MongoDB");
   }
 
   async disconnect() {
