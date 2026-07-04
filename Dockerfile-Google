@@ -1,33 +1,43 @@
-FROM node:26-alpine AS base
+ARG NODE_VERSION=26
+ARG PNPM_VERSION=11.0.0
+
+FROM node:${NODE_VERSION}-alpine AS base
+ARG PNPM_VERSION
 
 ENV PNPM_HOME="/pnpm"
+ENV PNPM_STORE_PATH="/pnpm-store"
 ENV PATH="$PNPM_HOME:$PATH"
-
-RUN corepack enable
 
 # Install build tools required for node-gyp
 RUN apk add --no-cache \
         curl \
+        wget \
+        ca-certificates \
         python3 \
         make \
         g++ \
     && ln -sf /usr/bin/python3 /usr/bin/python
 
+RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" PNPM_VERSION="${PNPM_VERSION}" sh - \
+    && pnpm --version
+
 FROM base AS builder
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm-store pnpm install --frozen-lockfile --store-dir "$PNPM_STORE_PATH"
 COPY . .
 RUN pnpm run build
 
 FROM base AS prod-deps
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --prod --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm-store pnpm install --prod --frozen-lockfile --store-dir "$PNPM_STORE_PATH"
 
-FROM node:26-alpine AS runner
+FROM node:${NODE_VERSION}-alpine AS runner
 
 WORKDIR /app
+ENV NODE_ENV=production
+RUN apk add --no-cache ca-certificates
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/src/static ./src/static

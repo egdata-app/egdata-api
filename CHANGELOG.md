@@ -4,7 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
-- Switched the Google deployment Dockerfile from Bun to Node.js 26 for production runtime alignment.
+- Switched the Google deployment Dockerfile from Bun to Node.js 26 and direct pnpm installation for production runtime alignment.
 - Added a PowerShell helper script for quoting dotenv values before pasting them into deployment environments.
 - Made OpenSearch client configuration lazy and added clear errors for missing, blank, or partial credentials.
 - Reduced normal request-path logging volume, removed offer RAM usage logs, and added debug-level request logging with Cloudflare location headers.
