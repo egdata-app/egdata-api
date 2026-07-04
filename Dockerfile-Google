@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM node:26-alpine AS base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -25,7 +25,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --prod --frozen-lockfile
 
-FROM oven/bun:1-alpine
+FROM node:26-alpine AS runner
 
 WORKDIR /app
 COPY --from=prod-deps /app/node_modules ./node_modules
@@ -36,4 +36,4 @@ COPY package.json ./
 EXPOSE 4000
 EXPOSE 9229
 
-CMD ["bun", "dist/index.js"]
+CMD ["node", "--enable-source-maps", "dist/index.js"]
