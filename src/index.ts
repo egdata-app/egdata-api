@@ -2,7 +2,7 @@ import "@aikidosec/firewall";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import Zen from "@aikidosec/firewall";
-import { serve } from "@hono/node-server";
+import { type ServerType, serve } from "@hono/node-server";
 import { swaggerUI } from "@hono/swagger-ui";
 import chalk from "chalk";
 import { Routes } from "discord-api-types/v10";
@@ -14,9 +14,9 @@ import { inspectRoutes } from "hono/dev";
 import { etag } from "hono/etag";
 import { discord } from "./clients/discord.js";
 import { gaClient } from "./clients/ga.js";
-import client from "./clients/redis.js";
+import client, { ioredis } from "./clients/redis.js";
 import { db } from "./db/index.js";
-import { server } from "./graphql/index.js";
+import { server as graphqlServer } from "./graphql/index.js";
 import { createLoaders } from "./graphql/loaders.js";
 import { honoMiddleware } from "./middlewares/apollo.js";
 import { requestDebugLogger } from "./middlewares/request-logger.js";
@@ -98,7 +98,7 @@ Zen.addHonoMiddleware(app);
 
 export { app };
 
-await server
+await graphqlServer
   .start()
   .then(() => {
     consola.success("GraphQL server started");
@@ -128,7 +128,7 @@ app.use("/*", requestDebugLogger);
 
 app.use(
   "/graphql",
-  honoMiddleware(server, {
+  honoMiddleware(graphqlServer, {
     context: async () => ({
       db: db.db,
       logger: consola,
@@ -1494,16 +1494,72 @@ app.get("/items-sitemap.xml", async (c) => {
   });
 });
 
+function closeHttpServer(httpServer: ServerType) {
+  return new Promise<void>((resolve, reject) => {
+    httpServer.close((error?: Error) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      resolve();
+    });
+  });
+}
+
+function installShutdownHandlers(httpServer: ServerType) {
+  let isShuttingDown = false;
+
+  const shutdown = async (signal: NodeJS.Signals) => {
+    if (isShuttingDown) {
+      return;
+    }
+
+    isShuttingDown = true;
+    consola.info(`Received ${signal}; shutting down HTTP and GraphQL servers`);
+
+    try {
+      await closeHttpServer(httpServer);
+
+      const shutdownResults = await Promise.allSettled([
+        graphqlServer.stop(),
+        client.quit(),
+        ioredis.quit(),
+        db.disconnect(),
+      ]);
+      const failedShutdown = shutdownResults.find(
+        (result): result is PromiseRejectedResult =>
+          result.status === "rejected",
+      );
+
+      if (failedShutdown) {
+        throw failedShutdown.reason;
+      }
+
+      consola.success("Server shut down gracefully");
+      process.exit(0);
+    } catch (error) {
+      consola.error("Graceful shutdown failed", error);
+      process.exit(1);
+    }
+  };
+
+  process.once("SIGTERM", shutdown);
+  process.once("SIGINT", shutdown);
+}
+
 async function startServer() {
   try {
     await db.connect();
 
-    const server = serve({
+    const httpServer = serve({
       fetch: app.fetch,
       port: 4000,
     });
 
-    server.on("listening", () => {
+    installShutdownHandlers(httpServer);
+
+    httpServer.on("listening", () => {
       consola.success(
         `${chalk.gray("Listening on")} ${chalk.green(
           "http://localhost:4000",
