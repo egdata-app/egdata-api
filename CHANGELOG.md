@@ -4,6 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Sanitized Epic Store GraphQL upstream error logging, detected Cloudflare challenge responses, and sent consistent Epic Store request headers for profile lookups.
 - Switched the Google deployment Dockerfile from Bun to Node.js 26 with direct pnpm installation and noninteractive frozen builds for production runtime alignment.
 - Added a PowerShell helper script for quoting dotenv values before pasting them into deployment environments.
 - Made OpenSearch client configuration lazy and added clear errors for missing, blank, or partial credentials.
@@ -11,8 +12,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 - Decoupled production deployment from the live MongoDB integration job while keeping build, docs, and release checks as deploy gates.
 - Increased the route snapshot test setup timeout to reduce CI failures during slow live MongoDB connections.
 - Removed Redis caching from sitemap XML responses to avoid storing large generated sitemap payloads in Redis.
-- Reduced offer sitemap pages to 5 offers each to keep localized `hreflang` sitemap XML responses smaller.
-- Added locale-prefixed offer URLs with `hreflang` alternates to the public offer sitemap pages.
+- Reduced public sitemap crawl fan-out by publishing canonical offer and item URLs instead of every localized or section URL.
+- Removed volatile sitemap index timestamps so sitemap responses remain stable and edge-cacheable.
 - Added `locale` overlays for REST and GraphQL offer DTO responses, including exact-locale fallback metadata.
 - Normalized free-game promotion responses so `countriesBlacklist`, `giveaway.offerId`, and `giveaway.platform` keep a stable shape.
 - Documented changelog context/search enrichment fields and made changelist list context enrichment use the shared safe resolver.

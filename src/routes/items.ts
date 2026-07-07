@@ -56,18 +56,18 @@ app.get("/sitemap.xml", async (c) => {
   ${Array.from(
     { length: Math.ceil(count / limit) },
     (_, i) =>
-      `<sitemap><loc>https://api.egdata.app/items/sitemap.xml?page=${i + 1}</loc><lastmod>${new Date().toISOString()}</lastmod></sitemap>`,
+      `<sitemap><loc>https://api.egdata.app/items/sitemap.xml?page=${i + 1}</loc></sitemap>`,
   ).join("")}
 </sitemapindex>`;
 
     return c.text(siteMapIndex, 200, {
       "Content-Type": "application/xml",
-      "Cache-Control": `max-age=${cacheTimeInSec}, stale-while-revalidate=${cacheStaleTimeInSec}`,
+      "Cache-Control": `public, max-age=${cacheTimeInSec}, stale-while-revalidate=${cacheStaleTimeInSec}`,
     });
   }
 
   // Generate individual sitemap page
-  const sections = ["assets", "builds", "images", "changelog"];
+  const sections = [] as const;
 
   const items = await Item.find(
     {},
@@ -105,7 +105,7 @@ app.get("/sitemap.xml", async (c) => {
 
   return c.text(siteMap, 200, {
     "Content-Type": "application/xml",
-    "Cache-Control": `max-age=${cacheTimeInSec}, stale-while-revalidate=${cacheStaleTimeInSec}`,
+    "Cache-Control": `public, max-age=${cacheTimeInSec}, stale-while-revalidate=${cacheStaleTimeInSec}`,
   });
 });
 

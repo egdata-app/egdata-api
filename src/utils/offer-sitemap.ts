@@ -1,13 +1,5 @@
 export const SITEMAP_URL_LIMIT = 50_000;
-export const OFFER_SITEMAP_SECTIONS = [
-  "price",
-  "items",
-  "achievements",
-  "related",
-  "metadata",
-  "changelog",
-  "media",
-] as const;
+export const OFFER_SITEMAP_SECTIONS = [] as const;
 export const OFFER_SITEMAP_LOCALES = [
   "id",
   "ms",
@@ -42,9 +34,8 @@ export const OFFER_SITEMAP_LOCALES = [
   "zh-Hant",
   "ko",
 ] as const;
-export const OFFER_SITEMAP_URLS_PER_OFFER =
-  (OFFER_SITEMAP_SECTIONS.length + 1) * (OFFER_SITEMAP_LOCALES.length + 1);
-export const OFFER_SITEMAP_FILE_SIZE_SAFE_PAGE_LIMIT = 5;
+export const OFFER_SITEMAP_URLS_PER_OFFER = OFFER_SITEMAP_SECTIONS.length + 1;
+export const OFFER_SITEMAP_FILE_SIZE_SAFE_PAGE_LIMIT = 500;
 export const OFFER_SITEMAP_PAGE_LIMIT = Math.min(
   Math.floor(SITEMAP_URL_LIMIT / OFFER_SITEMAP_URLS_PER_OFFER),
   OFFER_SITEMAP_FILE_SIZE_SAFE_PAGE_LIMIT,
@@ -80,13 +71,13 @@ const getOfferSitemapAlternates = (
 ];
 
 export const getOfferSitemapEntries = (offerId: string): OfferSitemapEntry[] =>
-  OFFER_SITEMAP_ROUTE_SUFFIXES.flatMap((routeSuffix) => {
+  OFFER_SITEMAP_ROUTE_SUFFIXES.map((routeSuffix) => {
     const alternates = getOfferSitemapAlternates(offerId, routeSuffix);
 
-    return alternates.map((alternate) => ({
-      loc: alternate.href,
+    return {
+      loc: `https://egdata.app/offers/${offerId}${routeSuffix}`,
       alternates,
-    }));
+    };
   });
 
 export const getOfferSitemapUrls = (offerId: string) =>

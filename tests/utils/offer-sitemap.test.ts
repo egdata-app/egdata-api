@@ -11,16 +11,12 @@ import {
 } from "../../src/utils/offer-sitemap.js";
 
 describe("offer sitemap URL generation", () => {
-  it("builds base and locale-prefixed offer section entries", () => {
+  it("builds canonical offer entries", () => {
     const urls = getOfferSitemapUrls("offer-1");
 
     expect(urls).toContain("https://egdata.app/offers/offer-1");
-    expect(urls).toContain("https://egdata.app/offers/offer-1/media");
-    expect(urls).toContain("https://egdata.app/es-ES/offers/offer-1");
-    expect(urls).toContain("https://egdata.app/es-ES/offers/offer-1/media");
-    expect(urls).toHaveLength(
-      (OFFER_SITEMAP_SECTIONS.length + 1) * (OFFER_SITEMAP_LOCALES.length + 1),
-    );
+    expect(urls).not.toContain("https://egdata.app/es-ES/offers/offer-1");
+    expect(urls).toHaveLength(OFFER_SITEMAP_SECTIONS.length + 1);
   });
 
   it("adds hreflang alternates for every localized URL", () => {
@@ -50,6 +46,6 @@ describe("offer sitemap URL generation", () => {
     expect(OFFER_SITEMAP_PAGE_LIMIT).toBeLessThanOrEqual(
       OFFER_SITEMAP_FILE_SIZE_SAFE_PAGE_LIMIT,
     );
-    expect(OFFER_SITEMAP_FILE_SIZE_SAFE_PAGE_LIMIT).toBe(5);
+    expect(OFFER_SITEMAP_FILE_SIZE_SAFE_PAGE_LIMIT).toBe(500);
   });
 });
