@@ -19,4 +19,4 @@ COPY --from=build /app/ /app/
 COPY src/static/ /app/src/static/
 EXPOSE 4000
 
-CMD [ "node", "--enable-source-maps" ,"dist/index.js" ]
+CMD [ "node", "--enable-source-maps", "-r", "@aikidosec/firewall/instrument", "dist/index.js" ]

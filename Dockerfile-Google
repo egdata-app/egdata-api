@@ -47,4 +47,4 @@ COPY package.json ./
 EXPOSE 4000
 EXPOSE 9229
 
-CMD ["node", "--enable-source-maps", "dist/index.js"]
+CMD ["node", "--enable-source-maps", "-r", "@aikidosec/firewall/instrument", "dist/index.js"]

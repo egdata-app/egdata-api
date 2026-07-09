@@ -4,6 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Updated Aikido Zen firewall to 1.8.29 and preloaded instrumentation for native ESM server startup.
 - Sanitized Epic Store GraphQL upstream error logging, detected Cloudflare challenge responses, and sent consistent Epic Store request headers for profile lookups.
 - Switched the Google deployment Dockerfile from Bun to Node.js 26 with direct pnpm installation and noninteractive frozen builds for production runtime alignment.
 - Added a PowerShell helper script for quoting dotenv values before pasting them into deployment environments.

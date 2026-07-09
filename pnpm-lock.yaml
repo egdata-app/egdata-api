@@ -20,8 +20,8 @@ importers:
   .:
     dependencies:
       '@aikidosec/firewall':
-        specifier: 1.8.26
-        version: 1.8.26
+        specifier: 1.8.29
+        version: 1.8.29
       '@apollo/server':
         specifier: ^5.4.0
         version: 5.5.1(graphql@16.11.0)
@@ -342,8 +342,8 @@ importers:
 
 packages:
 
-  '@aikidosec/firewall@1.8.26':
-    resolution: {integrity: sha512-oLyGd3voBEkc/hXXcPZMq/jCPAZVhPWIX98UNJSWPBiSdbe5NVnwQ903MXFfPgsMVukCxyQYR/bA/p1PNsAUGw==}
+  '@aikidosec/firewall@1.8.29':
+    resolution: {integrity: sha512-KnMCbAYm8NoL9Vt6AybscqP3lyd1xynndZ+ceAmIm3yXgZLRwrpJAZn/X5jgoceaA6cUsQMniuxJM1bNnTu3AA==}
     engines: {node: '>=16'}
 
   '@apollo/cache-control-types@1.0.3':
@@ -7820,7 +7820,7 @@ packages:
 
 snapshots:
 
-  '@aikidosec/firewall@1.8.26': {}
+  '@aikidosec/firewall@1.8.29': {}
 
   '@apollo/cache-control-types@1.0.3(graphql@16.11.0)':
     dependencies:

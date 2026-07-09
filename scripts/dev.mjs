@@ -1,6 +1,6 @@
-import { access } from "node:fs/promises";
-import { constants } from "node:fs";
 import { spawn } from "node:child_process";
+import { constants } from "node:fs";
+import { access } from "node:fs/promises";
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -30,7 +30,14 @@ await waitForFile("dist/index.js");
 
 const appRunner = spawn(
   "node",
-  ["--enable-source-maps", "--env-file=.env", "--watch-path=./dist", "dist/index.js"],
+  [
+    "--env-file=.env",
+    "--enable-source-maps",
+    "-r",
+    "@aikidosec/firewall/instrument",
+    "--watch-path=./dist",
+    "dist/index.js",
+  ],
   {
     stdio: "inherit",
     shell: true,

@@ -1,4 +1,3 @@
-import "@aikidosec/firewall";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import Zen from "@aikidosec/firewall";

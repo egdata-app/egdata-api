@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "rslib build",
-    "start": "node --enable-source-maps --env-file=.env dist/index.js",
+    "start": "node --env-file=.env --enable-source-maps -r @aikidosec/firewall/instrument dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:unit": "vitest run tests/utils tests/diff.test.ts tests/search-route.test.ts tests/items-route.test.ts tests/offers-localization-route.test.ts tests/graphql-offer-localization.test.ts",
@@ -22,7 +22,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@aikidosec/firewall": "1.8.26",
+    "@aikidosec/firewall": "1.8.29",
     "@apollo/server": "^5.4.0",
     "@apollo/utils.withrequired": "^3.0.0",
     "@aws-sdk/client-s3": "^3.990.0",
