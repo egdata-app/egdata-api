@@ -4,6 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added public cache headers to sandbox offer list responses so edge caches can absorb repeated crawler traffic.
 - Updated Aikido Zen firewall to 1.8.29 and preloaded instrumentation for native ESM server startup.
 - Added anonymous Aikido user and rate-limit grouping from Cloudflare client IP and User-Agent fingerprints.
 - Sanitized Epic Store GraphQL upstream error logging, detected Cloudflare challenge responses, and sent consistent Epic Store request headers for profile lookups.

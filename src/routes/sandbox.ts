@@ -267,7 +267,9 @@ app.get("/:sandboxId/offers", async (ctx) => {
   const cached = await client.get(cacheKey);
 
   if (cached) {
-    return ctx.json(JSON.parse(cached));
+    return ctx.json(JSON.parse(cached), 200, {
+      "Cache-Control": "public, max-age=60",
+    });
   }
 
   const sandbox = await db.db.collection("sandboxes").findOne({
@@ -322,7 +324,9 @@ app.get("/:sandboxId/offers", async (ctx) => {
     getLocalizedCacheTtlSeconds(response, 3600),
   );
 
-  return ctx.json(response);
+  return ctx.json(response, 200, {
+    "Cache-Control": "public, max-age=60",
+  });
 });
 
 app.get("/:sandboxId/assets", async (ctx) => {
