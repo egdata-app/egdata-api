@@ -53,7 +53,7 @@ import SellersRoute from "./routes/sellers.js";
 import StatsRoute from "./routes/stats.js";
 import UsersRoute from "./routes/users.js";
 import UsersServiceRoute from "./routes/users-service.js";
-import { getAikidoRateLimitGroup } from "./utils/aikido-rate-limit-group.js";
+import { getAikidoAnonymousIdentity } from "./utils/aikido-rate-limit-group.js";
 import { attributesToObject } from "./utils/attributes-to-object.js";
 import { resolveChangelogContextSafely } from "./utils/changelog-context.js";
 import { countries, regions } from "./utils/countries.js";
@@ -95,10 +95,11 @@ const app = new Hono();
 const openApiDocument = buildOpenApiDocument();
 
 app.use("/*", async (c, next) => {
-  const rateLimitGroup = getAikidoRateLimitGroup(c.req.raw.headers);
+  const anonymousIdentity = getAikidoAnonymousIdentity(c.req.raw.headers);
 
-  if (rateLimitGroup) {
-    Zen.setRateLimitGroup({ id: rateLimitGroup });
+  if (anonymousIdentity) {
+    Zen.setUser(anonymousIdentity);
+    Zen.setRateLimitGroup({ id: anonymousIdentity.id });
   }
 
   await next();

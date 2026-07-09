@@ -1,6 +1,10 @@
 import { createHmac } from "node:crypto";
 
 type HeaderReader = Pick<Headers, "get">;
+type AikidoAnonymousIdentity = {
+  id: string;
+  name: string;
+};
 
 function getHeader(headers: HeaderReader, name: string) {
   return headers.get(name)?.trim() ?? "";
@@ -22,7 +26,14 @@ function getFingerprintSecret() {
   return process.env.JWT_SECRET?.trim() ?? "";
 }
 
-export function getAikidoRateLimitGroup(headers: HeaderReader) {
+function getUserAgentLabel(userAgent: string) {
+  const firstProduct = userAgent.split(/\s+/)[0]?.trim() ?? "unknown-client";
+  return firstProduct.replace(/[^\w./-]/g, "").slice(0, 48) || "unknown-client";
+}
+
+export function getAikidoAnonymousIdentity(
+  headers: HeaderReader,
+): AikidoAnonymousIdentity | undefined {
   const secret = getFingerprintSecret();
   const clientIp = getClientIp(headers);
   const userAgent = getHeader(headers, "user-agent");
@@ -38,7 +49,20 @@ export function getAikidoRateLimitGroup(headers: HeaderReader) {
     `cf-ipcountry=${getHeader(headers, "cf-ipcountry")}`,
   ].join("\n");
 
-  return `anon:${createHmac("sha256", secret)
+  const id = `anon:${createHmac("sha256", secret)
     .update(fingerprint)
     .digest("base64url")}`;
+  const country = getHeader(headers, "cf-ipcountry");
+  const userAgentLabel = getUserAgentLabel(userAgent);
+
+  return {
+    id,
+    name: country
+      ? `Anonymous ${userAgentLabel} (${country})`
+      : `Anonymous ${userAgentLabel}`,
+  };
+}
+
+export function getAikidoRateLimitGroup(headers: HeaderReader) {
+  return getAikidoAnonymousIdentity(headers)?.id;
 }
