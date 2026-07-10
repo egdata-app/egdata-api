@@ -1094,7 +1094,7 @@ export const paths: EgdataPaths = {
       tags: ["Search"],
       summary: "Search offers with natural language",
       description:
-        "Embeds the query with Cloudflare Workers AI, ranks offer vectors in Cloudflare Vectorize, and hydrates the ranked vector IDs from canonical Mongo offer documents. Stale vectors that no longer resolve to an offer are omitted.",
+        "Embeds the query with Cloudflare Workers AI, ranks offer vectors in Cloudflare Vectorize, and hydrates each match from canonical Mongo offer documents using its indexed offer ID. Stale vectors that no longer resolve to an offer are omitted.",
       parameters: [parameterRef("locale")],
       requestBody: jsonBody(
         "Natural-language query and result limit.",

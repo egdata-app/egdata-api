@@ -32,7 +32,7 @@ describe("Cloudflare Vectorize client", () => {
     restoreEnv("VECTORIZE_INDEX_NAME", originalIndexName);
   });
 
-  it("embeds the query and requests only IDs and scores from the configured index", async () => {
+  it("embeds the query and requests offer IDs from the configured index", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(
@@ -69,7 +69,7 @@ describe("Cloudflare Vectorize client", () => {
     expect(JSON.parse(String(fetchMock.mock.calls[1]?.[1]?.body))).toEqual({
       vector: [0.1, 0.2, 0.3],
       topK: 7,
-      returnMetadata: "none",
+      returnMetadata: "all",
       returnValues: false,
     });
   });

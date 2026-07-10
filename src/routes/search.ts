@@ -93,7 +93,7 @@ interface SearchBody {
 const naturalLanguageSearchBodySchema = z
   .object({
     query: z.string().trim().min(1).max(500),
-    topK: z.number().int().min(1).max(100).optional(),
+    topK: z.number().int().min(1).max(50).optional(),
   })
   .strict();
 
@@ -1072,7 +1072,7 @@ app.post("/natural-language", async (c) => {
     return c.json(
       {
         message:
-          "Invalid body. Provide a query between 1 and 500 characters and an optional topK between 1 and 100.",
+          "Invalid body. Provide a query between 1 and 500 characters and an optional topK between 1 and 50.",
       },
       400,
     );
@@ -1089,14 +1089,41 @@ app.post("/natural-language", async (c) => {
           .filter((id) => ObjectId.isValid(id)),
       ),
     );
-    const offers = await Offer.find({
-      _id: { $in: vectorIds.map((id) => new ObjectId(id)) },
-    });
-    const offersByVectorId = new Map(
-      offers.map((offer) => [String(offer._id), offer]),
+    const offerIds = Array.from(
+      new Set(
+        vectorMatches
+          .map((match) => match.metadata?.id)
+          .filter(
+            (id): id is string => typeof id === "string" && id.length > 0,
+          ),
+      ),
     );
+    const lookupFilters = [
+      ...(offerIds.length > 0 ? [{ id: { $in: offerIds } }] : []),
+      ...(vectorIds.length > 0
+        ? [{ _id: { $in: vectorIds.map((id) => new ObjectId(id)) } }]
+        : []),
+    ];
+    const offers =
+      lookupFilters.length === 0
+        ? []
+        : await Offer.find(
+            lookupFilters.length === 1
+              ? lookupFilters[0]
+              : { $or: lookupFilters },
+          );
+    const offersByLookupId = new Map<string, (typeof offers)[number]>();
+    for (const offer of offers) {
+      offersByLookupId.set(String(offer._id), offer);
+      offersByLookupId.set(offer.id, offer);
+    }
     const rankedMatches = vectorMatches.flatMap((match) => {
-      const offer = offersByVectorId.get(match.id);
+      const metadataOfferId =
+        typeof match.metadata?.id === "string" ? match.metadata.id : undefined;
+      const offer =
+        (metadataOfferId
+          ? offersByLookupId.get(metadataOfferId)
+          : undefined) ?? offersByLookupId.get(match.id);
 
       return offer
         ? [

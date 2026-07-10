@@ -21,6 +21,7 @@ type EmbeddingResult = {
 export type VectorizeOfferMatch = {
   id: string;
   score: number;
+  metadata?: Record<string, unknown>;
 };
 
 type VectorizeQueryResult = {
@@ -171,7 +172,7 @@ const queryVectorize = async (
     {
       vector,
       topK,
-      returnMetadata: "none",
+      returnMetadata: "all",
       returnValues: false,
     },
     "Vectorize offer query",

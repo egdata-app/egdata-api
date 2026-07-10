@@ -483,7 +483,7 @@ export const components: OpenAPIV3.ComponentsObject = {
         topK: {
           type: "integer",
           minimum: 1,
-          maximum: 100,
+          maximum: 50,
           default: 10,
           description: "Maximum number of Vectorize neighbors to hydrate.",
         },

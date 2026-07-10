@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { ObjectId } from "mongodb";
 import {
   afterEach,
   beforeAll,
@@ -224,13 +223,13 @@ describe("search route with SeaQA fixtures", () => {
   });
 
   it("hydrates ranked natural-language matches from MongoDB", async () => {
-    const vectorId = "507f1f77bcf86cd799439011";
-    const offer = { ...offers[0], _id: vectorId };
+    const vectorId = "2747423799";
+    const offer = { ...offers[0], _id: "507f1f77bcf86cd799439011" };
     mocks.vectorizeSearch.mockResolvedValueOnce([
       {
         id: vectorId,
         score: 0.91,
-        metadata: { id: "stale-metadata-id", title: "Stale title" },
+        metadata: { id: offers[0]?.id, title: "Stale title" },
       },
     ]);
     vi.spyOn(Offer, "find").mockReturnValue(
@@ -249,7 +248,7 @@ describe("search route with SeaQA fixtures", () => {
       5,
     );
     expect(Offer.find).toHaveBeenCalledWith({
-      _id: { $in: [new ObjectId(vectorId)] },
+      id: { $in: [offers[0]?.id] },
     });
     await expect(res.json()).resolves.toMatchObject({
       query: "open world adventure",
@@ -272,7 +271,7 @@ describe("search route with SeaQA fixtures", () => {
     const res = await app.request("/search/natural-language", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ query: "", topK: 101 }),
+      body: JSON.stringify({ query: "", topK: 51 }),
     });
 
     expect(res.status).toBe(400);

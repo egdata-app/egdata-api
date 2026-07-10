@@ -3,7 +3,7 @@ title: Natural-Language Offer Search
 description: Find Epic Games Store offers by meaning with Workers AI and Cloudflare Vectorize.
 ---
 
-Use `POST /search/natural-language` to describe the kind of game or content you want instead of composing keyword filters. The API embeds the query, ranks the offer vectors, and then loads the current offer documents from MongoDB. Vector metadata is not used as the source of offer data.
+Use `POST /search/natural-language` to describe the kind of game or content you want instead of composing keyword filters. The API embeds the query, ranks the offer vectors, and then uses each match's indexed offer ID to load the current offer document from MongoDB. Vector metadata is not used as the source of offer fields.
 
 ```sh
 curl -X POST "https://api.egdata.app/search/natural-language?locale=en-US" \
@@ -11,7 +11,7 @@ curl -X POST "https://api.egdata.app/search/natural-language?locale=en-US" \
   -d '{"query":"open world co-op survival games","topK":10}'
 ```
 
-`query` is required and may contain up to 500 characters. `topK` is optional, defaults to `10`, and accepts values from `1` through `100`.
+`query` is required and may contain up to 500 characters. `topK` is optional, defaults to `10`, and accepts values from `1` through `50`.
 
 ## Response
 
