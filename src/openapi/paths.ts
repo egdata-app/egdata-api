@@ -1,4 +1,5 @@
 import type { OpenAPIV3 } from "openapi-types";
+import { jsonContent } from "./components.js";
 import {
   arrayOf,
   operation,
@@ -1085,6 +1086,42 @@ export const paths: EgdataPaths = {
         ref("SearchBody"),
       ),
       response: ref("SearchResponse"),
+    }),
+  },
+  "/search/natural-language": {
+    post: operation({
+      operationId: "searchOffersWithNaturalLanguage",
+      tags: ["Search"],
+      summary: "Search offers with natural language",
+      description:
+        "Embeds the query with Cloudflare Workers AI, ranks offer vectors in Cloudflare Vectorize, and hydrates the ranked vector IDs from canonical Mongo offer documents. Stale vectors that no longer resolve to an offer are omitted.",
+      parameters: [parameterRef("locale")],
+      requestBody: jsonBody(
+        "Natural-language query and result limit.",
+        ref("NaturalLanguageSearchBody"),
+      ),
+      response: {
+        200: {
+          description: "Ranked, hydrated offer matches.",
+          content: {
+            "application/json": jsonContent(
+              ref("NaturalLanguageSearchResponse"),
+            ),
+          },
+        },
+        502: {
+          description: "Cloudflare Workers AI or Vectorize is unavailable.",
+          content: {
+            "application/json": jsonContent(ref("ErrorResponse")),
+          },
+        },
+        503: {
+          description: "Natural-language search is not configured.",
+          content: {
+            "application/json": jsonContent(ref("ErrorResponse")),
+          },
+        },
+      },
     }),
   },
   "/search": {

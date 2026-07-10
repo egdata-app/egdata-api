@@ -198,6 +198,7 @@
       "GET /search/:id/count",
       "GET /search/changelog",
       "GET /search/developers",
+      "POST /search/natural-language",
       "GET /search/offer-types",
       "GET /search/publishers",
       "GET /search/tags",

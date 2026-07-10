@@ -3,8 +3,14 @@ import type { Types } from "@opensearch-project/opensearch";
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import { type Document, type Filter, ObjectId } from "mongodb";
+import { z } from "zod";
 import { opensearch } from "../clients/opensearch.js";
 import client from "../clients/redis.js";
+import {
+  CloudflareVectorizeError,
+  queryOffersWithNaturalLanguage,
+  VectorizeConfigurationError,
+} from "../clients/vectorize.js";
 import { db } from "../db/index.js";
 import {
   Asset,
@@ -83,6 +89,13 @@ interface SearchBody {
   isLowestPrice?: boolean;
   isLowestPriceEver?: boolean;
 }
+
+const naturalLanguageSearchBodySchema = z
+  .object({
+    query: z.string().trim().min(1).max(500),
+    topK: z.number().int().min(1).max(100).optional(),
+  })
+  .strict();
 
 interface MongoQuery {
   $text?: {
@@ -1044,6 +1057,93 @@ app.get("/changelog", async (c) => {
       "Cache-Control": debug ? "no-store" : "public, max-age=60",
     },
   );
+});
+
+app.post("/natural-language", async (c) => {
+  const localeResult = getLocaleOrErrorResponse(c);
+  if (localeResult.errorResponse) {
+    return localeResult.errorResponse;
+  }
+
+  const body = await c.req.json().catch(() => null);
+  const parsedBody = naturalLanguageSearchBodySchema.safeParse(body);
+
+  if (!parsedBody.success) {
+    return c.json(
+      {
+        message:
+          "Invalid body. Provide a query between 1 and 500 characters and an optional topK between 1 and 100.",
+      },
+      400,
+    );
+  }
+
+  const { query, topK = 10 } = parsedBody.data;
+
+  try {
+    const vectorMatches = await queryOffersWithNaturalLanguage(query, topK);
+    const vectorIds = Array.from(
+      new Set(
+        vectorMatches
+          .map((match) => match.id)
+          .filter((id) => ObjectId.isValid(id)),
+      ),
+    );
+    const offers = await Offer.find({
+      _id: { $in: vectorIds.map((id) => new ObjectId(id)) },
+    });
+    const offersByVectorId = new Map(
+      offers.map((offer) => [String(offer._id), offer]),
+    );
+    const rankedMatches = vectorMatches.flatMap((match) => {
+      const offer = offersByVectorId.get(match.id);
+
+      return offer
+        ? [
+            {
+              score: match.score,
+              offer: orderOffersObject(offer),
+            },
+          ]
+        : [];
+    });
+    const localizedOffers = await localizeOffers(
+      rankedMatches.map((match) => match.offer),
+      localeResult.locale,
+    );
+
+    return c.json(
+      {
+        query,
+        count: rankedMatches.length,
+        matches: rankedMatches.map((match, index) => ({
+          score: match.score,
+          offer: localizedOffers[index],
+        })),
+      },
+      200,
+      { "Cache-Control": "no-store" },
+    );
+  } catch (error) {
+    if (error instanceof VectorizeConfigurationError) {
+      consola.error("Natural-language offer search is not configured", error);
+      return c.json(
+        { message: "Natural-language search is not configured" },
+        503,
+      );
+    }
+
+    if (error instanceof CloudflareVectorizeError) {
+      consola.error("Cloudflare natural-language offer search failed", error);
+      return c.json(
+        { message: "Natural-language search is temporarily unavailable" },
+        502,
+      );
+    }
+
+    consola.error("Natural-language offer search failed", error);
+    return c.json({ message: "Natural-language search failed" }, 500);
+  }
 });
 
 app.post("/v2/search", async (c) => {

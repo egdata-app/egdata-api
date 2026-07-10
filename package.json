@@ -7,7 +7,7 @@
     "start": "node --env-file=.env --enable-source-maps -r @aikidosec/firewall/instrument dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:unit": "vitest run tests/utils tests/diff.test.ts tests/search-route.test.ts tests/items-route.test.ts tests/offers-localization-route.test.ts tests/graphql-offer-localization.test.ts",
+    "test:unit": "vitest run tests/utils tests/diff.test.ts tests/search-route.test.ts tests/items-route.test.ts tests/offers-localization-route.test.ts tests/graphql-offer-localization.test.ts tests/vectorize-client.test.ts",
     "test:routes": "vitest run tests/route-coverage.test.ts",
     "test:capture": "tsx tests/capture.ts",
     "typecheck": "tsc --noEmit",

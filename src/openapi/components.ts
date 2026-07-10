@@ -468,6 +468,58 @@ export const components: OpenAPIV3.ComponentsObject = {
         },
       },
     },
+    NaturalLanguageSearchBody: {
+      type: "object",
+      additionalProperties: false,
+      required: ["query"],
+      properties: {
+        query: {
+          type: "string",
+          minLength: 1,
+          maxLength: 500,
+          description: "Natural-language description of the desired offers.",
+          example: "open world co-op survival games",
+        },
+        topK: {
+          type: "integer",
+          minimum: 1,
+          maximum: 100,
+          default: 10,
+          description: "Maximum number of Vectorize neighbors to hydrate.",
+        },
+      },
+    },
+    NaturalLanguageSearchMatch: {
+      type: "object",
+      additionalProperties: false,
+      required: ["score", "offer"],
+      properties: {
+        score: {
+          type: "number",
+          description: "Similarity score returned by Cloudflare Vectorize.",
+        },
+        offer: { $ref: "#/components/schemas/Offer" },
+      },
+    },
+    NaturalLanguageSearchResponse: {
+      type: "object",
+      additionalProperties: false,
+      required: ["query", "count", "matches"],
+      properties: {
+        query: { type: "string" },
+        count: {
+          type: "integer",
+          description:
+            "Number of Vectorize matches that still resolve to Mongo offer documents.",
+        },
+        matches: {
+          type: "array",
+          items: {
+            $ref: "#/components/schemas/NaturalLanguageSearchMatch",
+          },
+        },
+      },
+    },
     SearchBody: {
       type: "object",
       additionalProperties: false,

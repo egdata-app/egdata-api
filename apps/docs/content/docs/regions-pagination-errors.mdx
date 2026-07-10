@@ -60,6 +60,8 @@ Error responses use HTTP status codes and a JSON body when the route can provide
 | `404` | Resource was not found |
 | `429` | Rate limit exceeded |
 | `500` | Unexpected server error |
+| `502` | An upstream service failed or returned an invalid response |
+| `503` | A required service is unavailable or not configured |
 
 Clients should branch on the HTTP status first and treat the response body as diagnostic detail.
 

@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { ObjectId } from "mongodb";
 import {
   afterEach,
   beforeAll,
@@ -22,6 +23,7 @@ type OpenSearchRequest = {
 const mocks = vi.hoisted(() => ({
   opensearchSearch: vi.fn(),
   redisSet: vi.fn(),
+  vectorizeSearch: vi.fn(),
 }));
 
 const changelogSearchResponse = (
@@ -57,6 +59,12 @@ vi.mock("../src/clients/redis.js", () => ({
   },
 }));
 
+vi.mock("../src/clients/vectorize.js", () => ({
+  CloudflareVectorizeError: class CloudflareVectorizeError extends Error {},
+  VectorizeConfigurationError: class VectorizeConfigurationError extends Error {},
+  queryOffersWithNaturalLanguage: mocks.vectorizeSearch,
+}));
+
 describe("search route with SeaQA fixtures", () => {
   let app: Hono;
   let offers: SeaQaOffer[];
@@ -70,6 +78,7 @@ describe("search route with SeaQA fixtures", () => {
   beforeEach(() => {
     mocks.opensearchSearch.mockReset();
     mocks.redisSet.mockReset();
+    mocks.vectorizeSearch.mockReset();
     consoleLogSpy = vi
       .spyOn(console, "log")
       .mockImplementation(() => undefined);
@@ -212,6 +221,62 @@ describe("search route with SeaQA fixtures", () => {
         }),
       }),
     );
+  });
+
+  it("hydrates ranked natural-language matches from MongoDB", async () => {
+    const vectorId = "507f1f77bcf86cd799439011";
+    const offer = { ...offers[0], _id: vectorId };
+    mocks.vectorizeSearch.mockResolvedValueOnce([
+      {
+        id: vectorId,
+        score: 0.91,
+        metadata: { id: "stale-metadata-id", title: "Stale title" },
+      },
+    ]);
+    vi.spyOn(Offer, "find").mockReturnValue(
+      Promise.resolve([offer]) as unknown as ReturnType<typeof Offer.find>,
+    );
+
+    const res = await app.request("/search/natural-language", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ query: "  open world adventure  ", topK: 5 }),
+    });
+
+    expect(res.status).toBe(200);
+    expect(mocks.vectorizeSearch).toHaveBeenCalledWith(
+      "open world adventure",
+      5,
+    );
+    expect(Offer.find).toHaveBeenCalledWith({
+      _id: { $in: [new ObjectId(vectorId)] },
+    });
+    await expect(res.json()).resolves.toMatchObject({
+      query: "open world adventure",
+      count: 1,
+      matches: [
+        {
+          score: 0.91,
+          offer: {
+            id: offers[0]?.id,
+            title: offers[0]?.title,
+            locale: "en-US",
+            localeStatus: "canonical",
+          },
+        },
+      ],
+    });
+  });
+
+  it("rejects invalid natural-language search bodies before querying Cloudflare", async () => {
+    const res = await app.request("/search/natural-language", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ query: "", topK: 101 }),
+    });
+
+    expect(res.status).toBe(400);
+    expect(mocks.vectorizeSearch).not.toHaveBeenCalled();
   });
 
   it("hydrates /search/changelog old and new values from Mongo", async () => {

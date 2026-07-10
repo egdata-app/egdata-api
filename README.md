@@ -28,6 +28,16 @@ Start Redis when working with routes that depend on cache or queues:
 sudo service redis-server start
 ```
 
+Natural-language offer search requires a Cloudflare API token with Workers AI Read and Vectorize Read permissions:
+
+```txt
+CLOUDFLARE_ACCOUNT_ID=...
+CLOUDFLARE_API_TOKEN=...
+VECTORIZE_INDEX_NAME=egdata-offers
+```
+
+`VECTORIZE_INDEX_NAME` is optional and defaults to `egdata-offers`. The endpoint uses the same `@cf/baai/bge-base-en-v1.5` embeddings as the backend indexing job.
+
 ## Build And Checks
 
 ```sh
