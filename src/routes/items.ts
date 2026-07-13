@@ -5,6 +5,11 @@ import { db } from "../db/index.js";
 import { Asset, Item, Offer } from "../models/index.js";
 import { attributesToObject } from "../utils/attributes-to-object.js";
 import {
+  type BuildDocument,
+  buildSummary,
+  effectiveBuildPlatform,
+} from "../utils/builds.js";
+import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
   localeCacheSegment,
@@ -303,10 +308,12 @@ app.get("/:id/builds", async (c) => {
   }
 
   const builds = await db.db
-    .collection("builds")
+    .collection<BuildDocument>("builds")
     .find({
       appName: {
-        $in: item.releaseInfo.map((r) => r.appId),
+        $in: item.releaseInfo.map(
+          (release: { appId: string }) => release.appId,
+        ),
       },
     })
     .toArray();
@@ -315,15 +322,10 @@ app.get("/:id/builds", async (c) => {
     builds.map(async (build) => {
       const asset = await Asset.findOne({
         artifactId: { $eq: build.appName },
-        platform: { $eq: build.labelName.split("-")[1] },
+        platform: { $eq: effectiveBuildPlatform(build) },
       });
 
-      return {
-        ...build,
-        downloadSizeBytes: build?.downloadSizeBytes ?? asset?.downloadSizeBytes,
-        installedSizeBytes:
-          build?.installedSizeBytes ?? asset?.installedSizeBytes,
-      };
+      return buildSummary(build, asset);
     }),
   );
 

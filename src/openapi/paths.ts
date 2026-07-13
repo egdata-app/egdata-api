@@ -33,6 +33,22 @@ const buildId: OpenAPIV3.ParameterObject = {
   description: "Mongo build document identifier.",
   schema: { type: "string" },
 };
+const buildPage: OpenAPIV3.ParameterObject = {
+  name: "page",
+  in: "query",
+  required: false,
+  description:
+    "One-based page number. Build endpoints reject requests whose calculated offset exceeds 100,000 records.",
+  schema: { type: "integer", minimum: 1, maximum: 100_001, default: 1 },
+};
+const buildLimit: OpenAPIV3.ParameterObject = {
+  name: "limit",
+  in: "query",
+  required: false,
+  description: "Maximum records per page.",
+  schema: { type: "integer", minimum: 1, maximum: 100 },
+};
+const buildPagination = [buildPage, buildLimit];
 const targetBuildId: OpenAPIV3.ParameterObject = {
   name: "targetId",
   in: "path",
@@ -100,13 +116,16 @@ export const paths: EgdataPaths = {
       tags: ["Builds"],
       summary: "List observed builds",
       parameters: [
-        ...pagination,
+        ...buildPagination,
         stringQuery(
           "sortBy",
           "Sort field: createdAt, updatedAt, or firstSeenAt.",
           "firstSeenAt",
+          { enum: ["createdAt", "updatedAt", "firstSeenAt"] },
         ),
-        stringQuery("sortDir", "Sort direction: asc or desc.", "desc"),
+        stringQuery("sortDir", "Sort direction: asc or desc.", "desc", {
+          enum: ["asc", "desc"],
+        }),
       ],
       response: arrayOf(ref("Build")),
     }),
@@ -129,8 +148,10 @@ export const paths: EgdataPaths = {
         "Returns chronological observations for the same stream or platform and identifies the previous comparable snapshot.",
       parameters: [
         buildId,
-        ...pagination,
-        stringQuery("scope", "Candidate scope: stream or platform.", "stream"),
+        ...buildPagination,
+        stringQuery("scope", "Candidate scope: stream or platform.", "stream", {
+          enum: ["stream", "platform"],
+        }),
       ],
       response: ref("BuildHistoryResponse"),
     }),
@@ -145,11 +166,15 @@ export const paths: EgdataPaths = {
       parameters: [
         targetBuildId,
         baseBuildId,
-        ...pagination,
+        ...buildPagination,
         stringQuery(
           "status",
           "Comma-separated added, removed, modified, or unchanged statuses.",
           "added,modified,removed",
+          {
+            pattern:
+              "^(added|removed|modified|unchanged)(,(added|removed|modified|unchanged))*$",
+          },
         ),
         stringQuery("q", "Literal case-insensitive file path search."),
         stringQuery(
@@ -157,7 +182,9 @@ export const paths: EgdataPaths = {
           "Comma-separated file extensions without leading dots.",
           "pak,dll",
         ),
-        stringQuery("dir", "Path order: asc or desc.", "asc"),
+        stringQuery("dir", "Path order: asc or desc.", "asc", {
+          enum: ["asc", "desc"],
+        }),
       ],
       response: {
         200: {
@@ -181,19 +208,20 @@ export const paths: EgdataPaths = {
       summary: "List files in a build snapshot",
       parameters: [
         buildId,
-        ...pagination,
+        ...buildPagination,
         stringQuery("q", "Literal case-insensitive file path search."),
         stringQuery("extension", "Comma-separated file extensions."),
         stringQuery(
           "sort",
           "Sort field: depth, fileName, or fileSize.",
           "depth",
+          { enum: ["depth", "fileName", "fileSize"] },
         ),
-        stringQuery("dir", "Sort direction: asc or desc.", "asc"),
+        stringQuery("dir", "Sort direction: asc or desc.", "asc", {
+          enum: ["asc", "desc"],
+        }),
       ],
-      response: flexibleObjectResponse(
-        "Paginated build files and manifest health.",
-      ),
+      response: ref("BuildFileListResponse"),
     }),
   },
   "/builds/{id}/items": {
@@ -201,8 +229,8 @@ export const paths: EgdataPaths = {
       operationId: "listBuildItems",
       tags: ["Builds"],
       summary: "List catalog items associated with a build",
-      parameters: [buildId, ...pagination],
-      response: flexibleObjectResponse("Paginated catalog items."),
+      parameters: [buildId, ...buildPagination],
+      response: ref("BuildItemsResponse"),
     }),
   },
   "/builds/{id}/install-options": {
@@ -211,10 +239,7 @@ export const paths: EgdataPaths = {
       tags: ["Builds"],
       summary: "Summarize install tags in a build",
       parameters: [buildId],
-      response: {
-        type: "object",
-        additionalProperties: { type: "object", additionalProperties: true },
-      },
+      response: ref("BuildInstallOptions"),
     }),
   },
   "/countries": {

@@ -2,7 +2,10 @@ import type { OpenAPIV3 } from "openapi-types";
 import { jsonContent } from "./components.js";
 import type { EgdataOperation, Visibility } from "./types.js";
 
-type OperationInput = Omit<EgdataOperation, "responses" | "x-egdata-visibility"> & {
+type OperationInput = Omit<
+  EgdataOperation,
+  "responses" | "x-egdata-visibility"
+> & {
   visibility?: Visibility;
   response:
     | OpenAPIV3.ReferenceObject
@@ -88,6 +91,7 @@ export const stringQuery = (
   name: string,
   description: string,
   example?: string,
+  schema?: Omit<OpenAPIV3.SchemaObject, "type" | "example">,
 ): OpenAPIV3.ParameterObject => ({
   name,
   in: "query",
@@ -96,6 +100,6 @@ export const stringQuery = (
   schema: {
     type: "string",
     ...(example ? { example } : {}),
+    ...schema,
   },
 });
-

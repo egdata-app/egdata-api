@@ -733,6 +733,88 @@ export const components: OpenAPIV3.ComponentsObject = {
         fileMetaFlags: { type: "integer", nullable: true },
       },
     },
+    BuildFile: {
+      type: "object",
+      additionalProperties: false,
+      required: [
+        "_id",
+        "manifestHash",
+        "appName",
+        "buildVersion",
+        "appLabel",
+        "fileName",
+        "fileHash",
+        "fileSize",
+      ],
+      properties: {
+        _id: { type: "string" },
+        manifestHash: { type: "string" },
+        manifestId: { type: "string" },
+        snapshotVerification: { type: "string" },
+        appName: { type: "string" },
+        buildVersion: { type: "string" },
+        appLabel: { type: "string" },
+        fileName: { type: "string" },
+        symlinkTarget: { type: "string", nullable: true },
+        fileHash: { type: "string" },
+        fileMetaFlags: { type: "integer", nullable: true },
+        installTags: { type: "array", items: { type: "string" } },
+        fileSize: { type: "number" },
+        mimeType: { type: "string", nullable: true },
+        depth: { type: "integer", nullable: true },
+      },
+    },
+    BuildFileListResponse: {
+      type: "object",
+      additionalProperties: false,
+      required: ["files", "manifestStatus", "page", "limit", "total"],
+      properties: {
+        files: {
+          type: "array",
+          items: { $ref: "#/components/schemas/BuildFile" },
+        },
+        manifestStatus: {
+          type: "string",
+          enum: [
+            "processing",
+            "verified",
+            "invalid",
+            "unavailable",
+            "failed",
+            "legacy_unverified",
+          ],
+        },
+        page: { type: "integer" },
+        limit: { type: "integer" },
+        total: { type: "integer" },
+      },
+    },
+    BuildItemsResponse: {
+      type: "object",
+      additionalProperties: false,
+      required: ["data", "page", "limit", "total"],
+      properties: {
+        data: {
+          type: "array",
+          items: { $ref: "#/components/schemas/Item" },
+        },
+        page: { type: "integer" },
+        limit: { type: "integer" },
+        total: { type: "integer" },
+      },
+    },
+    BuildInstallOptions: {
+      type: "object",
+      additionalProperties: {
+        type: "object",
+        additionalProperties: false,
+        required: ["files", "size"],
+        properties: {
+          files: { type: "integer" },
+          size: { type: "number" },
+        },
+      },
+    },
     BuildFileChange: {
       type: "object",
       additionalProperties: false,
@@ -766,6 +848,128 @@ export const components: OpenAPIV3.ComponentsObject = {
         total: { type: "integer" },
       },
     },
+    BuildComparisonSummary: {
+      type: "object",
+      additionalProperties: false,
+      required: [
+        "files",
+        "fileBytes",
+        "installedSizeBytes",
+        "fullDownloadSizeBytes",
+        "technologies",
+        "installTags",
+        "topFiles",
+        "topDirectories",
+      ],
+      properties: {
+        files: {
+          type: "object",
+          additionalProperties: false,
+          required: ["added", "removed", "modified", "unchanged", "total"],
+          properties: {
+            added: { type: "integer" },
+            removed: { type: "integer" },
+            modified: { type: "integer" },
+            unchanged: { type: "integer" },
+            total: { type: "integer" },
+          },
+        },
+        fileBytes: {
+          type: "object",
+          additionalProperties: false,
+          required: [
+            "base",
+            "target",
+            "delta",
+            "added",
+            "removed",
+            "modifiedBase",
+            "modifiedTarget",
+          ],
+          properties: {
+            base: { type: "number" },
+            target: { type: "number" },
+            delta: { type: "number" },
+            added: { type: "number" },
+            removed: { type: "number" },
+            modifiedBase: { type: "number" },
+            modifiedTarget: { type: "number" },
+          },
+        },
+        installedSizeBytes: {
+          $ref: "#/components/schemas/BuildSizeDelta",
+        },
+        fullDownloadSizeBytes: {
+          $ref: "#/components/schemas/BuildSizeDelta",
+        },
+        technologies: {
+          $ref: "#/components/schemas/BuildTechnologyChanges",
+        },
+        installTags: {
+          $ref: "#/components/schemas/BuildInstallTagChanges",
+        },
+        topFiles: {
+          type: "array",
+          items: { $ref: "#/components/schemas/BuildFileChange" },
+        },
+        topDirectories: {
+          type: "array",
+          items: { $ref: "#/components/schemas/BuildDirectoryChange" },
+        },
+      },
+    },
+    BuildSizeDelta: {
+      type: "object",
+      additionalProperties: false,
+      required: ["base", "target", "delta"],
+      properties: {
+        base: { type: "number", nullable: true },
+        target: { type: "number", nullable: true },
+        delta: { type: "number", nullable: true },
+      },
+    },
+    BuildTechnologyChanges: {
+      type: "object",
+      additionalProperties: false,
+      required: ["added", "removed"],
+      properties: {
+        added: {
+          type: "array",
+          items: { $ref: "#/components/schemas/BuildTechnology" },
+        },
+        removed: {
+          type: "array",
+          items: { $ref: "#/components/schemas/BuildTechnology" },
+        },
+      },
+    },
+    BuildTechnology: {
+      type: "object",
+      additionalProperties: false,
+      required: ["section", "technology"],
+      properties: {
+        section: { type: "string" },
+        technology: { type: "string" },
+      },
+    },
+    BuildInstallTagChanges: {
+      type: "object",
+      additionalProperties: false,
+      required: ["added", "removed"],
+      properties: {
+        added: { type: "array", items: { type: "string" } },
+        removed: { type: "array", items: { type: "string" } },
+      },
+    },
+    BuildDirectoryChange: {
+      type: "object",
+      additionalProperties: false,
+      required: ["path", "sizeDeltaBytes"],
+      properties: {
+        path: { type: "string" },
+        sizeDeltaBytes: { type: "number" },
+      },
+    },
     BuildComparisonResponse: {
       type: "object",
       additionalProperties: false,
@@ -787,7 +991,7 @@ export const components: OpenAPIV3.ComponentsObject = {
           type: "string",
           enum: ["same_stream", "cross_stream"],
         },
-        summary: { type: "object", additionalProperties: true },
+        summary: { $ref: "#/components/schemas/BuildComparisonSummary" },
         changes: {
           type: "array",
           items: { $ref: "#/components/schemas/BuildFileChange" },

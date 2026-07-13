@@ -12,6 +12,7 @@ import {
   Offer,
   PriceEngine,
 } from "../models/index.js";
+import { type BuildDocument, buildSummary } from "../utils/builds.js";
 import { regions } from "../utils/countries.js";
 import { consola } from "../utils/logger.js";
 import {
@@ -815,7 +816,7 @@ app.get("/:sandboxId/builds", async (c) => {
 
   const { platform } = c.req.query();
 
-  const cacheKey = `sandbox:${sandboxId}:builds:${page}:${limit}:${platform}`;
+  const cacheKey = `sandbox:${sandboxId}:builds:v2:${page}:${limit}:${platform}`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -849,12 +850,14 @@ app.get("/:sandboxId/builds", async (c) => {
     releaseInfo: 1,
   });
 
-  const appIds = items.flatMap((i) => i.releaseInfo.map((r) => r.appId));
+  const appIds = items.flatMap((item) =>
+    item.releaseInfo.map((release: { appId: string }) => release.appId),
+  );
 
   // Get all builds for these appIds
   const [builds, count] = await Promise.all([
     db.db
-      .collection("builds")
+      .collection<BuildDocument>("builds")
       .find({
         appName: {
           $in: appIds,
@@ -872,7 +875,7 @@ app.get("/:sandboxId/builds", async (c) => {
   ]);
 
   const response = {
-    elements: builds,
+    elements: builds.map((build) => buildSummary(build)),
     page,
     limit,
     count,

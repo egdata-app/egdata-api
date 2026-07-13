@@ -9,40 +9,19 @@ import {
   type BuildFileSnapshot,
   compareBuildFileSnapshots,
 } from "../utils/build-comparison.js";
+import {
+  buildPaginationOffset,
+  MAX_BUILD_PAGE,
+  parseBuildInteger,
+} from "../utils/build-pagination.js";
+import {
+  type BuildDocument,
+  buildManifestStatus,
+  buildSummary,
+  effectiveBuildPlatform,
+} from "../utils/builds.js";
 
 type AnyObject = Record<string, unknown>;
-type ManifestStatus =
-  | "processing"
-  | "verified"
-  | "invalid"
-  | "unavailable"
-  | "failed"
-  | "legacy_unverified";
-
-type BuildDocument = AnyObject & {
-  _id: ObjectId;
-  appName: string;
-  buildVersion: string;
-  labelName: string;
-  platform?: string;
-  hash: string;
-  sourceManifestHash?: string;
-  manifestId?: string;
-  manifestStatus?: ManifestStatus;
-  manifestParserVersion?: string;
-  manifestProcessedAt?: Date;
-  manifestFileCount?: number;
-  manifestFileBytes?: number;
-  manifestErrorCode?: string;
-  firstSeenAt?: Date;
-  lastSeenAt?: Date;
-  previousObservedBuildId?: ObjectId;
-  technologies?: Array<{ section: string; technology: string }>;
-  downloadSizeBytes?: number;
-  installedSizeBytes?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
 
 const app = new Hono();
 const allowedStatuses = new Set<BuildFileChangeStatus>([
@@ -51,64 +30,8 @@ const allowedStatuses = new Set<BuildFileChangeStatus>([
   "modified",
   "unchanged",
 ]);
-
-function parseInteger(
-  value: string | undefined,
-  fallback: number,
-  maximum = 100,
-): number | null {
-  const parsed = value === undefined ? fallback : Number.parseInt(value, 10);
-  return Number.isInteger(parsed) && parsed >= 1 && parsed <= maximum
-    ? parsed
-    : null;
-}
-
 function escapeRegex(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function effectivePlatform(
-  build: Pick<BuildDocument, "platform" | "labelName">,
-): string {
-  return build.platform ?? build.labelName.split("-").at(-1) ?? "Unknown";
-}
-
-function manifestStatus(build: BuildDocument): ManifestStatus {
-  return build.manifestStatus ?? "legacy_unverified";
-}
-
-function buildSummary(
-  build: BuildDocument,
-  asset?: { downloadSizeBytes?: number; installedSizeBytes?: number } | null,
-) {
-  return {
-    id: build._id.toString(),
-    _id: build._id.toString(),
-    appName: build.appName,
-    buildVersion: build.buildVersion,
-    labelName: build.labelName,
-    platform: effectivePlatform(build),
-    hash: build.hash,
-    firstSeenAt: build.firstSeenAt ?? build.createdAt ?? null,
-    lastSeenAt: build.lastSeenAt ?? build.updatedAt ?? null,
-    createdAt: build.createdAt ?? null,
-    updatedAt: build.updatedAt ?? null,
-    downloadSizeBytes:
-      build.downloadSizeBytes ?? asset?.downloadSizeBytes ?? null,
-    installedSizeBytes:
-      build.installedSizeBytes ?? asset?.installedSizeBytes ?? null,
-    technologies: build.technologies ?? [],
-    manifest: {
-      status: manifestStatus(build),
-      canonicalHash: build.manifestId ?? null,
-      sourceHash: build.sourceManifestHash ?? build.hash,
-      parserVersion: build.manifestParserVersion ?? null,
-      processedAt: build.manifestProcessedAt ?? null,
-      fileCount: build.manifestFileCount ?? null,
-      fileBytes: build.manifestFileBytes ?? null,
-      errorCode: build.manifestErrorCode ?? null,
-    },
-  };
 }
 
 function technologyChanges(base: BuildDocument, target: BuildDocument) {
@@ -144,7 +67,7 @@ function snapshotQuery(build: BuildDocument): Filter<AnyObject> {
 
 function comparable(build: BuildDocument): boolean {
   return (
-    ["verified", "legacy_unverified"].includes(manifestStatus(build)) &&
+    ["verified", "legacy_unverified"].includes(buildManifestStatus(build)) &&
     typeof build.manifestId === "string"
   );
 }
@@ -152,11 +75,13 @@ function comparable(build: BuildDocument): boolean {
 app.get("/", async (c) => {
   const sortBy = c.req.query("sortBy") || "createdAt";
   const sortDir = c.req.query("sortDir") || "desc";
-  const limit = parseInteger(c.req.query("limit"), 10);
-  const page = parseInteger(c.req.query("page"), 1, 1_000_000);
+  const limit = parseBuildInteger(c.req.query("limit"), 10);
+  const page = parseBuildInteger(c.req.query("page"), 1, MAX_BUILD_PAGE);
+  const offset = limit && page ? buildPaginationOffset(page, limit) : null;
   if (
     !limit ||
     !page ||
+    offset === null ||
     !["createdAt", "updatedAt", "firstSeenAt"].includes(sortBy)
   ) {
     return c.json(
@@ -187,7 +112,7 @@ app.get("/", async (c) => {
     .collection<BuildDocument>("builds")
     .find()
     .sort(sort)
-    .skip((page - 1) * limit)
+    .skip(offset)
     .limit(limit)
     .toArray();
   const items = await Item.find({
@@ -216,10 +141,16 @@ app.get("/:id/history", async (c) => {
       { error: { code: "VALIDATION_ERROR", message: "Invalid build ID" } },
       400,
     );
-  const limit = parseInteger(c.req.query("limit"), 50);
-  const page = parseInteger(c.req.query("page"), 1, 1_000_000);
+  const limit = parseBuildInteger(c.req.query("limit"), 50);
+  const page = parseBuildInteger(c.req.query("page"), 1, MAX_BUILD_PAGE);
+  const offset = limit && page ? buildPaginationOffset(page, limit) : null;
   const scope = c.req.query("scope") ?? "stream";
-  if (!limit || !page || !["stream", "platform"].includes(scope)) {
+  if (
+    !limit ||
+    !page ||
+    offset === null ||
+    !["stream", "platform"].includes(scope)
+  ) {
     return c.json(
       { error: { code: "VALIDATION_ERROR", message: "Invalid history query" } },
       400,
@@ -235,7 +166,7 @@ app.get("/:id/history", async (c) => {
       404,
     );
 
-  const platform = effectivePlatform(build);
+  const platform = effectiveBuildPlatform(build);
   const filter: Filter<BuildDocument> = { appName: build.appName };
   if (scope === "stream") filter.labelName = build.labelName;
   else {
@@ -253,13 +184,28 @@ app.get("/:id/history", async (c) => {
     collection
       .find(filter)
       .sort({ firstSeenAt: -1, createdAt: -1, _id: -1 })
-      .skip((page - 1) * limit)
+      .skip(offset)
       .limit(limit)
       .toArray(),
     collection.countDocuments(filter),
   ]);
-  let previousComparableBuildId =
-    build.previousObservedBuildId?.toString() ?? null;
+  let previousComparableBuildId: string | null = null;
+  if (build.previousObservedBuildId) {
+    const observed = await collection.findOne({
+      _id: build.previousObservedBuildId,
+      appName: build.appName,
+      labelName: build.labelName,
+      manifestStatus: { $in: ["verified", "legacy_unverified"] },
+      manifestId: { $type: "string" },
+    });
+    if (
+      observed &&
+      comparable(observed) &&
+      effectiveBuildPlatform(observed) === platform
+    ) {
+      previousComparableBuildId = observed._id.toString();
+    }
+  }
   if (!previousComparableBuildId) {
     const previous = await collection.findOne(
       {
@@ -269,6 +215,7 @@ app.get("/:id/history", async (c) => {
         manifestStatus: { $in: ["verified", "legacy_unverified"] },
         manifestId: { $type: "string" },
         createdAt: { $lt: build.createdAt ?? new Date() },
+        $or: [{ platform }, { platform: { $exists: false } }],
       },
       { sort: { firstSeenAt: -1, createdAt: -1 } },
     );
@@ -296,8 +243,9 @@ app.get("/:targetId/compare/:baseId", async (c) => {
       400,
     );
   }
-  const limit = parseInteger(c.req.query("limit"), 50);
-  const page = parseInteger(c.req.query("page"), 1, 1_000_000);
+  const limit = parseBuildInteger(c.req.query("limit"), 50);
+  const page = parseBuildInteger(c.req.query("page"), 1, MAX_BUILD_PAGE);
+  const offset = limit && page ? buildPaginationOffset(page, limit) : null;
   const direction = c.req.query("dir") ?? "asc";
   const query = c.req.query("q")?.trim();
   const statuses = new Set(
@@ -312,6 +260,7 @@ app.get("/:targetId/compare/:baseId", async (c) => {
   if (
     !limit ||
     !page ||
+    offset === null ||
     !["asc", "desc"].includes(direction) ||
     (query?.length ?? 0) > 200 ||
     extensions.size > 20 ||
@@ -343,7 +292,7 @@ app.get("/:targetId/compare/:baseId", async (c) => {
     );
   if (
     target.appName !== base.appName ||
-    effectivePlatform(target) !== effectivePlatform(base)
+    effectiveBuildPlatform(target) !== effectiveBuildPlatform(base)
   ) {
     return c.json(
       {
@@ -362,8 +311,8 @@ app.get("/:targetId/compare/:baseId", async (c) => {
           code: "MANIFEST_NOT_COMPARABLE",
           message:
             "Both builds must have stored file snapshots before comparison",
-          baseStatus: manifestStatus(base),
-          targetStatus: manifestStatus(target),
+          baseStatus: buildManifestStatus(base),
+          targetStatus: buildManifestStatus(target),
         },
       },
       409,
@@ -450,8 +399,8 @@ app.get("/:targetId/compare/:baseId", async (c) => {
       ...(base.labelName === target.labelName
         ? []
         : ["CROSS_STREAM_COMPARISON"]),
-      ...(manifestStatus(base) === "legacy_unverified" ||
-      manifestStatus(target) === "legacy_unverified"
+      ...(buildManifestStatus(base) === "legacy_unverified" ||
+      buildManifestStatus(target) === "legacy_unverified"
         ? ["LEGACY_UNVERIFIED_SNAPSHOT"]
         : []),
     ],
@@ -482,7 +431,7 @@ app.get("/:id", async (c) => {
     );
   const asset = await Asset.findOne({
     artifactId: build.appName,
-    platform: effectivePlatform(build),
+    platform: effectiveBuildPlatform(build),
   });
   return c.json(buildSummary(build, asset));
 });
@@ -494,8 +443,9 @@ app.get("/:id/files", async (c) => {
       { error: { code: "VALIDATION_ERROR", message: "Invalid build ID" } },
       400,
     );
-  const limit = parseInteger(c.req.query("limit"), 25);
-  const page = parseInteger(c.req.query("page"), 1, 1_000_000);
+  const limit = parseBuildInteger(c.req.query("limit"), 25);
+  const page = parseBuildInteger(c.req.query("page"), 1, MAX_BUILD_PAGE);
+  const offset = limit && page ? buildPaginationOffset(page, limit) : null;
   const sort = c.req.query("sort") || "depth";
   const direction = c.req.query("dir") || "asc";
   const filename = c.req.query("q")?.trim();
@@ -506,6 +456,7 @@ app.get("/:id/files", async (c) => {
   if (
     !limit ||
     !page ||
+    offset === null ||
     !["depth", "fileName", "fileSize"].includes(sort) ||
     !["asc", "desc"].includes(direction) ||
     (filename?.length ?? 0) > 200 ||
@@ -554,14 +505,14 @@ app.get("/:id/files", async (c) => {
       .collection("files")
       .find(queryFilter)
       .sort(sortQuery)
-      .skip((page - 1) * limit)
+      .skip(offset)
       .limit(limit)
       .toArray(),
     db.db.collection("files").countDocuments(queryFilter),
   ]);
   return c.json({
     files,
-    manifestStatus: manifestStatus(build),
+    manifestStatus: buildManifestStatus(build),
     page,
     limit,
     total,
@@ -575,9 +526,10 @@ app.get("/:id/items", async (c) => {
       { error: { code: "VALIDATION_ERROR", message: "Invalid build ID" } },
       400,
     );
-  const limit = parseInteger(c.req.query("limit"), 25);
-  const page = parseInteger(c.req.query("page"), 1, 1_000_000);
-  if (!limit || !page)
+  const limit = parseBuildInteger(c.req.query("limit"), 25);
+  const page = parseBuildInteger(c.req.query("page"), 1, MAX_BUILD_PAGE);
+  const offset = limit && page ? buildPaginationOffset(page, limit) : null;
+  if (!limit || !page || offset === null)
     return c.json(
       { error: { code: "VALIDATION_ERROR", message: "Invalid pagination" } },
       400,
@@ -592,9 +544,7 @@ app.get("/:id/items", async (c) => {
     );
   const itemFilter = { "releaseInfo.appId": build.appName };
   const [items, total] = await Promise.all([
-    Item.find(itemFilter)
-      .skip((page - 1) * limit)
-      .limit(limit),
+    Item.find(itemFilter).skip(offset).limit(limit),
     Item.countDocuments(itemFilter),
   ]);
   return c.json({ data: items, page, limit, total });
@@ -615,22 +565,31 @@ app.get("/:id/install-options", async (c) => {
       { error: { code: "BUILD_NOT_FOUND", message: "Build not found" } },
       404,
     );
-  const files = await db.db
-    .collection<{ installTags: string[]; fileSize: number }>("files")
-    .find({
-      ...snapshotQuery(build),
-      installTags: { $exists: true, $not: { $size: 0 } },
-    })
+  const installOptions = await db.db
+    .collection("files")
+    .aggregate<{ _id: string; files: number; size: number }>([
+      {
+        $match: {
+          ...snapshotQuery(build),
+          installTags: { $exists: true, $not: { $size: 0 } },
+        },
+      },
+      { $unwind: "$installTags" },
+      {
+        $group: {
+          _id: "$installTags",
+          files: { $sum: 1 },
+          size: { $sum: { $ifNull: ["$fileSize", 0] } },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ])
     .toArray();
-  const result: Record<string, { files: number; size: number }> = {};
-  for (const file of files) {
-    for (const installOption of file.installTags) {
-      result[installOption] ??= { files: 0, size: 0 };
-      result[installOption].files++;
-      result[installOption].size += file.fileSize;
-    }
-  }
-  return c.json(result);
+  return c.json(
+    Object.fromEntries(
+      installOptions.map(({ _id, files, size }) => [_id, { files, size }]),
+    ),
+  );
 });
 
 export default app;

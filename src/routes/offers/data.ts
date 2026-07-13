@@ -33,6 +33,7 @@ import {
 } from "../../models/index.js";
 import { ageRatingsCountries } from "../../utils/age-ratings.js";
 import { attributesToObject } from "../../utils/attributes-to-object.js";
+import { type BuildDocument, buildSummary } from "../../utils/builds.js";
 import { regions } from "../../utils/countries.js";
 import { getGameFeatures } from "../../utils/game-features.js";
 import { getImage } from "../../utils/get-image.js";
@@ -2573,7 +2574,7 @@ app.get("/technologies", async (c) => {
 app.get("/builds", async (c) => {
   const { id } = c.req.param();
 
-  const cacheKey = `offer:builds:${id}`;
+  const cacheKey = `offer:builds:v2:${id}`;
 
   // 1 day
   const cacheTTL = 86400;
@@ -2617,12 +2618,7 @@ app.get("/builds", async (c) => {
   });
 
   const builds = await db.db
-    .collection<{
-      appName: string;
-      labelName: string;
-      buildVersion: string;
-      hash: string;
-    }>("builds")
+    .collection<BuildDocument>("builds")
     .find({
       appName: { $in: assets.map((a) => a.artifactId) },
     })
@@ -2630,9 +2626,10 @@ app.get("/builds", async (c) => {
     .limit(50)
     .toArray();
 
-  await client.set(cacheKey, JSON.stringify(builds), "EX", 3600);
+  const response = builds.map((build) => buildSummary(build));
+  await client.set(cacheKey, JSON.stringify(response), "EX", 3600);
 
-  return c.json(builds, 200, {
+  return c.json(response, 200, {
     "Cache-Control": `public, max-age=${cacheTTL}`,
   });
 });

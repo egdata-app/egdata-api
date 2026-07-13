@@ -1,3 +1,5 @@
+import { Buffer } from "node:buffer";
+
 export type BuildFileSnapshot = {
   fileName: string;
   fileHash: string;
@@ -125,6 +127,16 @@ function sortedTop<T>(
     .slice(0, limit);
 }
 
+function compareMongoBinaryStrings(left: string, right: string): number {
+  return Buffer.compare(Buffer.from(left), Buffer.from(right));
+}
+
+/**
+ * Performs a bounded-memory merge join over two file snapshots.
+ *
+ * Both iterables must be sorted by `fileName` using MongoDB's default binary
+ * string order, in the direction declared by `filters.direction`.
+ */
 export async function compareBuildFileSnapshots(
   baseFiles: AsyncIterable<BuildFileSnapshot>,
   targetFiles: AsyncIterable<BuildFileSnapshot>,
@@ -206,7 +218,7 @@ export async function compareBuildFileSnapshots(
       continue;
     }
 
-    const order = before.fileName.localeCompare(after.fileName);
+    const order = compareMongoBinaryStrings(before.fileName, after.fileName);
     if (order === 0) {
       record(changeFor(before, after));
       before = await nextValue(baseIterator);

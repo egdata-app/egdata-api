@@ -94,4 +94,61 @@ describe("build comparison", () => {
     expect(result.total).toBe(1);
     expect(result.changes).toHaveLength(1);
   });
+
+  it("matches MongoDB binary ordering for mixed-case paths", async () => {
+    const result = await compareBuildFileSnapshots(
+      files([
+        { fileName: "Z.txt", fileHash: "same", fileSize: 1 },
+        { fileName: "a.txt", fileHash: "old", fileSize: 2 },
+      ]),
+      files([
+        { fileName: "Z.txt", fileHash: "same", fileSize: 1 },
+        { fileName: "a.txt", fileHash: "new", fileSize: 3 },
+      ]),
+      filters,
+    );
+
+    expect(result.files).toMatchObject({ modified: 1, unchanged: 1 });
+    expect(result.changes.map(({ path, status }) => [path, status])).toEqual([
+      ["Z.txt", "unchanged"],
+      ["a.txt", "modified"],
+    ]);
+  });
+
+  it("supports descending snapshots and pagination beyond the first page", async () => {
+    const result = await compareBuildFileSnapshots(
+      files([
+        { fileName: "D/root.bin", fileHash: "removed", fileSize: 40 },
+        { fileName: "B/keep.bin", fileHash: "same", fileSize: 5 },
+        { fileName: "A/change.bin", fileHash: "old", fileSize: 10 },
+      ]),
+      files([
+        { fileName: "C/added.bin", fileHash: "added", fileSize: 30 },
+        { fileName: "B/keep.bin", fileHash: "same", fileSize: 5 },
+        { fileName: "A/change.bin", fileHash: "new", fileSize: 25 },
+      ]),
+      {
+        ...filters,
+        direction: "desc",
+        page: 2,
+        limit: 2,
+      },
+    );
+
+    expect(result.total).toBe(4);
+    expect(result.changes.map(({ path }) => path)).toEqual([
+      "B/keep.bin",
+      "A/change.bin",
+    ]);
+    expect(result.topFiles.map(({ path }) => path)).toEqual([
+      "D/root.bin",
+      "C/added.bin",
+      "A/change.bin",
+    ]);
+    expect(result.topDirectories).toEqual([
+      { path: "D", sizeDeltaBytes: -40 },
+      { path: "C", sizeDeltaBytes: 30 },
+      { path: "A", sizeDeltaBytes: 15 },
+    ]);
+  });
 });
