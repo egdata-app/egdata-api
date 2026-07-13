@@ -26,6 +26,43 @@ const regionalLocalizedOfferId = [
 const itemId = [parameterRef("itemId")];
 const sandboxId = [parameterRef("sandboxId")];
 const sellerId = [parameterRef("sellerId")];
+const buildId: OpenAPIV3.ParameterObject = {
+  name: "id",
+  in: "path",
+  required: true,
+  description: "Mongo build document identifier.",
+  schema: { type: "string" },
+};
+const buildPage: OpenAPIV3.ParameterObject = {
+  name: "page",
+  in: "query",
+  required: false,
+  description:
+    "One-based page number. Build endpoints reject requests whose calculated offset exceeds 100,000 records.",
+  schema: { type: "integer", minimum: 1, maximum: 100_001, default: 1 },
+};
+const buildLimit: OpenAPIV3.ParameterObject = {
+  name: "limit",
+  in: "query",
+  required: false,
+  description: "Maximum records per page.",
+  schema: { type: "integer", minimum: 1, maximum: 100 },
+};
+const buildPagination = [buildPage, buildLimit];
+const targetBuildId: OpenAPIV3.ParameterObject = {
+  name: "targetId",
+  in: "path",
+  required: true,
+  description: "Target build identifier.",
+  schema: { type: "string" },
+};
+const baseBuildId: OpenAPIV3.ParameterObject = {
+  name: "baseId",
+  in: "path",
+  required: true,
+  description: "Baseline build identifier.",
+  schema: { type: "string" },
+};
 const flexibleObjectResponse = (
   description?: string,
 ): OpenAPIV3.SchemaObject => ({
@@ -71,6 +108,138 @@ export const paths: EgdataPaths = {
       summary: "Check API dependency health",
       description: "Reports Redis and MongoDB connectivity and latency.",
       response: ref("HealthResponse"),
+    }),
+  },
+  "/builds": {
+    get: operation({
+      operationId: "listBuilds",
+      tags: ["Builds"],
+      summary: "List observed builds",
+      parameters: [
+        ...buildPagination,
+        stringQuery(
+          "sortBy",
+          "Sort field: createdAt, updatedAt, or firstSeenAt.",
+          "firstSeenAt",
+          { enum: ["createdAt", "updatedAt", "firstSeenAt"] },
+        ),
+        stringQuery("sortDir", "Sort direction: asc or desc.", "desc", {
+          enum: ["asc", "desc"],
+        }),
+      ],
+      response: arrayOf(ref("Build")),
+    }),
+  },
+  "/builds/{id}": {
+    get: operation({
+      operationId: "getBuild",
+      tags: ["Builds"],
+      summary: "Get a sanitized build snapshot",
+      parameters: [buildId],
+      response: ref("Build"),
+    }),
+  },
+  "/builds/{id}/history": {
+    get: operation({
+      operationId: "getBuildHistory",
+      tags: ["Builds"],
+      summary: "List comparison candidates for a build",
+      description:
+        "Returns chronological observations for the same stream or platform and identifies the previous comparable snapshot.",
+      parameters: [
+        buildId,
+        ...buildPagination,
+        stringQuery("scope", "Candidate scope: stream or platform.", "stream", {
+          enum: ["stream", "platform"],
+        }),
+      ],
+      response: ref("BuildHistoryResponse"),
+    }),
+  },
+  "/builds/{targetId}/compare/{baseId}": {
+    get: operation({
+      operationId: "compareBuilds",
+      tags: ["Builds"],
+      summary: "Compare two stored build snapshots",
+      description:
+        "Compares immutable file snapshots by full path. Full-download deltas are not patch-download estimates.",
+      parameters: [
+        targetBuildId,
+        baseBuildId,
+        ...buildPagination,
+        stringQuery(
+          "status",
+          "Comma-separated added, removed, modified, or unchanged statuses.",
+          "added,modified,removed",
+          {
+            pattern:
+              "^(added|removed|modified|unchanged)(,(added|removed|modified|unchanged))*$",
+          },
+        ),
+        stringQuery("q", "Literal case-insensitive file path search."),
+        stringQuery(
+          "extension",
+          "Comma-separated file extensions without leading dots.",
+          "pak,dll",
+        ),
+        stringQuery("dir", "Path order: asc or desc.", "asc", {
+          enum: ["asc", "desc"],
+        }),
+      ],
+      response: {
+        200: {
+          description: "Build comparison.",
+          content: {
+            "application/json": jsonContent(ref("BuildComparisonResponse")),
+          },
+        },
+        409: {
+          description:
+            "One or both builds do not have a comparable stored snapshot.",
+          content: { "application/json": jsonContent(ref("ErrorResponse")) },
+        },
+      },
+    }),
+  },
+  "/builds/{id}/files": {
+    get: operation({
+      operationId: "listBuildFiles",
+      tags: ["Builds"],
+      summary: "List files in a build snapshot",
+      parameters: [
+        buildId,
+        ...buildPagination,
+        stringQuery("q", "Literal case-insensitive file path search."),
+        stringQuery("extension", "Comma-separated file extensions."),
+        stringQuery(
+          "sort",
+          "Sort field: depth, fileName, or fileSize.",
+          "depth",
+          { enum: ["depth", "fileName", "fileSize"] },
+        ),
+        stringQuery("dir", "Sort direction: asc or desc.", "asc", {
+          enum: ["asc", "desc"],
+        }),
+      ],
+      response: ref("BuildFileListResponse"),
+    }),
+  },
+  "/builds/{id}/items": {
+    get: operation({
+      operationId: "listBuildItems",
+      tags: ["Builds"],
+      summary: "List catalog items associated with a build",
+      parameters: [buildId, ...buildPagination],
+      response: ref("BuildItemsResponse"),
+    }),
+  },
+  "/builds/{id}/install-options": {
+    get: operation({
+      operationId: "getBuildInstallOptions",
+      tags: ["Builds"],
+      summary: "Summarize install tags in a build",
+      parameters: [buildId],
+      response: ref("BuildInstallOptions"),
     }),
   },
   "/countries": {

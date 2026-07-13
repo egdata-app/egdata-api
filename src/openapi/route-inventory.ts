@@ -233,16 +233,6 @@ export const routeClassifications: RouteClassification[] = [
     reason: "Public catalog lookup; outside first documentation slice.",
   },
   {
-    path: "/builds/**",
-    visibility: "public-deferred",
-    reason: "Public build data needs response review before stable docs.",
-  },
-  {
-    path: "/builds",
-    visibility: "public-deferred",
-    reason: "Public build data needs response review before stable docs.",
-  },
-  {
     path: "/changelog",
     visibility: "public-deferred",
     reason: "Legacy changelog route; search/changelog is documented first.",
