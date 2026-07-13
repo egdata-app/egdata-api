@@ -131,6 +131,607 @@
         }
       }
     },
+    "/builds": {
+      "get": {
+        "operationId": "listBuilds",
+        "tags": [
+          "Builds"
+        ],
+        "summary": "List observed builds",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "description": "Sort field: createdAt, updatedAt, or firstSeenAt.",
+            "schema": {
+              "type": "string",
+              "example": "firstSeenAt"
+            }
+          },
+          {
+            "name": "sortDir",
+            "in": "query",
+            "required": false,
+            "description": "Sort direction: asc or desc.",
+            "schema": {
+              "type": "string",
+              "example": "desc"
+            }
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Build"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/builds/{id}": {
+      "get": {
+        "operationId": "getBuild",
+        "tags": [
+          "Builds"
+        ],
+        "summary": "Get a sanitized build snapshot",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Mongo build document identifier.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Build"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/builds/{id}/history": {
+      "get": {
+        "operationId": "getBuildHistory",
+        "tags": [
+          "Builds"
+        ],
+        "summary": "List comparison candidates for a build",
+        "description": "Returns chronological observations for the same stream or platform and identifies the previous comparable snapshot.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Mongo build document identifier.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "description": "Candidate scope: stream or platform.",
+            "schema": {
+              "type": "string",
+              "example": "stream"
+            }
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildHistoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/builds/{targetId}/compare/{baseId}": {
+      "get": {
+        "operationId": "compareBuilds",
+        "tags": [
+          "Builds"
+        ],
+        "summary": "Compare two stored build snapshots",
+        "description": "Compares immutable file snapshots by full path. Full-download deltas are not patch-download estimates.",
+        "parameters": [
+          {
+            "name": "targetId",
+            "in": "path",
+            "required": true,
+            "description": "Target build identifier.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "baseId",
+            "in": "path",
+            "required": true,
+            "description": "Baseline build identifier.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated added, removed, modified, or unchanged statuses.",
+            "schema": {
+              "type": "string",
+              "example": "added,modified,removed"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Literal case-insensitive file path search.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "extension",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated file extensions without leading dots.",
+            "schema": {
+              "type": "string",
+              "example": "pak,dll"
+            }
+          },
+          {
+            "name": "dir",
+            "in": "query",
+            "required": false,
+            "description": "Path order: asc or desc.",
+            "schema": {
+              "type": "string",
+              "example": "asc"
+            }
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Build comparison.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildComparisonResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "One or both builds do not have a comparable stored snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/builds/{id}/files": {
+      "get": {
+        "operationId": "listBuildFiles",
+        "tags": [
+          "Builds"
+        ],
+        "summary": "List files in a build snapshot",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Mongo build document identifier.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Literal case-insensitive file path search.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "extension",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated file extensions.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Sort field: depth, fileName, or fileSize.",
+            "schema": {
+              "type": "string",
+              "example": "depth"
+            }
+          },
+          {
+            "name": "dir",
+            "in": "query",
+            "required": false,
+            "description": "Sort direction: asc or desc.",
+            "schema": {
+              "type": "string",
+              "example": "asc"
+            }
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Paginated build files and manifest health.",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/builds/{id}/items": {
+      "get": {
+        "operationId": "listBuildItems",
+        "tags": [
+          "Builds"
+        ],
+        "summary": "List catalog items associated with a build",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Mongo build document identifier.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Paginated catalog items.",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/builds/{id}/install-options": {
+      "get": {
+        "operationId": "getBuildInstallOptions",
+        "tags": [
+          "Builds"
+        ],
+        "summary": "Summarize install tags in a build",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Mongo build document identifier.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/countries": {
       "get": {
         "operationId": "listCountries",
@@ -7236,7 +7837,27 @@
             "type": "string"
           },
           "error": {
-            "type": "string"
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true,
+                "required": [
+                  "code",
+                  "message"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
           }
         }
       },
@@ -7890,28 +8511,123 @@
           }
         }
       },
+      "ManifestHealth": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "canonicalHash",
+          "sourceHash",
+          "parserVersion",
+          "processedAt",
+          "fileCount",
+          "fileBytes",
+          "errorCode"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "processing",
+              "verified",
+              "invalid",
+              "unavailable",
+              "failed",
+              "legacy_unverified"
+            ]
+          },
+          "canonicalHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "sourceHash": {
+            "type": "string"
+          },
+          "parserVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "processedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fileCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "fileBytes": {
+            "type": "number",
+            "nullable": true
+          },
+          "errorCode": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "Build": {
         "type": "object",
-        "description": "Build metadata associated with an Epic app or asset.",
-        "additionalProperties": true,
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "_id",
+          "appName",
+          "buildVersion",
+          "labelName",
+          "platform",
+          "hash",
+          "technologies",
+          "manifest"
+        ],
         "properties": {
+          "id": {
+            "type": "string"
+          },
           "_id": {
             "type": "string"
           },
           "appName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "labelName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
           },
           "buildVersion": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "hash": {
+            "type": "string"
+          },
+          "firstSeenAt": {
             "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastSeenAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "downloadSizeBytes": {
+            "type": "number",
+            "nullable": true
+          },
+          "installedSizeBytes": {
+            "type": "number",
             "nullable": true
           },
           "technologies": {
@@ -7921,10 +8637,191 @@
               "additionalProperties": true
             }
           },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
+          "manifest": {
+            "$ref": "#/components/schemas/ManifestHealth"
+          },
+          "comparable": {
+            "type": "boolean"
+          },
+          "sameStream": {
+            "type": "boolean"
+          },
+          "item": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Item"
+              }
+            ],
             "nullable": true
+          }
+        }
+      },
+      "BuildFileSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "fileName",
+          "fileHash",
+          "fileSize"
+        ],
+        "properties": {
+          "fileName": {
+            "type": "string"
+          },
+          "fileHash": {
+            "type": "string"
+          },
+          "fileSize": {
+            "type": "number"
+          },
+          "mimeType": {
+            "type": "string",
+            "nullable": true
+          },
+          "installTags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "symlinkTarget": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileMetaFlags": {
+            "type": "integer",
+            "nullable": true
+          }
+        }
+      },
+      "BuildFileChange": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "status",
+          "before",
+          "after",
+          "sizeDeltaBytes"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "added",
+              "removed",
+              "modified",
+              "unchanged"
+            ]
+          },
+          "before": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BuildFileSnapshot"
+              }
+            ],
+            "nullable": true
+          },
+          "after": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BuildFileSnapshot"
+              }
+            ],
+            "nullable": true
+          },
+          "sizeDeltaBytes": {
+            "type": "number"
+          }
+        }
+      },
+      "BuildHistoryResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "previousComparableBuildId",
+          "page",
+          "limit",
+          "total"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Build"
+            }
+          },
+          "previousComparableBuildId": {
+            "type": "string",
+            "nullable": true
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "BuildComparisonResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "base",
+          "target",
+          "comparisonScope",
+          "summary",
+          "changes",
+          "warnings",
+          "page",
+          "limit",
+          "total"
+        ],
+        "properties": {
+          "base": {
+            "$ref": "#/components/schemas/Build"
+          },
+          "target": {
+            "$ref": "#/components/schemas/Build"
+          },
+          "comparisonScope": {
+            "type": "string",
+            "enum": [
+              "same_stream",
+              "cross_stream"
+            ]
+          },
+          "summary": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BuildFileChange"
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
           }
         }
       },

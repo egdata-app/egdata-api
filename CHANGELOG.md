@@ -4,6 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added verified build-manifest history and file comparison endpoints, sanitized build responses, bounded build query validation, and correct historical size fallbacks.
 - Added `POST /search/natural-language` to rank offer vectors with Cloudflare Workers AI and Vectorize, then hydrate the matching offer documents from MongoDB.
 - Added public cache headers to sandbox offer list responses so edge caches can absorb repeated crawler traffic.
 - Updated Aikido Zen firewall to 1.8.29 and preloaded instrumentation for native ESM server startup.
