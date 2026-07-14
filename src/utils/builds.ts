@@ -43,6 +43,15 @@ export function buildManifestStatus(build: BuildDocument): ManifestStatus {
   return build.manifestStatus ?? "legacy_unverified";
 }
 
+export function buildSnapshotQuery(build: BuildDocument) {
+  if (buildManifestStatus(build) === "legacy_unverified") {
+    return { manifestHash: build.sourceManifestHash ?? build.hash };
+  }
+  return build.manifestId
+    ? { manifestId: build.manifestId }
+    : { manifestHash: build.hash };
+}
+
 export function buildSummary(build: BuildDocument, asset?: unknown) {
   const assetSizes = asset as
     | { downloadSizeBytes?: unknown; installedSizeBytes?: unknown }

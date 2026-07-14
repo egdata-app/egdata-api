@@ -17,6 +17,7 @@ import {
 import {
   type BuildDocument,
   buildManifestStatus,
+  buildSnapshotQuery,
   buildSummary,
   effectiveBuildPlatform,
 } from "../utils/builds.js";
@@ -57,12 +58,6 @@ function technologyChanges(base: BuildDocument, target: BuildDocument) {
       .filter(([id]) => !targetMap.has(id))
       .map(([, technology]) => technology),
   };
-}
-
-function snapshotQuery(build: BuildDocument): Filter<AnyObject> {
-  return build.manifestId
-    ? { manifestId: build.manifestId }
-    : { manifestHash: build.hash };
 }
 
 function comparable(build: BuildDocument): boolean {
@@ -348,11 +343,11 @@ app.get("/:targetId/compare/:baseId", async (c) => {
   };
   const baseFiles = db.db
     .collection<BuildFileSnapshot>("files")
-    .find(snapshotQuery(base), { projection })
+    .find(buildSnapshotQuery(base), { projection })
     .sort(fileSort);
   const targetFiles = db.db
     .collection<BuildFileSnapshot>("files")
-    .find(snapshotQuery(target), { projection })
+    .find(buildSnapshotQuery(target), { projection })
     .sort(fileSort);
   const comparison = await compareBuildFileSnapshots(baseFiles, targetFiles, {
     statuses: statuses as Set<BuildFileChangeStatus>,
@@ -476,7 +471,7 @@ app.get("/:id/files", async (c) => {
       404,
     );
 
-  const queryFilter: Filter<AnyObject> = snapshotQuery(build);
+  const queryFilter: Filter<AnyObject> = buildSnapshotQuery(build);
   const pathFilters: Filter<AnyObject>[] = [];
   if (filename)
     pathFilters.push({
@@ -570,7 +565,7 @@ app.get("/:id/install-options", async (c) => {
     .aggregate<{ _id: string; files: number; size: number }>([
       {
         $match: {
-          ...snapshotQuery(build),
+          ...buildSnapshotQuery(build),
           installTags: { $exists: true, $not: { $size: 0 } },
         },
       },
