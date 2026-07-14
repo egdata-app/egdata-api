@@ -48,7 +48,7 @@ export function buildSnapshotQuery(build: BuildDocument) {
     return { manifestHash: build.sourceManifestHash ?? build.hash };
   }
   return build.manifestId
-    ? { manifestId: build.manifestId }
+    ? { manifestId: { $eq: build.manifestId, $type: "string" } }
     : { manifestHash: build.hash };
 }
 

@@ -42,6 +42,8 @@ describe("buildSnapshotQuery", () => {
       buildSnapshotQuery(
         build({ manifestStatus: "verified", manifestId: "canonical-hash" }),
       ),
-    ).toEqual({ manifestId: "canonical-hash" });
+    ).toEqual({
+      manifestId: { $eq: "canonical-hash", $type: "string" },
+    });
   });
 });
