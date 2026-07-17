@@ -224,6 +224,24 @@ export const paths: EgdataPaths = {
       response: ref("BuildFileListResponse"),
     }),
   },
+  "/builds/{id}/tree": {
+    get: operation({
+      operationId: "getBuildFileTree",
+      tags: ["Builds"],
+      summary: "Expand one directory of a build file tree",
+      description:
+        "Returns only immediate child files and directories. Expand a directory by passing the path returned for that directory.",
+      parameters: [
+        buildId,
+        ...buildPagination,
+        stringQuery(
+          "path",
+          "Relative directory to expand, using forward slashes. Omit for the build root.",
+        ),
+      ],
+      response: ref("BuildFileTreeResponse"),
+    }),
+  },
   "/builds/{id}/items": {
     get: operation({
       operationId: "listBuildItems",

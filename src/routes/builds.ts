@@ -9,6 +9,7 @@ import {
   type BuildFileSnapshot,
   compareBuildFileSnapshots,
 } from "../utils/build-comparison.js";
+import { normalizeBuildTreePath } from "../utils/build-file-tree.js";
 import {
   buildPaginationOffset,
   MAX_BUILD_PAGE,
@@ -512,6 +513,175 @@ app.get("/:id/files", async (c) => {
     limit,
     total,
   });
+});
+
+app.get("/:id/tree", async (c) => {
+  const { id } = c.req.param();
+  if (!ObjectId.isValid(id))
+    return c.json(
+      { error: { code: "VALIDATION_ERROR", message: "Invalid build ID" } },
+      400,
+    );
+
+  const path = normalizeBuildTreePath(c.req.query("path"));
+  const limit = parseBuildInteger(c.req.query("limit"), 100);
+  const page = parseBuildInteger(c.req.query("page"), 1, MAX_BUILD_PAGE);
+  const offset = limit && page ? buildPaginationOffset(page, limit) : null;
+  if (path === null || !limit || !page || offset === null) {
+    return c.json(
+      { error: { code: "VALIDATION_ERROR", message: "Invalid tree query" } },
+      400,
+    );
+  }
+
+  const build = await db.db
+    .collection<BuildDocument>("builds")
+    .findOne({ _id: new ObjectId(id) });
+  if (!build)
+    return c.json(
+      { error: { code: "BUILD_NOT_FOUND", message: "Build not found" } },
+      404,
+    );
+
+  const snapshotKey =
+    build.manifestId ?? build.sourceManifestHash ?? build.hash;
+  const cacheHash = createHash("sha256")
+    .update(
+      JSON.stringify({
+        snapshotKey,
+        manifestUpdatedAt: build.updatedAt?.valueOf() ?? 0,
+        path,
+        page,
+        limit,
+      }),
+    )
+    .digest("hex")
+    .slice(0, 20);
+  const cacheKey = `build-tree:v1:${id}:${cacheHash}`;
+  const cached = await client.get(cacheKey).catch(() => null);
+  if (cached) return c.json(JSON.parse(cached));
+
+  const childPrefix = path ? `${path}/` : "";
+  const pathFilter = childPrefix
+    ? { fileName: { $regex: new RegExp(`^${escapeRegex(childPrefix)}`) } }
+    : { fileName: { $type: "string" } };
+  const [tree] = await db.db
+    .collection<AnyObject>("files")
+    .aggregate<{
+      nodes: Array<{
+        type: "directory" | "file";
+        name: string;
+        fileCount?: number;
+        totalSize?: number;
+        file?: AnyObject;
+      }>;
+      total: Array<{ count: number }>;
+    }>([
+      { $match: { $and: [buildSnapshotQuery(build), pathFilter] } },
+      {
+        $set: {
+          relativePath: childPrefix
+            ? {
+                $replaceOne: {
+                  input: "$fileName",
+                  find: childPrefix,
+                  replacement: "",
+                },
+              }
+            : "$fileName",
+        },
+      },
+      {
+        $set: {
+          nodeType: {
+            $cond: [
+              { $regexMatch: { input: "$relativePath", regex: "/" } },
+              "directory",
+              "file",
+            ],
+          },
+          nodeName: { $arrayElemAt: [{ $split: ["$relativePath", "/"] }, 0] },
+        },
+      },
+      {
+        $group: {
+          _id: { type: "$nodeType", name: "$nodeName" },
+          fileCount: { $sum: 1 },
+          totalSize: { $sum: { $ifNull: ["$fileSize", 0] } },
+          file: { $first: "$$ROOT" },
+        },
+      },
+      { $sort: { "_id.type": 1, "_id.name": 1 } },
+      {
+        $facet: {
+          nodes: [
+            { $skip: offset },
+            { $limit: limit },
+            {
+              $project: {
+                _id: 0,
+                type: "$_id.type",
+                name: "$_id.name",
+                fileCount: {
+                  $cond: [
+                    { $eq: ["$_id.type", "directory"] },
+                    "$fileCount",
+                    "$$REMOVE",
+                  ],
+                },
+                totalSize: {
+                  $cond: [
+                    { $eq: ["$_id.type", "directory"] },
+                    "$totalSize",
+                    "$$REMOVE",
+                  ],
+                },
+                file: {
+                  $cond: [
+                    { $eq: ["$_id.type", "file"] },
+                    {
+                      _id: "$file._id",
+                      manifestHash: "$file.manifestHash",
+                      manifestId: "$file.manifestId",
+                      snapshotVerification: "$file.snapshotVerification",
+                      appName: "$file.appName",
+                      buildVersion: "$file.buildVersion",
+                      appLabel: "$file.appLabel",
+                      fileName: "$file.fileName",
+                      symlinkTarget: "$file.symlinkTarget",
+                      fileHash: "$file.fileHash",
+                      fileMetaFlags: "$file.fileMetaFlags",
+                      installTags: "$file.installTags",
+                      fileSize: "$file.fileSize",
+                      mimeType: "$file.mimeType",
+                      depth: "$file.depth",
+                    },
+                    "$$REMOVE",
+                  ],
+                },
+              },
+            },
+          ],
+          total: [{ $count: "count" }],
+        },
+      },
+    ])
+    .toArray();
+  const response = {
+    path,
+    nodes: (tree?.nodes ?? []).map((node) => ({
+      ...node,
+      path: path ? `${path}/${node.name}` : node.name,
+    })),
+    manifestStatus: buildManifestStatus(build),
+    page,
+    limit,
+    total: tree?.total[0]?.count ?? 0,
+  };
+  await client
+    .set(cacheKey, JSON.stringify(response), "EX", 600)
+    .catch(() => undefined);
+  return c.json(response);
 });
 
 app.get("/:id/items", async (c) => {

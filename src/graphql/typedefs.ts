@@ -510,6 +510,7 @@ export const typeDefs = `#graphql
         prePurchase: Boolean
         releaseDate: Date
         pcReleaseDate: Date
+        expiryDate: Date
         viewableDate: Date
         countriesBlacklist: [String]
         countriesWhitelist: [String]

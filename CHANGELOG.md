@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added `expiryDate` to the GraphQL `Offer` schema.
+- Added `GET /builds/{id}/tree` for lazily expanding build manifest directories with recursive directory file and byte totals.
 - Fixed build snapshot comparisons and file queries to use the legacy and verified manifest path indexes instead of scanning all files by path.
 - Added verified build-manifest history and file comparison endpoints, sanitized build responses, bounded build query validation, and correct historical size fallbacks.
 - Hardened build comparisons with Mongo-compatible path ordering, bounded offsets, consistent sanitized Build DTOs, aggregated install options, and exact OpenAPI response contracts.

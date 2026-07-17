@@ -687,6 +687,102 @@
         }
       }
     },
+    "/builds/{id}/tree": {
+      "get": {
+        "operationId": "getBuildFileTree",
+        "tags": [
+          "Builds"
+        ],
+        "summary": "Expand one directory of a build file tree",
+        "description": "Returns only immediate child files and directories. Expand a directory by passing the path returned for that directory.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Mongo build document identifier.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "One-based page number. Build endpoints reject requests whose calculated offset exceeds 100,000 records.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100001,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum records per page.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "required": false,
+            "description": "Relative directory to expand, using forward slashes. Omit for the build root.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildFileTreeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/builds/{id}/items": {
       "get": {
         "operationId": "listBuildItems",
@@ -8881,6 +8977,112 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/BuildFile"
+            }
+          },
+          "manifestStatus": {
+            "type": "string",
+            "enum": [
+              "processing",
+              "verified",
+              "invalid",
+              "unavailable",
+              "failed",
+              "legacy_unverified"
+            ]
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "BuildFileTreeNode": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type",
+              "name",
+              "path",
+              "fileCount",
+              "totalSize"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "directory"
+                ]
+              },
+              "name": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "fileCount": {
+                "type": "integer"
+              },
+              "totalSize": {
+                "type": "number"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type",
+              "name",
+              "path",
+              "file"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "file"
+                ]
+              },
+              "name": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "file": {
+                "$ref": "#/components/schemas/BuildFile"
+              }
+            }
+          }
+        ]
+      },
+      "BuildFileTreeResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "nodes",
+          "manifestStatus",
+          "page",
+          "limit",
+          "total"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Directory that was expanded; an empty string is the build root."
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BuildFileTreeNode"
             }
           },
           "manifestStatus": {

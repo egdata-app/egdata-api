@@ -170,6 +170,7 @@ describe("GraphQL offer localization", () => {
       "related(country: String, locale: String): [Offer]",
     );
     expect(typeDefs).toContain("type OfferLocalizationMetadata");
+    expect(typeDefs).toContain("expiryDate: Date");
     expect(typeDefs).toContain("localeStatus: String");
   });
 

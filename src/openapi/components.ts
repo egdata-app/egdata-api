@@ -789,6 +789,63 @@ export const components: OpenAPIV3.ComponentsObject = {
         total: { type: "integer" },
       },
     },
+    BuildFileTreeNode: {
+      oneOf: [
+        {
+          type: "object",
+          additionalProperties: false,
+          required: ["type", "name", "path", "fileCount", "totalSize"],
+          properties: {
+            type: { type: "string", enum: ["directory"] },
+            name: { type: "string" },
+            path: { type: "string" },
+            fileCount: { type: "integer" },
+            totalSize: { type: "number" },
+          },
+        },
+        {
+          type: "object",
+          additionalProperties: false,
+          required: ["type", "name", "path", "file"],
+          properties: {
+            type: { type: "string", enum: ["file"] },
+            name: { type: "string" },
+            path: { type: "string" },
+            file: { $ref: "#/components/schemas/BuildFile" },
+          },
+        },
+      ],
+    },
+    BuildFileTreeResponse: {
+      type: "object",
+      additionalProperties: false,
+      required: ["path", "nodes", "manifestStatus", "page", "limit", "total"],
+      properties: {
+        path: {
+          type: "string",
+          description:
+            "Directory that was expanded; an empty string is the build root.",
+        },
+        nodes: {
+          type: "array",
+          items: { $ref: "#/components/schemas/BuildFileTreeNode" },
+        },
+        manifestStatus: {
+          type: "string",
+          enum: [
+            "processing",
+            "verified",
+            "invalid",
+            "unavailable",
+            "failed",
+            "legacy_unverified",
+          ],
+        },
+        page: { type: "integer" },
+        limit: { type: "integer" },
+        total: { type: "integer" },
+      },
+    },
     BuildItemsResponse: {
       type: "object",
       additionalProperties: false,
