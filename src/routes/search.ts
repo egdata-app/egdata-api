@@ -69,6 +69,7 @@ interface SearchBody {
     | "price"
     | "discount"
     | "discountPercent"
+    | "priceUpdatedAt"
     | "giveawayDate";
   sortDir?: "asc" | "desc";
   limit?: number;
@@ -551,9 +552,14 @@ app.post("/", async (c) => {
   let collection = "offers";
 
   if (
-    ["priceAsc", "priceDesc", "price", "discount", "discountPercent"].includes(
-      sort,
-    )
+    [
+      "priceAsc",
+      "priceDesc",
+      "price",
+      "discount",
+      "discountPercent",
+      "priceUpdatedAt",
+    ].includes(sort)
   ) {
     let priceSortOrder: 1 | -1 =
       sort === "priceAsc" || sort === "priceDesc"
@@ -569,6 +575,10 @@ app.post("/", async (c) => {
 
       if (sort === "discount") {
         return "price.discount";
+      }
+
+      if (sort === "priceUpdatedAt") {
+        return "updatedAt";
       }
 
       return "price.discountPrice";
@@ -1337,6 +1347,9 @@ app.post("/v2/search", async (c) => {
           [`prices.${region}.appliedRules.discountSetting.discountPercentage`]:
             { order: dir },
         });
+        break;
+      case "priceUpdatedAt":
+        sort.push({ [`prices.${region}.updatedAt`]: { order: dir } });
         break;
       case "upcoming":
         // Release date that is in the future (inverted direction, asc = desc, desc = asc)

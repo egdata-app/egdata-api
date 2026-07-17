@@ -8538,6 +8538,7 @@
           },
           "sortBy": {
             "type": "string",
+            "description": "Field used to order results. `priceUpdatedAt` sorts by `prices.<selected region>.updatedAt`.",
             "enum": [
               "releaseDate",
               "lastModifiedDate",
@@ -8551,6 +8552,7 @@
               "price",
               "discount",
               "discountPercent",
+              "priceUpdatedAt",
               "giveawayDate"
             ]
           },

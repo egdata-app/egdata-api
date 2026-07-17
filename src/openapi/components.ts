@@ -552,6 +552,8 @@ export const components: OpenAPIV3.ComponentsObject = {
         seller: { type: "string" },
         sortBy: {
           type: "string",
+          description:
+            "Field used to order results. `priceUpdatedAt` sorts by `prices.<selected region>.updatedAt`.",
           enum: [
             "releaseDate",
             "lastModifiedDate",
@@ -565,6 +567,7 @@ export const components: OpenAPIV3.ComponentsObject = {
             "price",
             "discount",
             "discountPercent",
+            "priceUpdatedAt",
             "giveawayDate",
           ],
         },

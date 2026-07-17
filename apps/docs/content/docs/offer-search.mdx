@@ -1,0 +1,30 @@
+---
+title: Offer Search
+description: Filter and sort Epic Games Store offers with the regional OpenSearch API.
+---
+
+Use `POST /search/v2/search` for catalog search, filters, facets, regional prices, and pagination. Pass the visitor's ISO country code in the `country` query parameter so price filters, price sorts, and the returned `price` record use the corresponding Epic pricing region.
+
+## Historical Lows
+
+The following request returns the 25 most recently updated paid offers that are currently at their historical US low:
+
+```http
+POST /search/v2/search?country=US
+Content-Type: application/json
+
+{
+  "isLowestPriceEver": true,
+  "price": { "min": 1 },
+  "sortBy": "priceUpdatedAt",
+  "sortDir": "desc",
+  "page": 1,
+  "limit": 25
+}
+```
+
+`isLowestPriceEver` uses the API's US historical-low benchmark. The positive `price.min` excludes zero-price promotions. Price filtering, the returned regional price record, and `priceUpdatedAt` ordering use `prices.<selected region>` for the requested country. No offer-type filter is implied, so base games, editions, add-ons, DLC, and other offer types can be returned.
+
+## Regional Price Update Sort
+
+Set `sortBy` to `priceUpdatedAt` to order offers by `prices.<selected region>.updatedAt`. Use `sortDir: "desc"` for the latest price changes first or `sortDir: "asc"` for the oldest first.

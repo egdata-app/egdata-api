@@ -6,6 +6,9 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 
 type FixtureRecord = Record<string, unknown>;
 
+export const SEA_QA_SMOKE_OFFER_ID = "620b1dc8a8b54cfda56ffbae32946f70";
+export const SEA_QA_SMOKE_ITEM_ID = "5c342732d6844d7d960ab272b5b4a806";
+
 export type SeaQaAttribute = {
   key?: string;
   type?: string;
