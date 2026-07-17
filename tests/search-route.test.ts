@@ -202,6 +202,98 @@ describe("search route with SeaQA fixtures", () => {
     );
   });
 
+  it("queries paginated historical lows with positive regional prices ordered by price update", async () => {
+    mocks.opensearchSearch.mockResolvedValueOnce({
+      body: {
+        took: 7,
+        timed_out: false,
+        hits: {
+          total: { value: 1, relation: "eq" },
+          hits: [
+            {
+              _source: {
+                ...offers[0],
+                prices: {
+                  US: {
+                    offerId: offers[0]?.id,
+                    region: "US",
+                    updatedAt: "2026-07-17T12:00:00.000Z",
+                    price: {
+                      currencyCode: "USD",
+                      originalPrice: 1999,
+                      discountPrice: 999,
+                      discount: 50,
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        },
+        aggregations: {},
+      },
+    });
+
+    const res = await app.request("/search/v2/search?country=US", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        isLowestPriceEver: true,
+        price: { min: 1 },
+        sortBy: "priceUpdatedAt",
+        sortDir: "desc",
+        page: 1,
+        limit: 25,
+      }),
+    });
+
+    expect(res.status).toBe(200);
+    expect(mocks.opensearchSearch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        index: "egdata.offers",
+        body: expect.objectContaining({
+          from: 0,
+          size: 25,
+          query: {
+            bool: {
+              must: [],
+              filter: [
+                {
+                  range: {
+                    "prices.US.price.discountPrice": { gte: 1 },
+                  },
+                },
+                { term: { isHistoricalLowestEverUS: true } },
+                {
+                  range: {
+                    "prices.US.price.discount": { gt: 0 },
+                  },
+                },
+              ],
+            },
+          },
+          sort: [
+            {
+              "prices.US.updatedAt": { order: "desc" },
+            },
+          ],
+        }),
+      }),
+    );
+
+    const body = await res.json();
+    expect(body.offers[0]).toMatchObject({
+      offerType: offers[0]?.offerType,
+      price: {
+        region: "US",
+        updatedAt: "2026-07-17T12:00:00.000Z",
+        price: {
+          discountPrice: 999,
+        },
+      },
+    });
+  });
+
   it("falls back unknown countries to the US price region", async () => {
     await app.request("/search/v2/search?country=ZZ", {
       method: "POST",

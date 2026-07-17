@@ -4,6 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added `priceUpdatedAt` sorting to `POST /search/v2/search` for ordering offers by the selected region's latest price update.
 - Added `expiryDate` to the GraphQL `Offer` schema.
 - Added `GET /builds/{id}/tree` for lazily expanding build manifest directories with recursive directory file and byte totals.
 - Fixed build snapshot comparisons and file queries to use the legacy and verified manifest path indexes instead of scanning all files by path.

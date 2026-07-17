@@ -69,6 +69,7 @@ interface SearchBody {
     | "price"
     | "discount"
     | "discountPercent"
+    | "priceUpdatedAt"
     | "giveawayDate";
   sortDir?: "asc" | "desc";
   limit?: number;
@@ -1337,6 +1338,9 @@ app.post("/v2/search", async (c) => {
           [`prices.${region}.appliedRules.discountSetting.discountPercentage`]:
             { order: dir },
         });
+        break;
+      case "priceUpdatedAt":
+        sort.push({ [`prices.${region}.updatedAt`]: { order: dir } });
         break;
       case "upcoming":
         // Release date that is in the future (inverted direction, asc = desc, desc = asc)
