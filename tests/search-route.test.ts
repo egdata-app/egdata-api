@@ -10,7 +10,11 @@ import {
 } from "vitest";
 import { Changelog, Offer } from "../src/models/index.js";
 import SearchRoute from "../src/routes/search.js";
-import { loadSeaQaOffers, type SeaQaOffer } from "./fixtures/seaqa.js";
+import {
+  loadSeaQaOffers,
+  SEA_QA_SMOKE_OFFER_ID,
+  type SeaQaOffer,
+} from "./fixtures/seaqa.js";
 
 type OpenSearchRequest = {
   body: {
@@ -134,7 +138,7 @@ describe("search route with SeaQA fixtures", () => {
     expect(body.total).toBe(offers.length);
     expect(body.offers).toHaveLength(3);
     expect(body.offers[0]).toMatchObject({
-      id: offers[0]?.id,
+      id: SEA_QA_SMOKE_OFFER_ID,
       namespace: "SeaQA",
       customAttributes: {
         grade: {

@@ -3,6 +3,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import ItemsRoute from "../src/routes/items.js";
 import {
   loadSeaQaItems,
+  SEA_QA_SMOKE_ITEM_ID,
   type SeaQaAttribute,
   type SeaQaItem,
 } from "./fixtures/seaqa.js";
@@ -106,6 +107,27 @@ describe("items route with SeaQA fixtures", () => {
           value: "test",
         },
       },
+    });
+  });
+
+  it("returns the stable SeaQA smoke item by ID", async () => {
+    const item = items.find((fixture) => fixture.id === SEA_QA_SMOKE_ITEM_ID);
+    if (!item) {
+      throw new Error("Missing stable SeaQA smoke item fixture");
+    }
+
+    mocks.itemFindOne.mockResolvedValue({
+      ...item,
+      toObject: () => item,
+    });
+
+    const res = await app.request(`/items/${SEA_QA_SMOKE_ITEM_ID}`);
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({
+      id: SEA_QA_SMOKE_ITEM_ID,
+      namespace: "SeaQA",
+      title: "SmokeTest Item For Any Offer",
     });
   });
 });

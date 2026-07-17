@@ -4,6 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Replaced production-captured route snapshots in pull-request CI with deterministic fixture tests and a scheduled public API smoke test that requires no production credentials.
 - Added `priceUpdatedAt` sorting to `POST /search/v2/search` for ordering offers by the selected region's latest price update.
 - Added `expiryDate` to the GraphQL `Offer` schema.
 - Added `GET /builds/{id}/tree` for lazily expanding build manifest directories with recursive directory file and byte totals.

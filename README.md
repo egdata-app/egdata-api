@@ -45,7 +45,7 @@ pnpm build
 pnpm start
 pnpm typecheck
 pnpm biome check .
-pnpm test:unit
+pnpm test
 ```
 
 ## OpenAPI And Docs
@@ -66,32 +66,21 @@ The Fumadocs app lives in `apps/docs` and consumes the generated OpenAPI artifac
 
 The test suite is split into two tiers:
 
-- **Unit tests** (`tests/utils/`, `tests/diff.test.ts`) — pure helpers, no infra required.
-- **Route golden-snapshot tests** (`tests/routes.test.ts`) — replay a curated corpus of stable routes against the local Hono app and structurally diff the response against a snapshot captured from `https://api.egdata.app`.
-- **Fixture-backed route tests** (`tests/search-route.test.ts`, `tests/items-route.test.ts`) — use committed SeaQA offer/item fixtures and mocked infrastructure for deterministic route coverage.
+- **Deterministic tests** — pure helpers and fixture-backed route tests using committed SeaQA offer/item data and mocked infrastructure. These require no live services or credentials and gate pull requests.
+- **Live smoke tests** (`tests/live-smoke.test.ts`) — minimal identity and response checks for stable public offer, item, sandbox, and build records. These run on a schedule and can be invoked manually.
 
 ```sh
-# Unit tests only, no env required
-pnpm test:unit
-
-# Route and coverage tests
-pnpm test:routes
-
-# Full suite, needs .env with MongoDB and Redis settings
+# Full deterministic suite, no service credentials required
 pnpm test
 
-# Opt into live OpenSearch golden snapshots (PowerShell)
-$env:RUN_OPENSEARCH_SNAPSHOTS="true"; pnpm test tests/routes.test.ts
+# Focused unit and fixture-backed route subset
+pnpm test:unit
 
-# Opt into live OpenSearch golden snapshots (sh)
-RUN_OPENSEARCH_SNAPSHOTS=true pnpm test tests/routes.test.ts
-
-# (Re)capture golden snapshots from prod
-# Edit tests/corpus.ts to add real IDs, then:
-pnpm test:capture
+# Public production smoke checks, no credentials required
+pnpm test:live
 ```
 
-Snapshots live in `tests/__snapshots__/`. Volatile fields such as timestamps, etags, and `lastModifiedDate` are ignored by the structural diff in `tests/diff.ts`.
+Route documentation coverage is enforced by `pnpm openapi:check`, which discovers Hono routes from source and requires every route to be documented or explicitly classified.
 
 ## Release Notes
 
