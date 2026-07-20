@@ -35,6 +35,7 @@ import AccountsRoute from "./routes/accounts.js";
 import AdminRoute from "./routes/admin.js";
 import AssetsRoute from "./routes/assets.js";
 import AuthRoute, { epic, type LauncherAuthTokens } from "./routes/auth.js";
+import BuildLauncherRecordsRoute from "./routes/build-launcher-records.js";
 import BuildsRoute from "./routes/builds.js";
 import CollectionsRoute from "./routes/collections.js";
 import FranchisesRoute from "./routes/franchises.js";
@@ -1425,6 +1426,7 @@ app.route("/admin", AdminRoute);
 app.route("/assets", AssetsRoute);
 
 app.route("/builds", BuildsRoute);
+app.route("/builds", BuildLauncherRecordsRoute);
 
 app.route("/launcher", LauncherRoute);
 
