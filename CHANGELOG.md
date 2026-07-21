@@ -4,6 +4,9 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Fixed empty changelog searches to return the latest canonical MongoDB records instead of waiting for OpenSearch indexing.
+- Replaced bulk catalog exports with `POST /catalog/hydrate` schema v2, which streams independently bounded, content-aware root graphs directly from authoritative collections for incremental local-first clients.
+- Added idempotent catalog resolver indexes and an explicit confirmation-gated command for removing legacy materialized catalog collections after rollout verification.
 - Added `POST /builds/resolve-launcher-records` for resolving bounded, path-free Windows manifest metadata to normalized Epic Games Launcher records without guessing ambiguous catalog, asset, or parent relationships.
 - Replaced production-captured route snapshots in pull-request CI with deterministic fixture tests and a scheduled public API smoke test that requires no production credentials.
 - Added `priceUpdatedAt` sorting to `POST /search/v2/search` for ordering offers by the selected region's latest price update.

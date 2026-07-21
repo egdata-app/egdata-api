@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "rslib build",
+    "catalog:cleanup-legacy": "tsx scripts/cleanup-legacy-catalog-storage.ts",
     "start": "node --env-file=.env --enable-source-maps -r @aikidosec/firewall/instrument dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",

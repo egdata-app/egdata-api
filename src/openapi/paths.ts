@@ -210,6 +210,56 @@ const launcherResolverResponse: OpenAPIV3.SchemaObject = {
 };
 
 export const paths: EgdataPaths = {
+  "/catalog/hydrate": {
+    post: operation({
+      operationId: "hydrateCatalogGraph",
+      tags: ["Catalog"],
+      summary: "Hydrate catalog records for known technical identifiers",
+      description:
+        "Resolves up to 25 item, asset, or release-app roots directly from the catalog collections. The response is NDJSON with one isolated, content-hashed graph result per line.",
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: ref("CatalogHydrationRequest"),
+          },
+        },
+      },
+      response: {
+        200: {
+          description:
+            "An NDJSON stream of resolved, unchanged, not-found, or isolated error results. Each decoded line is at most 2 MiB and 500 records.",
+          content: {
+            "application/x-ndjson": {
+              schema: {
+                type: "string",
+                description:
+                  "Newline-delimited CatalogHydrationRootResult objects.",
+              },
+            },
+          },
+        },
+        400: {
+          description: "The hydration batch is malformed.",
+          content: {
+            "application/json": jsonContent(ref("ErrorResponse")),
+          },
+        },
+        413: {
+          description: "The request body is too large.",
+          content: {
+            "application/json": jsonContent(ref("ErrorResponse")),
+          },
+        },
+        503: {
+          description: "Catalog hydration is temporarily unavailable.",
+          content: {
+            "application/json": jsonContent(ref("ErrorResponse")),
+          },
+        },
+      },
+    }),
+  },
   "/health": {
     get: operation({
       operationId: "getHealth",

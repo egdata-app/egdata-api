@@ -943,6 +943,55 @@ app.get("/changelog", async (c) => {
     { term: { "metadata.contextType.keyword": "achievements" } },
   ];
 
+  const mongoFilter: Record<string, unknown> = {
+    "metadata.contextType": { $nin: ["file", "achievements"] },
+  };
+
+  if (id) {
+    mongoFilter["metadata.contextId"] = id;
+  }
+
+  if (type) {
+    mongoFilter["metadata.contextType"] = {
+      $eq: type,
+      $nin: ["file", "achievements"],
+    };
+  }
+
+  // OpenSearch is asynchronous and can lag behind newly recorded changes. Use
+  // MongoDB as the source of truth for the recent-changes view (no text query).
+  if (!query?.trim()) {
+    const startedAt = performance.now();
+    const [mongoHits, estimatedTotalHits] = await Promise.all([
+      Changelog.find(mongoFilter, undefined, {
+        sort: { timestamp: -1 },
+        skip: (page - 1) * limit,
+        limit,
+      }),
+      Changelog.countDocuments(mongoFilter),
+    ]);
+
+    const hits = mongoHits.map((hit) => ({
+      ...hit.toObject(),
+      _id: String(hit._id),
+    })) as ChangelogSearchHit[];
+
+    await enrichChangelogSearchDocuments(hits);
+
+    return c.json(
+      {
+        hits,
+        estimatedTotalHits,
+        processingTimeMs: Math.round(performance.now() - startedAt),
+        query: "",
+      },
+      200,
+      {
+        "Cache-Control": debug ? "no-store" : "public, max-age=60",
+      },
+    );
+  }
+
   // Build query with match_all fallback when no must clauses
   let queryBody: Record<string, unknown>;
   if (must.length > 0) {
@@ -992,26 +1041,22 @@ app.get("/changelog", async (c) => {
     typeof total === "number" ? total : (total?.value ?? 0);
 
   if (query && estimatedTotalHits === 0 && relatedContextIds.length > 0) {
-    const mongoFilter: Record<string, unknown> = {
-      "metadata.contextType": { $nin: ["file", "achievements"] },
+    const fallbackMongoFilter: Record<string, unknown> = {
+      ...mongoFilter,
       "metadata.contextId": { $in: relatedContextIds },
     };
 
     if (id) {
-      mongoFilter["metadata.contextId"] = id;
-    }
-
-    if (type) {
-      mongoFilter["metadata.contextType"] = type;
+      fallbackMongoFilter["metadata.contextId"] = id;
     }
 
     const [fallbackHits, fallbackTotal] = await Promise.all([
-      Changelog.find(mongoFilter, undefined, {
+      Changelog.find(fallbackMongoFilter, undefined, {
         sort: { timestamp: -1 },
         skip: (page - 1) * limit,
         limit,
       }),
-      Changelog.countDocuments(mongoFilter),
+      Changelog.countDocuments(fallbackMongoFilter),
     ]);
 
     const fallbackResponseHits = fallbackHits.map((hit) => ({
