@@ -38,6 +38,12 @@ VECTORIZE_INDEX_NAME=egdata-offers
 
 `VECTORIZE_INDEX_NAME` is optional and defaults to `egdata-offers`. The endpoint uses the same `@cf/baai/bge-base-en-v1.5` embeddings as the backend indexing job.
 
+## Catalog Hydration
+
+`POST /catalog/hydrate` streams bounded NDJSON graphs directly from the catalog collections for item, asset, and release-app identifiers. Clients persist only their discovered roots and revalidate with content hashes.
+
+After the direct resolver has been verified, legacy materialized catalog collections can be removed with the explicit confirmation-gated command documented in the catalog hydration guide.
+
 ## Build And Checks
 
 ```sh

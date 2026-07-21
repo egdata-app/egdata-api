@@ -376,30 +376,33 @@ describe("search route with SeaQA fixtures", () => {
 
   it("hydrates /search/changelog old and new values from Mongo", async () => {
     const id = "6a2ac641bfc3cf2a0efc8507";
-    mocks.opensearchSearch.mockResolvedValueOnce(
-      changelogSearchResponse([
-        {
-          _id: id,
-          _source: {
-            timestamp: "2026-06-11T14:29:00.000Z",
-            metadata: {
-              contextType: "product-home",
-              contextId: "home-page",
-              changes: [
-                {
-                  changeType: "update",
-                  field: "hero",
-                  oldValue: null,
-                  newValue: null,
-                  oldValueRaw: '{"title":"indexed old"}',
-                  newValueRaw: '{"title":"indexed new"}',
-                },
-              ],
+    mocks.opensearchSearch
+      .mockResolvedValueOnce(changelogSearchResponse([]))
+      .mockResolvedValueOnce(changelogSearchResponse([]))
+      .mockResolvedValueOnce(
+        changelogSearchResponse([
+          {
+            _id: id,
+            _source: {
+              timestamp: "2026-06-11T14:29:00.000Z",
+              metadata: {
+                contextType: "product-home",
+                contextId: "home-page",
+                changes: [
+                  {
+                    changeType: "update",
+                    field: "hero",
+                    oldValue: null,
+                    newValue: null,
+                    oldValueRaw: '{"title":"indexed old"}',
+                    newValueRaw: '{"title":"indexed new"}',
+                  },
+                ],
+              },
             },
           },
-        },
-      ]),
-    );
+        ]),
+      );
     mockChangelogFind([
       {
         _id: id,
@@ -419,7 +422,7 @@ describe("search route with SeaQA fixtures", () => {
       },
     ]);
 
-    const res = await app.request("/search/changelog?query=&page=1&limit=1");
+    const res = await app.request("/search/changelog?query=home&page=1&limit=1");
     expect(res.status).toBe(200);
 
     const body = await res.json();
@@ -430,51 +433,95 @@ describe("search route with SeaQA fixtures", () => {
     expect(change.newValueRaw).toBe('{"title":"indexed new"}');
   });
 
-  it("hydrates /search/changelog values from raw OpenSearch values", async () => {
-    const id = "6a2abf73cdd9e513e4910af0";
-    mocks.opensearchSearch.mockResolvedValueOnce(
-      changelogSearchResponse([
-        {
-          _id: id,
-          _source: {
-            timestamp: "2026-06-11T14:00:00.000Z",
-            metadata: {
-              contextType: "product-home",
-              contextId: "home-page",
-              changes: [
-                {
-                  changeType: "update",
-                  field: "array",
-                  oldValue: null,
-                  newValue: null,
-                  oldValueRaw: "[1,2]",
-                  newValueRaw: '{"ok":true}',
-                },
-                {
-                  changeType: "update",
-                  field: "string",
-                  oldValue: null,
-                  newValue: null,
-                  oldValueRaw: '"quoted"',
-                  newValueRaw: "plain text",
-                },
-                {
-                  changeType: "delete",
-                  field: "removed",
-                  oldValue: null,
-                  newValue: null,
-                  oldValueRaw: "42",
-                  newValueRaw: null,
-                },
-              ],
-            },
-          },
-        },
-      ]),
-    );
-    mockChangelogFind([]);
+  it("reads empty changelog searches from Mongo so the latest changes are not delayed by indexing", async () => {
+    const newestChange = {
+      _id: "6a5e74230af20ca5b80b9684",
+      timestamp: "2026-07-20T19:16:51.316Z",
+      metadata: {
+        contextType: "unknown",
+        contextId: "latest-change",
+        changes: [],
+      },
+      toObject() {
+        return {
+          _id: this._id,
+          timestamp: this.timestamp,
+          metadata: this.metadata,
+        };
+      },
+    };
+    mockChangelogFind([newestChange]);
+    vi.spyOn(Changelog, "countDocuments").mockResolvedValue(1);
 
     const res = await app.request("/search/changelog?query=&page=1&limit=1");
+
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toMatchObject({
+      hits: [
+        {
+          _id: newestChange._id,
+          timestamp: newestChange.timestamp,
+        },
+      ],
+      estimatedTotalHits: 1,
+      query: "",
+    });
+    expect(Changelog.find).toHaveBeenCalledWith(
+      { "metadata.contextType": { $nin: ["file", "achievements"] } },
+      undefined,
+      { sort: { timestamp: -1 }, skip: 0, limit: 1 },
+    );
+    expect(mocks.opensearchSearch).not.toHaveBeenCalled();
+  });
+
+  it("hydrates /search/changelog values from raw OpenSearch values", async () => {
+    const id = "6a2abf73cdd9e513e4910af0";
+    mocks.opensearchSearch
+      .mockResolvedValueOnce(changelogSearchResponse([]))
+      .mockResolvedValueOnce(changelogSearchResponse([]))
+      .mockResolvedValueOnce(
+        changelogSearchResponse([
+          {
+            _id: id,
+            _source: {
+              timestamp: "2026-06-11T14:00:00.000Z",
+              metadata: {
+                contextType: "product-home",
+                contextId: "home-page",
+                changes: [
+                  {
+                    changeType: "update",
+                    field: "array",
+                    oldValue: null,
+                    newValue: null,
+                    oldValueRaw: "[1,2]",
+                    newValueRaw: '{"ok":true}',
+                  },
+                  {
+                    changeType: "update",
+                    field: "string",
+                    oldValue: null,
+                    newValue: null,
+                    oldValueRaw: '"quoted"',
+                    newValueRaw: "plain text",
+                  },
+                  {
+                    changeType: "delete",
+                    field: "removed",
+                    oldValue: null,
+                    newValue: null,
+                    oldValueRaw: "42",
+                    newValueRaw: null,
+                  },
+                ],
+              },
+            },
+          },
+        ]),
+      );
+    mockChangelogFind([]);
+
+    const res = await app.request("/search/changelog?query=home&page=1&limit=1");
     expect(res.status).toBe(200);
 
     const body = await res.json();
@@ -491,25 +538,28 @@ describe("search route with SeaQA fixtures", () => {
 
   it("keeps /search/changelog available when document enrichment fails", async () => {
     const id = "6a2abf73cdd9e513e4910af1";
-    mocks.opensearchSearch.mockResolvedValueOnce(
-      changelogSearchResponse([
-        {
-          _id: id,
-          _source: {
-            timestamp: "2026-06-11T14:00:00.000Z",
-            metadata: {
-              contextType: "offer",
-              contextId: "offer-1",
-              changes: [],
+    mocks.opensearchSearch
+      .mockResolvedValueOnce(changelogSearchResponse([]))
+      .mockResolvedValueOnce(changelogSearchResponse([]))
+      .mockResolvedValueOnce(
+        changelogSearchResponse([
+          {
+            _id: id,
+            _source: {
+              timestamp: "2026-06-11T14:00:00.000Z",
+              metadata: {
+                contextType: "offer",
+                contextId: "offer-1",
+                changes: [],
+              },
             },
           },
-        },
-      ]),
-    );
+        ]),
+      );
     mockChangelogFind([]);
     vi.spyOn(Offer, "findOne").mockRejectedValue(new Error("lookup timed out"));
 
-    const res = await app.request("/search/changelog?query=&page=1&limit=1");
+    const res = await app.request("/search/changelog?query=offer&page=1&limit=1");
     expect(res.status).toBe(200);
 
     const body = await res.json();

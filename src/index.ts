@@ -10,7 +10,7 @@ import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import { inspectRoutes } from "hono/dev";
-import { etag } from "hono/etag";
+import { ensureCatalogHydrationIndexes } from "./catalog/resolver.js";
 import { discord } from "./clients/discord.js";
 import { gaClient } from "./clients/ga.js";
 import client, { ioredis } from "./clients/redis.js";
@@ -19,6 +19,7 @@ import { server as graphqlServer } from "./graphql/index.js";
 import { createLoaders } from "./graphql/loaders.js";
 import { honoMiddleware } from "./middlewares/apollo.js";
 import { requestDebugLogger } from "./middlewares/request-logger.js";
+import { responseEtag } from "./middlewares/response-etag.js";
 import {
   Changelog,
   Event,
@@ -35,7 +36,9 @@ import AccountsRoute from "./routes/accounts.js";
 import AdminRoute from "./routes/admin.js";
 import AssetsRoute from "./routes/assets.js";
 import AuthRoute, { epic, type LauncherAuthTokens } from "./routes/auth.js";
+import BuildLauncherRecordsRoute from "./routes/build-launcher-records.js";
 import BuildsRoute from "./routes/builds.js";
+import CatalogHydrateRoute from "./routes/catalog-hydrate.js";
 import CollectionsRoute from "./routes/collections.js";
 import FranchisesRoute from "./routes/franchises.js";
 import FreeGamesRoute from "./routes/free-games.js";
@@ -134,7 +137,7 @@ app.use(
   }),
 );
 
-app.use("/*", etag());
+app.use("/*", responseEtag);
 app.use("/*", requestDebugLogger);
 
 app.use(
@@ -1412,6 +1415,8 @@ app.route("/accounts", AccountsRoute);
 
 app.route("/users", UsersRoute);
 
+app.route("/catalog", CatalogHydrateRoute);
+
 app.route("/collections", CollectionsRoute);
 
 app.route("/profiles", ProfilesRoute);
@@ -1425,6 +1430,7 @@ app.route("/admin", AdminRoute);
 app.route("/assets", AssetsRoute);
 
 app.route("/builds", BuildsRoute);
+app.route("/builds", BuildLauncherRecordsRoute);
 
 app.route("/launcher", LauncherRoute);
 
@@ -1562,6 +1568,7 @@ function installShutdownHandlers(httpServer: ServerType) {
 async function startServer() {
   try {
     await db.connect();
+    await ensureCatalogHydrationIndexes(db.db);
 
     const httpServer = serve({
       fetch: app.fetch,

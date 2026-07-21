@@ -100,7 +100,166 @@ const stringArrayBody = (property: string): OpenAPIV3.SchemaObject => ({
   },
 });
 
+const launcherIdentity: OpenAPIV3.SchemaObject = {
+  type: "object",
+  additionalProperties: false,
+  required: ["artifactId", "catalogItemId", "catalogNamespace"],
+  properties: {
+    artifactId: { type: "string", maxLength: 256 },
+    catalogItemId: { type: "string", maxLength: 256 },
+    catalogNamespace: { type: "string", maxLength: 256 },
+  },
+};
+
+const launcherResolverRequest: OpenAPIV3.SchemaObject = {
+  type: "object",
+  additionalProperties: false,
+  required: ["candidates"],
+  properties: {
+    candidates: {
+      type: "array",
+      minItems: 1,
+      maxItems: 100,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["requestId", "buildAppName", "buildVersion", "platform"],
+        properties: {
+          requestId: { type: "string", minLength: 1, maxLength: 128 },
+          buildAppName: { type: "string", minLength: 1, maxLength: 256 },
+          buildVersion: { type: "string", maxLength: 512 },
+          platform: { type: "string", enum: ["Windows"] },
+          catalogHint: launcherIdentity,
+        },
+      },
+    },
+  },
+};
+
+const launcherResolverResponse: OpenAPIV3.SchemaObject = {
+  type: "object",
+  additionalProperties: false,
+  required: ["results"],
+  properties: {
+    results: {
+      type: "array",
+      maxItems: 100,
+      items: {
+        oneOf: [
+          {
+            type: "object",
+            additionalProperties: false,
+            required: ["requestId", "status", "record"],
+            properties: {
+              requestId: { type: "string" },
+              status: { type: "string", enum: ["resolved"] },
+              record: {
+                type: "object",
+                additionalProperties: false,
+                required: [
+                  "artifactId",
+                  "catalogItemId",
+                  "catalogNamespace",
+                  "displayName",
+                  "kind",
+                  "appCategories",
+                  "mainGame",
+                  "mandatoryAppFolderName",
+                  "canRunOffline",
+                  "requiresAuth",
+                  "ownershipToken",
+                  "ignoredProcessNames",
+                ],
+                properties: {
+                  ...launcherIdentity.properties,
+                  displayName: { type: "string" },
+                  kind: {
+                    type: "string",
+                    enum: ["base-game", "addon", "digital-extra"],
+                  },
+                  appCategories: { type: "array", items: { type: "string" } },
+                  mainGame: { ...launcherIdentity, nullable: true },
+                  mandatoryAppFolderName: { type: "string" },
+                  canRunOffline: { type: "boolean" },
+                  requiresAuth: { type: "boolean" },
+                  ownershipToken: { type: "boolean" },
+                  ignoredProcessNames: {
+                    type: "array",
+                    items: { type: "string" },
+                  },
+                },
+              },
+            },
+          },
+          {
+            type: "object",
+            additionalProperties: false,
+            required: ["requestId", "status"],
+            properties: {
+              requestId: { type: "string" },
+              status: {
+                type: "string",
+                enum: ["not-found", "ambiguous", "unsupported"],
+              },
+            },
+          },
+        ],
+      },
+    },
+  },
+};
+
 export const paths: EgdataPaths = {
+  "/catalog/hydrate": {
+    post: operation({
+      operationId: "hydrateCatalogGraph",
+      tags: ["Catalog"],
+      summary: "Hydrate catalog records for known technical identifiers",
+      description:
+        "Resolves up to 25 item, asset, or release-app roots directly from the catalog collections. The response is NDJSON with one isolated, content-hashed graph result per line.",
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: ref("CatalogHydrationRequest"),
+          },
+        },
+      },
+      response: {
+        200: {
+          description:
+            "An NDJSON stream of resolved, unchanged, not-found, or isolated error results. Each decoded line is at most 2 MiB and 500 records.",
+          content: {
+            "application/x-ndjson": {
+              schema: {
+                type: "string",
+                description:
+                  "Newline-delimited CatalogHydrationRootResult objects.",
+              },
+            },
+          },
+        },
+        400: {
+          description: "The hydration batch is malformed.",
+          content: {
+            "application/json": jsonContent(ref("ErrorResponse")),
+          },
+        },
+        413: {
+          description: "The request body is too large.",
+          content: {
+            "application/json": jsonContent(ref("ErrorResponse")),
+          },
+        },
+        503: {
+          description: "Catalog hydration is temporarily unavailable.",
+          content: {
+            "application/json": jsonContent(ref("ErrorResponse")),
+          },
+        },
+      },
+    }),
+  },
   "/health": {
     get: operation({
       operationId: "getHealth",
@@ -128,6 +287,32 @@ export const paths: EgdataPaths = {
         }),
       ],
       response: arrayOf(ref("Build")),
+    }),
+  },
+  "/builds/resolve-launcher-records": {
+    post: operation({
+      operationId: "resolveLauncherRecords",
+      tags: ["Builds"],
+      summary: "Resolve parsed Windows manifests to launcher metadata",
+      description:
+        "Resolves bounded, path-free metadata from parsed binary manifests. Ambiguous catalog, asset, and parent relationships are returned without guessing.",
+      requestBody: jsonBody(
+        "Up to 100 parsed Windows manifest candidates. Local paths and manifest bytes are not accepted.",
+        launcherResolverRequest,
+      ),
+      response: {
+        200: {
+          description: "A result for each candidate in request order.",
+          content: {
+            "application/json": jsonContent(launcherResolverResponse),
+          },
+        },
+        400: {
+          description:
+            "The request did not satisfy the bounded resolver contract.",
+          content: { "application/json": jsonContent(ref("ErrorResponse")) },
+        },
+      },
     }),
   },
   "/builds/{id}": {

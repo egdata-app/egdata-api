@@ -78,6 +78,90 @@
     }
   ],
   "paths": {
+    "/catalog/hydrate": {
+      "post": {
+        "operationId": "hydrateCatalogGraph",
+        "tags": [
+          "Catalog"
+        ],
+        "summary": "Hydrate catalog records for known technical identifiers",
+        "description": "Resolves up to 25 item, asset, or release-app roots directly from the catalog collections. The response is NDJSON with one isolated, content-hashed graph result per line.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatalogHydrationRequest"
+              }
+            }
+          }
+        },
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "An NDJSON stream of resolved, unchanged, not-found, or isolated error results. Each decoded line is at most 2 MiB and 500 records.",
+            "content": {
+              "application/x-ndjson": {
+                "schema": {
+                  "type": "string",
+                  "description": "Newline-delimited CatalogHydrationRootResult objects."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "The request body is too large.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Catalog hydration is temporarily unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "operationId": "getHealth",
@@ -202,6 +286,282 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Build"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/builds/resolve-launcher-records": {
+      "post": {
+        "operationId": "resolveLauncherRecords",
+        "tags": [
+          "Builds"
+        ],
+        "summary": "Resolve parsed Windows manifests to launcher metadata",
+        "description": "Resolves bounded, path-free metadata from parsed binary manifests. Ambiguous catalog, asset, and parent relationships are returned without guessing.",
+        "requestBody": {
+          "required": true,
+          "description": "Up to 100 parsed Windows manifest candidates. Local paths and manifest bytes are not accepted.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "candidates"
+                ],
+                "properties": {
+                  "candidates": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "requestId",
+                        "buildAppName",
+                        "buildVersion",
+                        "platform"
+                      ],
+                      "properties": {
+                        "requestId": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 128
+                        },
+                        "buildAppName": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 256
+                        },
+                        "buildVersion": {
+                          "type": "string",
+                          "maxLength": 512
+                        },
+                        "platform": {
+                          "type": "string",
+                          "enum": [
+                            "Windows"
+                          ]
+                        },
+                        "catalogHint": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "artifactId",
+                            "catalogItemId",
+                            "catalogNamespace"
+                          ],
+                          "properties": {
+                            "artifactId": {
+                              "type": "string",
+                              "maxLength": 256
+                            },
+                            "catalogItemId": {
+                              "type": "string",
+                              "maxLength": 256
+                            },
+                            "catalogNamespace": {
+                              "type": "string",
+                              "maxLength": 256
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "A result for each candidate in request order.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "results"
+                  ],
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "maxItems": 100,
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "requestId",
+                              "status",
+                              "record"
+                            ],
+                            "properties": {
+                              "requestId": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "resolved"
+                                ]
+                              },
+                              "record": {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": [
+                                  "artifactId",
+                                  "catalogItemId",
+                                  "catalogNamespace",
+                                  "displayName",
+                                  "kind",
+                                  "appCategories",
+                                  "mainGame",
+                                  "mandatoryAppFolderName",
+                                  "canRunOffline",
+                                  "requiresAuth",
+                                  "ownershipToken",
+                                  "ignoredProcessNames"
+                                ],
+                                "properties": {
+                                  "artifactId": {
+                                    "type": "string",
+                                    "maxLength": 256
+                                  },
+                                  "catalogItemId": {
+                                    "type": "string",
+                                    "maxLength": 256
+                                  },
+                                  "catalogNamespace": {
+                                    "type": "string",
+                                    "maxLength": 256
+                                  },
+                                  "displayName": {
+                                    "type": "string"
+                                  },
+                                  "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                      "base-game",
+                                      "addon",
+                                      "digital-extra"
+                                    ]
+                                  },
+                                  "appCategories": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "mainGame": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "artifactId",
+                                      "catalogItemId",
+                                      "catalogNamespace"
+                                    ],
+                                    "properties": {
+                                      "artifactId": {
+                                        "type": "string",
+                                        "maxLength": 256
+                                      },
+                                      "catalogItemId": {
+                                        "type": "string",
+                                        "maxLength": 256
+                                      },
+                                      "catalogNamespace": {
+                                        "type": "string",
+                                        "maxLength": 256
+                                      }
+                                    },
+                                    "nullable": true
+                                  },
+                                  "mandatoryAppFolderName": {
+                                    "type": "string"
+                                  },
+                                  "canRunOffline": {
+                                    "type": "boolean"
+                                  },
+                                  "requiresAuth": {
+                                    "type": "boolean"
+                                  },
+                                  "ownershipToken": {
+                                    "type": "boolean"
+                                  },
+                                  "ignoredProcessNames": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "requestId",
+                              "status"
+                            ],
+                            "properties": {
+                              "requestId": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "not-found",
+                                  "ambiguous",
+                                  "unsupported"
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
                   }
                 }
               }
@@ -8029,6 +8389,952 @@
       }
     },
     "schemas": {
+      "CatalogImage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "url"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "md5": {
+            "type": "string",
+            "maxLength": 256
+          }
+        }
+      },
+      "CatalogTag": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 512
+          }
+        }
+      },
+      "CatalogCustomAttribute": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "value"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 65536
+          },
+          "type": {
+            "type": "string",
+            "maxLength": 256
+          }
+        }
+      },
+      "CatalogOfferRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "namespace",
+          "id",
+          "title",
+          "keyImages",
+          "tags",
+          "categories",
+          "customAttributes",
+          "countriesBlacklist",
+          "countriesWhitelist",
+          "offerMappings"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "offer"
+            ]
+          },
+          "namespace": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "id": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 65536
+          },
+          "longDescription": {
+            "type": "string",
+            "maxLength": 65536
+          },
+          "offerType": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "seller": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "name"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 256
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 512
+              }
+            }
+          },
+          "developerDisplayName": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "publisherDisplayName": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "productSlug": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "urlSlug": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "keyImages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogImage"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogTag"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "customAttributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogCustomAttribute"
+            }
+          },
+          "effectiveDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "releaseDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "pcReleaseDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "viewableDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "prePurchase": {
+            "type": "boolean"
+          },
+          "isCodeRedemptionOnly": {
+            "type": "boolean"
+          },
+          "countriesBlacklist": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "countriesWhitelist": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "refundType": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "offerMappings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "pageSlug",
+                "pageType"
+              ],
+              "properties": {
+                "pageSlug": {
+                  "type": "string",
+                  "maxLength": 4096
+                },
+                "pageType": {
+                  "type": "string",
+                  "maxLength": 256
+                }
+              }
+            }
+          }
+        }
+      },
+      "CatalogItemRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "namespace",
+          "id",
+          "title",
+          "keyImages",
+          "categories",
+          "customAttributes",
+          "eulaIds",
+          "installModes"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "item"
+            ]
+          },
+          "namespace": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "id": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 65536
+          },
+          "longDescription": {
+            "type": "string",
+            "maxLength": 65536
+          },
+          "technicalDetails": {
+            "type": "string",
+            "maxLength": 65536
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "entitlementName": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "entitlementType": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "itemType": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "keyImages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogImage"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "customAttributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogCustomAttribute"
+            }
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "developer": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "developerId": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "eulaIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "installModes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "endOfSupport": {
+            "type": "boolean"
+          },
+          "selfRefundable": {
+            "type": "boolean"
+          },
+          "applicationId": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "unsearchable": {
+            "type": "boolean"
+          },
+          "requiresSecureAccount": {
+            "type": "boolean"
+          },
+          "entitlementStartDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "entitlementEndDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "useCount": {
+            "type": "number",
+            "minimum": 0
+          },
+          "primaryOfferNamespace": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "primaryOfferId": {
+            "type": "string",
+            "maxLength": 256
+          }
+        }
+      },
+      "CatalogAssetRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "namespace",
+          "artifactId",
+          "platform",
+          "itemNamespace",
+          "itemId"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "asset"
+            ]
+          },
+          "namespace": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "artifactId": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "platform": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "itemNamespace": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "itemId": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "downloadSizeBytes": {
+            "type": "number",
+            "minimum": 0
+          },
+          "installedSizeBytes": {
+            "type": "number",
+            "minimum": 0
+          },
+          "primaryOfferNamespace": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "primaryOfferId": {
+            "type": "string",
+            "maxLength": 256
+          }
+        }
+      },
+      "CatalogReleaseAppRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "namespace",
+          "appId",
+          "platform",
+          "itemNamespace",
+          "itemId"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "release-app"
+            ]
+          },
+          "namespace": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "appId": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "platform": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "itemNamespace": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "itemId": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "releaseId": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "primaryOfferNamespace": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "primaryOfferId": {
+            "type": "string",
+            "maxLength": 256
+          }
+        }
+      },
+      "CatalogOfferItemRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "offerNamespace",
+          "offerId",
+          "itemNamespace",
+          "itemId",
+          "sources",
+          "isPrimary"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "offer-item"
+            ]
+          },
+          "offerNamespace": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "offerId": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "itemNamespace": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "itemId": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "sources": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "direct",
+                "subitem",
+                "linked"
+              ]
+            }
+          },
+          "isPrimary": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CatalogRecord": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CatalogOfferRecord"
+          },
+          {
+            "$ref": "#/components/schemas/CatalogItemRecord"
+          },
+          {
+            "$ref": "#/components/schemas/CatalogAssetRecord"
+          },
+          {
+            "$ref": "#/components/schemas/CatalogReleaseAppRecord"
+          },
+          {
+            "$ref": "#/components/schemas/CatalogOfferItemRecord"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "CatalogHydrationIdentifier": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type",
+              "namespace",
+              "id"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "item"
+                ]
+              },
+              "namespace": {
+                "type": "string",
+                "maxLength": 256
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 256
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type",
+              "namespace",
+              "artifactId",
+              "platform"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "asset"
+                ]
+              },
+              "namespace": {
+                "type": "string",
+                "maxLength": 256
+              },
+              "artifactId": {
+                "type": "string",
+                "maxLength": 256
+              },
+              "platform": {
+                "type": "string",
+                "maxLength": 64
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type",
+              "namespace",
+              "appId",
+              "platform"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "release-app"
+                ]
+              },
+              "namespace": {
+                "type": "string",
+                "maxLength": 256
+              },
+              "appId": {
+                "type": "string",
+                "maxLength": 256
+              },
+              "platform": {
+                "type": "string",
+                "maxLength": 64
+              }
+            }
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "CatalogHydrationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "identifiers",
+          "knownRoots",
+          "knownRecords"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "enum": [
+              2
+            ]
+          },
+          "identifiers": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 25,
+            "items": {
+              "$ref": "#/components/schemas/CatalogHydrationIdentifier"
+            }
+          },
+          "knownRoots": {
+            "type": "array",
+            "maxItems": 25,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "rootKey",
+                "graphHash"
+              ],
+              "properties": {
+                "rootKey": {
+                  "type": "string",
+                  "maxLength": 4096
+                },
+                "graphHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          },
+          "knownRecords": {
+            "type": "array",
+            "maxItems": 5000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "recordKey",
+                "sha256"
+              ],
+              "properties": {
+                "recordKey": {
+                  "type": "string",
+                  "maxLength": 4096
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CatalogHydrationRootResult": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schemaVersion",
+              "rootKey",
+              "identifier",
+              "hydratedAt",
+              "status",
+              "graphHash"
+            ],
+            "properties": {
+              "schemaVersion": {
+                "type": "integer",
+                "enum": [
+                  2
+                ]
+              },
+              "rootKey": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "identifier": {
+                "$ref": "#/components/schemas/CatalogHydrationIdentifier"
+              },
+              "hydratedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "unchanged"
+                ]
+              },
+              "graphHash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schemaVersion",
+              "rootKey",
+              "identifier",
+              "hydratedAt",
+              "status"
+            ],
+            "properties": {
+              "schemaVersion": {
+                "type": "integer",
+                "enum": [
+                  2
+                ]
+              },
+              "rootKey": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "identifier": {
+                "$ref": "#/components/schemas/CatalogHydrationIdentifier"
+              },
+              "hydratedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not-found"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schemaVersion",
+              "rootKey",
+              "identifier",
+              "hydratedAt",
+              "status",
+              "graphHash",
+              "recordKeys",
+              "records"
+            ],
+            "properties": {
+              "schemaVersion": {
+                "type": "integer",
+                "enum": [
+                  2
+                ]
+              },
+              "rootKey": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "identifier": {
+                "$ref": "#/components/schemas/CatalogHydrationIdentifier"
+              },
+              "hydratedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "resolved"
+                ]
+              },
+              "graphHash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "recordKeys": {
+                "type": "array",
+                "maxItems": 500,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "maxLength": 4096
+                }
+              },
+              "records": {
+                "type": "array",
+                "maxItems": 500,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "recordKey",
+                    "sha256",
+                    "record"
+                  ],
+                  "properties": {
+                    "recordKey": {
+                      "type": "string",
+                      "maxLength": 4096
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "record": {
+                      "$ref": "#/components/schemas/CatalogRecord"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schemaVersion",
+              "rootKey",
+              "identifier",
+              "hydratedAt",
+              "status",
+              "error"
+            ],
+            "properties": {
+              "schemaVersion": {
+                "type": "integer",
+                "enum": [
+                  2
+                ]
+              },
+              "rootKey": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "identifier": {
+                "$ref": "#/components/schemas/CatalogHydrationIdentifier"
+              },
+              "hydratedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "error"
+                ]
+              },
+              "error": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "code",
+                  "message"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "maxLength": 128
+                  },
+                  "message": {
+                    "type": "string",
+                    "maxLength": 500
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "discriminator": {
+          "propertyName": "status"
+        }
+      },
       "ErrorResponse": {
         "type": "object",
         "additionalProperties": false,

@@ -1,0 +1,64 @@
+---
+title: Launcher Record Resolution
+description: Resolve parsed Windows build metadata to safe Epic Games Launcher records.
+---
+
+Use `POST /builds/resolve-launcher-records` after parsing Epic binary manifests locally. The endpoint accepts metadata only: do not send manifest bytes or local filesystem paths.
+
+Each request contains between 1 and 100 candidates. `requestId` values must be unique within the request.
+
+```sh
+curl -X POST "https://api.egdata.app/builds/resolve-launcher-records" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "candidates": [{
+      "requestId": "candidate-1",
+      "buildAppName": "ParsedManifestAppName",
+      "buildVersion": "1.2.3",
+      "platform": "Windows",
+      "catalogHint": {
+        "artifactId": "LauncherArtifact",
+        "catalogItemId": "CatalogItem",
+        "catalogNamespace": "CatalogNamespace"
+      }
+    }]
+  }'
+```
+
+`catalogHint` is optional and is intended for data read from the same-basename `.mancpn` companion. Hints are validated against Windows assets; they are not trusted as launcher records by themselves.
+
+## Results
+
+The response preserves request order and returns one of four statuses per candidate:
+
+- `resolved` includes normalized catalog identity, launcher artifact, display metadata, record kind, categories, launch policy flags, process exclusions, and parent base-game identity for add-ons or digital extras.
+- `not-found` means no matching catalog item was found.
+- `ambiguous` means more than one item, asset, or parent could be correct.
+- `unsupported` means the catalog relationship is known but cannot produce a complete launcher record.
+
+Clients must not guess when a result is ambiguous or unsupported. Keep those candidates in a review state and do not write Epic Games Launcher files.
+
+```json
+{
+  "results": [
+    {
+      "requestId": "candidate-1",
+      "status": "resolved",
+      "record": {
+        "artifactId": "LauncherArtifact",
+        "catalogItemId": "CatalogItem",
+        "catalogNamespace": "CatalogNamespace",
+        "displayName": "Example Game",
+        "kind": "base-game",
+        "appCategories": ["public", "games", "applications"],
+        "mainGame": null,
+        "mandatoryAppFolderName": "ExampleGame",
+        "canRunOffline": true,
+        "requiresAuth": true,
+        "ownershipToken": false,
+        "ignoredProcessNames": []
+      }
+    }
+  ]
+}
+```
