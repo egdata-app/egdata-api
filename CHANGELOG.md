@@ -4,6 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Routed offer, item, and achievement regeneration requests through the signed Temporal job API while preserving existing public endpoint contracts and achievement cooldowns.
 - Fixed empty changelog searches to return the latest canonical MongoDB records instead of waiting for OpenSearch indexing.
 - Replaced bulk catalog exports with `POST /catalog/hydrate` schema v2, which streams independently bounded, content-aware root graphs directly from authoritative collections for incremental local-first clients.
 - Added idempotent catalog resolver indexes and an explicit confirmation-gated command for removing legacy materialized catalog collections after rollout verification.
