@@ -22,11 +22,21 @@ Open:
 http://localhost:4000
 ```
 
-Start Redis when working with routes that depend on cache or queues:
+Start Redis when working with routes that depend on cache:
 
 ```sh
 sudo service redis-server start
 ```
+
+Offer, item, and achievement regeneration routes submit signed jobs to the Temporal job API. Production must provide:
+
+```txt
+JOB_API_BASE_URL=https://jobs.egdata.app
+JOB_API_KEY_ID=egdata-api
+JOB_API_SECRET=... # at least 32 bytes; store only in the deployment secret manager
+```
+
+The backend key should be scoped only to `jobs:submit:offer-regen`, `jobs:submit:item-regen`, and `jobs:submit:achievement-refresh`. The API fails closed instead of reporting a successful regeneration when durable workflow acceptance cannot be confirmed.
 
 Natural-language offer search requires a Cloudflare API token with Workers AI Read and Vectorize Read permissions:
 
