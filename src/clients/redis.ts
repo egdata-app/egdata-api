@@ -13,9 +13,4 @@ const client = new IORedis({
   maxRetriesPerRequest: null,
 });
 
-const ioredis = new IORedis(process.env.BULL_REDIS_URI || "", {
-  maxRetriesPerRequest: null,
-});
-
 export default client;
-export { ioredis };

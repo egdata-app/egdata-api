@@ -13,7 +13,7 @@ import { inspectRoutes } from "hono/dev";
 import { ensureCatalogHydrationIndexes } from "./catalog/resolver.js";
 import { discord } from "./clients/discord.js";
 import { gaClient } from "./clients/ga.js";
-import client, { ioredis } from "./clients/redis.js";
+import client from "./clients/redis.js";
 import { db } from "./db/index.js";
 import { server as graphqlServer } from "./graphql/index.js";
 import { createLoaders } from "./graphql/loaders.js";
@@ -1541,7 +1541,6 @@ function installShutdownHandlers(httpServer: ServerType) {
       const shutdownResults = await Promise.allSettled([
         graphqlServer.stop(),
         client.quit(),
-        ioredis.quit(),
         db.disconnect(),
       ]);
       const failedShutdown = shutdownResults.find(

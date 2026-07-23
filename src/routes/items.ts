@@ -1,6 +1,9 @@
-import { Queue } from "bullmq";
 import { Hono } from "hono";
-import client, { ioredis } from "../clients/redis.js";
+import {
+  submitJobApiBatch,
+  submitJobApiRequest,
+} from "../clients/job-api.js";
+import client from "../clients/redis.js";
 import { db } from "../db/index.js";
 import { Asset, Item, Offer } from "../models/index.js";
 import { attributesToObject } from "../utils/attributes-to-object.js";
@@ -16,10 +19,6 @@ import {
   localizeOffer,
   localizeOffers,
 } from "../utils/offer-localization.js";
-
-const regenItemsQueue = new Queue<{ id: string }>("regenItemsQueue", {
-  connection: ioredis,
-});
 
 const app = new Hono();
 
@@ -562,7 +561,7 @@ app.get("/:id/offer", async (c) => {
 app.put("/regen/:id", async (c) => {
   const { id } = c.req.param();
 
-  await regenItemsQueue.add(`regen-item`, { id });
+  await submitJobApiRequest("item-regen", { id });
 
   return c.json({ message: "Item regen requested" }, 200);
 });
@@ -570,11 +569,9 @@ app.put("/regen/:id", async (c) => {
 app.post("/bulk-regen", async (c) => {
   const { items } = await c.req.json<{ items: string[] }>();
 
-  await regenItemsQueue.addBulk(
-    items.map((o) => ({
-      name: `regen-item`,
-      data: { id: o },
-    })),
+  await submitJobApiBatch(
+    "item-regen",
+    items.map((id) => ({ id })),
   );
 
   return c.json({ message: "Item regen requested" }, 200);

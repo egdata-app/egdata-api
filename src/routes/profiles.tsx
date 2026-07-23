@@ -1,11 +1,11 @@
 import { Hono } from "hono";
+import { requestAchievementRefresh } from "../clients/achievement-refresh.js";
 import { epicStoreClient } from "../clients/epic.js";
-import client, { ioredis } from "../clients/redis.js";
+import client from "../clients/redis.js";
 import type { AchievementsSummary } from "../types/get-user-achievements.js";
 import { db } from "../db/index.js";
 import { AchievementSet, Offer, Sandbox } from "../models/index.js";
 import { auth } from "../utils/auth.js";
-import { Queue } from "bullmq";
 import consola from "consola";
 
 export interface PlayerProductAchievements {
@@ -84,17 +84,6 @@ interface SingleAchievement {
   };
   completionPercentage: number;
 }
-
-type RegenOfferQueueType = {
-  accountId: string;
-};
-
-const refreshAchievementsQueue = new Queue<RegenOfferQueueType>(
-  "refreshAchievementsQueue",
-  {
-    connection: ioredis,
-  }
-);
 
 const app = new Hono();
 
@@ -1529,27 +1518,10 @@ app.put("/:id/refresh", async (c) => {
 
   const ttl = !isDonor ? 15 * 60 * 1000 : 2 * 60 * 1000;
 
-  const job = await refreshAchievementsQueue.add(
-    `refresh-achievements:${id}`,
-    {
-      accountId: id,
-    },
-    {
-      deduplication: {
-        id: `refresh-achievements:${id}`,
-        ttl,
-      },
-    }
-  );
-
-  consola.info("Job added", job.asJSON());
-
-  await client.set(
-    `refresh-achievements:${id}`,
-    JSON.stringify(job.asJSON()),
-    "EX",
-    ttl
-  );
+  const refresh = await requestAchievementRefresh(id, ttl);
+  if (refresh.metadata) {
+    consola.info("Temporal achievement refresh accepted", refresh.metadata);
+  }
 
   return c.json({
     message: "Refresh achievements job added",
