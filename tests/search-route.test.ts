@@ -103,6 +103,9 @@ describe("search route with SeaQA fixtures", () => {
             aggregations: {
               offerType: { buckets: [{ key: "BUNDLE", doc_count: 1 }] },
               tags: { buckets: [] },
+              technologies: {
+                buckets: [{ key: "Unreal", doc_count: 1 }],
+              },
               developer: { buckets: [] },
               publisher: { buckets: [] },
               seller: { buckets: [{ key: "Test", doc_count: offers.length }] },
@@ -204,6 +207,73 @@ describe("search route with SeaQA fixtures", () => {
         }),
       }),
     );
+  });
+
+  it("filters by every selected technology and returns technology facets", async () => {
+    const res = await app.request("/search/v2/search?country=US", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        technologies: [" Unreal ", "NVIDIA_DLSS", "Unreal"],
+        limit: 10,
+      }),
+    });
+
+    expect(mocks.opensearchSearch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        index: "egdata.offers",
+        body: expect.objectContaining({
+          query: {
+            bool: {
+              must: [],
+              filter: [
+                {
+                  terms_set: {
+                    "lastBuilds.technologies.technology.keyword": {
+                      terms: ["Unreal", "NVIDIA_DLSS"],
+                      minimum_should_match_script: {
+                        source: "2",
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          aggregations: expect.objectContaining({
+            technologies: {
+              terms: {
+                field: "lastBuilds.technologies.technology.keyword",
+                size: 10_000,
+              },
+            },
+          }),
+        }),
+      }),
+    );
+
+    const body = await res.json();
+    expect(body.aggregations.technologies.buckets).toEqual([
+      { key: "Unreal", doc_count: 1 },
+    ]);
+  });
+
+  it("rejects non-array and empty technology filters", async () => {
+    for (const technologies of ["Unreal", [" "]]) {
+      const res = await app.request("/search/v2/search?country=US", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ technologies }),
+      });
+
+      expect(res.status).toBe(400);
+      await expect(res.json()).resolves.toEqual({
+        message:
+          "Invalid technologies. Provide an array of non-empty technology names.",
+      });
+    }
+
+    expect(mocks.opensearchSearch).not.toHaveBeenCalled();
   });
 
   it("queries paginated historical lows with positive regional prices ordered by price update", async () => {
