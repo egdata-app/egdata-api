@@ -5,6 +5,23 @@ description: Filter and sort Epic Games Store offers with the regional OpenSearc
 
 Use `POST /search/v2/search` for catalog search, filters, facets, regional prices, and pagination. Pass the visitor's ISO country code in the `country` query parameter so price filters, price sorts, and the returned `price` record use the corresponding Epic pricing region.
 
+## Technology Filters
+
+Pass `technologies` as an array of detected build technology names. An offer must contain every selected technology:
+
+```http
+POST /search/v2/search?country=US
+Content-Type: application/json
+
+{
+  "technologies": ["Unreal", "NVIDIA_DLSS"],
+  "page": 1,
+  "limit": 25
+}
+```
+
+Every response includes `aggregations.technologies.buckets`. Each bucket contains a technology name in `key` and the number of matching offers in `doc_count`. Counts are scoped to the request's active filters and count offers rather than individual platform builds.
+
 ## Historical Lows
 
 The following request returns the 25 most recently updated paid offers that are currently at their historical US low:

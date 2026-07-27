@@ -988,6 +988,12 @@ export const components: OpenAPIV3.ComponentsObject = {
           type: "array",
           items: { type: "string" },
         },
+        technologies: {
+          type: "array",
+          items: { type: "string" },
+          description:
+            "Detected build technologies that every matching offer must contain. Available values and matching offer counts are returned in `aggregations.technologies.buckets`.",
+        },
         customAttributes: {
           type: "array",
           items: { type: "string" },

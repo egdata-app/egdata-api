@@ -35,6 +35,8 @@ import { orderOffersObject } from "../utils/order-offers-object.js";
 type AggregationContainer = Types.Common_Aggregations.AggregationContainer;
 type PipelineStage = Record<string, unknown>;
 
+const TECHNOLOGY_FIELD = "lastBuilds.technologies.technology.keyword";
+
 interface SearchBody {
   title?: string;
   offerType?:
@@ -54,6 +56,7 @@ interface SearchBody {
     | "DIGITAL_EXTRA"
     | "EDITION";
   tags?: string[];
+  technologies?: string[];
   customAttributes?: string[];
   seller?: string;
   sortBy?:
@@ -1304,6 +1307,18 @@ app.post("/v2/search", async (c) => {
       },
     });
   }
+  if (q.technologies?.length) {
+    filter.push({
+      terms_set: {
+        [TECHNOLOGY_FIELD]: {
+          terms: q.technologies,
+          minimum_should_match_script: {
+            source: q.technologies.length.toString(),
+          },
+        },
+      },
+    });
+  }
   if (q.categories?.length)
     filter.push({ terms: { "categories.keyword": q.categories } });
   if (q.customAttributes?.length)
@@ -1461,6 +1476,7 @@ app.post("/v2/search", async (c) => {
   const aggregations: Record<string, AggregationContainer> = {
     offerType: { terms: { field: "offerType.keyword", size: 100 } },
     tags: { terms: { field: "tags.name.keyword", size: 10_000 } },
+    technologies: { terms: { field: TECHNOLOGY_FIELD, size: 10_000 } },
     developer: { terms: { field: "developerDisplayName.keyword", size: 1000 } },
     publisher: { terms: { field: "publisherDisplayName.keyword", size: 1000 } },
     seller: { terms: { field: "seller.name.keyword", size: 1000 } },
