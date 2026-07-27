@@ -1455,7 +1455,7 @@ export const paths: EgdataPaths = {
       parameters: [parameterRef("country"), parameterRef("locale")],
       requestBody: jsonBody(
         "Search filters and sort options.",
-        ref("SearchBody"),
+        ref("SearchV2Body"),
       ),
       response: ref("SearchResponse"),
     }),

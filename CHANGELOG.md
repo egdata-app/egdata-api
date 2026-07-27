@@ -4,7 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
-- Added detected build technology filtering and technology facets with matching offer counts to `POST /search/v2/search`.
+- Added validated detected-build technology filtering and documented technology facet counts to `POST /search/v2/search`.
 - Routed Epic Store GraphQL profile requests through Node's core HTTP transport with the current Epic Games Launcher identity to avoid Cloudflare challenges against Undici.
 - Routed offer, item, and achievement regeneration requests through the signed Temporal job API while preserving existing public endpoint contracts and achievement cooldowns.
 - Fixed empty changelog searches to return the latest canonical MongoDB records instead of waiting for OpenSearch indexing.

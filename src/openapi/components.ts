@@ -24,6 +24,86 @@ const changelogValue: OpenAPIV3.SchemaObject = {
   nullable: true,
 };
 
+const searchBodySchema = (
+  extraProperties: Record<
+    string,
+    OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject
+  > = {},
+): OpenAPIV3.SchemaObject => ({
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    title: { type: "string" },
+    offerType: { type: "string" },
+    tags: {
+      type: "array",
+      items: { type: "string" },
+    },
+    customAttributes: {
+      type: "array",
+      items: { type: "string" },
+    },
+    categories: {
+      type: "array",
+      items: { type: "string" },
+    },
+    seller: { type: "string" },
+    sortBy: {
+      type: "string",
+      description:
+        "Field used to order results. `priceUpdatedAt` sorts by `prices.<selected region>.updatedAt`.",
+      enum: [
+        "releaseDate",
+        "lastModifiedDate",
+        "effectiveDate",
+        "creationDate",
+        "viewableDate",
+        "pcReleaseDate",
+        "upcoming",
+        "priceAsc",
+        "priceDesc",
+        "price",
+        "discount",
+        "discountPercent",
+        "priceUpdatedAt",
+        "giveawayDate",
+      ],
+    },
+    sortDir: {
+      type: "string",
+      enum: ["asc", "desc"],
+    },
+    limit: {
+      type: "integer",
+      minimum: 1,
+      maximum: 100,
+    },
+    page: {
+      type: "integer",
+      minimum: 1,
+    },
+    refundType: { type: "string" },
+    isCodeRedemptionOnly: { type: "boolean" },
+    price: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        min: { type: "number" },
+        max: { type: "number" },
+      },
+    },
+    onSale: { type: "boolean" },
+    developerDisplayName: { type: "string" },
+    publisherDisplayName: { type: "string" },
+    spt: { type: "boolean" },
+    excludeBlockchain: { type: "boolean" },
+    pastGiveaways: { type: "boolean" },
+    isLowestPrice: { type: "boolean" },
+    isLowestPriceEver: { type: "boolean" },
+    ...extraProperties,
+  },
+});
+
 export const commonParameters = {
   country: {
     name: "country",
@@ -914,6 +994,27 @@ export const components: OpenAPIV3.ComponentsObject = {
         aggregations: {
           type: "object",
           additionalProperties: true,
+          properties: {
+            technologies: {
+              type: "object",
+              additionalProperties: true,
+              required: ["buckets"],
+              properties: {
+                buckets: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    additionalProperties: true,
+                    required: ["key", "doc_count"],
+                    properties: {
+                      key: { type: "string" },
+                      doc_count: { type: "integer" },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
         meta: {
           type: "object",
@@ -978,85 +1079,18 @@ export const components: OpenAPIV3.ComponentsObject = {
         },
       },
     },
-    SearchBody: {
-      type: "object",
-      additionalProperties: false,
-      properties: {
-        title: { type: "string" },
-        offerType: { type: "string" },
-        tags: {
-          type: "array",
-          items: { type: "string" },
-        },
-        technologies: {
-          type: "array",
-          items: { type: "string" },
-          description:
-            "Detected build technologies that every matching offer must contain. Available values and matching offer counts are returned in `aggregations.technologies.buckets`.",
-        },
-        customAttributes: {
-          type: "array",
-          items: { type: "string" },
-        },
-        categories: {
-          type: "array",
-          items: { type: "string" },
-        },
-        seller: { type: "string" },
-        sortBy: {
+    SearchBody: searchBodySchema(),
+    SearchV2Body: searchBodySchema({
+      technologies: {
+        type: "array",
+        items: {
           type: "string",
-          description:
-            "Field used to order results. `priceUpdatedAt` sorts by `prices.<selected region>.updatedAt`.",
-          enum: [
-            "releaseDate",
-            "lastModifiedDate",
-            "effectiveDate",
-            "creationDate",
-            "viewableDate",
-            "pcReleaseDate",
-            "upcoming",
-            "priceAsc",
-            "priceDesc",
-            "price",
-            "discount",
-            "discountPercent",
-            "priceUpdatedAt",
-            "giveawayDate",
-          ],
+          minLength: 1,
         },
-        sortDir: {
-          type: "string",
-          enum: ["asc", "desc"],
-        },
-        limit: {
-          type: "integer",
-          minimum: 1,
-          maximum: 100,
-        },
-        page: {
-          type: "integer",
-          minimum: 1,
-        },
-        refundType: { type: "string" },
-        isCodeRedemptionOnly: { type: "boolean" },
-        price: {
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            min: { type: "number" },
-            max: { type: "number" },
-          },
-        },
-        onSale: { type: "boolean" },
-        developerDisplayName: { type: "string" },
-        publisherDisplayName: { type: "string" },
-        spt: { type: "boolean" },
-        excludeBlockchain: { type: "boolean" },
-        pastGiveaways: { type: "boolean" },
-        isLowestPrice: { type: "boolean" },
-        isLowestPriceEver: { type: "boolean" },
+        description:
+          "Detected build technologies that every matching offer must contain. Values are trimmed and duplicates are ignored. Available values and matching offer counts are returned in `aggregations.technologies.buckets`.",
       },
-    },
+    }),
     Item: flexibleObject("Public Epic Games Store item DTO.", {
       id: { type: "string" },
       namespace: { type: "string", nullable: true },

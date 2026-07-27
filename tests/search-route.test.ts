@@ -214,7 +214,7 @@ describe("search route with SeaQA fixtures", () => {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        technologies: ["Unreal", "NVIDIA_DLSS"],
+        technologies: [" Unreal ", "NVIDIA_DLSS", "Unreal"],
         limit: 10,
       }),
     });
@@ -256,6 +256,24 @@ describe("search route with SeaQA fixtures", () => {
     expect(body.aggregations.technologies.buckets).toEqual([
       { key: "Unreal", doc_count: 1 },
     ]);
+  });
+
+  it("rejects non-array and empty technology filters", async () => {
+    for (const technologies of ["Unreal", [" "]]) {
+      const res = await app.request("/search/v2/search?country=US", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ technologies }),
+      });
+
+      expect(res.status).toBe(400);
+      await expect(res.json()).resolves.toEqual({
+        message:
+          "Invalid technologies. Provide an array of non-empty technology names.",
+      });
+    }
+
+    expect(mocks.opensearchSearch).not.toHaveBeenCalled();
   });
 
   it("queries paginated historical lows with positive regional prices ordered by price update", async () => {

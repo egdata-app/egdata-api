@@ -56,7 +56,6 @@ interface SearchBody {
     | "DIGITAL_EXTRA"
     | "EDITION";
   tags?: string[];
-  technologies?: string[];
   customAttributes?: string[];
   seller?: string;
   sortBy?:
@@ -94,12 +93,21 @@ interface SearchBody {
   isLowestPriceEver?: boolean;
 }
 
+interface SearchV2Body extends SearchBody {
+  technologies?: string[];
+}
+
 const naturalLanguageSearchBodySchema = z
   .object({
     query: z.string().trim().min(1).max(500),
     topK: z.number().int().min(1).max(50).optional(),
   })
   .strict();
+
+const technologyFilterSchema = z
+  .array(z.string().trim().min(1))
+  .transform((technologies) => Array.from(new Set(technologies)))
+  .optional();
 
 interface MongoQuery {
   $text?: {
@@ -1249,7 +1257,24 @@ app.post("/v2/search", async (c) => {
   if (!body) {
     return c.json({ message: "Invalid body" }, 400);
   }
-  const q = body as SearchBody;
+  const rawTechnologies =
+    typeof body === "object" && !Array.isArray(body)
+      ? (body as Record<string, unknown>).technologies
+      : undefined;
+  const parsedTechnologies = technologyFilterSchema.safeParse(rawTechnologies);
+  if (!parsedTechnologies.success) {
+    return c.json(
+      {
+        message:
+          "Invalid technologies. Provide an array of non-empty technology names.",
+      },
+      400,
+    );
+  }
+  const q: SearchV2Body = {
+    ...(body as SearchBody),
+    technologies: parsedTechnologies.data,
+  };
 
   const limit = Math.min(q.limit ?? 10, 100);
   const page = Math.max(q.page ?? 1, 1);

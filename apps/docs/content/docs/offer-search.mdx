@@ -7,7 +7,7 @@ Use `POST /search/v2/search` for catalog search, filters, facets, regional price
 
 ## Technology Filters
 
-Pass `technologies` as an array of detected build technology names. An offer must contain every selected technology:
+Pass `technologies` as an array of non-empty detected build technology names. Values are trimmed, duplicates are ignored, and an offer must contain every selected technology:
 
 ```http
 POST /search/v2/search?country=US
