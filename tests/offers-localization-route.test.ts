@@ -13,13 +13,13 @@ const mocks = vi.hoisted(() => ({
   offerFindOneLean: vi.fn(),
   offerCountDocuments: vi.fn(),
   priceFind: vi.fn(),
+  submitJobApiBatch: vi.fn(),
+  submitJobApiRequest: vi.fn(),
 }));
 
-vi.mock("bullmq", () => ({
-  Queue: vi.fn().mockImplementation(() => ({
-    add: vi.fn(),
-    addBulk: vi.fn(),
-  })),
+vi.mock("../src/clients/job-api.js", () => ({
+  submitJobApiBatch: mocks.submitJobApiBatch,
+  submitJobApiRequest: mocks.submitJobApiRequest,
 }));
 
 vi.mock("consola", () => ({
@@ -38,7 +38,6 @@ vi.mock("../src/clients/redis.js", () => ({
     get: mocks.redisGet,
     set: mocks.redisSet,
   },
-  ioredis: {},
 }));
 
 vi.mock("../src/db/index.js", () => ({
@@ -126,6 +125,8 @@ describe("offers route localization", () => {
   });
 
   beforeEach(() => {
+    mocks.submitJobApiBatch.mockReset().mockResolvedValue([]);
+    mocks.submitJobApiRequest.mockReset().mockResolvedValue(undefined);
     mocks.redisGet.mockReset().mockResolvedValue(null);
     mocks.redisSet.mockReset().mockResolvedValue("OK");
     mocks.collection.mockReset().mockReturnValue({
@@ -151,6 +152,70 @@ describe("offers route localization", () => {
         },
       },
     ]);
+  });
+
+  it("preserves the Discord slug regen contract and decodes its path value", async () => {
+    const res = await app.request("/offers/regen/product%2Fhome", {
+      method: "PUT",
+    });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ message: "Offer regen requested" });
+    expect(mocks.submitJobApiRequest).toHaveBeenCalledWith("offer-regen", {
+      slug: "product/home",
+    });
+  });
+
+  it("preserves the Discord ID regen contract at the backend ID boundary", async () => {
+    const id = "i".repeat(160);
+    const res = await app.request(`/offers/regen-by-id/${id}`, {
+      method: "PUT",
+    });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ message: "Offer regen requested" });
+    expect(mocks.submitJobApiRequest).toHaveBeenCalledWith("offer-regen", {
+      id,
+    });
+  });
+
+  it("preserves bulk offer request and response shapes, including duplicates", async () => {
+    const res = await app.request("/offers/bulk-regen", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        offers: ["duplicate", "duplicate", "offer-2"],
+      }),
+    });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ message: "Offer regen requested" });
+    expect(mocks.submitJobApiBatch).toHaveBeenCalledWith("offer-regen", [
+      { id: "duplicate" },
+      { id: "duplicate" },
+      { id: "offer-2" },
+    ]);
+  });
+
+  it("does not return the Discord success contract when submission fails", async () => {
+    mocks.submitJobApiRequest.mockRejectedValueOnce(
+      new Error("submission not accepted"),
+    );
+
+    const res = await app.request("/offers/regen-by-id/offer-1", {
+      method: "PUT",
+    });
+
+    expect(res.status).toBe(500);
+  });
+
+  it("does not expose regen handlers under the old method", async () => {
+    const res = await app.request("/offers/regen-by-id/offer-1", {
+      method: "POST",
+    });
+
+    expect(res.status).toBe(404);
+    expect(mocks.submitJobApiRequest).not.toHaveBeenCalled();
   });
 
   it("overlays localized fields and metadata on GET /offers/{id}", async () => {

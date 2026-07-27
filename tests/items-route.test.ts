@@ -17,13 +17,13 @@ const mocks = vi.hoisted(() => ({
   redisGet: vi.fn(),
   redisSet: vi.fn(),
   collection: vi.fn(),
+  submitJobApiBatch: vi.fn(),
+  submitJobApiRequest: vi.fn(),
 }));
 
-vi.mock("bullmq", () => ({
-  Queue: vi.fn().mockImplementation(() => ({
-    add: vi.fn(),
-    addBulk: vi.fn(),
-  })),
+vi.mock("../src/clients/job-api.js", () => ({
+  submitJobApiBatch: mocks.submitJobApiBatch,
+  submitJobApiRequest: mocks.submitJobApiRequest,
 }));
 
 vi.mock("../src/clients/redis.js", () => ({
@@ -31,7 +31,6 @@ vi.mock("../src/clients/redis.js", () => ({
     get: mocks.redisGet,
     set: mocks.redisSet,
   },
-  ioredis: {},
 }));
 
 vi.mock("../src/db/index.js", () => ({
@@ -67,6 +66,48 @@ describe("items route with SeaQA fixtures", () => {
 
   beforeEach(() => {
     mocks.itemFindOne.mockReset();
+    mocks.submitJobApiBatch.mockReset().mockResolvedValue([]);
+    mocks.submitJobApiRequest.mockReset().mockResolvedValue(undefined);
+  });
+
+  it("preserves the item regen route contract", async () => {
+    const res = await app.request("/items/regen/item-1", { method: "PUT" });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ message: "Item regen requested" });
+    expect(mocks.submitJobApiRequest).toHaveBeenCalledWith("item-regen", {
+      id: "item-1",
+    });
+  });
+
+  it("submits every bulk item, including duplicates, before returning success", async () => {
+    const res = await app.request("/items/bulk-regen", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ items: ["duplicate", "duplicate", "item-2"] }),
+    });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ message: "Item regen requested" });
+    expect(mocks.submitJobApiBatch).toHaveBeenCalledWith("item-regen", [
+      { id: "duplicate" },
+      { id: "duplicate" },
+      { id: "item-2" },
+    ]);
+  });
+
+  it("does not report bulk success when a Temporal submission fails", async () => {
+    mocks.submitJobApiBatch.mockRejectedValueOnce(
+      new Error("submission not accepted"),
+    );
+
+    const res = await app.request("/items/bulk-regen", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ items: ["item-1", "item-2"] }),
+    });
+
+    expect(res.status).toBe(500);
   });
 
   it("maps item customAttributes from the fixture through /items/:id", async () => {

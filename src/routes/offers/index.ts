@@ -1,7 +1,10 @@
-import { Queue } from "bullmq";
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
-import client, { ioredis } from "../../clients/redis.js";
+import {
+  submitJobApiBatch,
+  submitJobApiRequest,
+} from "../../clients/job-api.js";
+import client from "../../clients/redis.js";
 import {
   AchievementSet,
   GamePosition,
@@ -24,14 +27,6 @@ import { orderOffersObject } from "../../utils/order-offers-object.js";
 import OfferDataRoute from "./data.js";
 import OfferPriceRoute from "./price.js";
 import OfferReviewsRoute from "./reviews.js";
-
-type RegenOfferQueueType =
-  | { slug: string }
-  | { id: string; namespace?: string };
-
-const regenOffersQueue = new Queue<RegenOfferQueueType>("regenOffersQueue", {
-  connection: ioredis,
-});
 
 const app = new Hono();
 
@@ -842,7 +837,7 @@ app.get("/latest-released", async (c) => {
 app.put("/regen/:slug", async (c) => {
   const { slug } = c.req.param();
 
-  await regenOffersQueue.add(`regenOffer-${slug}`, { slug });
+  await submitJobApiRequest("offer-regen", { slug });
 
   return c.json({ message: "Offer regen requested" }, 200);
 });
@@ -850,7 +845,7 @@ app.put("/regen/:slug", async (c) => {
 app.put("/regen-by-id/:id", async (c) => {
   const { id } = c.req.param();
 
-  await regenOffersQueue.add(`regenOffer-${id}`, { id });
+  await submitJobApiRequest("offer-regen", { id });
 
   return c.json({ message: "Offer regen requested" }, 200);
 });
@@ -858,11 +853,9 @@ app.put("/regen-by-id/:id", async (c) => {
 app.post("/bulk-regen", async (c) => {
   const { offers } = await c.req.json<{ offers: string[] }>();
 
-  await regenOffersQueue.addBulk(
-    offers.map((o) => ({
-      name: `regenOffer-${o}`,
-      data: { id: o },
-    })),
+  await submitJobApiBatch(
+    "offer-regen",
+    offers.map((id) => ({ id })),
   );
 
   return c.json({ message: "Offer regen requested" }, 200);
