@@ -4,6 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Routed Epic Store GraphQL profile requests through Node's core HTTP transport with the current Epic Games Launcher identity to avoid Cloudflare challenges against Undici.
 - Fixed empty changelog searches to return the latest canonical MongoDB records instead of waiting for OpenSearch indexing.
 - Replaced bulk catalog exports with `POST /catalog/hydrate` schema v2, which streams independently bounded, content-aware root graphs directly from authoritative collections for incremental local-first clients.
 - Added idempotent catalog resolver indexes and an explicit confirmation-gated command for removing legacy materialized catalog collections after rollout verification.

@@ -1,4 +1,5 @@
 import { GraphQLClient, gql } from "graphql-request";
+import nodeFetch from "node-fetch";
 import type { PlayerProfileQuery } from "../types/get-epic-user.js";
 import type { PlayerProfilePrivateResponse } from "../types/get-user-achievements.js";
 import type { PlayerProfileAchievementsByProductIdQuery } from "../types/get-user-product-achievements.js";
@@ -9,7 +10,7 @@ import type {
 
 const EPIC_STORE_GRAPHQL_URL = "https://store.epicgames.com/graphql";
 const EPIC_STORE_USER_AGENT =
-  "EpicGames/16.11.0-35427934+++Portal+Release-Live-Windows";
+  "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit";
 const EPIC_STORE_HEADERS = {
   Accept: "application/json",
   "Accept-Language": "en-US,en;q=0.9",
@@ -46,8 +47,11 @@ function getHeader(
     return undefined;
   }
 
-  if (typeof Headers !== "undefined" && headers instanceof Headers) {
-    return headers.get(name) ?? undefined;
+  const headersLike = headers as {
+    get?: (headerName: string) => string | null;
+  };
+  if (typeof headersLike.get === "function") {
+    return headersLike.get(name) ?? undefined;
   }
 
   const headerRecord = headers as Record<string, unknown>;
@@ -113,10 +117,15 @@ export function summarizeEpicGraphQlError(
 export class EpicStoreClient {
   private client: GraphQLClient;
 
-  constructor() {
+  constructor(
+    fetchImplementation = nodeFetch as unknown as typeof globalThis.fetch,
+  ) {
     this.client = new GraphQLClient(EPIC_STORE_GRAPHQL_URL, {
       errorPolicy: "ignore",
       headers: EPIC_STORE_HEADERS,
+      // Epic challenges Node's global Undici transport while accepting the
+      // same request over the Node core HTTP transport used by node-fetch.
+      fetch: fetchImplementation,
     });
   }
 

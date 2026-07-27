@@ -130,6 +130,9 @@ importers:
       nanoid:
         specifier: ^5.1.6
         version: 5.1.11
+      node-fetch:
+        specifier: 3.3.2
+        version: 3.3.2
       node-telegram-bot-api:
         specifier: ^0.67.0
         version: 0.67.0(request@2.88.2)

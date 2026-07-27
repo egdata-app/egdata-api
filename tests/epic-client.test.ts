@@ -1,5 +1,7 @@
+import { Headers as NodeFetchHeaders } from "node-fetch";
 import { describe, expect, it } from "vitest";
 import {
+  EpicStoreClient,
   isEpicGraphQlCloudflareChallenge,
   summarizeEpicGraphQlError,
 } from "../src/clients/epic.js";
@@ -48,6 +50,64 @@ describe("Epic GraphQL error handling", () => {
       contentType: "application/json",
       cloudflareChallenge: false,
       message: "Epic GraphQL playerProfile failed.",
+    });
+  });
+
+  it("detects challenges reported with node-fetch headers", () => {
+    const error = {
+      response: {
+        status: 403,
+        headers: new NodeFetchHeaders({
+          "cf-mitigated": "challenge",
+          "cf-ray": "a1607a8a4ee52a6d-CDG",
+          "content-type": "text/html; charset=UTF-8",
+        }),
+      },
+    };
+
+    expect(isEpicGraphQlCloudflareChallenge(error)).toBe(true);
+    expect(summarizeEpicGraphQlError("playerProfile", error)).toMatchObject({
+      status: 403,
+      cfMitigated: "challenge",
+      cfRay: "a1607a8a4ee52a6d-CDG",
+      cloudflareChallenge: true,
+    });
+  });
+
+  it("uses the configured Node HTTP transport with the current launcher identity", async () => {
+    const fetchImplementation = async (
+      _input: RequestInfo | URL,
+      init?: RequestInit,
+    ) => {
+      const headers = new Headers(init?.headers);
+      expect(headers.get("user-agent")).toBe(
+        "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit",
+      );
+
+      return new Response(
+        JSON.stringify({
+          data: {
+            PlayerProfile: {
+              playerProfile: {
+                epicAccountId: "account-id",
+                displayName: "Test Player",
+                avatar: null,
+              },
+            },
+          },
+        }),
+        {
+          headers: {
+            "content-type": "application/json",
+          },
+        },
+      );
+    };
+    const client = new EpicStoreClient(fetchImplementation);
+
+    await expect(client.getUser("account-id")).resolves.toMatchObject({
+      epicAccountId: "account-id",
+      displayName: "Test Player",
     });
   });
 });
