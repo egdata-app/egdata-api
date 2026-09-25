@@ -1,0 +1,14 @@
+---
+title: Price availability
+description: Current prices, country restrictions, and retained history.
+---
+
+Current offer prices respect the offer's country whitelist and blacklist. A non-empty whitelist limits availability; a blacklist exclusion takes precedence.
+
+`GET /offers/{id}/price?country=CN` and `GET /offers/{id}/regional-price?country=CN` return `404` with `{"message":"Price not found"}` if that offer is unavailable in China. These restrictions are evaluated before the API returns cached data.
+
+Without a country parameter, regional pricing omits regions with no eligible countries. An eligible country may share a pricing region with an excluded country; the requested country's eligibility still applies.
+
+Price history remains available at `GET /offers/{id}/price-history`, including historical observations from regions that are no longer available. Historical prices do not make an excluded region available again.
+
+A price's `updatedAt` records its last price change. An unchanged timestamp alone does not indicate that refreshes have stopped.

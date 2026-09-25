@@ -9,6 +9,11 @@ import {
   type PriceEngineType as PriceType,
 } from "../../models/index.js";
 import { regions } from "../../utils/countries.js";
+import {
+  isPriceCountryEligible,
+  isPriceRegionEligible,
+  priceAvailabilityKey,
+} from "../../utils/price-eligibility.js";
 import { toUsdCents } from "../../utils/price-usd.js";
 
 const app = new Hono();
@@ -116,7 +121,10 @@ app.get("/price", async (c) => {
     });
   }
 
-  const cacheKey = `price:${id}:${region}:v0.2`;
+  const offer = await Offer.findOne({ id: { $eq: id } }).lean();
+  if (!offer || !isPriceCountryEligible(offer, selectedCountry))
+    return c.json({ message: "Price not found" }, 404);
+  const cacheKey = `price:${id}:${region}:${priceAvailabilityKey(offer)}:v0.3`;
 
   const cached = await client.get(cacheKey);
 
@@ -188,6 +196,9 @@ app.get("/price/fairness", async (c) => {
 app.get("/regional-price", async (c) => {
   const { id } = c.req.param();
   const country = c.req.query("country");
+  const offer = await Offer.findOne({ id: { $eq: id } }).lean();
+  if (!offer || (country && !isPriceCountryEligible(offer, country)))
+    return c.json({ message: "Price not found" }, 404);
 
   if (country) {
     const region = Object.keys(regions).find((r) =>
@@ -201,7 +212,7 @@ app.get("/regional-price", async (c) => {
       });
     }
 
-    const cacheKey = `regional-price:${id}:${region}:v0.4`;
+    const cacheKey = `regional-price:${id}:${region}:${priceAvailabilityKey(offer)}:v0.5`;
     const cached = await client.get(cacheKey);
 
     if (cached) {
@@ -210,10 +221,10 @@ app.get("/regional-price", async (c) => {
       });
     }
 
-    const [offer, livePrice] = await Promise.all([
-      Offer.findOne({ id: { $eq: id } }).lean(),
-      PriceEngine.findOne({ offerId: { $eq: id }, region: { $eq: region } }).lean(),
-    ]);
+    const livePrice = await PriceEngine.findOne({
+      offerId: { $eq: id },
+      region: { $eq: region },
+    }).lean();
 
     const releaseDate = offer?.releaseDate ?? (offer?.effectiveDate as Date);
     const currentDate = new Date();
@@ -297,7 +308,7 @@ app.get("/regional-price", async (c) => {
     });
   }
 
-  const cacheKey = `regional-price:${id}:all:v0.4`;
+  const cacheKey = `regional-price:${id}:all:${priceAvailabilityKey(offer)}:v0.5`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -306,10 +317,7 @@ app.get("/regional-price", async (c) => {
     });
   }
 
-  const [offer, livePrices] = await Promise.all([
-    Offer.findOne({ id: { $eq: id } }).lean(),
-    PriceEngine.find({ offerId: { $eq: id } }).lean(),
-  ]);
+  const livePrices = await PriceEngine.find({ offerId: { $eq: id } }).lean();
 
   const releaseDate = offer?.releaseDate ?? (offer?.effectiveDate as Date);
   const currentDate = new Date();
@@ -344,6 +352,7 @@ app.get("/regional-price", async (c) => {
 
   const result = regionsKeys.reduce(
     (acc, r) => {
+      if (!isPriceRegionEligible(offer, r)) return acc;
       const regionPrices = prices.filter((p) => p?.region === r);
       const livePrice = livePrices.find((p) => p.region === r);
 
@@ -490,7 +499,9 @@ app.get("/price-stats", async (c) => {
   };
 
   return c.json({
-    current: normalize(currentPrice),
+    current: isPriceCountryEligible(offer, selectedCountry)
+      ? normalize(currentPrice)
+      : null,
     lowest: normalize(lowestPrice),
     lastDiscount: normalize(lastDiscountPrice),
   });
