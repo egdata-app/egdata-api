@@ -702,6 +702,8 @@ export const paths: EgdataPaths = {
       operationId: "getOfferPrice",
       tags: ["Prices"],
       summary: "Get current regional price for an offer",
+      description:
+        "Returns Price not found (404) when the offer excludes the requested country. A non-empty country whitelist limits availability, and the blacklist takes precedence. Availability is checked before cached prices are returned.",
       parameters: [...offerId, parameterRef("country")],
       response: ref("Price"),
     }),
@@ -727,6 +729,8 @@ export const paths: EgdataPaths = {
       operationId: "getOfferRegionalPrices",
       tags: ["Prices"],
       summary: "Get prices for an offer across regions",
+      description:
+        "Unavailable pricing regions are omitted. With a country parameter, an excluded country returns Price not found (404). Historical observations remain available through price-history and do not restore excluded current prices.",
       parameters: [...offerId, parameterRef("country")],
       response: arrayOf(ref("Price")),
     }),
