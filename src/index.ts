@@ -245,6 +245,7 @@ Allow: /items/sitemap.xml
 Allow: /items/sitemap.xml?*
 Allow: /offers/*/og
 Allow: /items/*/og
+Allow: /sandboxes/*/og
 `;
 
   return c.text(robots, 200, {

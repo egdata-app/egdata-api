@@ -42,3 +42,15 @@ The card shows the title, offer type, publisher, release date, current regional 
 Responses use `image/webp` or `image/png`, with `Cache-Control: public, max-age=60` and `Vary: Cookie`. Unknown offer IDs and unrecognized country codes return a JSON error with status 404. Artwork is omitted if its source cannot be fetched.
 
 `robots.txt` allows offer preview image URLs, including `/og.webp` and query parameters, while retaining `Disallow: /` for ordinary API data routes.
+
+## Sandbox preview images
+
+Use `GET /sandboxes/{sandboxId}/og.webp` for a 1200 × 630 WebP sandbox summary, or `GET /sandboxes/{sandboxId}/og` for PNG. The card uses the same visual style as offer previews, with the base game's title and artwork, three totals for offers, items, and assets, and the sandbox's last update date (UTC).
+
+```text
+https://api.egdata.app/sandboxes/e7f4ac33ff3d4ce4b243075f0b5dba84/og.webp
+```
+
+Counts include historical/test catalog offers. Assets follow the sandbox statistics convention: stored asset records plus each release-info platform without a stored artifact. For identity, the earliest-created released, non-code-redemption base game is preferred, followed by a preorder base game and an executable item. A sandbox without either still renders its own display name and counts. Artwork is optional; missing dates show `Not available`. The date uses the sandbox's `updated`, then `lastModifiedDate`, then `updatedAt`.
+
+Both routes are public and country-independent, accept the optional `v` URL cache buster, and return `image/webp` or `image/png` with `Cache-Control: public, max-age=60`. Unknown sandbox IDs return JSON with status 404. `robots.txt` allows both image paths, including query strings.

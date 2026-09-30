@@ -8,7 +8,7 @@
     "start": "node --env-file=.env --enable-source-maps -r @aikidosec/firewall/instrument dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:unit": "vitest run tests/utils tests/search-route.test.ts tests/items-route.test.ts tests/offers-localization-route.test.ts tests/graphql-offer-localization.test.ts tests/vectorize-client.test.ts",
+    "test:unit": "vitest run tests/utils tests/search-route.test.ts tests/items-route.test.ts tests/offers-localization-route.test.ts tests/offers-og-route.test.ts tests/sandbox-og-route.test.ts tests/graphql-offer-localization.test.ts tests/vectorize-client.test.ts",
     "test:live": "vitest run --config vitest.live.config.ts",
     "typecheck": "tsc --noEmit",
     "openapi:generate": "tsx scripts/generate-openapi.ts",

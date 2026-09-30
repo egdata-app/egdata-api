@@ -68,6 +68,31 @@ const regionalLocalizedOfferId = [
 ];
 const itemId = [parameterRef("itemId")];
 const sandboxId = [parameterRef("sandboxId")];
+const sandboxOgParameters = [
+  ...sandboxId,
+  stringQuery(
+    "v",
+    "Optional URL cache buster. Does not select a historical snapshot.",
+  ),
+];
+const sandboxOgResponse = (format: "png" | "webp") => ({
+  200: {
+    description:
+      "1200 × 630 sandbox summary with offer, item, and asset counts, base-game identity, and the sandbox's UTC update date. Artwork is optional and missing dates are labeled explicitly.",
+    headers: {
+      "Cache-Control": {
+        description:
+          "Public cache lifetime. Sandbox summaries are country-independent.",
+        schema: { type: "string" as const, example: "public, max-age=60" },
+      },
+    },
+    content: {
+      [`image/${format}`]: {
+        schema: { type: "string" as const, format: "binary" },
+      },
+    },
+  },
+});
 const sellerId = [parameterRef("sellerId")];
 const buildId: OpenAPIV3.ParameterObject = {
   name: "id",
@@ -1307,6 +1332,28 @@ export const paths: EgdataPaths = {
       summary: "Get a sandbox",
       parameters: sandboxId,
       response: ref("Sandbox"),
+    }),
+  },
+  "/sandboxes/{sandboxId}/og": {
+    get: operation({
+      operationId: "getSandboxOgPng",
+      tags: ["Sandboxes"],
+      summary: "Generate a PNG sandbox database preview",
+      description:
+        "Shows all offer and item records, and assets counted as stored records plus each release-info platform without a stored artifact. Uses the earliest-created released non-code-redemption base game, then a preorder base game, then an executable item; otherwise uses the sandbox name. Last update uses sandbox updated, then lastModifiedDate, then updatedAt. Missing artwork is omitted. Unknown sandboxes return a JSON 404 error.",
+      parameters: sandboxOgParameters,
+      response: sandboxOgResponse("png"),
+    }),
+  },
+  "/sandboxes/{sandboxId}/og.webp": {
+    get: operation({
+      operationId: "getSandboxOgWebp",
+      tags: ["Sandboxes"],
+      summary: "Generate a WebP sandbox database preview",
+      description:
+        "WebP version of /sandboxes/{sandboxId}/og with the same counts, identity, UTC update date, missing-data fallbacks, and JSON 404 errors.",
+      parameters: sandboxOgParameters,
+      response: sandboxOgResponse("webp"),
     }),
   },
   "/sandboxes/{sandboxId}/items": {

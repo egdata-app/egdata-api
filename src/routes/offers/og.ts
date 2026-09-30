@@ -4,6 +4,7 @@ import { db } from "../../db/index.js";
 import { Asset, Item, Offer, PriceEngine } from "../../models/index.js";
 import type { BuildDocument } from "../../utils/builds.js";
 import { regions } from "../../utils/countries.js";
+import { fetchOgCover } from "../../utils/database-og.js";
 import { getImage } from "../../utils/get-image.js";
 import { getOfferSubItems } from "../../utils/get-offer-sub-items.js";
 import {
@@ -16,17 +17,6 @@ import {
 import { isPriceCountryEligible } from "../../utils/price-eligibility.js";
 
 const app = new Hono();
-
-async function fetchCover(url?: string): Promise<Uint8Array | undefined> {
-  if (!url) return undefined;
-  try {
-    const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
-    if (!response.ok) return undefined;
-    return new Uint8Array(await response.arrayBuffer());
-  } catch {
-    return undefined;
-  }
-}
 
 async function offerOg(c: Context, format: "png" | "webp") {
   const id = c.req.param("id");
@@ -56,7 +46,7 @@ async function offerOg(c: Context, format: "png" | "webp") {
         }).lean()
       : Promise.resolve(null),
     getOfferSubItems({ _id: id }),
-    fetchCover(image?.url),
+    fetchOgCover(image?.url),
   ]);
   const directItemIds = (offer.items ?? []).map(
     (item: { id: string }) => item.id,
