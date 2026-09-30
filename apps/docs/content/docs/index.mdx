@@ -1,43 +1,44 @@
 ---
-title: Overview
-description: Start here for the egdata REST API documentation.
+title: Get started
+description: Build apps with Epic Games Store games, prices, and promotions.
 ---
 
-egdata API exposes Epic Games Store catalog, pricing, search, profile, and promotional data through JSON endpoints.
+Use egdata to build game discovery tools, price trackers, and free-game apps.
 
 ## Base URL
-
-Production requests use:
 
 ```txt
 https://api.egdata.app
 ```
 
-For local development, the API server runs on port `4000` by default:
+## Make your first request
 
-```txt
-http://localhost:4000
+Fetch five recently updated offers:
+
+```js
+const response = await fetch(
+  "https://api.egdata.app/offers?country=US&locale=en-US&page=1&limit=5",
+);
+if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+const data = await response.json();
+console.log(data.elements.map((offer) => offer.title));
 ```
 
-## OpenAPI Reference
+Abbreviated response with illustrative values:
 
-The API reference is generated from `../../openapi/egdata.openapi.json` when that file is present. This docs app ships a small fallback schema so the app can build before the generated schema exists in a checkout.
+```json
+{
+  "elements": [{ "id": "example-offer-id", "title": "Example Game" }],
+  "page": 1,
+  "limit": 5,
+  "total": 100
+}
+```
 
-Browse the documented public endpoints in the [API Reference](/docs/api-reference).
+## Build your app
 
-## Common Resources
-
-The REST API groups data around these resource families:
-
-| Area | Use |
-| --- | --- |
-| Offers | Game products, editions, bundles, and catalog metadata |
-| Items | Store items and related content |
-| Prices | Regional prices, discounts, and promotions |
-| Search | Queryable catalog and merchandising data |
-| Profiles | Public and authenticated profile data |
-| Free games | Current and upcoming free promotions |
-
-## Response Format
-
-Responses are JSON. Collection endpoints use pagination fields where the underlying route supports paging.
+- [Find games](/docs/offer-search) with keywords, filters, and sorting.
+- [Get game details](/docs/game-details) using an offer ID.
+- [Show prices](/docs/price-availability) for your visitor's country.
+- [List free games](/docs/free-games) and upcoming giveaways.
+- [Handle requests](/docs/regions-pagination-errors) with localization, pagination, and errors.

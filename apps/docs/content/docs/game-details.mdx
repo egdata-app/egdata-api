@@ -1,0 +1,40 @@
+---
+title: Game details
+description: Fetch store products and their associated catalog items.
+---
+
+An **offer** is a store product: a base game, edition, bundle, or add-on. An **item** is catalog content associated with an offer. One offer can contain multiple items.
+
+## Get an offer
+
+Use an offer ID returned by [search](/docs/offer-search) or `GET /offers`:
+
+```js
+// Replace this placeholder with an ID from a previous response.
+const offerId = "example-offer-id";
+const response = await fetch(
+  `https://api.egdata.app/offers/${encodeURIComponent(offerId)}?locale=en-US`,
+);
+if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+const offer = await response.json();
+console.log(offer.title, offer.items);
+```
+
+Abbreviated response with illustrative values:
+
+```json
+{
+  "id": "example-offer-id",
+  "namespace": "example-namespace",
+  "title": "Example Game",
+  "items": [{ "id": "example-item-id" }]
+}
+```
+
+## Get an item
+
+Pass an item ID to `GET /items/{id}`. Use `GET /items/{id}/assets` or `GET /items/{id}/builds` for its assets or builds.
+
+Keep offer and item IDs separate. Store the namespace alongside catalog IDs when maintaining your own catalog. Fetch [prices](/docs/price-availability) using the offer ID.
+
+Unknown offers and items return `404`. Optional fields can be missing or null.

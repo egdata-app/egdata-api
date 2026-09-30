@@ -1,15 +1,18 @@
 {
   "pages": [
-    "---Guides---",
+    "---Build with egdata---",
     "index",
-    "authentication",
-    "graphql-profiles",
     "offer-search",
     "natural-language-search",
-    "launcher-record-resolution",
-    "catalog-hydration",
+    "game-details",
+    "price-availability",
+    "free-games",
     "regions-pagination-errors",
     "changelog-deprecations",
+    "---Advanced---",
+    "graphql-profiles",
+    "catalog-hydration",
+    "launcher-record-resolution",
     "---API Reference---",
     "api-reference"
   ]

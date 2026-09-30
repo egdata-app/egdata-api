@@ -1,0 +1,43 @@
+---
+title: Free games
+description: Show current and upcoming Epic Games Store giveaways.
+---
+
+Use `GET /free-games` for promotions that have not ended, including upcoming giveaways.
+
+```js
+const response = await fetch(
+  "https://api.egdata.app/free-games?country=US&locale=en-US",
+);
+if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+const games = await response.json();
+console.log(games.map((game) => game.giveaway));
+```
+
+Abbreviated response with illustrative values:
+
+```json
+[
+  {
+    "id": "example-offer-id",
+    "title": "Example Game",
+    "countriesBlacklist": [],
+    "giveaway": {
+      "offerId": "example-offer-id",
+      "startDate": "2026-10-01T15:00:00.000Z",
+      "endDate": "2026-10-08T15:00:00.000Z",
+      "platform": null
+    }
+  }
+]
+```
+
+## Display availability
+
+- Compare `giveaway.startDate` and `giveaway.endDate` with the current time to label promotions as current or upcoming. Format dates in your visitor's timezone.
+- Pass the visitor's country for regional pricing. Check offer country whitelists and blacklists before showing availability; a blacklist exclusion takes precedence.
+- `giveaway.platform` is a string for platform-specific promotions or `null` otherwise.
+- `giveaway.offerId` is always present. An entry can contain only `giveaway` if offer metadata is unavailable; handle missing titles, images, and prices.
+- `countriesBlacklist` is an array when offer metadata is present.
+
+Without an explicit country, the endpoint uses the country cookie or `US`. Unsupported countries return `404` with `{"message":"Country not found"}`.

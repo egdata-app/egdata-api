@@ -1,0 +1,138 @@
+# Figma integration
+
+## Figma connect
+
+This integration allows you to connect your component code to your Figma design files using Figma Code Connect.
+
+The integration uses a build task to export the code on every release of your component.
+
+### Setup
+
+To set up the Figma integration, you just need to install the `@bitdesign/figma.code-connect` package and add the `CodeConnect` pipeline to your `snap` and `tag` pipelines.
+
+```bash
+bit install @bitdesign/figma.code-connect
+```
+
+```ts
+// ...
+import { Pipeline } from '@teambit/builder';
+import {
+  CodeConnect,
+  figmaConnectTransformer,
+} from '@bitdesign/figma.code-connect';
+
+export class MyEnv extends ReactEnv {
+  // ...
+
+  preview(): EnvHandler<Preview> {
+    return ReactPreview.from({
+      // ...
+      // Add this transformer to the preview pipeline to avoid issues with the Figma Connect code.
+      transformers: [figmaConnectTransformer],
+    });
+  }
+
+  /**
+   * You can remove the snap pipeline if you only want to release on new SemVer versions.
+   */
+  snap(): Pipeline {
+    return Pipeline.from([
+      // Other tasks
+      CodeConnect.from({}),
+    ]);
+  }
+
+  tag(): Pipeline {
+    return Pipeline.from([
+      // Other tasks
+      CodeConnect.from({}),
+    ]);
+  }
+}
+```
+
+### Configuration
+
+The Figma integration can be configured with just one option:
+
+- `accessToken`: The access token to connect to the Figma API. It's highly recommended to use the default `FIGMA_ACCESS_TOKEN` env variable instead of adding it as an option.
+
+### Usage
+
+After setting up the integration, you need to expose the code in your component, this will allow Figma Connect to find the code and export it.
+
+#### Expose using `.compositions.tsx` files
+
+When using Bit, usually you will place your component previews in a `.compositions.tsx` file. To expose the code, you just need to export a default function in that code that uses Figma Connect.
+
+```tsx
+import { Icon } from '@teambit/design.elements.icon';
+import figma from '@figma/code-connect';
+import { IconButton } from './';
+
+export default figma.connect(IconButton, 'https://www.figma.com/design/...', {
+  props: {
+    style: figma.enum('Type', {
+      Ghost: 'ghost',
+      Social: 'cta',
+    }),
+  },
+  example: ({ style, ...props }) => {
+    return <IconButton {...props} priority={style} />;
+  },
+});
+```
+
+#### Expose using `.figma.tsx` files
+
+Figma recommends using `.figma.tsx` files to expose the code. Even though we support it, we recommend using `.compositions.tsx` files as they are more aligned with the Bit workflow.
+
+```tsx
+import { Icon } from '@teambit/design.elements.icon';
+import figma from '@figma/code-connect';
+import { IconButton } from './';
+
+figma.connect(IconButton, 'https://www.figma.com/design/...', {
+  props: {
+    style: figma.enum('Type', {
+      Ghost: 'ghost',
+      Social: 'cta',
+    }),
+  },
+  example: ({ style, ...props }) => {
+    return <IconButton {...props} priority={style} />;
+  },
+});
+```
+
+### Using the Figma CLI
+
+You can also use the Figma CLI to create the figma files from the data of your Figma design files.
+
+To do so, you need to create a `figma.config.json` file in the root of your workspace with the following content:
+
+```json
+{
+  "codeConnect": {
+    "include": [],
+    "exclude": ["test/**", "docs/**", "build/**"],
+    "parser": "react"
+  }
+}
+```
+
+Then you can run the following command to create the `.figma.tsx` files:
+
+```bash
+cd my-scope/my-component
+npx figma connect create "https://www.figma.com/file/..."
+```
+
+This will create the `.figma.tsx` file with the props found in the design files.
+
+More information about the Figma CLI can be found [here](https://github.com/figma/code-connect/blob/main/cli/README.md#basic-setup).
+
+:::info
+You can check all the documentation about Figma Connect [here](https://github.com/figma/code-connect/blob/main/cli/README.md#basic-setup).
+:::

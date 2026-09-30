@@ -1,11 +1,42 @@
 ---
-title: Offer Search
-description: Filter and sort Epic Games Store offers with the regional OpenSearch API.
+title: Find games
+description: Search games by title, filters, and regional prices.
 ---
 
 Use `POST /search/v2/search` for catalog search, filters, facets, regional prices, and pagination. Pass the visitor's ISO country code in the `country` query parameter so price filters, price sorts, and the returned `price` record use the corresponding Epic pricing region.
 
-## Technology Filters
+## Search by title
+
+```js
+const response = await fetch(
+  "https://api.egdata.app/search/v2/search?country=US&locale=en-US",
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: "survival", page: 1, limit: 10 }),
+  },
+);
+if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+const data = await response.json();
+console.log(data.offers);
+```
+
+Abbreviated response with illustrative values:
+
+```json
+{
+  "offers": [{ "id": "example-offer-id", "title": "Example Game" }],
+  "total": 1,
+  "page": 1,
+  "limit": 10
+}
+```
+
+Pagination starts at page `1`. The default limit is `10`, capped at `100`. Set `onSale: true` for discounted offers or `offerType: "BASE_GAME"` for base games. Use `sortBy: "price"` with `sortDir: "asc"` to show cheaper offers first.
+
+For descriptive queries, try [natural-language search](/docs/natural-language-search).
+
+## Technology filters
 
 Pass `technologies` as an array of non-empty detected build technology names. Values are trimmed, duplicates are ignored, and an offer must contain every selected technology:
 
@@ -40,8 +71,8 @@ Content-Type: application/json
 }
 ```
 
-`isLowestPriceEver` uses the API's US historical-low benchmark. The positive `price.min` excludes zero-price promotions. Price filtering, the returned regional price record, and `priceUpdatedAt` ordering use `prices.<selected region>` for the requested country. No offer-type filter is implied, so base games, editions, add-ons, DLC, and other offer types can be returned.
+`isLowestPriceEver` uses the API's US historical-low benchmark. The positive `price.min` excludes zero-price promotions. Price filtering, the returned regional price record, and `priceUpdatedAt` ordering use the pricing region for the requested country. No offer-type filter is implied, so base games, editions, add-ons, DLC, and other offer types can be returned.
 
 ## Regional Price Update Sort
 
-Set `sortBy` to `priceUpdatedAt` to order offers by `prices.<selected region>.updatedAt`. Use `sortDir: "desc"` for the latest price changes first or `sortDir: "asc"` for the oldest first.
+Set `sortBy` to `priceUpdatedAt` to order offers by their regional price update time. Use `sortDir: "desc"` for the latest price changes first or `sortDir: "asc"` for the oldest first.

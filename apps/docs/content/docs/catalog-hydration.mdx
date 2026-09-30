@@ -1,11 +1,11 @@
 ---
-title: Direct catalog hydration
-description: Synchronize only the Epic catalog graphs a local-first client has discovered.
+title: Catalog hydration
+description: Keep a local catalog up to date using item, asset, or release-app identifiers.
 ---
 
-`POST /catalog/hydrate` resolves public Epic catalog metadata directly from the authoritative MongoDB collections. It does not require a bulk export or a prebuilt generation.
+`POST /catalog/hydrate` retrieves catalog metadata for identifiers your app has discovered. Use it to keep a local catalog up to date without downloading the entire catalog.
 
-Send at most 25 unique composite item, platform-qualified asset, or platform-qualified release-app identifiers:
+Send a JSON body with `Content-Type: application/json`. Include at most 25 unique item, asset, or release-app identifiers. Replace these illustrative identifiers with real catalog values:
 
 ```json
 {
@@ -23,7 +23,9 @@ Send at most 25 unique composite item, platform-qualified asset, or platform-qua
 }
 ```
 
-The response is `application/x-ndjson`. Read and validate one line at a time. Each line describes exactly one requested root and has one of four statuses:
+For later requests, send previously returned root hashes in `knownRoots` and record hashes in `knownRecords` to avoid downloading unchanged data. `knownRecords` accepts at most 5,000 entries.
+
+The response is `application/x-ndjson`. Read and validate one line at a time rather than calling `response.json()`. Each line describes exactly one requested root and has one of four statuses:
 
 - `resolved` supplies the complete authoritative `recordKeys` membership and only records whose SHA-256 differs from `knownRecords`.
 - `unchanged` confirms that the supplied root `graphHash` is still current.
@@ -32,26 +34,22 @@ The response is `application/x-ndjson`. Read and validate one line at a time. Ea
 
 Each decoded line is bounded to 2 MiB and 500 records. A malformed or oversized root becomes an isolated `error` line; it does not discard successfully streamed siblings.
 
+An abbreviated response line with illustrative values:
+
+```json
+{ "schemaVersion": 2, "rootKey": "example-root", "status": "not-found" }
+```
+
 ## Graph contents
 
 A resolved owning item includes every directly related, subitem, and linked offer. It also includes sibling items from those offers plus their assets and normalized release apps. Expansion stops there and does not recursively traverse unrelated offers.
 
-The discriminated `type` field selects `offer`, `item`, `asset`, `release-app`, or `offer-item`. Offer-item edges preserve every observed relationship source. The primary offer ranking is deterministic: non-prepurchase first, then direct/subitem/linked, then `BASE_GAME`, `DLC`, `ADD_ON`, `EDITION`, `BUNDLE`, and `CONSUMABLE`, newest modification, and lexical composite ID.
+Each record's `type` is `offer`, `item`, `asset`, `release-app`, or `offer-item`. Offer-item records describe relationships between products and content.
 
-`graphHash` is SHA-256 of stable JSON containing the sorted `(recordKey, recordSha256)` pairs. Metadata changes therefore invalidate the root even when membership is unchanged.
+Store the returned `graphHash` for the next request. It changes when metadata or graph membership changes.
 
 ## Local-first application
 
-Apply each line in its own SQLite transaction. Replace root membership only for `resolved` and `not-found`, garbage-collect records only after their final root reference disappears, and update only affected search documents. If a stream is interrupted, keep committed roots and requeue the unprocessed identifiers.
+Apply each line atomically in your local store. Replace root membership only for `resolved` and `not-found`; remove a record only after no roots reference it. If a stream is interrupted, keep committed roots and retry the unprocessed identifiers.
 
 The endpoint excludes prices, price history, global build history, signed URLs, and image binaries.
-
-## Legacy storage cleanup
-
-After direct hydration is verified in production, an operator may explicitly delete the old materialized collections:
-
-```sh
-pnpm catalog:cleanup-legacy -- --confirm-delete-legacy-catalog-storage
-```
-
-Without that exact confirmation flag the command refuses to delete data.

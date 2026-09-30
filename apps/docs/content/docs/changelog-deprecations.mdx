@@ -1,32 +1,29 @@
 ---
-title: Changelog and Deprecations
-description: How API changes, deprecated fields, and retired endpoints are communicated.
+title: Track changes
+description: Retrieve catalog updates to keep your app's data current.
 ---
 
-The API evolves with Epic Games Store data and with the internal schemas used by egdata. Clients should be tolerant of new response fields and should avoid depending on undocumented ordering.
+Use `GET /changelist` to retrieve recent catalog changes without fetching every game again.
 
-## Changelog Data
+```js
+const response = await fetch(
+  "https://api.egdata.app/changelist?page=1&limit=10",
+);
+if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+const changes = await response.json();
+console.log(changes);
+```
 
-Changelog endpoints expose observed changes in catalog data, including offer and item updates. Use these routes when you need to sync downstream systems without polling every resource.
+Use `GET /changelist/{id}` for a specific record, or `GET /search/changelog` to search changes.
 
-`GET /search/changelog` is the search-optimized route. Each hit includes `metadata.changes[]` entries where `oldValue` and `newValue` are hydrated from canonical changelog records when available, or parsed from `oldValueRaw` and `newValueRaw` when the search index only has raw values. Raw fields may still be present for compatibility.
+## Read changes
 
-`GET /changelist` and `GET /changelist/{id}` return recent or specific changelog records with best-effort `metadata.context` enrichment. Context lookups cover offer, item, asset, and build records; asset context IDs may match either `artifactId` or `id`. When enrichment is unavailable or times out, the changelog record is still returned with `metadata.context` set to `null`.
+Search results include `metadata.changes[]` entries with `oldValue` and `newValue` when available. Raw value fields may also be present. An abbreviated change entry with illustrative values:
 
-## Deprecations
+```json
+{ "oldValue": "Old title", "newValue": "New title" }
+```
 
-Deprecated fields and endpoints remain available only for a compatibility window. Prefer replacement fields from the OpenAPI reference as soon as they are documented.
+Recent and individual changelist records include best-effort `metadata.context`. It can be `null` when related data is unavailable.
 
-## Client Policy
-
-Use these defaults for resilient integrations:
-
-- Ignore unknown JSON properties.
-- Prefer stable identifiers such as namespace, offer id, and catalog item id.
-- Treat nullable fields as optional even if your current sample data always contains a value.
-- Monitor `deprecated: true` operations in the OpenAPI reference.
-
-## Breaking Changes
-
-Breaking changes should be reflected in the OpenAPI schema before clients are expected to migrate. Pin generated clients to a known schema revision when reproducibility matters.
-
+Ignore unknown response fields, handle nullable values, and use stable IDs to refresh affected records. Avoid depending on undocumented ordering.

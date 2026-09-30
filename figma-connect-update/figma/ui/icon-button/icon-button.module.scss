@@ -1,0 +1,110 @@
+.iconButton {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  padding: 0.844em 1em;
+  transition: 0.3s ease-in-out;
+  &.iconOnly {
+    padding: 6px 8px;
+  }
+  &[data-priority='ghost'] {
+    background-color: var(--background-color, #ffffff);
+    border: 1px solid var(--border-medium-color, #ededed);
+    color: var(--on-surface-color, #2b2b2b);
+    &.active,
+    &.active.withIcon > :first-child {
+      color: var(--primary-color, #6c5ce7);
+      border-color: var(--border-primary-color, #6c5ce7);
+    }
+    &:hover {
+      background-color: var(--surface-neutral-hover-color, #f4f5f6);
+    }
+    &:active {
+      background-color: var(--border-medium-color, #ededed);
+    }
+    &:not(:disabled) {
+      &.danger {
+        background-color: var(--negative-color, #e62e5c);
+        border-color: var(--negative-color, #e62e5c);
+        color: var(--on-primary-color, #ffffff);
+      }
+      &.success {
+        background-color: var(--positive-color, #37b26c);
+        border-color: var(--positive-color, #37b26c);
+        color: var(--on-primary-color, #ffffff);
+      }
+    }
+    &:hover:not(:disabled) {
+      &.danger {
+        background-color: #d31948;
+        border-color: #d31948;
+      }
+      &.success {
+        background-color: #2e945a;
+        border-color: #2e945a;
+      }
+    }
+    &:disabled {
+      &:hover {
+        background-color: var(--background-color, #ffffff);
+      }
+    }
+  }
+  &[data-priority='cta'] {
+    background-color: var(--primary-color, #6c5ce7);
+    border: 1px solid var(--border-primary-color, #6c5ce7);
+    color: var(--on-primary-color, #ffffff);
+    &.danger {
+      background-color: var(--negative-color, #e62e5c);
+      border-color: var(--negative-color, #e62e5c);
+    }
+    &.success {
+      background-color: var(--positive-color, #37b26c);
+      border-color: var(--positive-color, #37b26c);
+    }
+    &:hover:not(:disabled) {
+      background-color: var(--bit-accent-heavy, #5d4aec); // The token does not exist and there is no token for the color.
+      border: 1px solid var(--bit-accent-heavy, #5d4aec); // The token does not exist and there is no token for the color.
+      &.danger {
+        background-color: #d31948;
+        border-color: #d31948;
+      }
+      &.success {
+        background-color: #2e945a;
+        border-color: #2e945a;
+      }
+    }
+    &:disabled {
+      border-color: var(--surface-neutral-hover-color, #f4f5f6);
+      background-color: var(--surface-neutral-hover-color, #f4f5f6);
+    }
+  }
+  &:disabled {
+    color: var(--border-high-color, #babec9);
+    cursor: not-allowed;
+  }
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.125em var(--surface-hover-color, #edebfc);
+  }
+
+  &.withoutBorder {
+    border: 1px solid transparent;
+  }
+}
+
+.withIcon {
+  > :first-child:not(.loader) {
+    font-size: 16px;
+    color: inherit;
+  }
+  &.margin {
+    > :first-child:not(.loader) {
+      margin-right: 8px;
+    }
+  }
+}
+
+.loading {
+  justify-content: center;
+}

@@ -1,0 +1,31 @@
+---
+description: 'Figma Code Connect integration.'
+labels: ['figma', 'integration', 'code-connect', 'react', 'typescript']
+---
+
+Figma Code Connect is a tool that allows you to connect your code to your Figma designs.
+With this build task you can export the code on every release of your component.
+
+## How it works
+
+This build task automates the process of exporting your component code to Figma by adding a pipeline to your `snap` and `tag` pipelines.
+When you release a new version of your component, the pipeline will do the following:
+
+1. Initialize or update the `figma.config.json` file:
+
+   - The `figma.config.json` file is a configuration file that contains the information needed to connect to the Figma API.
+   - If the file doesn't exist, the pipeline will create it with the default configuration.
+   - If the file exists, the pipeline will update it with the latest configuration.
+   - In both cases, it adds the `importPaths` property to rewrite the imports to the package name.
+
+```json
+{
+  // ...
+  "importPaths": {
+    "/*": "@org/my-scope.ui.button"
+  }
+}
+```
+
+2. Export the code to Figma:
+   - The task will use the official Figma package to publish the code to Figma.

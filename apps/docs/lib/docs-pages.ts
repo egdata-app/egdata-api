@@ -15,6 +15,10 @@ export function slugFromSplat(splat?: string) {
 }
 
 export async function ensureDocsPage(slug?: string[]) {
+  if (slug?.join("/") === "authentication") {
+    throw redirect({ href: "/docs" });
+  }
+
   const source = await getSource();
   const page = source.getPage(slug);
 

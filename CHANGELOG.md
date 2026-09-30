@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Simplified API documentation around external app development, added game details and free-game guides, and retained the OpenAPI reference while removing internal setup and authentication guidance.
+
 - Enforced offer country restrictions before current-price cache reads, omitted unavailable regions from regional pricing, and preserved access to historical observations after current prices are retired.
 
 - Added validated detected-build technology filtering and documented technology facet counts to `POST /search/v2/search`.

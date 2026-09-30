@@ -1,0 +1,1 @@
+[{"name":"","description":"dependencies to be bundled only once, in the env preview template, and not in each component preview.\r\nmost of your peer dependencies should be listed here to avoid duplications in the preview.","args":[],"returns":{},"access":"public","examples":[],"render":"","properties":[],"static":false,"filePath":"preview/host-dependencies.ts"}]

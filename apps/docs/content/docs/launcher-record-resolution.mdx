@@ -1,5 +1,5 @@
 ---
-title: Launcher Record Resolution
+title: Launcher record resolution
 description: Resolve parsed Windows build metadata to safe Epic Games Launcher records.
 ---
 
@@ -37,6 +37,8 @@ The response preserves request order and returns one of four statuses per candid
 - `unsupported` means the catalog relationship is known but cannot produce a complete launcher record.
 
 Clients must not guess when a result is ambiguous or unsupported. Keep those candidates in a review state and do not write Epic Games Launcher files.
+
+Abbreviated response with illustrative values:
 
 ```json
 {

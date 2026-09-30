@@ -1,0 +1,109 @@
+{
+  "components": [
+    {
+      "id": {
+        "scope": "bitdesign.figma",
+        "name": "code-connect"
+      },
+      "isSymlink": false,
+      "hash": "b15136c19315198a68b4cc51500da7f58f5af2db"
+    },
+    {
+      "id": {
+        "scope": "bitdesign.figma",
+        "name": "envs/figma-env"
+      },
+      "isSymlink": false,
+      "hash": "f145b1cf2cc2802de7cf693ab2731b37384ef73d"
+    },
+    {
+      "id": {
+        "scope": "bitdesign.figma",
+        "name": "figma-embed"
+      },
+      "isSymlink": false,
+      "hash": "9826b125bad77393fa2931459dfab699114e67dc"
+    },
+    {
+      "id": {
+        "scope": "bitdesign.figma",
+        "name": "readme"
+      },
+      "isSymlink": false,
+      "hash": "2071c4fc54489708e3efbbdd45936585ecc1c8af"
+    },
+    {
+      "id": {
+        "scope": "bitdesign.figma",
+        "name": "ui/icon-button"
+      },
+      "isSymlink": false,
+      "hash": "4668ecde7e156123ff9fbe71b937d9e39ac7e713"
+    },
+    {
+      "id": {
+        "scope": "bitdev.general",
+        "name": "envs/bit-env"
+      },
+      "isSymlink": false,
+      "hash": "689a54288ee6bcbfe1bab66173e3e1cd2acef266"
+    },
+    {
+      "id": {
+        "scope": "bitdev.node",
+        "name": "node-env"
+      },
+      "isSymlink": false,
+      "hash": "ca06bbbbe1eefa9afb10aeb40fd66d33d9477d7e"
+    },
+    {
+      "id": {
+        "scope": "teambit.react",
+        "name": "react-env"
+      },
+      "isSymlink": false,
+      "hash": "b2ee4ccd9145c2c8be734d43c29d97bb54a99c0e"
+    },
+    {
+      "id": {
+        "scope": "teambit.community",
+        "name": "envs/community-mdx"
+      },
+      "isSymlink": false,
+      "hash": "be67d3bd22bf1f50606de2fbecc5e8182ce2f2e0"
+    },
+    {
+      "id": {
+        "scope": "bitdev.react",
+        "name": "react-env"
+      },
+      "isSymlink": false,
+      "hash": "332d61722e10572fbaef5995407ebdce773c6a7e"
+    },
+    {
+      "id": {
+        "scope": "bitdev.react",
+        "name": "preview/react-vite-preview"
+      },
+      "isSymlink": false,
+      "hash": "9451cf6f76abf3bf5c5349ef9f848b7f6fe27ea9"
+    },
+    {
+      "id": {
+        "scope": "teambit.react",
+        "name": "mounter"
+      },
+      "isSymlink": false,
+      "hash": "586a20562a9166bc7ed2f2e95fc02604ce281408"
+    },
+    {
+      "id": {
+        "scope": "teambit.mdx",
+        "name": "ui/mdx-scope-context"
+      },
+      "isSymlink": false,
+      "hash": "cc7cd9acc608063b4575e5462aa054e31a39311a"
+    }
+  ],
+  "lanes": []
+}

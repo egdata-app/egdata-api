@@ -1,5 +1,5 @@
 ---
-title: Regions, Pagination, and Errors
+title: Request essentials
 description: Request conventions for regional data, paginated lists, and error handling.
 ---
 
@@ -44,7 +44,7 @@ For nested GraphQL offer fields such as `related` and `suggestions`, the parent 
 
 ## Pagination
 
-Paginated endpoints use query parameters such as `page`, `limit`, `offset`, or route-specific cursors. Prefer the names documented on each OpenAPI operation.
+Paginated endpoints use query parameters such as `page`, `limit`, `offset`, or route-specific cursors. Use the parameters documented for the endpoint you call. For example, `GET /offers?page=2&limit=10` returns the second page; `POST /search/v2/search` takes `page` and `limit` in its JSON body.
 
 Keep page sizes conservative. Large responses increase API latency and can be harder for clients to cache safely.
 
@@ -55,8 +55,6 @@ Error responses use HTTP status codes and a JSON body when the route can provide
 | Status | Meaning |
 | --- | --- |
 | `400` | Invalid query string, path parameter, or request body |
-| `401` | Authentication required or token rejected |
-| `403` | Authenticated client cannot access the resource |
 | `404` | Resource was not found |
 | `429` | Rate limit exceeded |
 | `500` | Unexpected server error |
@@ -64,4 +62,3 @@ Error responses use HTTP status codes and a JSON body when the route can provide
 | `503` | A required service is unavailable or not configured |
 
 Clients should branch on the HTTP status first and treat the response body as diagnostic detail.
-

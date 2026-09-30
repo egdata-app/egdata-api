@@ -1,7 +1,38 @@
 ---
-title: Price availability
+title: Prices
 description: Current prices, country restrictions, and retained history.
 ---
+
+Use an offer ID from [search](/docs/offer-search) to fetch its current price. Replace the placeholder below with a returned ID:
+
+```js
+const offerId = "example-offer-id";
+const response = await fetch(
+  `https://api.egdata.app/offers/${encodeURIComponent(offerId)}/price?country=US`,
+);
+if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+const price = await response.json();
+console.log(price);
+```
+
+The response is a price record. An abbreviated example with illustrative values:
+
+```json
+{
+  "offerId": "example-offer-id",
+  "region": "US",
+  "price": {
+    "currencyCode": "USD",
+    "originalPrice": 1999,
+    "discountPrice": 999,
+    "discount": 1000
+  }
+}
+```
+
+Use `price.discountPrice` for the current amount, `price.originalPrice` for the original amount, and `price.currencyCode` for the currency. Amounts use minor currency units: in this USD example, `999` means $9.99.
+
+## Country availability
 
 Current offer prices respect the offer's country whitelist and blacklist. A non-empty whitelist limits availability; a blacklist exclusion takes precedence.
 
@@ -9,6 +40,10 @@ Current offer prices respect the offer's country whitelist and blacklist. A non-
 
 Without a country parameter, regional pricing omits regions with no eligible countries. An eligible country may share a pricing region with an excluded country; the requested country's eligibility still applies.
 
-Price history remains available at `GET /offers/{id}/price-history`, including historical observations from regions that are no longer available. Historical prices do not make an excluded region available again.
+## Price history
+
+Use `GET /offers/{id}/price-history?country=US` for a list of historical price records. Without a country or region, history is grouped by region. Add `since` with a date to retrieve observations updated since that date.
+
+History includes observations from regions that are no longer available. Historical prices do not make an excluded region available again.
 
 A price's `updatedAt` records its last price change. An unchanged timestamp alone does not indicate that refreshes have stopped.

@@ -1,9 +1,9 @@
 ---
-title: Natural-Language Offer Search
-description: Find Epic Games Store offers by meaning with Workers AI and Cloudflare Vectorize.
+title: Natural-language search
+description: Find games by describing what you want to play.
 ---
 
-Use `POST /search/natural-language` to describe the kind of game or content you want instead of composing keyword filters. The API embeds the query, ranks the offer vectors, and then uses each match's indexed offer ID to load the current offer document from MongoDB. Vector metadata is not used as the source of offer fields.
+Use `POST /search/natural-language` to describe the kind of game or content you want instead of composing keyword filters.
 
 ```sh
 curl -X POST "https://api.egdata.app/search/natural-language?locale=en-US" \
@@ -15,7 +15,7 @@ curl -X POST "https://api.egdata.app/search/natural-language?locale=en-US" \
 
 ## Response
 
-Results retain Vectorize similarity order. Each match contains the similarity `score` and a Mongo-backed `offer`, including the same localization metadata used by other public offer responses.
+Results are ordered by similarity. Each match contains a `score` and an `offer`, including localization metadata. This response is abbreviated and uses illustrative values:
 
 ```json
 {
@@ -35,4 +35,4 @@ Results retain Vectorize similarity order. Each match contains the similarity `s
 }
 ```
 
-`count` can be smaller than `topK` when a Vectorize entry is stale or its ID no longer resolves to an offer document. Treat scores as ranking signals within a response rather than as fixed relevance thresholds.
+`count` can be smaller than `topK` when fewer offers are available. Treat scores as ranking signals within a response rather than fixed relevance thresholds.

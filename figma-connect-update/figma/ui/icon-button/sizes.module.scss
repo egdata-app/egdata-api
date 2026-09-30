@@ -1,0 +1,30 @@
+.buttonSizes {
+  &[data-size='s'] {
+    height: 32px;
+    font-size: 14px;
+  }
+
+  &[data-size='m'] {
+    height: 40px;
+    font-size: 16px;
+  }
+
+  &[data-size='l'] {
+    height: 48px;
+    font-size: 16px;
+  }
+}
+
+.loaderSizes {
+  &[data-size='s'] {
+    font-size: 2px;
+  }
+
+  &[data-size='m'] {
+    font-size: 2.25px;
+  }
+
+  &[data-size='l'] {
+    font-size: 2.5px;
+  }
+}

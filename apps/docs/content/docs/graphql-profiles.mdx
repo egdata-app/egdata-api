@@ -9,7 +9,7 @@ The GraphQL endpoint is available at:
 https://api.egdata.app/graphql
 ```
 
-Use `profile(id: ID!)` to fetch public player identity, showcase highlights, featured games, rare achievements, and recent activity without calling multiple REST profile routes. The query is public: it does not require an `Authorization` header, bearer token, or token scopes.
+Use `profile(id: ID!)` to fetch public player identity, showcase highlights, featured games, rare achievements, and recent activity without calling multiple REST profile routes.
 
 ## Arguments
 
@@ -58,67 +58,40 @@ Pagination uses 1-based `page` values. `page: 2` returns the next `limit` result
 
 `recentActivity` currently returns only `ACHIEVEMENT_UNLOCKED` and `PLATINUM_EARNED` items because those records have reliable timestamps.
 
-## Showcase Query
+## Showcase query
 
-```graphql
-query ProfileShowcase($id: ID!) {
-  profile(id: $id) {
-    accountId
-    displayName
-    avatar {
-      large
-    }
-    linkedAccounts
-    creationDate
-    reviewsCount
-    highlights {
-      level
-      totalXP
-      totalGames
-      totalAchievements
-      totalPlatinums
-      reviewsCount
-    }
-    heroGame {
-      sandboxId
-      title
-      imageUrl
-      completionPercent
-      earnedXP
-      totalXP
-      hasPlatinum
-    }
-    featuredAchievements(limit: 8) {
-      displayName
-      description
-      iconUrl
-      rarityPercent
-      xp
-      sandboxId
-      gameTitle
-      unlockedAt
-    }
-    featuredGames(limit: 6, filter: ALL, sort: COMPLETION) {
-      sandboxId
-      title
-      imageUrl
-      completionPercent
-      earnedXP
-      totalXP
-      hasPlatinum
-      rarestAchievements {
+Send a JSON body containing `query` and `variables` to `POST /graphql` with `Content-Type: application/json`. Replace the placeholder with an Epic account ID:
+
+```js
+const response = await fetch("https://api.egdata.app/graphql", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    query: `query Profile($id: ID!) {
+      profile(id: $id) {
+        accountId
         displayName
-        iconUrl
-        rarityPercent
+        highlights { totalGames totalAchievements }
       }
-    }
-    recentActivity(limit: 8, page: 1) {
-      type
-      sandboxId
-      gameTitle
-      achievementName
-      achievementIconUrl
-      occurredAt
+    }`,
+    variables: { id: "example-epic-account-id" },
+  }),
+});
+if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+const result = await response.json();
+if (result.errors) throw new Error("Profile query failed");
+console.log(result.data.profile);
+```
+
+Abbreviated response with illustrative values:
+
+```json
+{
+  "data": {
+    "profile": {
+      "accountId": "example-epic-account-id",
+      "displayName": "Example Player",
+      "highlights": { "totalGames": 12, "totalAchievements": 100 }
     }
   }
 }
@@ -168,4 +141,4 @@ query ProfileLibrary($id: ID!, $page: Int!) {
 
 `profile` returns `null` when the Epic profile lookup fails. Profiles with no imported achievement data return empty game, achievement, and activity lists.
 
-Invalid GraphQL documents, missing required variables, or invalid enum values such as an unknown `filter` or `sort` return standard GraphQL errors. The `profile` query itself is public, so `401` and `403` responses are not expected for valid profile requests. Clients may still receive `429` if platform rate limits are exceeded, or `5xx` responses for unexpected upstream or server failures.
+Invalid GraphQL documents, missing required variables, or invalid enum values such as an unknown `filter` or `sort` return standard GraphQL errors. Clients may still receive `429` if platform rate limits are exceeded, or `5xx` responses for unexpected upstream or server failures.

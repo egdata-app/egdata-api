@@ -1,0 +1,56 @@
+---
+labels: ['react', 'ui', 'button']
+---
+
+import { Icon } from '@teambit/design.elements.icon';
+import { IconButton } from './icon-button.js';
+
+## Usages
+
+Use this component to display a button with icon, text or an icon + text.  
+Icon prop is a React element and can be an image or icon from icomoon CDN.
+
+### icon and text
+
+```js live
+<IconButton icon={<Icon of={`pending`} />}>button</IconButton>
+```
+
+### image and text
+
+```js live
+<IconButton icon={<img src="https://static.bit.dev/brands/logo-google.svg" />}>button</IconButton>
+```
+
+### icon only
+
+```js live
+<IconButton icon={<Icon of={`pending`} />}></IconButton>
+```
+
+### text only
+
+```js live
+<IconButton>button</IconButton>
+```
+
+## Different sizes
+
+Use the size option to set different size.  
+Small (default):
+
+```js live
+<IconButton size="s">button</IconButton>
+```
+
+Medium:
+
+```js live
+<IconButton size="m">button</IconButton>
+```
+
+Large:
+
+```js live
+<IconButton size="l">button</IconButton>
+```
