@@ -1,43 +1,31 @@
 ---
-title: Overview
-description: Start here for the egdata REST API documentation.
+title: Get started
+description: Make your first request to the egdata API.
 ---
 
-egdata API exposes Epic Games Store catalog, pricing, search, profile, and promotional data through JSON endpoints.
+The egdata API provides public Epic Games Store catalog, price, promotion, and change data as JSON. The production base URL is `https://api.egdata.app`.
 
-## Base URL
+Fetch an offer by its catalog offer ID:
 
-Production requests use:
+```js
+const response = await fetch(
+  "https://api.egdata.app/offers/offer-id?locale=en-US",
+);
 
-```txt
-https://api.egdata.app
+if (!response.ok) {
+  throw new Error(`egdata returned ${response.status}`);
+}
+
+const offer = await response.json();
+console.log(offer.title);
 ```
 
-For local development, the API server runs on port `4000` by default:
+A successful response includes the offer ID and its catalog details:
 
-```txt
-http://localhost:4000
+```json
+{ "id": "offer-id", "title": "Example Game", "locale": "en-US" }
 ```
 
-## OpenAPI Reference
+Offer IDs come from search results or the Epic catalog. Responses are JSON; check the HTTP status before reading a response as successful. If an ID is unknown, the API returns `404`.
 
-The API reference is generated from `../../openapi/egdata.openapi.json` when that file is present. This docs app ships a small fallback schema so the app can build before the generated schema exists in a checkout.
-
-Browse the documented public endpoints in the [API Reference](/docs/api-reference).
-
-## Common Resources
-
-The REST API groups data around these resource families:
-
-| Area | Use |
-| --- | --- |
-| Offers | Game products, editions, bundles, and catalog metadata |
-| Items | Store items and related content |
-| Prices | Regional prices, discounts, and promotions |
-| Search | Queryable catalog and merchandising data |
-| Profiles | Public and authenticated profile data |
-| Free games | Current and upcoming free promotions |
-
-## Response Format
-
-Responses are JSON. Collection endpoints use pagination fields where the underlying route supports paging.
+Start with [Find games](/docs/offer-search), then use [Game details](/docs/game-details) to load offers, items, and their relationships. See [Request essentials](/docs/regions-pagination-errors) for country, locale, pagination, and error behavior.

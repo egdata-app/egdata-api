@@ -232,7 +232,7 @@ app.get("/doc", async (c) => {
 });
 
 app.get("/robots.txt", async (c) => {
-  // Disallow all robots as this is an API (Besides the sitemap)
+  // Permit sitemaps and share-preview images while keeping API data uncrawlable.
   const robots = `User-agent: *
 Disallow: /
 Allow: /sitemap.xml
@@ -243,6 +243,8 @@ Allow: /sandboxes/sitemap.xml
 Allow: /sandboxes/sitemap.xml?*
 Allow: /items/sitemap.xml
 Allow: /items/sitemap.xml?*
+Allow: /offers/*/og
+Allow: /items/*/og
 `;
 
   return c.text(robots, 200, {

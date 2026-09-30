@@ -1,57 +1,44 @@
 ---
-title: Direct catalog hydration
-description: Synchronize only the Epic catalog graphs a local-first client has discovered.
+title: Catalog hydration
+description: Incrementally retrieve catalog records and relationships for discovered roots.
 ---
 
-`POST /catalog/hydrate` resolves public Epic catalog metadata directly from the authoritative MongoDB collections. It does not require a bulk export or a prebuilt generation.
+Use `POST /catalog/hydrate` when a client needs the records related to catalog identifiers it has discovered. The endpoint returns newline-delimited JSON (`application/x-ndjson`), with one result line per requested root.
 
-Send at most 25 unique composite item, platform-qualified asset, or platform-qualified release-app identifiers:
+```js
+const response = await fetch("https://api.egdata.app/catalog/hydrate", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    schemaVersion: 2,
+    identifiers: [
+      { type: "asset", namespace: "example-namespace", artifactId: "ExampleGame", platform: "Windows" },
+    ],
+    knownRoots: [],
+    knownRecords: [],
+  }),
+});
+
+if (!response.ok || !response.body) throw new Error(`Hydration failed: ${response.status}`);
+const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+let pending = "";
+while (true) {
+  const { value, done } = await reader.read();
+  pending += value ?? "";
+  const lines = pending.split("\n");
+  pending = lines.pop() ?? "";
+  for (const line of lines) if (line) console.log(JSON.parse(line));
+  if (done) break;
+}
+if (pending) console.log(JSON.parse(pending));
+```
+
+Send up to 25 unique composite item, platform-qualified asset, or platform-qualified release-app identifiers. The request uses schema version 2 and may include `knownRoots` and up to 5,000 `knownRecords` to request only changes. The whole request is limited to 256 KiB.
+
+Each line reports one root as `resolved`, `unchanged`, `not-found`, or `error`. A resolved result contains record membership and records whose hashes changed. An unchanged result confirms the root is current. A not-found result clears only that root. An error is isolated to that root; keep its local data and retry it. Process each line independently so a failed or interrupted stream does not discard earlier results.
 
 ```json
-{
-  "schemaVersion": 2,
-  "identifiers": [
-    {
-      "type": "asset",
-      "namespace": "example-namespace",
-      "artifactId": "ExampleGame",
-      "platform": "Windows"
-    }
-  ],
-  "knownRoots": [],
-  "knownRecords": []
-}
+{"schemaVersion":2,"rootKey":"asset:example-namespace:examplegame:windows","identifier":{"type":"asset","namespace":"example-namespace","artifactId":"ExampleGame","platform":"Windows"},"hydratedAt":"2026-09-30T10:00:00.000Z","status":"unchanged","graphHash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
 ```
 
-The response is `application/x-ndjson`. Read and validate one line at a time. Each line describes exactly one requested root and has one of four statuses:
-
-- `resolved` supplies the complete authoritative `recordKeys` membership and only records whose SHA-256 differs from `knownRecords`.
-- `unchanged` confirms that the supplied root `graphHash` is still current.
-- `not-found` authoritatively clears that root without affecting sibling requests. Missing `ue`, Fab, Unreal, and unknown identifiers use this status.
-- `error` is a sanitized root-level failure. Keep existing local data and retry the root later.
-
-Each decoded line is bounded to 2 MiB and 500 records. A malformed or oversized root becomes an isolated `error` line; it does not discard successfully streamed siblings.
-
-## Graph contents
-
-A resolved owning item includes every directly related, subitem, and linked offer. It also includes sibling items from those offers plus their assets and normalized release apps. Expansion stops there and does not recursively traverse unrelated offers.
-
-The discriminated `type` field selects `offer`, `item`, `asset`, `release-app`, or `offer-item`. Offer-item edges preserve every observed relationship source. The primary offer ranking is deterministic: non-prepurchase first, then direct/subitem/linked, then `BASE_GAME`, `DLC`, `ADD_ON`, `EDITION`, `BUNDLE`, and `CONSUMABLE`, newest modification, and lexical composite ID.
-
-`graphHash` is SHA-256 of stable JSON containing the sorted `(recordKey, recordSha256)` pairs. Metadata changes therefore invalidate the root even when membership is unchanged.
-
-## Local-first application
-
-Apply each line in its own SQLite transaction. Replace root membership only for `resolved` and `not-found`, garbage-collect records only after their final root reference disappears, and update only affected search documents. If a stream is interrupted, keep committed roots and requeue the unprocessed identifiers.
-
-The endpoint excludes prices, price history, global build history, signed URLs, and image binaries.
-
-## Legacy storage cleanup
-
-After direct hydration is verified in production, an operator may explicitly delete the old materialized collections:
-
-```sh
-pnpm catalog:cleanup-legacy -- --confirm-delete-legacy-catalog-storage
-```
-
-Without that exact confirmation flag the command refuses to delete data.
+Each line is bounded to 2 MiB and 500 records. A resolved graph can include linked offers, related items, assets, and normalized release apps. Prices, price history, build history, signed URLs, and image binaries are excluded. See the [API reference](/docs/api-reference) for the complete request and response schemas.

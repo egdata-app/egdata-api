@@ -3023,6 +3023,214 @@
         }
       }
     },
+    "/offers/{id}/og": {
+      "get": {
+        "operationId": "getOfferOgPng",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Generate a PNG offer database preview",
+        "description": "Returns the offer's database summary image. Last update is the catalog's lastModifiedDate (updatedAt fallback), not build polling time. Size is the latest associated build's download size, with matching asset fallback, preferring direct-item assets. Artwork may be omitted if unavailable. Unknown offers or countries return 404.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "description": "Country code for current pricing. Defaults to the EGDATA_COUNTRY cookie, then US. Unknown codes return 404; country-restricted prices display Unavailable.",
+            "schema": {
+              "type": "string",
+              "example": "US"
+            }
+          },
+          {
+            "name": "EGDATA_COUNTRY",
+            "in": "cookie",
+            "required": false,
+            "description": "Pricing country when the country query parameter is absent.",
+            "schema": {
+              "type": "string",
+              "example": "US"
+            }
+          },
+          {
+            "name": "v",
+            "in": "query",
+            "required": false,
+            "description": "Optional URL cache buster. Does not select a historical snapshot.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "1200 × 630 database summary with current price, UTC catalog update date, latest download size in decimal GB, and release date. Missing values are labeled explicitly.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Public cache lifetime.",
+                "schema": {
+                  "type": "string",
+                  "example": "public, max-age=60"
+                }
+              },
+              "Vary": {
+                "description": "Country cookies can change regional pricing.",
+                "schema": {
+                  "type": "string",
+                  "example": "Cookie"
+                }
+              }
+            },
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}/og.webp": {
+      "get": {
+        "operationId": "getOfferOgWebp",
+        "tags": [
+          "Offer Details"
+        ],
+        "summary": "Generate a WebP offer database preview",
+        "description": "WebP version of /offers/{id}/og with the same metadata, country selection, missing-data fallbacks, and 404 errors.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offerId"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "description": "Country code for current pricing. Defaults to the EGDATA_COUNTRY cookie, then US. Unknown codes return 404; country-restricted prices display Unavailable.",
+            "schema": {
+              "type": "string",
+              "example": "US"
+            }
+          },
+          {
+            "name": "EGDATA_COUNTRY",
+            "in": "cookie",
+            "required": false,
+            "description": "Pricing country when the country query parameter is absent.",
+            "schema": {
+              "type": "string",
+              "example": "US"
+            }
+          },
+          {
+            "name": "v",
+            "in": "query",
+            "required": false,
+            "description": "Optional URL cache buster. Does not select a historical snapshot.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "1200 × 630 database summary with current price, UTC catalog update date, latest download size in decimal GB, and release date. Missing values are labeled explicitly.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Public cache lifetime.",
+                "schema": {
+                  "type": "string",
+                  "example": "public, max-age=60"
+                }
+              },
+              "Vary": {
+                "description": "Country cookies can change regional pricing.",
+                "schema": {
+                  "type": "string",
+                  "example": "Cookie"
+                }
+              }
+            },
+            "content": {
+              "image/webp": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/offers/{id}/features": {
       "get": {
         "operationId": "getOfferFeatures",

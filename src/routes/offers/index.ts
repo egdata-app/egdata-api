@@ -25,6 +25,7 @@ import {
 } from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
 import OfferDataRoute from "./data.js";
+import OfferOgRoute from "./og.js";
 import OfferPriceRoute from "./price.js";
 import OfferReviewsRoute from "./reviews.js";
 
@@ -1009,6 +1010,7 @@ app.get("/:id", async (c) => {
 });
 
 app.route("/:id", OfferPriceRoute);
+app.route("/:id", OfferOgRoute);
 app.route("/:id", OfferReviewsRoute);
 app.route("/:id", OfferDataRoute);
 

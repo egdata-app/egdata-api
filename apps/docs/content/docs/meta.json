@@ -1,16 +1,24 @@
 {
   "pages": [
-    "---Guides---",
     "index",
-    "authentication",
-    "graphql-profiles",
+    "---Find games---",
     "offer-search",
     "natural-language-search",
-    "launcher-record-resolution",
-    "catalog-hydration",
+    "---Game details---",
+    "game-details",
+    "---Prices---",
+    "price-availability",
+    "---Free games---",
+    "free-games",
+    "---Request essentials---",
     "regions-pagination-errors",
-    "changelog-deprecations",
-    "---API Reference---",
+    "---Track changes---",
+    "track-changes",
+    "---Advanced---",
+    "graphql-profiles",
+    "catalog-hydration",
+    "launcher-record-resolution",
+    "---API reference---",
     "api-reference"
   ]
 }

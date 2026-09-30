@@ -302,11 +302,6 @@ export const routeClassifications: RouteClassification[] = [
     reason: "Authenticated ownership route.",
   },
   {
-    path: "/offers/{id}/og",
-    visibility: "non-json",
-    reason: "Generated OG image response.",
-  },
-  {
     path: "/profiles/**",
     visibility: "public-deferred",
     reason: "Public profile data; outside first documentation slice.",

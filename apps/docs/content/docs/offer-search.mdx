@@ -1,47 +1,43 @@
 ---
-title: Offer Search
-description: Filter and sort Epic Games Store offers with the regional OpenSearch API.
+title: Find games
+description: Search the catalog, combine filters, and order results.
 ---
 
-Use `POST /search/v2/search` for catalog search, filters, facets, regional prices, and pagination. Pass the visitor's ISO country code in the `country` query parameter so price filters, price sorts, and the returned `price` record use the corresponding Epic pricing region.
+Use `POST /search/v2/search` to find store offers by title and filter them by offer type, tags, seller, developer, publisher, category, detected technology, or regional price. Send the visitor's two-letter country code as `country` so price filters and returned prices use the right region.
 
-## Technology Filters
+```js
+const response = await fetch(
+  "https://api.egdata.app/search/v2/search?country=US&locale=en-US",
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      title: "co-op adventure",
+      offerType: "BASE_GAME",
+      onSale: true,
+      sortBy: "discountPercent",
+      sortDir: "desc",
+      page: 1,
+      limit: 20,
+    }),
+  },
+);
+const result = await response.json();
+```
 
-Pass `technologies` as an array of non-empty detected build technology names. Values are trimmed, duplicates are ignored, and an offer must contain every selected technology:
+The response contains a total count, matching offers, the requested page and limit, and filter aggregations. Each offer includes a `price` for the selected region, or `null` when no regional price is available.
 
-```http
-POST /search/v2/search?country=US
-Content-Type: application/json
-
+```json
 {
-  "technologies": ["Unreal", "NVIDIA_DLSS"],
+  "total": 1,
+  "offers": [{ "id": "offer-id", "title": "Example Game", "price": null }],
   "page": 1,
-  "limit": 25
+  "limit": 20
 }
 ```
 
-Every response includes `aggregations.technologies.buckets`. Each bucket contains a technology name in `key` and the number of matching offers in `doc_count`. Counts are scoped to the request's active filters and count offers rather than individual platform builds.
+`title` searches titles and related text with fuzzy and synonym matching. Filters can be combined. `tags` requires all supplied tag IDs; `technologies` requires every named detected technology. The response always includes technology buckets under `aggregations.technologies.buckets`.
 
-## Historical Lows
+`page` starts at 1. `limit` defaults to 10 and is capped at 100. Without `sortBy`, text searches rank by relevance and other searches sort by most recently modified. Common `sortBy` values include `releaseDate`, `lastModifiedDate`, `price`, `discount`, `discountPercent`, `priceUpdatedAt`, `upcoming`, and `giveawayDate`; `sortDir` is `asc` or `desc` and defaults to `desc`. Set `sortBy: "price"` and `sortDir: "asc"` for the lowest price first. Price sorting uses the selected country's region. Some release date sorts also restrict results to future or released offers.
 
-The following request returns the 25 most recently updated paid offers that are currently at their historical US low:
-
-```http
-POST /search/v2/search?country=US
-Content-Type: application/json
-
-{
-  "isLowestPriceEver": true,
-  "price": { "min": 1 },
-  "sortBy": "priceUpdatedAt",
-  "sortDir": "desc",
-  "page": 1,
-  "limit": 25
-}
-```
-
-`isLowestPriceEver` uses the API's US historical-low benchmark. The positive `price.min` excludes zero-price promotions. Price filtering, the returned regional price record, and `priceUpdatedAt` ordering use `prices.<selected region>` for the requested country. No offer-type filter is implied, so base games, editions, add-ons, DLC, and other offer types can be returned.
-
-## Regional Price Update Sort
-
-Set `sortBy` to `priceUpdatedAt` to order offers by `prices.<selected region>.updatedAt`. Use `sortDir: "desc"` for the latest price changes first or `sortDir: "asc"` for the oldest first.
+For meaning-based queries, see [natural-language search](/docs/natural-language-search).
