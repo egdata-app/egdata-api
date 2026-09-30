@@ -17,6 +17,49 @@ const regionalLocalizedPagination = [
   ...pagination,
 ];
 const offerId = [parameterRef("offerId")];
+const offerOgParameters = [
+  ...offerId,
+  {
+    name: "country",
+    in: "query",
+    required: false,
+    description:
+      "Country code for current pricing. Defaults to the EGDATA_COUNTRY cookie, then US. Unknown codes return 404; country-restricted prices display Unavailable.",
+    schema: { type: "string", example: "US" },
+  } satisfies OpenAPIV3.ParameterObject,
+  {
+    name: "EGDATA_COUNTRY",
+    in: "cookie",
+    required: false,
+    description: "Pricing country when the country query parameter is absent.",
+    schema: { type: "string", example: "US" },
+  } satisfies OpenAPIV3.ParameterObject,
+  stringQuery(
+    "v",
+    "Optional URL cache buster. Does not select a historical snapshot.",
+  ),
+];
+const offerOgResponse = (format: "png" | "webp") => ({
+  200: {
+    description:
+      "1200 × 630 database summary with current price, UTC catalog update date, latest download size in decimal GB, and release date. Missing values are labeled explicitly.",
+    headers: {
+      "Cache-Control": {
+        description: "Public cache lifetime.",
+        schema: { type: "string" as const, example: "public, max-age=60" },
+      },
+      Vary: {
+        description: "Country cookies can change regional pricing.",
+        schema: { type: "string" as const, example: "Cookie" },
+      },
+    },
+    content: {
+      [`image/${format}`]: {
+        schema: { type: "string" as const, format: "binary" },
+      },
+    },
+  },
+});
 const localizedOfferId = [...offerId, parameterRef("locale")];
 const regionalLocalizedOfferId = [
   ...offerId,
@@ -25,6 +68,31 @@ const regionalLocalizedOfferId = [
 ];
 const itemId = [parameterRef("itemId")];
 const sandboxId = [parameterRef("sandboxId")];
+const sandboxOgParameters = [
+  ...sandboxId,
+  stringQuery(
+    "v",
+    "Optional URL cache buster. Does not select a historical snapshot.",
+  ),
+];
+const sandboxOgResponse = (format: "png" | "webp") => ({
+  200: {
+    description:
+      "1200 × 630 sandbox summary with offer, item, and asset counts, base-game identity, and the sandbox's UTC update date. Artwork is optional and missing dates are labeled explicitly.",
+    headers: {
+      "Cache-Control": {
+        description:
+          "Public cache lifetime. Sandbox summaries are country-independent.",
+        schema: { type: "string" as const, example: "public, max-age=60" },
+      },
+    },
+    content: {
+      [`image/${format}`]: {
+        schema: { type: "string" as const, format: "binary" },
+      },
+    },
+  },
+});
 const sellerId = [parameterRef("sellerId")];
 const buildId: OpenAPIV3.ParameterObject = {
   name: "id",
@@ -768,6 +836,28 @@ export const paths: EgdataPaths = {
       response: arrayOf(flexibleObjectResponse("Franchise metadata.")),
     }),
   },
+  "/offers/{id}/og": {
+    get: operation({
+      operationId: "getOfferOgPng",
+      tags: ["Offer Details"],
+      summary: "Generate a PNG offer database preview",
+      description:
+        "Returns the offer's database summary image. Last update is the catalog's lastModifiedDate (updatedAt fallback), not build polling time. Size is the latest associated build's download size, with matching asset fallback, preferring direct-item assets. Artwork may be omitted if unavailable. Unknown offers or countries return 404.",
+      parameters: offerOgParameters,
+      response: offerOgResponse("png"),
+    }),
+  },
+  "/offers/{id}/og.webp": {
+    get: operation({
+      operationId: "getOfferOgWebp",
+      tags: ["Offer Details"],
+      summary: "Generate a WebP offer database preview",
+      description:
+        "WebP version of /offers/{id}/og with the same metadata, country selection, missing-data fallbacks, and 404 errors.",
+      parameters: offerOgParameters,
+      response: offerOgResponse("webp"),
+    }),
+  },
   "/offers/{id}/features": {
     get: operation({
       operationId: "getOfferFeatures",
@@ -1242,6 +1332,28 @@ export const paths: EgdataPaths = {
       summary: "Get a sandbox",
       parameters: sandboxId,
       response: ref("Sandbox"),
+    }),
+  },
+  "/sandboxes/{sandboxId}/og": {
+    get: operation({
+      operationId: "getSandboxOgPng",
+      tags: ["Sandboxes"],
+      summary: "Generate a PNG sandbox database preview",
+      description:
+        "Shows all offer and item records, and assets counted as stored records plus each release-info platform without a stored artifact. Uses the earliest-created released non-code-redemption base game, then a preorder base game, then an executable item; otherwise uses the sandbox name. Last update uses sandbox updated, then lastModifiedDate, then updatedAt. Missing artwork is omitted. Unknown sandboxes return a JSON 404 error.",
+      parameters: sandboxOgParameters,
+      response: sandboxOgResponse("png"),
+    }),
+  },
+  "/sandboxes/{sandboxId}/og.webp": {
+    get: operation({
+      operationId: "getSandboxOgWebp",
+      tags: ["Sandboxes"],
+      summary: "Generate a WebP sandbox database preview",
+      description:
+        "WebP version of /sandboxes/{sandboxId}/og with the same counts, identity, UTC update date, missing-data fallbacks, and JSON 404 errors.",
+      parameters: sandboxOgParameters,
+      response: sandboxOgResponse("webp"),
     }),
   },
   "/sandboxes/{sandboxId}/items": {

@@ -19,6 +19,16 @@ export async function ensureDocsPage(slug?: string[]) {
   const page = source.getPage(slug);
 
   if (!page) {
+    const docsRedirects: Record<string, string> = {
+      authentication: "/docs",
+      "changelog-deprecations": "/docs/track-changes",
+    };
+    const docsRedirect = slug?.length === 1 ? docsRedirects[slug[0]] : undefined;
+
+    if (docsRedirect) {
+      throw redirect({ href: docsRedirect });
+    }
+
     const redirectTo = getApiReferenceRedirect(slug);
 
     if (redirectTo) {

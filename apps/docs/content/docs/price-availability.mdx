@@ -1,14 +1,27 @@
 ---
-title: Price availability
-description: Current prices, country restrictions, and retained history.
+title: Prices
+description: Read current regional prices, discounts, and price history.
 ---
 
-Current offer prices respect the offer's country whitelist and blacklist. A non-empty whitelist limits availability; a blacklist exclusion takes precedence.
+Get an offer's current price for a country with `GET /offers/{id}/price`. The route maps the country to an Epic pricing region and returns its price record, including the current price and discount fields when available.
 
-`GET /offers/{id}/price?country=CN` and `GET /offers/{id}/regional-price?country=CN` return `404` with `{"message":"Price not found"}` if that offer is unavailable in China. These restrictions are evaluated before the API returns cached data.
+```js
+const response = await fetch(
+  "https://api.egdata.app/offers/offer-id/price?country=GB",
+);
+const price = await response.json();
+```
 
-Without a country parameter, regional pricing omits regions with no eligible countries. An eligible country may share a pricing region with an excluded country; the requested country's eligibility still applies.
+For prices across regions, use `GET /offers/{id}/regional-price`. Include `country` to get the selected country's current price and historical range; without it, the response covers eligible regions. `GET /offers/{id}/price-history?country=GB` returns observations for that country's region. Add `since` with an ISO date to limit history to later observations; omit `country` and `region` to receive history grouped by region.
 
-Price history remains available at `GET /offers/{id}/price-history`, including historical observations from regions that are no longer available. Historical prices do not make an excluded region available again.
+```json
+{
+  "currentPrice": { "region": "GB", "price": { "currencyCode": "GBP", "discountPrice": 1999, "discount": 20 } },
+  "minPrice": 1999,
+  "maxPrice": 2499
+}
+```
 
-A price's `updatedAt` records its last price change. An unchanged timestamp alone does not indicate that refreshes have stopped.
+The sample shows the shape of a country-specific regional-price response. Price amounts use the currency's minor units (for example, pence for GBP); use `currencyCode` when formatting them. A discount value of zero means no discount; use the returned price data rather than inferring availability from a discount.
+
+The offer's country whitelist and blacklist control current-price access. A non-empty whitelist restricts eligible countries; a blacklist excludes countries. If the requested country is ineligible, or has no price record, the current-price endpoint returns `404`. Regional lists omit regions with no eligible countries. Historical observations remain available even when an offer is no longer available in that region; historical data does not restore current availability.

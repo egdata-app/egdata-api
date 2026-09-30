@@ -1,38 +1,30 @@
 ---
-title: Natural-Language Offer Search
-description: Find Epic Games Store offers by meaning with Workers AI and Cloudflare Vectorize.
+title: Natural-language search
+description: Find games by describing what you are looking for.
 ---
 
-Use `POST /search/natural-language` to describe the kind of game or content you want instead of composing keyword filters. The API embeds the query, ranks the offer vectors, and then uses each match's indexed offer ID to load the current offer document from MongoDB. Vector metadata is not used as the source of offer fields.
+Use `POST /search/natural-language` when a phrase describes the kind of game you want better than exact filters.
 
-```sh
-curl -X POST "https://api.egdata.app/search/natural-language?locale=en-US" \
-  -H "Content-Type: application/json" \
-  -d '{"query":"open world co-op survival games","topK":10}'
+```js
+const response = await fetch(
+  "https://api.egdata.app/search/natural-language?locale=en-US",
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: "open world co-op survival games", topK: 10 }),
+  },
+);
+const result = await response.json();
 ```
 
-`query` is required and may contain up to 500 characters. `topK` is optional, defaults to `10`, and accepts values from `1` through `50`.
-
-## Response
-
-Results retain Vectorize similarity order. Each match contains the similarity `score` and a Mongo-backed `offer`, including the same localization metadata used by other public offer responses.
+Each match contains a similarity score and a current offer. Results are ordered by similarity:
 
 ```json
 {
   "query": "open world co-op survival games",
   "count": 1,
-  "matches": [
-    {
-      "score": 0.91,
-      "offer": {
-        "id": "example-offer-id",
-        "title": "Example Game",
-        "locale": "en-US",
-        "localeStatus": "canonical"
-      }
-    }
-  ]
+  "matches": [{ "score": 0.91, "offer": { "id": "offer-id", "title": "Example Game" } }]
 }
 ```
 
-`count` can be smaller than `topK` when a Vectorize entry is stale or its ID no longer resolves to an offer document. Treat scores as ranking signals within a response rather than as fixed relevance thresholds.
+`query` is required and may contain up to 500 characters. `topK` defaults to 10 and accepts 1 through 50. `count` may be lower than `topK` if a match no longer has a corresponding offer. Treat scores as relative ranking hints, not fixed relevance thresholds.

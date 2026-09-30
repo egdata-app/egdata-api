@@ -23,6 +23,7 @@ import {
   localizeOffers,
 } from "../utils/offer-localization.js";
 import { orderOffersObject } from "../utils/order-offers-object.js";
+import SandboxOgRoute from "./sandbox-og.js";
 
 const app = new Hono();
 
@@ -958,5 +959,7 @@ app.get("/:sandboxId/stats", async (c) => {
 
   return c.json(response);
 });
+
+app.route("/:sandboxId", SandboxOgRoute);
 
 export default app;

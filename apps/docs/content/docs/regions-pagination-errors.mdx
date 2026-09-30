@@ -1,67 +1,48 @@
 ---
-title: Regions, Pagination, and Errors
-description: Request conventions for regional data, paginated lists, and error handling.
+title: Request essentials
+description: Choose a country and locale, page through results, and handle errors.
 ---
 
-Several endpoints return region-specific store data. Region-aware routes accept ISO-style country or locale inputs depending on the endpoint.
+## Country and region
 
-## Regions
+Country-aware endpoints accept a two-letter `country` query parameter, such as `US`, `GB`, or `ES`. The API maps the country to an Epic pricing region. Where a country is omitted, many storefront routes use the `EGDATA_COUNTRY` cookie or default to `US`; pass `country` explicitly for predictable server-to-server requests. Unsupported countries can return `404`.
 
-Use store regions consistently across a request flow. Price and promotion results can differ by region, currency, availability, and local catalog rules.
+## Locale
 
-Common region examples:
+Offer endpoints accept `locale`; an omitted or blank value defaults to `en-US`. Locale syntax is validated and an invalid value returns `400`. Localization uses exact locale matches: `es-MX` does not fall back to `es-ES`. When the requested translation is missing for an offer, its text remains in canonical `en-US` and the offer includes `localeStatus: "fallback"`. Only public offer text and content fields are localized. Prices, availability, assets, builds, and other operational data remain canonical.
 
-| Region | Store context |
-| --- | --- |
-| `US` | United States |
-| `GB` | United Kingdom |
-| `DE` | Germany |
-| `FR` | France |
-| `ES` | Spain |
-
-If a region is unsupported or unavailable, routes may fall back to a default region or return an empty result, depending on the endpoint.
-
-Free-game promotion routes normalize availability metadata for clients. `countriesBlacklist` is always an array, `giveaway.offerId` is always present, and `giveaway.platform` is a string for platform-specific promotions or `null` otherwise.
-
-## Localization
-
-REST endpoints that return public offer DTOs accept a `locale` query parameter. GraphQL offer fields accept a `locale` argument. Missing or blank `locale` values default to `en-US`.
-
-Offer localization uses exact locale matches only. For example, `locale=es-MX` checks only `es-MX`; it does not fall back to `es-ES` or another regional variant. If no matching localization record exists for an offer, the response keeps the canonical `en-US` offer text for that offer.
-
-Only public offer text and content fields are localized: `title`, `description`, `longDescription`, `developerDisplayName`, `publisherDisplayName`, `seller`, `tags`, `offerMappings`, `productSlug`, `urlSlug`, and `url`. Prices, availability, countries, assets, builds, manifests, binary sizes, reviews, and other operational data remain canonical.
-
-Each offer includes localization metadata:
-
-| Field | Meaning |
-| --- | --- |
-| `locale` | Requested locale used for the offer response |
-| `localeStatus` | `canonical` for `en-US`, `localized` when an exact localization record was applied, or `fallback` when canonical text was returned for a non-canonical locale |
-| `canonicalLocale` | `en-US` on non-canonical responses |
-| `localization` | Metadata from the applied localization record when `localeStatus` is `localized` |
-
-For nested GraphQL offer fields such as `related` and `suggestions`, the parent offer locale is reused when the nested field does not provide its own `locale` argument.
+```json
+{
+  "title": "Example Game",
+  "locale": "es-MX",
+  "localeStatus": "fallback",
+  "canonicalLocale": "en-US"
+}
+```
 
 ## Pagination
 
-Paginated endpoints use query parameters such as `page`, `limit`, `offset`, or route-specific cursors. Prefer the names documented on each OpenAPI operation.
-
-Keep page sizes conservative. Large responses increase API latency and can be harder for clients to cache safely.
+Pagination is route-specific. Search and profile connections use 1-based `page` values. Search `limit` defaults to 10 and is capped at 100; free-game history caps `limit` at 25; changelog lists cap it at 50. Some endpoints use `offset` or another cursor. Check the endpoint's reference for its parameter names and maximum. Follow `hasNextPage`, `totalPages`, or equivalent metadata when the endpoint returns it.
 
 ## Errors
 
-Error responses use HTTP status codes and a JSON body when the route can provide one.
+Check `response.ok` or the status code before treating a response as data. Many errors have a JSON `message` or `error` field; its shape can vary by route.
 
-| Status | Meaning |
-| --- | --- |
-| `400` | Invalid query string, path parameter, or request body |
-| `401` | Authentication required or token rejected |
-| `403` | Authenticated client cannot access the resource |
-| `404` | Resource was not found |
-| `429` | Rate limit exceeded |
-| `500` | Unexpected server error |
-| `502` | An upstream service failed or returned an invalid response |
-| `503` | A required service is unavailable or not configured |
+For example, an offer may return canonical English text when the exact requested locale is unavailable:
 
-Clients should branch on the HTTP status first and treat the response body as diagnostic detail.
+```js
+const response = await fetch(
+  "https://api.egdata.app/offers/offer-id?country=GB&locale=es-MX",
+);
+```
 
+```js
+const response = await fetch(url);
+if (!response.ok) {
+  const detail = await response.json().catch(() => null);
+  throw new Error(`Request failed (${response.status}): ${detail?.message ?? ""}`);
+}
+const data = await response.json();
+```
+
+Common statuses are `400` for invalid input, `404` for missing or unavailable data, `429` for rate limiting, and `5xx` for a server or upstream failure. Treat nullable fields as optional and ignore response fields your client does not use.

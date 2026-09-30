@@ -4,6 +4,12 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added PNG and WebP sandbox OG database summaries with offers, items, asset counts, and the sandbox's last update; allowed sandbox OG paths in `robots.txt` and shared the Takumi renderer with offer cards.
+
+- Redesigned offer OG cards as database summaries with regional price, catalog update date, and latest download size; added `GET /offers/{id}/og.webp` alongside the existing PNG route using Takumi rendering, and allowed offer/item OG image paths in `robots.txt`.
+
+- Reorganized the API docs around developer tasks, added request examples and practical route guidance, and redirected retired guide URLs.
+
 - Enforced offer country restrictions before current-price cache reads, omitted unavailable regions from regional pricing, and preserved access to historical observations after current prices are retired.
 
 - Added validated detected-build technology filtering and documented technology facet counts to `POST /search/v2/search`.
