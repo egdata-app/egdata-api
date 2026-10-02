@@ -867,6 +867,17 @@ export const paths: EgdataPaths = {
       response: flexibleObjectResponse("Derived store feature flags."),
     }),
   },
+  "/offers/{id}/requirements": {
+    get: operation({
+      operationId: "getOfferRequirements",
+      tags: ["Offer Details"],
+      summary: "Get technical requirements for an offer",
+      description:
+        "Returns resolved Windows and macOS requirements. DLC requirements inherit from an explicitly linked base game only when the DLC source confirms that its own requirements are absent. A platform is null when no requirements record exists; 404 is returned when neither platform has a record or when the offer does not exist.",
+      parameters: offerId,
+      response: ref("OfferRequirementsResponse"),
+    }),
+  },
   "/offers/{id}/assets": {
     get: operation({
       operationId: "listOfferAssets",

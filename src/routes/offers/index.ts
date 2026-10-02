@@ -27,6 +27,7 @@ import { orderOffersObject } from "../../utils/order-offers-object.js";
 import OfferDataRoute from "./data.js";
 import OfferOgRoute from "./og.js";
 import OfferPriceRoute from "./price.js";
+import OfferRequirementsRoute from "./requirements.js";
 import OfferReviewsRoute from "./reviews.js";
 
 const app = new Hono();
@@ -1010,6 +1011,7 @@ app.get("/:id", async (c) => {
 });
 
 app.route("/:id", OfferPriceRoute);
+app.route("/:id", OfferRequirementsRoute);
 app.route("/:id", OfferOgRoute);
 app.route("/:id", OfferReviewsRoute);
 app.route("/:id", OfferDataRoute);
