@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Restored search v2 response cache reads, isolated normalized pagination in cache keys, and kept release-date search keys stable as time advances.
+
 - Added `GET /offers/{id}/requirements` for resolved Windows and macOS technical requirements, including validated DLC inheritance.
 
 - Added PNG and WebP sandbox OG database summaries with offers, items, asset counts, and the sandbox's last update; allowed sandbox OG paths in `robots.txt` and shared the Takumi renderer with offer cards.

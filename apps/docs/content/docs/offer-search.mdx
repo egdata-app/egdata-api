@@ -5,6 +5,8 @@ description: Search the catalog, combine filters, and order results.
 
 Use `POST /search/v2/search` to find store offers by title and filter them by offer type, tags, seller, developer, publisher, category, detected technology, or regional price. Send the visitor's two-letter country code as `country` so price filters and returned prices use the right region.
 
+Results are cached separately by filters, sorting, price region, locale, page, and page size. A reused response sets `meta.cached` to `true`; cache hits skip OpenSearch and do not rewrite the cached result.
+
 ```js
 const response = await fetch(
   "https://api.egdata.app/search/v2/search?country=US&locale=en-US",

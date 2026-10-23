@@ -1442,7 +1442,7 @@ app.post("/v2/search", async (c) => {
         filter.push({
           range: {
             releaseDate: {
-              gte: new Date().toISOString(),
+              gte: "now",
             },
           },
         });
@@ -1463,7 +1463,7 @@ app.post("/v2/search", async (c) => {
           filter.push({
             range: {
               releaseDate: {
-                lte: new Date().toISOString(),
+                lte: "now",
               },
             },
           });
@@ -1471,7 +1471,7 @@ app.post("/v2/search", async (c) => {
           filter.push({
             range: {
               releaseDate: {
-                gte: new Date().toISOString(),
+                gte: "now",
               },
             },
           });
@@ -1515,13 +1515,15 @@ app.post("/v2/search", async (c) => {
         filter,
         sort,
         aggregations,
+        page,
+        limit,
       }),
     )
     .digest("hex");
 
   const cacheKey = `search:v2:${hash}:${localeCacheSegment(locale)}`;
 
-  const cached = false; //await client.get(cacheKey);
+  const cached = await client.get(cacheKey);
 
   if (cached) {
     const result = JSON.parse(cached);

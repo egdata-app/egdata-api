@@ -25,6 +25,7 @@ type OpenSearchRequest = {
 
 const mocks = vi.hoisted(() => ({
   opensearchSearch: vi.fn(),
+  redisGet: vi.fn(),
   redisSet: vi.fn(),
   vectorizeSearch: vi.fn(),
 }));
@@ -46,7 +47,9 @@ const mockChangelogFind = (documents: unknown[]) =>
   vi
     .spyOn(Changelog, "find")
     .mockReturnValue(
-      Promise.resolve(documents) as unknown as ReturnType<typeof Changelog.find>,
+      Promise.resolve(documents) as unknown as ReturnType<
+        typeof Changelog.find
+      >,
     );
 
 vi.mock("../src/clients/opensearch.js", () => ({
@@ -57,7 +60,7 @@ vi.mock("../src/clients/opensearch.js", () => ({
 
 vi.mock("../src/clients/redis.js", () => ({
   default: {
-    get: vi.fn(),
+    get: mocks.redisGet,
     set: mocks.redisSet,
   },
 }));
@@ -80,7 +83,16 @@ describe("search route with SeaQA fixtures", () => {
 
   beforeEach(() => {
     mocks.opensearchSearch.mockReset();
+    mocks.redisGet.mockReset();
     mocks.redisSet.mockReset();
+    const cache = new Map<string, string>();
+    mocks.redisGet.mockImplementation(
+      async (key: string) => cache.get(key) ?? null,
+    );
+    mocks.redisSet.mockImplementation(async (key: string, value: string) => {
+      cache.set(key, value);
+      return "OK";
+    });
     mocks.vectorizeSearch.mockReset();
     consoleLogSpy = vi
       .spyOn(console, "log")
@@ -126,6 +138,7 @@ describe("search route with SeaQA fixtures", () => {
   afterEach(() => {
     consoleLogSpy.mockRestore();
     vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   it("maps fixture-backed OpenSearch hits through /search/v2/search", async () => {
@@ -161,6 +174,139 @@ describe("search route with SeaQA fixtures", () => {
       expect.any(String),
       "EX",
       3600,
+    );
+  });
+
+  it("serves repeated searches from Redis without querying or rewriting results", async () => {
+    const request = () =>
+      app.request("/search/v2/search?country=US", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ limit: 3 }),
+      });
+    const fresh = await request();
+    const freshBody = await fresh.json();
+    const cached = await request();
+
+    expect(cached.status).toBe(200);
+    expect(cached.headers.get("cache-control")).toBe("public, max-age=60");
+    await expect(cached.json()).resolves.toEqual({
+      ...freshBody,
+      meta: { ...freshBody.meta, cached: true },
+    });
+    expect(mocks.opensearchSearch).toHaveBeenCalledTimes(1);
+    expect(mocks.redisSet).toHaveBeenCalledTimes(1);
+    expect(mocks.redisGet).toHaveBeenNthCalledWith(
+      1,
+      mocks.redisSet.mock.calls[0]?.[0],
+    );
+    expect(mocks.redisGet).toHaveBeenNthCalledWith(
+      2,
+      mocks.redisSet.mock.calls[0]?.[0],
+    );
+  });
+
+  it("isolates cached pages and page sizes and reuses each exact result", async () => {
+    const variants = [
+      { page: 1, limit: 1 },
+      { page: 2, limit: 1 },
+      { page: 1, limit: 2 },
+    ];
+
+    for (const cached of [false, true]) {
+      for (const { page, limit } of variants) {
+        const response = await app.request("/search/v2/search?country=US", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ page, limit }),
+        });
+        expect(response.status).toBe(200);
+        const body = await response.json();
+        expect(body).toMatchObject({ page, limit, meta: { cached } });
+        expect(body.offers.map((offer: { id: string }) => offer.id)).toEqual(
+          offers
+            .slice((page - 1) * limit, page * limit)
+            .map((offer) => offer.id),
+        );
+      }
+    }
+
+    expect(mocks.opensearchSearch).toHaveBeenCalledTimes(variants.length);
+    expect(mocks.redisSet).toHaveBeenCalledTimes(variants.length);
+  });
+
+  it.each([
+    [{}, { page: 1, limit: 10 }],
+    [
+      { page: 0, limit: 101 },
+      { page: 1, limit: 100 },
+    ],
+  ])("shares a cache entry for equivalent normalized pagination: %j and %j", async (first, second) => {
+    for (const body of [first, second]) {
+      const response = await app.request("/search/v2/search?country=US", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      expect(response.status).toBe(200);
+    }
+    expect(mocks.opensearchSearch).toHaveBeenCalledTimes(1);
+    expect(mocks.redisSet).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps regional response caches separate without explicit price filters", async () => {
+    for (const country of ["US", "FR", "US", "FR"]) {
+      const response = await app.request(
+        `/search/v2/search?country=${country}`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ limit: 1 }),
+        },
+      );
+      expect(response.status).toBe(200);
+    }
+    expect(mocks.opensearchSearch).toHaveBeenCalledTimes(2);
+    expect(mocks.redisSet).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([
+    { sortBy: "upcoming", sortDir: "desc", boundary: "gte" },
+    { sortBy: "releaseDate", sortDir: "asc", boundary: "gte" },
+    { sortBy: "releaseDate", sortDir: "desc", boundary: "lte" },
+  ])("reuses time-relative searches as the clock advances: $sortBy $sortDir", async ({
+    sortBy,
+    sortDir,
+    boundary,
+  }) => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-23T12:00:00Z"));
+    const request = () =>
+      app.request("/search/v2/search?country=US", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ sortBy, sortDir, limit: 1 }),
+      });
+
+    expect((await request()).status).toBe(200);
+    vi.setSystemTime(new Date("2026-10-23T12:00:01Z"));
+    const cached = await request();
+    await expect(cached.json()).resolves.toMatchObject({
+      meta: { cached: true },
+    });
+    expect(mocks.opensearchSearch).toHaveBeenCalledTimes(1);
+    expect(mocks.redisSet).toHaveBeenCalledTimes(1);
+    expect(mocks.opensearchSearch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.objectContaining({
+          query: {
+            bool: {
+              must: [],
+              filter: [{ range: { releaseDate: { [boundary]: "now" } } }],
+            },
+          },
+        }),
+      }),
     );
   });
 
@@ -492,7 +638,9 @@ describe("search route with SeaQA fixtures", () => {
       },
     ]);
 
-    const res = await app.request("/search/changelog?query=home&page=1&limit=1");
+    const res = await app.request(
+      "/search/changelog?query=home&page=1&limit=1",
+    );
     expect(res.status).toBe(200);
 
     const body = await res.json();
@@ -591,7 +739,9 @@ describe("search route with SeaQA fixtures", () => {
       );
     mockChangelogFind([]);
 
-    const res = await app.request("/search/changelog?query=home&page=1&limit=1");
+    const res = await app.request(
+      "/search/changelog?query=home&page=1&limit=1",
+    );
     expect(res.status).toBe(200);
 
     const body = await res.json();
@@ -629,7 +779,9 @@ describe("search route with SeaQA fixtures", () => {
     mockChangelogFind([]);
     vi.spyOn(Offer, "findOne").mockRejectedValue(new Error("lookup timed out"));
 
-    const res = await app.request("/search/changelog?query=offer&page=1&limit=1");
+    const res = await app.request(
+      "/search/changelog?query=offer&page=1&limit=1",
+    );
     expect(res.status).toBe(200);
 
     const body = await res.json();
