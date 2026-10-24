@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
-import client from "../clients/redis.js";
+import client from "../clients/response-cache.js";
 import { db } from "../db/index.js";
 import {
   GamePosition,

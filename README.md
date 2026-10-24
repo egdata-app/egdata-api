@@ -28,6 +28,30 @@ Start Redis when working with routes that depend on cache:
 sudo service redis-server start
 ```
 
+Response caches can use a separate Redis on the API's private network:
+
+```txt
+CACHE_REDIS_HOST=egdata-response-cache-xus1cb
+CACHE_REDIS_PORT=6379
+CACHE_REDIS_PASSWORD=... # deployment secret; never commit it
+CACHE_REDIS_USER=default
+CACHE_REDIS_TLS=false
+```
+
+Without `CACHE_REDIS_HOST`, response caching continues to use the existing
+`REDISHOST` / `REDISPORT` / `REDISPASSWORD` connection. When a dedicated cache is
+configured, its credentials and TLS settings are independent. Cache connection
+failures become misses and failed writes are skipped, with bounded command times.
+
+Keep the existing `REDIS*` settings pointed at shared Redis: OAuth state, saved
+search definitions (`q:*`), and achievement refresh status/cooldowns remain there.
+Do not use Dokploy's own Redis for application data. The dedicated response cache
+may use LRU eviction and can start empty; existing response TTLs still apply.
+In Dokploy, keep its external port unset, use a 256 MiB `maxmemory` limit with
+`allkeys-lru`, and allow 512 MiB container memory for Redis overhead. For this
+disposable cache, disable RDB snapshots and AOF. Removing the `CACHE_REDIS_*`
+settings and redeploying rolls the API back to its original Redis connection.
+
 Offer, item, and achievement regeneration routes submit signed jobs to the Temporal job API. Production must provide:
 
 ```txt

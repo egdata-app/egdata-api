@@ -1,6 +1,6 @@
 import type { IResolvers } from "@graphql-tools/utils";
 import { ObjectId } from "mongodb";
-import client from "../../clients/redis.js";
+import client from "../../clients/response-cache.js";
 import { db } from "../../db/index.js";
 import {
   AchievementSet,

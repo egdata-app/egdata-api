@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { Hono } from "hono";
 import { type Filter, ObjectId, type Sort } from "mongodb";
-import client from "../clients/redis.js";
+import client from "../clients/response-cache.js";
 import { db } from "../db/index.js";
 import { Asset, Item } from "../models/index.js";
 import {

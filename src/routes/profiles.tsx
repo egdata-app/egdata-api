@@ -1,7 +1,8 @@
 import { Hono } from "hono";
 import { requestAchievementRefresh } from "../clients/achievement-refresh.js";
 import { epicStoreClient } from "../clients/epic.js";
-import client from "../clients/redis.js";
+import client from "../clients/response-cache.js";
+import sharedRedis from "../clients/redis.js";
 import type { AchievementsSummary } from "../types/get-user-achievements.js";
 import { db } from "../db/index.js";
 import { AchievementSet, Offer, Sandbox } from "../models/index.js";
@@ -1537,7 +1538,7 @@ app.get("/:id/refresh-status", async (c) => {
 
   const ttl = !isDonor ? 15 * 60 * 1000 : 2 * 60 * 1000;
 
-  const exists = await client.get(`refresh-achievements:${id}`);
+  const exists = await sharedRedis.get(`refresh-achievements:${id}`);
 
   if (!exists) {
     return c.json({

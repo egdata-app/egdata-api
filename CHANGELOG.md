@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added an optional private Redis response cache with bounded, fail-open operations while preserving shared OAuth state, saved searches, and achievement refresh coordination on the existing Redis.
+
 - Restored search v2 response cache reads, isolated normalized pagination in cache keys, and kept release-date search keys stable as time advances.
 
 - Added `GET /offers/{id}/requirements` for resolved Windows and macOS technical requirements, including validated DLC inheritance.

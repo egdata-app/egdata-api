@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import client from "../clients/redis.js";
+import client from "../clients/response-cache.js";
 import { db } from "../db/index.js";
 import { regions } from "../utils/countries.js";
 import { getCookie } from "hono/cookie";

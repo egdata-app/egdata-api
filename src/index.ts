@@ -13,7 +13,8 @@ import { inspectRoutes } from "hono/dev";
 import { ensureCatalogHydrationIndexes } from "./catalog/resolver.js";
 import { discord } from "./clients/discord.js";
 import { gaClient } from "./clients/ga.js";
-import client from "./clients/redis.js";
+import client, { disconnectResponseCache } from "./clients/response-cache.js";
+import sharedRedis from "./clients/redis.js";
 import { db } from "./db/index.js";
 import { server as graphqlServer } from "./graphql/index.js";
 import { createLoaders } from "./graphql/loaders.js";
@@ -172,7 +173,7 @@ app.get("/health", async (c) => {
   let redisStatus = "ok";
   let redisLatency = null;
   try {
-    await withTimeout(client.ping(), 5_000);
+    await withTimeout(sharedRedis.ping(), 5_000);
     redisLatency = Date.now() - startRedis;
   } catch (_e) {
     redisStatus = "error";
@@ -1540,10 +1541,11 @@ function installShutdownHandlers(httpServer: ServerType) {
 
     try {
       await closeHttpServer(httpServer);
+      disconnectResponseCache();
 
       const shutdownResults = await Promise.allSettled([
         graphqlServer.stop(),
-        client.quit(),
+        sharedRedis.quit(),
         db.disconnect(),
       ]);
       const failedShutdown = shutdownResults.find(

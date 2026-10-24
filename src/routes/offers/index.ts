@@ -4,7 +4,7 @@ import {
   submitJobApiBatch,
   submitJobApiRequest,
 } from "../../clients/job-api.js";
-import client from "../../clients/redis.js";
+import client from "../../clients/response-cache.js";
 import {
   AchievementSet,
   GamePosition,

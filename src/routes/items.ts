@@ -3,7 +3,7 @@ import {
   submitJobApiBatch,
   submitJobApiRequest,
 } from "../clients/job-api.js";
-import client from "../clients/redis.js";
+import client from "../clients/response-cache.js";
 import { db } from "../db/index.js";
 import { Asset, Item, Offer } from "../models/index.js";
 import { attributesToObject } from "../utils/attributes-to-object.js";

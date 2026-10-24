@@ -5,7 +5,8 @@ import { getCookie } from "hono/cookie";
 import { type Document, type Filter, ObjectId } from "mongodb";
 import { z } from "zod";
 import { opensearch } from "../clients/opensearch.js";
-import client from "../clients/redis.js";
+import client from "../clients/response-cache.js";
+import sharedRedis from "../clients/redis.js";
 import {
   CloudflareVectorizeError,
   queryOffersWithNaturalLanguage,
@@ -521,11 +522,11 @@ app.post("/", async (c) => {
 
   const queryCache = `q:${queryId}`;
 
-  const cachedQuery = await client.get(queryCache);
+  const cachedQuery = await sharedRedis.get(queryCache);
 
   if (!cachedQuery) {
     consola.debug(`Cache miss for ${queryCache}`);
-    await client.set(queryCache, JSON.stringify(query));
+    await sharedRedis.set(queryCache, JSON.stringify(query));
   } else {
     consola.debug(`Cache hit for ${queryCache}`);
   }
@@ -1596,7 +1597,7 @@ app.get("/:id", async (c) => {
 
   const queryKey = `q:${id}`;
 
-  const cachedQuery = await client.get(queryKey);
+  const cachedQuery = await sharedRedis.get(queryKey);
 
   if (!cachedQuery) {
     c.status(404);
@@ -1633,7 +1634,7 @@ app.get("/:id/count", async (c) => {
     });
   }
 
-  const cachedQuery = await client.get(queryKey);
+  const cachedQuery = await sharedRedis.get(queryKey);
 
   if (!cachedQuery) {
     c.status(404);

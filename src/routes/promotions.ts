@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
-import client from "../clients/redis.js";
+import client from "../clients/response-cache.js";
 import { Offer, PriceEngine, Tags } from "../models/index.js";
 import { regions } from "../utils/countries.js";
 import {

@@ -9,7 +9,7 @@ import { getCookie } from "hono/cookie";
 import React from "react";
 import satori from "satori";
 import { opensearch } from "../clients/opensearch.js";
-import client from "../clients/redis.js";
+import client from "../clients/response-cache.js";
 import { db } from "../db/index.js";
 import {
   FreeGames,

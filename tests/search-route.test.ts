@@ -27,6 +27,8 @@ const mocks = vi.hoisted(() => ({
   opensearchSearch: vi.fn(),
   redisGet: vi.fn(),
   redisSet: vi.fn(),
+  sharedGet: vi.fn(),
+  sharedSet: vi.fn(),
   vectorizeSearch: vi.fn(),
 }));
 
@@ -59,6 +61,10 @@ vi.mock("../src/clients/opensearch.js", () => ({
 }));
 
 vi.mock("../src/clients/redis.js", () => ({
+  default: { get: mocks.sharedGet, set: mocks.sharedSet },
+}));
+
+vi.mock("../src/clients/response-cache.js", () => ({
   default: {
     get: mocks.redisGet,
     set: mocks.redisSet,
@@ -85,6 +91,8 @@ describe("search route with SeaQA fixtures", () => {
     mocks.opensearchSearch.mockReset();
     mocks.redisGet.mockReset();
     mocks.redisSet.mockReset();
+    mocks.sharedGet.mockReset().mockResolvedValue(null);
+    mocks.sharedSet.mockReset().mockResolvedValue("OK");
     const cache = new Map<string, string>();
     mocks.redisGet.mockImplementation(
       async (key: string) => cache.get(key) ?? null,
@@ -139,6 +147,19 @@ describe("search route with SeaQA fixtures", () => {
     consoleLogSpy.mockRestore();
     vi.restoreAllMocks();
     vi.useRealTimers();
+  });
+
+  it("reads saved query definitions from shared Redis without consulting the response cache", async () => {
+    const query = { query: "saved catalog search", page: 2, limit: 5 };
+    mocks.sharedGet.mockResolvedValue(JSON.stringify(query));
+
+    const response = await app.request("/search/saved-query-id");
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual(query);
+    expect(mocks.sharedGet).toHaveBeenCalledWith("q:saved-query-id");
+    expect(mocks.redisGet).not.toHaveBeenCalled();
+    expect(mocks.redisSet).not.toHaveBeenCalled();
   });
 
   it("maps fixture-backed OpenSearch hits through /search/v2/search", async () => {
@@ -196,6 +217,8 @@ describe("search route with SeaQA fixtures", () => {
     });
     expect(mocks.opensearchSearch).toHaveBeenCalledTimes(1);
     expect(mocks.redisSet).toHaveBeenCalledTimes(1);
+    expect(mocks.sharedGet).not.toHaveBeenCalled();
+    expect(mocks.sharedSet).not.toHaveBeenCalled();
     expect(mocks.redisGet).toHaveBeenNthCalledWith(
       1,
       mocks.redisSet.mock.calls[0]?.[0],

@@ -1,5 +1,5 @@
 import { epicStoreClient } from "../../clients/epic.js";
-import client from "../../clients/redis.js";
+import client from "../../clients/response-cache.js";
 import { db } from "../../db/index.js";
 import { AchievementSet, Offer, Review } from "../../models/index.js";
 import { getImage } from "../../utils/get-image.js";
