@@ -23,6 +23,7 @@ beforeEach(() => {
     "CACHE_REDIS_USER",
     "CACHE_REDIS_PASSWORD",
     "CACHE_REDIS_TLS",
+    "RESPONSE_CACHE_PREFIX",
   ]) {
     vi.stubEnv(name, undefined);
   }
@@ -44,10 +45,11 @@ describe("dedicated response cache", () => {
     expect(mocks.shared.set).not.toHaveBeenCalled();
   });
 
-  it("preserves the original shared client when no cache is configured", async () => {
+  it("uses the shared client with versioned keys when no cache is configured", async () => {
     const { default: cache } = await import("../src/clients/response-cache.js");
-    expect(cache).toBe(mocks.shared);
     expect(mocks.createRedis).not.toHaveBeenCalled();
+    await cache.get("offers:test");
+    expect(mocks.shared.get).toHaveBeenCalledWith("response:v2:offers:test");
   });
 
   it("uses independent credentials and bounded commands for response data", async () => {
@@ -75,7 +77,7 @@ describe("dedicated response cache", () => {
       cache.set("search:v2:test", '{"total":2}', "EX", 60),
     ).resolves.toBe("OK");
     expect(mocks.cache.set).toHaveBeenCalledWith(
-      "search:v2:test",
+      "response:v2:search:v2:test",
       '{"total":2}',
       "EX",
       60,

@@ -367,7 +367,7 @@ describe("sandboxHub GraphQL resolver", () => {
 
     await expect(sandboxHub()).resolves.toEqual(cachedHub);
     expect(mocks.redisGet).toHaveBeenCalledWith(
-      "sandboxHub:sandbox-1:US:4:3:locale:en-US",
+      "response:v2:sandboxHub:sandbox-1:US:4:3:locale:en-US",
     );
     expect(mocks.sandboxFindOne).not.toHaveBeenCalled();
     expect(mocks.offerFindOne).not.toHaveBeenCalled();

@@ -4,7 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
-- Reverted the compact offer cards, item projections, profile pagination, seller caps, multisearch price removal, and price-history limits after frontend compatibility issues; list endpoints return full offer documents again. Compression, caching, rate limiting, and GraphQL APQ remain.
+- Reverted the compact offer cards, item projections, profile pagination, seller caps, multisearch price removal, and price-history limits after frontend compatibility issues; list endpoints return full offer documents again. Compression, caching, rate limiting, and GraphQL APQ remain. Response-cache keys are versioned so old compact payloads are no longer served after deploy.
 
 - Split GraphQL rate limits by method: cacheable GET/APQ gets 1200/minute (`RATE_LIMIT_GRAPHQL_GET_PER_MINUTE`) while uncached POST gets 120/minute (`RATE_LIMIT_GRAPHQL_POST_PER_MINUTE`). Raised the general limit to 1200/minute and namespaced every limiter's Redis counter so general, search, GraphQL GET/POST, heavy, and bulk requests no longer share one bucket.
 

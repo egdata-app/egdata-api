@@ -253,10 +253,10 @@ describe("offers route localization", () => {
       },
     });
     expect(mocks.redisGet).toHaveBeenCalledWith(
-      "offer:offer-1:locale:es-ES:v0.1",
+      "response:v2:offer:offer-1:locale:es-ES:v0.1",
     );
     expect(mocks.redisSet).toHaveBeenCalledWith(
-      "offer:offer-1:locale:es-ES:v0.1",
+      "response:v2:offer:offer-1:locale:es-ES:v0.1",
       expect.any(String),
       "EX",
       60,
@@ -287,10 +287,10 @@ describe("offers route localization", () => {
       locale: "fr-FR",
     });
     expect(mocks.redisGet).toHaveBeenCalledWith(
-      "offers:US:1:10:locale:fr-FR:card",
+      "response:v2:offers:US:1:10:locale:fr-FR:card",
     );
     expect(mocks.redisSet).toHaveBeenCalledWith(
-      "offers:US:1:10:locale:fr-FR:card",
+      "response:v2:offers:US:1:10:locale:fr-FR:card",
       expect.any(String),
       "EX",
       60,
@@ -308,10 +308,10 @@ describe("offers route localization", () => {
       longDescription: "Canonical long description",
     });
     expect(mocks.redisGet).toHaveBeenCalledWith(
-      "offers:US:1:10:locale:en-US:full",
+      "response:v2:offers:US:1:10:locale:en-US:full",
     );
     expect(mocks.redisSet).toHaveBeenCalledWith(
-      "offers:US:1:10:locale:en-US:full",
+      "response:v2:offers:US:1:10:locale:en-US:full",
       expect.any(String),
       "EX",
       60,
@@ -330,7 +330,7 @@ describe("offers route localization", () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual(cachedOverview);
     expect(mocks.redisGet).toHaveBeenCalledWith(
-      "overview:offer-1:US:locale:en-US:v0.1",
+      "response:v2:overview:offer-1:US:locale:en-US:v0.1",
     );
     expect(mocks.offerFindOne).not.toHaveBeenCalled();
   });
