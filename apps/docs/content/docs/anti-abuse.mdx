@@ -3,10 +3,17 @@ title: API sessions and abuse protection
 description: Initialize proof-of-work sessions and handle conditional catalog protection.
 ---
 
-When the API operator enables enforcement, catalog requests require a short-lived
-proof-of-work session. This session is separate from account authentication. Send
-the token in `x-egdata-session`, or use the secure `__Host-egdata-session` cookie
-with `credentials: 'include'` from `https://egdata.app`.
+When the API operator enables enforcement, **clean clients can keep requesting
+catalog data without a proof-of-work session**. Normal desktop clients do not
+need a startup handshake, cookies, browser headers, or any API integration changes.
+Only clients whose current behavioral risk exceeds 0.5 are challenged or mitigated.
+Existing account authentication requirements still apply.
+
+Clients that want to recover automatically from a challenge can implement the
+handshake below on demand. The session is separate from account authentication:
+send the token in `x-egdata-session`, or use the secure `__Host-egdata-session`
+cookie with `credentials: 'include'` from `https://egdata.app`. The frontend does
+not need to block normal requests on proactive session initialization.
 
 ## Initialize a session
 
@@ -25,8 +32,9 @@ with `credentials: 'include'` from `https://egdata.app`.
 Challenges expire in 60 seconds. Sessions expire ten minutes after the original
 challenge was issued. Reusing a solved challenge yields the same session and does
 not extend its lifetime. Keep the same transport/header profile through the
-handshake and subsequent requests. A changed transport fingerprint requires a new
-handshake; rotating just IP addresses or User-Agent values does not change it
+handshake and subsequent requests. A changed transport fingerprint invalidates the
+token; a new handshake is needed only if the new profile is challenged. Rotating
+just IP addresses or User-Agent values does not change the fingerprint
 within the same ASN. A change of ASN changes the composite fingerprint.
 
 Malformed JSON, invalid field types, or request bodies over 4096 bytes return 400
@@ -44,15 +52,29 @@ under protected prefixes. The challenge endpoint and CORS preflights are exempt.
 Supporting country, region, tag, featured and search routes contribute behavioral
 signals. Account authentication requirements still apply independently.
 
-A missing, invalid, or expired session returns **HTTP 200**, with:
+Enforcement uses the current score:
+
+- **0.0–0.5:** serve normally, with or without a session. A missing, invalid or
+  expired PoW token alone does not trigger a challenge.
+- **Above 0.5 through 0.8:** require a valid session less than 30 seconds old.
+  Otherwise return the challenge response below.
+- **Above 0.8:** return the delayed, truncated response described below, even if
+  a valid session is present.
+
+Only a suspicious client with a missing, invalid, or early-expired session receives
+**HTTP 200** with:
 
 ```json
 {"error":{"code":"SESSION_CHALLENGE_REQUIRED","challengeUrl":"/auth/challenge"}}
 ```
 
 Check this body before interpreting a successful HTTP status as catalog data.
-Perform the handshake and retry once. Suspicious sessions can expire after 30
-seconds and receive difficulty 20 instead of 16 on their next challenge. Confirmed
+Perform the handshake and retry once, sharing one in-flight handshake across
+concurrent requests. Suspicious clients receive difficulty 20 instead of 16 and
+their sessions are accepted for less than 30 seconds from challenge issuance.
+If the current score falls back to 0.5 or below, requests are allowed without a
+session again; a historical risk score stored in an old token does not keep the
+client challenged. Confirmed
 abuse receives a 3–5 second delay followed by a truncated JSON envelope:
 `{ "elements": [], "page": 1, "limit": 0, "total": 0 }`, also HTTP 200. The
 protection layer does not return 403 or 429. Existing route authorization and
@@ -64,7 +86,7 @@ for these requests. Unprotected routes retain their existing caching and limits.
 
 ## Synthetic records
 
-If the operator also enables canaries, `GET /items` includes one extra record with
+If the operator also enables canaries, `GET /items` with a valid session includes one extra record with
 `synthetic: true`, `namespace: 'egdata-canary'`, an empty `title`, and an opaque
 `egcanary_...` ID. Filter these records before rendering, prefetching, hydrating or
 following links. They are not catalog products and are not included in `total` or
@@ -76,7 +98,9 @@ immediately flags the requesting session/fingerprint. Canaries are disabled by d
 Fingerprints describe client families, not unique humans. The service combines
 them with behavioral evidence; missing client hints alone never confirms abuse.
 Missing trusted edge signals disable fingerprint-wide risk sharing, while signed
-session continuity still works. Transport impersonation, changing ASNs, fresh
+session continuity still works. Anonymous requests without trusted edge signals
+are not assigned a shared fallback fingerprint risk or forced to solve PoW just
+because those signals are missing. Transport impersonation, changing ASNs, fresh
 profiles and low-rate scraping can evade these heuristics. Cross-instance risk
 updates are asynchronous; an instance with a cold cache can admit requests before
 Redis telemetry arrives. This is not a synchronous global rate limit.

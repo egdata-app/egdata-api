@@ -1,7 +1,9 @@
 # Anti-abuse operations
 
-The implementation is opt-in so the frontend can ship its handshake before the
-API requires tokens. It is not deployed by changing this repository alone.
+The implementation is opt-in. Even in enforcement mode, clean clients do not need
+tokens or a handshake. Only suspicious clients require PoW; confirmed abuse is
+tarpitted regardless of token possession. Changing this repository does not
+automatically change the deployment's mode.
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
@@ -81,6 +83,15 @@ traffic analysis was used to calibrate these thresholds.
 
 ## Scoring and resource budgets
 
+For protected routes in `enforce` mode, risk <= 0.5 serves normal data without a
+session. Risk > 0.5 and <= 0.8 requires a valid fingerprint-bound session less
+than 30 seconds old; otherwise the API returns `SESSION_CHALLENGE_REQUIRED` with
+HTTP 200. Risk > 0.8 takes the existing tarpit/truncation path. Missing or invalid
+tokens alone do not raise risk. Decisions and challenge difficulty use current
+behavioral evidence, not a permanent floor from the token's issuance score, so
+clients return to normal when that evidence expires. Observe mode never applies
+these mitigations. Normal desktop clients need no integration changes.
+
 - Each event updates session and (when trusted transport exists) fingerprint nodes.
   Page progression and unique resource IDs connect requests across rotating IPs
   and sessions. Redis atomically merges each node's last 60 seconds, capped at 128
@@ -114,7 +125,9 @@ traffic analysis was used to calibrate these thresholds.
    anonymous fingerprint traffic. Monitor queue drops/store errors and evaluate false positives
    against real browsing and nonbrowser API consumers. Common browser profiles can
    collide, particularly behind large ASNs. Do not treat a fingerprint as a person.
-3. Ship the challenge handshake in the frontend and other API clients. Browser
+3. Ship on-demand challenge recovery in the frontend and clients that should
+   recover automatically if flagged. Proactive initialization is optional; clean
+   clients, including desktop apps, can keep fetching without changes. Browser
    workers should perform SHA-256 search without blocking UI; mobile solve times
    are not guaranteed by the bit difficulty. Cookies work on HTTPS same-site
    requests; use the session header for cross-site clients and localhost HTTP.
@@ -123,8 +136,8 @@ traffic analysis was used to calibrate these thresholds.
    override origin no-store. Cached responses otherwise bypass the origin gate.
    This supersedes catalog, GraphQL and preview-image caching in `edge-caching.md`.
 5. Enable `enforce`, then optionally canaries after the UI filters synthetic IDs.
-   Preview-image and sitemap consumers also need sessions under the current route
-   policy. Coordinate their usage before enforcing. Observe/off mode restores
+   Preview-image and sitemap consumers are also subject to behavioral checks but
+   only need sessions if flagged as suspicious. Observe/off mode restores
    existing IP rate limits and cache behavior. Upstream Aikido/Cloudflare controls
    and normal account authorization remain independent of this middleware.
 6. Run `pnpm exec vitest run tests/anti-abuse.test.ts`, `pnpm exec tsx

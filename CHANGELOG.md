@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Made PoW conditional on current suspicious behavior: clean clients (risk <= 0.5), including unchanged desktop apps, can access protected data without sessions even in enforcement mode. Suspicious clients require a recent valid session, confirmed abuse retains tarpitting, and historical token scores no longer prevent recovery after risk clears. Updated public docs and OpenAPI to make PoW authentication conditional while preserving existing account requirements.
+
 - Fixed anti-abuse fingerprint spoofing through client-supplied `cf-ja3-hash`/`cf-ja4` headers. Forwarded bot headers are now ignored unless explicitly enabled with authenticated edge forwarding and Cloudflare's managed Bot Management transform; corrected rollout instructions because request-header Transform Rules cannot remove these reserved headers.
 
 - Added opt-in transport/session anti-abuse protection with `POST /auth/challenge`, fingerprint-bound HMAC/PoW sessions, asynchronous Redis sliding-window scoring across rotating IPs/UAs, and HTTP 200 session challenges or bounded tarpits with truncated responses. Enforcement protects catalog/pagination/GraphQL routes, bypasses their legacy IP limits and shared caching, and optionally adds signed synthetic item canaries. Added rollout/client documentation, OpenAPI contracts, tests, and a latency benchmark; defaults remain off until clients and edge forwarding are configured.

@@ -90,7 +90,7 @@ function fixture(
     const challenge = await (await post({})).json();
     const response = await post({
       challenge: challenge.challenge,
-      nonce: solve(challenge.challenge),
+      nonce: solve(challenge.challenge, challenge.difficulty),
     });
     const result = await response.json();
     return { ...result, response } as {
@@ -364,8 +364,52 @@ describe("Hono integration", () => {
     f.scorer.close();
   });
 
-  it("gates root, nested and pagination endpoints with HTTP 200 and never queries the catalog", async () => {
+  it("serves clean desktop clients without sessions, including invalid or expired optional tokens", async () => {
     const f = fixture();
+    const desktopHeaders: Record<string, string> = headers({
+      "user-agent": "ExampleDesktop/1.0",
+    });
+    for (const name of ["sec-fetch-site", "sec-fetch-mode", "sec-ch-ua"])
+      delete desktopHeaders[name];
+    for (const path of [
+      "/offers",
+      "/offers/game/prices",
+      "/items/game",
+      "/sellers/seller",
+      "/other?page=2",
+      "/graphql",
+      "/catalog/hydrate",
+      "/%6fffers?page=1",
+    ]) {
+      const res = await f.app.request(path, { headers: desktopHeaders });
+      expect(res.status).toBe(200);
+      expect((await res.json()).elements[0].id).toBe("real");
+      expect(res.headers.get("cache-control")).toBe("private, no-store");
+      expect(res.headers.get("set-cookie")).toBeNull();
+    }
+    expect(
+      (
+        await (
+          await f.request("/items/game", { "x-egdata-session": "invalid" })
+        ).json()
+      ).total,
+    ).toBe(1);
+    const { token } = await f.handshake();
+    f.tick(600_000);
+    expect(
+      (
+        await (
+          await f.request("/items/game", { "x-egdata-session": token })
+        ).json()
+      ).total,
+    ).toBe(1);
+    expect(f.delay).not.toHaveBeenCalled();
+    f.scorer.close();
+  });
+
+  it("gates suspicious root, nested and pagination requests with HTTP 200 without querying the catalog", async () => {
+    const f = fixture();
+    vi.spyOn(f.scorer, "risk").mockReturnValue(0.6);
     for (const path of [
       "/offers",
       "/offers/x/prices",
@@ -383,6 +427,116 @@ describe("Hono integration", () => {
     }
     expect(f.handler).not.toHaveBeenCalled();
     expect(isProtectedPath("/offers/")).toBe(true);
+    f.scorer.close();
+  });
+
+  it("requires a valid bound session when suspicious and allows on-demand PoW recovery", async () => {
+    const f = fixture();
+    const risk = vi.spyOn(f.scorer, "risk").mockReturnValue(0.6);
+    for (const token of [undefined, "invalid"]) {
+      const res = await f.request(
+        "/items/game",
+        token ? { "x-egdata-session": token } : {},
+      );
+      expect((await res.json()).error.code).toBe("SESSION_CHALLENGE_REQUIRED");
+    }
+    const challenge = await (await f.post({})).json();
+    expect(challenge.difficulty).toBe(20);
+    const { token } = await (
+      await f.post({
+        challenge: challenge.challenge,
+        nonce: solve(challenge.challenge, challenge.difficulty),
+      })
+    ).json();
+    expect(typeof token).toBe("string");
+    expect(
+      (
+        await (
+          await f.request("/items/game", { "x-egdata-session": token })
+        ).json()
+      ).total,
+    ).toBe(1);
+    expect(
+      (
+        await (
+          await f.request("/items/game", {
+            "x-egdata-session": token,
+            "x-egdata-asn": "99",
+          })
+        ).json()
+      ).error.code,
+    ).toBe("SESSION_CHALLENGE_REQUIRED");
+    f.tick(30_000);
+    expect(
+      (
+        await (
+          await f.request("/items/game", { "x-egdata-session": token })
+        ).json()
+      ).error.code,
+    ).toBe("SESSION_CHALLENGE_REQUIRED");
+    risk.mockReturnValue(0);
+    // Historical risk in a valid, early-expired token must not force a clean
+    // client into an endless chain of harder challenges.
+    expect(
+      (
+        await (
+          await f.request("/items/game", { "x-egdata-session": token })
+        ).json()
+      ).total,
+    ).toBe(1);
+    expect((await (await f.request("/items/game")).json()).total).toBe(1);
+    expect(
+      (await (await f.post({}, { "x-egdata-session": token })).json())
+        .difficulty,
+    ).toBe(16);
+    f.scorer.close();
+  });
+
+  it("continues aggregating tokenless traffic and stops challenging when evidence expires", async () => {
+    const f = fixture();
+    const fingerprint = extractFingerprint(
+      new Request("https://api.test/items", { headers: headers() }),
+      { edgeSecret },
+    );
+    const key = `fp:${fingerprint.fingerprintHash}`;
+    // An irregularly timed unique-ID sweep scores 0.65 without robotic timing.
+    for (let i = 0; i < 30; i++) {
+      const res = await f.request(`/items/game-${i}`);
+      expect((await res.json()).total).toBe(1);
+      await f.scorer.drain();
+      f.tick(i % 2 ? 900 : 100);
+    }
+    expect(f.scorer.risk([key])).toBeCloseTo(0.65);
+    expect(
+      (await (await f.request("/items/next-game")).json()).error.code,
+    ).toBe("SESSION_CHALLENGE_REQUIRED");
+    await f.scorer.drain();
+    f.tick(60_001);
+    expect((await (await f.request("/items/next-game")).json()).total).toBe(1);
+    f.scorer.close();
+  });
+
+  it("keeps observe mode passive even for a suspicious tokenless client", async () => {
+    const f = fixture({ mode: "observe" });
+    vi.spyOn(f.scorer, "risk").mockReturnValue(1);
+    expect((await (await f.request("/items/game")).json()).total).toBe(1);
+    expect(f.delay).not.toHaveBeenCalled();
+    f.scorer.close();
+  });
+
+  it("does not let a valid session bypass confirmed abuse", async () => {
+    const f = fixture();
+    const { token } = await f.handshake();
+    vi.spyOn(f.scorer, "risk").mockReturnValue(0.81);
+    expect(
+      (
+        await (
+          await f.request("/items/game", { "x-egdata-session": token })
+        ).json()
+      ).elements,
+    ).toEqual([]);
+    expect(f.delay).toHaveBeenCalledTimes(1);
+    expect(f.handler).not.toHaveBeenCalled();
     f.scorer.close();
   });
 
@@ -531,24 +685,19 @@ describe("Hono integration", () => {
 
   it("keeps the clean/suspicious/confirmed threshold boundaries exact", async () => {
     const f = fixture();
-    const { token } = await f.handshake();
     const risk = vi.spyOn(f.scorer, "risk").mockReturnValue(0.5);
-    f.tick(30_000);
-    expect(
-      (await (await f.request("/items", { "x-egdata-session": token })).json())
-        .total,
-    ).toBe(1);
+    expect((await (await f.request("/items")).json()).total).toBe(1);
+    risk.mockReturnValue(0.5001);
+    expect((await (await f.request("/items")).json()).error.code).toBe(
+      "SESSION_CHALLENGE_REQUIRED",
+    );
     risk.mockReturnValue(0.8);
-    expect(
-      (await (await f.request("/items", { "x-egdata-session": token })).json())
-        .error.code,
-    ).toBe("SESSION_CHALLENGE_REQUIRED");
+    expect((await (await f.request("/items")).json()).error.code).toBe(
+      "SESSION_CHALLENGE_REQUIRED",
+    );
     expect(f.delay).not.toHaveBeenCalled();
     risk.mockReturnValue(0.8001);
-    expect(
-      (await (await f.request("/items", { "x-egdata-session": token })).json())
-        .elements,
-    ).toEqual([]);
+    expect((await (await f.request("/items")).json()).elements).toEqual([]);
     expect(f.delay).toHaveBeenCalledTimes(1);
     f.scorer.close();
   });

@@ -71,12 +71,14 @@ export function withAntiAbuseContract(
       in: "header",
       name: "x-egdata-session",
       description:
-        "PoW session required when anti-abuse enforcement is enabled; not account authentication.",
+        "Optional for clean clients. Required for suspicious clients (risk > 0.5 and <= 0.8) when anti-abuse enforcement is enabled; not account authentication.",
     },
     AbuseSessionCookie: {
       type: "apiKey",
       in: "cookie",
       name: "__Host-egdata-session",
+      description:
+        "Cookie alternative to x-egdata-session; only required when suspicious traffic is challenged.",
     },
   };
   result.components.schemas = {
@@ -174,11 +176,15 @@ export function withAntiAbuseContract(
       );
       if (!isProtectedPath(path) && !pagination) continue;
       operation.description =
-        `${operation.description ?? ""}\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required${!isProtectedPath(path) ? " when pagination query parameters are present" : ""}. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.`.trim();
-      operation.security = (operation.security ?? [{}]).flatMap((existing) => [
-        { ...existing, AbuseSessionHeader: [] },
-        { ...existing, AbuseSessionCookie: [] },
-      ]);
+        `${operation.description ?? ""}\n\nWhen ANTI_ABUSE_MODE=enforce${!isProtectedPath(path) ? " and pagination query parameters are present" : ""}, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.`.trim();
+      const security = operation.security ?? result.security ?? [];
+      operation.security = (security.length ? security : [{}]).flatMap(
+        (existing) => [
+          existing,
+          { ...existing, AbuseSessionHeader: [] },
+          { ...existing, AbuseSessionCookie: [] },
+        ],
+      );
       const response = operation.responses["200"];
       if (response && !("$ref" in response)) {
         const original = response.content?.["application/json"]?.schema;

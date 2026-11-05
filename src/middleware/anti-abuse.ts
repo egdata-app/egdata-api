@@ -251,11 +251,9 @@ export function createAntiAbuse(options: {
     const fp = fingerprint(c);
     const previous = await sessions.verify(token(c), fp.fingerprintHash);
     const keys = keysFor(fp, previous?.sessionId);
-    const risk = Math.max(
-      fp.riskScore,
-      scorer.risk(keys),
-      previous?.riskScore ?? 0,
-    );
+    // A token's issuance score is historical. Current evidence determines
+    // difficulty so a client can recover after its behavioral window clears.
+    const risk = Math.max(fp.riskScore, scorer.risk(keys));
     if (body.challenge !== undefined || body.nonce !== undefined) {
       if (typeof body.challenge !== "string" || typeof body.nonce !== "string")
         return c.json({ error: { code: "INVALID_CHALLENGE" } }, 400);
@@ -321,11 +319,7 @@ export function createAntiAbuse(options: {
         await sessions.canary(fp.fingerprintHash),
       );
     if (event.trap) scorer.trap(keys);
-    const risk = Math.max(
-      fp.riskScore,
-      session?.riskScore ?? 0,
-      scorer.risk(keys),
-    );
+    const risk = Math.max(fp.riskScore, scorer.risk(keys));
     scorer.enqueue(keys, event);
     if (options.mode !== "enforce") return next();
     // Also used by legacy limiters/ETag middleware on nested route handlers.
@@ -352,8 +346,8 @@ export function createAntiAbuse(options: {
     }
     if (
       protectedRoute &&
-      (!session ||
-        (risk > 0.5 && now() - session.issuedAt >= SUSPICIOUS_TTL_MS))
+      risk > 0.5 &&
+      (!session || now() - session.issuedAt >= SUSPICIOUS_TTL_MS)
     ) {
       privateResponse(c);
       // Keep a genuine but early-expired token for the next handshake so

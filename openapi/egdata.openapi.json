@@ -181,7 +181,7 @@
           "Catalog"
         ],
         "summary": "Hydrate catalog records for known technical identifiers",
-        "description": "Resolves up to 25 item, asset, or release-app roots directly from the catalog collections. The response is NDJSON with one isolated, content-hashed graph result per line.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Resolves up to 25 item, asset, or release-app roots directly from the catalog collections. The response is NDJSON with one isolated, content-hashed graph result per line.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "requestBody": {
           "required": true,
           "content": {
@@ -269,6 +269,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -448,8 +449,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -466,7 +468,7 @@
           "Builds"
         ],
         "summary": "Resolve parsed Windows manifests to launcher metadata",
-        "description": "Resolves bounded, path-free metadata from parsed binary manifests. Ambiguous catalog, asset, and parent relationships are returned without guessing.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Resolves bounded, path-free metadata from parsed binary manifests. Ambiguous catalog, asset, and parent relationships are returned without guessing.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "requestBody": {
           "required": true,
           "description": "Up to 100 parsed Windows manifest candidates. Local paths and manifest bytes are not accepted.",
@@ -744,6 +746,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -824,8 +827,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -842,7 +846,7 @@
           "Builds"
         ],
         "summary": "List comparison candidates for a build",
-        "description": "Returns chronological observations for the same stream or platform and identifies the previous comparable snapshot.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns chronological observations for the same stream or platform and identifies the previous comparable snapshot.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "name": "id",
@@ -945,6 +949,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -961,7 +966,7 @@
           "Builds"
         ],
         "summary": "Compare two stored build snapshots",
-        "description": "Compares immutable file snapshots by full path. Full-download deltas are not patch-download estimates.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Compares immutable file snapshots by full path. Full-download deltas are not patch-download estimates.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "name": "targetId",
@@ -1113,6 +1118,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -1263,8 +1269,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -1281,7 +1288,7 @@
           "Builds"
         ],
         "summary": "Expand one directory of a build file tree",
-        "description": "Returns only immediate child files and directories. Expand a directory by passing the path returned for that directory.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns only immediate child files and directories. Expand a directory by passing the path returned for that directory.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "name": "id",
@@ -1379,6 +1386,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -1482,8 +1490,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -1564,8 +1573,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -1956,8 +1966,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required when pagination query parameters are present. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce and pagination query parameters are present, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -2038,7 +2049,7 @@
           "Offers"
         ],
         "summary": "List offers with regional price data",
-        "description": "Returns full offer documents. Anonymous access is limited to 5 requests per minute per client IP; the quota is keyed by client and is not reset by changing query parameters.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns full offer documents. Anonymous access is limited to 5 requests per minute per client IP; the quota is keyed by client and is not reset by changing query parameters.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/country"
@@ -2129,6 +2140,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -2206,8 +2218,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -2322,8 +2335,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -2435,8 +2449,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -2523,8 +2538,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -2611,8 +2627,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -2700,8 +2717,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -2718,7 +2736,7 @@
           "Offers"
         ],
         "summary": "List top-selling offers",
-        "description": "Returns full offer documents.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns full offer documents.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/locale"
@@ -2787,6 +2805,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -2870,8 +2889,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -2955,8 +2975,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -3030,8 +3051,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -3151,8 +3173,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -3231,8 +3254,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -3249,7 +3273,7 @@
           "Prices"
         ],
         "summary": "Get current regional price for an offer",
-        "description": "Returns Price not found (404) when the offer excludes the requested country. A non-empty country whitelist limits availability, and the blacklist takes precedence. Availability is checked before cached prices are returned.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns Price not found (404) when the offer excludes the requested country. A non-empty country whitelist limits availability, and the blacklist takes precedence. Availability is checked before cached prices are returned.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
@@ -3312,6 +3336,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -3328,7 +3353,7 @@
           "Prices"
         ],
         "summary": "Get historical regional prices for an offer",
-        "description": "Returns price history for a country-derived region, an explicit region, or all regions when neither is provided.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns price history for a country-derived region, an explicit region, or all regions when neither is provided.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
@@ -3412,6 +3437,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -3428,7 +3454,7 @@
           "Prices"
         ],
         "summary": "Get prices for an offer across regions",
-        "description": "Unavailable pricing regions are omitted. With a country parameter, an excluded country returns Price not found (404). Historical observations remain available through price-history and do not restore excluded current prices.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Unavailable pricing regions are omitted. With a country parameter, an excluded country returns Price not found (404). Historical observations remain available through price-history and do not restore excluded current prices.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
@@ -3494,6 +3520,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -3569,8 +3596,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -3646,8 +3674,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -3727,8 +3756,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -3745,7 +3775,7 @@
           "Offer Details"
         ],
         "summary": "Generate a PNG offer database preview",
-        "description": "Returns the offer's database summary image. Last update is the catalog's lastModifiedDate (updatedAt fallback), not build polling time. Size is the latest associated build's download size, with matching asset fallback, preferring direct-item assets. Artwork may be omitted if unavailable. Unknown offers or countries return 404.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns the offer's database summary image. Last update is the catalog's lastModifiedDate (updatedAt fallback), not build polling time. Size is the latest associated build's download size, with matching asset fallback, preferring direct-item assets. Artwork may be omitted if unavailable. Unknown offers or countries return 404.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
@@ -3860,6 +3890,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -3876,7 +3907,7 @@
           "Offer Details"
         ],
         "summary": "Generate a WebP offer database preview",
-        "description": "WebP version of /offers/{id}/og with the same metadata, country selection, missing-data fallbacks, and 404 errors.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "WebP version of /offers/{id}/og with the same metadata, country selection, missing-data fallbacks, and 404 errors.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
@@ -3991,6 +4022,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -4067,8 +4099,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -4085,7 +4118,7 @@
           "Offer Details"
         ],
         "summary": "Get technical requirements for an offer",
-        "description": "Returns resolved Windows and macOS requirements. DLC requirements inherit from an explicitly linked base game only when the DLC source confirms that its own requirements are absent. A platform is null when no requirements record exists; 404 is returned when neither platform has a record or when the offer does not exist.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns resolved Windows and macOS requirements. DLC requirements inherit from an explicitly linked base game only when the DLC source confirms that its own requirements are absent. A platform is null when no requirements record exists; 404 is returned when neither platform has a record or when the offer does not exist.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
@@ -4145,6 +4178,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -4222,8 +4256,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -4301,8 +4336,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -4446,8 +4482,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -4542,8 +4579,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -4621,8 +4659,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -4709,8 +4748,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -4787,8 +4827,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -4865,8 +4906,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -4953,8 +4995,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -5043,8 +5086,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -5124,8 +5168,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -5202,8 +5247,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -5281,8 +5327,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -5359,8 +5406,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -5437,8 +5485,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -5525,8 +5574,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -5606,8 +5656,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -5716,8 +5767,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -5806,8 +5858,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -5905,8 +5958,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -6004,8 +6058,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -6085,8 +6140,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -6166,8 +6222,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -6245,8 +6302,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -6323,8 +6381,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -6468,8 +6527,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -6553,8 +6613,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -6632,8 +6693,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -6650,7 +6712,7 @@
           "Items"
         ],
         "summary": "List catalog items",
-        "description": "Returns paginated Epic catalog items sorted by last modification date.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns paginated Epic catalog items sorted by last modification date.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/expand"
@@ -6716,6 +6778,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -6732,7 +6795,7 @@
           "Items"
         ],
         "summary": "Get an item by ID",
-        "description": "Looks up an item by Mongo document ID or Epic item ID and expands custom attributes.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Looks up an item by Mongo document ID or Epic item ID and expands custom attributes.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/itemId"
@@ -6792,6 +6855,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -6808,7 +6872,7 @@
           "Items"
         ],
         "summary": "Fetch multiple items by ID",
-        "description": "Fetches up to 100 item IDs in one request.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Fetches up to 100 item IDs in one request.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "requestBody": {
           "required": true,
           "description": "Item IDs to fetch.",
@@ -6889,6 +6953,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -6905,7 +6970,7 @@
           "Items"
         ],
         "summary": "Resolve the best offer for multiple items",
-        "description": "Returns an object keyed by requested item ID. Each value is the best matching offer or null when no offer can be resolved.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns an object keyed by requested item ID. Each value is the best matching offer or null when no offer can be resolved.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/locale"
@@ -6996,6 +7061,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -7073,8 +7139,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -7152,8 +7219,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -7237,8 +7305,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -7316,8 +7385,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -7334,7 +7404,7 @@
           "Sandboxes"
         ],
         "summary": "List sandboxes",
-        "description": "Returns paginated Epic namespaces/sandboxes known to egdata.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns paginated Epic namespaces/sandboxes known to egdata.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/page"
@@ -7397,6 +7467,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -7471,8 +7542,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -7489,7 +7561,7 @@
           "Sandboxes"
         ],
         "summary": "Generate a PNG sandbox database preview",
-        "description": "Shows all offer and item records, and assets counted as stored records plus each release-info platform without a stored artifact. Uses the earliest-created released non-code-redemption base game, then a preorder base game, then an executable item; otherwise uses the sandbox name. Last update uses sandbox updated, then lastModifiedDate, then updatedAt. Missing artwork is omitted. Unknown sandboxes return a JSON 404 error.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Shows all offer and item records, and assets counted as stored records plus each release-info platform without a stored artifact. Uses the earliest-created released non-code-redemption base game, then a preorder base game, then an executable item; otherwise uses the sandbox name. Last update uses sandbox updated, then lastModifiedDate, then updatedAt. Missing artwork is omitted. Unknown sandboxes return a JSON 404 error.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/sandboxId"
@@ -7584,6 +7656,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -7600,7 +7673,7 @@
           "Sandboxes"
         ],
         "summary": "Generate a WebP sandbox database preview",
-        "description": "WebP version of /sandboxes/{sandboxId}/og with the same counts, identity, UTC update date, missing-data fallbacks, and JSON 404 errors.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "WebP version of /sandboxes/{sandboxId}/og with the same counts, identity, UTC update date, missing-data fallbacks, and JSON 404 errors.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/sandboxId"
@@ -7695,6 +7768,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -7811,8 +7885,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -7926,8 +8001,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -8035,8 +8111,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -8053,7 +8130,7 @@
           "Sandboxes"
         ],
         "summary": "Get the base game for a sandbox",
-        "description": "Returns the base game offer for a sandbox, or an executable item fallback when no offer exists.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns the base game offer for a sandbox, or an executable item fallback when no offer exists.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/sandboxId"
@@ -8121,6 +8198,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -8198,8 +8276,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -8280,8 +8359,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -8389,8 +8469,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -8465,8 +8546,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -8541,8 +8623,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -8627,8 +8710,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -8720,8 +8804,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -8791,8 +8876,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -8870,8 +8956,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -8944,8 +9031,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -9034,8 +9122,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -9050,7 +9139,7 @@
           "Search"
         ],
         "summary": "Search offers with query parameters (edge-cacheable)",
-        "description": "Query-parameter alias of POST /search/v2/search. Intended for browser and edge-cacheable searches. Returns full offer documents.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Query-parameter alias of POST /search/v2/search. Intended for browser and edge-cacheable searches. Returns full offer documents.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/country"
@@ -9299,6 +9388,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -9925,7 +10015,7 @@
           "Changelog"
         ],
         "summary": "List recent changelog records",
-        "description": "Returns recent changelog entries with best-effort `metadata.context` enrichment. Context is null when unavailable.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns recent changelog entries with best-effort `metadata.context` enrichment. Context is null when unavailable.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/page"
@@ -9991,6 +10081,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -10007,7 +10098,7 @@
           "Changelog"
         ],
         "summary": "Get a changelog record",
-        "description": "Returns a single changelog entry with best-effort `metadata.context` enrichment. Missing changelog IDs return 404.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns a single changelog entry with best-effort `metadata.context` enrichment. Missing changelog IDs return 404.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "name": "id",
@@ -10074,6 +10165,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -10090,7 +10182,7 @@
           "Search"
         ],
         "summary": "Search changelog records",
-        "description": "Searches changelog entries and hydrates `metadata.changes[].oldValue` and `newValue` from canonical Mongo records or raw OpenSearch values. Search hits include best-effort `document` enrichment.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required when pagination query parameters are present. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Searches changelog entries and hydrates `metadata.changes[].oldValue` and `newValue` from canonical Mongo records or raw OpenSearch values. Search hits include best-effort `document` enrichment.\n\nWhen ANTI_ABUSE_MODE=enforce and pagination query parameters are present, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "name": "query",
@@ -10205,6 +10297,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -10277,8 +10370,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -10295,7 +10389,7 @@
           "Sellers"
         ],
         "summary": "List offers for a seller",
-        "description": "Returns full offer documents. `limit` defaults to unlimited; pass an explicit limit to page.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "Returns full offer documents. `limit` defaults to unlimited; pass an explicit limit to page.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "parameters": [
           {
             "$ref": "#/components/parameters/sellerId"
@@ -10392,6 +10486,7 @@
           }
         },
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -10475,8 +10570,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -10551,8 +10647,9 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Protected responses remain private/no-store, and legacy IP rate limits are skipped. Existing account authentication requirements still apply.",
         "security": [
+          {},
           {
             "AbuseSessionHeader": []
           },
@@ -10905,12 +11002,13 @@
         "type": "apiKey",
         "in": "header",
         "name": "x-egdata-session",
-        "description": "PoW session required when anti-abuse enforcement is enabled; not account authentication."
+        "description": "Optional for clean clients. Required for suspicious clients (risk > 0.5 and <= 0.8) when anti-abuse enforcement is enabled; not account authentication."
       },
       "AbuseSessionCookie": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "__Host-egdata-session"
+        "name": "__Host-egdata-session",
+        "description": "Cookie alternative to x-egdata-session; only required when suspicious traffic is challenged."
       }
     },
     "parameters": {
