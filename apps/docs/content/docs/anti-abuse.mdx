@@ -1,0 +1,82 @@
+---
+title: API sessions and abuse protection
+description: Initialize proof-of-work sessions and handle conditional catalog protection.
+---
+
+When the API operator enables enforcement, catalog requests require a short-lived
+proof-of-work session. This session is separate from account authentication. Send
+the token in `x-egdata-session`, or use the secure `__Host-egdata-session` cookie
+with `credentials: 'include'` from `https://egdata.app`.
+
+## Initialize a session
+
+1. Send `POST /auth/challenge` with a JSON body of `{}`. The response contains
+   `challenge`, `difficulty`, `algorithm: 'SHA-256'`, and `expiresAt` (Unix milliseconds).
+2. In a browser Web Worker, find an ASCII nonce matching `[a-zA-Z0-9_-]{1,64}` such
+   that SHA-256 of the UTF-8 string `challenge + ':' + nonce` has at least
+   `difficulty` leading zero **bits**. At difficulty 16, the first two digest bytes
+   must be zero. At difficulty 20, the first two bytes and the top four bits of
+   the third byte must be zero. Solve time varies by device and implementation;
+   20–40 ms is a tuning target, not a guarantee. Do not run the search on the UI thread.
+3. Send `POST /auth/challenge` with `{ "challenge": "...", "nonce": "..." }`.
+   Success returns `{ "token": "...", "expiresAt": 1800000600000 }` and sets the cookie.
+   An invalid or expired proof returns a new challenge with HTTP 200; solve that challenge.
+
+Challenges expire in 60 seconds. Sessions expire ten minutes after the original
+challenge was issued. Reusing a solved challenge yields the same session and does
+not extend its lifetime. Keep the same transport/header profile through the
+handshake and subsequent requests. A changed transport fingerprint requires a new
+handshake; rotating just IP addresses or User-Agent values does not change it
+within the same ASN. A change of ASN changes the composite fingerprint.
+
+Malformed JSON, invalid field types, or request bodies over 4096 bytes return 400
+with `error.code: 'INVALID_CHALLENGE'`. A disabled service returns 503 with
+`error.code: 'ANTI_ABUSE_DISABLED'`. Never send a challenge string as a session token.
+
+## Protected requests
+
+Protection applies to the roots and all subroutes under `/offers`, `/items`,
+`/sellers`, `/builds`, `/changelist`, `/free-games`, `/collections`, `/franchises`,
+`/promotions`, `/sandboxes`, `/game-awards`, and `/multisearch`, plus `/graphql`,
+`/catalog/hydrate`, `/search/v2/search`, and requests containing `page`, `limit`,
+`offset`, or `cursor` query parameters. This includes preview images and sitemaps
+under protected prefixes. The challenge endpoint and CORS preflights are exempt.
+Supporting country, region, tag, featured and search routes contribute behavioral
+signals. Account authentication requirements still apply independently.
+
+A missing, invalid, or expired session returns **HTTP 200**, with:
+
+```json
+{"error":{"code":"SESSION_CHALLENGE_REQUIRED","challengeUrl":"/auth/challenge"}}
+```
+
+Check this body before interpreting a successful HTTP status as catalog data.
+Perform the handshake and retry once. Suspicious sessions can expire after 30
+seconds and receive difficulty 20 instead of 16 on their next challenge. Confirmed
+abuse receives a 3–5 second delay followed by a truncated JSON envelope:
+`{ "elements": [], "page": 1, "limit": 0, "total": 0 }`, also HTTP 200. The
+protection layer does not return 403 or 429. Existing route authorization and
+upstream security controls can still return their own errors.
+
+In enforcement mode protected responses are private/no-store, including normal
+catalog responses. Conditional ETags and legacy IP-based rate limits are bypassed
+for these requests. Unprotected routes retain their existing caching and limits.
+
+## Synthetic records
+
+If the operator also enables canaries, `GET /items` includes one extra record with
+`synthetic: true`, `namespace: 'egdata-canary'`, an empty `title`, and an opaque
+`egcanary_...` ID. Filter these records before rendering, prefetching, hydrating or
+following links. They are not catalog products and are not included in `total` or
+the requested `limit`. Looking up one through a protected URL path or query
+immediately flags the requesting session/fingerprint. Canaries are disabled by default.
+
+## Operational limitations
+
+Fingerprints describe client families, not unique humans. The service combines
+them with behavioral evidence; missing client hints alone never confirms abuse.
+Missing trusted edge signals disable fingerprint-wide risk sharing, while signed
+session continuity still works. Transport impersonation, changing ASNs, fresh
+profiles and low-rate scraping can evade these heuristics. Cross-instance risk
+updates are asynchronous; an instance with a cold cache can admit requests before
+Redis telemetry arrives. This is not a synchronous global rate limit.

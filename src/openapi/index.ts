@@ -1,10 +1,11 @@
 import type { OpenAPIV3 } from "openapi-types";
 import { API_VERSION } from "../version.js";
+import { withAntiAbuseContract } from "./anti-abuse.js";
 import { components } from "./components.js";
 import { paths } from "./paths.js";
 
 export function buildOpenApiDocument(): OpenAPIV3.Document {
-  return {
+  return withAntiAbuseContract({
     openapi: "3.0.3",
     info: {
       title: "egdata.app API",
@@ -87,7 +88,7 @@ export function buildOpenApiDocument(): OpenAPIV3.Document {
     ],
     paths,
     components,
-  };
+  });
 }
 
 export { documentedOperations } from "./paths.js";

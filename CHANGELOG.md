@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added opt-in transport/session anti-abuse protection with `POST /auth/challenge`, fingerprint-bound HMAC/PoW sessions, asynchronous Redis sliding-window scoring across rotating IPs/UAs, and HTTP 200 session challenges or bounded tarpits with truncated responses. Enforcement protects catalog/pagination/GraphQL routes, bypasses their legacy IP limits and shared caching, and optionally adds signed synthetic item canaries. Added rollout/client documentation, OpenAPI contracts, tests, and a latency benchmark; defaults remain off until clients and edge forwarding are configured.
+
 - Capped anonymous `GET /offers` at 5 requests per minute per client IP (`RATE_LIMIT_OFFERS_LIST_PER_MINUTE`). The counter is keyed by client identity instead of the request URL, so changing or adding query parameters cannot reset the quota, and the limiter runs on the list handler itself so encoded path variants cannot skip it; throttled responses are `429` with `Retry-After`.
 
 - Fixed the in-process rate-limit fallback to apply the configured window when Redis is unavailable; previously its counters never expired, so a Redis outage could block a client permanently.

@@ -78,6 +78,102 @@
     }
   ],
   "paths": {
+    "/auth/challenge": {
+      "post": {
+        "operationId": "createAbuseChallenge",
+        "tags": [
+          "System"
+        ],
+        "x-egdata-visibility": "public",
+        "summary": "Initialize or solve a proof-of-work session challenge",
+        "description": "Send {} to receive a signed challenge. Solve SHA-256(challenge + ':' + nonce) with the returned leading-zero bit difficulty, then POST {challenge, nonce} to receive a ten-minute session. Invalid/expired proofs return a fresh challenge with HTTP 200. Enabled in observe/enforce modes. No account login is required.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "maxProperties": 0
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "challenge",
+                      "nonce"
+                    ],
+                    "properties": {
+                      "challenge": {
+                        "type": "string",
+                        "maxLength": 2048
+                      },
+                      "nonce": {
+                        "type": "string",
+                        "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed PoW challenge or session token. Always no-store. A session also sets the Secure, HttpOnly, SameSite=Lax __Host-egdata-session cookie.",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/PowChallenge"
+                    },
+                    {
+                      "$ref": "#/components/schemas/PowSession"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed JSON, invalid field types, or body larger than 4096 bytes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "INVALID_CHALLENGE"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Anti-abuse is disabled (ANTI_ABUSE_DISABLED)."
+          }
+        }
+      }
+    },
     "/catalog/hydrate": {
       "post": {
         "operationId": "hydrateCatalogGraph",
@@ -85,7 +181,7 @@
           "Catalog"
         ],
         "summary": "Hydrate catalog records for known technical identifiers",
-        "description": "Resolves up to 25 item, asset, or release-app roots directly from the catalog collections. The response is NDJSON with one isolated, content-hashed graph result per line.",
+        "description": "Resolves up to 25 item, asset, or release-app roots directly from the catalog collections. The response is NDJSON with one isolated, content-hashed graph result per line.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "requestBody": {
           "required": true,
           "content": {
@@ -105,6 +201,18 @@
                 "schema": {
                   "type": "string",
                   "description": "Newline-delimited CatalogHydrationRootResult objects."
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -159,7 +267,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/health": {
@@ -283,10 +399,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Build"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Build"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -321,7 +447,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/builds/resolve-launcher-records": {
@@ -331,7 +466,7 @@
           "Builds"
         ],
         "summary": "Resolve parsed Windows manifests to launcher metadata",
-        "description": "Resolves bounded, path-free metadata from parsed binary manifests. Ambiguous catalog, asset, and parent relationships are returned without guessing.",
+        "description": "Resolves bounded, path-free metadata from parsed binary manifests. Ambiguous catalog, asset, and parent relationships are returned without guessing.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "requestBody": {
           "required": true,
           "description": "Up to 100 parsed Windows manifest candidates. Local paths and manifest bytes are not accepted.",
@@ -416,89 +551,53 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "results"
-                  ],
-                  "properties": {
-                    "results": {
-                      "type": "array",
-                      "maxItems": 100,
-                      "items": {
-                        "oneOf": [
-                          {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                              "requestId",
-                              "status",
-                              "record"
-                            ],
-                            "properties": {
-                              "requestId": {
-                                "type": "string"
-                              },
-                              "status": {
-                                "type": "string",
-                                "enum": [
-                                  "resolved"
-                                ]
-                              },
-                              "record": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "results"
+                      ],
+                      "properties": {
+                        "results": {
+                          "type": "array",
+                          "maxItems": 100,
+                          "items": {
+                            "oneOf": [
+                              {
                                 "type": "object",
                                 "additionalProperties": false,
                                 "required": [
-                                  "artifactId",
-                                  "catalogItemId",
-                                  "catalogNamespace",
-                                  "displayName",
-                                  "kind",
-                                  "appCategories",
-                                  "mainGame",
-                                  "mandatoryAppFolderName",
-                                  "canRunOffline",
-                                  "requiresAuth",
-                                  "ownershipToken",
-                                  "ignoredProcessNames"
+                                  "requestId",
+                                  "status",
+                                  "record"
                                 ],
                                 "properties": {
-                                  "artifactId": {
-                                    "type": "string",
-                                    "maxLength": 256
-                                  },
-                                  "catalogItemId": {
-                                    "type": "string",
-                                    "maxLength": 256
-                                  },
-                                  "catalogNamespace": {
-                                    "type": "string",
-                                    "maxLength": 256
-                                  },
-                                  "displayName": {
+                                  "requestId": {
                                     "type": "string"
                                   },
-                                  "kind": {
+                                  "status": {
                                     "type": "string",
                                     "enum": [
-                                      "base-game",
-                                      "addon",
-                                      "digital-extra"
+                                      "resolved"
                                     ]
                                   },
-                                  "appCategories": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "string"
-                                    }
-                                  },
-                                  "mainGame": {
+                                  "record": {
                                     "type": "object",
                                     "additionalProperties": false,
                                     "required": [
                                       "artifactId",
                                       "catalogItemId",
-                                      "catalogNamespace"
+                                      "catalogNamespace",
+                                      "displayName",
+                                      "kind",
+                                      "appCategories",
+                                      "mainGame",
+                                      "mandatoryAppFolderName",
+                                      "canRunOffline",
+                                      "requiresAuth",
+                                      "ownershipToken",
+                                      "ignoredProcessNames"
                                     ],
                                     "properties": {
                                       "artifactId": {
@@ -512,57 +611,103 @@
                                       "catalogNamespace": {
                                         "type": "string",
                                         "maxLength": 256
+                                      },
+                                      "displayName": {
+                                        "type": "string"
+                                      },
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "base-game",
+                                          "addon",
+                                          "digital-extra"
+                                        ]
+                                      },
+                                      "appCategories": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "mainGame": {
+                                        "type": "object",
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "artifactId",
+                                          "catalogItemId",
+                                          "catalogNamespace"
+                                        ],
+                                        "properties": {
+                                          "artifactId": {
+                                            "type": "string",
+                                            "maxLength": 256
+                                          },
+                                          "catalogItemId": {
+                                            "type": "string",
+                                            "maxLength": 256
+                                          },
+                                          "catalogNamespace": {
+                                            "type": "string",
+                                            "maxLength": 256
+                                          }
+                                        },
+                                        "nullable": true
+                                      },
+                                      "mandatoryAppFolderName": {
+                                        "type": "string"
+                                      },
+                                      "canRunOffline": {
+                                        "type": "boolean"
+                                      },
+                                      "requiresAuth": {
+                                        "type": "boolean"
+                                      },
+                                      "ownershipToken": {
+                                        "type": "boolean"
+                                      },
+                                      "ignoredProcessNames": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
                                       }
-                                    },
-                                    "nullable": true
-                                  },
-                                  "mandatoryAppFolderName": {
-                                    "type": "string"
-                                  },
-                                  "canRunOffline": {
-                                    "type": "boolean"
-                                  },
-                                  "requiresAuth": {
-                                    "type": "boolean"
-                                  },
-                                  "ownershipToken": {
-                                    "type": "boolean"
-                                  },
-                                  "ignoredProcessNames": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "string"
                                     }
                                   }
                                 }
-                              }
-                            }
-                          },
-                          {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                              "requestId",
-                              "status"
-                            ],
-                            "properties": {
-                              "requestId": {
-                                "type": "string"
                               },
-                              "status": {
-                                "type": "string",
-                                "enum": [
-                                  "not-found",
-                                  "ambiguous",
-                                  "unsupported"
-                                ]
+                              {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": [
+                                  "requestId",
+                                  "status"
+                                ],
+                                "properties": {
+                                  "requestId": {
+                                    "type": "string"
+                                  },
+                                  "status": {
+                                    "type": "string",
+                                    "enum": [
+                                      "not-found",
+                                      "ambiguous",
+                                      "unsupported"
+                                    ]
+                                  }
+                                }
                               }
-                            }
+                            ]
                           }
-                        ]
+                        }
                       }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -597,7 +742,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/builds/{id}": {
@@ -625,7 +778,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Build"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Build"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -660,7 +823,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/builds/{id}/history": {
@@ -670,7 +842,7 @@
           "Builds"
         ],
         "summary": "List comparison candidates for a build",
-        "description": "Returns chronological observations for the same stream or platform and identifies the previous comparable snapshot.",
+        "description": "Returns chronological observations for the same stream or platform and identifies the previous comparable snapshot.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "name": "id",
@@ -726,7 +898,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BuildHistoryResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/BuildHistoryResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -761,7 +943,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/builds/{targetId}/compare/{baseId}": {
@@ -771,7 +961,7 @@
           "Builds"
         ],
         "summary": "Compare two stored build snapshots",
-        "description": "Compares immutable file snapshots by full path. Full-download deltas are not patch-download estimates.",
+        "description": "Compares immutable file snapshots by full path. Full-download deltas are not patch-download estimates.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "name": "targetId",
@@ -866,7 +1056,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BuildComparisonResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/BuildComparisonResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -911,7 +1111,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/builds/{id}/files": {
@@ -1009,7 +1217,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BuildFileListResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/BuildFileListResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -1044,7 +1262,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/builds/{id}/tree": {
@@ -1054,7 +1281,7 @@
           "Builds"
         ],
         "summary": "Expand one directory of a build file tree",
-        "description": "Returns only immediate child files and directories. Expand a directory by passing the path returned for that directory.",
+        "description": "Returns only immediate child files and directories. Expand a directory by passing the path returned for that directory.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "name": "id",
@@ -1105,7 +1332,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BuildFileTreeResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/BuildFileTreeResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -1140,7 +1377,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/builds/{id}/items": {
@@ -1191,7 +1436,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BuildItemsResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/BuildItemsResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -1226,7 +1481,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/builds/{id}/install-options": {
@@ -1254,7 +1518,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BuildInstallOptions"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/BuildInstallOptions"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -1289,7 +1563,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/countries": {
@@ -1611,23 +1894,33 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "elements",
-                    "total"
-                  ],
-                  "additionalProperties": false,
-                  "properties": {
-                    "elements": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Offer"
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "required": [
+                        "elements",
+                        "total"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "elements": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Offer"
+                          }
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
                       }
                     },
-                    "total": {
-                      "type": "integer"
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -1662,7 +1955,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required when pagination query parameters are present. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/active-sales": {
@@ -1736,7 +2038,7 @@
           "Offers"
         ],
         "summary": "List offers with regional price data",
-        "description": "Returns full offer documents. Anonymous access is limited to 5 requests per minute per client IP; the quota is keyed by client and is not reset by changing query parameters.",
+        "description": "Returns full offer documents. Anonymous access is limited to 5 requests per minute per client IP; the quota is keyed by client and is not reset by changing query parameters.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/country"
@@ -1761,7 +2063,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OfferListResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/OfferListResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -1815,7 +2127,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}": {
@@ -1840,7 +2160,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Offer"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Offer"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -1875,7 +2205,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/slugs": {
@@ -1915,29 +2254,39 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "slug",
-                      "id",
-                      "namespace"
-                    ],
-                    "additionalProperties": false,
-                    "properties": {
-                      "slug": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "string",
-                        "nullable": true
-                      },
-                      "namespace": {
-                        "type": "string",
-                        "nullable": true
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "slug",
+                          "id",
+                          "namespace"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "slug": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "namespace": {
+                            "type": "string",
+                            "nullable": true
+                          }
+                        }
                       }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -1972,7 +2321,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/exists": {
@@ -2012,26 +2370,36 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "existingOffers",
-                    "nonExistingOffers"
-                  ],
-                  "additionalProperties": false,
-                  "properties": {
-                    "existingOffers": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "required": [
+                        "existingOffers",
+                        "nonExistingOffers"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "existingOffers": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "nonExistingOffers": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
                       }
                     },
-                    "nonExistingOffers": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -2066,7 +2434,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/upcoming": {
@@ -2100,7 +2477,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OfferListResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/OfferListResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -2135,7 +2522,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/latest-released": {
@@ -2169,7 +2565,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OfferListResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/OfferListResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -2204,7 +2610,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/latest-achievements": {
@@ -2232,14 +2647,24 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/Offer"
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/Offer"
+                          }
+                        ]
                       }
-                    ]
-                  }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -2274,7 +2699,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/top-sellers": {
@@ -2284,7 +2718,7 @@
           "Offers"
         ],
         "summary": "List top-selling offers",
-        "description": "Returns full offer documents.",
+        "description": "Returns full offer documents.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/locale"
@@ -2306,7 +2740,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OfferListResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/OfferListResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -2341,7 +2785,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/top-wishlisted": {
@@ -2372,7 +2824,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OfferListResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/OfferListResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -2407,7 +2869,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/featured-discounts": {
@@ -2435,10 +2906,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Offer"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Offer"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -2473,7 +2954,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/events": {
@@ -2490,11 +2980,21 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -2529,7 +3029,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/events/{id}": {
@@ -2572,31 +3081,41 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "elements": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Offer"
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "elements": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Offer"
+                          }
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "count": {
+                          "type": "integer"
+                        }
                       }
                     },
-                    "title": {
-                      "type": "string"
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
                     },
-                    "limit": {
-                      "type": "integer"
-                    },
-                    "start": {
-                      "type": "integer"
-                    },
-                    "page": {
-                      "type": "integer"
-                    },
-                    "count": {
-                      "type": "integer"
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -2631,7 +3150,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/genres": {
@@ -2653,11 +3181,21 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -2692,7 +3230,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/price": {
@@ -2702,7 +3249,7 @@
           "Prices"
         ],
         "summary": "Get current regional price for an offer",
-        "description": "Returns Price not found (404) when the offer excludes the requested country. A non-empty country whitelist limits availability, and the blacklist takes precedence. Availability is checked before cached prices are returned.",
+        "description": "Returns Price not found (404) when the offer excludes the requested country. A non-empty country whitelist limits availability, and the blacklist takes precedence. Availability is checked before cached prices are returned.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
@@ -2718,7 +3265,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Price"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Price"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -2753,7 +3310,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/price-history": {
@@ -2763,7 +3328,7 @@
           "Prices"
         ],
         "summary": "Get historical regional prices for an offer",
-        "description": "Returns price history for a country-derived region, an explicit region, or all regions when neither is provided.",
+        "description": "Returns price history for a country-derived region, an explicit region, or all regions when neither is provided.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
@@ -2797,10 +3362,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Price"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Price"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -2835,7 +3410,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/regional-price": {
@@ -2845,7 +3428,7 @@
           "Prices"
         ],
         "summary": "Get prices for an offer across regions",
-        "description": "Unavailable pricing regions are omitted. With a country parameter, an excluded country returns Price not found (404). Historical observations remain available through price-history and do not restore excluded current prices.",
+        "description": "Unavailable pricing regions are omitted. With a country parameter, an excluded country returns Price not found (404). Historical observations remain available through price-history and do not restore excluded current prices.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
@@ -2861,10 +3444,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Price"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Price"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -2899,7 +3492,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/price/fairness": {
@@ -2921,8 +3522,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -2957,7 +3568,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/price-stats": {
@@ -2979,8 +3599,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -3015,7 +3645,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/franchises": {
@@ -3037,12 +3676,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "description": "Franchise metadata.",
-                    "additionalProperties": true
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "Franchise metadata.",
+                        "additionalProperties": true
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -3077,7 +3726,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/og": {
@@ -3087,7 +3745,7 @@
           "Offer Details"
         ],
         "summary": "Generate a PNG offer database preview",
-        "description": "Returns the offer's database summary image. Last update is the catalog's lastModifiedDate (updatedAt fallback), not build polling time. Size is the latest associated build's download size, with matching asset fallback, preferring direct-item assets. Artwork may be omitted if unavailable. Unknown offers or countries return 404.",
+        "description": "Returns the offer's database summary image. Last update is the catalog's lastModifiedDate (updatedAt fallback), not build polling time. Size is the latest associated build's download size, with matching asset fallback, preferring direct-item assets. Artwork may be omitted if unavailable. Unknown offers or countries return 404.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
@@ -3155,6 +3813,18 @@
                   "type": "string",
                   "format": "binary"
                 }
+              },
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
+                }
               }
             }
           },
@@ -3188,7 +3858,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/og.webp": {
@@ -3198,7 +3876,7 @@
           "Offer Details"
         ],
         "summary": "Generate a WebP offer database preview",
-        "description": "WebP version of /offers/{id}/og with the same metadata, country selection, missing-data fallbacks, and 404 errors.",
+        "description": "WebP version of /offers/{id}/og with the same metadata, country selection, missing-data fallbacks, and 404 errors.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
@@ -3266,6 +3944,18 @@
                   "type": "string",
                   "format": "binary"
                 }
+              },
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
+                }
               }
             }
           },
@@ -3299,7 +3989,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/features": {
@@ -3321,9 +4019,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "Derived store feature flags.",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "description": "Derived store feature flags.",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -3358,7 +4066,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/requirements": {
@@ -3368,7 +4085,7 @@
           "Offer Details"
         ],
         "summary": "Get technical requirements for an offer",
-        "description": "Returns resolved Windows and macOS requirements. DLC requirements inherit from an explicitly linked base game only when the DLC source confirms that its own requirements are absent. A platform is null when no requirements record exists; 404 is returned when neither platform has a record or when the offer does not exist.",
+        "description": "Returns resolved Windows and macOS requirements. DLC requirements inherit from an explicitly linked base game only when the DLC source confirms that its own requirements are absent. A platform is null when no requirements record exists; 404 is returned when neither platform has a record or when the offer does not exist.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/offerId"
@@ -3381,7 +4098,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OfferRequirementsResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/OfferRequirementsResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -3416,7 +4143,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/assets": {
@@ -3438,10 +4173,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Asset"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Asset"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -3476,7 +4221,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/items": {
@@ -3498,10 +4252,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Item"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Item"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -3536,7 +4300,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/changelog": {
@@ -3591,43 +4364,53 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "elements",
-                    "page",
-                    "limit",
-                    "totalCount",
-                    "totalPages",
-                    "hasNextPage",
-                    "hasPreviousPage"
-                  ],
-                  "properties": {
-                    "elements": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/ChangelogEntry"
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "elements",
+                        "page",
+                        "limit",
+                        "totalCount",
+                        "totalPages",
+                        "hasNextPage",
+                        "hasPreviousPage"
+                      ],
+                      "properties": {
+                        "elements": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ChangelogEntry"
+                          }
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "totalCount": {
+                          "type": "integer"
+                        },
+                        "totalPages": {
+                          "type": "integer"
+                        },
+                        "hasNextPage": {
+                          "type": "boolean"
+                        },
+                        "hasPreviousPage": {
+                          "type": "boolean"
+                        }
                       }
                     },
-                    "page": {
-                      "type": "integer"
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
                     },
-                    "limit": {
-                      "type": "integer"
-                    },
-                    "totalCount": {
-                      "type": "integer"
-                    },
-                    "totalPages": {
-                      "type": "integer"
-                    },
-                    "hasNextPage": {
-                      "type": "boolean"
-                    },
-                    "hasPreviousPage": {
-                      "type": "boolean"
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -3662,7 +4445,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/changelog/stats": {
@@ -3702,9 +4494,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "Changelog counts by day, weekday, type, and field.",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "description": "Changelog counts by day, weekday, type, and field.",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -3739,7 +4541,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/achievements": {
@@ -3761,10 +4572,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AchievementSet"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AchievementSet"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -3799,7 +4620,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/related": {
@@ -3830,10 +4660,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Offer"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Offer"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -3868,7 +4708,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/mappings": {
@@ -3890,9 +4739,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "Store mapping metadata.",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "description": "Store mapping metadata.",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -3927,7 +4786,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/media": {
@@ -3949,9 +4817,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "Screenshots, trailers, and other media metadata.",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "description": "Screenshots, trailers, and other media metadata.",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -3986,7 +4864,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/suggestions": {
@@ -4017,10 +4904,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Offer"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Offer"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -4055,7 +4952,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/age-rating": {
@@ -4089,9 +4995,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "Age rating metadata keyed by rating authority.",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "description": "Age rating metadata keyed by rating authority.",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -4126,7 +5042,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/giveaways": {
@@ -4148,12 +5073,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "description": "Free-game promotion record.",
-                    "additionalProperties": true
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "Free-game promotion record.",
+                        "additionalProperties": true
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -4188,7 +5123,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/ratings": {
@@ -4210,9 +5154,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "External ratings metadata.",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "description": "External ratings metadata.",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -4247,7 +5201,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/tops": {
@@ -4269,10 +5232,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "integer"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "integer"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -4307,7 +5280,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/polls": {
@@ -4329,9 +5311,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "Community poll data.",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "description": "Community poll data.",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -4366,7 +5358,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/hltb": {
@@ -4388,9 +5389,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "HowLongToBeat metadata.",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "description": "HowLongToBeat metadata.",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -4425,7 +5436,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/collection": {
@@ -4456,10 +5476,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Offer"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Offer"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -4494,7 +5524,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/collections/{collection}": {
@@ -4519,9 +5558,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "Collection position metadata.",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "description": "Collection position metadata.",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -4556,7 +5605,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/bundle": {
@@ -4587,32 +5645,42 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "offers",
-                    "bundlePrice",
-                    "totalPrice"
-                  ],
-                  "properties": {
-                    "offers": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Offer"
-                      }
-                    },
-                    "bundlePrice": {
-                      "allOf": [
-                        {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "offers",
+                        "bundlePrice",
+                        "totalPrice"
+                      ],
+                      "properties": {
+                        "offers": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Offer"
+                          }
+                        },
+                        "bundlePrice": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/Price"
+                            }
+                          ],
+                          "nullable": true
+                        },
+                        "totalPrice": {
                           "$ref": "#/components/schemas/Price"
                         }
-                      ],
-                      "nullable": true
+                      }
                     },
-                    "totalPrice": {
-                      "$ref": "#/components/schemas/Price"
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -4647,7 +5715,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/in-bundle": {
@@ -4678,12 +5755,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "description": "Bundle offer and regional price data.",
-                    "additionalProperties": true
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "Bundle offer and regional price data.",
+                        "additionalProperties": true
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -4718,7 +5805,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/has-prepurchase": {
@@ -4746,24 +5842,34 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "hasPrepurchase"
-                  ],
-                  "properties": {
-                    "hasPrepurchase": {
-                      "type": "boolean"
-                    },
-                    "offer": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/Offer"
-                        }
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "hasPrepurchase"
                       ],
-                      "nullable": true
+                      "properties": {
+                        "hasPrepurchase": {
+                          "type": "boolean"
+                        },
+                        "offer": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/Offer"
+                            }
+                          ],
+                          "nullable": true
+                        }
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -4798,7 +5904,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/has-regular": {
@@ -4826,24 +5941,34 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "isPrepurchase"
-                  ],
-                  "properties": {
-                    "isPrepurchase": {
-                      "type": "boolean"
-                    },
-                    "offer": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/Offer"
-                        }
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "isPrepurchase"
                       ],
-                      "nullable": true
+                      "properties": {
+                        "isPrepurchase": {
+                          "type": "boolean"
+                        },
+                        "offer": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/Offer"
+                            }
+                          ],
+                          "nullable": true
+                        }
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -4878,7 +6003,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/genres": {
@@ -4900,12 +6034,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "description": "Genre tag metadata.",
-                    "additionalProperties": true
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "Genre tag metadata.",
+                        "additionalProperties": true
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -4940,7 +6084,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/technologies": {
@@ -4962,12 +6115,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "description": "Detected technology metadata.",
-                    "additionalProperties": true
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "Detected technology metadata.",
+                        "additionalProperties": true
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5002,7 +6165,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/builds": {
@@ -5024,10 +6196,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Build"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Build"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5062,7 +6244,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/igdb": {
@@ -5084,9 +6275,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "IGDB metadata.",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "description": "IGDB metadata.",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5121,7 +6322,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/overview": {
@@ -5149,70 +6359,80 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "properties": {
-                    "offer": {
-                      "$ref": "#/components/schemas/Offer"
-                    },
-                    "price": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/Price"
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "properties": {
+                        "offer": {
+                          "$ref": "#/components/schemas/Offer"
+                        },
+                        "price": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/Price"
+                            }
+                          ],
+                          "nullable": true
+                        },
+                        "media": {
+                          "type": "object",
+                          "description": "Media metadata.",
+                          "additionalProperties": true
+                        },
+                        "igdb": {
+                          "type": "object",
+                          "description": "IGDB metadata.",
+                          "additionalProperties": true
+                        },
+                        "features": {
+                          "type": "object",
+                          "description": "Derived feature flags.",
+                          "additionalProperties": true
+                        },
+                        "ageRating": {
+                          "type": "object",
+                          "description": "Age rating metadata.",
+                          "additionalProperties": true
+                        },
+                        "giveaways": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "description": "Free-game promotion record.",
+                            "additionalProperties": true
+                          }
+                        },
+                        "polls": {
+                          "type": "object",
+                          "description": "Community poll data.",
+                          "additionalProperties": true
+                        },
+                        "genres": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "description": "Genre tag metadata.",
+                            "additionalProperties": true
+                          }
+                        },
+                        "technologies": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "description": "Detected technology metadata.",
+                            "additionalProperties": true
+                          }
                         }
-                      ],
-                      "nullable": true
-                    },
-                    "media": {
-                      "type": "object",
-                      "description": "Media metadata.",
-                      "additionalProperties": true
-                    },
-                    "igdb": {
-                      "type": "object",
-                      "description": "IGDB metadata.",
-                      "additionalProperties": true
-                    },
-                    "features": {
-                      "type": "object",
-                      "description": "Derived feature flags.",
-                      "additionalProperties": true
-                    },
-                    "ageRating": {
-                      "type": "object",
-                      "description": "Age rating metadata.",
-                      "additionalProperties": true
-                    },
-                    "giveaways": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "description": "Free-game promotion record.",
-                        "additionalProperties": true
                       }
                     },
-                    "polls": {
-                      "type": "object",
-                      "description": "Community poll data.",
-                      "additionalProperties": true
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
                     },
-                    "genres": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "description": "Genre tag metadata.",
-                        "additionalProperties": true
-                      }
-                    },
-                    "technologies": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "description": "Detected technology metadata.",
-                        "additionalProperties": true
-                      }
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -5247,7 +6467,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/reviews": {
@@ -5278,7 +6507,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReviewListResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ReviewListResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5313,7 +6552,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/offers/{id}/reviews-summary": {
@@ -5338,7 +6586,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReviewSummary"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ReviewSummary"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5373,7 +6631,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/items": {
@@ -5383,7 +6650,7 @@
           "Items"
         ],
         "summary": "List catalog items",
-        "description": "Returns paginated Epic catalog items sorted by last modification date.",
+        "description": "Returns paginated Epic catalog items sorted by last modification date.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/expand"
@@ -5402,7 +6669,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ItemListResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ItemListResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5437,7 +6714,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/items/{id}": {
@@ -5447,7 +6732,7 @@
           "Items"
         ],
         "summary": "Get an item by ID",
-        "description": "Looks up an item by Mongo document ID or Epic item ID and expands custom attributes.",
+        "description": "Looks up an item by Mongo document ID or Epic item ID and expands custom attributes.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/itemId"
@@ -5460,7 +6745,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Item"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Item"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5495,7 +6790,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/items/bulk": {
@@ -5505,7 +6808,7 @@
           "Items"
         ],
         "summary": "Fetch multiple items by ID",
-        "description": "Fetches up to 100 item IDs in one request.",
+        "description": "Fetches up to 100 item IDs in one request.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "requestBody": {
           "required": true,
           "description": "Item IDs to fetch.",
@@ -5536,10 +6839,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Item"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Item"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5574,7 +6887,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/items/bulk/offers": {
@@ -5584,7 +6905,7 @@
           "Items"
         ],
         "summary": "Resolve the best offer for multiple items",
-        "description": "Returns an object keyed by requested item ID. Each value is the best matching offer or null when no offer can be resolved.",
+        "description": "Returns an object keyed by requested item ID. Each value is the best matching offer or null when no offer can be resolved.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/locale"
@@ -5620,15 +6941,25 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/Offer"
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": {
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/Offer"
+                          }
+                        ],
+                        "nullable": true
                       }
-                    ],
-                    "nullable": true
-                  }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5663,7 +6994,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/items/{id}/assets": {
@@ -5685,10 +7024,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Asset"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Asset"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5723,7 +7072,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/items/{id}/builds": {
@@ -5745,10 +7103,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Build"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Build"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5783,7 +7151,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/items/{id}/changelog": {
@@ -5811,10 +7188,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ChangelogEntry"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ChangelogEntry"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5849,7 +7236,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/items/{id}/offer": {
@@ -5874,7 +7270,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Offer"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Offer"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5909,7 +7315,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sandboxes": {
@@ -5919,7 +7334,7 @@
           "Sandboxes"
         ],
         "summary": "List sandboxes",
-        "description": "Returns paginated Epic namespaces/sandboxes known to egdata.",
+        "description": "Returns paginated Epic namespaces/sandboxes known to egdata.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/page"
@@ -5935,7 +7350,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SandboxListResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SandboxListResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -5970,7 +7395,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sandboxes/{sandboxId}": {
@@ -5992,7 +7425,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Sandbox"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Sandbox"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -6027,7 +7470,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sandboxes/{sandboxId}/og": {
@@ -6037,7 +7489,7 @@
           "Sandboxes"
         ],
         "summary": "Generate a PNG sandbox database preview",
-        "description": "Shows all offer and item records, and assets counted as stored records plus each release-info platform without a stored artifact. Uses the earliest-created released non-code-redemption base game, then a preorder base game, then an executable item; otherwise uses the sandbox name. Last update uses sandbox updated, then lastModifiedDate, then updatedAt. Missing artwork is omitted. Unknown sandboxes return a JSON 404 error.",
+        "description": "Shows all offer and item records, and assets counted as stored records plus each release-info platform without a stored artifact. Uses the earliest-created released non-code-redemption base game, then a preorder base game, then an executable item; otherwise uses the sandbox name. Last update uses sandbox updated, then lastModifiedDate, then updatedAt. Missing artwork is omitted. Unknown sandboxes return a JSON 404 error.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/sandboxId"
@@ -6085,6 +7537,18 @@
                   "type": "string",
                   "format": "binary"
                 }
+              },
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
+                }
               }
             }
           },
@@ -6118,7 +7582,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sandboxes/{sandboxId}/og.webp": {
@@ -6128,7 +7600,7 @@
           "Sandboxes"
         ],
         "summary": "Generate a WebP sandbox database preview",
-        "description": "WebP version of /sandboxes/{sandboxId}/og with the same counts, identity, UTC update date, missing-data fallbacks, and JSON 404 errors.",
+        "description": "WebP version of /sandboxes/{sandboxId}/og with the same counts, identity, UTC update date, missing-data fallbacks, and JSON 404 errors.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/sandboxId"
@@ -6176,6 +7648,18 @@
                   "type": "string",
                   "format": "binary"
                 }
+              },
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
+                }
               }
             }
           },
@@ -6209,7 +7693,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sandboxes/{sandboxId}/items": {
@@ -6249,31 +7741,41 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "elements",
-                    "page",
-                    "limit",
-                    "count"
-                  ],
-                  "properties": {
-                    "elements": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Item"
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "elements",
+                        "page",
+                        "limit",
+                        "count"
+                      ],
+                      "properties": {
+                        "elements": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Item"
+                          }
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "count": {
+                          "type": "integer"
+                        }
                       }
                     },
-                    "page": {
-                      "type": "integer"
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
                     },
-                    "limit": {
-                      "type": "integer"
-                    },
-                    "count": {
-                      "type": "integer"
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -6308,7 +7810,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sandboxes/{sandboxId}/offers": {
@@ -6345,31 +7856,41 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "elements",
-                    "page",
-                    "limit",
-                    "count"
-                  ],
-                  "properties": {
-                    "elements": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Offer"
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "elements",
+                        "page",
+                        "limit",
+                        "count"
+                      ],
+                      "properties": {
+                        "elements": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Offer"
+                          }
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "count": {
+                          "type": "integer"
+                        }
                       }
                     },
-                    "page": {
-                      "type": "integer"
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
                     },
-                    "limit": {
-                      "type": "integer"
-                    },
-                    "count": {
-                      "type": "integer"
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -6404,7 +7925,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sandboxes/{sandboxId}/assets": {
@@ -6435,31 +7965,41 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "elements",
-                    "page",
-                    "limit",
-                    "count"
-                  ],
-                  "properties": {
-                    "elements": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Asset"
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "elements",
+                        "page",
+                        "limit",
+                        "count"
+                      ],
+                      "properties": {
+                        "elements": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Asset"
+                          }
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "count": {
+                          "type": "integer"
+                        }
                       }
                     },
-                    "page": {
-                      "type": "integer"
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
                     },
-                    "limit": {
-                      "type": "integer"
-                    },
-                    "count": {
-                      "type": "integer"
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -6494,7 +8034,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sandboxes/{sandboxId}/base-game": {
@@ -6504,7 +8053,7 @@
           "Sandboxes"
         ],
         "summary": "Get the base game for a sandbox",
-        "description": "Returns the base game offer for a sandbox, or an executable item fallback when no offer exists.",
+        "description": "Returns the base game offer for a sandbox, or an executable item fallback when no offer exists.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/sandboxId"
@@ -6523,9 +8072,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "Base game offer or executable item fallback.",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "description": "Base game offer or executable item fallback.",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -6560,7 +8119,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sandboxes/{sandboxId}/achievements": {
@@ -6582,10 +8149,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AchievementSet"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AchievementSet"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -6620,7 +8197,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sandboxes/{sandboxId}/changelog": {
@@ -6648,7 +8234,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChangelogSearchResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ChangelogSearchResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -6683,7 +8279,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sandboxes/{sandboxId}/builds": {
@@ -6714,31 +8319,41 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "elements",
-                    "page",
-                    "limit",
-                    "count"
-                  ],
-                  "properties": {
-                    "elements": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Build"
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "elements",
+                        "page",
+                        "limit",
+                        "count"
+                      ],
+                      "properties": {
+                        "elements": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Build"
+                          }
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "count": {
+                          "type": "integer"
+                        }
                       }
                     },
-                    "page": {
-                      "type": "integer"
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
                     },
-                    "limit": {
-                      "type": "integer"
-                    },
-                    "count": {
-                      "type": "integer"
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -6773,7 +8388,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sandboxes/{sandboxId}/stats": {
@@ -6795,7 +8419,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SandboxStatsResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SandboxStatsResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -6830,7 +8464,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/free-games": {
@@ -6852,7 +8495,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FreeGamesResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/FreeGamesResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -6887,7 +8540,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/free-games/history": {
@@ -6918,8 +8580,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -6954,7 +8626,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/free-games/search": {
@@ -6992,8 +8673,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -7028,7 +8719,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/free-games/stats": {
@@ -7045,7 +8745,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StatsResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/StatsResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -7080,7 +8790,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/free-games/mobile": {
@@ -7105,7 +8824,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FreeGamesResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/FreeGamesResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -7140,7 +8869,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/free-games/sellers": {
@@ -7157,10 +8895,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SellerSummary"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SellerSummary"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -7195,7 +8943,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/search/v2/search": {
@@ -7231,7 +8988,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SearchResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SearchResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -7266,7 +9033,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       },
       "get": {
         "operationId": "searchOffersV2Get",
@@ -7274,7 +9050,7 @@
           "Search"
         ],
         "summary": "Search offers with query parameters (edge-cacheable)",
-        "description": "Query-parameter alias of POST /search/v2/search. Intended for browser and edge-cacheable searches. Returns full offer documents.",
+        "description": "Query-parameter alias of POST /search/v2/search. Intended for browser and edge-cacheable searches. Returns full offer documents.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/country"
@@ -7476,7 +9252,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SearchResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SearchResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -7511,7 +9297,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/search/natural-language": {
@@ -8131,7 +9925,7 @@
           "Changelog"
         ],
         "summary": "List recent changelog records",
-        "description": "Returns recent changelog entries with best-effort `metadata.context` enrichment. Context is null when unavailable.",
+        "description": "Returns recent changelog entries with best-effort `metadata.context` enrichment. Context is null when unavailable.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/page"
@@ -8147,10 +9941,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ChangelogEntry"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ChangelogEntry"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -8185,7 +9989,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/changelist/{id}": {
@@ -8195,7 +10007,7 @@
           "Changelog"
         ],
         "summary": "Get a changelog record",
-        "description": "Returns a single changelog entry with best-effort `metadata.context` enrichment. Missing changelog IDs return 404.",
+        "description": "Returns a single changelog entry with best-effort `metadata.context` enrichment. Missing changelog IDs return 404.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "name": "id",
@@ -8215,7 +10027,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChangelogEntry"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ChangelogEntry"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -8250,7 +10072,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/search/changelog": {
@@ -8260,7 +10090,7 @@
           "Search"
         ],
         "summary": "Search changelog records",
-        "description": "Searches changelog entries and hydrates `metadata.changes[].oldValue` and `newValue` from canonical Mongo records or raw OpenSearch values. Search hits include best-effort `document` enrichment.",
+        "description": "Searches changelog entries and hydrates `metadata.changes[].oldValue` and `newValue` from canonical Mongo records or raw OpenSearch values. Search hits include best-effort `document` enrichment.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required when pagination query parameters are present. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "name": "query",
@@ -8304,31 +10134,41 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "hits",
-                    "estimatedTotalHits",
-                    "processingTimeMs",
-                    "query"
-                  ],
-                  "additionalProperties": true,
-                  "properties": {
-                    "hits": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/ChangelogEntry"
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "required": [
+                        "hits",
+                        "estimatedTotalHits",
+                        "processingTimeMs",
+                        "query"
+                      ],
+                      "additionalProperties": true,
+                      "properties": {
+                        "hits": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ChangelogEntry"
+                          }
+                        },
+                        "estimatedTotalHits": {
+                          "type": "integer"
+                        },
+                        "processingTimeMs": {
+                          "type": "number"
+                        },
+                        "query": {
+                          "type": "string"
+                        }
                       }
                     },
-                    "estimatedTotalHits": {
-                      "type": "integer"
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
                     },
-                    "processingTimeMs": {
-                      "type": "number"
-                    },
-                    "query": {
-                      "type": "string"
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -8363,7 +10203,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sellers": {
@@ -8380,10 +10228,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SellerSummary"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SellerSummary"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -8418,7 +10276,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sellers/{id}": {
@@ -8428,7 +10295,7 @@
           "Sellers"
         ],
         "summary": "List offers for a seller",
-        "description": "Returns full offer documents. `limit` defaults to unlimited; pass an explicit limit to page.",
+        "description": "Returns full offer documents. `limit` defaults to unlimited; pass an explicit limit to page.\n\nWhen ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
         "parameters": [
           {
             "$ref": "#/components/parameters/sellerId"
@@ -8475,10 +10342,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Offer"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Offer"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -8513,7 +10390,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sellers/{id}/cover": {
@@ -8541,10 +10426,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Offer"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Offer"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -8579,7 +10474,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/sellers/{id}/stats": {
@@ -8601,7 +10505,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StatsResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/StatsResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SessionChallengeRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbuseTruncatedResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -8636,7 +10550,16 @@
               }
             }
           }
-        }
+        },
+        "description": "When ANTI_ABUSE_MODE=enforce, a PoW session is required. SESSION_CHALLENGE_REQUIRED and truncated mitigation responses use HTTP 200. Protected responses are private/no-store. Scores above 0.8 receive a 3–5 second delay and a truncated envelope; 0.5–0.8 sessions expire early and require harder PoW. Legacy IP rate limits are skipped on these requests.",
+        "security": [
+          {
+            "AbuseSessionHeader": []
+          },
+          {
+            "AbuseSessionCookie": []
+          }
+        ]
       }
     },
     "/stats": {
@@ -8977,6 +10900,17 @@
         "in": "header",
         "name": "X-API-Key",
         "description": "Endpoint-specific API key."
+      },
+      "AbuseSessionHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-egdata-session",
+        "description": "PoW session required when anti-abuse enforcement is enabled; not account authentication."
+      },
+      "AbuseSessionCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "__Host-egdata-session"
       }
     },
     "parameters": {
@@ -10937,7 +12871,14 @@
           "elements": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Item"
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Item"
+                },
+                {
+                  "$ref": "#/components/schemas/SyntheticItem"
+                }
+              ]
             }
           },
           "page": {
@@ -12388,6 +14329,150 @@
       "BooleanLookupResponse": {
         "type": "object",
         "additionalProperties": true
+      },
+      "PowChallenge": {
+        "type": "object",
+        "required": [
+          "challenge",
+          "difficulty",
+          "expiresAt",
+          "algorithm"
+        ],
+        "properties": {
+          "challenge": {
+            "type": "string"
+          },
+          "difficulty": {
+            "type": "integer",
+            "enum": [
+              16,
+              20
+            ]
+          },
+          "expiresAt": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix milliseconds; challenge expires after 60 seconds."
+          },
+          "algorithm": {
+            "type": "string",
+            "enum": [
+              "SHA-256"
+            ]
+          }
+        }
+      },
+      "PowSession": {
+        "type": "object",
+        "required": [
+          "token",
+          "expiresAt"
+        ],
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix milliseconds; ten minutes from challenge issuance. Suspicious sessions can expire after 30 seconds."
+          }
+        }
+      },
+      "SessionChallengeRequired": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "challengeUrl"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "SESSION_CHALLENGE_REQUIRED"
+                ]
+              },
+              "challengeUrl": {
+                "type": "string",
+                "enum": [
+                  "/auth/challenge"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "AbuseTruncatedResponse": {
+        "type": "object",
+        "required": [
+          "elements",
+          "page",
+          "limit",
+          "total"
+        ],
+        "properties": {
+          "elements": {
+            "type": "array",
+            "maxItems": 0,
+            "items": {
+              "type": "object"
+            }
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer",
+            "enum": [
+              0
+            ]
+          },
+          "total": {
+            "type": "integer",
+            "enum": [
+              0
+            ]
+          }
+        }
+      },
+      "SyntheticItem": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "namespace",
+          "synthetic"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^egcanary_[a-f0-9]{32}$"
+          },
+          "title": {
+            "type": "string",
+            "enum": [
+              ""
+            ]
+          },
+          "namespace": {
+            "type": "string",
+            "enum": [
+              "egdata-canary"
+            ]
+          },
+          "synthetic": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        }
       }
     }
   }

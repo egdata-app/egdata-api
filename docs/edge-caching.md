@@ -1,5 +1,10 @@
 # Edge caching and bandwidth operations
 
+When enabling `ANTI_ABUSE_MODE=enforce`, follow [anti-abuse rollout](anti-abuse.md)
+first: bypass and purge shared caches for protected routes, including GraphQL,
+catalog, preview images and pagination URLs. Their private/no-store responses
+supersede the cache rules below; cached hits would otherwise skip the session gate.
+
 The API now compresses text responses at the origin and emits explicit
 shared-cache headers (`Cache-Control`, `CDN-Cache-Control`) for public GET
 endpoints. Cloudflare still does **not** cache JSON by default, so the rules in

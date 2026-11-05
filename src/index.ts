@@ -69,6 +69,7 @@ import SellersRoute from "./routes/sellers.js";
 import StatsRoute from "./routes/stats.js";
 import UsersRoute from "./routes/users.js";
 import UsersServiceRoute from "./routes/users-service.js";
+import { createAntiAbuseRuntime } from "./services/anti-abuse-runtime.js";
 import { getAikidoAnonymousIdentity } from "./utils/aikido-rate-limit-group.js";
 import { attributesToObject } from "./utils/attributes-to-object.js";
 import { resolveChangelogContextSafely } from "./utils/changelog-context.js";
@@ -157,6 +158,7 @@ app.use(
       "apollographql-client-version",
       "apollo-require-preflight",
       "x-api-key",
+      "x-egdata-session",
     ],
     allowMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"],
     exposeHeaders: [
@@ -174,6 +176,10 @@ app.use(
     credentials: true,
   }),
 );
+
+const antiAbuse = createAntiAbuseRuntime();
+app.use("/*", antiAbuse.middleware);
+app.post("/auth/challenge", antiAbuse.challenge);
 
 app.use("/*", responseEtag);
 app.use("/*", requestDebugLogger);
@@ -1632,6 +1638,7 @@ function installShutdownHandlers(httpServer: ServerType) {
       await closeHttpServer(httpServer);
       disconnectResponseCache();
       disconnectRateLimitStore();
+      antiAbuse.close();
       disconnectPersistedQueryStore();
 
       const shutdownResults = await Promise.allSettled([

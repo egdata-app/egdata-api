@@ -59,4 +59,27 @@ describe("rate limiting", () => {
     const response = await app.request("/", { headers: otherClient });
     expect(response.status).toBe(200);
   });
+
+  it("leaves enforced PoW requests to the anti-abuse scorer instead of issuing 429", async () => {
+    const protectedApp = new Hono();
+    protectedApp.use("*", async (c, next) => {
+      c.set("antiAbuseEnforced", true);
+      await next();
+    });
+    protectedApp.use("*", rateLimit.generalRateLimit);
+    protectedApp.use("*", rateLimit.offersListRateLimit);
+    protectedApp.get("/offers", (c) => c.json({ elements: [] }));
+    for (let i = 0; i < 10; i++) {
+      expect(
+        (
+          await protectedApp.request("/offers", {
+            headers: {
+              "x-forwarded-for": "203.0.113.10",
+              "user-agent": "vitest-rate-limit",
+            },
+          })
+        ).status,
+      ).toBe(200);
+    }
+  });
 });

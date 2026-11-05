@@ -236,7 +236,7 @@ const createLimiter = (
   });
 
   return async (c: Context, next: Next) => {
-    if (!isRateLimitEnabled()) {
+    if (c.get("antiAbuseEnforced") || !isRateLimitEnabled()) {
       return next();
     }
     return middleware(c, next);

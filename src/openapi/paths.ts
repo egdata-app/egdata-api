@@ -1,4 +1,5 @@
 import type { OpenAPIV3 } from "openapi-types";
+import { challengeOperation } from "./anti-abuse.js";
 import { jsonContent } from "./components.js";
 import {
   arrayOf,
@@ -312,6 +313,7 @@ const launcherResolverResponse: OpenAPIV3.SchemaObject = {
 };
 
 export const paths: EgdataPaths = {
+  "/auth/challenge": { post: challengeOperation },
   "/catalog/hydrate": {
     post: operation({
       operationId: "hydrateCatalogGraph",
