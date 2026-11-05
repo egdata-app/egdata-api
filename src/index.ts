@@ -27,6 +27,7 @@ import {
   disconnectRateLimitStore,
   generalRateLimit,
   heavyRateLimit,
+  searchRateLimit,
 } from "./middlewares/rate-limit.js";
 import { requestDebugLogger } from "./middlewares/request-logger.js";
 import { responseEtag } from "./middlewares/response-etag.js";
@@ -182,7 +183,9 @@ app.use("/*", generalRateLimit);
 // Expensive routes get a tighter anonymous quota. These are the paths that
 // account for the bulk of dynamic origin egress.
 app.use("/graphql", heavyRateLimit);
-app.use("/search/*", heavyRateLimit);
+app.use("/search/v2/search", searchRateLimit);
+app.use("/search/natural-language", heavyRateLimit);
+app.use("/search/:id/count", heavyRateLimit);
 app.use("/multisearch/*", heavyRateLimit);
 app.use("/profiles/*", heavyRateLimit);
 app.use("/sellers/*", heavyRateLimit);
