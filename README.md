@@ -83,8 +83,9 @@ for automated traffic but generous for normal browsing:
 
 ```txt
 RATE_LIMIT_ENABLED=true
-RATE_LIMIT_GENERAL_PER_MINUTE=600
-RATE_LIMIT_GRAPHQL_PER_MINUTE=600
+RATE_LIMIT_GENERAL_PER_MINUTE=1200
+RATE_LIMIT_GRAPHQL_GET_PER_MINUTE=1200
+RATE_LIMIT_GRAPHQL_POST_PER_MINUTE=120
 RATE_LIMIT_SEARCH_PER_MINUTE=300
 RATE_LIMIT_HEAVY_PER_MINUTE=60
 RATE_LIMIT_BULK_PER_MINUTE=10
@@ -97,8 +98,11 @@ to an in-process store if Redis is unavailable.
 
 The general limit also applies to every route, so keep
 `RATE_LIMIT_GENERAL_PER_MINUTE` at or above the route-specific limits you set.
-For example, GraphQL is effectively capped by the lower of the general and
-`RATE_LIMIT_GRAPHQL_PER_MINUTE` values.
+For example, GraphQL GET is effectively capped by the lower of the general and
+`RATE_LIMIT_GRAPHQL_GET_PER_MINUTE` values.
+
+Each limiter uses its own Redis key namespace, so general, search, GraphQL GET,
+GraphQL POST, heavy, and bulk requests do not consume each other's counters.
 
 GraphQL additionally caps list page sizes, query depth, aliases, and query size.
 Introspection is disabled in production unless `GRAPHQL_INTROSPECTION=true`.

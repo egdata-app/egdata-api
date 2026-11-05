@@ -60,3 +60,5 @@ GET /graphql?extensions={"persistedQuery":{"version":1,"sha256Hash":"<sha256-of-
 3. Subsequent requests can use the hash-only URL plus `variables` and `operationName`. Apollo Client's `createPersistedQueryLink({ useGETForHashedQueries: true })` implements this flow automatically.
 
 Successful `GET` responses carry `Cache-Control: public, max-age=<ttl>, s-maxage=<ttl>, stale-while-revalidate=...` and `CDN-Cache-Control`, where the TTL is the minimum cache hint in the query: 60 seconds for offers, prices, profiles, and changelogs; 300 seconds for items and sandboxes; 3600 seconds for builds, assets, tags, sellers, and franchises. Error responses and `POST` responses are `no-store`. Cache keys should include the full query string (`extensions`, `query`, `variables`, `operationName`) and `Origin`, and must bypass requests with an `Authorization` header.
+
+GET/APQ has a much higher anonymous quota (1200 requests/minute) than POST (120 requests/minute), because GET responses can be served from the CDN. Preload-style read queries should use GET with persisted queries rather than POST.

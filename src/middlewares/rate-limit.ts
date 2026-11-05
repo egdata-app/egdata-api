@@ -64,17 +64,21 @@ export const disconnectRateLimitStore = () => {
 };
 
 /**
- * Redis-backed sliding window store. Falls back to the in-process store on any
- * Redis failure so a cache outage can never turn into a 5xx.
+ * Redis-backed fixed-window store. Each limiter gets its own namespace; without
+ * that, all limiters would share one counter per client and the lowest limit in
+ * the process would effectively apply to every route.
  */
 class RedisRateLimitStore implements Store {
   readonly localKeys = false;
   private readonly fallback = new MemoryStore();
 
-  constructor(private readonly windowMs: number) {}
+  constructor(
+    private readonly windowMs: number,
+    private readonly namespace: string,
+  ) {}
 
   private key(key: string) {
-    return `${RATE_LIMIT_PREFIX}${key}`;
+    return `${RATE_LIMIT_PREFIX}${this.namespace}:${key}`;
   }
 
   async increment(key: string): Promise<ClientRateLimitInfo> {
@@ -206,11 +210,12 @@ const rateLimitHandler = (message: string) => {
 };
 
 const createLimiter = (
+  namespace: string,
   limit: number,
   message: string,
   windowMs = MINUTE_MS,
 ) => {
-  const store = new RedisRateLimitStore(windowMs);
+  const store = new RedisRateLimitStore(windowMs, namespace);
   const middleware = rateLimiter({
     windowMs,
     limit,
@@ -234,24 +239,43 @@ const createLimiter = (
  * scripts without affecting normal browsing.
  */
 export const generalRateLimit = createLimiter(
-  numberFromEnv("RATE_LIMIT_GENERAL_PER_MINUTE", 600),
+  "general",
+  numberFromEnv("RATE_LIMIT_GENERAL_PER_MINUTE", 1200),
   "Too many requests. Please retry shortly.",
 );
 
 /**
- * GraphQL feeds the site's preloads, so it gets a much higher quota than the
- * other expensive routes. A single page navigation can issue many queries.
+ * Cacheable GraphQL GET queries, including Automatic Persisted Queries. These
+ * are served by Cloudflare on repeat requests, so the origin limit can be high.
  */
-export const graphqlRateLimit = createLimiter(
-  numberFromEnv("RATE_LIMIT_GRAPHQL_PER_MINUTE", 600),
+export const graphqlGetRateLimit = createLimiter(
+  "graphql-get",
+  numberFromEnv("RATE_LIMIT_GRAPHQL_GET_PER_MINUTE", 1200),
   "GraphQL is temporarily rate limited. Please retry shortly.",
 );
+
+/**
+ * GraphQL POST queries cannot be cached by a CDN and are the main scraping
+ * path, so they get a much tighter quota than GET/APQ.
+ */
+export const graphqlPostRateLimit = createLimiter(
+  "graphql-post",
+  numberFromEnv("RATE_LIMIT_GRAPHQL_POST_PER_MINUTE", 120),
+  "GraphQL POST is temporarily rate limited. Please use GET with persisted queries.",
+);
+
+export const graphqlRateLimit = async (c: Context, next: Next) => {
+  const limiter =
+    c.req.method === "GET" ? graphqlGetRateLimit : graphqlPostRateLimit;
+  return limiter(c, next);
+};
 
 /**
  * Expensive detail/image routes. Anonymous traffic above this rate is almost
  * always automation in practice.
  */
 export const heavyRateLimit = createLimiter(
+  "heavy",
   numberFromEnv("RATE_LIMIT_HEAVY_PER_MINUTE", 60),
   "This endpoint is temporarily rate limited. Please retry shortly.",
 );
@@ -262,6 +286,7 @@ export const heavyRateLimit = createLimiter(
  * detail/image routes.
  */
 export const searchRateLimit = createLimiter(
+  "search",
   numberFromEnv("RATE_LIMIT_SEARCH_PER_MINUTE", 300),
   "Search is temporarily rate limited. Please retry shortly.",
 );
@@ -270,6 +295,7 @@ export const searchRateLimit = createLimiter(
  * Bulk catalog/launcher resolution endpoints.
  */
 export const bulkRateLimit = createLimiter(
+  "bulk",
   numberFromEnv("RATE_LIMIT_BULK_PER_MINUTE", 10),
   "Bulk requests are rate limited. Please retry shortly.",
 );
