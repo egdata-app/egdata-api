@@ -635,9 +635,29 @@ export const paths: EgdataPaths = {
       tags: ["Offers"],
       summary: "List offers with regional price data",
       description:
-        "Returns full offer documents.",
+        "Returns full offer documents. Anonymous access is limited to 5 requests per minute per client IP; the quota is keyed by client and is not reset by changing query parameters.",
       parameters: regionalLocalizedPagination,
-      response: ref("OfferListResponse"),
+      response: {
+        200: {
+          description: "Returns full offer documents.",
+          content: {
+            "application/json": jsonContent(ref("OfferListResponse")),
+          },
+        },
+        429: {
+          description:
+            "Too many offer list requests. Wait for the `Retry-After` interval or query `/search/v2/search` instead.",
+          headers: {
+            "Retry-After": {
+              description: "Seconds to wait before retrying.",
+              schema: { type: "integer", example: 42 },
+            },
+          },
+          content: {
+            "application/json": jsonContent(ref("ErrorResponse")),
+          },
+        },
+      },
     }),
   },
   "/offers/{id}": {
@@ -728,8 +748,7 @@ export const paths: EgdataPaths = {
       operationId: "listTopSellersOffers",
       tags: ["Offers"],
       summary: "List top-selling offers",
-      description:
-        "Returns full offer documents.",
+      description: "Returns full offer documents.",
       parameters: localizedPagination,
       response: ref("OfferListResponse"),
     }),

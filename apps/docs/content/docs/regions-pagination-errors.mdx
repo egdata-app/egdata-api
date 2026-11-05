@@ -26,7 +26,7 @@ Pagination is route-specific. Search and profile connections use 1-based `page` 
 
 ## Rate limits
 
-Anonymous traffic is limited per client IP. Expensive routes (search, GraphQL, offer preview images, profiles, sellers) have a tighter quota than ordinary reads, and bulk catalog/launcher routes are tighter still. Limits are per minute; a throttled request returns `429` with a `Retry-After` header:
+Anonymous traffic is limited per client IP. Expensive routes (search, GraphQL, offer preview images, profiles, sellers) have a tighter quota than ordinary reads, and bulk catalog/launcher routes are tighter still. The offer list (`GET /offers`) is limited to 5 requests per minute per client IP. Quotas are keyed by client, not by request URL, so changing or adding query parameters does not reset them. Limits are per minute; a throttled request returns `429` with a `Retry-After` header:
 
 ```json
 {

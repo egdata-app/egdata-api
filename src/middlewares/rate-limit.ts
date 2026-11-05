@@ -77,6 +77,15 @@ class RedisRateLimitStore implements Store {
     private readonly namespace: string,
   ) {}
 
+  /**
+   * hono-rate-limiter only calls `init` when the store exposes it. Forward the
+   * options so the in-process fallback knows its window; without this it never
+   * resets and a Redis outage turns into a permanent block per client.
+   */
+  init(options: Parameters<MemoryStore["init"]>[0]) {
+    this.fallback.init(options);
+  }
+
   private key(key: string) {
     return `${RATE_LIMIT_PREFIX}${this.namespace}:${key}`;
   }
@@ -298,4 +307,19 @@ export const bulkRateLimit = createLimiter(
   "bulk",
   numberFromEnv("RATE_LIMIT_BULK_PER_MINUTE", 10),
   "Bulk requests are rate limited. Please retry shortly.",
+);
+
+/**
+ * Public offer list (`GET /offers`). This is the catalogue enumeration route
+ * that sustained scrapers page through, while the website itself never calls
+ * it. The counter is keyed by client identity (IP), never by the request URL,
+ * so adding or rotating query parameters (page, country, cache busters, ...)
+ * cannot open a fresh bucket.
+ */
+const offersListLimit = numberFromEnv("RATE_LIMIT_OFFERS_LIST_PER_MINUTE", 5);
+
+export const offersListRateLimit = createLimiter(
+  "offers-list",
+  offersListLimit,
+  `The offers list is limited to ${offersListLimit} requests per minute. Use /search/v2/search for catalogue queries.`,
 );

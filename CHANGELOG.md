@@ -4,6 +4,10 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Capped anonymous `GET /offers` at 5 requests per minute per client IP (`RATE_LIMIT_OFFERS_LIST_PER_MINUTE`). The counter is keyed by client identity instead of the request URL, so changing or adding query parameters cannot reset the quota, and the limiter runs on the list handler itself so encoded path variants cannot skip it; throttled responses are `429` with `Retry-After`.
+
+- Fixed the in-process rate-limit fallback to apply the configured window when Redis is unavailable; previously its counters never expired, so a Redis outage could block a client permanently.
+
 - Reverted the compact offer cards, item projections, profile pagination, seller caps, multisearch price removal, and price-history limits after frontend compatibility issues; list endpoints return full offer documents again. Compression, caching, rate limiting, and GraphQL APQ remain. Response-cache keys are versioned so old compact payloads are no longer served after deploy.
 
 - Split GraphQL rate limits by method: cacheable GET/APQ gets 1200/minute (`RATE_LIMIT_GRAPHQL_GET_PER_MINUTE`) while uncached POST gets 120/minute (`RATE_LIMIT_GRAPHQL_POST_PER_MINUTE`). Raised the general limit to 1200/minute and namespaced every limiter's Redis counter so general, search, GraphQL GET/POST, heavy, and bulk requests no longer share one bucket.

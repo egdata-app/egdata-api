@@ -1736,7 +1736,7 @@
           "Offers"
         ],
         "summary": "List offers with regional price data",
-        "description": "Returns full offer documents.",
+        "description": "Returns full offer documents. Anonymous access is limited to 5 requests per minute per client IP; the quota is keyed by client and is not reset by changing query parameters.",
         "parameters": [
           {
             "$ref": "#/components/parameters/country"
@@ -1757,7 +1757,7 @@
         "x-egdata-visibility": "public",
         "responses": {
           "200": {
-            "description": "Successful response.",
+            "description": "Returns full offer documents.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1778,6 +1778,25 @@
           },
           "404": {
             "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many offer list requests. Wait for the `Retry-After` interval or query `/search/v2/search` instead.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying.",
+                "schema": {
+                  "type": "integer",
+                  "example": 42
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {

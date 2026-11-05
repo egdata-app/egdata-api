@@ -5,6 +5,7 @@ import {
   submitJobApiRequest,
 } from "../../clients/job-api.js";
 import client from "../../clients/response-cache.js";
+import { offersListRateLimit } from "../../middlewares/rate-limit.js";
 import {
   AchievementSet,
   GamePosition,
@@ -34,7 +35,9 @@ import OfferReviewsRoute from "./reviews.js";
 
 const app = new Hono();
 
-app.get("/", async (c) => {
+// Applied on the handler itself, not via a path prefix, so encoded variants
+// such as `/%6Fffers` cannot reach the list while skipping the counter.
+app.get("/", offersListRateLimit, async (c) => {
   const start = new Date();
   const localeResult = getLocaleOrErrorResponse(c);
   if (localeResult.errorResponse) {

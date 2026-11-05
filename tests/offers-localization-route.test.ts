@@ -22,6 +22,12 @@ vi.mock("../src/clients/job-api.js", () => ({
   submitJobApiRequest: mocks.submitJobApiRequest,
 }));
 
+// The route attaches the list quota inline; localization tests are not about
+// rate limiting and must not pull in the Redis/logger wiring.
+vi.mock("../src/middlewares/rate-limit.js", () => ({
+  offersListRateLimit: async (_c: unknown, next: () => Promise<void>) => next(),
+}));
+
 vi.mock("consola", () => ({
   default: {
     info: vi.fn(),
