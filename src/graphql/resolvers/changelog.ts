@@ -5,6 +5,7 @@ import { Asset, Item, Offer } from "../../models/index.js";
 import { localizeOffer } from "../../utils/offer-localization.js";
 import type { Context } from "../index.js";
 import { resolveGraphqlLocale } from "../locale.js";
+import { clampPage, clampPageSize } from "../pagination.js";
 
 const resolvers: IResolvers<any, Context> = {
   Query: {
@@ -51,8 +52,10 @@ const resolvers: IResolvers<any, Context> = {
     },
   },
   Offer: {
-    changelog: async (parent, { limit = 10, page = 1 }) => {
-      const skip = (page - 1) * limit;
+    changelog: async (parent, { limit, page }) => {
+      const resolvedLimit = clampPageSize(limit);
+      const resolvedPage = clampPage(page);
+      const skip = (resolvedPage - 1) * resolvedLimit;
       const offerId = parent.id || parent._id;
 
       // Logic from src/routes/offers/data.ts
@@ -96,15 +99,15 @@ const resolvers: IResolvers<any, Context> = {
         .find(matchQuery)
         .sort({ timestamp: -1 })
         .skip(skip)
-        .limit(limit)
+        .limit(resolvedLimit)
         .toArray();
 
       return {
         elements,
         totalCount,
-        totalPages: Math.ceil(totalCount / limit),
-        hasNextPage: page * limit < totalCount,
-        hasPreviousPage: page > 1,
+        totalPages: Math.ceil(totalCount / resolvedLimit),
+        hasNextPage: resolvedPage * resolvedLimit < totalCount,
+        hasPreviousPage: resolvedPage > 1,
       };
     },
   },

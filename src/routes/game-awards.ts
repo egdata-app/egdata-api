@@ -6,20 +6,21 @@ import { getCookie } from "hono/cookie";
 import React from "react";
 import satori from "satori";
 import { db } from "../db/index.js";
-import {
-  Offer,
-  type OfferType,
-  PriceEngine,
-  type PriceEngineType,
-} from "../models/index.js";
+import { Offer, PriceEngine } from "../models/index.js";
 import { regions } from "../utils/countries.js";
 import { consola } from "../utils/logger.js";
+import { toOfferCards, wantsExpandedOffers } from "../utils/offer-card.js";
 import {
   getLocaleOrErrorResponse,
   localizeOffers,
 } from "../utils/offer-localization.js";
 
 const app = new Hono();
+
+const LIST_CACHE_CONTROL =
+  "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
+const LIST_CDN_CACHE_CONTROL =
+  "public, max-age=300, stale-while-revalidate=3600";
 
 export interface Root {
   _id: string;
@@ -96,57 +97,60 @@ app.get("/", async (c) => {
     })
     .toArray();
 
+  const expand = wantsExpandedOffers(c);
+
+  const offerIds = modules.flatMap((x) => x.offers.map((y) => y.id));
+
   const offers = await Offer.find({
     id: {
-      $in: modules.flatMap((x) => x.offers.map((y) => y.id)),
+      $in: offerIds,
     },
   });
 
   const offersMap = new Map(offers.map((x) => [x.id, x]));
 
-  type OfferWithPrice = OfferType & {
-    price: PriceEngineType | null;
-  };
+  const prices = await PriceEngine.find({
+    offerId: { $in: offerIds },
+    region,
+  });
+
+  const priceByOfferId = new Map(prices.map((price) => [price.offerId, price]));
 
   const result: {
     title: string;
-    offers: OfferWithPrice[];
+    offers: unknown[];
   }[] = [];
 
   await Promise.all(
     modules.map(async (module) => {
-      const offers: OfferWithPrice[] = [];
-
       if (!module.offers.length) {
         consola.debug("No offers for module", module.title);
         return;
       }
 
-      for (const offerId of module.offers) {
-        const offer = offersMap.get(offerId.id);
-        if (!offer) {
-          continue;
-        }
-
-        const price = await PriceEngine.findOne({
-          offerId: offer.id,
-          region,
-        });
-
-        offers.push({
-          ...offer.toObject(),
-          price: price?.toObject() ?? null,
-        });
-      }
+      const moduleOffers = module.offers
+        .map((offer) => offersMap.get(offer.id))
+        .filter((offer): offer is NonNullable<typeof offer> => Boolean(offer));
 
       result.push({
         title: module.title.trim(),
-        offers: await localizeOffers(offers, locale),
+        offers: expand
+          ? await localizeOffers(
+              moduleOffers.map((offer) => ({
+                ...offer.toObject(),
+                price: priceByOfferId.get(offer.id)?.toObject() ?? null,
+              })),
+              locale,
+            )
+          : await toOfferCards(moduleOffers, locale, priceByOfferId),
       });
     }),
   );
 
-  return c.json(result);
+  return c.json(result, 200, {
+    "Cache-Control": LIST_CACHE_CONTROL,
+    "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
+  });
 });
 
 app.get("/og", async (c) => {
@@ -332,10 +336,16 @@ app.get("/og", async (c) => {
   });
   const pngData = resvg.render();
   const pngBuffer = pngData.asPng();
+  const versioned = Boolean(c.req.query("v"));
 
   return c.body(pngBuffer as any, 200, {
     "Content-Type": "image/png",
-    "Cache-Control": "public, max-age=60",
+    "Cache-Control": versioned
+      ? "public, max-age=31536000, immutable"
+      : "public, max-age=86400, stale-while-revalidate=604800",
+    "CDN-Cache-Control":
+      "public, max-age=2592000, stale-while-revalidate=604800",
+    Vary: "Accept-Encoding",
   });
 });
 

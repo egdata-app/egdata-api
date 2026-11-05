@@ -1,113 +1,140 @@
-import type { WithRequired } from '@apollo/utils.withrequired';
 import type {
-    ApolloServer,
-    BaseContext,
-    ContextFunction,
-    HTTPGraphQLRequest,
-} from '@apollo/server';
-import type { Context, MiddlewareHandler } from 'hono';
-import { HeaderMap } from '@apollo/server';
+  ApolloServer,
+  BaseContext,
+  ContextFunction,
+  HTTPGraphQLRequest,
+} from "@apollo/server";
+import { HeaderMap } from "@apollo/server";
+import type { WithRequired } from "@apollo/utils.withrequired";
+import type { Context, MiddlewareHandler } from "hono";
+import {
+  applyGraphqlCdnCacheHeaders,
+  applyPersistedQuery,
+} from "../graphql/apq.js";
 
 /** ──── Types ────────────────────────────────────────────────────────────── */
 
 export interface HonoContextFunctionArgument {
-    /** The Hono context, giving you raw Request/Response if you need them */
-    c: Context;
+  /** The Hono context, giving you raw Request/Response if you need them */
+  c: Context;
 }
 
 export interface HonoMiddlewareOptions<TContext extends BaseContext> {
-    /**
-     * Build your GraphQL context from the Hono context.
-     * (Exactly like the Express version, just with `c` instead of `req`, `res`.)
-     */
-    context?: ContextFunction<[HonoContextFunctionArgument], TContext>;
+  /**
+   * Build your GraphQL context from the Hono context.
+   * (Exactly like the Express version, just with `c` instead of `req`, `res`.)
+   */
+  context?: ContextFunction<[HonoContextFunctionArgument], TContext>;
 }
 
 /** ──── Middleware factory ───────────────────────────────────────────────── */
 export function honoMiddleware(
-    server: ApolloServer<BaseContext>,
-    options?: HonoMiddlewareOptions<BaseContext>,
+  server: ApolloServer<BaseContext>,
+  options?: HonoMiddlewareOptions<BaseContext>,
 ): MiddlewareHandler;
 
 export function honoMiddleware<TContext extends BaseContext>(
-    server: ApolloServer<TContext>,
-    options: WithRequired<HonoMiddlewareOptions<TContext>, 'context'>,
+  server: ApolloServer<TContext>,
+  options: WithRequired<HonoMiddlewareOptions<TContext>, "context">,
 ): MiddlewareHandler;
 
 export function honoMiddleware<TContext extends BaseContext>(
-    server: ApolloServer<TContext>,
-    options?: HonoMiddlewareOptions<TContext>,
+  server: ApolloServer<TContext>,
+  options?: HonoMiddlewareOptions<TContext>,
 ): MiddlewareHandler {
-    server.assertStarted('honoMiddleware()');
+  server.assertStarted("honoMiddleware()");
 
-    const defaultContext: ContextFunction<[HonoContextFunctionArgument], BaseContext> =
-        async () => ({});
-    const context =
-        options?.context ?? (defaultContext as unknown as ContextFunction<
-            [HonoContextFunctionArgument],
-            TContext
-        >);
+  const defaultContext: ContextFunction<
+    [HonoContextFunctionArgument],
+    BaseContext
+  > = async () => ({});
+  const context =
+    options?.context ??
+    (defaultContext as unknown as ContextFunction<
+      [HonoContextFunctionArgument],
+      TContext
+    >);
 
-    /** Actual Hono middleware (handler) */
-    return async (c: Context): Promise<Response> => {
-        // 1️⃣ Build the HTTPGraphQLRequest --------------------------------------
-        const rawReq = c.req.raw; // Native Fetch Request
+  /** Actual Hono middleware (handler) */
+  return async (c: Context): Promise<Response> => {
+    // 1️⃣ Build the HTTPGraphQLRequest --------------------------------------
+    const rawReq = c.req.raw; // Native Fetch Request
 
-        const headers = new HeaderMap();
-        rawReq.headers.forEach((value, key) => headers.set(key, value));
+    const headers = new HeaderMap();
+    rawReq.headers.forEach((value, key) => {
+      headers.set(key, value);
+    });
 
-        let body: unknown = undefined;
-        // Hono gives you helpers for the common body types. We only attempt JSON.
-        if (rawReq.method !== 'GET' && rawReq.body) {
-            try {
-                body = await c.req.json();
-            } catch {
-                // probably not JSON – leave undefined and let Apollo handle it
-            }
-        }
+    // Apollo's CSRF protection rejects header-less GET requests. GraphQL
+    // GET is read-only (mutations are rejected by Apollo), and adding this
+    // internal preflight marker lets hash URLs be cached by a CDN without
+    // asking every client to send a custom header. POST keeps the normal
+    // CSRF/content-type protection.
+    if (rawReq.method === "GET") {
+      headers.set("apollo-require-preflight", "true");
+    }
 
-        const { search } = new URL(rawReq.url, 'http://localhost'); // base needed only for Node
+    let body: unknown;
+    // Hono gives you helpers for the common body types. We only attempt JSON.
+    if (rawReq.method !== "GET" && rawReq.body) {
+      try {
+        body = await c.req.json();
+      } catch {
+        // probably not JSON – leave undefined and let Apollo handle it
+      }
+    }
 
-        const httpGraphQLRequest: HTTPGraphQLRequest = {
-            method: rawReq.method.toUpperCase(),
-            headers,
-            search,
-            body,
-        };
+    const { search } = new URL(rawReq.url, "http://localhost"); // base needed only for Node
 
-        // 2️⃣ Let Apollo do its thing -------------------------------------------
-        const httpGraphQLResponse = await server.executeHTTPGraphQLRequest({
-            httpGraphQLRequest,
-            context: () => context({ c }),
-        });
-
-        // 3️⃣ Convert Apollo's response back to Fetch Response ------------------
-        const responseHeaders = Object.fromEntries(httpGraphQLResponse.headers);
-
-        // ── Non-streaming responses (“complete”) ───────────────────────────────
-        if (httpGraphQLResponse.body.kind === 'complete') {
-            return new Response(httpGraphQLResponse.body.string, {
-                status: httpGraphQLResponse.status ?? 200,
-                headers: responseHeaders,
-            });
-        }
-
-        // ── Streaming responses (“chunked”) ────────────────────────────────────
-        const chunkedBody = httpGraphQLResponse.body;
-        const stream = new ReadableStream({
-            async start(controller) {
-                for await (const chunk of chunkedBody.asyncIterator) {
-                    controller.enqueue(
-                        typeof chunk === 'string' ? new TextEncoder().encode(chunk) : chunk,
-                    );
-                }
-                controller.close();
-            },
-        });
-
-        return new Response(stream, {
-            status: httpGraphQLResponse.status ?? 200,
-            headers: responseHeaders,
-        });
+    const httpGraphQLRequest: HTTPGraphQLRequest = {
+      method: rawReq.method.toUpperCase(),
+      headers,
+      search,
+      body,
     };
+
+    // APQ: resolve a 64-char hash into the stored query (or ask the client
+    // to retry with the full query). This happens before Apollo parses the
+    // request so hash-only GET URLs never need a large query string.
+    const persisted = await applyPersistedQuery(httpGraphQLRequest);
+    if (persisted.response) {
+      return persisted.response;
+    }
+
+    // 2️⃣ Let Apollo do its thing -------------------------------------------
+    const httpGraphQLResponse = await server.executeHTTPGraphQLRequest({
+      httpGraphQLRequest: persisted.request,
+      context: () => context({ c }),
+    });
+
+    // 3️⃣ Convert Apollo's response back to Fetch Response ------------------
+    const responseHeaders = Object.fromEntries(httpGraphQLResponse.headers);
+    applyGraphqlCdnCacheHeaders(responseHeaders, rawReq.method);
+
+    // ── Non-streaming responses (“complete”) ───────────────────────────────
+    if (httpGraphQLResponse.body.kind === "complete") {
+      return new Response(httpGraphQLResponse.body.string, {
+        status: httpGraphQLResponse.status ?? 200,
+        headers: responseHeaders,
+      });
+    }
+
+    // ── Streaming responses (“chunked”) ────────────────────────────────────
+    const chunkedBody = httpGraphQLResponse.body;
+    const stream = new ReadableStream({
+      async start(controller) {
+        for await (const chunk of chunkedBody.asyncIterator) {
+          controller.enqueue(
+            typeof chunk === "string" ? new TextEncoder().encode(chunk) : chunk,
+          );
+        }
+        controller.close();
+      },
+    });
+
+    return new Response(stream, {
+      status: httpGraphQLResponse.status ?? 200,
+      headers: responseHeaders,
+    });
+  };
 }

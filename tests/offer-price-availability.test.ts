@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   offer: vi.fn(),
   current: vi.fn(),
   history: vi.fn(),
+  limit: vi.fn(),
   currents: vi.fn(),
 }));
 vi.mock("../src/clients/redis.js", () => ({
@@ -23,6 +24,10 @@ vi.mock("../src/models/index.js", () => ({
     find: (...args: unknown[]) => {
       const result = mocks.history(...args);
       result.sort = () => result;
+      result.limit = (value: number) => {
+        mocks.limit(value);
+        return result;
+      };
       return result;
     },
   },
@@ -82,5 +87,20 @@ describe("offer price availability", () => {
     expect(response.status).toBe(200);
     expect(mocks.offer).not.toHaveBeenCalled();
     expect(mocks.history).toHaveBeenCalled();
+  });
+  it("caps price history at the default and maximum limits", async () => {
+    await app.request("/offers/addon/price-history?country=US");
+    expect(mocks.limit).toHaveBeenLastCalledWith(500);
+
+    await app.request("/offers/addon/price-history?country=US&limit=5000");
+    expect(mocks.limit).toHaveBeenLastCalledWith(2000);
+
+    await app.request("/offers/addon/price-history?country=US&limit=25");
+    expect(mocks.limit).toHaveBeenLastCalledWith(25);
+  });
+  it("caps the all-regions price history response", async () => {
+    const response = await app.request("/offers/addon/price-history?limit=10");
+    expect(response.status).toBe(200);
+    expect(mocks.limit).toHaveBeenCalledWith(10);
   });
 });

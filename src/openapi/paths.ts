@@ -10,10 +10,15 @@ import {
 import type { EgdataPaths } from "./types.js";
 
 const pagination = [parameterRef("page"), parameterRef("limit")];
-const localizedPagination = [parameterRef("locale"), ...pagination];
+const localizedPagination = [
+  parameterRef("locale"),
+  parameterRef("expand"),
+  ...pagination,
+];
 const regionalLocalizedPagination = [
   parameterRef("country"),
   parameterRef("locale"),
+  parameterRef("expand"),
   ...pagination,
 ];
 const offerId = [parameterRef("offerId")];
@@ -45,12 +50,27 @@ const offerOgResponse = (format: "png" | "webp") => ({
       "1200 × 630 database summary with current price, UTC catalog update date, latest download size in decimal GB, and release date. Missing values are labeled explicitly.",
     headers: {
       "Cache-Control": {
-        description: "Public cache lifetime.",
-        schema: { type: "string" as const, example: "public, max-age=60" },
+        description:
+          "Public cache lifetime. `v` selects the one-year immutable variant; otherwise one day with stale-while-revalidate.",
+        schema: {
+          type: "string" as const,
+          example: "public, max-age=86400, stale-while-revalidate=604800",
+        },
+      },
+      "CDN-Cache-Control": {
+        description: "Shared-cache lifetime for the generated image.",
+        schema: {
+          type: "string" as const,
+          example: "public, max-age=2592000, stale-while-revalidate=604800",
+        },
       },
       Vary: {
-        description: "Country cookies can change regional pricing.",
-        schema: { type: "string" as const, example: "Cookie" },
+        description:
+          "`Cookie, Accept-Encoding` without a country query parameter; `Accept-Encoding` when country is supplied.",
+        schema: {
+          type: "string" as const,
+          example: "Cookie, Accept-Encoding",
+        },
       },
     },
     content: {
@@ -82,8 +102,22 @@ const sandboxOgResponse = (format: "png" | "webp") => ({
     headers: {
       "Cache-Control": {
         description:
-          "Public cache lifetime. Sandbox summaries are country-independent.",
-        schema: { type: "string" as const, example: "public, max-age=60" },
+          "Public cache lifetime. Sandbox summaries are country-independent. `v` selects the one-year immutable variant.",
+        schema: {
+          type: "string" as const,
+          example: "public, max-age=86400, stale-while-revalidate=604800",
+        },
+      },
+      "CDN-Cache-Control": {
+        description: "Shared-cache lifetime for the generated image.",
+        schema: {
+          type: "string" as const,
+          example: "public, max-age=2592000, stale-while-revalidate=604800",
+        },
+      },
+      Vary: {
+        description: "Responses vary by accepted content encoding.",
+        schema: { type: "string" as const, example: "Accept-Encoding" },
       },
     },
     content: {
@@ -600,6 +634,8 @@ export const paths: EgdataPaths = {
       operationId: "listOffers",
       tags: ["Offers"],
       summary: "List offers with regional price data",
+      description:
+        "Returns compact offer cards by default; pass `expand=true` for full offer documents.",
       parameters: regionalLocalizedPagination,
       response: ref("OfferListResponse"),
     }),
@@ -677,7 +713,11 @@ export const paths: EgdataPaths = {
       operationId: "listLatestAchievementOffers",
       tags: ["Offers"],
       summary: "List recently released base games with achievements",
-      parameters: [parameterRef("country"), parameterRef("locale")],
+      parameters: [
+        parameterRef("country"),
+        parameterRef("locale"),
+        parameterRef("expand"),
+      ],
       response: arrayOf({
         allOf: [{ $ref: "#/components/schemas/Offer" }],
       }),
@@ -688,6 +728,8 @@ export const paths: EgdataPaths = {
       operationId: "listTopSellersOffers",
       tags: ["Offers"],
       summary: "List top-selling offers",
+      description:
+        "Returns compact offer cards by default; pass `expand=true` for full offer documents.",
       parameters: localizedPagination,
       response: ref("OfferListResponse"),
     }),
@@ -706,7 +748,11 @@ export const paths: EgdataPaths = {
       operationId: "listFeaturedDiscounts",
       tags: ["Offers"],
       summary: "List featured discounted offers",
-      parameters: [parameterRef("country"), parameterRef("locale")],
+      parameters: [
+        parameterRef("country"),
+        parameterRef("locale"),
+        parameterRef("expand"),
+      ],
       response: arrayOf(ref("Offer")),
     }),
   },
@@ -788,6 +834,19 @@ export const paths: EgdataPaths = {
         parameterRef("country"),
         parameterRef("region"),
         parameterRef("since"),
+        {
+          name: "limit",
+          in: "query",
+          required: false,
+          description:
+            "Maximum observations returned per region. Defaults to 500 and is capped at 2000.",
+          schema: {
+            type: "integer",
+            minimum: 1,
+            maximum: 2000,
+            default: 500,
+          },
+        },
       ],
       response: arrayOf(ref("Price")),
     }),
@@ -964,7 +1023,7 @@ export const paths: EgdataPaths = {
       operationId: "listRelatedOffers",
       tags: ["Offer Details"],
       summary: "List related offers in the same sandbox",
-      parameters: regionalLocalizedOfferId,
+      parameters: [...regionalLocalizedOfferId, parameterRef("expand")],
       response: arrayOf(ref("Offer")),
     }),
   },
@@ -993,7 +1052,7 @@ export const paths: EgdataPaths = {
       operationId: "listOfferSuggestions",
       tags: ["Offer Details"],
       summary: "List suggested offers",
-      parameters: regionalLocalizedOfferId,
+      parameters: [...regionalLocalizedOfferId, parameterRef("expand")],
       response: arrayOf(ref("Offer")),
     }),
   },
@@ -1068,7 +1127,7 @@ export const paths: EgdataPaths = {
       operationId: "listOfferCollectionOffers",
       tags: ["Offer Details"],
       summary: "List collection offers for an offer",
-      parameters: regionalLocalizedOfferId,
+      parameters: [...regionalLocalizedOfferId, parameterRef("expand")],
       response: arrayOf(ref("Offer")),
     }),
   },
@@ -1086,7 +1145,7 @@ export const paths: EgdataPaths = {
       operationId: "getOfferBundle",
       tags: ["Offer Details"],
       summary: "Get bundle contents and prices",
-      parameters: regionalLocalizedOfferId,
+      parameters: [...regionalLocalizedOfferId, parameterRef("expand")],
       response: {
         type: "object",
         additionalProperties: false,
@@ -1110,7 +1169,7 @@ export const paths: EgdataPaths = {
       operationId: "listBundlesContainingOffer",
       tags: ["Offer Details"],
       summary: "List bundles that contain an offer",
-      parameters: regionalLocalizedOfferId,
+      parameters: [...regionalLocalizedOfferId, parameterRef("expand")],
       response: arrayOf(
         flexibleObjectResponse("Bundle offer and regional price data."),
       ),
@@ -1248,8 +1307,8 @@ export const paths: EgdataPaths = {
       tags: ["Items"],
       summary: "List catalog items",
       description:
-        "Returns paginated Epic catalog items sorted by last modification date.",
-      parameters: pagination,
+        "Returns paginated Epic catalog items sorted by last modification date. Responses use a compact item projection by default; pass `expand=true` for full item documents.",
+      parameters: [parameterRef("expand"), ...pagination],
       response: ref("ItemListResponse"),
     }),
   },
@@ -1586,6 +1645,78 @@ export const paths: EgdataPaths = {
       ),
       response: ref("SearchResponse"),
     }),
+    get: operation({
+      operationId: "searchOffersV2Get",
+      tags: ["Search"],
+      summary: "Search offers with query parameters (edge-cacheable)",
+      description:
+        "Query-parameter alias of POST /search/v2/search. Intended for browser and edge-cacheable searches. Returns compact offer cards by default; pass expand=true for full offer documents.",
+      parameters: [
+        parameterRef("country"),
+        parameterRef("locale"),
+        parameterRef("facets"),
+        parameterRef("expand"),
+        stringQuery("title", "Title or descriptive text search."),
+        stringQuery("offerType", "Exact offer type filter."),
+        stringQuery("tags", "Comma-separated tag IDs. Every tag must match."),
+        stringQuery("categories", "Comma-separated category names."),
+        stringQuery(
+          "customAttributes",
+          "Comma-separated custom attribute values.",
+        ),
+        stringQuery("seller", "Seller id or name."),
+        stringQuery("developerDisplayName", "Exact developer display name."),
+        stringQuery("publisherDisplayName", "Exact publisher display name."),
+        stringQuery("refundType", "Refund type filter."),
+        stringQuery("sortBy", "Sort field, for example lastModifiedDate."),
+        stringQuery("sortDir", "Sort direction: asc or desc."),
+        stringQuery(
+          "technologies",
+          "Comma-separated detected build technologies.",
+        ),
+        stringQuery("priceMin", "Minimum discount price in minor units."),
+        stringQuery("priceMax", "Maximum discount price in minor units."),
+        {
+          name: "isCodeRedemptionOnly",
+          in: "query",
+          required: false,
+          schema: { type: "boolean" },
+        },
+        {
+          name: "excludeBlockchain",
+          in: "query",
+          required: false,
+          schema: { type: "boolean" },
+        },
+        {
+          name: "onSale",
+          in: "query",
+          required: false,
+          schema: { type: "boolean" },
+        },
+        {
+          name: "pastGiveaways",
+          in: "query",
+          required: false,
+          schema: { type: "boolean" },
+        },
+        {
+          name: "isLowestPrice",
+          in: "query",
+          required: false,
+          schema: { type: "boolean" },
+        },
+        {
+          name: "isLowestPriceEver",
+          in: "query",
+          required: false,
+          schema: { type: "boolean" },
+        },
+        parameterRef("page"),
+        parameterRef("limit"),
+      ],
+      response: ref("SearchResponse"),
+    }),
   },
   "/search/natural-language": {
     post: operation({
@@ -1627,26 +1758,21 @@ export const paths: EgdataPaths = {
     post: operation({
       operationId: "searchOffersLegacy",
       tags: ["Search"],
-      summary: "Search offers with the legacy Mongo-backed implementation",
+      summary: "Deprecated legacy search endpoint",
       description:
-        "Legacy search endpoint retained for compatibility. New integrations should prefer POST /search/v2/search.",
+        "Always returns 410 Gone. Use POST /search/v2/search or GET /search/v2/search instead.",
+      deprecated: true,
       parameters: [parameterRef("country"), parameterRef("locale")],
       requestBody: jsonBody(
-        "Search filters and sort options.",
+        "Ignored legacy search filters.",
         ref("SearchBody"),
       ),
       response: {
-        type: "object",
-        required: ["elements", "page", "limit", "query"],
-        additionalProperties: false,
-        properties: {
-          elements: {
-            type: "array",
-            items: ref("Offer"),
+        410: {
+          description: "The legacy search endpoint has been retired.",
+          content: {
+            "application/json": jsonContent(ref("ErrorResponse")),
           },
-          page: { type: "integer" },
-          limit: { type: "integer" },
-          query: { type: "string" },
         },
       },
     }),
@@ -1846,6 +1972,8 @@ export const paths: EgdataPaths = {
       operationId: "listSellerOffers",
       tags: ["Sellers"],
       summary: "List offers for a seller",
+      description:
+        "Returns compact offer cards by default. The default page size is 20; `limit` is capped at 100. Pass `expand=true` for full offer documents.",
       parameters: [
         ...sellerId,
         ...regionalLocalizedPagination,

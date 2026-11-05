@@ -15,6 +15,7 @@ import {
 import { type BuildDocument, buildSummary } from "../utils/builds.js";
 import { regions } from "../utils/countries.js";
 import { consola } from "../utils/logger.js";
+import { toOfferCards, wantsExpandedOffers } from "../utils/offer-card.js";
 import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
@@ -26,6 +27,11 @@ import { orderOffersObject } from "../utils/order-offers-object.js";
 import SandboxOgRoute from "./sandbox-og.js";
 
 const app = new Hono();
+
+const LIST_CACHE_CONTROL =
+  "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
+const LIST_CDN_CACHE_CONTROL =
+  "public, max-age=300, stale-while-revalidate=3600";
 
 app.get("/", async (ctx) => {
   const start = Date.now();
@@ -265,12 +271,16 @@ app.get("/:sandboxId/offers", async (ctx) => {
 
   const { offerType, title } = ctx.req.query();
 
-  const cacheKey = `sandbox:${sandboxId}:offers:${page}:${limit}:${offerType}:${title}:${localeCacheSegment(locale)}`;
+  const expand = wantsExpandedOffers(ctx);
+  const cacheKey = `sandbox:${sandboxId}:offers:${page}:${limit}:${offerType}:${title}:${localeCacheSegment(
+    locale,
+  )}:${expand ? "full" : "card"}`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
     return ctx.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
+      "Cache-Control": LIST_CACHE_CONTROL,
+      "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
     });
   }
 
@@ -310,10 +320,12 @@ app.get("/:sandboxId/offers", async (ctx) => {
   ]);
 
   const response = {
-    elements: await localizeOffers(
-      offers.map((offer) => offer.toObject()),
-      locale,
-    ),
+    elements: expand
+      ? await localizeOffers(
+          offers.map((offer) => offer.toObject()),
+          locale,
+        )
+      : await toOfferCards(offers, locale),
     page,
     limit,
     count,
@@ -327,7 +339,8 @@ app.get("/:sandboxId/offers", async (ctx) => {
   );
 
   return ctx.json(response, 200, {
-    "Cache-Control": "public, max-age=60",
+    "Cache-Control": LIST_CACHE_CONTROL,
+    "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
   });
 });
 

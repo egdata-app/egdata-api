@@ -1,4 +1,5 @@
 import { ApolloServer } from "@apollo/server";
+import { ApolloServerPluginCacheControl } from "@apollo/server/plugin/cacheControl";
 import { type ConsolaInstance, LogLevels } from "consola";
 import { GraphQLDateTime, GraphQLJSON } from "graphql-scalars";
 import type { Db } from "mongodb";
@@ -10,6 +11,10 @@ import offers from "./resolvers/offer.js";
 import profiles from "./resolvers/profile.js";
 import sandboxes from "./resolvers/sandbox.js";
 import { typeDefs } from "./typedefs.js";
+import {
+  createQuerySizeLimitPlugin,
+  graphqlValidationRules,
+} from "./validation.js";
 
 const resolvers = {
   Date: GraphQLDateTime,
@@ -33,8 +38,15 @@ export const server = new ApolloServer<Context>({
     profiles,
     resolvers,
   ],
-  introspection: true,
+  introspection:
+    process.env.NODE_ENV !== "production" ||
+    process.env.GRAPHQL_INTROSPECTION === "true",
+  validationRules: graphqlValidationRules,
   plugins: [
+    // Emit `Cache-Control: max-age=N, public` for successful query responses.
+    // The Hono bridge turns GET responses into CDN-friendly s-maxage headers.
+    ApolloServerPluginCacheControl({ defaultMaxAge: 60 }),
+    createQuerySizeLimitPlugin<Context>(),
     {
       async requestDidStart(requestContext) {
         const logger = requestContext.contextValue.logger;

@@ -25,6 +25,7 @@ import {
 import { orderOffersObject } from "../../utils/order-offers-object.js";
 import type { Context } from "../index.js";
 import { resolveGraphqlLocale } from "../locale.js";
+import { clampPageSize, resolvePagination } from "../pagination.js";
 
 type Document = Record<string, any>;
 
@@ -33,9 +34,6 @@ const DEFAULT_OFFER_LIMIT = 8;
 const DEFAULT_UPDATE_LIMIT = 8;
 const MAX_OFFER_LIMIT = 24;
 const MAX_UPDATE_LIMIT = 24;
-const DEFAULT_PAGE_LIMIT = 10;
-const MAX_PAGE_LIMIT = 100;
-const MAX_PAGE = 10_000;
 const CHANGELOG_BUILD_CONTEXT_LIMIT = 500;
 const SANDBOX_HUB_CACHE_TTL_SECONDS = 3600;
 
@@ -50,34 +48,6 @@ const offerTypeRank: Record<string, number> = {
   SEASON: 6,
   DEMO: 7,
 };
-
-function clampLimit(value: number | undefined, fallback: number, max: number) {
-  if (!value || Number.isNaN(value)) {
-    return fallback;
-  }
-
-  return Math.min(Math.max(value, 1), max);
-}
-
-function clampPage(value: number | undefined) {
-  return clampLimit(value, 1, MAX_PAGE);
-}
-
-function resolvePagination(
-  limit: number | undefined,
-  page: number | undefined,
-  fallbackLimit = DEFAULT_PAGE_LIMIT,
-  maxLimit = MAX_PAGE_LIMIT,
-) {
-  const resolvedLimit = clampLimit(limit, fallbackLimit, maxLimit);
-  const resolvedPage = clampPage(page);
-
-  return {
-    limit: resolvedLimit,
-    page: resolvedPage,
-    skip: (resolvedPage - 1) * resolvedLimit,
-  };
-}
 
 function resolveRegion(country: string | undefined) {
   const selectedCountry = country || DEFAULT_COUNTRY;
@@ -296,12 +266,12 @@ const resolvers: IResolvers<any, Context> = {
       { id, country, offerLimit, updateLimit, locale: requestedLocale },
     ) => {
       const locale = resolveGraphqlLocale({ locale: requestedLocale });
-      const resolvedOfferLimit = clampLimit(
+      const resolvedOfferLimit = clampPageSize(
         offerLimit,
         DEFAULT_OFFER_LIMIT,
         MAX_OFFER_LIMIT,
       );
-      const resolvedUpdateLimit = clampLimit(
+      const resolvedUpdateLimit = clampPageSize(
         updateLimit,
         DEFAULT_UPDATE_LIMIT,
         MAX_UPDATE_LIMIT,
@@ -619,7 +589,8 @@ const resolvers: IResolvers<any, Context> = {
       return primary.item;
     },
     achievements: async (parent, _, { loaders }) => {
-      return loaders.achievementSet.load(parent._id);
+      const sets = await loaders.achievementSet.load(parent._id);
+      return Array.isArray(sets) ? sets.slice(0, 100) : sets;
     },
     stats: async (parent) => {
       const [offers, items, achievements, assets] = await Promise.all([

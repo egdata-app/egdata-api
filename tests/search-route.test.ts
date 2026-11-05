@@ -170,6 +170,12 @@ describe("search route with SeaQA fixtures", () => {
     });
 
     expect(res.status).toBe(200);
+    expect(res.headers.get("cache-control")).toBe(
+      "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+    );
+    expect(res.headers.get("cdn-cache-control")).toBe(
+      "public, max-age=300, stale-while-revalidate=3600",
+    );
     const body = await res.json();
 
     expect(body.total).toBe(offers.length);
@@ -177,14 +183,16 @@ describe("search route with SeaQA fixtures", () => {
     expect(body.offers[0]).toMatchObject({
       id: SEA_QA_SMOKE_OFFER_ID,
       namespace: "SeaQA",
-      customAttributes: {
-        grade: {
-          type: "STRING",
-          value: "9C804681A7",
-        },
-      },
+      title: offers[0]?.title,
       price: null,
+      locale: "en-US",
+      localeStatus: "canonical",
     });
+    expect(body.offers[0]).not.toHaveProperty("description");
+    expect(body.offers[0]).not.toHaveProperty("longDescription");
+    expect(body.offers[0]).not.toHaveProperty("tags");
+    expect(body.offers[0]).not.toHaveProperty("items");
+    expect(body.offers[0]?.keyImages.length).toBeLessThanOrEqual(4);
     expect(body.meta).toMatchObject({
       ms: 7,
       timed_out: false,
@@ -210,7 +218,12 @@ describe("search route with SeaQA fixtures", () => {
     const cached = await request();
 
     expect(cached.status).toBe(200);
-    expect(cached.headers.get("cache-control")).toBe("public, max-age=60");
+    expect(cached.headers.get("cache-control")).toBe(
+      "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+    );
+    expect(cached.headers.get("cdn-cache-control")).toBe(
+      "public, max-age=300, stale-while-revalidate=3600",
+    );
     await expect(cached.json()).resolves.toEqual({
       ...freshBody,
       meta: { ...freshBody.meta, cached: true },
@@ -413,7 +426,7 @@ describe("search route with SeaQA fixtures", () => {
             technologies: {
               terms: {
                 field: "lastBuilds.technologies.technology.keyword",
-                size: 10_000,
+                size: 1000,
               },
             },
           }),
@@ -555,6 +568,250 @@ describe("search route with SeaQA fixtures", () => {
         }),
       }),
     );
+  });
+
+  it("defaults to minimal facets without developer, publisher or seller aggregations", async () => {
+    const res = await app.request("/search/v2/search?country=US", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ limit: 2 }),
+    });
+
+    expect(res.status).toBe(200);
+    const request = mocks.opensearchSearch.mock.calls[0]?.[0];
+    expect(request.body.aggregations).toEqual({
+      offerType: { terms: { field: "offerType.keyword", size: 100 } },
+      technologies: {
+        terms: {
+          field: "lastBuilds.technologies.technology.keyword",
+          size: 1000,
+        },
+      },
+      price_stats: { stats: { field: "prices.US.price.discountPrice" } },
+    });
+    expect(request.body.aggregations).not.toHaveProperty("tags");
+    expect(request.body.aggregations).not.toHaveProperty("developer");
+    expect(request.body.aggregations).not.toHaveProperty("publisher");
+    expect(request.body.aggregations).not.toHaveProperty("seller");
+
+    const body = await res.json();
+    expect(Object.keys(body.aggregations)).toEqual([
+      "offerType",
+      "technologies",
+      "price_stats",
+    ]);
+  });
+
+  it("returns full facets with capped bucket sizes when requested", async () => {
+    const res = await app.request("/search/v2/search?country=US", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ limit: 2, facets: "full" }),
+    });
+
+    expect(res.status).toBe(200);
+    expect(mocks.opensearchSearch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.objectContaining({
+          aggregations: {
+            offerType: { terms: { field: "offerType.keyword", size: 100 } },
+            technologies: {
+              terms: {
+                field: "lastBuilds.technologies.technology.keyword",
+                size: 1000,
+              },
+            },
+            price_stats: {
+              stats: { field: "prices.US.price.discountPrice" },
+            },
+            tags: { terms: { field: "tags.name.keyword", size: 1000 } },
+            developer: {
+              terms: { field: "developerDisplayName.keyword", size: 100 },
+            },
+            publisher: {
+              terms: { field: "publisherDisplayName.keyword", size: 100 },
+            },
+            seller: { terms: { field: "seller.name.keyword", size: 100 } },
+          },
+        }),
+      }),
+    );
+
+    const body = await res.json();
+    for (const facet of ["developer", "publisher", "seller"] as const) {
+      expect(body.aggregations[facet].buckets.length).toBeLessThanOrEqual(100);
+    }
+  });
+
+  it("omits the aggregations request and response when facets=none", async () => {
+    const res = await app.request("/search/v2/search?country=US", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ limit: 1, facets: "none" }),
+    });
+
+    expect(res.status).toBe(200);
+    const request = mocks.opensearchSearch.mock.calls[0]?.[0];
+    expect(request.body).not.toHaveProperty("aggregations");
+    await expect(res.json()).resolves.toMatchObject({ aggregations: {} });
+  });
+
+  it("keeps facet modes in separate response cache entries", async () => {
+    for (const facets of ["minimal", "full", "none"]) {
+      const res = await app.request("/search/v2/search?country=US", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ limit: 1, facets }),
+      });
+      expect(res.status).toBe(200);
+    }
+
+    expect(mocks.opensearchSearch).toHaveBeenCalledTimes(3);
+    expect(mocks.redisSet).toHaveBeenCalledTimes(3);
+  });
+
+  it("serves the same results through GET and POST /search/v2/search", async () => {
+    const getResponse = await app.request(
+      "/search/v2/search?country=US&limit=2&page=1&sortBy=releaseDate&sortDir=desc",
+    );
+    const postResponse = await app.request("/search/v2/search?country=US", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        limit: 2,
+        page: 1,
+        sortBy: "releaseDate",
+        sortDir: "desc",
+      }),
+    });
+
+    expect(getResponse.status).toBe(200);
+    expect(postResponse.status).toBe(200);
+    const getBody = await getResponse.json();
+    const postBody = await postResponse.json();
+
+    expect(getBody).toMatchObject({ page: 1, limit: 2 });
+    expect(getBody.total).toBe(postBody.total);
+    expect(getBody.offers).toEqual(postBody.offers);
+    expect(mocks.opensearchSearch).toHaveBeenCalledTimes(1);
+    expect(mocks.opensearchSearch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.objectContaining({ from: 0, size: 2 }),
+      }),
+    );
+  });
+
+  it("maps GET query parameters into the search body", async () => {
+    await app.request(
+      "/search/v2/search?country=FR&tags=Action,RPG&technologies=Unreal,NVIDIA_DLSS&priceMin=0&priceMax=2000&onSale=true&excludeBlockchain=true&limit=5&page=2",
+    );
+
+    expect(mocks.opensearchSearch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.objectContaining({
+          from: 5,
+          size: 5,
+          query: {
+            bool: {
+              must: [],
+              filter: [
+                {
+                  terms_set: {
+                    "tags.id.keyword": {
+                      terms: ["Action", "RPG"],
+                      minimum_should_match_script: { source: "2" },
+                    },
+                  },
+                },
+                {
+                  terms_set: {
+                    "lastBuilds.technologies.technology.keyword": {
+                      terms: ["Unreal", "NVIDIA_DLSS"],
+                      minimum_should_match_script: { source: "2" },
+                    },
+                  },
+                },
+                {
+                  bool: {
+                    must_not: [
+                      { term: { "customAttributes.isBlockchainUsed": true } },
+                    ],
+                  },
+                },
+                {
+                  range: {
+                    "prices.EURO.price.discountPrice": { gte: 0, lte: 2000 },
+                  },
+                },
+                {
+                  range: { "prices.EURO.price.discount": { gt: 0 } },
+                },
+              ],
+            },
+          },
+        }),
+      }),
+    );
+  });
+
+  it("returns full offer fields when expand=true and never mixes them with cards", async () => {
+    const expanded = await app.request(
+      "/search/v2/search?country=US&expand=true",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ limit: 2 }),
+      },
+    );
+
+    expect(expanded.status).toBe(200);
+    const expandedBody = await expanded.json();
+    expect(expandedBody.offers[0]).toMatchObject({
+      id: SEA_QA_SMOKE_OFFER_ID,
+      description: offers[0]?.description,
+      price: null,
+    });
+    expect(expandedBody.offers[0]).toHaveProperty("longDescription");
+    expect(expandedBody.offers[0]).toHaveProperty("tags");
+    expect(expandedBody.offers[0]).toHaveProperty("items");
+    expect(expandedBody.offers[0]).toHaveProperty("customAttributes");
+
+    const cards = await app.request("/search/v2/search?country=US", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ limit: 2 }),
+    });
+    const cardsBody = await cards.json();
+    expect(cardsBody.offers[0]).not.toHaveProperty("description");
+    expect(cardsBody.offers[0]).toHaveProperty("keyImages");
+    expect(mocks.opensearchSearch).toHaveBeenCalledTimes(2);
+    expect(mocks.redisSet).toHaveBeenCalledTimes(2);
+  });
+
+  it("retires the legacy search endpoint with 410 without touching backends", async () => {
+    const responses = [
+      await app.request("/search"),
+      await app.request("/search", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ limit: 1 }),
+      }),
+    ];
+
+    for (const res of responses) {
+      expect(res.status).toBe(410);
+      expect(res.headers.get("cache-control")).toBe("no-store");
+      await expect(res.json()).resolves.toEqual({
+        error: {
+          code: "DEPRECATED",
+          message: "Use /search/v2/search instead.",
+        },
+      });
+    }
+
+    expect(mocks.opensearchSearch).not.toHaveBeenCalled();
+    expect(mocks.redisGet).not.toHaveBeenCalled();
+    expect(mocks.sharedGet).not.toHaveBeenCalled();
   });
 
   it("hydrates ranked natural-language matches from MongoDB", async () => {

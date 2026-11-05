@@ -5,6 +5,8 @@ description: Load an offer, discover its items, and follow catalog relationships
 
 Search returns offer IDs. Load the complete offer with `GET /offers/{id}` and load the store items connected to it with `GET /offers/{id}/items`.
 
+List endpoints such as `GET /offers`, `GET /offers/top-sellers`, and `GET /sellers/{id}` return compact offer cards by default. Cards include identity, type, slugs, up to four key images, seller, developer/publisher, dates, and the regional price. Pass `expand=true` to a list endpoint when you need the full documents. Detail endpoints always return the complete offer. `GET /items` similarly returns a compact item projection by default; pass `expand=true` for full item documents.
+
 ```js
 const base = "https://api.egdata.app";
 const offerId = "offer-id";
@@ -52,7 +54,7 @@ https://api.egdata.app/offers/af4c34934afe4db0870b8a1d82dceb94/og.webp?country=U
 
 The card shows the title, offer type, publisher, release date, current regional price, last catalog modification date (UTC), and latest download size. Size uses the newest associated build, preferring assets for the offer's direct items over related subitems, and falls back to its matching asset when the build has no size. Without builds, the most recently updated associated asset is used. Size is decimal GB (1 GB = 1,000,000,000 bytes), with the platform shown when known; it is not installed size or a sum of DLC sizes. Missing dates or sizes show `Not available`, and missing or country-restricted pricing shows `Unavailable`.
 
-Responses use `image/webp` or `image/png`, with `Cache-Control: public, max-age=60` and `Vary: Cookie`. Unknown offer IDs and unrecognized country codes return a JSON error with status 404. Artwork is omitted if its source cannot be fetched.
+Responses use `image/webp` or `image/png`. Without `v`, the response sends `Cache-Control: public, max-age=86400, stale-while-revalidate=604800` and `CDN-Cache-Control: public, max-age=2592000, stale-while-revalidate=604800`. With `v`, both become long-lived (`max-age=31536000, immutable` for browsers) so a content-hashed URL can be cached indefinitely. `Vary` is `Accept-Encoding` when `country` is supplied, otherwise `Cookie, Accept-Encoding`. Unknown offer IDs and unrecognized country codes return a JSON error with status 404. Artwork is omitted if its source cannot be fetched.
 
 `robots.txt` allows offer preview image URLs, including `/og.webp` and query parameters, while retaining `Disallow: /` for ordinary API data routes.
 
@@ -66,4 +68,8 @@ https://api.egdata.app/sandboxes/e7f4ac33ff3d4ce4b243075f0b5dba84/og.webp
 
 Counts include historical/test catalog offers. Assets follow the sandbox statistics convention: stored asset records plus each release-info platform without a stored artifact. For identity, the earliest-created released, non-code-redemption base game is preferred, followed by a preorder base game and an executable item. A sandbox without either still renders its own display name and counts. Artwork is optional; missing dates show `Not available`. The date uses the sandbox's `updated`, then `lastModifiedDate`, then `updatedAt`.
 
-Both routes are public and country-independent, accept the optional `v` URL cache buster, and return `image/webp` or `image/png` with `Cache-Control: public, max-age=60`. Unknown sandbox IDs return JSON with status 404. `robots.txt` allows both image paths, including query strings.
+Both routes are public and country-independent. They accept the optional `v` URL cache buster and return `image/webp` or `image/png` with `Cache-Control: public, max-age=86400, stale-while-revalidate=604800` (or `max-age=31536000, immutable` when `v` is present) and `CDN-Cache-Control: public, max-age=2592000, stale-while-revalidate=604800`. `Vary: Accept-Encoding`. Unknown sandbox IDs return JSON with status 404. `robots.txt` allows both image paths, including query strings.
+
+## Price history
+
+`GET /offers/{id}/price-history` returns newest-first observations. Use `since` to bound the window and `limit` (default 500, maximum 2000) to bound each region's history. Without a region parameter the response is grouped by region, and the same limit applies per request.

@@ -2,6 +2,17 @@ export const typeDefs = `#graphql
     scalar Date
     scalar JSON
 
+    enum CacheControlScope {
+        PUBLIC
+        PRIVATE
+    }
+
+    directive @cacheControl(
+        maxAge: Int
+        scope: CacheControlScope
+        inheritMaxAge: Boolean
+    ) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
+
     type Query {
         # Offers
         offer(id: ID!, locale: String): Offer
@@ -87,7 +98,7 @@ export const typeDefs = `#graphql
         PLATINUM_EARNED
     }
 
-    type Profile {
+    type Profile @cacheControl(maxAge: 60) {
         accountId: ID
         displayName: String
         avatar: ProfileAvatar
@@ -186,13 +197,13 @@ export const typeDefs = `#graphql
         _id: ID
     }
 
-    type Tag {
+    type Tag @cacheControl(maxAge: 3600) {
         id: String
         name: String
         groupName: String
     }
 
-    type Seller {
+    type Seller @cacheControl(maxAge: 3600) {
         id: String
         name: String
     }
@@ -203,7 +214,7 @@ export const typeDefs = `#graphql
         md5: String
     }
 
-    type Price {
+    type Price @cacheControl(maxAge: 60) {
         country: String
         region: String
         namespace: String
@@ -234,7 +245,7 @@ export const typeDefs = `#graphql
         regionIds: [String]
     }
 
-    type Asset {
+    type Asset @cacheControl(maxAge: 3600) {
         _id: String
         artifactId: String
         downloadSizeBytes: Float
@@ -246,7 +257,7 @@ export const typeDefs = `#graphql
         updatedAt: Date
     }
 
-    type Build {
+    type Build @cacheControl(maxAge: 3600) {
         _id: String
         appName: String
         labelName: String
@@ -288,7 +299,7 @@ export const typeDefs = `#graphql
         technology: String
     }
 
-    type Changelog {
+    type Changelog @cacheControl(maxAge: 60) {
         _id: ID
         metadata: ChangelogMetadata
         timestamp: Date
@@ -310,7 +321,7 @@ export const typeDefs = `#graphql
 
     union ChangelogDocument = Offer | Item | Asset | Build
 
-    type Item {
+    type Item @cacheControl(maxAge: 300) {
         _id: String
         id: String
         namespace: String
@@ -350,7 +361,7 @@ export const typeDefs = `#graphql
         platform: [String]
     }
 
-    type Sandbox {
+    type Sandbox @cacheControl(maxAge: 300) {
         _id: ID
         name: String
         displayName: String
@@ -430,7 +441,7 @@ export const typeDefs = `#graphql
         achievements: Int
     }
 
-    type AchievementSet {
+    type AchievementSet @cacheControl(maxAge: 300) {
         _id: ID
         sandboxId: String
         isBase: Boolean
@@ -447,7 +458,7 @@ export const typeDefs = `#graphql
         score: Int
     }
 
-    type Franchise {
+    type Franchise @cacheControl(maxAge: 3600) {
         _id: ID
         id: String
         name: String
@@ -490,7 +501,7 @@ export const typeDefs = `#graphql
         completionist: Float
     }
 
-    type Offer {
+    type Offer @cacheControl(maxAge: 60) {
         _id: String
         id: String
         namespace: String

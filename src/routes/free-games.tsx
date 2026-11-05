@@ -22,6 +22,7 @@ import {
 import { regions } from "../utils/countries.js";
 import { getImage } from "../utils/get-image.js";
 import { consola } from "../utils/logger.js";
+import { toOfferCards, wantsExpandedOffers } from "../utils/offer-card.js";
 import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
@@ -32,6 +33,14 @@ import {
 import { orderOffersObject } from "../utils/order-offers-object.js";
 
 const app = new Hono();
+
+const OG_CACHE_CONTROL = "public, max-age=86400, stale-while-revalidate=604800";
+const OG_CDN_CACHE_CONTROL =
+  "public, max-age=2592000, stale-while-revalidate=604800";
+const LIST_CACHE_CONTROL =
+  "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
+const LIST_CDN_CACHE_CONTROL =
+  "public, max-age=300, stale-while-revalidate=3600";
 
 const toPlainObject = (value: unknown): Record<string, unknown> => {
   if (!value || typeof value !== "object") {
@@ -103,6 +112,7 @@ app.get("/", async (c) => {
   }
   const { locale } = localeResult;
   const now = new Date();
+  const expand = wantsExpandedOffers(c);
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
   const selectedCountry = country ?? cookieCountry ?? "US";
@@ -227,14 +237,15 @@ app.get("/", async (c) => {
         }
 
         const items = await fetchItemsForOffer(offer);
-
+        const normalizedOffer = normalizeFreeGamesOffer(
+          typeof offer.toObject === "function" ? offer.toObject() : offer,
+        );
+        const priceByOfferId = new Map([[offer.id, price ?? null]]);
+        const [offerPayload] = expand
+          ? [await localizeOffer(normalizedOffer, locale)]
+          : await toOfferCards([normalizedOffer], locale, priceByOfferId);
         return {
-          ...(await localizeOffer(
-            normalizeFreeGamesOffer(
-              typeof offer.toObject === "function" ? offer.toObject() : offer,
-            ),
-            locale,
-          )),
+          ...offerPayload,
           items,
           giveaway: normalizeGiveaway(
             src.toPojo(game),
@@ -247,7 +258,10 @@ app.get("/", async (c) => {
     ),
   );
 
-  return c.json(enriched, 200, { "Cache-Control": "private, max-age=0" });
+  return c.json(enriched, 200, {
+    "Cache-Control": LIST_CACHE_CONTROL,
+    "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
+  });
 });
 
 app.get("/history", async (c) => {
@@ -276,13 +290,17 @@ app.get("/history", async (c) => {
     });
   }
 
-  const cacheKey = `giveaways-history:${region}:${page}:${limit}:${localeCacheSegment(locale)}`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `giveaways-history:${region}:${page}:${limit}:${localeCacheSegment(
+    locale,
+  )}:${expand ? "full" : "card"}`;
 
   const cached = await client.get(cacheKey);
 
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
+      "Cache-Control": LIST_CACHE_CONTROL,
+      "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
     });
   }
 
@@ -307,10 +325,12 @@ app.get("/history", async (c) => {
   const offers = offersData.status === "fulfilled" ? offersData.value : [];
   const prices = pricesData.status === "fulfilled" ? pricesData.value : [];
 
+  const priceByOfferId = new Map(prices.map((price) => [price.offerId, price]));
+
   const result = await Promise.all(
     freeGames.map(async (game) => {
       const offer = offers.find((o) => o.id === game.id);
-      const price = prices.find((p) => p.offerId === game.id);
+      const price = priceByOfferId.get(game.id) ?? null;
 
       if (!offer) {
         return {
@@ -318,9 +338,22 @@ app.get("/history", async (c) => {
         };
       }
 
+      if (expand) {
+        return {
+          ...(await localizeOffer(
+            orderOffersObject(offer?.toObject()),
+            locale,
+          )),
+          price,
+          giveaway: game,
+        };
+      }
+
+      const [card] = await toOfferCards([offer], locale, priceByOfferId);
+
       return {
-        ...(await localizeOffer(orderOffersObject(offer?.toObject()), locale)),
-        price: price ?? null,
+        ...card,
+        price,
         giveaway: game,
       };
     }),
@@ -334,7 +367,8 @@ app.get("/history", async (c) => {
   );
 
   return c.json(result, 200, {
-    "Cache-Control": "private, max-age=0",
+    "Cache-Control": LIST_CACHE_CONTROL,
+    "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
   });
 });
 
@@ -423,7 +457,8 @@ app.get("/search", async (c) => {
 
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
+      "Cache-Control": LIST_CACHE_CONTROL,
+      "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
     });
   }
 
@@ -556,7 +591,8 @@ app.get("/stats", async (c) => {
 
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
+      "Cache-Control": LIST_CACHE_CONTROL,
+      "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
     });
   }
 
@@ -642,7 +678,8 @@ app.get("/stats", async (c) => {
   await client.set(cacheKey, JSON.stringify(result), "EX", 3600);
 
   return c.json(result, 200, {
-    "Cache-Control": "private, max-age=0",
+    "Cache-Control": LIST_CACHE_CONTROL,
+    "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
   });
 });
 
@@ -692,6 +729,11 @@ app.get("/og", async (c) => {
         id: cachedImage.imageId,
       },
       200,
+      {
+        "Cache-Control": OG_CACHE_CONTROL,
+        "CDN-Cache-Control": OG_CDN_CACHE_CONTROL,
+        Vary: "Accept-Encoding",
+      },
     );
   }
 
@@ -988,6 +1030,11 @@ app.get("/og", async (c) => {
       id: responseData.result.id,
     },
     200,
+    {
+      "Cache-Control": OG_CACHE_CONTROL,
+      "CDN-Cache-Control": OG_CDN_CACHE_CONTROL,
+      Vary: "Accept-Encoding",
+    },
   );
 });
 

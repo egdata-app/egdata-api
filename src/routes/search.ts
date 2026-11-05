@@ -1,12 +1,12 @@
 import { createHash } from "node:crypto";
 import type { Types } from "@opensearch-project/opensearch";
-import { Hono } from "hono";
+import { type Context, Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import { type Document, type Filter, ObjectId } from "mongodb";
 import { z } from "zod";
 import { opensearch } from "../clients/opensearch.js";
-import client from "../clients/response-cache.js";
 import sharedRedis from "../clients/redis.js";
+import client from "../clients/response-cache.js";
 import {
   CloudflareVectorizeError,
   queryOffersWithNaturalLanguage,
@@ -25,6 +25,7 @@ import {
 } from "../models/index.js";
 import { regions } from "../utils/countries.js";
 import { consola } from "../utils/logger.js";
+import { toOfferCards, wantsExpandedOffers } from "../utils/offer-card.js";
 import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
@@ -37,6 +38,8 @@ type AggregationContainer = Types.Common_Aggregations.AggregationContainer;
 type PipelineStage = Record<string, unknown>;
 
 const TECHNOLOGY_FIELD = "lastBuilds.technologies.technology.keyword";
+
+type FacetMode = "minimal" | "full" | "none";
 
 interface SearchBody {
   title?: string;
@@ -92,11 +95,138 @@ interface SearchBody {
   pastGiveaways?: boolean;
   isLowestPrice?: boolean;
   isLowestPriceEver?: boolean;
+  facets?: FacetMode;
 }
 
 interface SearchV2Body extends SearchBody {
   technologies?: string[];
 }
+
+const SEARCH_CACHE_HEADERS = {
+  "Cache-Control":
+    "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+  "CDN-Cache-Control": "public, max-age=300, stale-while-revalidate=3600",
+} as const;
+
+const LEGACY_SEARCH_ERROR = {
+  error: {
+    code: "DEPRECATED",
+    message: "Use /search/v2/search instead.",
+  },
+} as const;
+
+const deprecatedSearchResponse = (c: Context) =>
+  c.json(LEGACY_SEARCH_ERROR, 410, { "Cache-Control": "no-store" });
+
+const normalizeFacetMode = (value: unknown): FacetMode =>
+  value === "full" || value === "none" ? value : "minimal";
+
+const buildSearchAggregations = (
+  facets: FacetMode,
+  region: string,
+): Record<string, AggregationContainer> | undefined => {
+  if (facets === "none") {
+    return undefined;
+  }
+
+  const aggregations: Record<string, AggregationContainer> = {
+    offerType: { terms: { field: "offerType.keyword", size: 100 } },
+    technologies: { terms: { field: TECHNOLOGY_FIELD, size: 1000 } },
+    price_stats: { stats: { field: `prices.${region}.price.discountPrice` } },
+  };
+
+  if (facets === "full") {
+    aggregations.tags = { terms: { field: "tags.name.keyword", size: 1000 } };
+    aggregations.developer = {
+      terms: { field: "developerDisplayName.keyword", size: 100 },
+    };
+    aggregations.publisher = {
+      terms: { field: "publisherDisplayName.keyword", size: 100 },
+    };
+    aggregations.seller = {
+      terms: { field: "seller.name.keyword", size: 100 },
+    };
+  }
+
+  return aggregations;
+};
+
+const parseBooleanQueryParam = (value: string | undefined) => {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "true" || normalized === "1") {
+    return true;
+  }
+  if (normalized === "false" || normalized === "0") {
+    return false;
+  }
+
+  return undefined;
+};
+
+const parseNumberQueryParam = (value: string | undefined) => {
+  if (value === undefined || value.trim() === "") {
+    return undefined;
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+};
+
+const parseCsvQueryParam = (value: string | undefined) => {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  const items = value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return items.length > 0 ? items : undefined;
+};
+
+const parseSearchV2Query = (c: Context): SearchV2Body => {
+  const params = c.req.query();
+  const price: { min?: number; max?: number } = {};
+  const priceMin = parseNumberQueryParam(params.priceMin);
+  const priceMax = parseNumberQueryParam(params.priceMax);
+
+  if (priceMin !== undefined) {
+    price.min = priceMin;
+  }
+  if (priceMax !== undefined) {
+    price.max = priceMax;
+  }
+
+  return {
+    title: params.title,
+    offerType: params.offerType as SearchBody["offerType"],
+    tags: parseCsvQueryParam(params.tags),
+    categories: parseCsvQueryParam(params.categories),
+    customAttributes: parseCsvQueryParam(params.customAttributes),
+    seller: params.seller,
+    developerDisplayName: params.developerDisplayName,
+    publisherDisplayName: params.publisherDisplayName,
+    refundType: params.refundType,
+    isCodeRedemptionOnly: parseBooleanQueryParam(params.isCodeRedemptionOnly),
+    excludeBlockchain: parseBooleanQueryParam(params.excludeBlockchain),
+    onSale: parseBooleanQueryParam(params.onSale),
+    pastGiveaways: parseBooleanQueryParam(params.pastGiveaways),
+    isLowestPrice: parseBooleanQueryParam(params.isLowestPrice),
+    isLowestPriceEver: parseBooleanQueryParam(params.isLowestPriceEver),
+    sortBy: params.sortBy as SearchBody["sortBy"],
+    sortDir: params.sortDir as SearchBody["sortDir"],
+    limit: parseNumberQueryParam(params.limit),
+    page: parseNumberQueryParam(params.page),
+    facets: normalizeFacetMode(params.facets),
+    technologies: parseCsvQueryParam(params.technologies),
+    ...(Object.keys(price).length > 0 ? { price } : {}),
+  };
+};
 
 const naturalLanguageSearchBodySchema = z
   .object({
@@ -109,35 +239,6 @@ const technologyFilterSchema = z
   .array(z.string().trim().min(1))
   .transform((technologies) => Array.from(new Set(technologies)))
   .optional();
-
-interface MongoQuery {
-  $text?: {
-    $search: string;
-    $language: string;
-  };
-  offerType?: string;
-  "tags.id"?: { $all: string[] } | { $ne: string };
-  customAttributes?: {
-    $elemMatch: { id: { $in: string[] } };
-  };
-  categories?: { $all: string[] };
-  $or?: Array<{ "seller.name": string } | { "seller.id": string }>;
-  refundType?: string;
-  isCodeRedemptionOnly?: boolean;
-  developerDisplayName?: string;
-  publisherDisplayName?: string;
-  "keyImages.url"?: { $regex: RegExp };
-  namespace?: { $ne: string };
-  [key: string]: any;
-}
-
-interface PriceQuery {
-  "price.discountPrice"?: {
-    $gte?: number;
-    $lte?: number;
-  };
-  "price.discount"?: { $gt: number };
-}
 
 type ChangelogChange = Record<string, unknown> & {
   oldValue?: unknown;
@@ -323,462 +424,11 @@ const enrichChangelogSearchDocuments = async (hits: ChangelogSearchHit[]) => {
   return hits;
 };
 
-function buildBaseQuery(query: SearchBody): MongoQuery {
-  const mongoQuery: MongoQuery = {};
-
-  // Always exclude 'ue' namespace
-  mongoQuery.namespace = { $ne: "ue" };
-
-  if (query.title) {
-    mongoQuery.$text = {
-      $search: query.title
-        .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, "")
-        .split(" ")
-        .map((q) => `"${q.trim()}"`)
-        .join(" | "),
-      $language: "en",
-    };
-  }
-
-  if (query.offerType) {
-    mongoQuery.offerType = query.offerType;
-  }
-
-  if (query.tags) {
-    mongoQuery["tags.id"] = { $all: query.tags };
-  }
-
-  if (query.customAttributes) {
-    mongoQuery.customAttributes = {
-      $elemMatch: { id: { $in: query.customAttributes } },
-    };
-  }
-
-  if (query.categories) {
-    mongoQuery.categories = { $all: query.categories };
-  }
-
-  if (query.seller) {
-    mongoQuery.$or = [
-      { "seller.name": query.seller },
-      { "seller.id": query.seller },
-    ];
-  }
-
-  if (query.refundType) {
-    mongoQuery.refundType = query.refundType;
-  }
-
-  if (query.isCodeRedemptionOnly !== undefined) {
-    mongoQuery.isCodeRedemptionOnly = query.isCodeRedemptionOnly;
-  }
-
-  if (query.excludeBlockchain) {
-    if (query.tags) {
-      mongoQuery["tags.id"] = { $all: query.tags, $ne: "21739" };
-    } else {
-      mongoQuery["tags.id"] = { $ne: "21739" };
-    }
-  }
-
-  if (query.developerDisplayName) {
-    mongoQuery.developerDisplayName = query.developerDisplayName;
-  }
-
-  if (query.publisherDisplayName) {
-    mongoQuery.publisherDisplayName = query.publisherDisplayName;
-  }
-
-  if (query.spt) {
-    mongoQuery["keyImages.url"] = { $regex: /spt/i };
-  }
-
-  return mongoQuery;
-}
-
-function buildPriceQuery(query: SearchBody): PriceQuery {
-  const priceQuery: PriceQuery = {};
-
-  if (query.price) {
-    if (query.price.min !== undefined && query.price.min !== null) {
-      priceQuery["price.discountPrice"] = {
-        $gte: query.price.min,
-      };
-    }
-
-    if (query.price.max !== undefined && query.price.max !== null) {
-      priceQuery["price.discountPrice"] = {
-        ...priceQuery["price.discountPrice"],
-        $lte: query.price.max,
-      };
-    }
-  }
-
-  if (
-    query.onSale ||
-    ["discount", "discountPercent"].includes(query.sortBy || "")
-  ) {
-    priceQuery["price.discount"] = { $gt: 0 };
-  }
-
-  return priceQuery;
-}
-
-function buildSortParams(
-  query: SearchBody,
-  sort: string,
-  dir: 1 | -1,
-): Record<string, 1 | -1 | { $meta: string }> {
-  let sortParams: Record<string, 1 | -1 | { $meta: string }> = {};
-
-  if (query.title) {
-    sortParams = {
-      score: { $meta: "textScore" },
-    };
-  }
-
-  if (
-    ![
-      "upcoming",
-      "priceAsc",
-      "priceDesc",
-      "price",
-      "discount",
-      "discountPercent",
-    ].includes(sort)
-  ) {
-    sortParams[sort] = dir;
-  } else if (sort === "upcoming") {
-    sortParams = {
-      releaseDate: 1,
-    };
-  } else {
-    sortParams = {
-      lastModifiedDate: dir,
-    };
-  }
-
-  return sortParams;
-}
-
 const app = new Hono();
 
-app.get("/", (c) => c.json("Hello, World!"));
+app.get("/", (c) => deprecatedSearchResponse(c));
 
-app.post("/", async (c) => {
-  const start = new Date();
-  const localeResult = getLocaleOrErrorResponse(c);
-  if (localeResult.errorResponse) {
-    return localeResult.errorResponse;
-  }
-  const { locale } = localeResult;
-
-  const country = c.req.query("country");
-  const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
-
-  const selectedCountry = country ?? cookieCountry ?? "US";
-
-  const region =
-    Object.keys(regions).find((r) =>
-      regions[r].countries.includes(selectedCountry),
-    ) || "US";
-
-  const body = await c.req.json().catch((err) => {
-    c.status(400);
-    return null;
-  });
-
-  if (!body) {
-    return c.json({
-      message: "Invalid body",
-    });
-  }
-
-  const query = body as SearchBody;
-
-  const queryId = createHash("md5")
-    .update(
-      JSON.stringify({
-        ...query,
-        page: undefined,
-        limit: undefined,
-      }),
-    )
-    .digest("hex");
-
-  const cacheKey = `offers:search:${queryId}:${region}:${query.page}:${query.limit}:${localeCacheSegment(locale)}:v0.1`;
-
-  const cached = await client.get(cacheKey);
-
-  if (cached) {
-    consola.debug(`Cache hit for ${cacheKey}`);
-    return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
-    });
-  }
-
-  consola.debug(`Cache miss for ${cacheKey}`);
-
-  const queryCache = `q:${queryId}`;
-
-  const cachedQuery = await sharedRedis.get(queryCache);
-
-  if (!cachedQuery) {
-    consola.debug(`Cache miss for ${queryCache}`);
-    await sharedRedis.set(queryCache, JSON.stringify(query));
-  } else {
-    consola.debug(`Cache hit for ${queryCache}`);
-  }
-
-  const limit = Math.min(query.limit || 10, 50);
-  const page = Math.max(query.page || 1, 1);
-
-  const sort = query.sortBy || "lastModifiedDate";
-  const sortDir = query.sortDir || "desc";
-  const dir: 1 | -1 = sortDir === "asc" ? 1 : -1;
-
-  const mongoQuery = buildBaseQuery(query);
-  const priceQuery = buildPriceQuery(query);
-
-  // Add date-based filters
-  if (["effectiveDate", "creationDate", "viewableDate"].includes(sort)) {
-    mongoQuery[sort] = { $lt: new Date("2090-01-01") };
-  }
-
-  if (["releaseDate", "pcReleaseDate"].includes(sort)) {
-    mongoQuery[sort] = { $lte: new Date() };
-  }
-
-  if (["upcoming"].includes(sort)) {
-    mongoQuery["releaseDate"] = {
-      $gte: new Date(),
-    };
-  }
-
-  if (!sort) {
-    mongoQuery.lastModifiedDate = { $lt: new Date() };
-  }
-
-  let offersPipeline: PipelineStage[] = [];
-  let collection = "offers";
-
-  if (
-    [
-      "priceAsc",
-      "priceDesc",
-      "price",
-      "discount",
-      "discountPercent",
-      "priceUpdatedAt",
-    ].includes(sort)
-  ) {
-    let priceSortOrder: 1 | -1 =
-      sort === "priceAsc" || sort === "priceDesc"
-        ? sort === "priceAsc"
-          ? 1
-          : -1
-        : dir;
-
-    const sortKey = () => {
-      if (sort === "discountPercent") {
-        return "appliedRules.discountSetting.discountPercentage";
-      }
-
-      if (sort === "discount") {
-        return "price.discount";
-      }
-
-      if (sort === "priceUpdatedAt") {
-        return "updatedAt";
-      }
-
-      return "price.discountPrice";
-    };
-
-    if (sort === "discountPercent") {
-      priceSortOrder = priceSortOrder * -1;
-    }
-
-    collection = "pricev2";
-    offersPipeline = [
-      {
-        $match: {
-          region: region,
-          ...priceQuery,
-        },
-      },
-      {
-        $sort: {
-          [sortKey()]: priceSortOrder,
-        },
-      },
-      {
-        $addFields: {
-          price: "$$ROOT",
-        },
-      },
-      {
-        $lookup: {
-          from: "offers",
-          localField: "offerId",
-          foreignField: "id",
-          as: "offerDetails",
-        },
-      },
-      {
-        $unwind: "$offerDetails",
-      },
-      {
-        $replaceRoot: {
-          newRoot: {
-            $mergeObjects: ["$offerDetails", "$$ROOT"],
-          },
-        },
-      },
-      {
-        $match: mongoQuery,
-      },
-      ...(query.pastGiveaways
-        ? [
-            {
-              $lookup: {
-                from: "freegames",
-                localField: "id",
-                foreignField: "id",
-                as: "freegame",
-              },
-            },
-            {
-              $match: {
-                freegame: { $ne: [] },
-              },
-            },
-          ]
-        : []),
-      {
-        $skip: (page - 1) * limit,
-      },
-      {
-        $limit: limit,
-      },
-      {
-        $project: {
-          discountPrice: 0,
-          offerDetails: 0,
-          appliedRules: 0,
-          region: 0,
-          country: 0,
-          offerId: 0,
-          updatedAt: 0,
-          freegame: 0,
-        },
-      },
-    ];
-  } else {
-    offersPipeline = [
-      {
-        $match: mongoQuery,
-      },
-      {
-        $sort: {
-          ...(query.title ? { score: { $meta: "textScore" } } : {}),
-          ...buildSortParams(query, sort, dir),
-        },
-      },
-      {
-        $lookup: {
-          from: "pricev2",
-          localField: "id",
-          foreignField: "offerId",
-          as: "priceEngine",
-          pipeline: [
-            {
-              $match: {
-                region: region,
-                ...priceQuery,
-              },
-            },
-          ],
-        },
-      },
-      {
-        $addFields: {
-          price: { $arrayElemAt: ["$priceEngine", 0] },
-        },
-      },
-      {
-        $match: {
-          price: { $ne: null },
-        },
-      },
-      ...(query.pastGiveaways
-        ? [
-            {
-              $lookup: {
-                from: "freegames",
-                localField: "id",
-                foreignField: "id",
-                as: "freegame",
-              },
-            },
-            {
-              $match: {
-                freegame: { $ne: [] },
-              },
-            },
-          ]
-        : []),
-      {
-        $project: {
-          priceEngine: 0,
-          freegame: 0,
-        },
-      },
-      {
-        $skip: (page - 1) * limit,
-      },
-      {
-        $limit: limit,
-      },
-    ];
-  }
-
-  const dbColl = db.db.collection(collection);
-
-  const aggregation = dbColl.aggregate(offersPipeline);
-
-  const offersData = await aggregation.toArray();
-
-  const sortedElements = offersData.sort((a, b) => {
-    if (query.sortBy === "price" && query.title) {
-      if (sortDir === "asc") {
-        return a.price.price.discountPrice - b.price.price.discountPrice;
-      }
-      return b.price.price.discountPrice - a.price.price.discountPrice;
-    }
-
-    return 0;
-  });
-
-  const result = {
-    elements: await localizeOffers(sortedElements, locale),
-    page,
-    limit,
-    query: queryId,
-  };
-
-  await client.set(
-    cacheKey,
-    JSON.stringify(result),
-    "EX",
-    getLocalizedCacheTtlSeconds(result, 3600),
-  );
-
-  return c.json(result, 200, {
-    "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
-  });
-});
+app.post("/", (c) => deprecatedSearchResponse(c));
 
 app.get("/tags", async (c) => {
   const tags = await Tags.find({
@@ -1188,9 +838,8 @@ app.post("/natural-language", async (c) => {
       const metadataOfferId =
         typeof match.metadata?.id === "string" ? match.metadata.id : undefined;
       const offer =
-        (metadataOfferId
-          ? offersByLookupId.get(metadataOfferId)
-          : undefined) ?? offersByLookupId.get(match.id);
+        (metadataOfferId ? offersByLookupId.get(metadataOfferId) : undefined) ??
+        offersByLookupId.get(match.id);
 
       return offer
         ? [
@@ -1240,7 +889,7 @@ app.post("/natural-language", async (c) => {
   }
 });
 
-app.post("/v2/search", async (c) => {
+const runSearchV2 = async (c: Context, body: unknown) => {
   const localeResult = getLocaleOrErrorResponse(c);
   if (localeResult.errorResponse) {
     return localeResult.errorResponse;
@@ -1254,15 +903,14 @@ app.post("/v2/search", async (c) => {
       regions[r].countries.includes(selectedCountry),
     ) ?? "US";
 
-  const body = await c.req.json().catch(() => null);
-  if (!body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
     return c.json({ message: "Invalid body" }, 400);
   }
-  const rawTechnologies =
-    typeof body === "object" && !Array.isArray(body)
-      ? (body as Record<string, unknown>).technologies
-      : undefined;
-  const parsedTechnologies = technologyFilterSchema.safeParse(rawTechnologies);
+
+  const rawBody = body as Record<string, unknown>;
+  const parsedTechnologies = technologyFilterSchema.safeParse(
+    rawBody.technologies,
+  );
   if (!parsedTechnologies.success) {
     return c.json(
       {
@@ -1272,9 +920,13 @@ app.post("/v2/search", async (c) => {
       400,
     );
   }
+
+  const facets = normalizeFacetMode(rawBody.facets);
+  const expand = wantsExpandedOffers(c);
   const q: SearchV2Body = {
-    ...(body as SearchBody),
+    ...(rawBody as SearchV2Body),
     technologies: parsedTechnologies.data,
+    facets,
   };
 
   const limit = Math.min(q.limit ?? 10, 100);
@@ -1499,23 +1151,18 @@ app.post("/v2/search", async (c) => {
     }
   }
 
-  const aggregations: Record<string, AggregationContainer> = {
-    offerType: { terms: { field: "offerType.keyword", size: 100 } },
-    tags: { terms: { field: "tags.name.keyword", size: 10_000 } },
-    technologies: { terms: { field: TECHNOLOGY_FIELD, size: 10_000 } },
-    developer: { terms: { field: "developerDisplayName.keyword", size: 1000 } },
-    publisher: { terms: { field: "publisherDisplayName.keyword", size: 1000 } },
-    seller: { terms: { field: "seller.name.keyword", size: 1000 } },
-    price_stats: { stats: { field: `prices.${region}.price.discountPrice` } },
-  };
+  const aggregations = buildSearchAggregations(facets, region);
 
   const hash = createHash("sha256")
     .update(
       JSON.stringify({
+        region,
+        facets,
+        expand,
         must,
         filter,
         sort,
-        aggregations,
+        aggregations: aggregations ?? null,
         page,
         limit,
       }),
@@ -1529,9 +1176,7 @@ app.post("/v2/search", async (c) => {
   if (cached) {
     const result = JSON.parse(cached);
     result.meta.cached = true;
-    return c.json(result, 200, {
-      "Cache-Control": "public, max-age=60",
-    });
+    return c.json(result, 200, SEARCH_CACHE_HEADERS);
   }
 
   consola.debug("OpenSearch query", { must, filter, sort, aggregations });
@@ -1543,7 +1188,7 @@ app.post("/v2/search", async (c) => {
       size: limit,
       query: { bool: { must, filter } },
       sort,
-      aggregations,
+      ...(aggregations ? { aggregations } : {}),
     },
   });
 
@@ -1553,28 +1198,44 @@ app.post("/v2/search", async (c) => {
       ? osResponse.body.hits.total
       : osResponse.body.hits.total?.value;
 
-  const offers = await localizeOffers(
-    hits.map((hit) => {
-      const doc = hit._source as OfferType & {
-        prices: Record<string, PriceEngineType> | undefined;
-      };
-      const regionalPrice: PriceEngineType | null =
-        doc.prices?.[region] ?? null;
-      doc.prices = undefined;
-      return {
-        ...orderOffersObject(doc),
-        price: regionalPrice,
-      };
-    }),
-    locale,
-  );
+  const offerDocs: OfferType[] = [];
+  const priceByOfferId = new Map<string, PriceEngineType | null>();
+
+  for (const hit of hits) {
+    const doc = hit._source as OfferType & {
+      prices?: Record<string, PriceEngineType>;
+    };
+    priceByOfferId.set(doc.id, doc.prices?.[region] ?? null);
+    delete doc.prices;
+    offerDocs.push(doc);
+  }
+
+  const offers = expand
+    ? await localizeOffers(
+        offerDocs.map((doc) => ({
+          ...orderOffersObject(doc),
+          price: priceByOfferId.get(doc.id) ?? null,
+        })),
+        locale,
+      )
+    : await toOfferCards(offerDocs, locale, priceByOfferId);
+
+  const responseAggregations: Record<string, unknown> = {};
+  if (aggregations) {
+    const osAggregations = osResponse.body.aggregations ?? {};
+    for (const key of Object.keys(aggregations)) {
+      if (osAggregations[key] !== undefined) {
+        responseAggregations[key] = osAggregations[key];
+      }
+    }
+  }
 
   const result = {
     total,
     offers,
     page,
     limit,
-    aggregations: osResponse.body.aggregations,
+    aggregations: responseAggregations,
     meta: {
       ms: osResponse.body.took,
       timed_out: osResponse.body.timed_out,
@@ -1589,8 +1250,19 @@ app.post("/v2/search", async (c) => {
     getLocalizedCacheTtlSeconds(result, 3600),
   );
 
-  return c.json(result, 200, { "Cache-Control": "public, max-age=60" });
+  return c.json(result, 200, SEARCH_CACHE_HEADERS);
+};
+
+app.post("/v2/search", async (c) => {
+  const body = await c.req.json().catch(() => null);
+  if (!body) {
+    return c.json({ message: "Invalid body" }, 400);
+  }
+
+  return runSearchV2(c, body);
 });
+
+app.get("/v2/search", (c) => runSearchV2(c, parseSearchV2Query(c)));
 
 app.get("/:id", async (c) => {
   const { id } = c.req.param();

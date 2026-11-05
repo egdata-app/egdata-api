@@ -43,3 +43,20 @@ The response places selected fields under `data.profile`. The profile is `null` 
 ```
 
 Profile lists accept `limit` up to 100. `games` and `achievements` also accept 1-based `page` values. Featured and library games accept `filter` (`ALL`, `COMPLETED`, `NEAR_PLATINUM`, `IN_PROGRESS`, `PLATINUM`) and `sort` (`COMPLETION`, `ALPHABETICAL`, `XP`, `ACHIEVEMENTS`). Recent activity currently includes achievement unlocks and platinum awards.
+
+GraphQL requests are bounded: list page sizes are capped at 100 (pages at 10,000), `sandboxHub` offer/update limits at 24, `Build.files` at 100, `Franchise.allOffers` at 500, `Sandbox.achievements` at 100 sets, query depth at 12 fields, aliased fields at 50, and the query document at 100 KB. Exceeding a limit returns a GraphQL error with a code such as `QUERY_DEPTH_EXCEEDED`, `QUERY_ALIAS_LIMIT_EXCEEDED`, or `QUERY_TOO_LARGE` (HTTP 413). Introspection is disabled in production unless the deployment sets `GRAPHQL_INTROSPECTION=true`.
+
+## Caching and persisted queries
+
+Send read queries over `GET /graphql` (mutations are not supported) so a CDN can cache the URL. To keep cache keys short, use Apollo Automatic Persisted Queries (APQ):
+
+1. Send the query hash without the query. The API answers `200` with `PersistedQueryNotFound`:
+
+```text
+GET /graphql?extensions={"persistedQuery":{"version":1,"sha256Hash":"<sha256-of-query>"}}
+```
+
+2. Retry with the query and the same hash; the API verifies the hash, stores the query, and executes it.
+3. Subsequent requests can use the hash-only URL plus `variables` and `operationName`. Apollo Client's `createPersistedQueryLink({ useGETForHashedQueries: true })` implements this flow automatically.
+
+Successful `GET` responses carry `Cache-Control: public, max-age=<ttl>, s-maxage=<ttl>, stale-while-revalidate=...` and `CDN-Cache-Control`, where the TTL is the minimum cache hint in the query: 60 seconds for offers, prices, profiles, and changelogs; 300 seconds for items and sandboxes; 3600 seconds for builds, assets, tags, sellers, and franchises. Error responses and `POST` responses are `no-store`. Cache keys should include the full query string (`extensions`, `query`, `variables`, `operationName`) and `Origin`, and must bypass requests with an `Authorization` header.

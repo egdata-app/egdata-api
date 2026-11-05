@@ -20,8 +20,9 @@ const app = new Hono();
 
 async function offerOg(c: Context, format: "png" | "webp") {
   const id = c.req.param("id");
-  const country =
-    c.req.query("country") ?? getCookie(c, "EGDATA_COUNTRY") ?? "US";
+  const versioned = Boolean(c.req.query("v"));
+  const countryQuery = c.req.query("country");
+  const country = countryQuery ?? getCookie(c, "EGDATA_COUNTRY") ?? "US";
   const region = Object.keys(regions).find((key) =>
     regions[key].countries.includes(country),
   );
@@ -120,8 +121,13 @@ async function offerOg(c: Context, format: "png" | "webp") {
   const buffer = await renderOfferOg(card, format, cover);
   return c.body(new Uint8Array(buffer), 200, {
     "Content-Type": `image/${format}`,
-    "Cache-Control": "public, max-age=60",
-    Vary: "Cookie",
+    "Cache-Control": versioned
+      ? "public, max-age=31536000, immutable"
+      : "public, max-age=86400, stale-while-revalidate=604800",
+    "CDN-Cache-Control": versioned
+      ? "public, max-age=31536000, stale-while-revalidate=604800"
+      : "public, max-age=2592000, stale-while-revalidate=604800",
+    Vary: countryQuery ? "Accept-Encoding" : "Cookie, Accept-Encoding",
   });
 }
 

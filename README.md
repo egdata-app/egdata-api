@@ -72,6 +72,34 @@ VECTORIZE_INDEX_NAME=egdata-offers
 
 `VECTORIZE_INDEX_NAME` is optional and defaults to `egdata-offers`. The endpoint uses the same `@cf/baai/bge-base-en-v1.5` embeddings as the backend indexing job.
 
+## Bandwidth Controls
+
+Text responses are gzip-compressed at the origin. Public GET responses also emit
+`Cache-Control` and `CDN-Cache-Control` headers; Cloudflare Cache Rules must be
+configured to actually cache JSON (see [`docs/edge-caching.md`](docs/edge-caching.md)).
+
+Anonymous rate limits are configurable. Defaults are intentionally conservative
+for automated traffic but generous for normal browsing:
+
+```txt
+RATE_LIMIT_ENABLED=true
+RATE_LIMIT_GENERAL_PER_MINUTE=300
+RATE_LIMIT_HEAVY_PER_MINUTE=30
+RATE_LIMIT_BULK_PER_MINUTE=10
+GRAPHQL_INTROSPECTION=false
+```
+
+`RATE_LIMIT_ENABLED=false` disables application limits (useful for local tests).
+The rate limiter uses shared Redis with a bounded command timeout and falls back
+to an in-process store if Redis is unavailable.
+
+GraphQL additionally caps list page sizes, query depth, aliases, and query size.
+Introspection is disabled in production unless `GRAPHQL_INTROSPECTION=true`.
+Read queries can use `GET /graphql`, including Apollo Automatic Persisted
+Queries; successful GET responses carry CDN cache headers, while POST responses
+are `no-store`. See [`docs/edge-caching.md`](docs/edge-caching.md) and the
+[GraphQL profile guide](apps/docs/content/docs/graphql-profiles.mdx).
+
 ## Catalog Hydration
 
 `POST /catalog/hydrate` streams bounded NDJSON graphs directly from the catalog collections for item, asset, and release-app identifiers. Clients persist only their discovered roots and revalidate with content hashes.

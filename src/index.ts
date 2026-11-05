@@ -7,20 +7,30 @@ import chalk from "chalk";
 import { Routes } from "discord-api-types/v10";
 import { config } from "dotenv";
 import { Hono } from "hono";
+import { compress } from "hono/compress";
 import { getCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import { inspectRoutes } from "hono/dev";
 import { ensureCatalogHydrationIndexes } from "./catalog/resolver.js";
 import { discord } from "./clients/discord.js";
 import { gaClient } from "./clients/ga.js";
-import client, { disconnectResponseCache } from "./clients/response-cache.js";
 import sharedRedis from "./clients/redis.js";
+import client, { disconnectResponseCache } from "./clients/response-cache.js";
 import { db } from "./db/index.js";
 import { server as graphqlServer } from "./graphql/index.js";
 import { createLoaders } from "./graphql/loaders.js";
+import { disconnectPersistedQueryStore } from "./graphql/persisted-queries.js";
 import { honoMiddleware } from "./middlewares/apollo.js";
+import { edgeCacheHeaders } from "./middlewares/edge-cache.js";
+import {
+  bulkRateLimit,
+  disconnectRateLimitStore,
+  generalRateLimit,
+  heavyRateLimit,
+} from "./middlewares/rate-limit.js";
 import { requestDebugLogger } from "./middlewares/request-logger.js";
 import { responseEtag } from "./middlewares/response-etag.js";
+import { routeTemplate } from "./middlewares/route-template.js";
 import {
   Changelog,
   Event,
@@ -63,6 +73,7 @@ import { resolveChangelogContextSafely } from "./utils/changelog-context.js";
 import { countries, regions } from "./utils/countries.js";
 import { getFeaturedGames } from "./utils/get-featured-games.js";
 import { consola } from "./utils/logger.js";
+import { toOfferCards, wantsExpandedOffers } from "./utils/offer-card.js";
 import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
@@ -111,6 +122,11 @@ app.use("/*", async (c, next) => {
 
 Zen.addHonoMiddleware(app);
 
+// Compress text responses at the origin. Cloudflare compresses browser traffic,
+// but the origin -> edge hop is what GCP bills; without this every JSON/XML
+// response crosses that hop uncompressed.
+app.use("/*", compress({ threshold: 512 }));
+
 export { app };
 
 await graphqlServer
@@ -132,14 +148,53 @@ app.use(
 
       return origin.endsWith("egdata.app") ? origin : "https://egdata.app";
     },
-    allowHeaders: [],
+    allowHeaders: [
+      "Content-Type",
+      "Authorization",
+      "apollographql-client-name",
+      "apollographql-client-version",
+      "apollo-require-preflight",
+      "x-api-key",
+    ],
     allowMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"],
+    exposeHeaders: [
+      "Cache-Control",
+      "CDN-Cache-Control",
+      "ETag",
+      "X-Total-Count",
+      "X-Cache",
+      "X-Route-Template",
+      "Retry-After",
+      "Server-Timing",
+      "RateLimit",
+      "RateLimit-Policy",
+    ],
     credentials: true,
   }),
 );
 
 app.use("/*", responseEtag);
 app.use("/*", requestDebugLogger);
+app.use("/*", routeTemplate);
+app.use("/*", edgeCacheHeaders);
+app.use("/*", generalRateLimit);
+
+// Expensive routes get a tighter anonymous quota. These are the paths that
+// account for the bulk of dynamic origin egress.
+app.use("/graphql", heavyRateLimit);
+app.use("/search/*", heavyRateLimit);
+app.use("/multisearch/*", heavyRateLimit);
+app.use("/profiles/*", heavyRateLimit);
+app.use("/sellers/*", heavyRateLimit);
+app.use("/offers/:id/og", heavyRateLimit);
+app.use("/offers/:id/og.webp", heavyRateLimit);
+app.use("/sandboxes/:id/og", heavyRateLimit);
+app.use("/sandboxes/:id/og.webp", heavyRateLimit);
+app.use("/game-awards/og", heavyRateLimit);
+app.use("/free-games/og", heavyRateLimit);
+app.use("/collections/:slug/:week/og", heavyRateLimit);
+app.use("/catalog/*", bulkRateLimit);
+app.use("/builds/resolve-launcher-records", bulkRateLimit);
 
 app.use(
   "/graphql",
@@ -493,7 +548,9 @@ app.get("/latest-games", async (c) => {
     });
   }
 
-  const cacheKey = `latest-games:${region}:${localeCacheSegment(locale)}`;
+  const cacheKey = `latest-games:${region}:${localeCacheSegment(locale)}:${
+    wantsExpandedOffers(c) ? "full" : "card"
+  }`;
 
   const cached = await client.get(cacheKey);
 
@@ -524,16 +581,16 @@ app.get("/latest-games", async (c) => {
 
   const end = new Date();
 
-  const result = await localizeOffers(
-    items.map((i) => {
-      const price = prices.find((p) => p.offerId === i.id);
-      return {
-        ...orderOffersObject(i),
-        price: price,
-      };
-    }),
-    locale,
-  );
+  const priceByOfferId = new Map(prices.map((price) => [price.offerId, price]));
+  const result = wantsExpandedOffers(c)
+    ? await localizeOffers(
+        items.map((i) => ({
+          ...orderOffersObject(i),
+          price: priceByOfferId.get(i.id) ?? null,
+        })),
+        locale,
+      )
+    : await toOfferCards(items, locale, priceByOfferId);
 
   await client.set(
     cacheKey,
@@ -557,7 +614,9 @@ app.get("/featured", async (c) => {
   const GET_FEATURED_GAMES_START = new Date();
 
   const cacheKey = `featured:v0.1`;
-  const responseCacheKey = `featured-response:${localeCacheSegment(locale)}:v0.1`;
+  const responseCacheKey = `featured-response:${localeCacheSegment(locale)}:v0.1:${
+    wantsExpandedOffers(c) ? "full" : "card"
+  }`;
 
   consola.debug(`[CACHE] ${cacheKey}`);
 
@@ -601,10 +660,12 @@ app.get("/featured", async (c) => {
     },
   );
 
-  const result = await localizeOffers(
-    offers.map((o) => orderOffersObject(o)),
-    locale,
-  );
+  const result = wantsExpandedOffers(c)
+    ? await localizeOffers(
+        offers.map((o) => orderOffersObject(o)),
+        locale,
+      )
+    : await toOfferCards(offers, locale);
 
   await client.set(
     responseCacheKey,
@@ -739,7 +800,9 @@ app.get("/sales", async (c) => {
   const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 30);
   const skip = (page - 1) * limit;
 
-  const cacheKey = `sales:${region}:${page}:${limit}:${localeCacheSegment(locale)}:v1.3`;
+  const cacheKey = `sales:${region}:${page}:${limit}:${localeCacheSegment(locale)}:v1.3:${
+    wantsExpandedOffers(c) ? "full" : "card"
+  }`;
 
   const cached = await client.get(cacheKey);
 
@@ -800,16 +863,26 @@ app.get("/sales", async (c) => {
     region,
   });
 
-  const res = {
-    elements: await localizeOffers(
-      result.map((r) => {
-        return {
+  const pricedOffers = result.filter((r) => r.offer);
+  const priceByOfferId = new Map(
+    pricedOffers.map((r) => [r.offer.id, r.price]),
+  );
+  const elements = wantsExpandedOffers(c)
+    ? await localizeOffers(
+        pricedOffers.map((r) => ({
           ...r.offer,
           price: r.price,
-        };
-      }),
-      locale,
-    ),
+        })),
+        locale,
+      )
+    : await toOfferCards(
+        pricedOffers.map((r) => r.offer),
+        locale,
+        priceByOfferId,
+      );
+
+  const res = {
+    elements,
     page,
     limit,
     total: count,
@@ -1206,7 +1279,9 @@ app.get("/active-sales", async (c) => {
     });
   }
 
-  const cacheKey = `active-sales:${region}:${localeCacheSegment(locale)}`;
+  const cacheKey = `active-sales:${region}:${localeCacheSegment(locale)}:${
+    wantsExpandedOffers(c) ? "full" : "card"
+  }`;
 
   const cached = await client.get(cacheKey);
 
@@ -1234,7 +1309,8 @@ app.get("/active-sales", async (c) => {
   const result: {
     id: string;
     name: string;
-    offers: OfferType[];
+    active: boolean;
+    offers: unknown[];
   }[] = [];
 
   await Promise.all(
@@ -1264,15 +1340,24 @@ app.get("/active-sales", async (c) => {
             (p) => p.price.discount > 0 || p.price.originalPrice === 0,
           ));
 
+      const topOffers = offers.slice(0, 3);
+      const priceByOfferId = new Map(
+        prices.map((price) => [price.offerId, price]),
+      );
+
       result.push({
         id: t.id,
         name: t.name,
         active: everyPriceIsOnSale,
-        // @ts-expect-error
-        offers: await localizeOffers(
-          offers.slice(0, 3).map((o) => orderOffersObject(o)),
-          locale,
-        ),
+        offers: wantsExpandedOffers(c)
+          ? await localizeOffers(
+              topOffers.map((offer) => ({
+                ...orderOffersObject(offer),
+                price: priceByOfferId.get(offer.id) ?? null,
+              })),
+              locale,
+            )
+          : await toOfferCards(topOffers, locale, priceByOfferId),
       });
     }),
   );
@@ -1542,6 +1627,8 @@ function installShutdownHandlers(httpServer: ServerType) {
     try {
       await closeHttpServer(httpServer);
       disconnectResponseCache();
+      disconnectRateLimitStore();
+      disconnectPersistedQueryStore();
 
       const shutdownResults = await Promise.allSettled([
         graphqlServer.stop(),

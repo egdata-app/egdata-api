@@ -16,7 +16,6 @@ import {
   Mappings,
   Media,
   Offer,
-  type OfferType,
   PriceEngine,
   type PriceEngineType as PriceType,
   Ratings,
@@ -31,6 +30,7 @@ import { regions } from "../../utils/countries.js";
 import { getGameFeatures } from "../../utils/game-features.js";
 import { getOfferSubItems } from "../../utils/get-offer-sub-items.js";
 import { getProduct } from "../../utils/get-product.js";
+import { toOfferCards, wantsExpandedOffers } from "../../utils/offer-card.js";
 import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
@@ -618,7 +618,10 @@ app.get("/related", async (c) => {
     });
   }
 
-  const cacheKey = `related-offers:${id}:${region}:${localeCacheSegment(locale)}`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `related-offers:${id}:${region}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }:v0.2`;
 
   const cached = await client.get(cacheKey);
 
@@ -653,16 +656,16 @@ app.get("/related", async (c) => {
     region,
   });
 
-  const result = await localizeOffers(
-    related.map((o) => {
-      const price = prices.find((p) => p.offerId === o.id);
-      return {
-        ...orderOffersObject(o),
-        price: price ?? null,
-      };
-    }),
-    locale,
-  );
+  const priceByOfferId = new Map(prices.map((price) => [price.offerId, price]));
+  const result = expand
+    ? await localizeOffers(
+        related.map((offer) => ({
+          ...orderOffersObject(offer),
+          price: priceByOfferId.get(offer.id) ?? null,
+        })),
+        locale,
+      )
+    : await toOfferCards(related, locale, priceByOfferId);
 
   await client.set(
     cacheKey,
@@ -762,7 +765,10 @@ app.get("/suggestions", async (c) => {
     });
   }
 
-  const cacheKey = `suggestions:${id}:${region}:${localeCacheSegment(locale)}`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `suggestions:${id}:${region}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }:v0.2`;
 
   const cached = await client.get(cacheKey);
 
@@ -797,7 +803,7 @@ app.get("/suggestions", async (c) => {
     },
     undefined,
     {
-      limit: 25,
+      limit: 10,
       sort: {
         lastModifiedDate: -1,
       },
@@ -809,16 +815,16 @@ app.get("/suggestions", async (c) => {
     region: region,
   });
 
-  const result = await localizeOffers(
-    suggestions.map((o) => {
-      const price = prices.find((p) => p.offerId === o.id);
-      return {
-        ...orderOffersObject(o),
-        price: price ?? null,
-      };
-    }),
-    locale,
-  );
+  const priceByOfferId = new Map(prices.map((price) => [price.offerId, price]));
+  const result = expand
+    ? await localizeOffers(
+        suggestions.map((suggestion) => ({
+          ...orderOffersObject(suggestion),
+          price: priceByOfferId.get(suggestion.id) ?? null,
+        })),
+        locale,
+      )
+    : await toOfferCards(suggestions, locale, priceByOfferId);
 
   await client.set(
     cacheKey,
@@ -1213,7 +1219,10 @@ app.get("/collection", async (c) => {
     });
   }
 
-  const cacheKey = `collection-offers:${id}:${region}:${localeCacheSegment(locale)}`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `collection-offers:${id}:${region}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }:v0.2`;
 
   const cached = await client.get(cacheKey);
 
@@ -1248,16 +1257,16 @@ app.get("/collection", async (c) => {
   const offers = offersData.status === "fulfilled" ? offersData.value : [];
   const prices = pricesData.status === "fulfilled" ? pricesData.value : [];
 
-  const result = await localizeOffers(
-    offers.map((o) => {
-      const price = prices.find((p) => p.offerId === o.id);
-      return {
-        ...orderOffersObject(o),
-        price: price ?? null,
-      };
-    }),
-    locale,
-  );
+  const priceByOfferId = new Map(prices.map((price) => [price.offerId, price]));
+  const result = expand
+    ? await localizeOffers(
+        offers.map((collectionOffer) => ({
+          ...orderOffersObject(collectionOffer),
+          price: priceByOfferId.get(collectionOffer.id) ?? null,
+        })),
+        locale,
+      )
+    : await toOfferCards(offers, locale, priceByOfferId);
 
   await client.set(
     cacheKey,
@@ -1299,7 +1308,7 @@ app.get("/collections/:collection", async (c) => {
 });
 
 type BUNDLE_RESPONSE = {
-  offers: OfferType[];
+  offers: unknown[];
   bundlePrice: PriceType;
   totalPrice: PriceType;
 };
@@ -1328,7 +1337,10 @@ app.get("/bundle", async (c) => {
     });
   }
 
-  const cacheKey = `bundle:${id}:${region}:${localeCacheSegment(locale)}`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `bundle:${id}:${region}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }:v0.2`;
 
   const cached = await client.get(cacheKey);
 
@@ -1393,23 +1405,25 @@ app.get("/bundle", async (c) => {
   const bundlePrices =
     bundlePricesData.status === "fulfilled" ? bundlePricesData.value : [];
 
-  const offers = await localizeOffers(
-    bundleOffers.map((o) => {
-      const price = bundlePrices.find((p) => p.offerId === o.id);
-      return {
-        ...orderOffersObject(o),
-        price: price ?? null,
-      };
-    }),
-    locale,
+  const priceByOfferId = new Map(
+    bundlePrices.map((price) => [price.offerId, price]),
   );
+  const offers = expand
+    ? await localizeOffers(
+        bundleOffers.map((bundleOffer) => ({
+          ...orderOffersObject(bundleOffer),
+          price: priceByOfferId.get(bundleOffer.id) ?? null,
+        })),
+        locale,
+      )
+    : await toOfferCards(bundleOffers, locale, priceByOfferId);
 
   const result: BUNDLE_RESPONSE = {
     offers: offers,
     // @ts-expect-error
-    totalPrice: offers.reduce(
-      (acc, offer) => {
-        const price = bundlePrices.find((p) => p.offerId === offer.id);
+    totalPrice: bundleOffers.reduce(
+      (acc, bundleOffer) => {
+        const price = priceByOfferId.get(bundleOffer.id);
 
         // If there's no price for the offer, skip it
         if (!price) return acc;
@@ -1490,7 +1504,10 @@ app.get("/in-bundle", async (c) => {
     });
   }
 
-  const cacheKey = `in-bundle:${id}:${region}:${localeCacheSegment(locale)}`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `in-bundle:${id}:${region}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }:v0.2`;
 
   const cached = await client.get(cacheKey);
 
@@ -1509,37 +1526,54 @@ app.get("/in-bundle", async (c) => {
     });
   }
 
-  const bundles = await Promise.all(
-    bundleData.flatMap(async (bundle) => {
-      const id = bundle._id;
-      const [bundleData, bundlePriceData] = await Promise.allSettled([
-        Offer.findOne({ id }),
-        PriceEngine.findOne({
-          offerId: id,
-          region,
-        }),
-      ]);
+  const bundles = (
+    await Promise.all(
+      bundleData.flatMap(async (bundle) => {
+        const id = bundle._id;
+        const [bundleData, bundlePriceData] = await Promise.allSettled([
+          Offer.findOne({ id }),
+          PriceEngine.findOne({
+            offerId: id,
+            region,
+          }),
+        ]);
 
-      const b = bundleData.status === "fulfilled" ? bundleData.value : null;
-      const bp =
-        bundlePriceData.status === "fulfilled" ? bundlePriceData.value : null;
+        const b = bundleData.status === "fulfilled" ? bundleData.value : null;
+        const bp =
+          bundlePriceData.status === "fulfilled" ? bundlePriceData.value : null;
 
-      return {
-        ...orderOffersObject(b),
-        price: bp ?? null,
-      };
-    }),
-  );
-  const localizedBundles = await localizeOffers(bundles, locale);
+        if (!b) return null;
+
+        return {
+          offer: b,
+          price: bp ?? null,
+        };
+      }),
+    )
+  ).filter((bundle): bundle is NonNullable<typeof bundle> => bundle !== null);
+
+  const result = expand
+    ? await localizeOffers(
+        bundles.map(({ offer, price }) => ({
+          ...orderOffersObject(offer),
+          price,
+        })),
+        locale,
+      )
+    : await toOfferCards(
+        bundles.map(({ offer }) => offer),
+        locale,
+        new Map(bundles.map(({ offer, price }) => [offer.id, price])),
+      );
 
   await client.set(
     cacheKey,
-    JSON.stringify(localizedBundles),
+    JSON.stringify(result),
     "EX",
-    getLocalizedCacheTtlSeconds(localizedBundles, 3600),
+    getLocalizedCacheTtlSeconds(result, 3600),
   );
 
-  return c.json(localizedBundles, 200, {
+  return c.json(result, 200, {
     "Cache-Control": "public, max-age=60",
   });
 });
@@ -1955,7 +1989,7 @@ app.get("/overview", async (c) => {
 
   const start = new Date();
   const cacheKey = `overview:${id}:${region}:${localeCacheSegment(locale)}:v0.1`;
-  const cached = false; // await client.get(cacheKey);
+  const cached = await client.get(cacheKey);
 
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
@@ -2110,7 +2144,7 @@ app.get("/overview", async (c) => {
     cacheKey,
     JSON.stringify(result),
     "EX",
-    getLocalizedCacheTtlSeconds(result, 3600),
+    getLocalizedCacheTtlSeconds(result, 300),
   );
 
   return c.json(result, 200, {

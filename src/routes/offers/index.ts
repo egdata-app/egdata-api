@@ -11,11 +11,13 @@ import {
   Offer,
   type OfferType,
   PriceEngine,
+  type PriceEngineType,
   Tags,
 } from "../../models/index.js";
 import { attributesToObject } from "../../utils/attributes-to-object.js";
 import { regions } from "../../utils/countries.js";
 import { getImage } from "../../utils/get-image.js";
+import { toOfferCards, wantsExpandedOffers } from "../../utils/offer-card.js";
 import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
@@ -62,7 +64,10 @@ app.get("/", async (c) => {
   );
   const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
 
-  const cacheKey = `offers:${region}:${page}:${limit}:${localeCacheSegment(locale)}`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `offers:${region}:${page}:${limit}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }`;
 
   const cached = await client.get(cacheKey);
 
@@ -85,16 +90,16 @@ app.get("/", async (c) => {
     region,
   });
 
-  const elements = await localizeOffers(
-    offers.map((o) => {
-      const price = prices.find((p) => p.offerId === o.id);
-      return {
-        ...orderOffersObject(o),
-        price: price ?? null,
-      };
-    }),
-    locale,
-  );
+  const priceByOfferId = new Map(prices.map((price) => [price.offerId, price]));
+  const elements = expand
+    ? await localizeOffers(
+        offers.map((offer) => ({
+          ...orderOffersObject(offer),
+          price: priceByOfferId.get(offer.id) ?? null,
+        })),
+        locale,
+      )
+    : await toOfferCards(offers, locale, priceByOfferId);
 
   const result = {
     elements,
@@ -156,7 +161,10 @@ app.get("/events/:id", async (c) => {
 
   const start = new Date();
 
-  const cacheKey = `event:${id}:${region}:${page}:${limit}:${localeCacheSegment(locale)}`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `event:${id}:${region}:${page}:${limit}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }`;
 
   const cached = await client.get(cacheKey);
 
@@ -231,12 +239,28 @@ app.get("/events/:id", async (c) => {
         publisherDisplayName: 1,
         keyImages: 1,
         price: 1,
+        offerType: 1,
+        productSlug: 1,
+        urlSlug: 1,
+        releaseDate: 1,
+        effectiveDate: 1,
+        lastModifiedDate: 1,
+        prePurchase: 1,
       },
     },
   ]);
 
+  const priceByOfferId = new Map(
+    offers
+      .filter((offer) => offer.price)
+      .map((offer) => [offer.id, offer.price]),
+  );
+  const elements = expand
+    ? await localizeOffers(offers, locale)
+    : await toOfferCards(offers, locale, priceByOfferId);
+
   const result = {
-    elements: await localizeOffers(offers, locale),
+    elements,
     title: event.name ?? "",
     limit,
     start: skip,
@@ -287,7 +311,10 @@ app.get("/upcoming", async (c) => {
 
   const start = new Date();
 
-  const cacheKey = `upcoming:${region}:${page}:${limit}:${localeCacheSegment(locale)}:v0.1`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `upcoming:${region}:${page}:${limit}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }:v0.2`;
 
   const cached = await client.get(cacheKey);
 
@@ -349,15 +376,20 @@ app.get("/upcoming", async (c) => {
     },
   ]);
 
-  const elements = await localizeOffers(
-    offers.map((o) => {
-      return {
-        ...orderOffersObject(o),
-        price: o.price ?? null,
-      };
-    }),
-    locale,
+  const priceByOfferId = new Map(
+    offers
+      .filter((offer) => offer.price)
+      .map((offer) => [offer.id, offer.price]),
   );
+  const elements = expand
+    ? await localizeOffers(
+        offers.map((offer) => ({
+          ...orderOffersObject(offer),
+          price: offer.price ?? null,
+        })),
+        locale,
+      )
+    : await toOfferCards(offers, locale, priceByOfferId);
 
   const result = {
     elements,
@@ -447,7 +479,10 @@ app.get("/top-wishlisted", async (c) => {
   const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
   const start = new Date();
-  const cacheKey = `top-wishlisted:${page}:${limit}:${localeCacheSegment(locale)}:v0.1`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `top-wishlisted:${page}:${limit}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }:v0.2`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -468,18 +503,27 @@ app.get("/top-wishlisted", async (c) => {
     id: { $in: result.map((o) => o.offerId) },
   });
 
+  const positionByOfferId = new Map(
+    result.map((position) => [position.offerId, position.position]),
+  );
+  offers.sort(
+    (a, b) =>
+      (positionByOfferId.get(a.id) ?? 0) - (positionByOfferId.get(b.id) ?? 0),
+  );
+
   if (result.length > 0) {
-    const elements = await localizeOffers(
-      offers
-        .map((o: OfferType) => {
-          return {
-            ...orderOffersObject(o),
-            position: result.find((r) => r.offerId === o.id)?.position,
-          };
-        })
-        .sort((a, b) => a.position - b.position),
-      locale,
-    );
+    const elements = expand
+      ? await localizeOffers(
+          offers.map((offer: OfferType) => ({
+            ...orderOffersObject(offer),
+            position: positionByOfferId.get(offer.id),
+          })),
+          locale,
+        )
+      : (await toOfferCards(offers, locale)).map((card) => ({
+          ...card,
+          position: card.id ? positionByOfferId.get(card.id) : undefined,
+        }));
     const response = {
       elements,
       page,
@@ -516,7 +560,10 @@ app.get("/top-sellers", async (c) => {
   const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
   const start = new Date();
-  const cacheKey = `top-sellers:${page}:${limit}:${localeCacheSegment(locale)}:v0.1`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `top-sellers:${page}:${limit}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }:v0.2`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -537,18 +584,27 @@ app.get("/top-sellers", async (c) => {
     id: { $in: result.map((o) => o.offerId) },
   });
 
+  const positionByOfferId = new Map(
+    result.map((position) => [position.offerId, position.position]),
+  );
+  offers.sort(
+    (a, b) =>
+      (positionByOfferId.get(a.id) ?? 0) - (positionByOfferId.get(b.id) ?? 0),
+  );
+
   if (result.length > 0) {
-    const elements = await localizeOffers(
-      offers
-        .map((o: OfferType) => {
-          return {
-            ...orderOffersObject(o),
-            position: result.find((r) => r.offerId === o.id)?.position,
-          };
-        })
-        .sort((a, b) => a.position - b.position),
-      locale,
-    );
+    const elements = expand
+      ? await localizeOffers(
+          offers.map((offer: OfferType) => ({
+            ...orderOffersObject(offer),
+            position: positionByOfferId.get(offer.id),
+          })),
+          locale,
+        )
+      : (await toOfferCards(offers, locale)).map((card) => ({
+          ...card,
+          position: card.id ? positionByOfferId.get(card.id) : undefined,
+        }));
     const response = {
       elements,
       page,
@@ -595,7 +651,10 @@ app.get("/featured-discounts", async (c) => {
     });
   }
 
-  const cacheKey = `featured-discounts:${region}:${localeCacheSegment(locale)}:v0.3`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `featured-discounts:${region}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }:v0.4`;
   const cached = await client.get(cacheKey);
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
@@ -638,25 +697,38 @@ app.get("/featured-discounts", async (c) => {
     featuredOffers.map((p) => [p.offerId, p.position]),
   );
 
-  const result = await localizeOffers(
-    offers
-      .map((offer) => {
-        const price = priceMap.get(offer.id);
-        const position = positionMap.get(offer.id);
+  const matchingOffers = offers
+    .map((offer) => {
+      const price = priceMap.get(offer.id);
+      const position = positionMap.get(offer.id);
 
-        if (!price || position === undefined) return null;
+      if (!price || position === undefined) return null;
 
-        return {
+      return { offer, price, position };
+    })
+    .filter((o): o is NonNullable<typeof o> => o !== null)
+    .sort((a, b) => a.position - b.position)
+    .slice(0, 20);
+
+  const result = expand
+    ? await localizeOffers(
+        matchingOffers.map(({ offer, price, position }) => ({
           ...offer,
           price,
           position,
-        };
-      })
-      .filter((o): o is NonNullable<typeof o> => o !== null)
-      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-      .slice(0, 20),
-    locale,
-  );
+        })),
+        locale,
+      )
+    : (
+        await toOfferCards(
+          matchingOffers.map(({ offer }) => offer),
+          locale,
+          priceMap,
+        )
+      ).map((card) => ({
+        ...card,
+        position: card.id ? positionMap.get(card.id) : undefined,
+      }));
 
   await client.set(
     cacheKey,
@@ -688,7 +760,10 @@ app.get("/latest-achievements", async (c) => {
       message: "Country not found",
     });
   }
-  const cacheKey = `latest-achievements:${region}:${localeCacheSegment(locale)}:v0.1`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `latest-achievements:${region}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }:v0.2`;
   const cached = await client.get(cacheKey);
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
@@ -697,8 +772,12 @@ app.get("/latest-achievements", async (c) => {
   }
   const limit = 15;
   let skip = 0;
-  let result: any[] = [];
-  while (result.length < 20) {
+  let collected: Array<{
+    offer: OfferType;
+    achievements: unknown;
+    price: PriceEngineType | null;
+  }> = [];
+  while (collected.length < 20) {
     const offers = await Offer.find({
       offerType: { $in: ["BASE_GAME"] },
       "tags.id": "19847",
@@ -720,26 +799,48 @@ app.get("/latest-achievements", async (c) => {
     const achievements =
       achievementsData.status === "fulfilled" ? achievementsData.value : [];
     const prices = pricesData.status === "fulfilled" ? pricesData.value : [];
+    const priceByOfferId = new Map(
+      prices.map((price) => [price.offerId, price]),
+    );
     const pageResults = offers
-      .map((o) => {
-        const price = prices.find((p) => p.offerId === o.id);
+      .map((offer) => {
         const achievement = achievements.find(
-          (a) => a.sandboxId === o.namespace,
+          (a) => a.sandboxId === offer.namespace,
         );
+        if (!achievement) return null;
         return {
-          ...orderOffersObject(o),
+          offer,
           achievements: achievement,
-          price: price ?? null,
+          price: priceByOfferId.get(offer.id) ?? null,
         };
       })
-      .filter((o) => o.achievements);
-    result = result.concat(pageResults);
+      .filter((entry): entry is NonNullable<typeof entry> => entry !== null);
+    collected = collected.concat(pageResults);
     skip += limit;
     if (offers.length < limit) {
       break;
     }
   }
-  result = await localizeOffers(result.slice(0, 20), locale);
+  const selected = collected.slice(0, 20);
+  const result = expand
+    ? await localizeOffers(
+        selected.map(({ offer, achievements, price }) => ({
+          ...orderOffersObject(offer),
+          achievements,
+          price,
+        })),
+        locale,
+      )
+    : (
+        await toOfferCards(
+          selected.map(({ offer }) => offer),
+          locale,
+          new Map(selected.map(({ offer, price }) => [offer.id, price])),
+        )
+      ).map((card, index) => ({
+        ...card,
+        achievements: selected[index].achievements,
+      }));
   await client.set(
     cacheKey,
     JSON.stringify(result),
@@ -772,7 +873,10 @@ app.get("/latest-released", async (c) => {
   const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 50);
   const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
-  const cacheKey = `latest-released:${region}:${localeCacheSegment(locale)}`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `latest-released:${region}:${page}:${limit}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }:v0.2`;
   const cached = await client.get(cacheKey);
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
@@ -805,16 +909,16 @@ app.get("/latest-released", async (c) => {
     offerId: { $in: offers.map((o) => o.id) },
     region,
   });
-  const elements = await localizeOffers(
-    offers.map((o) => {
-      const price = prices.find((p) => p.offerId === o.id);
-      return {
-        ...orderOffersObject(o),
-        price: price ?? null,
-      };
-    }),
-    locale,
-  );
+  const priceByOfferId = new Map(prices.map((price) => [price.offerId, price]));
+  const elements = expand
+    ? await localizeOffers(
+        offers.map((offer) => ({
+          ...orderOffersObject(offer),
+          price: priceByOfferId.get(offer.id) ?? null,
+        })),
+        locale,
+      )
+    : await toOfferCards(offers, locale, priceByOfferId);
   const result = {
     elements,
     limit,

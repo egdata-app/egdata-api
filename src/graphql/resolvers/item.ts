@@ -8,6 +8,7 @@ import {
 import { buildProjection } from "../../utils/projection.js";
 import type { Context } from "../index.js";
 import { resolveGraphqlLocale } from "../locale.js";
+import { clampPage, clampPageSize, MAX_PAGE_SIZE } from "../pagination.js";
 
 const resolvers: IResolvers<any, Context> = {
   Query: {
@@ -15,14 +16,21 @@ const resolvers: IResolvers<any, Context> = {
       const projection = buildProjection(info, "Item");
       return Item.findOne({ id: { $eq: id } }, projection).lean();
     },
-    items: async (_, { limit = 10, page = 1 }) => {
-      const skip = (page - 1) * limit;
+    items: async (_, { limit, page }) => {
+      const resolvedLimit = clampPageSize(limit);
+      const resolvedPage = clampPage(page);
+      const skip = (resolvedPage - 1) * resolvedLimit;
       const elements = await Item.find({}, undefined, {
-        limit,
+        limit: resolvedLimit,
         skip,
         sort: { lastModifiedDate: -1 },
       }).lean();
-      return { elements, total: await Item.countDocuments(), page, limit };
+      return {
+        elements,
+        total: await Item.countDocuments(),
+        page: resolvedPage,
+        limit: resolvedLimit,
+      };
     },
   },
   Item: {
@@ -33,14 +41,17 @@ const resolvers: IResolvers<any, Context> = {
       if (!parent.releaseInfo || parent.releaseInfo.length === 0) return [];
       const appIds = parent.releaseInfo
         .map((r: any) => r.appId)
-        .filter(Boolean);
+        .filter(Boolean)
+        .slice(0, MAX_PAGE_SIZE);
       if (appIds.length === 0) return [];
       return loaders.build.loadMany(appIds);
     },
     offers: async (parent, { locale: requestedLocale }) => {
       const locale = resolveGraphqlLocale({ locale: requestedLocale });
       // Find offers that contain this item
-      const offers = await Offer.find({ "items.id": parent.id }).lean();
+      const offers = await Offer.find({ "items.id": parent.id })
+        .limit(MAX_PAGE_SIZE)
+        .lean();
       return localizeOffers(offers, locale);
     },
     mainOffer: async (parent, { locale: requestedLocale }) => {
@@ -61,8 +72,10 @@ const resolvers: IResolvers<any, Context> = {
         locale,
       );
     },
-    changelog: async (parent, { limit = 10, page = 1 }) => {
-      const skip = (page - 1) * limit;
+    changelog: async (parent, { limit, page }) => {
+      const resolvedLimit = clampPageSize(limit);
+      const resolvedPage = clampPage(page);
+      const skip = (resolvedPage - 1) * resolvedLimit;
       const assets = await Asset.find({ itemId: parent.id }).lean();
       const assetIds = assets.map((a: any) => a.artifactId);
       const builds = await db.db
@@ -81,15 +94,15 @@ const resolvers: IResolvers<any, Context> = {
         .find(matchQuery)
         .sort({ timestamp: -1 })
         .skip(skip)
-        .limit(limit)
+        .limit(resolvedLimit)
         .toArray();
 
       return {
         elements,
         totalCount,
-        totalPages: Math.ceil(totalCount / limit),
-        hasNextPage: page * limit < totalCount,
-        hasPreviousPage: page > 1,
+        totalPages: Math.ceil(totalCount / resolvedLimit),
+        hasNextPage: resolvedPage * resolvedLimit < totalCount,
+        hasPreviousPage: resolvedPage > 1,
       };
     },
   },

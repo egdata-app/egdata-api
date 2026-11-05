@@ -1,12 +1,10 @@
 import { Hono } from "hono";
-import {
-  submitJobApiBatch,
-  submitJobApiRequest,
-} from "../clients/job-api.js";
+import { submitJobApiBatch, submitJobApiRequest } from "../clients/job-api.js";
 import client from "../clients/response-cache.js";
 import { db } from "../db/index.js";
 import { Asset, Item, Offer } from "../models/index.js";
 import { attributesToObject } from "../utils/attributes-to-object.js";
+import { wantsExpandedOffers } from "../utils/offer-card.js";
 import {
   type BuildDocument,
   buildSummary,
@@ -22,28 +20,85 @@ import {
 
 const app = new Hono();
 
+const ITEMS_LIST_MAX_LIMIT = 50;
+const ITEMS_LIST_DEFAULT_LIMIT = 10;
+
+const BUILDS_MAX_LIMIT = 100;
+const BUILDS_DEFAULT_LIMIT = 50;
+
+const CACHE_HEADERS = {
+  "Cache-Control": "public, max-age=60, s-maxage=300",
+  "CDN-Cache-Control": "public, max-age=300",
+} as const;
+
+/**
+ * Only the fields used by item cards. Long descriptions, custom attributes,
+ * media lists and other bulk fields stay in the detail endpoint.
+ */
+const ITEMS_LIST_PROJECTION = {
+  _id: 0,
+  id: 1,
+  namespace: 1,
+  title: 1,
+  description: 1,
+  keyImages: 1,
+  categories: 1,
+  status: 1,
+  entitlementType: 1,
+  developer: 1,
+  releaseInfo: 1,
+  lastModifiedDate: 1,
+} as const;
+
+const parseBoundedLimit = (
+  value: string | undefined,
+  fallback: number,
+  maximum: number,
+) => {
+  const parsed = Number.parseInt(value ?? "", 10);
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return fallback;
+  }
+  return Math.min(parsed, maximum);
+};
+
+const parsePage = (value: string | undefined) => {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed >= 1 ? parsed : 1;
+};
+
 app.get("/", async (c) => {
-  const MAX_LIMIT = 50;
-  const limit = Math.min(
-    Number.parseInt(c.req.query("limit") || "10", 10),
-    MAX_LIMIT,
+  const limit = parseBoundedLimit(
+    c.req.query("limit"),
+    ITEMS_LIST_DEFAULT_LIMIT,
+    ITEMS_LIST_MAX_LIMIT,
   );
-  const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
+  const page = parsePage(c.req.query("page"));
+  const projection = wantsExpandedOffers(c)
+    ? undefined
+    : ITEMS_LIST_PROJECTION;
 
-  const items = await Item.find({}, undefined, {
-    limit,
-    skip: (page - 1) * limit,
-    sort: {
-      lastModifiedDate: -1,
+  const [items, total] = await Promise.all([
+    Item.find({}, projection, {
+      limit,
+      skip: (page - 1) * limit,
+      sort: {
+        lastModifiedDate: -1,
+      },
+    }),
+    Item.countDocuments(),
+  ]);
+
+  return c.json(
+    {
+      elements: items,
+      page,
+      limit,
+      total,
     },
-  });
-
-  return c.json({
-    elements: items,
-    page,
-    limit,
-    total: await Item.countDocuments(),
-  });
+    200,
+    CACHE_HEADERS,
+  );
 });
 
 app.get("/sitemap.xml", async (c) => {
@@ -297,6 +352,13 @@ app.get("/:id/assets", async (c) => {
 
 app.get("/:id/builds", async (c) => {
   const { id } = c.req.param();
+  const limit = parseBoundedLimit(
+    c.req.query("limit"),
+    BUILDS_DEFAULT_LIMIT,
+    BUILDS_MAX_LIMIT,
+  );
+  const page = parsePage(c.req.query("page"));
+  const skip = (page - 1) * limit;
 
   const item = await Item.findOne({
     id: { $eq: id },
@@ -306,29 +368,72 @@ app.get("/:id/builds", async (c) => {
     return c.json({ error: "Item not found" }, 404);
   }
 
-  const builds = await db.db
-    .collection<BuildDocument>("builds")
-    .find({
-      appName: {
-        $in: item.releaseInfo.map(
-          (release: { appId: string }) => release.appId,
+  const releaseInfo: Array<{ appId?: unknown }> = Array.isArray(
+    item.releaseInfo,
+  )
+    ? item.releaseInfo
+    : [];
+  const appNames = [
+    ...new Set(
+      releaseInfo
+        .map((release) => release.appId)
+        .filter(
+          (appId): appId is string =>
+            typeof appId === "string" && appId.length > 0,
         ),
-      },
-    })
-    .toArray();
+    ),
+  ];
 
-  const assets = await Promise.all(
-    builds.map(async (build) => {
-      const asset = await Asset.findOne({
-        artifactId: { $eq: build.appName },
-        platform: { $eq: effectiveBuildPlatform(build) },
-      });
+  if (appNames.length === 0) {
+    return c.json([], 200, {
+      ...CACHE_HEADERS,
+      "X-Total-Count": "0",
+    });
+  }
 
-      return buildSummary(build, asset);
-    }),
+  const buildsCollection = db.db.collection<BuildDocument>("builds");
+  const filter = { appName: { $in: appNames } };
+
+  const [builds, total] = await Promise.all([
+    buildsCollection
+      .find(filter)
+      .sort({ firstSeenAt: -1, createdAt: -1, _id: -1 })
+      .skip(skip)
+      .limit(limit)
+      .toArray(),
+    buildsCollection.countDocuments(filter),
+  ]);
+
+  // One lookup for the whole page instead of one per build.
+  const assets =
+    builds.length === 0
+      ? []
+      : await Asset.find(
+          {
+            artifactId: { $in: builds.map((build) => build.appName) },
+          },
+          {
+            artifactId: 1,
+            platform: 1,
+            downloadSizeBytes: 1,
+            installedSizeBytes: 1,
+          },
+        );
+  const assetByBuild = new Map(
+    assets.map((asset) => [`${asset.artifactId}:${asset.platform}`, asset]),
   );
 
-  return c.json(assets);
+  const summaries = builds.map((build) =>
+    buildSummary(
+      build,
+      assetByBuild.get(`${build.appName}:${effectiveBuildPlatform(build)}`),
+    ),
+  );
+
+  return c.json(summaries, 200, {
+    ...CACHE_HEADERS,
+    "X-Total-Count": String(total),
+  });
 });
 
 app.get("/:id/changelog", async (c) => {
@@ -393,7 +498,17 @@ app.get("/:id/changelog", async (c) => {
         $lookup: {
           from: "items",
           let: { contextId: "$metadata.contextId" },
-          pipeline: [{ $match: { $expr: { $eq: ["$id", "$$contextId"] } } }],
+          pipeline: [
+            { $match: { $expr: { $eq: ["$id", "$$contextId"] } } },
+            {
+              $project: {
+                _id: 1,
+                id: 1,
+                title: 1,
+                namespace: 1,
+              },
+            },
+          ],
           as: "itemDoc",
         },
       },
@@ -405,6 +520,14 @@ app.get("/:id/changelog", async (c) => {
             {
               $match: {
                 $expr: { $eq: ["$artifactId", "$$contextId"] },
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                artifactId: 1,
+                itemId: 1,
+                platform: 1,
               },
             },
           ],
@@ -421,6 +544,15 @@ app.get("/:id/changelog", async (c) => {
                 $expr: {
                   $eq: [{ $toString: "$_id" }, "$$contextId"],
                 },
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                appName: 1,
+                buildVersion: 1,
+                labelName: 1,
+                platform: 1,
               },
             },
           ],

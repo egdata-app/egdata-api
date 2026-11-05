@@ -94,8 +94,13 @@ describe("offer OG routes", () => {
     const response = await app.request(`/offers/offer/${path}?v=123`);
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toBe(`image/${format}`);
-    expect(response.headers.get("cache-control")).toBe("public, max-age=60");
-    expect(response.headers.get("vary")).toBe("Cookie");
+    expect(response.headers.get("cache-control")).toBe(
+      "public, max-age=31536000, immutable",
+    );
+    expect(response.headers.get("cdn-cache-control")).toBe(
+      "public, max-age=31536000, stale-while-revalidate=604800",
+    );
+    expect(response.headers.get("vary")).toBe("Cookie, Accept-Encoding");
     expect(mocks.render).toHaveBeenCalledWith(
       expect.objectContaining({
         price: "$39.99",
@@ -105,6 +110,29 @@ describe("offer OG routes", () => {
       }),
       format,
       undefined,
+    );
+  });
+
+  it("uses long shared cache headers and varies on the country cookie", async () => {
+    const unversioned = await app.request("/offers/offer/og.webp");
+    expect(unversioned.headers.get("cache-control")).toBe(
+      "public, max-age=86400, stale-while-revalidate=604800",
+    );
+    expect(unversioned.headers.get("cdn-cache-control")).toBe(
+      "public, max-age=2592000, stale-while-revalidate=604800",
+    );
+    expect(unversioned.headers.get("vary")).toBe("Cookie, Accept-Encoding");
+    expect(unversioned.headers.get("cache-control")).not.toContain("no-store");
+
+    const explicitCountry = await app.request(
+      "/offers/offer/og.webp?country=US",
+    );
+    expect(explicitCountry.headers.get("vary")).toBe("Accept-Encoding");
+    expect(explicitCountry.headers.get("cache-control")).toBe(
+      "public, max-age=86400, stale-while-revalidate=604800",
+    );
+    expect(explicitCountry.headers.get("cdn-cache-control")).toBe(
+      "public, max-age=2592000, stale-while-revalidate=604800",
     );
   });
 

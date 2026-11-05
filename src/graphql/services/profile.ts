@@ -3,6 +3,7 @@ import client from "../../clients/response-cache.js";
 import { db } from "../../db/index.js";
 import { AchievementSet, Offer, Review } from "../../models/index.js";
 import { getImage } from "../../utils/get-image.js";
+import { clampPage, clampPageSize } from "../pagination.js";
 
 type Document = Record<string, any>;
 
@@ -125,7 +126,6 @@ const PROFILE_ACHIEVEMENTS_TTL_SECONDS = 3600;
 const PROFILE_ACTIVITY_TTL_SECONDS = 60;
 const DEFAULT_LIMIT = 12;
 const DEFAULT_ACHIEVEMENT_LIMIT = 25;
-const MAX_LIMIT = 100;
 const PLATINUM_XP = 250;
 
 const GAME_IMAGE_TYPES: Parameters<typeof getImage>[1] = [
@@ -136,22 +136,6 @@ const GAME_IMAGE_TYPES: Parameters<typeof getImage>[1] = [
   "DieselStoreFrontTall",
   "OfferImageTall",
 ];
-
-function clampLimit(value: number | undefined, fallback: number) {
-  if (!value || Number.isNaN(value)) {
-    return fallback;
-  }
-
-  return Math.min(Math.max(Math.trunc(value), 1), MAX_LIMIT);
-}
-
-function clampPage(value: number | undefined) {
-  if (!value || Number.isNaN(value)) {
-    return 1;
-  }
-
-  return Math.max(Math.trunc(value), 1);
-}
 
 function roundPercent(value: number) {
   const clamped = Math.min(Math.max(value, 0), 100);
@@ -692,7 +676,7 @@ function sortGames(games: ProfileGame[], sort: ProfileGameSort) {
 }
 
 function paginate<T>(items: T[], limit: number, page: number) {
-  const resolvedLimit = clampLimit(limit, DEFAULT_LIMIT);
+  const resolvedLimit = clampPageSize(limit, DEFAULT_LIMIT);
   const resolvedPage = clampPage(page);
   const start = (resolvedPage - 1) * resolvedLimit;
 
@@ -873,7 +857,7 @@ export async function getFeaturedAchievements(
   limit: number | undefined,
   requestCache?: ProfileRequestCache,
 ) {
-  const resolvedLimit = clampLimit(limit, 8);
+  const resolvedLimit = clampPageSize(limit, 8);
 
   return memoize(
     requestCache,
@@ -896,7 +880,7 @@ export async function getRecentActivity(
   page: number | undefined,
   requestCache?: ProfileRequestCache,
 ) {
-  const resolvedLimit = clampLimit(limit, DEFAULT_LIMIT);
+  const resolvedLimit = clampPageSize(limit, DEFAULT_LIMIT);
   const resolvedPage = clampPage(page);
 
   return memoize(
@@ -933,7 +917,7 @@ export async function getFeaturedGames(
     requestCache,
   );
 
-  return games.slice(0, clampLimit(args.limit, 6));
+  return games.slice(0, clampPageSize(args.limit, 6));
 }
 
 export async function getProfileGameConnection(

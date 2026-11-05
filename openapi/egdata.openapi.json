@@ -1736,12 +1736,16 @@
           "Offers"
         ],
         "summary": "List offers with regional price data",
+        "description": "Returns compact offer cards by default; pass `expand=true` for full offer documents.",
         "parameters": [
           {
             "$ref": "#/components/parameters/country"
           },
           {
             "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
           },
           {
             "$ref": "#/components/parameters/page"
@@ -2061,6 +2065,9 @@
             "$ref": "#/components/parameters/locale"
           },
           {
+            "$ref": "#/components/parameters/expand"
+          },
+          {
             "$ref": "#/components/parameters/page"
           },
           {
@@ -2127,6 +2134,9 @@
             "$ref": "#/components/parameters/locale"
           },
           {
+            "$ref": "#/components/parameters/expand"
+          },
+          {
             "$ref": "#/components/parameters/page"
           },
           {
@@ -2191,6 +2201,9 @@
           },
           {
             "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
           }
         ],
         "x-egdata-visibility": "public",
@@ -2252,9 +2265,13 @@
           "Offers"
         ],
         "summary": "List top-selling offers",
+        "description": "Returns compact offer cards by default; pass `expand=true` for full offer documents.",
         "parameters": [
           {
             "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
           },
           {
             "$ref": "#/components/parameters/page"
@@ -2318,6 +2335,9 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
           },
           {
             "$ref": "#/components/parameters/page"
@@ -2384,6 +2404,9 @@
           },
           {
             "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
           }
         ],
         "x-egdata-visibility": "public",
@@ -2512,6 +2535,9 @@
           },
           {
             "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
           },
           {
             "$ref": "#/components/parameters/page"
@@ -2731,6 +2757,18 @@
           },
           {
             "$ref": "#/components/parameters/since"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum observations returned per region. Defaults to 500 and is capped at 2000.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2000,
+              "default": 500
+            }
           }
         ],
         "x-egdata-visibility": "public",
@@ -3071,17 +3109,24 @@
             "description": "1200 × 630 database summary with current price, UTC catalog update date, latest download size in decimal GB, and release date. Missing values are labeled explicitly.",
             "headers": {
               "Cache-Control": {
-                "description": "Public cache lifetime.",
+                "description": "Public cache lifetime. `v` selects the one-year immutable variant; otherwise one day with stale-while-revalidate.",
                 "schema": {
                   "type": "string",
-                  "example": "public, max-age=60"
+                  "example": "public, max-age=86400, stale-while-revalidate=604800"
+                }
+              },
+              "CDN-Cache-Control": {
+                "description": "Shared-cache lifetime for the generated image.",
+                "schema": {
+                  "type": "string",
+                  "example": "public, max-age=2592000, stale-while-revalidate=604800"
                 }
               },
               "Vary": {
-                "description": "Country cookies can change regional pricing.",
+                "description": "`Cookie, Accept-Encoding` without a country query parameter; `Accept-Encoding` when country is supplied.",
                 "schema": {
                   "type": "string",
-                  "example": "Cookie"
+                  "example": "Cookie, Accept-Encoding"
                 }
               }
             },
@@ -3175,17 +3220,24 @@
             "description": "1200 × 630 database summary with current price, UTC catalog update date, latest download size in decimal GB, and release date. Missing values are labeled explicitly.",
             "headers": {
               "Cache-Control": {
-                "description": "Public cache lifetime.",
+                "description": "Public cache lifetime. `v` selects the one-year immutable variant; otherwise one day with stale-while-revalidate.",
                 "schema": {
                   "type": "string",
-                  "example": "public, max-age=60"
+                  "example": "public, max-age=86400, stale-while-revalidate=604800"
+                }
+              },
+              "CDN-Cache-Control": {
+                "description": "Shared-cache lifetime for the generated image.",
+                "schema": {
+                  "type": "string",
+                  "example": "public, max-age=2592000, stale-while-revalidate=604800"
                 }
               },
               "Vary": {
-                "description": "Country cookies can change regional pricing.",
+                "description": "`Cookie, Accept-Encoding` without a country query parameter; `Accept-Encoding` when country is supplied.",
                 "schema": {
                   "type": "string",
-                  "example": "Cookie"
+                  "example": "Cookie, Accept-Encoding"
                 }
               }
             },
@@ -3747,6 +3799,9 @@
           },
           {
             "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
           }
         ],
         "x-egdata-visibility": "public",
@@ -3931,6 +3986,9 @@
           },
           {
             "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
           }
         ],
         "x-egdata-visibility": "public",
@@ -4367,6 +4425,9 @@
           },
           {
             "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
           }
         ],
         "x-egdata-visibility": "public",
@@ -4495,6 +4556,9 @@
           },
           {
             "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
           }
         ],
         "x-egdata-visibility": "public",
@@ -4583,6 +4647,9 @@
           },
           {
             "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
           }
         ],
         "x-egdata-visibility": "public",
@@ -5297,8 +5364,11 @@
           "Items"
         ],
         "summary": "List catalog items",
-        "description": "Returns paginated Epic catalog items sorted by last modification date.",
+        "description": "Returns paginated Epic catalog items sorted by last modification date. Responses use a compact item projection by default; pass `expand=true` for full item documents.",
         "parameters": [
+          {
+            "$ref": "#/components/parameters/expand"
+          },
           {
             "$ref": "#/components/parameters/page"
           },
@@ -5969,10 +6039,24 @@
             "description": "1200 × 630 sandbox summary with offer, item, and asset counts, base-game identity, and the sandbox's UTC update date. Artwork is optional and missing dates are labeled explicitly.",
             "headers": {
               "Cache-Control": {
-                "description": "Public cache lifetime. Sandbox summaries are country-independent.",
+                "description": "Public cache lifetime. Sandbox summaries are country-independent. `v` selects the one-year immutable variant.",
                 "schema": {
                   "type": "string",
-                  "example": "public, max-age=60"
+                  "example": "public, max-age=86400, stale-while-revalidate=604800"
+                }
+              },
+              "CDN-Cache-Control": {
+                "description": "Shared-cache lifetime for the generated image.",
+                "schema": {
+                  "type": "string",
+                  "example": "public, max-age=2592000, stale-while-revalidate=604800"
+                }
+              },
+              "Vary": {
+                "description": "Responses vary by accepted content encoding.",
+                "schema": {
+                  "type": "string",
+                  "example": "Accept-Encoding"
                 }
               }
             },
@@ -6046,10 +6130,24 @@
             "description": "1200 × 630 sandbox summary with offer, item, and asset counts, base-game identity, and the sandbox's UTC update date. Artwork is optional and missing dates are labeled explicitly.",
             "headers": {
               "Cache-Control": {
-                "description": "Public cache lifetime. Sandbox summaries are country-independent.",
+                "description": "Public cache lifetime. Sandbox summaries are country-independent. `v` selects the one-year immutable variant.",
                 "schema": {
                   "type": "string",
-                  "example": "public, max-age=60"
+                  "example": "public, max-age=86400, stale-while-revalidate=604800"
+                }
+              },
+              "CDN-Cache-Control": {
+                "description": "Shared-cache lifetime for the generated image.",
+                "schema": {
+                  "type": "string",
+                  "example": "public, max-age=2592000, stale-while-revalidate=604800"
+                }
+              },
+              "Vary": {
+                "description": "Responses vary by accepted content encoding.",
+                "schema": {
+                  "type": "string",
+                  "example": "Accept-Encoding"
                 }
               }
             },
@@ -6785,6 +6883,9 @@
             "$ref": "#/components/parameters/locale"
           },
           {
+            "$ref": "#/components/parameters/expand"
+          },
+          {
             "$ref": "#/components/parameters/page"
           },
           {
@@ -7147,6 +7248,251 @@
             }
           }
         }
+      },
+      "get": {
+        "operationId": "searchOffersV2Get",
+        "tags": [
+          "Search"
+        ],
+        "summary": "Search offers with query parameters (edge-cacheable)",
+        "description": "Query-parameter alias of POST /search/v2/search. Intended for browser and edge-cacheable searches. Returns compact offer cards by default; pass expand=true for full offer documents.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/country"
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/facets"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "required": false,
+            "description": "Title or descriptive text search.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offerType",
+            "in": "query",
+            "required": false,
+            "description": "Exact offer type filter.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated tag IDs. Every tag must match.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categories",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated category names.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customAttributes",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated custom attribute values.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "seller",
+            "in": "query",
+            "required": false,
+            "description": "Seller id or name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "developerDisplayName",
+            "in": "query",
+            "required": false,
+            "description": "Exact developer display name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "publisherDisplayName",
+            "in": "query",
+            "required": false,
+            "description": "Exact publisher display name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "refundType",
+            "in": "query",
+            "required": false,
+            "description": "Refund type filter.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "description": "Sort field, for example lastModifiedDate.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDir",
+            "in": "query",
+            "required": false,
+            "description": "Sort direction: asc or desc.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "technologies",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated detected build technologies.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "priceMin",
+            "in": "query",
+            "required": false,
+            "description": "Minimum discount price in minor units.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "priceMax",
+            "in": "query",
+            "required": false,
+            "description": "Maximum discount price in minor units.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isCodeRedemptionOnly",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "excludeBlockchain",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "onSale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "pastGiveaways",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "isLowestPrice",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "isLowestPriceEver",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          }
+        ],
+        "x-egdata-visibility": "public",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/search/natural-language": {
@@ -7244,8 +7590,9 @@
         "tags": [
           "Search"
         ],
-        "summary": "Search offers with the legacy Mongo-backed implementation",
-        "description": "Legacy search endpoint retained for compatibility. New integrations should prefer POST /search/v2/search.",
+        "summary": "Deprecated legacy search endpoint",
+        "description": "Always returns 410 Gone. Use POST /search/v2/search or GET /search/v2/search instead.",
+        "deprecated": true,
         "parameters": [
           {
             "$ref": "#/components/parameters/country"
@@ -7256,7 +7603,7 @@
         ],
         "requestBody": {
           "required": true,
-          "description": "Search filters and sort options.",
+          "description": "Ignored legacy search filters.",
           "content": {
             "application/json": {
               "schema": {
@@ -7272,29 +7619,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "elements",
-                    "page",
-                    "limit",
-                    "query"
-                  ],
-                  "additionalProperties": false,
-                  "properties": {
-                    "elements": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Offer"
+                  "410": {
+                    "description": "The legacy search endpoint has been retired.",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/ErrorResponse"
+                        }
                       }
-                    },
-                    "page": {
-                      "type": "integer"
-                    },
-                    "limit": {
-                      "type": "integer"
-                    },
-                    "query": {
-                      "type": "string"
                     }
                   }
                 }
@@ -8077,6 +8409,7 @@
           "Sellers"
         ],
         "summary": "List offers for a seller",
+        "description": "Returns compact offer cards by default. The default page size is 20; `limit` is capped at 100. Pass `expand=true` for full offer documents.",
         "parameters": [
           {
             "$ref": "#/components/parameters/sellerId"
@@ -8086,6 +8419,9 @@
           },
           {
             "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
           },
           {
             "$ref": "#/components/parameters/page"
@@ -8667,6 +9003,31 @@
           "type": "integer",
           "minimum": 1,
           "default": 1
+        }
+      },
+      "expand": {
+        "name": "expand",
+        "in": "query",
+        "required": false,
+        "description": "Set to `true` to return full offer documents from list endpoints instead of the default compact offer cards. Compact cards omit long descriptions, tags, items, custom attributes, mappings, and all but four key images.",
+        "schema": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "facets": {
+        "name": "facets",
+        "in": "query",
+        "required": false,
+        "description": "Facet detail for GET /search/v2/search. `minimal` returns offer type and technology buckets, `full` adds tag/developer/publisher/seller buckets, and `none` omits aggregations.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "minimal",
+            "full",
+            "none"
+          ],
+          "default": "minimal"
         }
       },
       "offerId": {
@@ -10371,6 +10732,16 @@
           },
           "isLowestPriceEver": {
             "type": "boolean"
+          },
+          "facets": {
+            "type": "string",
+            "enum": [
+              "minimal",
+              "full",
+              "none"
+            ],
+            "default": "minimal",
+            "description": "Facet detail. `minimal` keeps offer type and technology buckets, `full` adds tag/developer/publisher/seller buckets, `none` omits aggregations."
           }
         }
       },
@@ -10482,6 +10853,16 @@
           },
           "isLowestPriceEver": {
             "type": "boolean"
+          },
+          "facets": {
+            "type": "string",
+            "enum": [
+              "minimal",
+              "full",
+              "none"
+            ],
+            "default": "minimal",
+            "description": "Facet detail. `minimal` keeps offer type and technology buckets, `full` adds tag/developer/publisher/seller buckets, `none` omits aggregations."
           },
           "technologies": {
             "type": "array",

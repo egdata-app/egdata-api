@@ -9,6 +9,7 @@ import {
   PriceEngine,
 } from "../models/index.js";
 import { regions } from "../utils/countries.js";
+import { toOfferCards, wantsExpandedOffers } from "../utils/offer-card.js";
 import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
@@ -18,6 +19,11 @@ import {
 import { orderOffersObject } from "../utils/order-offers-object.js";
 
 const app = new Hono();
+
+const LIST_CACHE_CONTROL =
+  "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
+const LIST_CDN_CACHE_CONTROL =
+  "public, max-age=300, stale-while-revalidate=3600";
 
 app.get("/:slug", async (c) => {
   const { slug } = c.req.param();
@@ -48,12 +54,16 @@ app.get("/:slug", async (c) => {
   const skip = (page - 1) * limit;
 
   const start = new Date();
-  const cacheKey = `franchises:${slug}:${region}:${page}:${limit}:${localeCacheSegment(locale)}:v0.1`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `franchises:${slug}:${region}:${page}:${limit}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }:v0.1`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
+      "Cache-Control": LIST_CACHE_CONTROL,
+      "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
     });
   }
 
@@ -70,23 +80,30 @@ app.get("/:slug", async (c) => {
   const offerIds = franchise.offers || [];
 
   if (offerIds.length === 0) {
-    return c.json({
-      id: franchise._id,
-      name: franchise.name,
-      lastUpdated: franchise.lastUpdated,
-      elements: [],
-      stats: {
-        totalTimeHastily: 0,
-        totalTimeNormally: 0,
-        totalTimeCompletely: 0,
-        totalAchievements: 0,
-        totalXp: 0,
-        gamesCount: 0,
+    return c.json(
+      {
+        id: franchise._id,
+        name: franchise.name,
+        lastUpdated: franchise.lastUpdated,
+        elements: [],
+        stats: {
+          totalTimeHastily: 0,
+          totalTimeNormally: 0,
+          totalTimeCompletely: 0,
+          totalAchievements: 0,
+          totalXp: 0,
+          gamesCount: 0,
+        },
+        page,
+        limit,
+        total: 0,
       },
-      page,
-      limit,
-      total: 0,
-    });
+      200,
+      {
+        "Cache-Control": LIST_CACHE_CONTROL,
+        "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
+      },
+    );
   }
 
   // Fetch offers for the current page
@@ -112,17 +129,18 @@ app.get("/:slug", async (c) => {
     region,
   });
 
+  const priceByOfferId = new Map(prices.map((price) => [price.offerId, price]));
+
   // Map offers with prices
-  const elements = await localizeOffers(
-    offers.map((o) => {
-      const price = prices.find((p) => p.offerId === o.id);
-      return {
-        ...orderOffersObject(o),
-        price: price ?? null,
-      };
-    }),
-    locale,
-  );
+  const elements = expand
+    ? await localizeOffers(
+        offers.map((o) => ({
+          ...orderOffersObject(o),
+          price: priceByOfferId.get(o.id) ?? null,
+        })),
+        locale,
+      )
+    : await toOfferCards(offers, locale, priceByOfferId);
 
   // Calculate stats for all offers in the franchise
   // 1. Achievements
@@ -192,7 +210,8 @@ app.get("/:slug", async (c) => {
   );
 
   return c.json(result, 200, {
-    "Cache-Control": "public, max-age=60",
+    "Cache-Control": LIST_CACHE_CONTROL,
+    "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
     "Server-Timing": `db;dur=${new Date().getTime() - start.getTime()}`,
   });
 });

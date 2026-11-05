@@ -70,7 +70,13 @@ describe("sandbox OG routes", () => {
     const response = await app.request(`/sandboxes/sandbox/${path}?v=123`);
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toBe(`image/${format}`);
-    expect(response.headers.get("cache-control")).toBe("public, max-age=60");
+    expect(response.headers.get("cache-control")).toBe(
+      "public, max-age=31536000, immutable",
+    );
+    expect(response.headers.get("cdn-cache-control")).toBe(
+      "public, max-age=31536000, stale-while-revalidate=604800",
+    );
+    expect(response.headers.get("vary")).toBe("Accept-Encoding");
     expect(mocks.sandbox).toHaveBeenCalledWith({ _id: { $eq: "sandbox" } });
     expect(mocks.offers).toHaveBeenCalledWith({ namespace: "sandbox" });
     expect(mocks.render).toHaveBeenCalledWith(
@@ -99,6 +105,19 @@ describe("sandbox OG routes", () => {
       { sort: { creationDate: 1, id: 1 } },
     );
     expect(mocks.itemIdentity).not.toHaveBeenCalled();
+  });
+
+  it("uses long country-independent cache headers without a version", async () => {
+    const response = await app.request("/sandboxes/sandbox/og");
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe(
+      "public, max-age=86400, stale-while-revalidate=604800",
+    );
+    expect(response.headers.get("cdn-cache-control")).toBe(
+      "public, max-age=2592000, stale-while-revalidate=604800",
+    );
+    expect(response.headers.get("vary")).toBe("Accept-Encoding");
+    expect(response.headers.get("cache-control")).not.toContain("no-store");
   });
 
   it.each([

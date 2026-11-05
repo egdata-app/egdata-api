@@ -1,15 +1,67 @@
+import { createHash } from "node:crypto";
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import { opensearch } from "../clients/opensearch.js";
-import { Seller } from "../models/index.js";
+import client from "../clients/response-cache.js";
+import {
+  type OfferType,
+  type PriceEngineType,
+  Seller,
+} from "../models/index.js";
 import { attributesToObject } from "../utils/attributes-to-object.js";
 import { regions } from "../utils/countries.js";
+import { toOfferCards, wantsExpandedOffers } from "../utils/offer-card.js";
 import {
   getLocaleOrErrorResponse,
+  getLocalizedCacheTtlSeconds,
+  localeCacheSegment,
   localizeOffers,
 } from "../utils/offer-localization.js";
 
 const app = new Hono();
+
+const MULTISEARCH_OFFERS_DEFAULT_LIMIT = 10;
+const MULTISEARCH_OFFERS_MAX_LIMIT = 50;
+
+const MULTISEARCH_ITEMS_DEFAULT_LIMIT = 10;
+const MULTISEARCH_ITEMS_MAX_LIMIT = 50;
+
+const CACHE_HEADERS = {
+  "Cache-Control": "public, max-age=60, s-maxage=300",
+  "CDN-Cache-Control": "public, max-age=300",
+} as const;
+
+const ITEM_CARD_SOURCE_FIELDS = [
+  "id",
+  "namespace",
+  "title",
+  "description",
+  "keyImages",
+  "categories",
+  "customAttributes",
+  "developer",
+  "entitlementType",
+  "releaseInfo",
+  "status",
+  "lastModifiedDate",
+];
+
+const parseBoundedLimit = (
+  value: string | undefined,
+  fallback: number,
+  maximum: number,
+) => {
+  const parsed = Number.parseInt(value ?? "", 10);
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return fallback;
+  }
+  return Math.min(parsed, maximum);
+};
+
+const parsePage = (value: string | undefined) => {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed >= 1 ? parsed : 1;
+};
 
 app.get("/", (c) => {
   return c.json({ message: "Hello, World!" });
@@ -46,9 +98,14 @@ app.get("/offers", async (c) => {
   const isLowestPriceEver = c.req.query("isLowestPriceEver");
   const sortBy = c.req.query("sortBy");
   const sortDir = c.req.query("sortDir") as "asc" | "desc" | undefined;
-  const limit = Math.min(Number(c.req.query("limit")) || 10, 100);
-  const page = Math.max(Number(c.req.query("page")) || 1, 1);
+  const limit = parseBoundedLimit(
+    c.req.query("limit"),
+    MULTISEARCH_OFFERS_DEFAULT_LIMIT,
+    MULTISEARCH_OFFERS_MAX_LIMIT,
+  );
+  const page = parsePage(c.req.query("page"));
   const from = (page - 1) * limit;
+  const expand = wantsExpandedOffers(c);
 
   if (query?.includes("store.epicgames.com")) {
     const isUrl = URL.canParse(query);
@@ -250,38 +307,88 @@ app.get("/offers", async (c) => {
     sort.push({ _score: { order: "desc" } });
   }
 
+  const searchBody = {
+    from,
+    size: limit,
+    query: { bool: { must, filter } },
+    sort,
+  };
+  const queryHash = createHash("sha256")
+    .update(JSON.stringify(searchBody))
+    .digest("hex");
+  const cacheKey = `multisearch:offers:${region}:${page}:${limit}:${
+    expand ? "full" : "card"
+  }:${localeCacheSegment(locale)}:${queryHash}`;
+
+  const cached = await client.get(cacheKey);
+
+  if (cached) {
+    return c.json(JSON.parse(cached), 200, CACHE_HEADERS);
+  }
+
   const response = await opensearch.search({
     index: "egdata.offers",
-    body: {
-      from,
-      size: limit,
-      query: { bool: { must, filter } },
-      sort,
-    },
+    body: searchBody,
   });
 
-  const hits = response.body.hits.hits.map((hit) => {
-    const source = hit._source || {};
-    return {
+  // The index stores a price document for every region on every hit. Keep only
+  // the requested region's price and drop the rest before responding.
+  const offerDocs: OfferType[] = [];
+  const priceByOfferId = new Map<string, PriceEngineType | null>();
+
+  for (const hit of response.body.hits.hits) {
+    const source = (hit._source ?? {}) as OfferType & {
+      prices?: Record<string, PriceEngineType>;
+    };
+    const doc: OfferType = {
       ...source,
       _id: hit._id,
     };
-  });
+    priceByOfferId.set(doc.id, source.prices?.[region] ?? null);
+    delete doc.prices;
+    offerDocs.push(doc);
+  }
+
+  const hits = expand
+    ? await localizeOffers(
+        offerDocs.map((doc) => ({
+          ...doc,
+          price: priceByOfferId.get(doc.id) ?? null,
+        })),
+        locale,
+      )
+    : await toOfferCards(offerDocs, locale, priceByOfferId);
 
   const total = response.body.hits.total;
   const estimatedTotalHits =
     typeof total === "number" ? total : (total?.value ?? 0);
 
-  return c.json({
-    hits: await localizeOffers(hits, locale),
+  const result = {
+    hits,
     estimatedTotalHits,
     processingTimeMs: response.body.took,
     query: query || "",
-  });
+  };
+
+  await client.set(
+    cacheKey,
+    JSON.stringify(result),
+    "EX",
+    getLocalizedCacheTtlSeconds(result, 300),
+  );
+
+  return c.json(result, 200, CACHE_HEADERS);
 });
 
 app.get("/items", async (c) => {
   const { query, type: entitlementType } = c.req.query();
+  const limit = parseBoundedLimit(
+    c.req.query("limit"),
+    MULTISEARCH_ITEMS_DEFAULT_LIMIT,
+    MULTISEARCH_ITEMS_MAX_LIMIT,
+  );
+  const page = parsePage(c.req.query("page"));
+  const from = (page - 1) * limit;
 
   const must: Array<Record<string, unknown>> = [];
   const filter: Array<Record<string, unknown>> = [
@@ -304,6 +411,11 @@ app.get("/items", async (c) => {
   const response = await opensearch.search({
     index: "egdata.items",
     body: {
+      from,
+      size: limit,
+      ...(wantsExpandedOffers(c)
+        ? {}
+        : { _source: ITEM_CARD_SOURCE_FIELDS }),
       query: { bool: { must, filter } },
       sort: [{ lastModifiedDate: { order: "desc" } }],
     },
@@ -324,12 +436,16 @@ app.get("/items", async (c) => {
   const estimatedTotalHits =
     typeof total === "number" ? total : (total?.value ?? 0);
 
-  return c.json({
-    hits,
-    estimatedTotalHits,
-    processingTimeMs: response.body.took,
-    query: query || "",
-  });
+  return c.json(
+    {
+      hits,
+      estimatedTotalHits,
+      processingTimeMs: response.body.took,
+      query: query || "",
+    },
+    200,
+    CACHE_HEADERS,
+  );
 });
 
 app.get("/sellers", async (c) => {

@@ -31,6 +31,11 @@ import {
   resolveGraphqlLocale,
   withOfferLocalizationProjection,
 } from "../locale.js";
+import { clampPage, clampPageSize } from "../pagination.js";
+
+const LATEST_ACHIEVEMENTS_PAGE_SIZE = 15;
+const LATEST_ACHIEVEMENTS_RESULT_LIMIT = 20;
+const MAX_LATEST_ACHIEVEMENT_SCAN_PAGES = 10;
 
 const resolvers: IResolvers<any, Context> = {
   Query: {
@@ -45,17 +50,19 @@ const resolvers: IResolvers<any, Context> = {
     },
     offers: async (
       _,
-      { limit = 10, page = 1, country = "US", locale: requestedLocale },
+      { limit, page, country = "US", locale: requestedLocale },
     ) => {
+      const resolvedLimit = clampPageSize(limit);
+      const resolvedPage = clampPage(page);
       const locale = resolveGraphqlLocale({ locale: requestedLocale });
-      const skip = (page - 1) * limit;
+      const skip = (resolvedPage - 1) * resolvedLimit;
       const region =
         Object.keys(regions).find((r) =>
           regions[r].countries.includes(country),
         ) || "US";
 
       const elements = await Offer.find({}, undefined, {
-        limit,
+        limit: resolvedLimit,
         skip,
         sort: { lastModifiedDate: -1 },
       }).lean();
@@ -77,13 +84,15 @@ const resolvers: IResolvers<any, Context> = {
           locale,
         ),
         total: await Offer.countDocuments(),
-        page,
-        limit,
+        page: resolvedPage,
+        limit: resolvedLimit,
       };
     },
-    upcoming: async (_, { limit = 15, page = 1, locale: requestedLocale }) => {
+    upcoming: async (_, { limit, page, locale: requestedLocale }) => {
+      const resolvedLimit = clampPageSize(limit, 15);
+      const resolvedPage = clampPage(page);
       const locale = resolveGraphqlLocale({ locale: requestedLocale });
-      const skip = (page - 1) * limit;
+      const skip = (resolvedPage - 1) * resolvedLimit;
 
       const elements = await Offer.aggregate([
         {
@@ -98,7 +107,7 @@ const resolvers: IResolvers<any, Context> = {
         },
         { $sort: { releaseDate: 1 } },
         { $skip: skip },
-        { $limit: limit },
+        { $limit: resolvedLimit },
       ]);
 
       return {
@@ -106,16 +115,15 @@ const resolvers: IResolvers<any, Context> = {
         total: await Offer.countDocuments({
           releaseDate: { $gt: new Date() },
         }),
-        page,
-        limit,
+        page: resolvedPage,
+        limit: resolvedLimit,
       };
     },
-    latestReleased: async (
-      _,
-      { limit = 10, page = 1, locale: requestedLocale },
-    ) => {
+    latestReleased: async (_, { limit, page, locale: requestedLocale }) => {
+      const resolvedLimit = clampPageSize(limit);
+      const resolvedPage = clampPage(page);
       const locale = resolveGraphqlLocale({ locale: requestedLocale });
-      const skip = (page - 1) * limit;
+      const skip = (resolvedPage - 1) * resolvedLimit;
       const elements = await Offer.find(
         {
           effectiveDate: { $lte: new Date() },
@@ -123,7 +131,7 @@ const resolvers: IResolvers<any, Context> = {
           releaseDate: { $ne: null, $lte: new Date() },
         },
         undefined,
-        { sort: { releaseDate: -1 }, limit, skip },
+        { sort: { releaseDate: -1 }, limit: resolvedLimit, skip },
       ).lean();
       return {
         elements: await localizeOffers(elements.map(orderOffersObject), locale),
@@ -131,22 +139,21 @@ const resolvers: IResolvers<any, Context> = {
           releaseDate: { $ne: null },
           offerType: { $in: ["BASE_GAME"] },
         }),
-        page,
-        limit,
+        page: resolvedPage,
+        limit: resolvedLimit,
       };
     },
-    topSellers: async (
-      _,
-      { limit = 10, page = 1, locale: requestedLocale },
-    ) => {
+    topSellers: async (_, { limit, page, locale: requestedLocale }) => {
+      const resolvedLimit = clampPageSize(limit);
+      const resolvedPage = clampPage(page);
       const locale = resolveGraphqlLocale({ locale: requestedLocale });
-      const skip = (page - 1) * limit;
+      const skip = (resolvedPage - 1) * resolvedLimit;
       const positions = await GamePosition.find({
         collectionId: "top-sellers",
         position: { $gt: 0 },
       })
         .sort({ position: 1 })
-        .limit(limit)
+        .limit(resolvedLimit)
         .skip(skip)
         .lean();
       const offers = await Offer.find({
@@ -167,22 +174,21 @@ const resolvers: IResolvers<any, Context> = {
           collectionId: "top-sellers",
           position: { $gt: 0 },
         }),
-        page,
-        limit,
+        page: resolvedPage,
+        limit: resolvedLimit,
       };
     },
-    topWishlisted: async (
-      _,
-      { limit = 10, page = 1, locale: requestedLocale },
-    ) => {
+    topWishlisted: async (_, { limit, page, locale: requestedLocale }) => {
+      const resolvedLimit = clampPageSize(limit);
+      const resolvedPage = clampPage(page);
       const locale = resolveGraphqlLocale({ locale: requestedLocale });
-      const skip = (page - 1) * limit;
+      const skip = (resolvedPage - 1) * resolvedLimit;
       const positions = await GamePosition.find({
         collectionId: "top-wishlisted",
         position: { $gt: 0 },
       })
         .sort({ position: 1 })
-        .limit(limit)
+        .limit(resolvedLimit)
         .skip(skip)
         .lean();
       const offers = await Offer.find({
@@ -203,8 +209,8 @@ const resolvers: IResolvers<any, Context> = {
           collectionId: "top-wishlisted",
           position: { $gt: 0 },
         }),
-        page,
-        limit,
+        page: resolvedPage,
+        limit: resolvedLimit,
       };
     },
     featuredDiscounts: async (
@@ -245,10 +251,12 @@ const resolvers: IResolvers<any, Context> = {
     },
     event: async (
       _,
-      { id, limit = 10, page = 1, country = "US", locale: requestedLocale },
+      { id, limit, page, country = "US", locale: requestedLocale },
     ) => {
+      const resolvedLimit = clampPageSize(limit);
+      const resolvedPage = clampPage(page);
       const locale = resolveGraphqlLocale({ locale: requestedLocale });
-      const skip = (page - 1) * limit;
+      const skip = (resolvedPage - 1) * resolvedLimit;
       const region =
         Object.keys(regions).find((r) =>
           regions[r].countries.includes(country),
@@ -286,7 +294,7 @@ const resolvers: IResolvers<any, Context> = {
         { $unwind: { path: "$price", preserveNullAndEmptyArrays: true } },
         { $sort: { "price.price.discount": -1 } },
         { $skip: skip },
-        { $limit: limit },
+        { $limit: resolvedLimit },
       ]);
 
       return {
@@ -294,8 +302,8 @@ const resolvers: IResolvers<any, Context> = {
         total: await Offer.countDocuments({
           tags: { $elemMatch: { id: { $eq: id } } },
         }),
-        page,
-        limit,
+        page: resolvedPage,
+        limit: resolvedLimit,
       };
     },
     genres: async (_, { locale: requestedLocale }) => {
@@ -341,10 +349,14 @@ const resolvers: IResolvers<any, Context> = {
         Object.keys(regions).find((r) =>
           regions[r].countries.includes(country),
         ) || "US";
-      const limit = 15;
+      const limit = LATEST_ACHIEVEMENTS_PAGE_SIZE;
       let skip = 0;
+      let scannedPages = 0;
       let result: any[] = [];
-      while (result.length < 20) {
+      while (
+        result.length < LATEST_ACHIEVEMENTS_RESULT_LIMIT &&
+        scannedPages < MAX_LATEST_ACHIEVEMENT_SCAN_PAGES
+      ) {
         const offers = await Offer.find({
           offerType: { $in: ["BASE_GAME"] },
           "tags.id": "19847",
@@ -380,9 +392,13 @@ const resolvers: IResolvers<any, Context> = {
 
         result = result.concat(pageResults);
         skip += limit;
+        scannedPages += 1;
         if (offers.length < limit) break;
       }
-      return localizeOffers(result.slice(0, 20), locale);
+      return localizeOffers(
+        result.slice(0, LATEST_ACHIEVEMENTS_RESULT_LIMIT),
+        locale,
+      );
     },
   },
   Offer: {
@@ -516,7 +532,7 @@ const resolvers: IResolvers<any, Context> = {
     allOffers: async (parent, { locale: requestedLocale }) => {
       const locale = resolveGraphqlLocale({ locale: requestedLocale });
       const offers = await Offer.find({
-        id: { $in: parent.offers || [] },
+        id: { $in: (parent.offers || []).slice(0, 500) },
       }).lean();
 
       return localizeOffers(offers.map(orderOffersObject), locale);

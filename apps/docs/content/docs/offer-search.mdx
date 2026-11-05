@@ -5,7 +5,7 @@ description: Search the catalog, combine filters, and order results.
 
 Use `POST /search/v2/search` to find store offers by title and filter them by offer type, tags, seller, developer, publisher, category, detected technology, or regional price. Send the visitor's two-letter country code as `country` so price filters and returned prices use the right region.
 
-Results are cached separately by filters, sorting, price region, locale, page, and page size. A reused response sets `meta.cached` to `true`; cache hits skip OpenSearch and do not rewrite the cached result.
+For cacheable browser searches, use the query-parameter alias `GET /search/v2/search`. It accepts the same filters as flat query parameters (`title`, `offerType`, `tags`, `categories`, `customAttributes`, `seller`, `developerDisplayName`, `publisherDisplayName`, `sortBy`, `sortDir`, `limit`, `page`, `facets`, `technologies`, `priceMin`, `priceMax`, and the boolean filters) and can be cached at the edge.
 
 ```js
 const response = await fetch(
@@ -21,13 +21,20 @@ const response = await fetch(
       sortDir: "desc",
       page: 1,
       limit: 20,
+      facets: "minimal",
     }),
   },
 );
 const result = await response.json();
 ```
 
-The response contains a total count, matching offers, the requested page and limit, and filter aggregations. Each offer includes a `price` for the selected region, or `null` when no regional price is available.
+The response contains a total count, matching offers, the requested page and limit, facet aggregations, and metadata. By default `offers` contains compact offer cards (id, namespace, title, type, slugs, up to four key images, seller, developer/publisher, dates, and regional price). Pass `expand=true` on the URL to receive full offer documents from a list response.
+
+Facets are controlled with `facets`:
+
+- `minimal` (default) returns offer type and technology buckets only.
+- `full` adds tag, developer, publisher, and seller buckets (each capped at 100–1000 buckets).
+- `none` omits aggregations entirely.
 
 ```json
 {
@@ -38,8 +45,10 @@ The response contains a total count, matching offers, the requested page and lim
 }
 ```
 
-`title` searches titles and related text with fuzzy and synonym matching. Filters can be combined. `tags` requires all supplied tag IDs; `technologies` requires every named detected technology. The response always includes technology buckets under `aggregations.technologies.buckets`.
+`title` searches titles and related text with fuzzy and synonym matching. Filters can be combined. `tags` requires all supplied tag IDs; `technologies` requires every named detected technology.
 
 `page` starts at 1. `limit` defaults to 10 and is capped at 100. Without `sortBy`, text searches rank by relevance and other searches sort by most recently modified. Common `sortBy` values include `releaseDate`, `lastModifiedDate`, `price`, `discount`, `discountPercent`, `priceUpdatedAt`, `upcoming`, and `giveawayDate`; `sortDir` is `asc` or `desc` and defaults to `desc`. Set `sortBy: "price"` and `sortDir: "asc"` for the lowest price first. Price sorting uses the selected country's region. Some release date sorts also restrict results to future or released offers.
+
+The legacy `GET`/`POST /search` routes now return `410 Gone` with code `DEPRECATED`; use search v2 instead. Existing saved-query hashes can still be read through `GET /search/{id}`.
 
 For meaning-based queries, see [natural-language search](/docs/natural-language-search).

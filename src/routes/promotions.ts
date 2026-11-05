@@ -3,6 +3,7 @@ import { getCookie } from "hono/cookie";
 import client from "../clients/response-cache.js";
 import { Offer, PriceEngine, Tags } from "../models/index.js";
 import { regions } from "../utils/countries.js";
+import { toOfferCards, wantsExpandedOffers } from "../utils/offer-card.js";
 import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
@@ -24,6 +25,11 @@ type SortBy =
   | "price";
 
 const app = new Hono();
+
+const LIST_CACHE_CONTROL =
+  "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
+const LIST_CDN_CACHE_CONTROL =
+  "public, max-age=300, stale-while-revalidate=3600";
 
 app.get("/", async (c) => {
   const events = await Tags.find(
@@ -74,16 +80,18 @@ app.get("/:id", async (c) => {
 
   const sortBy = (c.req.query("sortBy") ?? "lastModifiedDate") as SortBy;
   const sortDir = (c.req.query("sortDir") ?? "desc") as "asc" | "desc";
+  const expand = wantsExpandedOffers(c);
 
   const cacheKey = `promotion:${id}:${region}:${page}:${limit}:${sortBy}:${sortDir}:${
     query ?? "no-query"
-  }:${localeCacheSegment(locale)}:v0.1`;
+  }:${localeCacheSegment(locale)}:${expand ? "full" : "card"}:v0.1`;
 
   const cached = await client.get(cacheKey);
 
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
+      "Cache-Control": LIST_CACHE_CONTROL,
+      "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
     });
   }
 
@@ -215,11 +223,18 @@ app.get("/:id", async (c) => {
       region,
       offerId: { $in: offers.map((o) => o.id) },
     });
+    const pricesByOfferId = new Map(
+      prices.map((price) => [price.offerId, price]),
+    );
 
     offers.forEach((o) => {
-      o.price = prices.find((p) => p.offerId === o.id) ?? null;
+      o.price = pricesByOfferId.get(o.id) ?? null;
     });
   }
+
+  const priceByOfferId = new Map(
+    offers.map((offer) => [offer.id, offer.price ?? null]),
+  );
 
   const result: {
     elements: unknown[];
@@ -228,7 +243,9 @@ app.get("/:id", async (c) => {
     page: number;
     count: number;
   } = {
-    elements: await localizeOffers(offers, locale),
+    elements: expand
+      ? await localizeOffers(offers, locale)
+      : await toOfferCards(offers, locale, priceByOfferId),
     title: event.name ?? "",
     start: skip,
     page,
@@ -254,7 +271,8 @@ app.get("/:id", async (c) => {
   );
 
   return c.json(result, 200, {
-    "Cache-Control": "public, max-age=60",
+    "Cache-Control": LIST_CACHE_CONTROL,
+    "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
   });
 });
 

@@ -25,6 +25,7 @@ const app = new Hono();
 
 async function sandboxOg(c: Context, format: "png" | "webp") {
   const sandboxId = c.req.param("sandboxId");
+  const versioned = Boolean(c.req.query("v"));
   const sandbox = await db.db
     .collection<SandboxOgDocument>("sandboxes")
     .findOne({ _id: { $eq: sandboxId } });
@@ -111,7 +112,13 @@ async function sandboxOg(c: Context, format: "png" | "webp") {
   const buffer = await renderDatabaseOg(card, format, cover);
   return c.body(new Uint8Array(buffer), 200, {
     "Content-Type": `image/${format}`,
-    "Cache-Control": "public, max-age=60",
+    "Cache-Control": versioned
+      ? "public, max-age=31536000, immutable"
+      : "public, max-age=86400, stale-while-revalidate=604800",
+    "CDN-Cache-Control": versioned
+      ? "public, max-age=31536000, stale-while-revalidate=604800"
+      : "public, max-age=2592000, stale-while-revalidate=604800",
+    Vary: "Accept-Encoding",
   });
 }
 

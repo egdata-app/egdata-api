@@ -1,5 +1,6 @@
 import type { IResolvers } from "@graphql-tools/utils";
 import type { Context } from "../index.js";
+import { clampPage, clampPageSize } from "../pagination.js";
 import {
   getFeaturedAchievements,
   getFeaturedGames,
@@ -49,7 +50,7 @@ const resolvers: IResolvers<Record<string, unknown>, Context> = {
     ) => {
       return getFeaturedAchievements(
         parent.accountId,
-        limit,
+        clampPageSize(limit, 8),
         getProfileRequestCache(context),
       );
     },
@@ -60,7 +61,7 @@ const resolvers: IResolvers<Record<string, unknown>, Context> = {
     ) => {
       return getFeaturedGames(
         parent.accountId,
-        { filter, limit, sort },
+        { filter, limit: clampPageSize(limit, 6), sort },
         getProfileRequestCache(context),
       );
     },
@@ -71,8 +72,8 @@ const resolvers: IResolvers<Record<string, unknown>, Context> = {
     ) => {
       return getRecentActivity(
         parent.accountId,
-        limit,
-        page,
+        clampPageSize(limit, 12),
+        clampPage(page),
         getProfileRequestCache(context),
       );
     },
@@ -83,15 +84,20 @@ const resolvers: IResolvers<Record<string, unknown>, Context> = {
     ) => {
       return getProfileGameConnection(
         parent.accountId,
-        { filter, limit, page, sort },
+        {
+          filter,
+          limit: clampPageSize(limit, 12),
+          page: clampPage(page),
+          sort,
+        },
         getProfileRequestCache(context),
       );
     },
     achievements: async (parent: ProfileIdentity, { limit, page }, context) => {
       return getProfileAchievementConnection(
         parent.accountId,
-        limit,
-        page,
+        clampPageSize(limit, 25),
+        clampPage(page),
         getProfileRequestCache(context),
       );
     },

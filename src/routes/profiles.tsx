@@ -1,13 +1,13 @@
+import consola from "consola";
 import { Hono } from "hono";
 import { requestAchievementRefresh } from "../clients/achievement-refresh.js";
 import { epicStoreClient } from "../clients/epic.js";
-import client from "../clients/response-cache.js";
 import sharedRedis from "../clients/redis.js";
-import type { AchievementsSummary } from "../types/get-user-achievements.js";
+import client from "../clients/response-cache.js";
 import { db } from "../db/index.js";
 import { AchievementSet, Offer, Sandbox } from "../models/index.js";
+import type { AchievementsSummary } from "../types/get-user-achievements.js";
 import { auth } from "../utils/auth.js";
-import consola from "consola";
 
 export interface PlayerProductAchievements {
   _id: Id;
@@ -88,6 +88,36 @@ interface SingleAchievement {
 
 const app = new Hono();
 
+const PROFILE_ACHIEVEMENTS_DEFAULT_LIMIT = 20;
+const PROFILE_ACHIEVEMENTS_MAX_LIMIT = 100;
+// The per-sandbox endpoint returns raw player-achievement documents; bound both
+// the document count and the award array so one request cannot stream an
+// unbounded response.
+const SANDBOX_ACHIEVEMENTS_MAX_DOCS = 500;
+const PLAYER_AWARDS_MAX = 100;
+
+const parseBoundedLimit = (
+  value: string | undefined,
+  fallback: number,
+  maximum: number,
+) => {
+  const parsed = Number.parseInt(value ?? "", 10);
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return fallback;
+  }
+  return Math.min(parsed, maximum);
+};
+
+const parsePage = (value: string | undefined) => {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed >= 1 ? parsed : 1;
+};
+
+const parseBooleanFlag = (value: string | undefined) => {
+  const normalized = value?.trim().toLowerCase();
+  return normalized === "true" || normalized === "1" || normalized === "full";
+};
+
 app.get("/sitemap.xml", async (c) => {
   const profiles = await db.db.collection("epic").find({}).toArray();
 
@@ -98,7 +128,7 @@ app.get("/sitemap.xml", async (c) => {
       (profile) =>
         `<url>
           <loc>https://egdata.app/profile/${profile.accountId}</loc>
-        </url>`
+        </url>`,
     )
     .join("\n")}
 </urlset>`;
@@ -153,7 +183,7 @@ app.get("/me", async (c) => {
         $set: {
           creationDate: dbProfile.creationDate,
         },
-      }
+      },
     );
   }
 
@@ -349,7 +379,19 @@ app.get("/:id", async (c) => {
     });
   }
 
-  const cacheKey = `epic-profile:${id}:v0.3`;
+  // `?full=true` is the compatibility escape hatch: it returns every
+  // achievement entry, ignoring page/limit.
+  const full = parseBooleanFlag(c.req.query("full"));
+  const page = full ? 1 : parsePage(c.req.query("page"));
+  const requestedLimit = parseBoundedLimit(
+    c.req.query("limit"),
+    PROFILE_ACHIEVEMENTS_DEFAULT_LIMIT,
+    PROFILE_ACHIEVEMENTS_MAX_LIMIT,
+  );
+
+  const cacheKey = `epic-profile:${id}:v0.4:page:${page}:limit:${
+    full ? "all" : requestedLimit
+  }:full:${full}`;
 
   const cached = await client.get(cacheKey);
 
@@ -377,7 +419,7 @@ app.get("/:id", async (c) => {
           $set: {
             creationDate: dbProfile.creationDate,
           },
-        }
+        },
       );
     }
 
@@ -392,9 +434,21 @@ app.get("/:id", async (c) => {
       });
     }
 
+    // Only the summary fields are needed here. Projecting them keeps the full
+    // per-achievement progress arrays in the database.
     const savedPlayerAchievements = await db.db
       .collection("player-achievements")
-      .find<PlayerProductAchievements>({ epicAccountId: id })
+      .find<PlayerProductAchievements>(
+        { epicAccountId: id },
+        {
+          projection: {
+            sandboxId: 1,
+            totalXP: 1,
+            totalUnlocked: 1,
+            playerAwards: { $slice: PLAYER_AWARDS_MAX },
+          },
+        },
+      )
       .toArray();
 
     if (savedPlayerAchievements) {
@@ -402,7 +456,9 @@ app.get("/:id", async (c) => {
 
       await Promise.all(
         savedPlayerAchievements.map(async (entry) => {
-          const sandbox = await Sandbox.findOne({ _id: { $eq: entry.sandboxId } });
+          const sandbox = await Sandbox.findOne({
+            _id: { $eq: entry.sandboxId },
+          });
 
           if (!sandbox) {
             console.error("Sandbox not found", entry.sandboxId);
@@ -446,26 +502,45 @@ app.get("/:id", async (c) => {
               productAchievements: {
                 totalAchievements: achievementsSets.reduce(
                   (acc, curr) => acc + curr.achievements.length,
-                  0
+                  0,
                 ),
                 totalProductXP: achievementsSets.reduce(
                   (acc, curr) =>
                     acc +
                     curr.achievements.reduce((acc, curr) => acc + curr.xp, 0),
-                  0
+                  0,
                 ),
               },
             },
           });
-        })
+        }),
       );
+
+      const total = achievements.length;
+      const data = full
+        ? achievements
+        : achievements.slice(
+            (page - 1) * requestedLimit,
+            (page - 1) * requestedLimit + requestedLimit,
+          );
+      const totalPages = full
+        ? total > 0
+          ? 1
+          : 0
+        : Math.ceil(total / requestedLimit);
 
       const result = {
         ...profile,
         achievements: {
           __typename: "AchievementsSummaryResponse",
           status: 200,
-          data: achievements.map((achievement) => achievement.data),
+          data: data.map((achievement) => achievement.data),
+          pagination: {
+            total,
+            page,
+            limit: full ? total : requestedLimit,
+            totalPages,
+          },
         },
         avatar: {
           small: dbProfile?.avatarUrl?.variants[0] ?? profile?.avatar?.small,
@@ -539,16 +614,26 @@ app.get("/:id/achievements/:sandboxId", async (c) => {
     });
   }
 
+  // Cap the bounded response: one document per sandbox is typical, but the
+  // collection has no upper bound per account and the award arrays can grow.
   const playerAchievements = await db.db
     .collection("player-achievements")
-    .find<PlayerProductAchievements>({
-      epicAccountId: id,
-      sandboxId: sandboxId,
-    })
+    .find<PlayerProductAchievements>(
+      {
+        epicAccountId: id,
+        sandboxId: sandboxId,
+      },
+      {
+        projection: {
+          playerAwards: { $slice: PLAYER_AWARDS_MAX },
+        },
+      },
+    )
+    .limit(SANDBOX_ACHIEVEMENTS_MAX_DOCS)
     .toArray();
 
   const achievementsSets = playerAchievements.flatMap((p) =>
-    p.achievementSets.map((a) => a.achievementSetId)
+    p.achievementSets.map((a) => a.achievementSetId),
   );
 
   const dedupedAchievementsSets = [...new Set(achievementsSets)];
@@ -557,7 +642,7 @@ app.get("/:id/achievements/:sandboxId", async (c) => {
     achievementSetId: {
       $in: dedupedAchievementsSets,
     },
-  });
+  }).limit(SANDBOX_ACHIEVEMENTS_MAX_DOCS);
 
   return c.json({
     playerAchievements,
@@ -990,7 +1075,7 @@ app.get("/:id/information", async (c) => {
           epicProfileCacheKey,
           JSON.stringify(profile),
           "EX",
-          3600
+          3600,
         ); // Cache Epic profile for 1 hour
       }
     }
@@ -1025,7 +1110,7 @@ app.get("/:id/information", async (c) => {
           $set: {
             creationDate: dbProfile.creationDate,
           },
-        }
+        },
       );
     }
 
@@ -1112,16 +1197,16 @@ app.get("/:id/information", async (c) => {
 
 app.get("/:id/games", async (c) => {
   const { id } = c.req.param();
-  const { 
-    page = "1", 
-    limit = "10", 
-    platinum = "false", 
-    sort = "completion" 
+  const {
+    page = "1",
+    limit = "10",
+    platinum = "false",
+    sort = "completion",
   } = c.req.query();
   const pageNum = Number.parseInt(page, 10);
   const limitNum = Number.parseInt(limit, 10);
   const platinumOnly = platinum === "true";
-  
+
   // Validate sort parameter
   const validSorts = ["completion", "alphabetical", "xp", "achievements"];
   const sortBy = validSorts.includes(sort) ? sort : "completion";
@@ -1177,15 +1262,17 @@ app.get("/:id/games", async (c) => {
       { $project: { playerAwards_arr: 0 } },
 
       /* 3.5️⃣  filter platinum games only if requested -------------------- */
-      ...(platinumOnly ? [
-        {
-          $match: {
-            $expr: {
-              $gt: [{ $size: "$playerAwards" }, 0]
-            }
-          }
-        }
-      ] : []),
+      ...(platinumOnly
+        ? [
+            {
+              $match: {
+                $expr: {
+                  $gt: [{ $size: "$playerAwards" }, 0],
+                },
+              },
+            },
+          ]
+        : []),
 
       /* 4️⃣  join ONE BASE_GAME offer per sandbox -------------------------- */
       {
@@ -1301,39 +1388,45 @@ app.get("/:id/games", async (c) => {
       },
 
       /* 7️⃣  dynamic sorting based on sort parameter ---------------------- */
-      ...(sortBy === "alphabetical" ? [
-        {
-          $sort: {
-            "product.name": 1,
-            sandboxId: 1,
-          },
-        }
-      ] : sortBy === "xp" ? [
-        {
-          $sort: {
-            totalXP: -1,
-            "product.name": 1,
-            sandboxId: 1,
-          },
-        }
-      ] : sortBy === "achievements" ? [
-        {
-          $sort: {
-            totalUnlocked: -1,
-            "product.name": 1,
-            sandboxId: 1,
-          },
-        }
-      ] : [
-        // Default: completion percentage
-        {
-          $sort: {
-            completionPercentage: -1,
-            "product.name": 1,
-            sandboxId: 1,
-          },
-        }
-      ]),
+      ...(sortBy === "alphabetical"
+        ? [
+            {
+              $sort: {
+                "product.name": 1,
+                sandboxId: 1,
+              },
+            },
+          ]
+        : sortBy === "xp"
+          ? [
+              {
+                $sort: {
+                  totalXP: -1,
+                  "product.name": 1,
+                  sandboxId: 1,
+                },
+              },
+            ]
+          : sortBy === "achievements"
+            ? [
+                {
+                  $sort: {
+                    totalUnlocked: -1,
+                    "product.name": 1,
+                    sandboxId: 1,
+                  },
+                },
+              ]
+            : [
+                // Default: completion percentage
+                {
+                  $sort: {
+                    completionPercentage: -1,
+                    "product.name": 1,
+                    sandboxId: 1,
+                  },
+                },
+              ]),
 
       /* 8️⃣  facet for pagination + total count in one pass ---------------- */
       {
@@ -1354,11 +1447,11 @@ app.get("/:id/games", async (c) => {
 
     const [{ paginated, total = 0 }] = await db.db
       .collection("player-achievements")
-      .aggregate(pipeline, { 
+      .aggregate(pipeline, {
         allowDiskUse: true,
         ...(sortBy === "alphabetical" && {
-          collation: { locale: "en", strength: 2 } // Case-insensitive sorting
-        })
+          collation: { locale: "en", strength: 2 }, // Case-insensitive sorting
+        }),
       })
       .toArray();
 
@@ -1551,7 +1644,7 @@ app.get("/:id/refresh-status", async (c) => {
 
   const remainingTime = Math.max(
     0,
-    Math.ceil((ttl - (Date.now() - job.timestamp)) / 1000)
+    Math.ceil((ttl - (Date.now() - job.timestamp)) / 1000),
   );
 
   if (remainingTime > 0) {

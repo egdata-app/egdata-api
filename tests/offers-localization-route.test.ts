@@ -286,12 +286,52 @@ describe("offers route localization", () => {
       },
       locale: "fr-FR",
     });
-    expect(mocks.redisGet).toHaveBeenCalledWith("offers:US:1:10:locale:fr-FR");
+    expect(mocks.redisGet).toHaveBeenCalledWith(
+      "offers:US:1:10:locale:fr-FR:card",
+    );
     expect(mocks.redisSet).toHaveBeenCalledWith(
-      "offers:US:1:10:locale:fr-FR",
+      "offers:US:1:10:locale:fr-FR:card",
       expect.any(String),
       "EX",
       60,
     );
+  });
+
+  it("returns full offer documents from GET /offers when expand is requested", async () => {
+    const res = await app.request("/offers?country=US&expand=true");
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.elements[0]).toMatchObject({
+      id: "offer-1",
+      description: "Canonical description",
+      longDescription: "Canonical long description",
+    });
+    expect(mocks.redisGet).toHaveBeenCalledWith(
+      "offers:US:1:10:locale:en-US:full",
+    );
+    expect(mocks.redisSet).toHaveBeenCalledWith(
+      "offers:US:1:10:locale:en-US:full",
+      expect.any(String),
+      "EX",
+      60,
+    );
+  });
+
+  it("serves cached overview payloads without querying offers", async () => {
+    const cachedOverview = {
+      offer: { id: "offer-1", title: "Cached overview" },
+      technologies: [],
+    };
+    mocks.redisGet.mockResolvedValueOnce(JSON.stringify(cachedOverview));
+
+    const res = await app.request("/offers/offer-1/overview?country=US");
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual(cachedOverview);
+    expect(mocks.redisGet).toHaveBeenCalledWith(
+      "overview:offer-1:US:locale:en-US:v0.1",
+    );
+    expect(mocks.offerFindOne).not.toHaveBeenCalled();
   });
 });

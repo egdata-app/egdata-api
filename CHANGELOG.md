@@ -4,6 +4,24 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added GraphQL GET support with Automatic Persisted Queries (Redis-backed hash store with local fallback), Apollo cache-control hints, and CDN-friendly `Cache-Control`/`CDN-Cache-Control` headers for hash URLs; GraphQL POST responses are `no-store`.
+
+- Compressed text responses at the origin and added explicit `Cache-Control` / `CDN-Cache-Control` headers for public GET endpoints; documented the required Cloudflare cache rules, bot controls, and path-normalised analytics in `docs/edge-caching.md`.
+
+- Added Redis-backed anonymous rate limits for general, expensive, and bulk routes with fail-open local fallback, `429` responses, and `Retry-After` headers.
+
+- Added an `X-Route-Template` response header so edge and origin analytics can group id-bearing routes such as `/offers/{id}` and `/profiles/{id}`.
+
+- Changed offer list endpoints to return compact offer cards by default; pass `expand=true` to receive the previous full offer documents.
+
+- Added `GET /search/v2/search`, added `facets=minimal|full|none` to search v2 (default `minimal`), reduced facet bucket sizes, and changed the legacy `POST /search` route to return `410 Gone`.
+
+- Capped GraphQL list page sizes, added query depth/alias/size validation, and made introspection opt-in in production via `GRAPHQL_INTROSPECTION=true`.
+
+- Paginated profile achievements, capped seller offer lists by default, removed the multi-region `prices` map from multisearch offer hits, reduced offer suggestions and price-history payloads, and re-enabled the offer overview response cache.
+
+- Extended generated OG image caching with versioned immutable URLs and longer edge TTLs.
+
 - Added an optional private Redis response cache with bounded, fail-open operations while preserving shared OAuth state, saved searches, and achievement refresh coordination on the existing Redis.
 
 - Restored search v2 response cache reads, isolated normalized pagination in cache keys, and kept release-date search keys stable as time advances.

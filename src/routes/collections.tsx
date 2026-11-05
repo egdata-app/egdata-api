@@ -15,6 +15,7 @@ import {
 } from "../models/index.js";
 import { regions } from "../utils/countries.js";
 import { consola } from "../utils/logger.js";
+import { toOfferCards, wantsExpandedOffers } from "../utils/offer-card.js";
 import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
@@ -23,6 +24,18 @@ import {
 } from "../utils/offer-localization.js";
 
 const app = new Hono();
+
+const LIST_CACHE_CONTROL =
+  "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
+const LIST_CDN_CACHE_CONTROL =
+  "public, max-age=300, stale-while-revalidate=3600";
+
+const OG_CACHE_CONTROL = "public, max-age=86400, stale-while-revalidate=604800";
+const OG_CDN_CACHE_CONTROL =
+  "public, max-age=2592000, stale-while-revalidate=604800";
+const OG_IMMUTABLE_CACHE_CONTROL = "public, max-age=31536000, immutable";
+const OG_IMMUTABLE_CDN_CACHE_CONTROL =
+  "public, max-age=31536000, stale-while-revalidate=604800";
 
 app.get("/:slug", async (c) => {
   const { slug } = c.req.param();
@@ -52,13 +65,17 @@ app.get("/:slug", async (c) => {
   const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
 
-  const cacheKey = `collections:${slug}:${region}:${page}:${limit}:${localeCacheSegment(locale)}:v0.1`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `collections:${slug}:${region}:${page}:${limit}:${localeCacheSegment(locale)}:${
+    expand ? "full" : "card"
+  }:v0.1`;
 
   const cached = await client.get(cacheKey);
 
   if (cached) {
     return c.json(JSON.parse(cached), 200, {
-      "Cache-Control": "public, max-age=60",
+      "Cache-Control": LIST_CACHE_CONTROL,
+      "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
     });
   }
 
@@ -101,32 +118,50 @@ app.get("/:slug", async (c) => {
   const offers = offersData.status === "fulfilled" ? offersData.value : [];
   const prices = pricesData.status === "fulfilled" ? pricesData.value : [];
 
-  const elements = await localizeOffers(
-    offers
-      .map((o) => {
-        const price = prices.find((p) => p.offerId === o.id);
-        const collectionOffer = offersList.find(
-          (i) => i.toJSON().offerId === o.id,
-        );
+  const priceByOfferId = new Map(prices.map((price) => [price.offerId, price]));
 
-        consola.debug(
-          `Offer ${o.title} has position ${collectionOffer?.position}`,
-        );
+  const ranked = offers
+    .map((o) => {
+      const collectionOffer = offersList.find(
+        (i) => i.toJSON().offerId === o.id,
+      );
 
-        return {
-          ...o.toObject(),
-          price: price ?? null,
-          position: collectionOffer?.position ?? totalOffersCount,
-          previousPosition: collectionOffer?.previous,
-          metadata: collectionOffer,
-        };
-      })
-      .sort(
-        (a, b) =>
-          (a.position ?? totalOffersCount) - (b.position ?? totalOffersCount),
-      ),
-    locale,
-  );
+      consola.debug(
+        `Offer ${o.title} has position ${collectionOffer?.position}`,
+      );
+
+      return {
+        offer: o,
+        position: collectionOffer?.position ?? totalOffersCount,
+        previousPosition: collectionOffer?.previous,
+        metadata: collectionOffer,
+      };
+    })
+    .sort((a, b) => a.position - b.position);
+
+  const elements = expand
+    ? await localizeOffers(
+        ranked.map(({ offer, position, previousPosition, metadata }) => ({
+          ...offer.toObject(),
+          price: priceByOfferId.get(offer.id) ?? null,
+          position,
+          previousPosition,
+          metadata,
+        })),
+        locale,
+      )
+    : (
+        await toOfferCards(
+          ranked.map(({ offer }) => offer),
+          locale,
+          priceByOfferId,
+        )
+      ).map((card, index) => ({
+        ...card,
+        position: ranked[index].position,
+        previousPosition: ranked[index].previousPosition,
+        metadata: ranked[index].metadata,
+      }));
 
   const result = {
     elements,
@@ -145,7 +180,8 @@ app.get("/:slug", async (c) => {
   );
 
   return c.json(result, 200, {
-    "Cache-Control": "public, max-age=60",
+    "Cache-Control": LIST_CACHE_CONTROL,
+    "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
   });
 });
 
@@ -176,7 +212,10 @@ app.get("/:slug/:week", async (c) => {
   const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const skip = (page - 1) * limit;
 
-  const cacheKey = `collections:${week}:${slug}:${region}:${page}:${limit}:${localeCacheSegment(locale)}`;
+  const expand = wantsExpandedOffers(c);
+  const cacheKey = `collections:${week}:${slug}:${region}:${page}:${limit}:${localeCacheSegment(
+    locale,
+  )}:${expand ? "full" : "card"}`;
 
   // const cached = await client.get(cacheKey);
   // if (cached) {
@@ -232,24 +271,48 @@ app.get("/:slug/:week", async (c) => {
     PriceEngine.find({ offerId: { $in: pageOfferIds }, region }),
   ]);
 
-  const offersWithMetadata = pageItems
+  const priceByOfferId = new Map(
+    pricesData.map((price) => [price.offerId, price]),
+  );
+
+  const pageEntries = pageItems
     .map((o) => {
       const offerData = offersData.find((x) => x.id === o.offerId);
-      const priceData = pricesData.find((x) => x.offerId === o.offerId);
+      const priceData = priceByOfferId.get(o.offerId);
       if (!offerData || !priceData) {
         console.error(`Offer or price not found for ${o.offerId}`);
         return null;
       }
       return {
-        ...offerData.toJSON(),
+        offer: offerData,
         metadata: o,
         price: priceData.toJSON(),
       };
     })
     .filter((offer): offer is NonNullable<typeof offer> => Boolean(offer));
 
+  const elements = expand
+    ? await localizeOffers(
+        pageEntries.map(({ offer, metadata, price }) => ({
+          ...offer.toJSON(),
+          metadata,
+          price,
+        })),
+        locale,
+      )
+    : (
+        await toOfferCards(
+          pageEntries.map(({ offer }) => offer),
+          locale,
+          priceByOfferId,
+        )
+      ).map((card, index) => ({
+        ...card,
+        metadata: pageEntries[index].metadata,
+      }));
+
   const result = {
-    elements: await localizeOffers(offersWithMetadata, locale),
+    elements,
     page,
     limit,
     title: collection.name,
@@ -265,7 +328,10 @@ app.get("/:slug/:week", async (c) => {
     "EX",
     getLocalizedCacheTtlSeconds(result, 3600),
   );
-  return c.json(result, 200, { "Cache-Control": "public, max-age=60" });
+  return c.json(result, 200, {
+    "Cache-Control": LIST_CACHE_CONTROL,
+    "CDN-Cache-Control": LIST_CDN_CACHE_CONTROL,
+  });
 });
 
 /** Helper: ISO week range (UTC), end is exclusive */
@@ -296,6 +362,16 @@ app.get("/:slug/:week/og", async (c) => {
   const direct = c.req.query("direct");
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
+
+  const hasStableVersion = Boolean(
+    c.req.query("v")?.trim() || c.req.query("hash")?.trim(),
+  );
+  const ogCacheControl = hasStableVersion
+    ? OG_IMMUTABLE_CACHE_CONTROL
+    : OG_CACHE_CONTROL;
+  const ogCdnCacheControl = hasStableVersion
+    ? OG_IMMUTABLE_CDN_CACHE_CONTROL
+    : OG_CDN_CACHE_CONTROL;
 
   const selectedCountry = country ?? cookieCountry ?? "US";
   const region = Object.keys(regions).find((r) =>
@@ -412,6 +488,11 @@ app.get("/:slug/:week/og", async (c) => {
         url: `https://cdn.egdata.app/cdn-cgi/imagedelivery/RlN2EBAhhGSZh5aeUaPz3Q/${existingImage.imageId}/og`,
       },
       200,
+      {
+        "Cache-Control": ogCacheControl,
+        "CDN-Cache-Control": ogCdnCacheControl,
+        Vary: "Accept-Encoding",
+      },
     );
   }
 
@@ -639,7 +720,9 @@ app.get("/:slug/:week/og", async (c) => {
   if (direct) {
     return c.body(new Uint8Array(pngBuffer), 200, {
       "Content-Type": "image/png",
-      "Cache-Control": "public, max-age=3600",
+      "Cache-Control": ogCacheControl,
+      "CDN-Cache-Control": ogCdnCacheControl,
+      Vary: "Accept-Encoding",
     });
   }
 
@@ -682,7 +765,11 @@ app.get("/:slug/:week/og", async (c) => {
 
   // await client.set(cacheKey, JSON.stringify(payload), "EX", 3600);
 
-  return c.json(payload, 200);
+  return c.json(payload, 200, {
+    "Cache-Control": ogCacheControl,
+    "CDN-Cache-Control": ogCdnCacheControl,
+    Vary: "Accept-Encoding",
+  });
 });
 
 export default app;
