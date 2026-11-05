@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Reduced the default GraphQL POST quota from 120 to 30 requests per minute per client IP (`RATE_LIMIT_GRAPHQL_POST_PER_MINUTE`). GraphQL GET/APQ retains its separate 1200/minute quota; throttled requests return 429 with Retry-After.
+
 - Preserved normal CDN caching, ETags and baseline rate limits during anti-abuse enforcement to avoid increasing origin bandwidth. Added unpaginated sales coverage and bounded GraphQL telemetry from executed pagination/ID arguments, including GET variables and APQ. Telemetry now prefers dedicated `ANTI_ABUSE_REDIS_*` or existing private `CACHE_REDIS_*` settings before legacy shared Redis. Rollout remains observational; cache hits need separate edge controls.
 
 - Made PoW conditional on current suspicious behavior: clean clients (risk <= 0.5), including unchanged desktop apps, can access protected data without sessions even in enforcement mode. Suspicious clients require a recent valid session, confirmed abuse retains tarpitting, and historical token scores no longer prevent recovery after risk clears. Updated public docs and OpenAPI to make PoW authentication conditional while preserving existing account requirements.

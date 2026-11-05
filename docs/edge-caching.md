@@ -150,7 +150,7 @@ by the GraphQL rule above.
 ## 6. WAF and rate limiting
 
 Application-level limits are already enforced in `src/middlewares/rate-limit.ts`
-(defaults: 1200/min general, 1200/min GraphQL GET/APQ, 120/min GraphQL POST,
+(defaults: 1200/min general, 1200/min GraphQL GET/APQ, 30/min GraphQL POST,
 300/min interactive search, 60/min detail/image routes, 10/min bulk catalog and
 launcher resolution). Each limiter has its own Redis key namespace.
 Configure matching Cloudflare Rate Limiting rules so abusive clients are

@@ -14,6 +14,7 @@ describe("rate limiting", () => {
     vi.stubEnv("NODE_ENV", "test");
     vi.stubEnv("RATE_LIMIT_ENABLED", "true");
     vi.stubEnv("RATE_LIMIT_GENERAL_PER_MINUTE", "2");
+    vi.stubEnv("RATE_LIMIT_GRAPHQL_POST_PER_MINUTE", "");
     vi.stubEnv("JWT_SECRET", "");
     // Point at a closed port so the store exercises its fail-open fallback.
     vi.stubEnv("REDISHOST", "127.0.0.1");
@@ -61,6 +62,43 @@ describe("rate limiting", () => {
 
     const response = await app.request("/", { headers: otherClient });
     expect(response.status).toBe(200);
+  });
+
+  it("limits GraphQL POST to 30 per minute across queries while keeping GET and other IPs independent", async () => {
+    const graphql = new Hono();
+    graphql.use("/graphql", rateLimit.graphqlRateLimit);
+    graphql.all("/graphql", (c) => c.json({ data: { ok: true } }));
+    const headers = {
+      "cf-connecting-ip": "203.0.113.90",
+      "content-type": "application/json",
+    };
+    for (let i = 0; i < 30; i++) {
+      const response = await graphql.request(`/graphql?request=${i}`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          query: "query ($id: ID!) { offer(id: $id) { id } }",
+          variables: { id: `game-${i}` },
+        }),
+      });
+      expect(response.status).toBe(200);
+    }
+    const blocked = await graphql.request("/graphql", {
+      method: "POST",
+      headers,
+    });
+    expect(blocked.status).toBe(429);
+    expect(Number(blocked.headers.get("retry-after"))).toBeGreaterThan(0);
+    expect((await blocked.json()).error.code).toBe("RATE_LIMITED");
+    expect((await graphql.request("/graphql", { headers })).status).toBe(200);
+    expect(
+      (
+        await graphql.request("/graphql", {
+          method: "POST",
+          headers: { ...headers, "cf-connecting-ip": "203.0.113.91" },
+        })
+      ).status,
+    ).toBe(200);
   });
 
   it("retains baseline limits in enforce mode when transport is untrusted and no session exists", async () => {

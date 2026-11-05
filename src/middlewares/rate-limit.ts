@@ -269,7 +269,7 @@ export const graphqlGetRateLimit = createLimiter(
  */
 export const graphqlPostRateLimit = createLimiter(
   "graphql-post",
-  numberFromEnv("RATE_LIMIT_GRAPHQL_POST_PER_MINUTE", 120),
+  numberFromEnv("RATE_LIMIT_GRAPHQL_POST_PER_MINUTE", 30),
   "GraphQL POST is temporarily rate limited. Please use GET with persisted queries.",
 );
 

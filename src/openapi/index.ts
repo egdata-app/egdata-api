@@ -11,7 +11,7 @@ export function buildOpenApiDocument(): OpenAPIV3.Document {
       title: "egdata.app API",
       version: API_VERSION,
       description:
-        "REST API for Epic Games Store catalog, pricing, search, and public egdata.app data. This contract starts with public stable REST endpoints and will expand as legacy routes are classified.",
+        "REST API for Epic Games Store catalog, pricing, search, and public egdata.app data. This contract starts with public stable REST endpoints and will expand as legacy routes are classified. The separately documented GraphQL endpoint defaults to 30 POST requests per minute per client IP (RATE_LIMIT_GRAPHQL_POST_PER_MINUTE); exceeding the quota returns 429 with Retry-After. GraphQL GET/APQ has a separate default quota of 1200 per minute.",
       contact: {
         name: "egdata.app",
         url: "https://egdata.app",
