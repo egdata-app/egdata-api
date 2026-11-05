@@ -18,22 +18,9 @@ import { toUsdCents } from "../../utils/price-usd.js";
 
 const app = new Hono();
 
-const DEFAULT_PRICE_HISTORY_LIMIT = 500;
-const MAX_PRICE_HISTORY_LIMIT = 2000;
-
-const getPriceHistoryLimit = (value: string | undefined) => {
-  const parsed = Number.parseInt(value ?? "", 10);
-  if (!Number.isFinite(parsed) || parsed <= 0) {
-    return DEFAULT_PRICE_HISTORY_LIMIT;
-  }
-
-  return Math.min(parsed, MAX_PRICE_HISTORY_LIMIT);
-};
-
 app.get("/price-history", async (c) => {
   const { id } = c.req.param();
   const since = c.req.query("since");
-  const limit = getPriceHistoryLimit(c.req.query("limit"));
 
   const country = c.req.query("country");
   const usrRegion = c.req.query("region");
@@ -45,7 +32,7 @@ app.get("/price-history", async (c) => {
   if (region) {
     const cacheKey = `price-history:${id}:${region}:${
       since ?? "unlimited"
-    }:${limit}:v0.2`;
+    }:v0.1`;
     const cached = await client.get(cacheKey);
 
     if (cached) {
@@ -60,9 +47,7 @@ app.get("/price-history", async (c) => {
       ...(since && {
         updatedAt: { $gte: new Date(since) },
       }),
-    })
-      .sort({ date: -1 })
-      .limit(limit);
+    }).sort({ date: -1 });
 
     if (!prices) {
       c.status(200);
@@ -76,7 +61,7 @@ app.get("/price-history", async (c) => {
     });
   }
 
-  const cacheKey = `price-history:${id}:all:${since ?? "unlimited"}:${limit}:v0.2`;
+  const cacheKey = `price-history:${id}:all:${since ?? "unlimited"}:v0.1`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
@@ -89,9 +74,7 @@ app.get("/price-history", async (c) => {
     ...(since && {
       updatedAt: { $gte: new Date(since) },
     }),
-  })
-    .sort({ date: -1 })
-    .limit(limit);
+  }).sort({ date: -1 });
 
   const pricesByRegion = prices.reduce(
     (acc, price) => {
@@ -256,7 +239,6 @@ app.get("/regional-price", async (c) => {
       sort: {
         updatedAt: -1,
       },
-      limit: MAX_PRICE_HISTORY_LIMIT,
     });
 
     if (!price || price.length === 0) {
@@ -270,7 +252,6 @@ app.get("/regional-price", async (c) => {
           sort: {
             updatedAt: -1,
           },
-          limit: MAX_PRICE_HISTORY_LIMIT,
         },
       );
 
@@ -351,7 +332,6 @@ app.get("/regional-price", async (c) => {
     sort: {
       updatedAt: -1,
     },
-    limit: MAX_PRICE_HISTORY_LIMIT,
   });
 
   if (prices.length === 0) {
@@ -364,7 +344,6 @@ app.get("/regional-price", async (c) => {
         sort: {
           updatedAt: -1,
         },
-        limit: MAX_PRICE_HISTORY_LIMIT,
       },
     );
   }

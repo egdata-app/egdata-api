@@ -103,7 +103,7 @@ const searchBodySchema = (
     facets: {
       type: "string",
       enum: ["minimal", "full", "none"],
-      default: "minimal",
+      default: "full",
       description:
         "Facet detail. `minimal` keeps offer type and technology buckets, `full` adds tag/developer/publisher/seller buckets, `none` omits aggregations.",
     },
@@ -164,7 +164,7 @@ export const commonParameters = {
     in: "query",
     required: false,
     description:
-      "Set to `true` to return full offer documents from list endpoints instead of the default compact offer cards. Compact cards omit long descriptions, tags, items, custom attributes, mappings, and all but four key images.",
+      "Deprecated compatibility flag. List endpoints always return full offer documents.",
     schema: {
       type: "boolean",
       default: false,
@@ -179,7 +179,7 @@ export const commonParameters = {
     schema: {
       type: "string",
       enum: ["minimal", "full", "none"],
-      default: "minimal",
+      default: "full",
     },
   },
   offerId: {

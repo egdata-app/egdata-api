@@ -22,7 +22,7 @@ Offer endpoints accept `locale`; an omitted or blank value defaults to `en-US`. 
 
 ## Pagination
 
-Pagination is route-specific. Search and profile connections use 1-based `page` values. Search `limit` defaults to 10 and is capped at 100; free-game history caps `limit` at 25; changelog lists cap it at 50; seller offer lists default to 20 and cap at 100; profile achievement summaries default to 20 and cap at 100; item build lists default to 50 and cap at 100. Some endpoints use `offset` or another cursor. Check the endpoint's reference for its parameter names and maximum. Follow `hasNextPage`, `totalPages`, or equivalent metadata when the endpoint returns it.
+Pagination is route-specific. Search and profile connections use 1-based `page` values. Search `limit` defaults to 10 and is capped at 100; free-game history caps `limit` at 25; changelog lists cap it at 50. Seller offer lists and item build lists are unbounded by default, and profile responses include all achievement entries. Some endpoints use `offset` or another cursor. Check the endpoint's reference for its parameter names and maximum. Follow `hasNextPage`, `totalPages`, or equivalent metadata when the endpoint returns it.
 
 ## Rate limits
 

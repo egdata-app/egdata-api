@@ -21,19 +21,19 @@ const response = await fetch(
       sortDir: "desc",
       page: 1,
       limit: 20,
-      facets: "minimal",
+      facets: "full",
     }),
   },
 );
 const result = await response.json();
 ```
 
-The response contains a total count, matching offers, the requested page and limit, facet aggregations, and metadata. By default `offers` contains compact offer cards (id, namespace, title, type, slugs, up to four key images, seller, developer/publisher, dates, and regional price). Pass `expand=true` on the URL to receive full offer documents from a list response.
+The response contains a total count, matching offers, the requested page and limit, facet aggregations, and metadata. `offers` contains full offer documents, including tags, items, custom attributes, and the complete key image set.
 
 Facets are controlled with `facets`:
 
-- `minimal` (default) returns offer type and technology buckets only.
-- `full` adds tag, developer, publisher, and seller buckets (each capped at 100–1000 buckets).
+- `full` (default) returns offer type, technology, tag, developer, publisher, and seller buckets.
+- `minimal` returns offer type and technology buckets only.
 - `none` omits aggregations entirely.
 
 ```json

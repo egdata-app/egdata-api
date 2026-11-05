@@ -188,11 +188,11 @@ describe("search route with SeaQA fixtures", () => {
       locale: "en-US",
       localeStatus: "canonical",
     });
-    expect(body.offers[0]).not.toHaveProperty("description");
-    expect(body.offers[0]).not.toHaveProperty("longDescription");
-    expect(body.offers[0]).not.toHaveProperty("tags");
-    expect(body.offers[0]).not.toHaveProperty("items");
-    expect(body.offers[0]?.keyImages.length).toBeLessThanOrEqual(4);
+    expect(body.offers[0]).toHaveProperty("description");
+    expect(body.offers[0]).toHaveProperty("longDescription");
+    expect(body.offers[0]).toHaveProperty("tags");
+    expect(body.offers[0]).toHaveProperty("items");
+    expect(Array.isArray(body.offers[0]?.keyImages)).toBe(true);
     expect(body.meta).toMatchObject({
       ms: 7,
       timed_out: false,
@@ -426,7 +426,7 @@ describe("search route with SeaQA fixtures", () => {
             technologies: {
               terms: {
                 field: "lastBuilds.technologies.technology.keyword",
-                size: 1000,
+                size: 10_000,
               },
             },
           }),
@@ -570,7 +570,7 @@ describe("search route with SeaQA fixtures", () => {
     );
   });
 
-  it("defaults to minimal facets without developer, publisher or seller aggregations", async () => {
+  it("defaults to full facets, including developer, publisher and seller aggregations", async () => {
     const res = await app.request("/search/v2/search?country=US", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -584,29 +584,39 @@ describe("search route with SeaQA fixtures", () => {
       technologies: {
         terms: {
           field: "lastBuilds.technologies.technology.keyword",
-          size: 1000,
+          size: 10_000,
         },
       },
       price_stats: { stats: { field: "prices.US.price.discountPrice" } },
+      tags: { terms: { field: "tags.name.keyword", size: 10_000 } },
+      developer: {
+        terms: { field: "developerDisplayName.keyword", size: 1000 },
+      },
+      publisher: {
+        terms: { field: "publisherDisplayName.keyword", size: 1000 },
+      },
+      seller: { terms: { field: "seller.name.keyword", size: 1000 } },
     });
-    expect(request.body.aggregations).not.toHaveProperty("tags");
-    expect(request.body.aggregations).not.toHaveProperty("developer");
-    expect(request.body.aggregations).not.toHaveProperty("publisher");
-    expect(request.body.aggregations).not.toHaveProperty("seller");
 
     const body = await res.json();
-    expect(Object.keys(body.aggregations)).toEqual([
-      "offerType",
-      "technologies",
-      "price_stats",
-    ]);
+    expect(Object.keys(body.aggregations).sort()).toEqual(
+      [
+        "offerType",
+        "technologies",
+        "price_stats",
+        "tags",
+        "developer",
+        "publisher",
+        "seller",
+      ].sort(),
+    );
   });
 
-  it("returns full facets with capped bucket sizes when requested", async () => {
+  it("returns minimal facets when explicitly requested", async () => {
     const res = await app.request("/search/v2/search?country=US", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ limit: 2, facets: "full" }),
+      body: JSON.stringify({ limit: 2, facets: "minimal" }),
     });
 
     expect(res.status).toBe(200);
@@ -624,23 +634,15 @@ describe("search route with SeaQA fixtures", () => {
             price_stats: {
               stats: { field: "prices.US.price.discountPrice" },
             },
-            tags: { terms: { field: "tags.name.keyword", size: 1000 } },
-            developer: {
-              terms: { field: "developerDisplayName.keyword", size: 100 },
-            },
-            publisher: {
-              terms: { field: "publisherDisplayName.keyword", size: 100 },
-            },
-            seller: { terms: { field: "seller.name.keyword", size: 100 } },
           },
         }),
       }),
     );
 
     const body = await res.json();
-    for (const facet of ["developer", "publisher", "seller"] as const) {
-      expect(body.aggregations[facet].buckets.length).toBeLessThanOrEqual(100);
-    }
+    expect(Object.keys(body.aggregations).sort()).toEqual(
+      ["offerType", "technologies", "price_stats"].sort(),
+    );
   });
 
   it("omits the aggregations request and response when facets=none", async () => {
@@ -754,7 +756,7 @@ describe("search route with SeaQA fixtures", () => {
     );
   });
 
-  it("returns full offer fields when expand=true and never mixes them with cards", async () => {
+  it("returns full offer fields by default and when expand=true", async () => {
     const expanded = await app.request(
       "/search/v2/search?country=US&expand=true",
       {
@@ -776,14 +778,16 @@ describe("search route with SeaQA fixtures", () => {
     expect(expandedBody.offers[0]).toHaveProperty("items");
     expect(expandedBody.offers[0]).toHaveProperty("customAttributes");
 
-    const cards = await app.request("/search/v2/search?country=US", {
+    const defaultResponse = await app.request("/search/v2/search?country=US", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ limit: 2 }),
     });
-    const cardsBody = await cards.json();
-    expect(cardsBody.offers[0]).not.toHaveProperty("description");
-    expect(cardsBody.offers[0]).toHaveProperty("keyImages");
+    const defaultBody = await defaultResponse.json();
+    expect(defaultBody.offers[0]).toHaveProperty("description");
+    expect(defaultBody.offers[0]).toHaveProperty("longDescription");
+    expect(defaultBody.offers[0]).toHaveProperty("tags");
+    expect(defaultBody.offers[0]).toHaveProperty("items");
     expect(mocks.opensearchSearch).toHaveBeenCalledTimes(2);
     expect(mocks.redisSet).toHaveBeenCalledTimes(2);
   });

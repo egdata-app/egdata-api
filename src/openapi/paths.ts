@@ -635,7 +635,7 @@ export const paths: EgdataPaths = {
       tags: ["Offers"],
       summary: "List offers with regional price data",
       description:
-        "Returns compact offer cards by default; pass `expand=true` for full offer documents.",
+        "Returns full offer documents.",
       parameters: regionalLocalizedPagination,
       response: ref("OfferListResponse"),
     }),
@@ -729,7 +729,7 @@ export const paths: EgdataPaths = {
       tags: ["Offers"],
       summary: "List top-selling offers",
       description:
-        "Returns compact offer cards by default; pass `expand=true` for full offer documents.",
+        "Returns full offer documents.",
       parameters: localizedPagination,
       response: ref("OfferListResponse"),
     }),
@@ -1307,7 +1307,7 @@ export const paths: EgdataPaths = {
       tags: ["Items"],
       summary: "List catalog items",
       description:
-        "Returns paginated Epic catalog items sorted by last modification date. Responses use a compact item projection by default; pass `expand=true` for full item documents.",
+        "Returns paginated Epic catalog items sorted by last modification date.",
       parameters: [parameterRef("expand"), ...pagination],
       response: ref("ItemListResponse"),
     }),
@@ -1650,7 +1650,7 @@ export const paths: EgdataPaths = {
       tags: ["Search"],
       summary: "Search offers with query parameters (edge-cacheable)",
       description:
-        "Query-parameter alias of POST /search/v2/search. Intended for browser and edge-cacheable searches. Returns compact offer cards by default; pass expand=true for full offer documents.",
+        "Query-parameter alias of POST /search/v2/search. Intended for browser and edge-cacheable searches. Returns full offer documents.",
       parameters: [
         parameterRef("country"),
         parameterRef("locale"),
@@ -1973,7 +1973,7 @@ export const paths: EgdataPaths = {
       tags: ["Sellers"],
       summary: "List offers for a seller",
       description:
-        "Returns compact offer cards by default. The default page size is 20; `limit` is capped at 100. Pass `expand=true` for full offer documents.",
+        "Returns full offer documents. `limit` defaults to unlimited; pass an explicit limit to page.",
       parameters: [
         ...sellerId,
         ...regionalLocalizedPagination,

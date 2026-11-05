@@ -5,7 +5,7 @@ description: Load an offer, discover its items, and follow catalog relationships
 
 Search returns offer IDs. Load the complete offer with `GET /offers/{id}` and load the store items connected to it with `GET /offers/{id}/items`.
 
-List endpoints such as `GET /offers`, `GET /offers/top-sellers`, and `GET /sellers/{id}` return compact offer cards by default. Cards include identity, type, slugs, up to four key images, seller, developer/publisher, dates, and the regional price. Pass `expand=true` to a list endpoint when you need the full documents. Detail endpoints always return the complete offer. `GET /items` similarly returns a compact item projection by default; pass `expand=true` for full item documents.
+List endpoints such as `GET /offers`, `GET /offers/top-sellers`, and `GET /sellers/{id}` return full offer documents, including tags, items, custom attributes, and the complete key image set. Detail endpoints return the same complete offer. `GET /items` also returns full item documents.
 
 ```js
 const base = "https://api.egdata.app";

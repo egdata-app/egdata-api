@@ -10,7 +10,6 @@ import {
   Seller,
 } from "../models/index.js";
 import { regions } from "../utils/countries.js";
-import { toOfferCards, wantsExpandedOffers } from "../utils/offer-card.js";
 import {
   getLocaleOrErrorResponse,
   getLocalizedCacheTtlSeconds,
@@ -21,40 +20,10 @@ import { orderOffersObject } from "../utils/order-offers-object.js";
 
 const app = new Hono();
 
-const SELLER_OFFERS_DEFAULT_LIMIT = 20;
-const SELLER_OFFERS_MAX_LIMIT = 100;
-
-const OFFERS_CACHE_HEADERS = {
-  "Cache-Control": "public, max-age=60, s-maxage=300",
-  "CDN-Cache-Control": "public, max-age=300",
-} as const;
-
-const SELLERS_CACHE_HEADERS = {
-  "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
-  "CDN-Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
-} as const;
-
-const parseBoundedLimit = (
-  value: string | undefined,
-  fallback: number,
-  maximum: number,
-) => {
-  const parsed = Number.parseInt(value ?? "", 10);
-  if (!Number.isFinite(parsed) || parsed < 1) {
-    return fallback;
-  }
-  return Math.min(parsed, maximum);
-};
-
-const parsePage = (value: string | undefined) => {
-  const parsed = Number.parseInt(value ?? "", 10);
-  return Number.isFinite(parsed) && parsed >= 1 ? parsed : 1;
-};
-
 app.get("/", async (c) => {
   const sellers = await Offer.distinct("seller");
 
-  return c.json(sellers, 200, SELLERS_CACHE_HEADERS);
+  return c.json(sellers);
 });
 
 app.get("/:id", async (c) => {
@@ -65,15 +34,8 @@ app.get("/:id", async (c) => {
   }
   const { locale } = localeResult;
   const country = c.req.query("country");
-  // `limit=0` used to mean "every offer". Default and cap it instead so a
-  // single seller page cannot stream the whole catalog.
-  const limit = parseBoundedLimit(
-    c.req.query("limit"),
-    SELLER_OFFERS_DEFAULT_LIMIT,
-    SELLER_OFFERS_MAX_LIMIT,
-  );
-  const page = parsePage(c.req.query("page"));
-  const expand = wantsExpandedOffers(c);
+  const limit = Number.parseInt(c.req.query("limit") || "0", 10);
+  const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const offerType = c.req.query("offerType");
   const ignoredSandboxes = (c.req.query("ignoredSandboxes") || "").split(",");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
@@ -93,11 +55,13 @@ app.get("/:id", async (c) => {
 
   const cacheKey = `sellers:${id}:${region}:${page}:${limit}:${offerType}:${ignoredSandboxes.join(
     ",",
-  )}:${localeCacheSegment(locale)}:${expand ? "full" : "card"}`;
+  )}:${localeCacheSegment(locale)}`;
   const cached = await client.get(cacheKey);
 
   if (cached) {
-    return c.json(JSON.parse(cached), 200, OFFERS_CACHE_HEADERS);
+    return c.json(JSON.parse(cached), 200, {
+      "Cache-Control": "public, max-age=60",
+    });
   }
 
   const offers = await Offer.find(
@@ -111,8 +75,8 @@ app.get("/:id", async (c) => {
     },
     undefined,
     {
-      limit,
-      skip: (page - 1) * limit,
+      limit: limit === 0 ? undefined : limit,
+      skip: (page - 1) * (limit === 0 ? 1 : limit),
       sort: {
         lastModifiedDate: -1,
       },
@@ -124,16 +88,16 @@ app.get("/:id", async (c) => {
     region,
   });
 
-  const priceByOfferId = new Map(prices.map((price) => [price.offerId, price]));
-  const result = expand
-    ? await localizeOffers(
-        offers.map((offer) => ({
-          ...orderOffersObject(offer),
-          price: priceByOfferId.get(offer.id) ?? null,
-        })),
-        locale,
-      )
-    : await toOfferCards(offers, locale, priceByOfferId);
+  const result = await localizeOffers(
+    offers.map((o) => {
+      const price = prices.find((p) => p.offerId === o.id);
+      return {
+        ...orderOffersObject(o),
+        price,
+      };
+    }),
+    locale,
+  );
 
   await client.set(
     cacheKey,
@@ -142,7 +106,7 @@ app.get("/:id", async (c) => {
     getLocalizedCacheTtlSeconds(result, 3600),
   );
 
-  return c.json(result, 200, OFFERS_CACHE_HEADERS);
+  return c.json(result);
 });
 
 app.get("/:id/cover", async (c) => {

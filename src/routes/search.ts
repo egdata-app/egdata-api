@@ -119,7 +119,7 @@ const deprecatedSearchResponse = (c: Context) =>
   c.json(LEGACY_SEARCH_ERROR, 410, { "Cache-Control": "no-store" });
 
 const normalizeFacetMode = (value: unknown): FacetMode =>
-  value === "full" || value === "none" ? value : "minimal";
+  value === "minimal" || value === "none" ? value : "full";
 
 const buildSearchAggregations = (
   facets: FacetMode,
@@ -136,15 +136,18 @@ const buildSearchAggregations = (
   };
 
   if (facets === "full") {
-    aggregations.tags = { terms: { field: "tags.name.keyword", size: 1000 } };
+    aggregations.technologies = {
+      terms: { field: TECHNOLOGY_FIELD, size: 10_000 },
+    };
+    aggregations.tags = { terms: { field: "tags.name.keyword", size: 10_000 } };
     aggregations.developer = {
-      terms: { field: "developerDisplayName.keyword", size: 100 },
+      terms: { field: "developerDisplayName.keyword", size: 1000 },
     };
     aggregations.publisher = {
-      terms: { field: "publisherDisplayName.keyword", size: 100 },
+      terms: { field: "publisherDisplayName.keyword", size: 1000 },
     };
     aggregations.seller = {
-      terms: { field: "seller.name.keyword", size: 100 },
+      terms: { field: "seller.name.keyword", size: 1000 },
     };
   }
 

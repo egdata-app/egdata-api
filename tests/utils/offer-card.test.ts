@@ -33,32 +33,29 @@ const baseOffer = {
 };
 
 describe("toOfferCard", () => {
-  it("keeps card fields and drops the heavy detail fields", () => {
+  it("returns the full offer document for list endpoints", () => {
     const card = toOfferCard(baseOffer);
 
     expect(card).toMatchObject({
+      _id: "mongo-id",
       id: "offer-id",
       namespace: "sandbox-id",
       title: "Example Game",
+      description: "short",
+      longDescription: baseOffer.longDescription,
       offerType: "BASE_GAME",
       productSlug: "example-game",
       urlSlug: "example-game",
       seller: { id: "seller-id", name: "Example Seller" },
+      tags: [{ id: "tag", name: "Tag" }],
+      items: [{ id: "item" }],
+      categories: ["category"],
+      offerMappings: [{ pageSlug: "slug" }],
     });
-    expect(card).not.toHaveProperty("description");
-    expect(card).not.toHaveProperty("longDescription");
-    expect(card).not.toHaveProperty("tags");
-    expect(card).not.toHaveProperty("items");
-    expect(card).not.toHaveProperty("customAttributes");
-    expect(card).not.toHaveProperty("offerMappings");
-    expect(card).not.toHaveProperty("categories");
-  });
-
-  it("limits key images to four unique urls", () => {
-    const card = toOfferCard(baseOffer);
-
-    expect(card.keyImages).toHaveLength(4);
-    expect(new Set(card.keyImages.map((image) => image.url)).size).toBe(4);
+    expect(card.customAttributes).toEqual({
+      key: { type: "STRING", value: "value" },
+    });
+    expect(card.keyImages).toHaveLength(5);
   });
 
   it("attaches the supplied price and defaults to null", () => {

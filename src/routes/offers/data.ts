@@ -803,7 +803,7 @@ app.get("/suggestions", async (c) => {
     },
     undefined,
     {
-      limit: 10,
+      limit: 25,
       sort: {
         lastModifiedDate: -1,
       },

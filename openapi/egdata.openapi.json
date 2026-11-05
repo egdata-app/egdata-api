@@ -1736,7 +1736,7 @@
           "Offers"
         ],
         "summary": "List offers with regional price data",
-        "description": "Returns compact offer cards by default; pass `expand=true` for full offer documents.",
+        "description": "Returns full offer documents.",
         "parameters": [
           {
             "$ref": "#/components/parameters/country"
@@ -2265,7 +2265,7 @@
           "Offers"
         ],
         "summary": "List top-selling offers",
-        "description": "Returns compact offer cards by default; pass `expand=true` for full offer documents.",
+        "description": "Returns full offer documents.",
         "parameters": [
           {
             "$ref": "#/components/parameters/locale"
@@ -5364,7 +5364,7 @@
           "Items"
         ],
         "summary": "List catalog items",
-        "description": "Returns paginated Epic catalog items sorted by last modification date. Responses use a compact item projection by default; pass `expand=true` for full item documents.",
+        "description": "Returns paginated Epic catalog items sorted by last modification date.",
         "parameters": [
           {
             "$ref": "#/components/parameters/expand"
@@ -7255,7 +7255,7 @@
           "Search"
         ],
         "summary": "Search offers with query parameters (edge-cacheable)",
-        "description": "Query-parameter alias of POST /search/v2/search. Intended for browser and edge-cacheable searches. Returns compact offer cards by default; pass expand=true for full offer documents.",
+        "description": "Query-parameter alias of POST /search/v2/search. Intended for browser and edge-cacheable searches. Returns full offer documents.",
         "parameters": [
           {
             "$ref": "#/components/parameters/country"
@@ -8409,7 +8409,7 @@
           "Sellers"
         ],
         "summary": "List offers for a seller",
-        "description": "Returns compact offer cards by default. The default page size is 20; `limit` is capped at 100. Pass `expand=true` for full offer documents.",
+        "description": "Returns full offer documents. `limit` defaults to unlimited; pass an explicit limit to page.",
         "parameters": [
           {
             "$ref": "#/components/parameters/sellerId"
@@ -9009,7 +9009,7 @@
         "name": "expand",
         "in": "query",
         "required": false,
-        "description": "Set to `true` to return full offer documents from list endpoints instead of the default compact offer cards. Compact cards omit long descriptions, tags, items, custom attributes, mappings, and all but four key images.",
+        "description": "Deprecated compatibility flag. List endpoints always return full offer documents.",
         "schema": {
           "type": "boolean",
           "default": false
@@ -9027,7 +9027,7 @@
             "full",
             "none"
           ],
-          "default": "minimal"
+          "default": "full"
         }
       },
       "offerId": {
@@ -10740,7 +10740,7 @@
               "full",
               "none"
             ],
-            "default": "minimal",
+            "default": "full",
             "description": "Facet detail. `minimal` keeps offer type and technology buckets, `full` adds tag/developer/publisher/seller buckets, `none` omits aggregations."
           }
         }
@@ -10861,7 +10861,7 @@
               "full",
               "none"
             ],
-            "default": "minimal",
+            "default": "full",
             "description": "Facet detail. `minimal` keeps offer type and technology buckets, `full` adds tag/developer/publisher/seller buckets, `none` omits aggregations."
           },
           "technologies": {
