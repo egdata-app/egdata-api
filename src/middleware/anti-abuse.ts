@@ -1,7 +1,11 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import type { Context, MiddlewareHandler } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
-import type { AbuseEvent, AbuseScorer } from "../services/abuse-scorer.js";
+import type {
+  AbuseEvent,
+  AbuseResource,
+  AbuseScorer,
+} from "../services/abuse-scorer.js";
 import {
   type PowSessionService,
   SUSPICIOUS_TTL_MS,
@@ -154,7 +158,7 @@ export function isProtectedPath(
 ): boolean {
   path = normalizedAbusePath(path);
   return (
-    /^\/(?:offers|items|sellers|builds|changelist|free-games|collections|franchises|promotions|sandboxes|game-awards|multisearch)(?:\/|$)/.test(
+    /^\/(?:offers|items|sellers|sales|active-sales|builds|changelist|free-games|collections|franchises|promotions|sandboxes|game-awards|multisearch)(?:\/|$)/.test(
       path,
     ) ||
     path === "/catalog/hydrate" ||
@@ -320,11 +324,27 @@ export function createAntiAbuse(options: {
       );
     if (event.trap) scorer.trap(keys);
     const risk = Math.max(fp.riskScore, scorer.risk(keys));
-    scorer.enqueue(keys, event);
-    if (options.mode !== "enforce") return next();
-    // Also used by legacy limiters/ETag middleware on nested route handlers.
-    if (protectedRoute) c.set("antiAbuseEnforced", true);
+    // Apollo supplies resolved arguments (including APQ, aliases and variables)
+    // without reading or parsing the HTTP body a second time here.
+    const graphql = path === "/graphql";
+    if (graphql) {
+      c.set("antiAbuseGraphql", (resource) => {
+        event.resources ??= [];
+        if (event.resources.length < 32) event.resources.push(resource);
+      });
+    }
+    const pass = async () => {
+      if (!graphql) return next();
+      try {
+        await next();
+      } finally {
+        scorer.enqueue(keys, event);
+      }
+    };
+    if (!graphql) scorer.enqueue(keys, event);
+    if (options.mode !== "enforce") return pass();
     if (protectedRoute && risk > 0.8) {
+      if (graphql) scorer.enqueue(keys, event);
       privateResponse(c);
       if (sleepers < 512) {
         sleepers++;
@@ -349,6 +369,7 @@ export function createAntiAbuse(options: {
       risk > 0.5 &&
       (!session || now() - session.issuedAt >= SUSPICIOUS_TTL_MS)
     ) {
+      if (graphql) scorer.enqueue(keys, event);
       privateResponse(c);
       // Keep a genuine but early-expired token for the next handshake so
       // session-only risk survives when trusted edge signals are unavailable.
@@ -371,15 +392,19 @@ export function createAntiAbuse(options: {
         200,
       );
     }
-    await next();
-    if (protectedRoute) privateResponse(c);
+    // Only personalized canary output needs to bypass downstream ETag handling.
+    const injectCanary = Boolean(
+      options.canaries &&
+        session &&
+        path === "/items" &&
+        c.req.method === "GET",
+    );
+    if (injectCanary) c.set("antiAbuseCanaryResponse", true);
+    await pass();
     // Canary injection is explicit: clients must hide synthetic records. It is
     // limited to the small /items list and applied AFTER the route cache read.
     if (
-      options.canaries &&
-      session &&
-      path === "/items" &&
-      c.req.method === "GET" &&
+      injectCanary &&
       c.res.status === 200 &&
       c.res.headers.get("content-type")?.includes("application/json")
     ) {
@@ -404,6 +429,7 @@ export function createAntiAbuse(options: {
 
 declare module "hono" {
   interface ContextVariableMap {
-    antiAbuseEnforced: boolean;
+    antiAbuseCanaryResponse: boolean;
+    antiAbuseGraphql: (resource: AbuseResource) => void;
   }
 }

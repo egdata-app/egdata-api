@@ -384,7 +384,6 @@ describe("Hono integration", () => {
       const res = await f.app.request(path, { headers: desktopHeaders });
       expect(res.status).toBe(200);
       expect((await res.json()).elements[0].id).toBe("real");
-      expect(res.headers.get("cache-control")).toBe("private, no-store");
       expect(res.headers.get("set-cookie")).toBeNull();
     }
     expect(
@@ -540,7 +539,7 @@ describe("Hono integration", () => {
     f.scorer.close();
   });
 
-  it("accepts header or secure cookie tokens across IP/UA rotation and suppresses shared caching", async () => {
+  it("accepts sessions across IP/UA rotation while preserving normal cache headers and ETags", async () => {
     const f = fixture();
     const { token, response } = await f.handshake();
     expect(response.headers.get("set-cookie")).toContain("HttpOnly");
@@ -551,8 +550,13 @@ describe("Hono integration", () => {
       "user-agent": "rotated",
     });
     expect((await res.json()).elements[0].id).toBe("real");
-    expect(res.headers.get("cdn-cache-control")).toBe("no-store");
-    expect(res.headers.get("etag")).toBeNull();
+    expect(res.headers.get("cdn-cache-control")).toContain("public");
+    expect(res.headers.get("etag")).toBeTruthy();
+    const revalidated = await f.request("/offers?page=1", {
+      "if-none-match": res.headers.get("etag") ?? "missing-etag",
+    });
+    expect(revalidated.status).toBe(304);
+    expect(await revalidated.text()).toBe("");
     const cookieRes = await f.request("/items", {
       cookie: `__Host-egdata-session=${token}`,
     });
@@ -619,9 +623,18 @@ describe("Hono integration", () => {
   it("injects a canary after list generation and immediately traps its lookup", async () => {
     const f = fixture({ canaries: true });
     const { token } = await f.handshake();
-    const list = await (
-      await f.request("/items", { "x-egdata-session": token })
-    ).json();
+    const ordinary = await f.request("/items");
+    const canaryResponse = await f.request("/items", {
+      "x-egdata-session": token,
+      "if-none-match": ordinary.headers.get("etag") ?? "missing-etag",
+    });
+    expect(canaryResponse.status).toBe(200);
+    expect(canaryResponse.headers.get("cache-control")).toBe(
+      "private, no-store",
+    );
+    expect(canaryResponse.headers.get("cdn-cache-control")).toBe("no-store");
+    expect(canaryResponse.headers.get("etag")).toBeNull();
+    const list = await canaryResponse.json();
     const canary = list.elements.find(
       (item: { synthetic?: boolean }) => item.synthetic,
     );
@@ -632,7 +645,7 @@ describe("Hono integration", () => {
     expect(response.status).toBe(200);
     expect((await response.json()).elements).toEqual([]);
     expect(f.delay).toHaveBeenCalledTimes(1);
-    expect(f.handler).toHaveBeenCalledTimes(1);
+    expect(f.handler).toHaveBeenCalledTimes(2);
     f.scorer.close();
   });
 
@@ -680,6 +693,29 @@ describe("Hono integration", () => {
   it("rejects oversized challenge input before cryptographic processing", async () => {
     const f = fixture();
     expect((await f.post({ nonce: "a".repeat(5000) })).status).toBe(400);
+    f.scorer.close();
+  });
+
+  it("protects sales without pagination and never caches mitigation responses", async () => {
+    const f = fixture();
+    const risk = vi.spyOn(f.scorer, "risk").mockReturnValue(0.6);
+    for (const path of ["/sales", "/active-sales", "/%73ales"]) {
+      expect(isProtectedPath(path)).toBe(true);
+      const response = await f.request(path, { "if-none-match": "anything" });
+      expect((await response.json()).error.code).toBe(
+        "SESSION_CHALLENGE_REQUIRED",
+      );
+      expect(response.headers.get("cloudflare-cdn-cache-control")).toBe(
+        "no-store",
+      );
+      expect(response.headers.get("etag")).toBeNull();
+    }
+    risk.mockReturnValue(1);
+    const response = await f.request("/sales");
+    expect((await response.json()).elements).toEqual([]);
+    expect(response.headers.get("cache-control")).toBe("private, no-store");
+    expect(response.headers.get("etag")).toBeNull();
+    expect(f.handler).not.toHaveBeenCalled();
     f.scorer.close();
   });
 

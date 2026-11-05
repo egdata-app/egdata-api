@@ -317,11 +317,6 @@ export const routeClassifications: RouteClassification[] = [
     reason: "Public promotion data; outside first documentation slice.",
   },
   {
-    path: "/sales",
-    visibility: "public-deferred",
-    reason: "Public catalog listing; outside first documentation slice.",
-  },
-  {
     path: "/tags",
     visibility: "public-deferred",
     reason: "Public tag list; outside first documentation slice.",

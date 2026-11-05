@@ -619,6 +619,33 @@ export const paths: EgdataPaths = {
       },
     }),
   },
+  "/sales": {
+    get: operation({
+      operationId: "listSaleOffers",
+      tags: ["Catalog"],
+      summary: "List discounted offers with regional prices",
+      description:
+        "Country defaults to the EGDATA_COUNTRY cookie, then US. Unknown countries return 404. Baseline rate limits and conditional anti-abuse checks apply even when pagination parameters are omitted.",
+      parameters: [
+        parameterRef("country"),
+        parameterRef("locale"),
+        parameterRef("expand"),
+        parameterRef("page"),
+        {
+          name: "limit",
+          in: "query",
+          schema: { type: "integer", default: 10, maximum: 30 },
+        },
+        {
+          name: "EGDATA_COUNTRY",
+          in: "cookie",
+          schema: { type: "string" },
+          description: "Fallback pricing country when country is omitted.",
+        },
+      ],
+      response: ref("OfferListResponse"),
+    }),
+  },
   "/active-sales": {
     get: operation({
       operationId: "listActiveSales",

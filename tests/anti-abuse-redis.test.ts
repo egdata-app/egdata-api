@@ -56,14 +56,23 @@ describe.skipIf(!url)("anti-abuse Redis integration", () => {
     }
   });
 
-  it("combines alternating pagination requests across independent scorers", async () => {
+  it.each([
+    "REST",
+    "GraphQL",
+  ])("combines alternating %s pagination requests across independent scorers", async (kind) => {
     const shared = key();
     const a = new AbuseScorer(store);
     const b = new AbuseScorer(otherStore);
     const start = Date.now() - 5000;
     for (let page = 1; page <= 30; page++) {
       const worker = page % 2 ? a : b;
-      worker.enqueue([shared], event(start + page * 100, page));
+      const entry = event(start + page * 100, page);
+      if (kind === "GraphQL") {
+        entry.route = "/graphql";
+        entry.page = undefined;
+        entry.resources = [{ route: "/graphql/Query.offers", page }];
+      }
+      worker.enqueue([shared], entry);
       await worker.drain();
     }
     expect(a.risk([shared])).toBeGreaterThan(0.8);

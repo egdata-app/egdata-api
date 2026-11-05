@@ -6,7 +6,13 @@ import { buildOpenApiDocument } from "../src/openapi/index.js";
 describe("conditional PoW contract", () => {
   it("keeps public catalog operations accessible without PoW credentials", () => {
     const document = buildOpenApiDocument();
-    for (const path of ["/offers", "/items", "/sellers"]) {
+    for (const path of [
+      "/offers",
+      "/items",
+      "/sellers",
+      "/sales",
+      "/active-sales",
+    ]) {
       expect(document.paths[path]?.get?.security).toContainEqual({});
       expect(document.paths[path]?.get?.security).toContainEqual({
         AbuseSessionHeader: [],

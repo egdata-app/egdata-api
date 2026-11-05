@@ -4,7 +4,7 @@ import { etag } from "hono/etag";
 const applyEtag = etag();
 
 export const responseEtag = async (c: Context, next: Next): Promise<void> => {
-  if (c.get("antiAbuseEnforced") || c.req.path === "/catalog/hydrate") {
+  if (c.get("antiAbuseCanaryResponse") || c.req.path === "/catalog/hydrate") {
     await next();
     return;
   }

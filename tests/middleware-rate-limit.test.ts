@@ -1,5 +1,8 @@
 import { Hono } from "hono";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { createAntiAbuse } from "../src/middleware/anti-abuse.js";
+import { AbuseScorer } from "../src/services/abuse-scorer.js";
+import { PowSessionService } from "../src/services/pow-session.js";
 
 type RateLimitModule = typeof import("../src/middlewares/rate-limit.js");
 
@@ -60,26 +63,36 @@ describe("rate limiting", () => {
     expect(response.status).toBe(200);
   });
 
-  it("leaves enforced PoW requests to the anti-abuse scorer instead of issuing 429", async () => {
+  it("retains baseline limits in enforce mode when transport is untrusted and no session exists", async () => {
     const protectedApp = new Hono();
-    protectedApp.use("*", async (c, next) => {
-      c.set("antiAbuseEnforced", true);
-      await next();
+    const scorer = new AbuseScorer();
+    const enqueue = vi.spyOn(scorer, "enqueue");
+    const anti = createAntiAbuse({
+      mode: "enforce",
+      scorer,
+      sessions: new PowSessionService(
+        "test-only-secret-with-at-least-32-bytes",
+      ),
+      edgeSecret: "trusted-secret",
     });
+    protectedApp.use("*", anti.middleware);
     protectedApp.use("*", rateLimit.generalRateLimit);
     protectedApp.use("*", rateLimit.offersListRateLimit);
     protectedApp.get("/offers", (c) => c.json({ elements: [] }));
-    for (let i = 0; i < 10; i++) {
-      expect(
-        (
-          await protectedApp.request("/offers", {
-            headers: {
-              "x-forwarded-for": "203.0.113.10",
-              "user-agent": "vitest-rate-limit",
-            },
-          })
-        ).status,
-      ).toBe(200);
-    }
+    const request = () =>
+      protectedApp.request("/offers", {
+        headers: {
+          "cf-connecting-ip": "203.0.113.77",
+          "x-egdata-edge-secret": "forged",
+          "x-egdata-tls-version": "TLSv1.3",
+        },
+      });
+    expect((await request()).status).toBe(200);
+    expect((await request()).status).toBe(200);
+    const limited = await request();
+    expect(limited.status).toBe(429);
+    expect((await limited.json()).error.code).toBe("RATE_LIMITED");
+    expect(enqueue.mock.calls.every(([keys]) => keys.length === 0)).toBe(true);
+    scorer.close();
   });
 });

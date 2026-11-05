@@ -12,11 +12,27 @@ automatically change the deployment's mode.
 | `ANTI_ABUSE_EDGE_SECRET` | none | Independent random secret for authenticated edge forwarding |
 | `ANTI_ABUSE_TRUST_BOT_HEADERS` | `false` | Trust forwarded JA3/JA4 only after enabling Cloudflare's managed Bot Management header transform |
 | `ANTI_ABUSE_CANARIES` | `false` | Append synthetic records to `GET /items` in enforcement mode |
+| `ANTI_ABUSE_REDIS_HOST` | unset | Private Redis host for telemetry; prefer the API's region/private network |
+| `ANTI_ABUSE_REDIS_PORT` | `6379` | Dedicated telemetry Redis port |
+| `ANTI_ABUSE_REDIS_USER` / `ANTI_ABUSE_REDIS_PASSWORD` | unset | Dedicated telemetry credentials |
+| `ANTI_ABUSE_REDIS_TLS` | `false` | Enable TLS for the dedicated telemetry connection |
 
-Existing `REDISHOST`, `REDISPORT`, `REDISUSER`, `REDISPASSWORD`, and `REDISTLS`
-configure a dedicated telemetry connection. It has a 500 ms command timeout,
+Telemetry selects a complete connection configuration in this order:
+`ANTI_ABUSE_REDIS_*`, then the existing `CACHE_REDIS_*` response-cache configuration,
+then legacy `REDISHOST`, `REDISPORT`, `REDISUSER`, `REDISPASSWORD`, and `REDISTLS`.
+Credentials/TLS are never inherited from a different target. Dedicated settings
+without their matching host fail startup. Use the GCP-local/private Redis target;
+a configured hostname does not by itself prove locality. If neither local host
+is set, the backward-compatible shared Redis fallback may still be cross-cloud.
+The connection has a 500 ms command timeout,
 no offline command queue, and a five-second failure backoff. No Redis calls are
 awaited on a request. Rotating the session secret invalidates all tokens/challenges.
+
+Asynchronous telemetry still consumes bandwidth: each tracked node sends an event
+and retrieves up to 128 recent events. A session plus fingerprint updates two nodes.
+Co-locate telemetry before rollout and measure Redis traffic separately from HTTP
+response bytes. Moving the target starts new shared observation windows; it does
+not migrate historical telemetry or change account/session secrets.
 
 ## Cloudflare trust boundary
 
@@ -96,6 +112,12 @@ these mitigations. Normal desktop clients need no integration changes.
   Page progression and unique resource IDs connect requests across rotating IPs
   and sessions. Redis atomically merges each node's last 60 seconds, capped at 128
   events. A random event suffix prevents identical timestamps from collapsing.
+- `/sales` and `/active-sales` are protected even without pagination parameters.
+  GraphQL captures executed field names and resolved `page`/`id` arguments through
+  Apollo, covering POST, GET variables, literal/default arguments and APQ. At most
+  32 field features are recorded per request. Aliases do not create new route names
+  or inflate HTTP request counts. Raw query text/variables are not stored. GraphQL
+  telemetry is queued after execution, so its current request uses prior evidence.
 - Scores combine deep/support ratio, eight rapid sequential page transitions or
   30 unique resource IDs, low inter-arrival coefficient of variation, volume,
   and weak header/transport mismatch evidence. At least 12 events are needed
@@ -131,15 +153,22 @@ these mitigations. Normal desktop clients need no integration changes.
    workers should perform SHA-256 search without blocking UI; mobile solve times
    are not guaranteed by the bit difficulty. Cookies work on HTTPS same-site
    requests; use the session header for cross-site clients and localhost HTTP.
-4. **Before enforcement**, bypass Cloudflare caching for all protected routes and
-   pagination requests; purge existing entries. Remove any Edge TTL rules that
-   override origin no-store. Cached responses otherwise bypass the origin gate.
-   This supersedes catalog, GraphQL and preview-image caching in `edge-caching.md`.
-5. Enable `enforce`, then optionally canaries after the UI filters synthetic IDs.
-   Preview-image and sitemap consumers are also subject to behavioral checks but
-   only need sessions if flagged as suspicious. Observe/off mode restores
-   existing IP rate limits and cache behavior. Upstream Aikido/Cloudflare controls
-   and normal account authorization remain independent of this middleware.
+4. **Preserve Cloudflare caching** for ordinary public GETs, including GraphQL/APQ
+   and preview images. Keep the policies in `edge-caching.md`; never override origin
+   no-store on challenges, truncated responses or canary lists. Normal ETags and
+   existing baseline IP limits remain active in enforcement, including when there
+   are no trusted fingerprint or session tracking keys. Baseline limits can still
+   return 429; PoW does not exempt clients from them.
+5. Keep `observe` and canaries disabled while comparing origin bytes, cache HIT/MISS
+   rates, Redis bytes, queue drops and false positives on actual client traces.
+   A cache HIT does not reach this origin scorer or its limits. Configure separate
+   Cloudflare WAF/rate controls before cache lookup when cache-access enforcement
+   is needed; authenticated header forwarding alone does not provide this.
+   See [Cloudflare's request ordering](https://developers.cloudflare.com/cache/interaction-cloudflare-products/waf-snippets/).
+   Only then consider origin `enforce` for requests that reach the API. Do not
+   claim calibration against named crawlers without replaying their real traffic.
+   Low-rate crawlers below the heuristic thresholds can still pass. Canaries stay
+   optional and require frontend filtering; cache hits will not receive them.
 6. Run `pnpm exec vitest run tests/anti-abuse.test.ts`, `pnpm exec tsx
    scripts/benchmark-anti-abuse.ts`, `pnpm openapi:generate`, `pnpm docs:check`, and
    `pnpm release:check`. The benchmark reports fast-path and full Hono overhead;

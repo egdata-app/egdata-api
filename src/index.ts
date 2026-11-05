@@ -209,7 +209,8 @@ app.use("/builds/resolve-launcher-records", bulkRateLimit);
 app.use(
   "/graphql",
   honoMiddleware(graphqlServer, {
-    context: async () => ({
+    context: async ({ c }) => ({
+      abuseTelemetry: c.get("antiAbuseGraphql"),
       db: db.db,
       logger: consola,
       loaders: createLoaders(db.db),

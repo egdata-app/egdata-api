@@ -3,6 +3,10 @@ import { ApolloServerPluginCacheControl } from "@apollo/server/plugin/cacheContr
 import { type ConsolaInstance, LogLevels } from "consola";
 import { GraphQLDateTime, GraphQLJSON } from "graphql-scalars";
 import type { Db } from "mongodb";
+import {
+  type AbuseTelemetryContext,
+  createAbuseTelemetryPlugin,
+} from "./abuse-telemetry.js";
 import type { createLoaders } from "./loaders.js";
 import builds from "./resolvers/build.js";
 import changelogs from "./resolvers/changelog.js";
@@ -21,7 +25,7 @@ const resolvers = {
   JSON: GraphQLJSON,
 };
 
-export type Context = {
+export type Context = AbuseTelemetryContext & {
   db: Db;
   logger: ConsolaInstance;
   loaders: ReturnType<typeof createLoaders>;
@@ -43,6 +47,7 @@ export const server = new ApolloServer<Context>({
     process.env.GRAPHQL_INTROSPECTION === "true",
   validationRules: graphqlValidationRules,
   plugins: [
+    createAbuseTelemetryPlugin<Context>(),
     // Emit `Cache-Control: max-age=N, public` for successful query responses.
     // The Hono bridge turns GET responses into CDN-friendly s-maxage headers.
     ApolloServerPluginCacheControl({ defaultMaxAge: 60 }),

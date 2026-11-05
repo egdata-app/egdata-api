@@ -45,7 +45,7 @@ with `error.code: 'INVALID_CHALLENGE'`. A disabled service returns 503 with
 
 Protection applies to the roots and all subroutes under `/offers`, `/items`,
 `/sellers`, `/builds`, `/changelist`, `/free-games`, `/collections`, `/franchises`,
-`/promotions`, `/sandboxes`, `/game-awards`, and `/multisearch`, plus `/graphql`,
+`/promotions`, `/sandboxes`, `/game-awards`, `/multisearch`, `/sales`, and `/active-sales`, plus `/graphql`,
 `/catalog/hydrate`, `/search/v2/search`, and requests containing `page`, `limit`,
 `offset`, or `cursor` query parameters. This includes preview images and sitemaps
 under protected prefixes. The challenge endpoint and CORS preflights are exempt.
@@ -77,12 +77,17 @@ session again; a historical risk score stored in an old token does not keep the
 client challenged. Confirmed
 abuse receives a 3–5 second delay followed by a truncated JSON envelope:
 `{ "elements": [], "page": 1, "limit": 0, "total": 0 }`, also HTTP 200. The
-protection layer does not return 403 or 429. Existing route authorization and
-upstream security controls can still return their own errors.
+protection layer does not return 403 or 429. Existing baseline rate limits still
+apply and can return 429 with Retry-After, including for clients without trusted
+transport signals or sessions. Route authorization and upstream security controls
+can also return their own errors.
 
-In enforcement mode protected responses are private/no-store, including normal
-catalog responses. Conditional ETags and legacy IP-based rate limits are bypassed
-for these requests. Unprotected routes retain their existing caching and limits.
+Normal responses retain their existing cache policies and conditional ETags in
+all modes. Challenges, truncated mitigation responses and synthetic canary lists
+are private/no-store and have no ETag. The origin only scores requests that reach
+it; Cloudflare cache hits require separate edge-side controls and do not contribute
+to origin telemetry. Enforcement does not turn public cached catalog data into
+session-restricted content.
 
 ## Synthetic records
 

@@ -1,9 +1,11 @@
 # Edge caching and bandwidth operations
 
-When enabling `ANTI_ABUSE_MODE=enforce`, follow [anti-abuse rollout](anti-abuse.md)
-first: bypass and purge shared caches for protected routes, including GraphQL,
-catalog, preview images and pagination URLs. Their private/no-store responses
-supersede the cache rules below; cached hits would otherwise skip the session gate.
+Anti-abuse enforcement preserves the normal cache rules below and baseline rate
+limits. Do not bypass public GET caching to force requests through the origin;
+that defeats the origin bandwidth savings. Respect origin no-store for challenges,
+truncated mitigations and personalized canary lists. See [anti-abuse rollout](anti-abuse.md).
+Cloudflare cache hits skip the origin scorer; use edge-side WAF/rate controls for
+those requests. Transform Rules forwarding signals do not enforce cache access.
 
 The API now compresses text responses at the origin and emits explicit
 shared-cache headers (`Cache-Control`, `CDN-Cache-Control`) for public GET

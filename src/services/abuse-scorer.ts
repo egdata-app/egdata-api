@@ -4,13 +4,17 @@ const WINDOW_MS = 60_000;
 const MAX_EVENTS = 128;
 const TRAP_TTL_MS = 600_000;
 
-export interface AbuseEvent {
-  at: number;
-  deep: boolean;
-  support: boolean;
+export interface AbuseResource {
   route: string;
   page?: number;
   itemId?: string;
+}
+
+export interface AbuseEvent extends AbuseResource {
+  at: number;
+  deep: boolean;
+  support: boolean;
+  resources?: AbuseResource[];
   mismatch: number;
   trap?: boolean;
 }
@@ -47,6 +51,8 @@ export class ExpiringLru<T> {
 }
 
 export function scoreEvents(events: AbuseEvent[]): number {
+  // GraphQL finishes asynchronously; completion order is not arrival order.
+  events = [...events].sort((a, b) => a.at - b.at);
   if (events.some((event) => event.trap)) return 1;
   const count = events.length;
   if (!count) return 0;
@@ -63,8 +69,14 @@ export function scoreEvents(events: AbuseEvent[]): number {
     gaps.reduce((sum, gap) => sum + (gap - mean) ** 2, 0) / gaps.length;
   const cv = mean > 0 ? Math.sqrt(variance) / mean : 0;
   let sequential = 0;
-  const pages = new Map<string, AbuseEvent>();
-  for (const event of deep) {
+  const pages = new Map<string, AbuseResource & { at: number }>();
+  const resources = deep.flatMap((event) =>
+    (event.resources?.length ? event.resources : [event]).map((resource) => ({
+      ...resource,
+      at: event.at,
+    })),
+  );
+  for (const event of resources) {
     const previous = pages.get(event.route);
     if (
       event.page !== undefined &&
@@ -75,7 +87,7 @@ export function scoreEvents(events: AbuseEvent[]): number {
       sequential++;
     if (event.page !== undefined) pages.set(event.route, event);
   }
-  const unique = new Set(deep.map((event) => event.itemId).filter(Boolean))
+  const unique = new Set(resources.map((event) => event.itemId).filter(Boolean))
     .size;
   const sweep = sequential >= 8 || unique >= 30;
   // Deep-only traffic or a common TLS profile alone must never convict.
