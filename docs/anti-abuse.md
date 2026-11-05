@@ -8,6 +8,7 @@ API requires tokens. It is not deployed by changing this repository alone.
 | `ANTI_ABUSE_MODE` | `off` | `off`, `observe` (score only), or `enforce` |
 | `ANTI_ABUSE_SECRET` | none | At least 32 random secret bytes; shared by all instances |
 | `ANTI_ABUSE_EDGE_SECRET` | none | Independent random secret for authenticated edge forwarding |
+| `ANTI_ABUSE_TRUST_BOT_HEADERS` | `false` | Trust forwarded JA3/JA4 only after enabling Cloudflare's managed Bot Management header transform |
 | `ANTI_ABUSE_CANARIES` | `false` | Append synthetic records to `GET /items` in enforcement mode |
 
 Existing `REDISHOST`, `REDISPORT`, `REDISUSER`, `REDISPASSWORD`, and `REDISTLS`
@@ -34,11 +35,22 @@ use HTTPS between Cloudflare and the origin:
 | `x-egdata-http-protocol` | Set dynamic: `http.request.version` |
 | `x-egdata-asn` | Set dynamic: `to_string(ip.src.asnum)` |
 
-Remove `cf-ja3-hash`, `cf-ja4`, and `x-egdata-header-order` unless Cloudflare
-explicitly overwrites them with trusted values. Setting the edge secret while
-leaving these optional headers client-controlled would allow spoofed signals.
-JA3/JA4 can be supplied by Bot Management when available; original header order
-requires a trusted capture source and must not be inferred from Fetch iteration.
+Do not add Remove operations for `cf-ja3-hash` or `cf-ja4`: Cloudflare prohibits
+modifying or removing these reserved names in request-header Transform Rules.
+The API ignores these forwarded bot headers by default, even when the edge
+secret is valid. Keep `ANTI_ABUSE_TRUST_BOT_HEADERS` unset or `false` for this
+rollout; no additional environment variable is required.
+
+Only set `ANTI_ABUSE_TRUST_BOT_HEADERS=true` after enabling and verifying the
+managed **Add bot protection headers** transform, which requires Enterprise with
+Bot Management and supplies authoritative values. A valid edge secret is still
+required. Native `Request.cf.botManagement` properties remain trusted without
+this flag. Changing whether bot headers are trusted can change fingerprints and
+require clients to obtain new sessions.
+
+Remove `x-egdata-header-order` unless a trusted capture explicitly overwrites it.
+Original header order must not be inferred from Fetch iteration. Setting the edge
+secret while leaving this optional header client-controlled would allow spoofing.
 
 Do not trust JA headers merely because their names start with `cf-`. Without the
 edge secret, forwarded signals are ignored. Restrict direct origin access and
@@ -61,6 +73,7 @@ Cloudflare references:
 - [JA3/JA4 availability and missing values](https://developers.cloudflare.com/bots/additional-configurations/ja3-ja4-fingerprint/)
 - [Managed Bot Management headers](https://developers.cloudflare.com/rules/transform/managed-transforms/reference/)
 - [Transform Rule fields and functions](https://developers.cloudflare.com/rules/transform/request-header-modification/reference/fields-functions/)
+- [Request-header restrictions](https://developers.cloudflare.com/rules/transform/request-header-modification/)
 
 Wrangler authentication was checked during implementation. The available OAuth
 permissions include zone read but do not list zone analytics read; no live zone

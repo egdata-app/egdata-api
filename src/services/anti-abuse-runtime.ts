@@ -43,6 +43,7 @@ export function createAntiAbuseRuntime() {
       sessions,
       scorer,
       edgeSecret: process.env.ANTI_ABUSE_EDGE_SECRET,
+      trustBotHeaders: process.env.ANTI_ABUSE_TRUST_BOT_HEADERS === "true",
       canaries: process.env.ANTI_ABUSE_CANARIES === "true",
     }),
     close: () => scorer.close(),

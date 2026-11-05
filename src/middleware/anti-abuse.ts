@@ -21,6 +21,7 @@ type EdgeSignals = {
 
 type FingerprintOptions = {
   edgeSecret?: string;
+  trustBotHeaders?: boolean;
   rawHeaderNames?: string[];
 };
 
@@ -69,11 +70,16 @@ export function extractFingerprint(
           asn: Number(headers.get("x-egdata-asn")) || undefined,
         }
       : {});
+  // An authenticated edge secret proves the request passed our zone, not that
+  // every cf-* header originated there. Transform Rules cannot remove these
+  // reserved headers. Only opt in after enabling Cloudflare's managed Bot
+  // Management header transform, which overwrites them with trusted values.
+  const trustBotHeaders = forwarded && options.trustBotHeaders === true;
   const ja4 =
-    cf.botManagement?.ja4 ?? (forwarded ? headers.get("cf-ja4") : null);
+    cf.botManagement?.ja4 ?? (trustBotHeaders ? headers.get("cf-ja4") : null);
   const ja3 =
     cf.botManagement?.ja3Hash ??
-    (forwarded ? headers.get("cf-ja3-hash") : null);
+    (trustBotHeaders ? headers.get("cf-ja3-hash") : null);
   // Fetch Headers sorts/normalizes names. Only an authenticated edge capture
   // can claim original order; Node rawHeaders describes the edge->origin hop.
   const edgeOrder = forwarded ? headers.get("x-egdata-header-order") : null;
@@ -184,6 +190,7 @@ export function createAntiAbuse(options: {
   sessions: PowSessionService;
   scorer: AbuseScorer;
   edgeSecret?: string;
+  trustBotHeaders?: boolean;
   canaries?: boolean;
   now?: () => number;
   delay?: (ms: number, signal?: AbortSignal) => Promise<void>;
@@ -195,6 +202,7 @@ export function createAntiAbuse(options: {
   const fingerprint = (c: Context) =>
     extractFingerprint(c.req.raw, {
       edgeSecret: options.edgeSecret,
+      trustBotHeaders: options.trustBotHeaders,
       rawHeaderNames: (
         c.env as { incoming?: { rawHeaders?: string[] } } | undefined
       )?.incoming?.rawHeaders?.filter((_, i) => i % 2 === 0),

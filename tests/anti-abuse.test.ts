@@ -116,6 +116,72 @@ function fixture(
 }
 
 describe("transport fingerprint", () => {
+  it("ignores client-supplied JA3/JA4 by default even with a valid edge secret", () => {
+    const fingerprint = (extra: Record<string, string>) =>
+      extractFingerprint(
+        new Request("https://api.test/items", { headers: headers(extra) }),
+        { edgeSecret },
+      );
+    const baseline = fingerprint({});
+    expect(
+      fingerprint({ "cf-ja3-hash": "spoofed-ja3", "cf-ja4": "spoofed-ja4" })
+        .fingerprintHash,
+    ).toBe(baseline.fingerprintHash);
+    const noTransport = new Request("https://api.test/items", {
+      headers: {
+        "x-egdata-edge-secret": edgeSecret,
+        "cf-ja3-hash": "spoofed-ja3",
+        "cf-ja4": "spoofed-ja4",
+      },
+    });
+    expect(
+      extractFingerprint(noTransport, { edgeSecret }).trustedTransport,
+    ).toBe(false);
+  });
+
+  it("only accepts forwarded bot headers with explicit opt-in and edge authentication", () => {
+    const fingerprint = (extra: Record<string, string>) =>
+      extractFingerprint(
+        new Request("https://api.test/items", { headers: headers(extra) }),
+        { edgeSecret, trustBotHeaders: true },
+      );
+    expect(
+      fingerprint({ "cf-ja4": "different-profile" }).fingerprintHash,
+    ).not.toBe(fingerprint({}).fingerprintHash);
+    expect(
+      fingerprint({ "cf-ja4": "", "cf-ja3-hash": "first-ja3" }).fingerprintHash,
+    ).not.toBe(
+      fingerprint({ "cf-ja4": "", "cf-ja3-hash": "second-ja3" })
+        .fingerprintHash,
+    );
+    expect(
+      fingerprint({ "x-egdata-edge-secret": "invalid", "cf-ja4": "first" })
+        .fingerprintHash,
+    ).toBe(
+      fingerprint({ "x-egdata-edge-secret": "invalid", "cf-ja4": "second" })
+        .fingerprintHash,
+    );
+  });
+
+  it("uses native Cloudflare bot properties without trusting forwarded bot headers", () => {
+    const fingerprint = (ja4: string, header: string) => {
+      const request = new Request("https://api.test/items", {
+        headers: headers({ "cf-ja4": header }),
+      });
+      Object.assign(request, { cf: { asn: 1234, botManagement: { ja4 } } });
+      return extractFingerprint(request);
+    };
+    expect(fingerprint("native-profile", "spoofed").trustedTransport).toBe(
+      true,
+    );
+    expect(fingerprint("native-profile", "spoofed").fingerprintHash).toBe(
+      fingerprint("native-profile", "other-spoof").fingerprintHash,
+    );
+    expect(fingerprint("native-profile", "spoofed").fingerprintHash).not.toBe(
+      fingerprint("other-native-profile", "spoofed").fingerprintHash,
+    );
+  });
+
   it("groups rotating IPs and UA values, including after the cookie/header handshake", () => {
     const a = extractFingerprint(
       new Request("https://api.test/items", {
@@ -285,6 +351,19 @@ describe("sliding feature aggregation", () => {
 });
 
 describe("Hono integration", () => {
+  it("keeps sessions valid when clients alter ignored bot headers", async () => {
+    const f = fixture();
+    const { token } = await f.handshake();
+    const response = await f.request("/items", {
+      "x-egdata-session": token,
+      "cf-ja3-hash": "spoofed-ja3",
+      "cf-ja4": "spoofed-ja4",
+    });
+    expect((await response.json()).total).toBe(1);
+    expect(f.handler).toHaveBeenCalledTimes(1);
+    f.scorer.close();
+  });
+
   it("gates root, nested and pagination endpoints with HTTP 200 and never queries the catalog", async () => {
     const f = fixture();
     for (const path of [
