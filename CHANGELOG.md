@@ -4,7 +4,7 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
-- Raised the interactive search rate limit to 120 requests/minute (`RATE_LIMIT_SEARCH_PER_MINUTE`) while keeping 30/minute for GraphQL, profile, seller, and preview-image routes.
+- Raised anonymous limits for website traffic: 600/minute general, 600/minute GraphQL (`RATE_LIMIT_GRAPHQL_PER_MINUTE`), 300/minute interactive search, 60/minute detail/image routes, and 10/minute bulk routes. GraphQL preloads no longer share the detail-route bucket.
 
 - Added GraphQL GET support with Automatic Persisted Queries (Redis-backed hash store with local fallback), Apollo cache-control hints, and CDN-friendly `Cache-Control`/`CDN-Cache-Control` headers for hash URLs; GraphQL POST responses are `no-store`.
 

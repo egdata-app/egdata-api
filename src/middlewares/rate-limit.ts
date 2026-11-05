@@ -234,26 +234,35 @@ const createLimiter = (
  * scripts without affecting normal browsing.
  */
 export const generalRateLimit = createLimiter(
-  numberFromEnv("RATE_LIMIT_GENERAL_PER_MINUTE", 300),
+  numberFromEnv("RATE_LIMIT_GENERAL_PER_MINUTE", 600),
   "Too many requests. Please retry shortly.",
 );
 
 /**
- * Expensive search/GraphQL/detail/image routes. Anonymous traffic above this
- * rate is almost always automation in practice.
+ * GraphQL feeds the site's preloads, so it gets a much higher quota than the
+ * other expensive routes. A single page navigation can issue many queries.
+ */
+export const graphqlRateLimit = createLimiter(
+  numberFromEnv("RATE_LIMIT_GRAPHQL_PER_MINUTE", 600),
+  "GraphQL is temporarily rate limited. Please retry shortly.",
+);
+
+/**
+ * Expensive detail/image routes. Anonymous traffic above this rate is almost
+ * always automation in practice.
  */
 export const heavyRateLimit = createLimiter(
-  numberFromEnv("RATE_LIMIT_HEAVY_PER_MINUTE", 30),
+  numberFromEnv("RATE_LIMIT_HEAVY_PER_MINUTE", 60),
   "This endpoint is temporarily rate limited. Please retry shortly.",
 );
 
 /**
  * Interactive offer search. A single UI page can issue several searches per
  * filter/sort/page interaction, so this needs a materially higher quota than
- * GraphQL or detail/image routes.
+ * detail/image routes.
  */
 export const searchRateLimit = createLimiter(
-  numberFromEnv("RATE_LIMIT_SEARCH_PER_MINUTE", 120),
+  numberFromEnv("RATE_LIMIT_SEARCH_PER_MINUTE", 300),
   "Search is temporarily rate limited. Please retry shortly.",
 );
 

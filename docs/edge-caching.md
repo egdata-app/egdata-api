@@ -143,17 +143,16 @@ by the GraphQL rule above.
 ## 6. WAF and rate limiting
 
 Application-level limits are already enforced in `src/middlewares/rate-limit.ts`
-(defaults: 300/min general, 120/min interactive search, 30/min for
-GraphQL/detail/OG routes, 10/min for bulk catalog and launcher resolution).
+(defaults: 600/min general, 600/min GraphQL, 300/min interactive search,
+60/min detail/image routes, 10/min bulk catalog and launcher resolution).
 Configure matching Cloudflare Rate Limiting rules so abusive clients are
-stopped before the origin:
+stopped before the origin. Keep the edge thresholds above the origin limits,
+otherwise Cloudflare will throttle normal UI bursts before the app sees them:
 
-- `/graphql`: 60 requests/minute per IP, block for 10 minutes.
-- `/search/*`: 240 requests/minute per IP (above the app's 120/minute
-  interactive-search limit, so normal UI bursts are handled by the origin
-  limiter rather than the edge).
+- `/graphql`: 1200 requests/minute per IP, block for 10 minutes.
+- `/search/*`: 600 requests/minute per IP.
 - `/offers/*/og`, `/sandboxes/*/og`: 120 requests/minute per IP.
-- `/profiles/*`, `/sellers/*`: 60 requests/minute per IP.
+- `/profiles/*`, `/sellers/*`: 120 requests/minute per IP.
 - `/catalog/*`, `/builds/resolve-launcher-records`: 10 requests/minute per IP.
 
 In the 2026-11-05 capture only 2.42k of 784k requests received a `429`, while

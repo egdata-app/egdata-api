@@ -26,6 +26,7 @@ import {
   bulkRateLimit,
   disconnectRateLimitStore,
   generalRateLimit,
+  graphqlRateLimit,
   heavyRateLimit,
   searchRateLimit,
 } from "./middlewares/rate-limit.js";
@@ -182,7 +183,7 @@ app.use("/*", generalRateLimit);
 
 // Expensive routes get a tighter anonymous quota. These are the paths that
 // account for the bulk of dynamic origin egress.
-app.use("/graphql", heavyRateLimit);
+app.use("/graphql", graphqlRateLimit);
 app.use("/search/v2/search", searchRateLimit);
 app.use("/search/natural-language", heavyRateLimit);
 app.use("/search/:id/count", heavyRateLimit);

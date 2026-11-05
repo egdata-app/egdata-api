@@ -83,9 +83,10 @@ for automated traffic but generous for normal browsing:
 
 ```txt
 RATE_LIMIT_ENABLED=true
-RATE_LIMIT_GENERAL_PER_MINUTE=300
-RATE_LIMIT_SEARCH_PER_MINUTE=120
-RATE_LIMIT_HEAVY_PER_MINUTE=30
+RATE_LIMIT_GENERAL_PER_MINUTE=600
+RATE_LIMIT_GRAPHQL_PER_MINUTE=600
+RATE_LIMIT_SEARCH_PER_MINUTE=300
+RATE_LIMIT_HEAVY_PER_MINUTE=60
 RATE_LIMIT_BULK_PER_MINUTE=10
 GRAPHQL_INTROSPECTION=false
 ```
@@ -93,6 +94,11 @@ GRAPHQL_INTROSPECTION=false
 `RATE_LIMIT_ENABLED=false` disables application limits (useful for local tests).
 The rate limiter uses shared Redis with a bounded command timeout and falls back
 to an in-process store if Redis is unavailable.
+
+The general limit also applies to every route, so keep
+`RATE_LIMIT_GENERAL_PER_MINUTE` at or above the route-specific limits you set.
+For example, GraphQL is effectively capped by the lower of the general and
+`RATE_LIMIT_GRAPHQL_PER_MINUTE` values.
 
 GraphQL additionally caps list page sizes, query depth, aliases, and query size.
 Introspection is disabled in production unless `GRAPHQL_INTROSPECTION=true`.
