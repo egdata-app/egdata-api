@@ -703,6 +703,42 @@ describe("search route with SeaQA fixtures", () => {
     );
   });
 
+  it("records normalized traversal features on both GET and POST cache hits", async () => {
+    const recorded = vi.fn();
+    const observed = new Hono();
+    observed.use("*", async (c, next) => {
+      c.set("antiAbuseCatalog", recorded);
+      await next();
+    });
+    observed.route("/search", SearchRoute);
+    mocks.redisGet.mockResolvedValue(
+      JSON.stringify({ elements: [], page: 2, limit: 50, total: 0, meta: {} }),
+    );
+    const get = await observed.request(
+      "/search/v2/search?title=game&page=2&limit=50&tracking=ignored",
+    );
+    const post = await observed.request("/search/v2/search", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        title: "game",
+        page: 3,
+        limit: 50,
+        unknown: "ignored",
+      }),
+    });
+    expect(get.status).toBe(200);
+    expect(post.status).toBe(200);
+    expect(recorded).toHaveBeenCalledTimes(2);
+    expect(recorded.mock.calls[0][0].route).toBe(
+      recorded.mock.calls[1][0].route,
+    );
+    expect(recorded.mock.calls.map(([feature]) => feature.page)).toEqual([
+      2, 3,
+    ]);
+    expect(mocks.opensearchSearch).not.toHaveBeenCalled();
+  });
+
   it("maps GET query parameters into the search body", async () => {
     await app.request(
       "/search/v2/search?country=FR&tags=Action,RPG&technologies=Unreal,NVIDIA_DLSS&priceMin=0&priceMax=2000&onSale=true&excludeBlockchain=true&limit=5&page=2",

@@ -6,6 +6,7 @@ import type {
   AbuseResource,
   AbuseScorer,
 } from "../services/abuse-scorer.js";
+import type { AbuseTrialController } from "../services/abuse-trial.js";
 import {
   type PowSessionService,
   SUSPICIOUS_TTL_MS,
@@ -196,6 +197,7 @@ export function createAntiAbuse(options: {
   edgeSecret?: string;
   trustBotHeaders?: boolean;
   canaries?: boolean;
+  trial?: Pick<AbuseTrialController, "matches">;
   now?: () => number;
   delay?: (ms: number, signal?: AbortSignal) => Promise<void>;
   random?: () => number;
@@ -219,6 +221,16 @@ export function createAntiAbuse(options: {
   ];
 
   const challenge: MiddlewareHandler = async (c) => {
+    c.set("antiAbuseObservation", {
+      at: now(),
+      route: "/auth/challenge",
+      method: c.req.method,
+      scope: options.mode === "enforce" ? "enforce" : "observe",
+      action: "handshake",
+      risk: 0,
+      reasons: [],
+      tracked: false,
+    });
     privateResponse(c);
     if (options.mode === "off")
       return c.json({ error: { code: "ANTI_ABUSE_DISABLED" } }, 503);
@@ -258,6 +270,11 @@ export function createAntiAbuse(options: {
     // A token's issuance score is historical. Current evidence determines
     // difficulty so a client can recover after its behavioral window clears.
     const risk = Math.max(fp.riskScore, scorer.risk(keys));
+    Object.assign(c.get("antiAbuseObservation"), {
+      risk,
+      reasons: scorer.reasons(keys),
+      tracked: keys.length > 0,
+    });
     if (body.challenge !== undefined || body.nonce !== undefined) {
       if (typeof body.challenge !== "string" || typeof body.nonce !== "string")
         return c.json({ error: { code: "INVALID_CHALLENGE" } }, 400);
@@ -294,13 +311,15 @@ export function createAntiAbuse(options: {
     const path = normalizedAbusePath(url.pathname);
     const protectedRoute = isProtectedPath(path, url.searchParams);
     const support =
-      /^\/(?:search(?:\/tags|\/v2\/search)?|featured|countries|regions|tags|offers\/genres)$/.test(
+      /^\/(?:search(?:\/tags)?|featured|countries|regions|tags|offers\/genres)$/.test(
         path,
       );
     if (!protectedRoute && !support) return next();
     const fp = fingerprint(c);
     const session = await sessions.verify(token(c), fp.fingerprintHash);
     const keys = keysFor(fp, session?.sessionId);
+    const search =
+      path === "/search/v2/search" || /^\/sandboxes\/[^/]+\/offers$/.test(path);
     const requestedCanaries =
       `${path} ${Array.from(url.searchParams.values()).join(" ")}`.match(
         /egcanary_[a-f0-9]{32}/g,
@@ -311,9 +330,10 @@ export function createAntiAbuse(options: {
       support,
       route: path.slice(0, 256),
       mismatch: fp.riskScore,
-      page: /^\d{1,9}$/.test(url.searchParams.get("page") ?? "")
-        ? Number(url.searchParams.get("page"))
-        : undefined,
+      page:
+        !search && /^\d{1,9}$/.test(url.searchParams.get("page") ?? "")
+          ? Number(url.searchParams.get("page"))
+          : undefined,
       itemId: /^\/(?:offers|items|sellers)\/([^/]+)/
         .exec(path)?.[1]
         ?.slice(0, 128),
@@ -324,9 +344,33 @@ export function createAntiAbuse(options: {
       );
     if (event.trap) scorer.trap(keys);
     const risk = Math.max(fp.riskScore, scorer.risk(keys));
+    const trial =
+      options.mode === "observe" &&
+      fp.trustedTransport &&
+      options.trial?.matches(fp.fingerprintHash, path, c.req.method);
+    const enforcing = options.mode === "enforce" || trial;
+    const observation = {
+      at: event.at,
+      route: path,
+      method: c.req.method,
+      scope: trial
+        ? ("trial" as const)
+        : options.mode === "enforce"
+          ? ("enforce" as const)
+          : ("observe" as const),
+      action: "serve" as "serve" | "challenge" | "tarpit",
+      risk,
+      reasons: scorer.reasons(keys),
+      tracked: keys.length > 0,
+    };
+    c.set("antiAbuseObservation", observation);
     // Apollo supplies resolved arguments (including APQ, aliases and variables)
     // without reading or parsing the HTTP body a second time here.
     const graphql = path === "/graphql";
+    if (search)
+      c.set("antiAbuseCatalog", (resource) => {
+        event.resources = [resource];
+      });
     if (graphql) {
       c.set("antiAbuseGraphql", (resource) => {
         event.resources ??= [];
@@ -334,17 +378,18 @@ export function createAntiAbuse(options: {
       });
     }
     const pass = async () => {
-      if (!graphql) return next();
+      if (!graphql && !search) return next();
       try {
         await next();
       } finally {
         scorer.enqueue(keys, event);
       }
     };
-    if (!graphql) scorer.enqueue(keys, event);
-    if (options.mode !== "enforce") return pass();
+    if (!graphql && !search) scorer.enqueue(keys, event);
+    if (!enforcing) return pass();
     if (protectedRoute && risk > 0.8) {
-      if (graphql) scorer.enqueue(keys, event);
+      if (graphql || search) scorer.enqueue(keys, event);
+      observation.action = "tarpit";
       privateResponse(c);
       if (sleepers < 512) {
         sleepers++;
@@ -369,7 +414,8 @@ export function createAntiAbuse(options: {
       risk > 0.5 &&
       (!session || now() - session.issuedAt >= SUSPICIOUS_TTL_MS)
     ) {
-      if (graphql) scorer.enqueue(keys, event);
+      if (graphql || search) scorer.enqueue(keys, event);
+      observation.action = "challenge";
       privateResponse(c);
       // Keep a genuine but early-expired token for the next handshake so
       // session-only risk survives when trusted edge signals are unavailable.
@@ -394,7 +440,8 @@ export function createAntiAbuse(options: {
     }
     // Only personalized canary output needs to bypass downstream ETag handling.
     const injectCanary = Boolean(
-      options.canaries &&
+      options.mode === "enforce" &&
+        options.canaries &&
         session &&
         path === "/items" &&
         c.req.method === "GET",
@@ -431,5 +478,6 @@ declare module "hono" {
   interface ContextVariableMap {
     antiAbuseCanaryResponse: boolean;
     antiAbuseGraphql: (resource: AbuseResource) => void;
+    antiAbuseCatalog: (resource: AbuseResource) => void;
   }
 }

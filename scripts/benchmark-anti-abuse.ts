@@ -4,6 +4,10 @@ import {
   createAntiAbuse,
   extractFingerprint,
 } from "../src/middleware/anti-abuse.js";
+import {
+  AbuseObservations,
+  observeAbuseResponses,
+} from "../src/services/abuse-observation.js";
 import { AbuseScorer } from "../src/services/abuse-scorer.js";
 import {
   PowSessionService,
@@ -58,17 +62,22 @@ const fast = await measure(async () => {
 const baseline = new Hono();
 baseline.get("/items", (c) => c.json({ elements: [] }));
 const protectedApp = new Hono();
+const observations = new AbuseObservations({ write: async () => {} });
+protectedApp.use("*", observeAbuseResponses(observations));
 protectedApp.use(
   "*",
   createAntiAbuse({ mode: "enforce", sessions, scorer }).middleware,
 );
 protectedApp.get("/items", (c) => c.json({ elements: [] }));
-const plain = await measure(() => baseline.request("/items", { headers }));
-const protectedTiming = await measure(() =>
-  protectedApp.request("/items", { headers }),
+const plain = await measure(async () =>
+  (await baseline.request("/items", { headers })).arrayBuffer(),
+);
+const protectedTiming = await measure(async () =>
+  (await protectedApp.request("/items", { headers })).arrayBuffer(),
 );
 await scorer.drain();
 scorer.close();
+await observations.close();
 console.log(
   JSON.stringify(
     {

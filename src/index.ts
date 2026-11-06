@@ -128,6 +128,8 @@ Zen.addHonoMiddleware(app);
 // Compress text responses at the origin. Cloudflare compresses browser traffic,
 // but the origin -> edge hop is what GCP bills; without this every JSON/XML
 // response crosses that hop uncompressed.
+const antiAbuse = createAntiAbuseRuntime();
+app.use("/*", antiAbuse.observeResponse);
 app.use("/*", compress({ threshold: 512 }));
 
 export { app };
@@ -177,7 +179,6 @@ app.use(
   }),
 );
 
-const antiAbuse = createAntiAbuseRuntime();
 app.use("/*", antiAbuse.middleware);
 app.post("/auth/challenge", antiAbuse.challenge);
 

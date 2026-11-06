@@ -318,7 +318,7 @@ describe("sliding feature aggregation", () => {
       ),
     ).toBeGreaterThan(0.8);
     expect(
-      scoreEvents(Array.from({ length: 20 }, (_, i) => event(i * 3000, i))),
+      scoreEvents(Array.from({ length: 20 }, (_, i) => event(i * 3000, 1))),
     ).toBeLessThanOrEqual(0.5);
     expect(
       scoreEvents(

@@ -9,6 +9,10 @@ need a startup handshake, cookies, browser headers, or any API integration chang
 Only clients whose current behavioral risk exceeds 0.5 are challenged or mitigated.
 Existing account authentication requirements still apply.
 
+An operator can also run a short, fingerprint-scoped trial while the default mode
+remains observe. Such trials are limited to offer details or catalog search and
+expire within 15 minutes; clients outside the selected scope remain unaffected.
+
 Clients that want to recover automatically from a challenge can implement the
 handshake below on demand. The session is separate from account authentication:
 send the token in `x-egdata-session`, or use the secure `__Host-egdata-session`
@@ -51,6 +55,13 @@ Protection applies to the roots and all subroutes under `/offers`, `/items`,
 under protected prefixes. The challenge endpoint and CORS preflights are exempt.
 Supporting country, region, tag, featured and search routes contribute behavioral
 signals. Account authentication requirements still apply independently.
+
+Catalog search (`GET` and `POST /search/v2/search`) is scored as catalog traffic;
+lightweight search metadata remains supporting traffic. Sequential traversal is
+grouped by normalized filters, so unrelated queries do not form one page sweep.
+The same grouping applies to `/sandboxes/{sandboxId}/offers`. Repeated page
+advances less than five seconds apart and sustained large searches contribute to
+risk; a single query, large page, or occasional pagination does not trigger PoW.
 
 Enforcement uses the current score:
 

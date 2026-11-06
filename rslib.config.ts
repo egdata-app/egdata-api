@@ -4,6 +4,8 @@ export default defineConfig({
   source: {
     entry: {
       index: "./src/index.ts",
+      "anti-abuse-ops": "./scripts/anti-abuse-ops.ts",
+      "anti-abuse-production-check": "./scripts/anti-abuse-production-check.ts",
     },
   },
   lib: [

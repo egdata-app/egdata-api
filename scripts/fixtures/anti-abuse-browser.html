@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Anti-abuse staging check</title>
+<h1>Isolated PoW staging check</h1><p>This harness tests the API contract. It is not the production frontend integration.</p>
+<button id="run">Run checks</button><pre id="results">Ready</pre>
+<script id="worker" type="text/plain">
+onmessage = async ({ data }) => {
+  try {
+    const encoder = new TextEncoder();
+    for (let n = 0; ; n++) {
+      if (n % 256 === 0 && Date.now() >= data.expiresAt) throw new Error('Challenge expired');
+      const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', encoder.encode(data.challenge + ':' + n)));
+      let remaining = data.difficulty, valid = true;
+      for (const byte of digest) {
+        const bits = Math.min(8, remaining);
+        if ((byte >>> (8 - bits)) !== 0) { valid = false; break; }
+        remaining -= bits; if (!remaining) break;
+      }
+      if (valid && remaining === 0) { postMessage({ nonce: String(n) }); return; }
+    }
+  } catch (error) { postMessage({ error: String(error) }); }
+};
+</script><script>
+let token, generation = 0, flight, workers = 0;
+const jsonPost = (path, body) => fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { 'x-egdata-session': token } : {}) }, body: JSON.stringify(body) }).then(r => r.json());
+function solve(challenge) {
+  workers++;
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(new Blob([document.querySelector('#worker').textContent], { type: 'text/javascript' }));
+    const worker = new Worker(url); URL.revokeObjectURL(url);
+    const timer = setTimeout(() => { worker.terminate(); reject(new Error('Solve timeout')); }, 65000);
+    const finish = () => { clearTimeout(timer); worker.terminate(); };
+    worker.onmessage = ({ data }) => { finish(); data.error ? reject(new Error(data.error)) : resolve(data.nonce); };
+    worker.onerror = (error) => { finish(); reject(error); };
+    worker.postMessage(challenge);
+  });
+}
+async function handshake() {
+  let challenge = await jsonPost('/auth/challenge', {});
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const nonce = await solve(challenge);
+    const redeemed = await jsonPost('/auth/challenge', { challenge: challenge.challenge, nonce });
+    if (typeof redeemed.token === 'string') { token = redeemed.token; generation++; return; }
+    if (!redeemed.challenge) throw new Error('Invalid handshake response');
+    challenge = redeemed;
+  }
+  throw new Error('Handshake attempts exhausted');
+}
+async function api(path) {
+  const previousGeneration = generation;
+  const send = () => fetch(path, { headers: token ? { 'x-egdata-session': token } : {} }).then(r => r.json());
+  const result = await send();
+  if (result?.error?.code !== 'SESSION_CHALLENGE_REQUIRED') return result;
+  if (generation === previousGeneration) {
+    if (!flight) flight = handshake().finally(() => { flight = undefined; });
+    await flight;
+  }
+  const retry = await send();
+  if (retry?.error?.code === 'SESSION_CHALLENGE_REQUIRED') throw new Error('Repeated challenge');
+  return retry;
+}
+window.runChecks = async () => {
+  const results = []; const assert = (value, name) => { if (!value) throw new Error(name); results.push(name); document.querySelector('#results').textContent = results.join('\n'); };
+  await jsonPost('/test/config', { risk: 0 });
+  assert((await api('/items/normal')).normal && workers === 0, 'Normal request: no handshake or worker');
+  await jsonPost('/test/config', { risk: 0.6 });
+  const before = (await fetch('/test/state').then(r => r.json())).handshakes;
+  const recovered = await Promise.all([api('/items/a'), api('/items/b'), api('/items/c')]);
+  const after = (await fetch('/test/state').then(r => r.json())).handshakes;
+  assert(recovered.every(r => r.normal) && after - before === 2 && workers === 1, 'Concurrent challenge: one real SHA-256 worker handshake and successful retries');
+  await jsonPost('/test/config', { risk: 0.6, offset: 31000 });
+  assert((await api('/items/renew')).normal && workers === 2, 'Early expiry: on-demand renewal');
+  await jsonPost('/test/config', { risk: 1, offset: 31000 });
+  const high = await api('/items/high');
+  assert(Array.isArray(high.elements) && high.elements.length === 0 && workers === 2, 'Truncated response: no PoW retry loop');
+  await jsonPost('/test/config', { risk: 0, offset: 31000 });
+  const desktop = await fetch('/items/desktop').then(r => r.json());
+  assert(desktop.normal, 'Desktop request without a token: normal after risk clears');
+  return { passed: results.length, results, workers };
+};
+document.querySelector('#run').onclick = () => window.runChecks().catch(error => { document.querySelector('#results').textContent += '\nFAIL: ' + error; });
+</script></html>

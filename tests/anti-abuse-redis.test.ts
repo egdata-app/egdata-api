@@ -2,10 +2,19 @@ import { randomUUID } from "node:crypto";
 import { Redis } from "ioredis";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
+  RedisSummaryStore,
+  SUMMARY_PREFIX,
+  SUMMARY_SCRIPT,
+} from "../src/services/abuse-observation.js";
+import {
   type AbuseEvent,
   AbuseScorer,
   RedisRiskStore,
 } from "../src/services/abuse-scorer.js";
+import {
+  AbuseTrialController,
+  TRIAL_KEY,
+} from "../src/services/abuse-trial.js";
 
 // Explicit opt-in only: never use the application's production Redis variables.
 const url = process.env.ANTI_ABUSE_TEST_REDIS_URL;
@@ -116,5 +125,57 @@ describe.skipIf(!url)("anti-abuse Redis integration", () => {
     const result = await otherStore.append(node, event(Date.now()));
     expect(result.trapped).toBe(true);
     expect(result.events.some((entry) => entry.trap)).toBe(false);
+  });
+
+  it("retains compact summaries for 24 hours, atomically deduplicates batches, and expires old buckets", async () => {
+    const minute = Math.floor(Date.now() / 60000) - 5;
+    const summaryKey = `${SUMMARY_PREFIX}${minute}`;
+    const oldMinute = minute - 1440;
+    cleanup.push(summaryKey, `${SUMMARY_PREFIX}${oldMinute}`);
+    const store = new RedisSummaryStore(redis);
+    await store.write([{ minute, values: { requests: 3, bodyBytes: 1200 } }]);
+    await store.write([{ minute, values: { requests: 2, bodyBytes: 800 } }]);
+    expect(await redis.hget(summaryKey, "requests")).toBe("5");
+    expect(await redis.hget(summaryKey, "bodyBytes")).toBe("2000");
+    expect(await redis.ttl(summaryKey)).toBeGreaterThan(85000);
+    expect(await redis.ttl(summaryKey)).toBeLessThanOrEqual(86400);
+    const args = [
+      summaryKey,
+      "__batch:replay",
+      JSON.stringify({ requests: 1 }),
+      minute * 60 + 60 + 86400,
+    ];
+    await redis.eval(SUMMARY_SCRIPT, 1, ...args);
+    await redis.eval(SUMMARY_SCRIPT, 1, ...args);
+    expect(await redis.hget(summaryKey, "requests")).toBe("6");
+    await store.write([{ minute: oldMinute, values: { requests: 1 } }]);
+    expect(await redis.exists(`${SUMMARY_PREFIX}${oldMinute}`)).toBe(0);
+  });
+
+  it("propagates scoped trial activation and rollback between Redis clients", async () => {
+    cleanup.push(TRIAL_KEY);
+    const now = Date.now();
+    const fingerprint = "a".repeat(64),
+      path = `/offers/${"b".repeat(32)}`;
+    await redis.set(
+      TRIAL_KEY,
+      JSON.stringify({
+        id: "integration",
+        createdAt: now,
+        expiresAt: now + 30000,
+        fingerprints: [fingerprint],
+        route: "offer-details",
+      }),
+      "PX",
+      30000,
+    );
+    const trial = new AbuseTrialController(peer);
+    await trial.poll();
+    expect(trial.matches(fingerprint, path, "GET")).toBe(true);
+    expect(await redis.pttl(TRIAL_KEY)).toBeLessThanOrEqual(30000);
+    await redis.del(TRIAL_KEY);
+    await trial.poll();
+    expect(trial.matches(fingerprint, path, "GET")).toBe(false);
+    trial.close();
   });
 });

@@ -105,8 +105,9 @@ than 30 seconds old; otherwise the API returns `SESSION_CHALLENGE_REQUIRED` with
 HTTP 200. Risk > 0.8 takes the existing tarpit/truncation path. Missing or invalid
 tokens alone do not raise risk. Decisions and challenge difficulty use current
 behavioral evidence, not a permanent floor from the token's issuance score, so
-clients return to normal when that evidence expires. Observe mode never applies
-these mitigations. Normal desktop clients need no integration changes.
+clients return to normal when that evidence expires. Observe mode does not apply
+these mitigations unless an operator explicitly starts the limited trial described
+below. Normal desktop clients need no integration changes.
 
 - Each event updates session and (when trusted transport exists) fingerprint nodes.
   Page progression and unique resource IDs connect requests across rotating IPs
@@ -118,10 +119,18 @@ these mitigations. Normal desktop clients need no integration changes.
   32 field features are recorded per request. Aliases do not create new route names
   or inflate HTTP request counts. Raw query text/variables are not stored. GraphQL
   telemetry is queued after execution, so its current request uses prior evidence.
-- Scores combine deep/support ratio, eight rapid sequential page transitions or
+- Catalog search GET/POST is deep traffic; lightweight metadata remains support.
+  Resolved search filters, locale and region are hashed into a traversal key;
+  tracking parameters are ignored, and raw terms are never stored. Sandbox-offer
+  traversal is grouped by sandbox and filters, including `/sandboxes/fn/offers`.
+- Scores combine deep/support ratio, eight sequential page transitions (each less
+  than five seconds apart, covering a steady 1600/hour sweep) or
   30 unique resource IDs, low inter-arrival coefficient of variation, volume,
   and weak header/transport mismatch evidence. At least 12 events are needed
   beyond weak mismatch scoring. These are tunable heuristics, not a trained model.
+  Twenty large search requests (limit >= 50) requesting at least 1500 total rows
+  add volume evidence; this alone cannot challenge a client. Request limits are
+  demand signals, not a measurement of rows actually returned.
 - Local feature, risk, and trap LRUs each have 5,000 entries. The queue holds at
   most 2,048 events, yields every 32 events and prioritizes trap propagation when
   full. Observe `scorer.stats` (`processed`, `dropped`, `storeErrors`) when tuning.
@@ -178,6 +187,63 @@ these mitigations. Normal desktop clients need no integration changes.
 The feature flag and canary flag are intentionally separate. Mode `off` creates
 no Redis connection and requires no secret. Unknown modes and weak signing keys
 fail startup rather than silently enabling insecure sessions.
+
+## Observation summaries and scoped trials
+
+Minute hashes under `egdata:abuse:summary:v1:<unix-minute>` expire 24 hours after
+the minute ends. They count requests once, even when both session and fingerprint
+nodes exist, and retain risk bands, score bins, reasons, route categories, method,
+action, response status class, encoded body bytes, incomplete streams and untracked
+requests. No IPs, session tokens, fingerprint IDs, search terms or resource IDs are
+retained in these summaries. Raw scoring windows still expire after 60 seconds.
+In-memory aggregation is bounded to 4096 fields/four minute buckets and flushed
+asynchronously every five seconds. Failed writes are best-effort losses, not
+retried indefinitely; `storeErrors`, `dropped`, `summaryErrors` and `summaryDropped`
+are also summarized. Gaps and errors must accompany any interpretation of totals.
+
+The response observer wraps application compression, counts chunks without
+buffering, and preserves cache headers/ETags. `bodyBytes` measures origin response
+bodies consumed by the server adapter, including partial streams. It excludes
+Cloudflare cache hits, TCP/TLS overhead and upstream rejections. It is not a GCP
+billing report or a claim of bytes saved. Compare the same route/method before
+and during a trial, and verify savings against provider egress metrics.
+
+Run these commands **inside the API container**, using its existing environment:
+
+```sh
+node dist/anti-abuse-ops.js report --minutes 1440
+node dist/anti-abuse-ops.js status
+node dist/anti-abuse-ops.js start-trial --id controlled-check --fingerprint EXACT_SHA256 --route offer-details --seconds 120
+node dist/anti-abuse-ops.js stop-trial --id controlled-check
+```
+
+The operator-only Redis key `egdata:abuse:trial:v1` selects exact trusted
+fingerprints and either `offer-details` (GET `/offers/<32-hex-id>`) or
+`catalog-search` (GET/POST `/search/v2/search`). It cannot be enabled by a request
+header. The CLI requires observe mode and canaries disabled; it refuses to replace
+an existing trial. Durations are capped at 15 minutes, the Redis key has a matching
+TTL, and each request also checks expiry. Polling occurs every two seconds;
+deletion rolls back on the next poll, and Redis errors immediately clear the local
+trial. The baseline mode, ordinary caches and rate limits remain unchanged.
+Do not select real-user fingerprints until frontend challenge recovery is ready.
+Shared fingerprints are cohorts, not identities.
+
+`pnpm exec tsx scripts/anti-abuse-staging.ts` starts an isolated loopback Hono
+harness with no production DB or Redis access. Open its printed URL and run the
+checks, or set `PLAYWRIGHT_MODULE` to an installed Playwright `index.mjs` and run
+`node scripts/anti-abuse-browser-smoke.mjs <loopback-url>` with Chrome installed.
+It exercises real Web Worker SHA-256, concurrent on-demand recovery, early expiry,
+truncated responses and tokenless desktop requests. This is contract validation,
+not validation of the production frontend; its PoW handler must still be built.
+
+After deployment, `node dist/anti-abuse-production-check.js --run` performs a
+controlled production check while mode remains observe. It uses a random header
+name to isolate its own fingerprint, seeds only that fingerprint's risk, activates
+a two-minute scoped trial, solves real PoW, verifies retry/tarpit behavior and
+removes the trial in a finally block. Probe URLs deliberately miss the cache;
+normal cache rules are untouched. It cannot run with canaries enabled or replace
+an existing trial. Synthetic trial results are not evidence of savings on real
+scraper traffic. The frontend rollout remains a separate prerequisite.
 
 For Redis integration tests, point `ANTI_ABUSE_TEST_REDIS_URL` at an isolated test
 instance (for example `redis://127.0.0.1:16379`) and run `pnpm exec vitest run

@@ -23,6 +23,7 @@ import {
   type PriceEngineType,
   Tags,
 } from "../models/index.js";
+import { searchAbuseResource } from "../services/abuse-search.js";
 import { regions } from "../utils/countries.js";
 import { consola } from "../utils/logger.js";
 import { toOfferCards, wantsExpandedOffers } from "../utils/offer-card.js";
@@ -935,6 +936,11 @@ const runSearchV2 = async (c: Context, body: unknown) => {
   const limit = Math.min(q.limit ?? 10, 100);
   const page = Math.max(q.page ?? 1, 1);
   const from = (page - 1) * limit;
+  const recordAbuse = c.get("antiAbuseCatalog");
+  if (recordAbuse) {
+    const resource = searchAbuseResource(q, page, limit, region, locale);
+    if (resource) recordAbuse(resource);
+  }
 
   const must: Array<Record<string, unknown>> = [];
   const filter: Array<Record<string, unknown>> = [];

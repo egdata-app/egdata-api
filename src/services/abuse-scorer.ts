@@ -8,6 +8,8 @@ export interface AbuseResource {
   route: string;
   page?: number;
   itemId?: string;
+  limit?: number;
+  search?: boolean;
 }
 
 export interface AbuseEvent extends AbuseResource {
@@ -50,14 +52,24 @@ export class ExpiringLru<T> {
   }
 }
 
-export function scoreEvents(events: AbuseEvent[]): number {
+export interface AbuseAssessment {
+  score: number;
+  reasons: string[];
+}
+
+export function analyzeEvents(events: AbuseEvent[]): AbuseAssessment {
   // GraphQL finishes asynchronously; completion order is not arrival order.
   events = [...events].sort((a, b) => a.at - b.at);
-  if (events.some((event) => event.trap)) return 1;
+  if (events.some((event) => event.trap))
+    return { score: 1, reasons: ["canary"] };
   const count = events.length;
-  if (!count) return 0;
+  if (!count) return { score: 0, reasons: [] };
   const mismatch = Math.max(...events.map((event) => event.mismatch));
-  if (count < 12) return Math.min(0.3, mismatch);
+  if (count < 12)
+    return {
+      score: Math.min(0.3, mismatch),
+      reasons: mismatch ? ["transport-mismatch"] : [],
+    };
   const deep = events.filter((event) => event.deep);
   const support = events.filter((event) => event.support).length;
   const ratio = deep.length / Math.max(1, deep.length + support);
@@ -69,7 +81,10 @@ export function scoreEvents(events: AbuseEvent[]): number {
     gaps.reduce((sum, gap) => sum + (gap - mean) ** 2, 0) / gaps.length;
   const cv = mean > 0 ? Math.sqrt(variance) / mean : 0;
   let sequential = 0;
-  const pages = new Map<string, AbuseResource & { at: number }>();
+  const pages = new Map<
+    string,
+    AbuseResource & { at: number; steps: number }
+  >();
   const resources = deep.flatMap((event) =>
     (event.resources?.length ? event.resources : [event]).map((resource) => ({
       ...resource,
@@ -78,27 +93,51 @@ export function scoreEvents(events: AbuseEvent[]): number {
   );
   for (const event of resources) {
     const previous = pages.get(event.route);
+    if (event.page === undefined || event.page === previous?.page) continue;
+    let steps = 0;
     if (
       event.page !== undefined &&
       previous?.page !== undefined &&
       event.page === previous.page + 1 &&
-      event.at - previous.at < 2000
+      event.at - previous.at < 5000
     )
-      sequential++;
-    if (event.page !== undefined) pages.set(event.route, event);
+      steps = previous.steps + 1;
+    sequential = Math.max(sequential, steps);
+    pages.set(event.route, { ...event, steps });
   }
   const unique = new Set(resources.map((event) => event.itemId).filter(Boolean))
     .size;
   const sweep = sequential >= 8 || unique >= 30;
+  const largeSearches = resources.filter(
+    (entry) => entry.search && (entry.limit ?? 0) >= 50,
+  );
+  const largeSearchVolume =
+    largeSearches.length >= 20 &&
+    largeSearches.reduce((sum, entry) => sum + (entry.limit ?? 0), 0) >= 1500;
+  const reasons = [
+    ratio >= 0.95 ? "deep-only" : ratio >= 0.8 ? "mostly-deep" : "",
+    sequential >= 8 ? "sequential-pages" : "",
+    unique >= 30 ? "unique-id-sweep" : "",
+    cv < 0.15 && mean < 2000 ? "regular-intervals" : "",
+    deep.length >= 60 ? "high-volume" : "",
+    largeSearchVolume ? "large-search-volume" : "",
+    mismatch ? "transport-mismatch" : "",
+  ].filter(Boolean);
   // Deep-only traffic or a common TLS profile alone must never convict.
-  return Math.min(
+  const score = Math.min(
     1,
     (ratio >= 0.95 ? 0.2 : ratio >= 0.8 ? 0.1 : 0) +
       (sweep ? 0.45 : 0) +
       (cv < 0.15 && mean < 2000 ? 0.2 : 0) +
       (deep.length >= 60 ? 0.2 : 0) +
+      (largeSearchVolume ? 0.2 : 0) +
       Math.min(0.15, mismatch),
   );
+  return { score, reasons };
+}
+
+export function scoreEvents(events: AbuseEvent[]): number {
+  return analyzeEvents(events).score;
 }
 
 /** Atomic sliding window shared by all instances, with a bounded Redis payload. */
@@ -153,7 +192,7 @@ export class RedisRiskStore implements RiskStore {
 
 export class AbuseScorer {
   private readonly windows: ExpiringLru<AbuseEvent[]>;
-  private readonly risks: ExpiringLru<number>;
+  private readonly risks: ExpiringLru<AbuseAssessment>;
   private readonly traps: ExpiringLru<boolean>;
   private readonly queue: { keys: string[]; event: AbuseEvent }[] = [];
   private running: Promise<void> | undefined;
@@ -176,9 +215,21 @@ export class AbuseScorer {
     return Math.max(
       0,
       ...keys.map((key) =>
-        this.traps.get(key) ? 1 : (this.risks.get(key) ?? 0),
+        this.traps.get(key) ? 1 : (this.risks.get(key)?.score ?? 0),
       ),
     );
+  }
+
+  reasons(keys: string[]): string[] {
+    return [
+      ...new Set(
+        keys.flatMap((key) =>
+          this.traps.get(key)
+            ? ["canary"]
+            : (this.risks.get(key)?.reasons ?? []),
+        ),
+      ),
+    ];
   }
 
   trap(keys: string[]) {
@@ -206,27 +257,25 @@ export class AbuseScorer {
 
   private async process(keys: string[], event: AbuseEvent) {
     for (const key of keys) {
-      const local = [
-        ...(this.windows.get(key) ?? []).filter(
-          (entry) => entry.at > this.now() - WINDOW_MS,
-        ),
-        event,
-      ].slice(-MAX_EVENTS);
+      const local = [...(this.windows.get(key) ?? []), event]
+        .filter((entry) => entry.at > this.now() - WINDOW_MS)
+        .sort((a, b) => a.at - b.at)
+        .slice(-MAX_EVENTS);
       this.windows.set(key, local, WINDOW_MS);
-      let score = scoreEvents(local);
+      let assessment = analyzeEvents(local);
       if (this.store && this.now() >= this.unavailableUntil) {
         try {
           const shared = await this.store.append(key, event);
-          score = Math.max(
-            score,
-            shared.trapped ? 1 : scoreEvents(shared.events),
-          );
+          const candidate = shared.trapped
+            ? { score: 1, reasons: ["canary"] }
+            : analyzeEvents(shared.events);
+          if (candidate.score > assessment.score) assessment = candidate;
         } catch {
           this.stats.storeErrors++;
           this.unavailableUntil = this.now() + 5000;
         }
       }
-      this.risks.set(key, score, WINDOW_MS);
+      this.risks.set(key, assessment, WINDOW_MS);
     }
     this.stats.processed++;
   }

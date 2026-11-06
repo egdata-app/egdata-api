@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added catalog-search and sandbox-offer traversal scoring using normalized filter fingerprints, including sequential pages up to five seconds apart. Added bounded, asynchronous 24-hour summaries of request scores, reasons, routes, and encoded origin body bytes. Added operator-only fingerprint-scoped trials with automatic expiry and rollback, plus a browser PoW staging harness; ordinary public caching and baseline rate limits remain active.
+
 - Reduced the default GraphQL POST quota from 120 to 30 requests per minute per client IP (`RATE_LIMIT_GRAPHQL_POST_PER_MINUTE`). GraphQL GET/APQ retains its separate 1200/minute quota; throttled requests return 429 with Retry-After.
 
 - Preserved normal CDN caching, ETags and baseline rate limits during anti-abuse enforcement to avoid increasing origin bandwidth. Added unpaginated sales coverage and bounded GraphQL telemetry from executed pagination/ID arguments, including GET variables and APQ. Telemetry now prefers dedicated `ANTI_ABUSE_REDIS_*` or existing private `CACHE_REDIS_*` settings before legacy shared Redis. Rollout remains observational; cache hits need separate edge controls.

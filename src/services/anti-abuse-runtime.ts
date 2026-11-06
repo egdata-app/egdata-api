@@ -4,7 +4,13 @@ import {
   type AntiAbuseMode,
   createAntiAbuse,
 } from "../middleware/anti-abuse.js";
+import {
+  AbuseObservations,
+  observeAbuseResponses,
+  RedisSummaryStore,
+} from "./abuse-observation.js";
 import { AbuseScorer, RedisRiskStore } from "./abuse-scorer.js";
+import { AbuseTrialController } from "./abuse-trial.js";
 import { PowSessionService } from "./pow-session.js";
 
 /** Select one complete configuration; never mix credentials across hosts. */
@@ -52,6 +58,7 @@ export function createAntiAbuseRuntime() {
   if (mode === "off")
     return {
       middleware: (async (_, next) => next()) satisfies MiddlewareHandler,
+      observeResponse: (async (_, next) => next()) satisfies MiddlewareHandler,
       challenge: (async (c) => {
         c.header("Cache-Control", "no-store");
         return c.json({ error: { code: "ANTI_ABUSE_DISABLED" } }, 503);
@@ -70,7 +77,26 @@ export function createAntiAbuseRuntime() {
   // Errors are counted by the scorer; do not emit one log line per request.
   redis.on("error", () => {});
   const scorer = new AbuseScorer(new RedisRiskStore(redis));
+  const observations = new AbuseObservations(new RedisSummaryStore(redis));
+  const trial = new AbuseTrialController(redis);
+  observations.start();
+  if (mode === "observe") trial.start();
+  let last = { ...scorer.stats, summaryErrors: 0, summaryDropped: 0 };
+  const metricsTimer = setInterval(() => {
+    const current = {
+      ...scorer.stats,
+      summaryErrors: observations.stats.storeErrors,
+      summaryDropped: observations.stats.dropped,
+    };
+    for (const name of Object.keys(current) as (keyof typeof current)[]) {
+      const delta = current[name] - last[name];
+      if (delta) observations.increment(`system|${name}`, delta);
+    }
+    last = current;
+  }, 5000);
+  metricsTimer.unref();
   return {
+    observeResponse: observeAbuseResponses(observations),
     ...createAntiAbuse({
       mode: mode as AntiAbuseMode,
       sessions,
@@ -78,7 +104,13 @@ export function createAntiAbuseRuntime() {
       edgeSecret: process.env.ANTI_ABUSE_EDGE_SECRET,
       trustBotHeaders: process.env.ANTI_ABUSE_TRUST_BOT_HEADERS === "true",
       canaries: process.env.ANTI_ABUSE_CANARIES === "true",
+      trial,
     }),
-    close: () => scorer.close(),
+    close: async () => {
+      clearInterval(metricsTimer);
+      trial.close();
+      await observations.close();
+      scorer.close();
+    },
   };
 }

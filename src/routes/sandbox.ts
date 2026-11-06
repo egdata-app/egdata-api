@@ -12,6 +12,7 @@ import {
   Offer,
   PriceEngine,
 } from "../models/index.js";
+import { searchAbuseResource } from "../services/abuse-search.js";
 import { type BuildDocument, buildSummary } from "../utils/builds.js";
 import { regions } from "../utils/countries.js";
 import { consola } from "../utils/logger.js";
@@ -270,6 +271,22 @@ app.get("/:sandboxId/offers", async (ctx) => {
   const skip = (page - 1) * limit;
 
   const { offerType, title } = ctx.req.query();
+  const recordAbuse = ctx.get("antiAbuseCatalog");
+  if (recordAbuse) {
+    const resource = searchAbuseResource(
+      { offerType: offerType?.split(","), title },
+      page,
+      limit,
+      sandboxId,
+      locale,
+    );
+    if (resource)
+      recordAbuse({
+        ...resource,
+        route: `/sandboxes/${sandboxId}/offers:${resource.route.split(":")[1]}`,
+        search: false,
+      });
+  }
 
   const expand = wantsExpandedOffers(ctx);
   const cacheKey = `sandbox:${sandboxId}:offers:${page}:${limit}:${offerType}:${title}:${localeCacheSegment(

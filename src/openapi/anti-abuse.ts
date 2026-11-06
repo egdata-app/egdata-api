@@ -178,6 +178,8 @@ export function withAntiAbuseContract(
       operation.description =
         `${operation.description ?? ""}\n\nWhen ANTI_ABUSE_MODE=enforce${!isProtectedPath(path) ? " and pagination query parameters are present" : ""}, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Normal responses retain existing cache policies and ETags; challenges, truncated mitigations and canary lists are private/no-store. Baseline rate limits remain active and can return 429. Cloudflare cache hits bypass origin scoring and require separate edge controls. Existing account authentication requirements still apply.`.trim();
       const security = operation.security ?? result.security ?? [];
+      operation.description +=
+        " In observe mode an operator can apply the same policy to exact trusted fingerprints on offer-detail or catalog-search routes for an expiring trial of at most 15 minutes. Catalog search and sandbox-offer pagination contribute traversal evidence, grouped by normalized filters; ordinary isolated queries remain low-risk.";
       operation.security = (security.length ? security : [{}]).flatMap(
         (existing) => [
           existing,
