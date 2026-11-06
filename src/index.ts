@@ -9,7 +9,7 @@ import { config } from "dotenv";
 import { Hono } from "hono";
 import { compress } from "hono/compress";
 import { getCookie } from "hono/cookie";
-import { cors } from "hono/cors";
+import { apiCors } from "./middlewares/cors.js";
 import { inspectRoutes } from "hono/dev";
 import { ensureCatalogHydrationIndexes } from "./catalog/resolver.js";
 import { discord } from "./clients/discord.js";
@@ -99,16 +99,6 @@ const internalNamespaces = [
   "d5241c76f178492ea1540fce45616757",
 ];
 
-const ALLOWED_ORIGINS = [
-  "https://egdata.app",
-  "http://localhost:5173",
-  "http://localhost:3000",
-  "http://localhost:4000",
-  "https://user-reviews-pr.egdata.app/",
-  "https://egdata-370475041422.us-central1.run.app",
-  "https://store.epicgames.com",
-];
-
 const app = new Hono();
 const openApiDocument = buildOpenApiDocument();
 
@@ -143,41 +133,7 @@ await graphqlServer
     consola.error("GraphQL server failed to start", e);
   });
 
-app.use(
-  "/*",
-  cors({
-    origin: (origin: string) => {
-      if (ALLOWED_ORIGINS.includes(origin)) {
-        return origin;
-      }
-
-      return origin.endsWith("egdata.app") ? origin : "https://egdata.app";
-    },
-    allowHeaders: [
-      "Content-Type",
-      "Authorization",
-      "apollographql-client-name",
-      "apollographql-client-version",
-      "apollo-require-preflight",
-      "x-api-key",
-      "x-egdata-session",
-    ],
-    allowMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"],
-    exposeHeaders: [
-      "Cache-Control",
-      "CDN-Cache-Control",
-      "ETag",
-      "X-Total-Count",
-      "X-Cache",
-      "X-Route-Template",
-      "Retry-After",
-      "Server-Timing",
-      "RateLimit",
-      "RateLimit-Policy",
-    ],
-    credentials: true,
-  }),
-);
+app.use("/*", apiCors());
 
 app.use("/*", antiAbuse.middleware);
 app.post("/auth/challenge", antiAbuse.challenge);

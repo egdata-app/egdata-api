@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { MiddlewareHandler } from "hono";
 import type { Redis } from "ioredis";
+import { ABUSE_VERSION } from "./abuse-version.js";
 
 export interface AbuseObservation {
   at: number;
@@ -19,7 +20,7 @@ export interface SummaryRow {
 export interface SummaryStore {
   write(rows: SummaryRow[]): Promise<void>;
 }
-export const SUMMARY_PREFIX = "egdata:abuse:summary:v1:";
+export const SUMMARY_PREFIX = `egdata:abuse:summary:v${ABUSE_VERSION}:`;
 export const SUMMARY_TTL_SECONDS = 86400;
 
 // The dedupe field makes a retried Redis command safe; expiry is fixed to the
@@ -151,6 +152,7 @@ export class AbuseObservations {
           "mostly-deep",
           "sequential-pages",
           "unique-id-sweep",
+          "title-lookup-sweep",
           "regular-intervals",
           "high-volume",
           "large-search-volume",

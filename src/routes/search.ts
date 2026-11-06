@@ -937,9 +937,10 @@ const runSearchV2 = async (c: Context, body: unknown) => {
   const page = Math.max(q.page ?? 1, 1);
   const from = (page - 1) * limit;
   const recordAbuse = c.get("antiAbuseCatalog");
+  let abuseResource: ReturnType<typeof searchAbuseResource>;
   if (recordAbuse) {
-    const resource = searchAbuseResource(q, page, limit, region, locale);
-    if (resource) recordAbuse(resource);
+    abuseResource = searchAbuseResource(q, page, limit, region, locale);
+    if (abuseResource) recordAbuse(abuseResource);
   }
 
   const must: Array<Record<string, unknown>> = [];
@@ -1182,6 +1183,7 @@ const runSearchV2 = async (c: Context, body: unknown) => {
 
   const cached = await client.get(cacheKey);
 
+  if (abuseResource) abuseResource.cacheHit = Boolean(cached);
   if (cached) {
     const result = JSON.parse(cached);
     result.meta.cached = true;

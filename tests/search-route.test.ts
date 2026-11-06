@@ -736,7 +736,17 @@ describe("search route with SeaQA fixtures", () => {
     expect(recorded.mock.calls.map(([feature]) => feature.page)).toEqual([
       2, 3,
     ]);
+    expect(
+      recorded.mock.calls.every(([feature]) => feature.cacheHit === true),
+    ).toBe(true);
+    expect(recorded.mock.calls[0][0].titleHash).toMatch(/^[a-f0-9]{64}$/);
     expect(mocks.opensearchSearch).not.toHaveBeenCalled();
+    mocks.redisGet.mockResolvedValueOnce(null);
+    await observed.request(
+      "/search/v2/search?title=other-game&page=1&limit=12",
+    );
+    expect(recorded.mock.calls[2][0].cacheHit).toBe(false);
+    expect(mocks.opensearchSearch).toHaveBeenCalledTimes(1);
   });
 
   it("maps GET query parameters into the search body", async () => {

@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { logicalOperations } from "./abuse-operations.js";
+import { riskRedisKeys } from "./abuse-version.js";
 
 const WINDOW_MS = 60_000;
 const MAX_EVENTS = 128;
@@ -10,6 +12,10 @@ export interface AbuseResource {
   itemId?: string;
   limit?: number;
   search?: boolean;
+  titleHash?: string;
+  hydrationId?: string;
+  hydrationRoute?: string;
+  cacheHit?: boolean;
 }
 
 export interface AbuseEvent extends AbuseResource {
@@ -19,6 +25,7 @@ export interface AbuseEvent extends AbuseResource {
   resources?: AbuseResource[];
   mismatch: number;
   trap?: boolean;
+  method?: string;
 }
 
 export interface RiskStore {
@@ -71,15 +78,21 @@ export function analyzeEvents(events: AbuseEvent[]): AbuseAssessment {
       reasons: mismatch ? ["transport-mismatch"] : [],
     };
   const deep = events.filter((event) => event.deep);
+  const operations = logicalOperations(events);
+  const logicalDeep = operations.filter((event) => event.deep);
   const support = events.filter((event) => event.support).length;
   const ratio = deep.length / Math.max(1, deep.length + support);
-  const gaps = events
+  const gaps = operations
     .slice(1)
-    .map((event, i) => Math.max(0, event.at - events[i].at));
-  const mean = gaps.reduce((sum, gap) => sum + gap, 0) / gaps.length;
+    .map((event, i) => Math.max(0, event.at - operations[i].at));
+  const mean = gaps.length
+    ? gaps.reduce((sum, gap) => sum + gap, 0) / gaps.length
+    : 0;
   const variance =
     gaps.reduce((sum, gap) => sum + (gap - mean) ** 2, 0) / gaps.length;
   const cv = mean > 0 ? Math.sqrt(variance) / mean : 0;
+  const regular = gaps.length >= 8 && mean >= 50 && mean < 2000 && cv < 0.15;
+  const highVolume = logicalDeep.length >= 60;
   let sequential = 0;
   const pages = new Map<
     string,
@@ -107,7 +120,20 @@ export function analyzeEvents(events: AbuseEvent[]): AbuseAssessment {
   }
   const unique = new Set(resources.map((event) => event.itemId).filter(Boolean))
     .size;
-  const sweep = sequential >= 8 || unique >= 30;
+  const titleSearches = operations
+    .flatMap((event) => (event.deep ? (event.resources ?? []) : []))
+    .filter((resource) => resource.search && resource.titleHash);
+  const distinctTitles = new Set(
+    titleSearches.map((resource) => resource.titleHash),
+  ).size;
+  const searchTimes = resources
+    .filter((resource) => resource.search && resource.titleHash)
+    .map((resource) => resource.at);
+  const titleSweep =
+    distinctTitles >= 18 &&
+    distinctTitles / titleSearches.length >= 0.8 &&
+    Math.max(...searchTimes) - Math.min(...searchTimes) >= 25000;
+  const sweep = sequential >= 8 || unique >= 30 || titleSweep;
   const largeSearches = resources.filter(
     (entry) => entry.search && (entry.limit ?? 0) >= 50,
   );
@@ -118,18 +144,25 @@ export function analyzeEvents(events: AbuseEvent[]): AbuseAssessment {
     ratio >= 0.95 ? "deep-only" : ratio >= 0.8 ? "mostly-deep" : "",
     sequential >= 8 ? "sequential-pages" : "",
     unique >= 30 ? "unique-id-sweep" : "",
-    cv < 0.15 && mean < 2000 ? "regular-intervals" : "",
-    deep.length >= 60 ? "high-volume" : "",
+    titleSweep ? "title-lookup-sweep" : "",
+    regular ? "regular-intervals" : "",
+    highVolume ? "high-volume" : "",
     largeSearchVolume ? "large-search-volume" : "",
     mismatch ? "transport-mismatch" : "",
   ].filter(Boolean);
   // Deep-only traffic or a common TLS profile alone must never convict.
   const score = Math.min(
     1,
-    (ratio >= 0.95 ? 0.2 : ratio >= 0.8 ? 0.1 : 0) +
+    (sweep || regular || highVolume || largeSearchVolume
+      ? ratio >= 0.95
+        ? 0.2
+        : ratio >= 0.8
+          ? 0.1
+          : 0
+      : 0) +
       (sweep ? 0.45 : 0) +
-      (cv < 0.15 && mean < 2000 ? 0.2 : 0) +
-      (deep.length >= 60 ? 0.2 : 0) +
+      (regular ? 0.2 : 0) +
+      (highVolume ? 0.2 : 0) +
       (largeSearchVolume ? 0.2 : 0) +
       Math.min(0.15, mismatch),
   );
@@ -173,8 +206,7 @@ export class RedisRiskStore implements RiskStore {
     const [rows, trapped] = (await this.redis.eval(
       APPEND_WINDOW_SCRIPT,
       2,
-      `egdata:abuse:{${key}}:events`,
-      `egdata:abuse:{${key}}:trap`,
+      ...riskRedisKeys(key),
       JSON.stringify(event),
       randomUUID(),
     )) as [string[], number];

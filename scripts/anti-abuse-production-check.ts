@@ -5,6 +5,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { Redis } from "ioredis";
 import { APPEND_WINDOW_SCRIPT } from "../src/services/abuse-scorer.js";
 import { TRIAL_KEY } from "../src/services/abuse-trial.js";
+import { riskRedisKeys } from "../src/services/abuse-version.js";
 import { telemetryRedisOptions } from "../src/services/anti-abuse-runtime.js";
 
 if (
@@ -82,10 +83,7 @@ try {
     clean.response.status === 200 && !clean.json.error,
     "Clean tokenless request failed",
   );
-  const keys = [
-    `egdata:abuse:{fp:${fp}}:events`,
-    `egdata:abuse:{fp:${fp}}:trap`,
-  ];
+  const keys = riskRedisKeys(`fp:${fp}`);
   const now = Date.now();
   // 30 unique resources with irregular intervals produce suspicious risk.
   for (let i = 0; i < 30; i++)
@@ -217,10 +215,7 @@ try {
         trialId,
       );
     if (/^[a-f0-9]{64}$/.test(fp))
-      await redis.del(
-        `egdata:abuse:{fp:${fp}}:events`,
-        `egdata:abuse:{fp:${fp}}:trap`,
-      );
+      await redis.del(...riskRedisKeys(`fp:${fp}`));
   } finally {
     redis.disconnect();
   }

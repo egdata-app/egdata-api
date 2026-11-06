@@ -1,6 +1,7 @@
 import type { Redis } from "ioredis";
+import { ABUSE_VERSION } from "./abuse-version.js";
 
-export const TRIAL_KEY = "egdata:abuse:trial:v1";
+export const TRIAL_KEY = `egdata:abuse:trial:v${ABUSE_VERSION}`;
 export interface AbuseTrial {
   id: string;
   createdAt: number;

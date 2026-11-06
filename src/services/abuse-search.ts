@@ -26,6 +26,17 @@ const FILTERS = [
   "spt",
 ];
 
+export function normalizedTitleHash(title: unknown): string | undefined {
+  if (typeof title !== "string") return;
+  const normalized = title
+    .normalize("NFKC")
+    .trim()
+    .replace(/\s+/gu, " ")
+    .toLowerCase();
+  if (Array.from(normalized).length < 3) return;
+  return createHash("sha256").update(normalized).digest("hex");
+}
+
 function canonical(value: unknown, depth = 0): unknown {
   if (depth > 3) return null;
   if (typeof value === "string") return value.slice(0, 512);
@@ -74,5 +85,6 @@ export function searchAbuseResource(
     page,
     limit: Math.min(limit, 100),
     search: true,
+    titleHash: normalizedTitleHash(input.title),
   };
 }

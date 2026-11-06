@@ -9,6 +9,19 @@ need a startup handshake, cookies, browser headers, or any API integration chang
 Only clients whose current behavioral risk exceeds 0.5 are challenged or mitigated.
 Existing account authentication requirements still apply.
 
+Browser preflight responses advertise `Access-Control-Max-Age: 600`. HTTPS
+`egdata.app` and its subdomains are accepted alongside explicitly configured
+integration/development origins; suffix lookalikes are rejected. Browsers cache
+preflights per URL, so different GraphQL variables can still require new preflights.
+Apollo's CSRF preflight header remains required where applicable.
+
+Fingerprint v2 preserves relative header order while ignoring Apollo client and
+CORS request-control headers. OPTIONS requests are never behaviorally scored.
+Offer-page hydration and fast typing chains are collapsed for volume/cadence;
+deep-only access alone carries no risk weight. Repeated distinct title lookups
+can contribute sweep risk even when each request asks only for the first page.
+The behavior window remains 60 seconds, capped at 128 events per tracking key.
+
 An operator can also run a short, fingerprint-scoped trial while the default mode
 remains observe. Such trials are limited to offer details or catalog search and
 expire within 15 minutes; clients outside the selected scope remain unaffected.

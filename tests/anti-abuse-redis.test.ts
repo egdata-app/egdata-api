@@ -11,10 +11,12 @@ import {
   AbuseScorer,
   RedisRiskStore,
 } from "../src/services/abuse-scorer.js";
+import { searchAbuseResource } from "../src/services/abuse-search.js";
 import {
   AbuseTrialController,
   TRIAL_KEY,
 } from "../src/services/abuse-trial.js";
+import { riskRedisKeys } from "../src/services/abuse-version.js";
 
 // Explicit opt-in only: never use the application's production Redis variables.
 const url = process.env.ANTI_ABUSE_TEST_REDIS_URL;
@@ -26,10 +28,7 @@ describe.skipIf(!url)("anti-abuse Redis integration", () => {
   const cleanup: string[] = [];
   const key = () => {
     const value = `integration:${randomUUID()}`;
-    cleanup.push(
-      `egdata:abuse:{${value}}:events`,
-      `egdata:abuse:{${value}}:trap`,
-    );
+    cleanup.push(...riskRedisKeys(value));
     return value;
   };
   const event = (at: number, page = 1): AbuseEvent => ({
@@ -101,27 +100,69 @@ describe.skipIf(!url)("anti-abuse Redis integration", () => {
     );
     const bounded = await store.append(node, event(now));
     expect(bounded.events).toHaveLength(128);
-    expect(await redis.pttl(`egdata:abuse:{${node}}:events`)).toBeGreaterThan(
-      59_000,
+    expect(await redis.pttl(riskRedisKeys(node)[0])).toBeGreaterThan(59_000);
+    expect(await redis.pttl(riskRedisKeys(node)[0])).toBeLessThanOrEqual(
+      60_000,
     );
-    expect(
-      await redis.pttl(`egdata:abuse:{${node}}:events`),
-    ).toBeLessThanOrEqual(60_000);
     expect(bounded.events.every((entry) => entry.at === now)).toBe(true);
+  });
+
+  it("combines title sweeps across instances within one 60s window, without legacy state", async () => {
+    const node = key();
+    const legacyTrap = `egdata:abuse:{${node}}:trap`;
+    cleanup.push(legacyTrap);
+    await redis.set(legacyTrap, "1", "EX", 60);
+    const start = Date.now() - 45000;
+    const a = new AbuseScorer(store),
+      b = new AbuseScorer(otherStore);
+    for (let i = 0; i < 18; i++) {
+      const worker = i % 2 ? a : b;
+      const resource = searchAbuseResource(
+        { title: `game ${i}` },
+        1,
+        12,
+        "US",
+        "en",
+      );
+      if (!resource) throw new Error("Invalid search fixture");
+      worker.enqueue([node], {
+        ...event(start + Math.floor(i / 2) * 3600 + (i % 2 ? 1000 : 0)),
+        page: undefined,
+        route: "/search/v2/search",
+        method: i % 2 ? "GET" : "POST",
+        resources: [resource],
+      });
+      await worker.drain();
+    }
+    expect(a.risk([node])).toBe(0.65);
+    expect(a.reasons([node])).toContain("title-lookup-sweep");
+    expect(await redis.exists(riskRedisKeys(node)[1])).toBe(0);
+    const persisted = await redis.zrange(riskRedisKeys(node)[0], 0, -1);
+    expect(persisted).toHaveLength(18);
+    expect(persisted.join(" ")).not.toContain("game ");
+    // A later/cold instance sees expiry using the same arrival-time rule.
+    await redis.zadd(
+      riskRedisKeys(node)[0],
+      Date.now() - 61000,
+      `old|${JSON.stringify(event(Date.now() - 61000))}`,
+    );
+    const pruned = await otherStore.append(node, event(Date.now()));
+    expect(pruned.events).toHaveLength(19);
+    expect(pruned.events.every((entry) => entry.at > Date.now() - 60000)).toBe(
+      true,
+    );
   });
 
   it("propagates trap risk to a cold instance even after the event window is gone", async () => {
     const node = key();
     await store.append(node, { ...event(Date.now()), trap: true });
-    await redis.del(`egdata:abuse:{${node}}:events`);
+    await redis.del(riskRedisKeys(node)[0]);
     const cold = new AbuseScorer(otherStore);
     expect(cold.risk([node])).toBe(0);
     cold.enqueue([node], event(Date.now()));
     await cold.drain();
     expect(cold.risk([node])).toBe(1);
-    expect(await redis.pttl(`egdata:abuse:{${node}}:trap`)).toBeGreaterThan(
-      590_000,
-    );
+    expect(await redis.pttl(riskRedisKeys(node)[1])).toBeGreaterThan(590_000);
     const result = await otherStore.append(node, event(Date.now()));
     expect(result.trapped).toBe(true);
     expect(result.events.some((entry) => entry.trap)).toBe(false);

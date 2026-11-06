@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Updated anti-abuse fingerprints/scoring to v2: preserve relative header order while ignoring Apollo/CORS plumbing, collapse offer hydration and typing bursts, and detect sustained distinct-title lookups within the existing bounded 60-second window. Browse routes count as support and deep-only traffic alone adds no risk. Added a 600-second global CORS preflight lifetime and strict HTTPS egdata.app hostname boundaries. Deployment mode remains operator-controlled; rollout stays in observe with canaries disabled.
+
 - Added catalog-search and sandbox-offer traversal scoring using normalized filter fingerprints, including sequential pages up to five seconds apart. Added bounded, asynchronous 24-hour summaries of request scores, reasons, routes, and encoded origin body bytes. Added operator-only fingerprint-scoped trials with automatic expiry and rollback, plus a browser PoW staging harness; ordinary public caching and baseline rate limits remain active.
 
 - Reduced the default GraphQL POST quota from 120 to 30 requests per minute per client IP (`RATE_LIMIT_GRAPHQL_POST_PER_MINUTE`). GraphQL GET/APQ retains its separate 1200/minute quota; throttled requests return 429 with Retry-After.

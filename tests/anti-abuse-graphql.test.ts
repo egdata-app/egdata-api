@@ -23,13 +23,14 @@ describe("GraphQL abuse telemetry", () => {
     typeDefs: `
       enum CacheControlScope { PUBLIC PRIVATE }
       directive @cacheControl(maxAge: Int, scope: CacheControlScope, inheritMaxAge: Boolean) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
-      type Query { offers(page: Int, limit: Int): [Offer] @cacheControl(maxAge: 60) item(id: ID!): Offer @cacheControl(maxAge: 60) }
+      type Query { offers(page: Int, limit: Int): [Offer] @cacheControl(maxAge: 60) item(id: ID!): Offer @cacheControl(maxAge: 60) offer(id: ID!): Offer @cacheControl(maxAge: 60) }
       type Offer { id: ID! }
     `,
     resolvers: {
       Query: {
         offers: () => [{ id: "game" }],
         item: (_, args) => ({ id: args.id }),
+        offer: (_, args) => ({ id: args.id }),
       },
     },
     plugins: [
@@ -110,6 +111,37 @@ describe("GraphQL abuse telemetry", () => {
     };
     return { scorer, enqueue, events, request };
   }
+
+  it.each([
+    "OfferOnly",
+    "OfferPage",
+  ])("annotates resolved %s offer reads, including aliases, for hydration collapsing", async (operation) => {
+    const f = fixture();
+    const id = "a".repeat(32);
+    await f.request(
+      {
+        query: `query ${operation}($id: ID!) { renamed: offer(id: $id) { id } }`,
+        variables: { id },
+      },
+      "GET",
+    );
+    expect(f.events[0].resources?.[0]).toMatchObject({
+      itemId: id,
+      hydrationId: id,
+      hydrationRoute: `graphql:${operation}`,
+    });
+    await f.request({
+      query: "query Other($id: ID!) { offer(id: $id) { id } }",
+      variables: { id },
+    });
+    expect(f.events[1].resources?.[0].hydrationId).toBeUndefined();
+    await f.request({
+      query: `query ${operation}($id: ID!) { item(id: $id) { id } }`,
+      variables: { id },
+    });
+    expect(f.events[2].resources?.[0].hydrationId).toBeUndefined();
+    f.scorer.close();
+  });
 
   it.each([
     "POST",

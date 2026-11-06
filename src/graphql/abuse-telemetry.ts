@@ -37,6 +37,19 @@ export function createAbuseTelemetryPlugin<
                 route: `/graphql/${info.parentType.name}.${info.fieldName}`,
                 page,
                 itemId,
+                ...(root &&
+                info.fieldName === "offer" &&
+                itemId &&
+                /^[a-f0-9]{32}$/.test(itemId) &&
+                ["OfferOnly", "OfferPage"].includes(
+                  info.operation.name?.value ?? "",
+                ) &&
+                page === undefined
+                  ? {
+                      hydrationId: itemId,
+                      hydrationRoute: `graphql:${info.operation.name?.value}`,
+                    }
+                  : {}),
               });
             },
           };

@@ -86,7 +86,7 @@
         ],
         "x-egdata-visibility": "public",
         "summary": "Initialize or solve a proof-of-work session challenge",
-        "description": "Send {} to receive a signed challenge. Solve SHA-256(challenge + ':' + nonce) with the returned leading-zero bit difficulty, then POST {challenge, nonce} to receive a ten-minute session. Invalid/expired proofs return a fresh challenge with HTTP 200. Enabled in observe/enforce modes. No account login is required.",
+        "description": "Send {} to receive a signed challenge. Solve SHA-256(challenge + ':' + nonce) with the returned leading-zero bit difficulty, then POST {challenge, nonce} to receive a ten-minute session. Invalid/expired proofs return a fresh challenge with HTTP 200. Enabled in observe/enforce modes. No account login is required. Fingerprint v2 preserves header order while excluding Apollo/CORS plumbing; changing fingerprint versions invalidates old bound tokens. CORS preflight max-age is 600 seconds for allowed origins (HTTPS egdata.app/subdomains and explicit integration/development origins). Behavior scoring collapses hydration/typeahead and includes distinct-title sweeps within a bounded 60-second window; deep-only access alone adds no risk.",
         "requestBody": {
           "required": true,
           "content": {

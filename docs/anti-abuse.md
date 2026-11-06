@@ -86,6 +86,24 @@ The hash contains the remaining ordered header keys, client-hint presence, JA4
 (preferred)/JA3, TLS/protocol profile and ASN. IP and UA **values** are excluded.
 Changing ASNs creates a different bucket; this is not universal device identity.
 
+Fingerprint v2 additionally excludes `apollo-*`, `apollographql-*` and
+`access-control-request-*`. Relative header order is preserved, never sorted by
+the detector. The version number is part of the hashed profile. Redis risk/trap
+keys use `egdata:abuse:v2:{<node>}:events` / `:trap`; summaries and trial switches
+also use v2 so old risk/trial state is not mixed with the new scoring rules.
+Existing v1 tokens no longer match the fingerprint. Roll out in `observe` with
+canaries disabled, let the ten-minute token lifetime elapse before an enforcement
+trial, and compare new summaries separately from v1 history. No secret rotation
+or new environment variables are required.
+
+Global CORS uses a 600-second preflight max-age. It accepts serialized HTTPS
+origins whose hostname is exactly `egdata.app` or ends with `.egdata.app`, plus
+explicit development/integration origins. Suffix lookalikes, credentials in the
+URL, paths, non-HTTPS subdomains and unexpected ports receive no origin grant.
+Keep Apollo's CSRF preflight header: browsers cache preflights per full URL, so
+different GraphQL variables still require their own initial preflight. OPTIONS
+is handled by CORS and never enters scoring.
+
 Cloudflare references:
 - [Request cf properties](https://developers.cloudflare.com/workers/runtime-apis/request/)
 - [JA3/JA4 availability and missing values](https://developers.cloudflare.com/bots/additional-configurations/ja3-ja4-fingerprint/)
@@ -123,14 +141,32 @@ below. Normal desktop clients need no integration changes.
   Resolved search filters, locale and region are hashed into a traversal key;
   tracking parameters are ignored, and raw terms are never stored. Sandbox-offer
   traversal is grouped by sandbox and filters, including `/sandboxes/fn/offers`.
-- Scores combine deep/support ratio, eight sequential page transitions (each less
-  than five seconds apart, covering a steady 1600/hour sweep) or
-  30 unique resource IDs, low inter-arrival coefficient of variation, volume,
-  and weak header/transport mismatch evidence. At least 12 events are needed
-  beyond weak mismatch scoring. These are tunable heuristics, not a trained model.
-  Twenty large search requests (limit >= 50) requesting at least 1500 total rows
-  add volume evidence; this alone cannot challenge a client. Request limits are
-  demand signals, not a measurement of rows actually returned.
+- Distinct allowlisted offer hydration reads for the same 32-hex offer ID within
+  two seconds collapse into one logical operation. This includes resolved
+  GraphQL `OfferOnly`/`OfferPage` offer reads. Repeated same-subroute requests,
+  other IDs, non-allowlisted routes and additional pagination do not collapse.
+  Top-level `/collections/*`, `/free-games/*`, `/offers/upcoming` and
+  `/offers/latest-achievements` are support traffic.
+- Search resources include a normalized title SHA-256 (NFKC, whitespace-folded,
+  lowercase; empty or fewer than three Unicode code points omitted), method on
+  the parent event, and the application-cache outcome when known. Consecutive
+  searches less than 800ms apart collapse into a typing chain, retaining only
+  its final title. No additional multi-minute state is stored.
+- At least 12 raw events are needed beyond mismatch scoring. A sweep adds +0.45
+  once if any of these hold: eight consecutive page increments less than five
+  seconds apart; 30 distinct resource IDs; or 18 distinct logical title hashes,
+  at least 80% distinct among qualifying logical title searches, with at least
+  25 seconds between first/last qualifying raw title-search events. Short and
+  empty titles do not enter that title ratio or span.
+- Cadence uses logical timestamps: at least eight intervals, mean >=50ms and
+  <2000ms, CV <0.15 adds +0.20. Sixty logical deep operations add +0.20.
+  Twenty raw large searches (limit >=50) requesting at least 1500 total rows add
+  +0.20. Limits are demand signals, not actual returned rows. Deep-only ratio
+  >=95% adds +0.20 (>=80% adds +0.10) only alongside an active sweep, cadence,
+  volume or large-search signal; it remains a diagnostic otherwise. Mismatch
+  contributes up to +0.15, total score is capped at 1, and a trap overrides it.
+  These are heuristics, not a trained model; library-sync clients can also trigger
+  sustained lookup evidence, so calibration and conditional recovery still matter.
 - Local feature, risk, and trap LRUs each have 5,000 entries. The queue holds at
   most 2,048 events, yields every 32 events and prioritizes trap propagation when
   full. Observe `scorer.stats` (`processed`, `dropped`, `storeErrors`) when tuning.
@@ -190,7 +226,7 @@ fail startup rather than silently enabling insecure sessions.
 
 ## Observation summaries and scoped trials
 
-Minute hashes under `egdata:abuse:summary:v1:<unix-minute>` expire 24 hours after
+Minute hashes under `egdata:abuse:summary:v2:<unix-minute>` expire 24 hours after
 the minute ends. They count requests once, even when both session and fingerprint
 nodes exist, and retain risk bands, score bins, reasons, route categories, method,
 action, response status class, encoded body bytes, incomplete streams and untracked
@@ -217,7 +253,7 @@ node dist/anti-abuse-ops.js start-trial --id controlled-check --fingerprint EXAC
 node dist/anti-abuse-ops.js stop-trial --id controlled-check
 ```
 
-The operator-only Redis key `egdata:abuse:trial:v1` selects exact trusted
+The operator-only Redis key `egdata:abuse:trial:v2` selects exact trusted
 fingerprints and either `offer-details` (GET `/offers/<32-hex-id>`) or
 `catalog-search` (GET/POST `/search/v2/search`). It cannot be enabled by a request
 header. The CLI requires observe mode and canaries disabled; it refuses to replace
@@ -255,3 +291,11 @@ retention, cross-instance pagination scoring, and sticky trap propagation.
 A local Node 22 benchmark on 2026-11-05 (2,000 samples, concurrency 1) measured
 0.098 ms p95 for fingerprint + HMAC verification + cached risk and 0.118 ms added
 p95 through Hono. These are warm local results, not production latency guarantees.
+
+`pnpm exec tsx scripts/replay-abuse-sample.ts <timestamped-sample.json>
+<legacy-scorer.mjs>` compares a sanitized request slice offline against a legacy
+module exporting `extractFingerprint` and `analyzeEvents`. It applies each
+version's grouping/window bounds, reconstructs known OfferOnly/OfferPage reads,
+and reports skipped unknown GraphQL operations. It does not access Redis/network
+or invent missing timestamps/titles. Earlier aggregate-only reports cannot be
+exactly replayed; label synthetic regressions separately from captured traces.

@@ -1,12 +1,14 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import type { Context, MiddlewareHandler } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
+import { offerHydrationResource } from "../services/abuse-operations.js";
 import type {
   AbuseEvent,
   AbuseResource,
   AbuseScorer,
 } from "../services/abuse-scorer.js";
 import type { AbuseTrialController } from "../services/abuse-trial.js";
+import { ABUSE_VERSION } from "../services/abuse-version.js";
 import {
   type PowSessionService,
   SUSPICIOUS_TTL_MS,
@@ -100,7 +102,9 @@ export function extractFingerprint(
       const key = name.toLowerCase();
       return (
         !unstableHeaders.has(key) &&
-        !/^(?:cf-|x-|forwarded$|traceparent$|tracestate$)/.test(key)
+        !/^(?:cf-|x-|apollo-|apollographql-|access-control-request-|forwarded$|traceparent$|tracestate$)/.test(
+          key,
+        )
       );
     })
     .map((name) => name.toLowerCase());
@@ -111,6 +115,7 @@ export function extractFingerprint(
     (nativeCf || forwarded) && (ja3 || ja4 || (cf.tlsCipher && cf.tlsVersion)),
   );
   const profile = [
+    ABUSE_VERSION,
     ja4 || ja3 || "",
     cf.tlsCipher ?? "",
     cf.tlsVersion ?? "",
@@ -166,6 +171,14 @@ export function isProtectedPath(
     path === "/graphql" ||
     path === "/search/v2/search" ||
     ["page", "offset", "cursor", "limit"].some((key) => searchParams.has(key))
+  );
+}
+
+export function isSupportPath(path: string): boolean {
+  return (
+    /^\/(?:search(?:\/tags)?|featured|countries|regions|tags|offers\/(?:genres|upcoming|latest-achievements))$/.test(
+      path,
+    ) || /^\/(?:collections|free-games)(?:\/|$)/.test(path)
   );
 }
 
@@ -310,10 +323,7 @@ export function createAntiAbuse(options: {
     const url = new URL(c.req.url);
     const path = normalizedAbusePath(url.pathname);
     const protectedRoute = isProtectedPath(path, url.searchParams);
-    const support =
-      /^\/(?:search(?:\/tags)?|featured|countries|regions|tags|offers\/genres)$/.test(
-        path,
-      );
+    const support = isSupportPath(path);
     if (!protectedRoute && !support) return next();
     const fp = fingerprint(c);
     const session = await sessions.verify(token(c), fp.fingerprintHash);
@@ -330,6 +340,8 @@ export function createAntiAbuse(options: {
       support,
       route: path.slice(0, 256),
       mismatch: fp.riskScore,
+      method: c.req.method,
+      ...offerHydrationResource(path, c.req.method, url.searchParams),
       page:
         !search && /^\d{1,9}$/.test(url.searchParams.get("page") ?? "")
           ? Number(url.searchParams.get("page"))

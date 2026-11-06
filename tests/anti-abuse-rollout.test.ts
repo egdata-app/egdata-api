@@ -141,7 +141,10 @@ describe("catalog traversal", () => {
         resources: [resource],
       };
     });
-    expect(analyzeEvents(unrelated).score).toBeLessThanOrEqual(0.5);
+    // Different titles are now their own sweep signal, without combining pages.
+    expect(analyzeEvents(unrelated).reasons).not.toContain("sequential-pages");
+    expect(analyzeEvents(unrelated).reasons).toContain("title-lookup-sweep");
+    expect(analyzeEvents(unrelated).score).toBeGreaterThan(0.5);
     const shortRuns = events.map((event, i) => ({
       ...event,
       route: `/query-${Math.floor(i / 4)}`,
@@ -158,7 +161,7 @@ describe("catalog traversal", () => {
     const resource = searchAbuseResource({}, 1, 100, "US", "en");
     if (!resource) throw new Error("Invalid test feature");
     const events: AbuseEvent[] = Array.from({ length: 20 }, (_, i) => ({
-      at: base + i * 500,
+      at: base + i * 900,
       route: "/search/v2/search",
       deep: true,
       support: false,
