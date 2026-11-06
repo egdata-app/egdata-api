@@ -12,6 +12,38 @@ export interface AbuseObservation {
   risk: number;
   reasons: string[];
   tracked: boolean;
+  /** Decision under enforcement, also evaluated in observe mode. */
+  decision?: "serve" | "challenge" | "tarpit";
+  sessionValid?: boolean;
+  handshakeOutcome?:
+    | "issued"
+    | "accepted"
+    | "replaced"
+    | "invalid"
+    | "disabled";
+}
+
+const POW_COUNTERS = [
+  "observedResponses",
+  "challengeRequired",
+  "challengeRequested",
+  "puzzlesIssued",
+  "proofsSubmitted",
+  "proofsAccepted",
+  "proofsRejected",
+  "puzzlesReplaced",
+  "invalidHandshakeRequests",
+  "disabledHandshakeRequests",
+  "passedWithSession",
+  "wouldChallenge",
+  "wouldTarpit",
+] as const;
+
+/** Stable zero-filled report; coverage distinguishes old buckets from no activity. */
+export function powCounters(totals: Record<string, number>) {
+  return Object.fromEntries(
+    POW_COUNTERS.map((name) => [name, totals[`pow:${name}`] ?? 0]),
+  ) as Record<(typeof POW_COUNTERS)[number], number>;
 }
 export interface SummaryRow {
   minute: number;
@@ -144,6 +176,37 @@ export class AbuseObservations {
     );
     add(complete ? "complete" : "incomplete");
     if (!o.tracked) add("untracked");
+    if (o.decision || o.handshakeOutcome) {
+      add("pow:observedResponses");
+      if (o.action === "challenge") add("pow:challengeRequired");
+      if (o.action === "serve" && o.sessionValid) add("pow:passedWithSession");
+      if (o.scope === "observe" && o.action === "serve") {
+        if (o.decision === "challenge") add("pow:wouldChallenge");
+        if (o.decision === "tarpit") add("pow:wouldTarpit");
+      }
+      switch (o.handshakeOutcome) {
+        case "issued":
+          add("pow:challengeRequested");
+          add("pow:puzzlesIssued");
+          break;
+        case "accepted":
+          add("pow:proofsSubmitted");
+          add("pow:proofsAccepted");
+          break;
+        case "replaced":
+          add("pow:proofsSubmitted");
+          add("pow:proofsRejected");
+          add("pow:puzzlesIssued");
+          add("pow:puzzlesReplaced");
+          break;
+        case "invalid":
+          add("pow:invalidHandshakeRequests");
+          break;
+        case "disabled":
+          add("pow:disabledHandshakeRequests");
+          break;
+      }
+    }
     for (const reason of new Set(o.reasons))
       if (
         [

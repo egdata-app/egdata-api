@@ -265,6 +265,35 @@ node dist/anti-abuse-ops.js start-trial --id controlled-check --fingerprint EXAC
 node dist/anti-abuse-ops.js stop-trial --id controlled-check
 ```
 
+The report includes `pow.totals` and `pow.byScope` (observe/enforce/trial), with
+zero-filled counters:
+
+| Counter | Meaning |
+| --- | --- |
+| `observedResponses` | Responses covered by the new PoW instrumentation; older buckets lack these counters. |
+| `challengeRequired` | Protected requests actually answered with the challenge-required envelope. |
+| `challengeRequested` | Initial handshake requests that issue a puzzle (no submitted proof). |
+| `puzzlesIssued` | All puzzle responses, including replacements. |
+| `proofsSubmitted` | Well-typed challenge/nonce submissions, whether accepted or rejected. |
+| `proofsAccepted` | Submissions accepted by HMAC/fingerprint/PoW verification and issued a session. |
+| `proofsRejected` / `puzzlesReplaced` | Submissions rejected and answered with a new puzzle, including expired or fingerprint-mismatched proofs. |
+| `invalidHandshakeRequests` | Malformed JSON/body or invalid field types; separate from rejected proofs. |
+| `disabledHandshakeRequests` | Handshake handler replies while disabled, only when an observer is attached; production off mode disables telemetry entirely. |
+| `passedWithSession` | Requests with a cryptographically valid session admitted to a route, including observe mode; not proof of a successful browser retry or successful route response. |
+| `wouldChallenge` / `wouldTarpit` | Observe-only requests whose exact enforcement decision would be challenge/tarpit. Accounts for protected paths and early session expiry; high risk is not mislabeled as a challenge. |
+
+Counters measure requests/attempts, not unique people or challenges: 20 concurrent
+requests may receive 20 challenge envelopes but share one handshake, and replaying
+an accepted proof counts another acceptance. Do not infer abandonment or a funnel
+conversion rate by subtracting these totals. Browser worker failures, closing a
+tab and successful frontend rendering are not visible. A session may be valid for
+ten minutes but too old for suspicious enforcement after 30 seconds. Handshake
+scope follows the global mode, so a scoped trial's handshake is labeled observe.
+Response counters are finalized on stream completion/cancellation, including
+incomplete responses; inspect the existing incomplete/error/drop metrics too.
+These additions use the same bounded asynchronous flush and 24-hour retention,
+with no new Redis operation in the request path or public monitoring endpoint.
+
 The operator-only Redis key `egdata:abuse:trial:v2` selects exact trusted
 fingerprints and either `offer-details` (GET `/offers/<32-hex-id>`) or
 `catalog-search` (GET/POST `/search/v2/search`). It cannot be enabled by a request

@@ -1,6 +1,9 @@
 import { config } from "dotenv";
 import { Redis } from "ioredis";
-import { SUMMARY_PREFIX } from "../src/services/abuse-observation.js";
+import {
+  powCounters,
+  SUMMARY_PREFIX,
+} from "../src/services/abuse-observation.js";
 import { parseTrial, TRIAL_KEY } from "../src/services/abuse-trial.js";
 import { telemetryRedisOptions } from "../src/services/anti-abuse-runtime.js";
 
@@ -100,6 +103,7 @@ try {
       throw new Error("minutes must be between 1 and 1440");
     const current = Math.floor(Date.now() / 60000),
       totals: Record<string, number> = {},
+      byScope: Record<string, Record<string, number>> = {},
       byRoute: Record<string, { requests: number; bodyBytes: number }> = {};
     let buckets = 0;
     for (let offset = 0; offset < minutes; offset += 30) {
@@ -117,6 +121,9 @@ try {
             metric = parts.at(-1) ?? field;
           totals[metric] = (totals[metric] ?? 0) + value;
           if (parts.length === 5) {
+            const scope = parts[0];
+            byScope[scope] ??= {};
+            byScope[scope][metric] = (byScope[scope][metric] ?? 0) + value;
             const group = parts.slice(0, 4).join("|");
             byRoute[group] ??= { requests: 0, bodyBytes: 0 };
             if (metric === "requests" || metric === "bodyBytes")
@@ -132,6 +139,17 @@ try {
           requestedMinutes: minutes,
           bucketsWithData: buckets,
           totals,
+          pow: {
+            totals: powCounters(totals),
+            byScope: Object.fromEntries(
+              Object.entries(byScope).map(([scope, values]) => [
+                scope,
+                powCounters(values),
+              ]),
+            ),
+            limitations:
+              "Request/attempt counts, not unique puzzles or users. Accepted proof replays count again. passedWithSession means admitted to a route, not successful browser recovery. Old buckets have no PoW coverage; inspect observedResponses. No browser failures, abandonment or Cloudflare cache hits are recorded. Handshakes use the global mode scope; scoped-trial handshakes appear under observe.",
+          },
           routes: Object.entries(byRoute)
             .sort((a, b) => b[1].bodyBytes - a[1].bodyBytes)
             .slice(0, 40)

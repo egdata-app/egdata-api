@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added asynchronous server-side PoW outcome counters and an operator report for challenge responses, puzzle issuance/replacement, accepted/rejected proofs, requests admitted with valid sessions, and observe-mode would-challenge/would-tarpit decisions. Existing 24-hour Redis summaries remain bounded and private; no public endpoint, frontend telemetry, or enforcement change.
+
 - Detect out-of-order pagination (10 distinct pages per semantic resource) and route hammering (120 logical requests per concrete resource) within the existing bounded 60-second anti-abuse window. Both share the existing sweep weight and appear in observation summaries; hydration collapsing, caching, and deployment mode remain unchanged. These signals describe behavior, not measured origin bandwidth cost.
 
 - Updated anti-abuse fingerprints/scoring to v2: preserve relative header order while ignoring Apollo/CORS plumbing, collapse offer hydration and typing bursts, and detect sustained distinct-title lookups within the existing bounded 60-second window. Browse routes count as support and deep-only traffic alone adds no risk. Added a 600-second global CORS preflight lifetime and strict HTTPS egdata.app hostname boundaries. Deployment mode remains operator-controlled; rollout stays in observe with canaries disabled.

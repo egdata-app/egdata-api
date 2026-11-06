@@ -1,6 +1,7 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import type { Context, MiddlewareHandler } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
+import type { AbuseObservation } from "../services/abuse-observation.js";
 import { offerHydrationResource } from "../services/abuse-operations.js";
 import type {
   AbuseEvent,
@@ -234,7 +235,7 @@ export function createAntiAbuse(options: {
   ];
 
   const challenge: MiddlewareHandler = async (c) => {
-    c.set("antiAbuseObservation", {
+    const observation: AbuseObservation = {
       at: now(),
       route: "/auth/challenge",
       method: c.req.method,
@@ -243,10 +244,14 @@ export function createAntiAbuse(options: {
       risk: 0,
       reasons: [],
       tracked: false,
-    });
+      handshakeOutcome: "invalid",
+    };
+    c.set("antiAbuseObservation", observation);
     privateResponse(c);
-    if (options.mode === "off")
+    if (options.mode === "off") {
+      observation.handshakeOutcome = "disabled";
       return c.json({ error: { code: "ANTI_ABUSE_DISABLED" } }, 503);
+    }
     // Bound streaming input as well as Content-Length; this endpoint is public.
     const reader = c.req.raw.body?.getReader();
     let text = "";
@@ -298,6 +303,7 @@ export function createAntiAbuse(options: {
         risk,
       );
       if (redeemed) {
+        observation.handshakeOutcome = "accepted";
         setCookie(c, SESSION_COOKIE, redeemed.token, {
           httpOnly: true,
           secure: true,
@@ -307,6 +313,9 @@ export function createAntiAbuse(options: {
         });
         return c.json({ token: redeemed.token, expiresAt: redeemed.expiresAt });
       }
+      observation.handshakeOutcome = "replaced";
+    } else {
+      observation.handshakeOutcome = "issued";
     }
     return c.json(
       await sessions.challenge(fp.fingerprintHash, risk, previous?.sessionId),
@@ -361,7 +370,15 @@ export function createAntiAbuse(options: {
       fp.trustedTransport &&
       options.trial?.matches(fp.fingerprintHash, path, c.req.method);
     const enforcing = options.mode === "enforce" || trial;
-    const observation = {
+    const decision =
+      protectedRoute && risk > 0.8
+        ? "tarpit"
+        : protectedRoute &&
+            risk > 0.5 &&
+            (!session || now() - session.issuedAt >= SUSPICIOUS_TTL_MS)
+          ? "challenge"
+          : "serve";
+    const observation: AbuseObservation = {
       at: event.at,
       route: path,
       method: c.req.method,
@@ -374,6 +391,8 @@ export function createAntiAbuse(options: {
       risk,
       reasons: scorer.reasons(keys),
       tracked: keys.length > 0,
+      decision,
+      sessionValid: Boolean(session),
     };
     c.set("antiAbuseObservation", observation);
     // Apollo supplies resolved arguments (including APQ, aliases and variables)
@@ -399,7 +418,7 @@ export function createAntiAbuse(options: {
     };
     if (!graphql && !search) scorer.enqueue(keys, event);
     if (!enforcing) return pass();
-    if (protectedRoute && risk > 0.8) {
+    if (decision === "tarpit") {
       if (graphql || search) scorer.enqueue(keys, event);
       observation.action = "tarpit";
       privateResponse(c);
@@ -421,11 +440,7 @@ export function createAntiAbuse(options: {
         200,
       );
     }
-    if (
-      protectedRoute &&
-      risk > 0.5 &&
-      (!session || now() - session.issuedAt >= SUSPICIOUS_TTL_MS)
-    ) {
+    if (decision === "challenge") {
       if (graphql || search) scorer.enqueue(keys, event);
       observation.action = "challenge";
       privateResponse(c);
