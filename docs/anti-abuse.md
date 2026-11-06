@@ -5,6 +5,18 @@ tokens or a handshake. Only suspicious clients require PoW; confirmed abuse is
 tarpitted regardless of token possession. Changing this repository does not
 automatically change the deployment's mode.
 
+Pagination scoring includes `page-sweep` for at least 10 distinct positive page
+numbers on one semantic resource, regardless of arrival order, and
+`route-hammering` for at least 120 logical deep requests to one concrete resource.
+Both use the existing 60-second window (at most 128 events) and share the +0.45
+sweep cap with sequential traversal, unique IDs, and title lookups. Page breadth
+keeps semantic filters separate; route volume ignores filter hashes but preserves
+resource IDs. Hydration and typing collapse before route-volume counting, and
+repeated GraphQL aliases count once per operation/resource. These are origin-side
+behavior signals, not cost measurements: edge hits are invisible, while origin
+cache hits and revalidation requests can still be scored. Keep rollout in observe
+until response bytes and cache behavior establish whether mitigation saves egress.
+
 | Variable | Default | Meaning |
 | --- | --- | --- |
 | `ANTI_ABUSE_MODE` | `off` | `off`, `observe` (score only), or `enforce` |

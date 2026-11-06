@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Detect out-of-order pagination (10 distinct pages per semantic resource) and route hammering (120 logical requests per concrete resource) within the existing bounded 60-second anti-abuse window. Both share the existing sweep weight and appear in observation summaries; hydration collapsing, caching, and deployment mode remain unchanged. These signals describe behavior, not measured origin bandwidth cost.
+
 - Updated anti-abuse fingerprints/scoring to v2: preserve relative header order while ignoring Apollo/CORS plumbing, collapse offer hydration and typing bursts, and detect sustained distinct-title lookups within the existing bounded 60-second window. Browse routes count as support and deep-only traffic alone adds no risk. Added a 600-second global CORS preflight lifetime and strict HTTPS egdata.app hostname boundaries. Deployment mode remains operator-controlled; rollout stays in observe with canaries disabled.
 
 - Added catalog-search and sandbox-offer traversal scoring using normalized filter fingerprints, including sequential pages up to five seconds apart. Added bounded, asynchronous 24-hour summaries of request scores, reasons, routes, and encoded origin body bytes. Added operator-only fingerprint-scoped trials with automatic expiry and rollback, plus a browser PoW staging harness; ordinary public caching and baseline rate limits remain active.

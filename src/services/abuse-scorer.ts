@@ -64,6 +64,15 @@ export interface AbuseAssessment {
   reasons: string[];
 }
 
+function resourceKey(resource: AbuseResource, includeFilters = true): string {
+  // Catalog resources append a semantic filter hash. Keep it for page breadth;
+  // route volume must not reset when filters change. Preserve concrete IDs.
+  const route = includeFilters
+    ? resource.route
+    : resource.route.replace(/:[a-f0-9]{64}$/, "");
+  return JSON.stringify([route, resource.itemId ?? resource.hydrationId ?? ""]);
+}
+
 export function analyzeEvents(events: AbuseEvent[]): AbuseAssessment {
   // GraphQL finishes asynchronously; completion order is not arrival order.
   events = [...events].sort((a, b) => a.at - b.at);
@@ -72,14 +81,52 @@ export function analyzeEvents(events: AbuseEvent[]): AbuseAssessment {
   const count = events.length;
   if (!count) return { score: 0, reasons: [] };
   const mismatch = Math.max(...events.map((event) => event.mismatch));
-  if (count < 12)
+  const deep = events.filter((event) => event.deep);
+  const resources = deep.flatMap((event) =>
+    (event.resources?.length ? event.resources : [event]).map((resource) => ({
+      ...resource,
+      at: event.at,
+    })),
+  );
+  const distinctPages = new Map<string, Set<number>>();
+  for (const resource of resources) {
+    if (
+      resource.page === undefined ||
+      !Number.isSafeInteger(resource.page) ||
+      resource.page < 1
+    )
+      continue;
+    const key = resourceKey(resource);
+    const seen = distinctPages.get(key) ?? new Set<number>();
+    seen.add(resource.page);
+    distinctPages.set(key, seen);
+  }
+  const pageSweep = [...distinctPages.values()].some(
+    (pages) => pages.size >= 10,
+  );
+  // Ten pages must be observable before the legacy twelve-event warm-up ends.
+  if (count < 12 && !pageSweep)
     return {
       score: Math.min(0.3, mismatch),
       reasons: mismatch ? ["transport-mismatch"] : [],
     };
-  const deep = events.filter((event) => event.deep);
   const operations = logicalOperations(events);
   const logicalDeep = operations.filter((event) => event.deep);
+  const routeCounts = new Map<string, number>();
+  for (const event of logicalDeep) {
+    // A batched GraphQL operation counts at most once per resource, even when
+    // aliases repeat it. Hydration/typing collapsing has already happened.
+    const keys = new Set(
+      (event.resources?.length ? event.resources : [event]).map((resource) =>
+        resourceKey(resource, false),
+      ),
+    );
+    for (const key of keys)
+      routeCounts.set(key, (routeCounts.get(key) ?? 0) + 1);
+  }
+  const routeHammering = [...routeCounts.values()].some(
+    (count) => count >= 120,
+  );
   const support = events.filter((event) => event.support).length;
   const ratio = deep.length / Math.max(1, deep.length + support);
   const gaps = operations
@@ -98,12 +145,6 @@ export function analyzeEvents(events: AbuseEvent[]): AbuseAssessment {
     string,
     AbuseResource & { at: number; steps: number }
   >();
-  const resources = deep.flatMap((event) =>
-    (event.resources?.length ? event.resources : [event]).map((resource) => ({
-      ...resource,
-      at: event.at,
-    })),
-  );
   for (const event of resources) {
     const previous = pages.get(event.route);
     if (event.page === undefined || event.page === previous?.page) continue;
@@ -133,7 +174,12 @@ export function analyzeEvents(events: AbuseEvent[]): AbuseAssessment {
     distinctTitles >= 18 &&
     distinctTitles / titleSearches.length >= 0.8 &&
     Math.max(...searchTimes) - Math.min(...searchTimes) >= 25000;
-  const sweep = sequential >= 8 || unique >= 30 || titleSweep;
+  const sweep =
+    sequential >= 8 ||
+    unique >= 30 ||
+    titleSweep ||
+    pageSweep ||
+    routeHammering;
   const largeSearches = resources.filter(
     (entry) => entry.search && (entry.limit ?? 0) >= 50,
   );
@@ -143,6 +189,8 @@ export function analyzeEvents(events: AbuseEvent[]): AbuseAssessment {
   const reasons = [
     ratio >= 0.95 ? "deep-only" : ratio >= 0.8 ? "mostly-deep" : "",
     sequential >= 8 ? "sequential-pages" : "",
+    pageSweep ? "page-sweep" : "",
+    routeHammering ? "route-hammering" : "",
     unique >= 30 ? "unique-id-sweep" : "",
     titleSweep ? "title-lookup-sweep" : "",
     regular ? "regular-intervals" : "",

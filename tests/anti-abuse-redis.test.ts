@@ -89,6 +89,42 @@ describe.skipIf(!url)("anti-abuse Redis integration", () => {
     expect(a.stats.storeErrors + b.stats.storeErrors).toBe(0);
   });
 
+  it.each([
+    "pages",
+    "hammer",
+  ])("combines unordered %s evidence across independent scorers", async (kind) => {
+    const shared = key();
+    const a = new AbuseScorer(store);
+    const b = new AbuseScorer(otherStore);
+    const pages = [1, 8, 3, 10, 5, 2, 9, 4, 7, 6];
+    const count = kind === "pages" ? 10 : 120;
+    const start = Date.now() - 5000;
+    for (let i = 0; i < count; i++) {
+      const worker = i % 2 ? a : b;
+      worker.enqueue([shared], {
+        ...event(start + i * 10),
+        route: "/sandboxes/fn/offers",
+        page: undefined,
+        resources: [
+          {
+            route: "/sandboxes/fn/offers:filters",
+            page: kind === "pages" ? pages[i] : 1,
+            limit: 100,
+            search: false,
+          },
+        ],
+      });
+      await worker.drain();
+    }
+    // Each process has only five pages or sixty requests; the shared window
+    // supplies the evidence needed for the new threshold.
+    expect(a.risk([shared])).toBeCloseTo(kind === "pages" ? 0.65 : 0.85);
+    expect(a.reasons([shared])).toContain(
+      kind === "pages" ? "page-sweep" : "route-hammering",
+    );
+    expect(a.stats.storeErrors + b.stats.storeErrors).toBe(0);
+  });
+
   it("prunes by actual arrival time, retains duplicates, caps windows and expires keys", async () => {
     const node = key();
     const now = Date.now();

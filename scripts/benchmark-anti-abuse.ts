@@ -66,7 +66,9 @@ const observations = new AbuseObservations({ write: async () => {} });
 protectedApp.use("*", observeAbuseResponses(observations));
 protectedApp.use(
   "*",
-  createAntiAbuse({ mode: "enforce", sessions, scorer }).middleware,
+  // This deliberately repetitive workload now triggers route-hammering. Measure
+  // scoring/verification overhead in observe mode, excluding intentional delays.
+  createAntiAbuse({ mode: "observe", sessions, scorer }).middleware,
 );
 protectedApp.get("/items", (c) => c.json({ elements: [] }));
 const plain = await measure(async () =>
@@ -88,7 +90,7 @@ console.log(
       baselineHono: plain,
       protectedHono: protectedTiming,
       addedP95: protectedTiming.p95 - plain.p95,
-      note: "Warm local cache; includes Hono request construction. Excludes canary parsing, intentional tarpits, network and production load.",
+      note: "Observe mode with a valid session and warm local cache; includes Hono request construction. Excludes canary parsing, intentional tarpits, network and production load.",
     },
     null,
     2,

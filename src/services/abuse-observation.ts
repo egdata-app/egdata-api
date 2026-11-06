@@ -151,6 +151,8 @@ export class AbuseObservations {
           "deep-only",
           "mostly-deep",
           "sequential-pages",
+          "page-sweep",
+          "route-hammering",
           "unique-id-sweep",
           "title-lookup-sweep",
           "regular-intervals",
