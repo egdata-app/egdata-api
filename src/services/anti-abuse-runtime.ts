@@ -11,6 +11,7 @@ import {
 } from "./abuse-observation.js";
 import { AbuseScorer, RedisRiskStore } from "./abuse-scorer.js";
 import { AbuseTrialController } from "./abuse-trial.js";
+import { PowCohorts, RedisCohortStore } from "./pow-cohorts.js";
 import { PowSessionService } from "./pow-session.js";
 
 /** Select one complete configuration; never mix credentials across hosts. */
@@ -77,16 +78,31 @@ export function createAntiAbuseRuntime() {
   // Errors are counted by the scorer; do not emit one log line per request.
   redis.on("error", () => {});
   const scorer = new AbuseScorer(new RedisRiskStore(redis));
-  const observations = new AbuseObservations(new RedisSummaryStore(redis));
+  const cohorts = new PowCohorts(new RedisCohortStore(redis));
+  const observations = new AbuseObservations(
+    new RedisSummaryStore(redis),
+    Date.now,
+    cohorts,
+  );
   const trial = new AbuseTrialController(redis);
   observations.start();
   if (mode === "observe") trial.start();
-  let last = { ...scorer.stats, summaryErrors: 0, summaryDropped: 0 };
+  let last = {
+    ...scorer.stats,
+    summaryErrors: 0,
+    summaryDropped: 0,
+    cohortDropped: 0,
+    cohortUntracked: 0,
+    cohortStoreErrors: 0,
+  };
   const metricsTimer = setInterval(() => {
     const current = {
       ...scorer.stats,
       summaryErrors: observations.stats.storeErrors,
       summaryDropped: observations.stats.dropped,
+      cohortDropped: cohorts.stats.dropped,
+      cohortUntracked: cohorts.stats.untracked,
+      cohortStoreErrors: cohorts.stats.storeErrors,
     };
     for (const name of Object.keys(current) as (keyof typeof current)[]) {
       const delta = current[name] - last[name];

@@ -17,6 +17,12 @@ import {
   TRIAL_KEY,
 } from "../src/services/abuse-trial.js";
 import { riskRedisKeys } from "../src/services/abuse-version.js";
+import {
+  COHORT_SCRIPT,
+  type CohortUpdate,
+  cohortReport,
+  PowCohorts,
+} from "../src/services/pow-cohorts.js";
 
 // Explicit opt-in only: never use the application's production Redis variables.
 const url = process.env.ANTI_ABUSE_TEST_REDIS_URL;
@@ -62,6 +68,132 @@ describe.skipIf(!url)("anti-abuse Redis integration", () => {
       redis?.disconnect();
       peer?.disconnect();
     }
+  });
+
+  it("merges cohort lifecycle writes atomically across replicas, replays and out-of-order arrivals", async () => {
+    const cohortKey = `integration:pow:${randomUUID()}`;
+    cleanup.push(cohortKey);
+    const at = Date.now();
+    const base = {
+      id: "one",
+      firstChallenge: 0,
+      lastChallenge: 0,
+      lastPuzzle: 0,
+      lastSolve: 0,
+    };
+    const write = (connection: Redis, rows: object[]) =>
+      connection.eval(
+        COHORT_SCRIPT,
+        1,
+        cohortKey,
+        JSON.stringify(rows),
+        Math.floor(at / 1000) + 3600,
+        10000,
+      );
+    // A proof flush can beat the earlier challenge's flush on another replica.
+    await write(peer, [{ ...base, lastSolve: at + 1000 }]);
+    await Promise.all(
+      Array.from({ length: 20 }, (_, i) =>
+        write(i % 2 ? redis : peer, [
+          { ...base, firstChallenge: at + i, lastChallenge: at + i },
+        ]),
+      ),
+    );
+    await write(redis, [{ ...base, lastSolve: at + 1000 }]);
+    const raw = await redis.hgetall(cohortKey);
+    expect(cohortReport(raw, at + 2000)).toMatchObject({
+      challenged: 1,
+      solved: 1,
+      pending: 0,
+      noSolutionObserved: 0,
+      capacityReached: false,
+    });
+    expect(raw.__count).toBe("1");
+    expect(JSON.parse(raw.one).firstChallenge).toBe(at);
+    expect(await redis.ttl(cohortKey)).toBeGreaterThan(3500);
+    expect(await redis.ttl(cohortKey)).toBeLessThanOrEqual(3600);
+  });
+
+  it("caps stored cohorts without preventing updates to admitted cohorts", async () => {
+    const cohortKey = `integration:pow:${randomUUID()}`;
+    cleanup.push(cohortKey);
+    const at = Date.now();
+    const base = {
+      firstChallenge: at,
+      lastChallenge: at,
+      lastPuzzle: 0,
+      lastSolve: 0,
+    };
+    const write = (rows: object[]) =>
+      redis.eval(
+        COHORT_SCRIPT,
+        1,
+        cohortKey,
+        JSON.stringify(rows),
+        Math.floor(at / 1000) + 3600,
+        2,
+      );
+    await write([1, 2, 3].map((id) => ({ ...base, id: String(id) })));
+    await write([{ ...base, id: "1", lastSolve: at + 1 }]);
+    const raw = await redis.hgetall(cohortKey);
+    expect(raw.__count).toBe("2");
+    expect(raw["3"]).toBeUndefined();
+    expect(cohortReport(raw, at + 300000)).toMatchObject({
+      capacityReached: true,
+      challenged: 2,
+      solved: 1,
+      noSolutionObserved: 1,
+    });
+  });
+
+  it("links midnight recovery even when the prior day's challenge flush arrives later", async () => {
+    const prefix = `integration:pow:${randomUUID()}:`;
+    const midnight = Math.floor(Date.now() / 86400000) * 86400000;
+    const previousDay = midnight / 86400000 - 1;
+    cleanup.push(`${prefix}${previousDay}`, `${prefix}${previousDay + 1}`);
+    const write = async (rows: CohortUpdate[]) => {
+      for (const row of rows)
+        await redis.eval(
+          COHORT_SCRIPT,
+          1,
+          `${prefix}${row.day}`,
+          JSON.stringify([row]),
+          Math.floor(Date.now() / 1000) + 3600,
+          10000,
+        );
+    };
+    const a = new PowCohorts({ write }),
+      b = new PowCohorts({ write });
+    const common = {
+      route: "/offers/one",
+      method: "GET",
+      scope: "enforce" as const,
+      risk: 0.65,
+      reasons: [],
+      tracked: true,
+      cohortFingerprint: "a".repeat(64),
+    };
+    a.record({ ...common, at: midnight - 1000, action: "challenge" });
+    b.record({
+      ...common,
+      at: midnight + 1000,
+      action: "handshake",
+      handshakeOutcome: "accepted",
+    });
+    await b.flush();
+    await a.flush();
+    expect(
+      cohortReport(
+        await redis.hgetall(`${prefix}${previousDay}`),
+        midnight + 2000,
+      ),
+    ).toMatchObject({ challenged: 1, solved: 1 });
+    expect(
+      cohortReport(
+        await redis.hgetall(`${prefix}${previousDay + 1}`),
+        midnight + 2000,
+      ),
+    ).toMatchObject({ challenged: 0, solved: 0 });
   });
 
   it.each([

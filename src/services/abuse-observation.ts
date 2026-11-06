@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import type { MiddlewareHandler } from "hono";
 import type { Redis } from "ioredis";
 import { ABUSE_VERSION } from "./abuse-version.js";
+import type { PowCohorts } from "./pow-cohorts.js";
 
 export interface AbuseObservation {
   at: number;
@@ -15,6 +16,8 @@ export interface AbuseObservation {
   /** Decision under enforcement, also evaluated in observe mode. */
   decision?: "serve" | "challenge" | "tarpit";
   sessionValid?: boolean;
+  /** Trusted fingerprint, used only by the private cohort store, never labels. */
+  cohortFingerprint?: string;
   handshakeOutcome?:
     | "issued"
     | "accepted"
@@ -130,6 +133,7 @@ export class AbuseObservations {
   constructor(
     private readonly store: SummaryStore,
     private readonly now = Date.now,
+    private readonly cohorts?: PowCohorts,
   ) {}
 
   start() {
@@ -161,6 +165,7 @@ export class AbuseObservations {
     bytes: number,
     complete: boolean,
   ) {
+    this.cohorts?.record(o);
     const method = ["GET", "POST", "HEAD"].includes(o.method)
       ? o.method
       : "OTHER";
@@ -228,18 +233,20 @@ export class AbuseObservations {
   }
   async flush(): Promise<void> {
     if (this.flushing) return this.flushing;
-    if (!this.pending.size) return;
+    if (!this.pending.size && !this.cohorts) return;
     const rows = [...this.pending].map(([minute, values]) => ({
       minute,
       values,
     }));
     this.pending.clear();
     this.fields = 0;
-    this.flushing = this.store
-      .write(rows)
-      .catch(() => {
+    this.flushing = Promise.all([
+      this.store.write(rows).catch(() => {
         this.stats.storeErrors++;
-      })
+      }),
+      this.cohorts?.flush(),
+    ])
+      .then(() => {})
       .finally(() => {
         this.flushing = undefined;
       });

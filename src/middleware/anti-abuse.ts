@@ -292,6 +292,7 @@ export function createAntiAbuse(options: {
       risk,
       reasons: scorer.reasons(keys),
       tracked: keys.length > 0,
+      cohortFingerprint: fp.trustedTransport ? fp.fingerprintHash : undefined,
     });
     if (body.challenge !== undefined || body.nonce !== undefined) {
       if (typeof body.challenge !== "string" || typeof body.nonce !== "string")
@@ -393,6 +394,7 @@ export function createAntiAbuse(options: {
       tracked: keys.length > 0,
       decision,
       sessionValid: Boolean(session),
+      cohortFingerprint: fp.trustedTransport ? fp.fingerprintHash : undefined,
     };
     c.set("antiAbuseObservation", observation);
     // Apollo supplies resolved arguments (including APQ, aliases and variables)

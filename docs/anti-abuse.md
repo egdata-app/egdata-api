@@ -294,6 +294,54 @@ incomplete responses; inspect the existing incomplete/error/drop metrics too.
 These additions use the same bounded asynchronous flush and 24-hour retention,
 with no new Redis operation in the request path or public monitoring endpoint.
 
+### Distinct daily PoW cohorts
+
+After deploying cohort instrumentation, run inside the API container:
+
+```sh
+node dist/anti-abuse-ops.js cohorts
+node dist/anti-abuse-ops.js cohorts --day 2026-11-06
+```
+
+The default is the current **UTC day**, independently of `report --minutes`.
+Today and yesterday are retained. No existing request counters can be backfilled
+into this report. `firstObservedAt: null` means no stored lifecycle events, not
+proof of full telemetry coverage.
+
+| Field | Meaning |
+|---|---|
+| `challenged` | Distinct trusted fingerprint cohorts receiving an enforced challenge that day. |
+| `solved` | Those cohorts with at least one accepted proof at or after their first challenge. Replays and parallel responses count once. |
+| `pending` | Challenged, no accepted proof observed, and less than five minutes since the first challenge. |
+| `noSolutionObserved` | Challenged and no accepted proof observed after at least five minutes. |
+| `noPuzzleRequested` | Subset of `noSolutionObserved` with no subsequent puzzle issuance observed. |
+| `puzzleRequestedUnsolved` | Remaining subset: puzzle issuance observed, but no accepted proof. |
+| `capacityReached` | Daily storage cap reached; new cohorts may be missing. |
+
+`challenged = solved + pending + noSolutionObserved`. Late accepted proofs move
+a cohort from pending/no-solution to solved. Later re-challenges do not undo a
+day's solved status; use existing request counters for repeated challenge volume.
+Handshakes on the following UTC day also update the prior day's cohort, including
+when separate API replicas flush out of order. A proof before the first challenge
+does not mark that cohort solved. Unsolicited handshakes are not challenged cohorts.
+
+These are **cohorts, not distinct clients or people**. Different clients can share
+a transport fingerprint; one client's solve can therefore mark a shared cohort
+solved. Fingerprint changes can split one client. “No solution observed” does not
+prove ignoring: closing a tab, networking failures and missing telemetry look the
+same. Missing trusted edge signals are excluded, and scoped trials/observe mode
+are excluded because their handshake scope cannot be attributed reliably.
+
+Only daily domain-separated hashes and lifecycle timestamps are stored, never raw
+IP/UA, tokens, cookies, paths or search titles. Redis state is bounded to 10,000
+cohorts per UTC day (including handshake-only entries) and expires at the end of
+the following day, at most 48 hours. The in-process queue caps at 2,048 cohort/day
+entries per flush; Lua writes merge at most 128 entries per call. All Redis work
+runs in the existing asynchronous flush. Check `system|cohortDropped`,
+`system|cohortUntracked`, and `system|cohortStoreErrors` through the existing report
+alongside `capacityReached`; outage/overflow can make this best-effort funnel
+incomplete. No public endpoint, frontend integration or scoring change is needed.
+
 The operator-only Redis key `egdata:abuse:trial:v2` selects exact trusted
 fingerprints and either `offer-details` (GET `/offers/<32-hex-id>`) or
 `catalog-search` (GET/POST `/search/v2/search`). It cannot be enabled by a request

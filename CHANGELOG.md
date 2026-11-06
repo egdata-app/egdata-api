@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added an operator-only daily PoW cohort report that deduplicates challenge responses and accepted proof replays, separates pending cohorts from those with no solution observed after five minutes, and flags storage saturation. Bounded asynchronous Redis tracking uses trusted fingerprint hashes, not unique-person identities; enforcement and the public protocol are unchanged.
+
 - Added asynchronous server-side PoW outcome counters and an operator report for challenge responses, puzzle issuance/replacement, accepted/rejected proofs, requests admitted with valid sessions, and observe-mode would-challenge/would-tarpit decisions. Existing 24-hour Redis summaries remain bounded and private; no public endpoint, frontend telemetry, or enforcement change.
 
 - Detect out-of-order pagination (10 distinct pages per semantic resource) and route hammering (120 logical requests per concrete resource) within the existing bounded 60-second anti-abuse window. Both share the existing sweep weight and appear in observation summaries; hydration collapsing, caching, and deployment mode remain unchanged. These signals describe behavior, not measured origin bandwidth cost.

@@ -12,6 +12,7 @@ import {
   type SummaryRow,
 } from "../src/services/abuse-observation.js";
 import { AbuseScorer } from "../src/services/abuse-scorer.js";
+import { type CohortUpdate, PowCohorts } from "../src/services/pow-cohorts.js";
 import { PowSessionService } from "../src/services/pow-session.js";
 
 const headers = {
@@ -32,6 +33,12 @@ function harness(
   let clock = 1800000000000;
   let risk = 0;
   const rows: SummaryRow[] = [];
+  const cohortRows: CohortUpdate[] = [];
+  const cohorts = new PowCohorts({
+    write: async (batch) => {
+      cohortRows.push(...batch);
+    },
+  });
   const observations = new AbuseObservations(
     {
       write: async (batch) => {
@@ -39,6 +46,7 @@ function harness(
       },
     },
     () => clock,
+    cohorts,
   );
   const scorer = new AbuseScorer(undefined, () => clock);
   cleanup.push(() => scorer.close());
@@ -109,6 +117,7 @@ function harness(
     validSession,
     totals,
     rows,
+    cohortRows,
     setRisk: (value: number) => {
       risk = value;
     },
@@ -259,6 +268,25 @@ describe("server-side PoW monitoring", () => {
       challengeRequested: 0,
       proofsSubmitted: 0,
     });
+    expect(new Set(h.cohortRows.map((row) => row.id)).size).toBe(1);
+    expect(h.cohortRows.some((row) => row.firstChallenge > 0)).toBe(true);
+  });
+
+  it("correlates an enforced challenge with a real verified proof across REST/handshake", async () => {
+    const h = harness();
+    h.setRisk(0.65);
+    await h.request();
+    const challenged = h.cohortRows.find((row) => row.firstChallenge > 0);
+    if (!challenged) throw new Error("Expected a recorded challenge cohort");
+    h.setRisk(0); // Real 16-bit proof avoids expensive test-only 20-bit solves.
+    const { json: puzzle } = await h.request("/auth/challenge", {});
+    await h.request("/auth/challenge", {
+      challenge: puzzle.challenge,
+      nonce: solve(puzzle.challenge),
+    });
+    expect(
+      h.cohortRows.some((row) => row.id === challenged.id && row.lastSolve > 0),
+    ).toBe(true);
   });
 
   it("does not count a tarpitted valid session as admitted", async () => {

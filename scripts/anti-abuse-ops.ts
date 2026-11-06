@@ -6,6 +6,7 @@ import {
 } from "../src/services/abuse-observation.js";
 import { parseTrial, TRIAL_KEY } from "../src/services/abuse-trial.js";
 import { telemetryRedisOptions } from "../src/services/anti-abuse-runtime.js";
+import { COHORT_PREFIX, cohortReport } from "../src/services/pow-cohorts.js";
 
 config({ quiet: true });
 const [command, ...args] = process.argv.slice(2);
@@ -13,9 +14,13 @@ const option = (name: string) => {
   const index = args.indexOf(`--${name}`);
   return index < 0 ? undefined : args[index + 1];
 };
-if (!["report", "status", "start-trial", "stop-trial"].includes(command))
+if (
+  !["report", "cohorts", "status", "start-trial", "stop-trial"].includes(
+    command,
+  )
+)
   throw new Error(
-    "Use report [--minutes 60], status, start-trial --id ID --fingerprint HASH --route offer-details --seconds 120, or stop-trial --id ID. Run inside the deployed API container to use its Redis configuration.",
+    "Use report [--minutes 60], cohorts [--day YYYY-MM-DD UTC], status, start-trial --id ID --fingerprint HASH --route offer-details --seconds 120, or stop-trial --id ID. Run inside the deployed API container to use its Redis configuration.",
   );
 const redis = new Redis({
   ...telemetryRedisOptions(),
@@ -28,7 +33,35 @@ const redis = new Redis({
 redis.on("error", () => {});
 try {
   await redis.connect();
-  if (command === "status") {
+  if (command === "cohorts") {
+    const now = Date.now();
+    const day = option("day") ?? new Date(now).toISOString().slice(0, 10);
+    const at = Date.parse(`${day}T00:00:00.000Z`);
+    if (
+      !/^\d{4}-\d{2}-\d{2}$/.test(day) ||
+      !Number.isFinite(at) ||
+      new Date(at).toISOString().slice(0, 10) !== day ||
+      at > now ||
+      at + 2 * 86400000 <= now
+    )
+      throw new Error(
+        "day must be today or yesterday in UTC (retained daily cohorts)",
+      );
+    const raw = await redis.hgetall(
+      `${COHORT_PREFIX}${Math.floor(at / 86400000)}`,
+    );
+    console.log(
+      JSON.stringify(
+        {
+          observedAt: new Date(now).toISOString(),
+          day,
+          ...cohortReport(raw, now),
+        },
+        null,
+        2,
+      ),
+    );
+  } else if (command === "status") {
     const trial = parseTrial(await redis.get(TRIAL_KEY));
     console.log(
       JSON.stringify({
