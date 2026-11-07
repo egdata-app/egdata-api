@@ -435,12 +435,10 @@ export function createAntiAbuse(options: {
           sleepers--;
         }
       }
-      // Deliberately truncated data, without a catalog/database query or
-      // corrupting prices, purchase links, or shared cache contents.
-      return c.json(
-        { elements: [], page: event.page ?? 1, limit: 0, total: 0 },
-        200,
-      );
+      // Explicit no-content mitigation, without running the catalog handler.
+      // The marker distinguishes this from legitimate 204 responses in clients.
+      c.header("X-Egdata-Mitigation", "tarpit");
+      return c.body(null, 204);
     }
     if (decision === "challenge") {
       if (graphql || search) scorer.enqueue(keys, event);

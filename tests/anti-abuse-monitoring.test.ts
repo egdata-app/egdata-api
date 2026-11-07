@@ -85,7 +85,7 @@ function harness(
         ? {}
         : { body: typeof body === "string" ? body : JSON.stringify(body) }),
     });
-    const json = await response.json();
+    const json = response.status === 204 ? null : await response.json();
     await observations.flush();
     return { response, json };
   }
@@ -293,7 +293,16 @@ describe("server-side PoW monitoring", () => {
     const h = harness();
     const token = await h.validSession();
     h.setRisk(0.9);
-    expect((await h.request(undefined, undefined, token)).json.limit).toBe(0);
+    const result = await h.request(undefined, undefined, token);
+    expect(result.response.status).toBe(204);
+    expect(result.json).toBeNull();
+    expect(
+      h.rows.some((row) =>
+        Object.entries(row.values).some(
+          ([key, value]) => key.endsWith("|tarpit|bodyBytes") && value === 0,
+        ),
+      ),
+    ).toBe(true);
     expect(h.totals()).toMatchObject({
       passedWithSession: 0,
       challengeRequired: 0,

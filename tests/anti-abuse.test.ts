@@ -6,6 +6,7 @@ import {
   isProtectedPath,
   tarpitDelay,
 } from "../src/middleware/anti-abuse.js";
+import { apiCors } from "../src/middlewares/cors.js";
 import { edgeCacheHeaders } from "../src/middlewares/edge-cache.js";
 import { responseEtag } from "../src/middlewares/response-etag.js";
 import {
@@ -527,13 +528,11 @@ describe("Hono integration", () => {
     const f = fixture();
     const { token } = await f.handshake();
     vi.spyOn(f.scorer, "risk").mockReturnValue(0.81);
-    expect(
-      (
-        await (
-          await f.request("/items/game", { "x-egdata-session": token })
-        ).json()
-      ).elements,
-    ).toEqual([]);
+    const response = await f.request("/items/game", {
+      "x-egdata-session": token,
+    });
+    expect(response.status).toBe(204);
+    expect(await response.text()).toBe("");
     expect(f.delay).toHaveBeenCalledTimes(1);
     expect(f.handler).not.toHaveBeenCalled();
     f.scorer.close();
@@ -593,8 +592,9 @@ describe("Hono integration", () => {
         "cf-connecting-ip": "203.0.113.99",
       }),
     });
-    expect(response.status).toBe(200);
-    expect((await response.json()).elements).toEqual([]);
+    expect(response.status).toBe(204);
+    expect(await response.text()).toBe("");
+    expect(response.headers.get("x-egdata-mitigation")).toBe("tarpit");
     expect(downstream).not.toHaveBeenCalled();
     expect(f.delay.mock.calls[0][0]).toBe(3000);
     f.scorer.close();
@@ -642,8 +642,8 @@ describe("Hono integration", () => {
     const response = await f.request(`/items/${canary.id}`, {
       "x-egdata-session": token,
     });
-    expect(response.status).toBe(200);
-    expect((await response.json()).elements).toEqual([]);
+    expect(response.status).toBe(204);
+    expect(await response.text()).toBe("");
     expect(f.delay).toHaveBeenCalledTimes(1);
     expect(f.handler).toHaveBeenCalledTimes(2);
     f.scorer.close();
@@ -712,7 +712,8 @@ describe("Hono integration", () => {
     }
     risk.mockReturnValue(1);
     const response = await f.request("/sales");
-    expect((await response.json()).elements).toEqual([]);
+    expect(response.status).toBe(204);
+    expect(await response.text()).toBe("");
     expect(response.headers.get("cache-control")).toBe("private, no-store");
     expect(response.headers.get("etag")).toBeNull();
     expect(f.handler).not.toHaveBeenCalled();
@@ -733,7 +734,7 @@ describe("Hono integration", () => {
     );
     expect(f.delay).not.toHaveBeenCalled();
     risk.mockReturnValue(0.8001);
-    expect((await (await f.request("/items")).json()).elements).toEqual([]);
+    expect((await f.request("/items")).status).toBe(204);
     expect(f.delay).toHaveBeenCalledTimes(1);
     f.scorer.close();
   });
@@ -761,6 +762,50 @@ describe("Hono integration", () => {
     expect(
       (await (await f.post({}, { ...extra, cookie })).json()).difficulty,
     ).toBe(20);
+    f.scorer.close();
+  });
+});
+
+describe("bodyless tarpit contract", () => {
+  it.each([
+    "/offers/abc/regional-price",
+    "/graphql",
+    "/search/v2/search",
+  ])("keeps delay and no-store on %s, exposes the marker, and skips downstream", async (path) => {
+    const f = fixture();
+    vi.spyOn(f.scorer, "risk").mockReturnValue(0.9);
+    const app = new Hono();
+    app.use("*", apiCors());
+    app.route("/", f.app);
+    const response = await app.request(path, {
+      method: path === "/offers/abc/regional-price" ? "GET" : "POST",
+      headers: headers({ origin: "https://egdata.app" }),
+    });
+    expect(response.status).toBe(204);
+    expect(await response.text()).toBe("");
+    expect(response.headers.get("x-egdata-mitigation")).toBe("tarpit");
+    expect(response.headers.get("access-control-expose-headers")).toContain(
+      "X-Egdata-Mitigation",
+    );
+    expect(response.headers.get("cache-control")).toBe("private, no-store");
+    expect(response.headers.get("cdn-cache-control")).toBe("no-store");
+    expect(response.headers.get("cloudflare-cdn-cache-control")).toBe(
+      "no-store",
+    );
+    for (const name of ["content-type", "content-length", "etag"]) {
+      expect(response.headers.get(name)).toBeNull();
+    }
+    expect(f.handler).not.toHaveBeenCalled();
+    expect(f.delay.mock.calls[0][0]).toBe(4000);
+    const preflight = await app.request(path, {
+      method: "OPTIONS",
+      headers: {
+        origin: "https://egdata.app",
+        "access-control-request-method": "GET",
+      },
+    });
+    expect(preflight.status).toBe(204);
+    expect(preflight.headers.get("x-egdata-mitigation")).toBeNull();
     f.scorer.close();
   });
 });

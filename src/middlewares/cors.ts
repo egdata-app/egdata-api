@@ -44,6 +44,7 @@ export const apiCors = () =>
       "X-Total-Count",
       "X-Cache",
       "X-Route-Template",
+      "X-Egdata-Mitigation",
       "Retry-After",
       "Server-Timing",
       "RateLimit",

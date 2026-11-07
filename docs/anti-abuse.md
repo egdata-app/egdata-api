@@ -132,7 +132,7 @@ traffic analysis was used to calibrate these thresholds.
 For protected routes in `enforce` mode, risk <= 0.5 serves normal data without a
 session. Risk > 0.5 and <= 0.8 requires a valid fingerprint-bound session less
 than 30 seconds old; otherwise the API returns `SESSION_CHALLENGE_REQUIRED` with
-HTTP 200. Risk > 0.8 takes the existing tarpit/truncation path. Missing or invalid
+HTTP 200. Risk > 0.8 takes the tarpit path (HTTP 204, no body, X-Egdata-Mitigation: tarpit). Missing or invalid
 tokens alone do not raise risk. Decisions and challenge difficulty use current
 behavioral evidence, not a permanent floor from the token's issuance score, so
 clients return to normal when that evidence expires. Observe mode does not apply
@@ -186,7 +186,7 @@ below. Normal desktop clients need no integration changes.
 - Local trap risk is set synchronously before any response and retained ten
   minutes; Redis propagates it asynchronously. Ordinary risk expires after 60
   seconds without updates. Clean common TLS profiles alone cannot convict.
-- At most 512 tarpit sleepers per process; excess requests receive the truncated
+- At most 512 tarpit sleepers per process; excess requests receive the bodyless 204
   response immediately to avoid turning protection into a resource exhaustion
   mechanism. Disconnect signals cancel sleeps. No origin catalog/database work
   runs for confirmed abuse. No shared data, prices or purchase links are altered.
@@ -212,7 +212,7 @@ below. Normal desktop clients need no integration changes.
    requests; use the session header for cross-site clients and localhost HTTP.
 4. **Preserve Cloudflare caching** for ordinary public GETs, including GraphQL/APQ
    and preview images. Keep the policies in `edge-caching.md`; never override origin
-   no-store on challenges, truncated responses or canary lists. Normal ETags and
+   no-store on challenges, bodyless tarpit responses or canary lists. Normal ETags and
    existing baseline IP limits remain active in enforcement, including when there
    are no trusted fingerprint or session tracking keys. Baseline limits can still
    return 429; PoW does not exempt clients from them.
@@ -358,7 +358,7 @@ harness with no production DB or Redis access. Open its printed URL and run the
 checks, or set `PLAYWRIGHT_MODULE` to an installed Playwright `index.mjs` and run
 `node scripts/anti-abuse-browser-smoke.mjs <loopback-url>` with Chrome installed.
 It exercises real Web Worker SHA-256, concurrent on-demand recovery, early expiry,
-truncated responses and tokenless desktop requests. This is contract validation,
+bodyless tarpit responses and tokenless desktop requests. This is contract validation,
 not validation of the production frontend; its PoW handler must still be built.
 
 After deployment, `node dist/anti-abuse-production-check.js --run` performs a
@@ -388,3 +388,12 @@ version's grouping/window bounds, reconstructs known OfferOnly/OfferPage reads,
 and reports skipped unknown GraphQL operations. It does not access Redis/network
 or invent missing timestamps/titles. Earlier aggregate-only reports cannot be
 exactly replayed; label synthetic regressions separately from captured traces.
+
+### Tarpit client contract
+
+Enforced high-risk requests return HTTP 204 with `X-Egdata-Mitigation: tarpit`,
+exposed via CORS, and no body. The existing 3–5 second sleep, cancellation,
+512-sleeper cap and private/no-store headers remain. PoW challenges still return
+the existing HTTP 200 JSON envelope. Clients should surface a recoverable error
+for marked 204s, avoid automatic retries/PoW and successful-data caching, and
+allow manual retry later. Deploy frontend handling before the backend change.

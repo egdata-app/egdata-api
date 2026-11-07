@@ -57,7 +57,7 @@ async function request(path: string, body?: unknown, token?: string) {
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     signal: AbortSignal.timeout(12000),
   });
-  const json = await response.json();
+  const json = response.status === 204 ? null : await response.json();
   return { response, json, ms: performance.now() - start };
 }
 try {
@@ -160,17 +160,20 @@ try {
   // The sticky trap belongs solely to this unique test fingerprint.
   await redis.set(keys[1], "1", "PX", 30000);
   let tarpit = await request(path, undefined, redeemed.token);
-  for (let i = 0; i < 5 && tarpit.json.limit !== 0; i++) {
+  for (let i = 0; i < 5 && tarpit.response.status !== 204; i++) {
     await sleep(300);
     tarpit = await request(path, undefined, redeemed.token);
   }
   assert(
-    tarpit.json.limit === 0 && tarpit.json.total === 0 && tarpit.ms >= 2900,
+    tarpit.response.status === 204 &&
+      tarpit.json === null &&
+      tarpit.response.headers.get("x-egdata-mitigation") === "tarpit" &&
+      tarpit.ms >= 2900,
     "Confirmed-risk tarpit was not enforced",
   );
   assert(
     tarpit.response.headers.get("cache-control")?.includes("no-store"),
-    "Truncated response was cacheable",
+    "Tarpit response was cacheable",
   );
   const outside = await request("/countries");
   assert(

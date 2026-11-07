@@ -82,7 +82,7 @@ Enforcement uses the current score:
   expired PoW token alone does not trigger a challenge.
 - **Above 0.5 through 0.8:** require a valid session less than 30 seconds old.
   Otherwise return the challenge response below.
-- **Above 0.8:** return the delayed, truncated response described below, even if
+- **Above 0.8:** return the delayed, bodyless response described below, even if
   a valid session is present.
 
 Only a suspicious client with a missing, invalid, or early-expired session receives
@@ -99,15 +99,20 @@ their sessions are accepted for less than 30 seconds from challenge issuance.
 If the current score falls back to 0.5 or below, requests are allowed without a
 session again; a historical risk score stored in an old token does not keep the
 client challenged. Confirmed
-abuse receives a 3–5 second delay followed by a truncated JSON envelope:
-`{ "elements": [], "page": 1, "limit": 0, "total": 0 }`, also HTTP 200. The
+abuse receives a 3–5 second delay followed by **HTTP 204 No Content**, with no
+response body and `X-Egdata-Mitigation: tarpit`. The marker is exposed through
+CORS. Clients must handle this as a recoverable mitigation error before REST or
+GraphQL parsing: do not cache it as successful data, automatically retry, or start
+a PoW handshake. Offer a manual retry after waiting; a successful PoW solve does
+not bypass an ongoing high-risk score. Ordinary 204 responses without the marker
+are unaffected. The
 protection layer does not return 403 or 429. Existing baseline rate limits still
 apply and can return 429 with Retry-After, including for clients without trusted
 transport signals or sessions. Route authorization and upstream security controls
 can also return their own errors.
 
 Normal responses retain their existing cache policies and conditional ETags in
-all modes. Challenges, truncated mitigation responses and synthetic canary lists
+all modes. Challenges, bodyless tarpit responses and synthetic canary lists
 are private/no-store and have no ETag. The origin only scores requests that reach
 it; Cloudflare cache hits require separate edge-side controls and do not contribute
 to origin telemetry. Enforcement does not turn public cached catalog data into
@@ -133,3 +138,8 @@ because those signals are missing. Transport impersonation, changing ASNs, fresh
 profiles and low-rate scraping can evade these heuristics. Cross-instance risk
 updates are asynchronous; an instance with a cold cache can admit requests before
 Redis telemetry arrives. This is not a synchronous global rate limit.
+
+For Cloudflare analytics, filter response status 204 and exclude OPTIONS (CORS
+preflights also use 204). On routes with legitimate 204 responses, status alone
+is not sufficient attribution; use the mitigation marker in configured logs.
+Deploy frontend support before enabling this backend response contract.

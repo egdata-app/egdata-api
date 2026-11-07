@@ -124,16 +124,6 @@ export function withAntiAbuseContract(
         },
       },
     },
-    AbuseTruncatedResponse: {
-      type: "object",
-      required: ["elements", "page", "limit", "total"],
-      properties: {
-        elements: { type: "array", maxItems: 0, items: { type: "object" } },
-        page: { type: "integer" },
-        limit: { type: "integer", enum: [0] },
-        total: { type: "integer", enum: [0] },
-      },
-    },
     SyntheticItem: {
       type: "object",
       required: ["id", "title", "namespace", "synthetic"],
@@ -176,7 +166,7 @@ export function withAntiAbuseContract(
       );
       if (!isProtectedPath(path) && !pagination) continue;
       operation.description =
-        `${operation.description ?? ""}\n\nWhen ANTI_ABUSE_MODE=enforce${!isProtectedPath(path) ? " and pagination query parameters are present" : ""}, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and a truncated envelope regardless of session. Historical token scores do not prevent recovery after current risk clears. Normal responses retain existing cache policies and ETags; challenges, truncated mitigations and canary lists are private/no-store. Baseline rate limits remain active and can return 429. Cloudflare cache hits bypass origin scoring and require separate edge controls. Existing account authentication requirements still apply.`.trim();
+        `${operation.description ?? ""}\n\nWhen ANTI_ABUSE_MODE=enforce${!isProtectedPath(path) ? " and pagination query parameters are present" : ""}, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and HTTP 204 No Content with X-Egdata-Mitigation: tarpit regardless of session. Historical token scores do not prevent recovery after current risk clears. Normal responses retain existing cache policies and ETags; challenges, bodyless tarpits and canary lists are private/no-store. Baseline rate limits remain active and can return 429. Cloudflare cache hits bypass origin scoring and require separate edge controls. Existing account authentication requirements still apply.`.trim();
       const security = operation.security ?? result.security ?? [];
       operation.description +=
         " In observe mode an operator can apply the same policy to exact trusted fingerprints on offer-detail or catalog-search routes for an expiring trial of at most 15 minutes. Catalog search and sandbox-offer pagination contribute traversal evidence, grouped by normalized filters; ordinary isolated queries remain low-risk.";
@@ -196,11 +186,28 @@ export function withAntiAbuseContract(
             anyOf: [
               ...(original ? [original] : []),
               reference("SessionChallengeRequired"),
-              reference("AbuseTruncatedResponse"),
             ],
           }),
         };
       }
+      operation.responses["204"] = {
+        description:
+          "High-risk tarpit: normally delayed 3–5 seconds, with no response body. X-Egdata-Mitigation: tarpit distinguishes mitigation from ordinary no-content responses. Always private/no-store; do not treat as catalog data, automatically retry, or start PoW. Retry manually later. The per-process sleeper cap can omit the delay under saturation.",
+        headers: {
+          "X-Egdata-Mitigation": {
+            schema: { type: "string", enum: ["tarpit"] },
+          },
+          "Cache-Control": {
+            schema: { type: "string", enum: ["private, no-store"] },
+          },
+          "CDN-Cache-Control": {
+            schema: { type: "string", enum: ["no-store"] },
+          },
+          "Cloudflare-CDN-Cache-Control": {
+            schema: { type: "string", enum: ["no-store"] },
+          },
+        },
+      };
     }
   }
   return result;
