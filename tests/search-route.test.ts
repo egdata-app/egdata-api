@@ -1,4 +1,7 @@
+import { once } from "node:events";
+import { serve } from "@hono/node-server";
 import { Hono } from "hono";
+import { compress } from "hono/compress";
 import {
   afterEach,
   beforeAll,
@@ -8,6 +11,9 @@ import {
   it,
   vi,
 } from "vitest";
+import { apiCors } from "../src/middlewares/cors.js";
+import { edgeCacheHeaders } from "../src/middlewares/edge-cache.js";
+import { responseEtag } from "../src/middlewares/response-etag.js";
 import { Changelog, Offer } from "../src/models/index.js";
 import SearchRoute from "../src/routes/search.js";
 import {
@@ -76,6 +82,19 @@ vi.mock("../src/clients/vectorize.js", () => ({
   VectorizeConfigurationError: class VectorizeConfigurationError extends Error {},
   queryOffersWithNaturalLanguage: mocks.vectorizeSearch,
 }));
+
+// Hono's in-process request helper does not follow redirects like fetch does.
+async function requestFollowingRedirect(
+  app: Hono,
+  ...args: Parameters<Hono["request"]>
+) {
+  const response = await app.request(...args);
+  return response.status === 303
+    ? app.request(
+        response.headers.get("location") ?? "missing-redirect-location",
+      )
+    : response;
+}
 
 describe("search route with SeaQA fixtures", () => {
   let app: Hono;
@@ -153,7 +172,10 @@ describe("search route with SeaQA fixtures", () => {
     const query = { query: "saved catalog search", page: 2, limit: 5 };
     mocks.sharedGet.mockResolvedValue(JSON.stringify(query));
 
-    const response = await app.request("/search/saved-query-id");
+    const response = await requestFollowingRedirect(
+      app,
+      "/search/saved-query-id",
+    );
 
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual(query);
@@ -162,12 +184,278 @@ describe("search route with SeaQA fixtures", () => {
     expect(mocks.redisSet).not.toHaveBeenCalled();
   });
 
-  it("maps fixture-backed OpenSearch hits through /search/v2/search", async () => {
-    const res = await app.request("/search/v2/search?country=FR", {
+  it("redirects POST to a sanitized, deterministic GET without accessing search or caches", async () => {
+    const response = await app.request(
+      "/search/v2/search?locale=EN-us&expand=1&tracking=no",
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          cookie: "EGDATA_COUNTRY=FR",
+        },
+        body: JSON.stringify({
+          title: "  A & B?#  ",
+          tags: ["RPG", "Action", "RPG"],
+          technologies: [" Unreal ", "Unreal"],
+          price: { min: 0, max: 2000, ignored: 5 },
+          onSale: false,
+          page: 0,
+          limit: 200,
+          facets: "none",
+          unknown: "ignored",
+        }),
+      },
+    );
+    expect(response.status).toBe(303);
+    expect(response.headers.get("cache-control")).toBe("no-store");
+    expect(await response.text()).toBe("");
+    expect(response.headers.get("location")).toBe(
+      "/search/v2/search?country=FR&expand=true&facets=none&limit=100&onSale=false&priceMax=2000&priceMin=0&tags=Action%2CRPG&technologies=Unreal&title=A+%26+B%3F%23",
+    );
+    expect(mocks.opensearchSearch).not.toHaveBeenCalled();
+    expect(mocks.redisGet).not.toHaveBeenCalled();
+    expect(mocks.redisSet).not.toHaveBeenCalled();
+    expect(
+      (
+        await app.request(
+          response.headers.get("location") ?? "missing-redirect-location",
+        )
+      ).status,
+    ).toBe(200);
+  });
+
+  it("uses identical redirect URLs for equivalent filters and explicit defaults", async () => {
+    const locations = [];
+    for (const body of [
+      { tags: ["b", "a", "b"] },
+      {
+        tags: ["a", "b"],
+        page: 1,
+        limit: 10,
+        facets: "full",
+        sortDir: "desc",
+        ignored: true,
+      },
+    ]) {
+      const response = await app.request("/search/v2/search", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+      expect(response.status).toBe(303);
+      locations.push(response.headers.get("location"));
+    }
+    expect(locations).toEqual([
+      "/search/v2/search?country=US&tags=a%2Cb",
+      "/search/v2/search?country=US&tags=a%2Cb",
+    ]);
+  });
+
+  it("preserves literal commas in list filters through the redirect", async () => {
+    const response = await requestFollowingRedirect(
+      app,
+      "/search/v2/search?country=US",
+      {
+        method: "POST",
+        body: JSON.stringify({ technologies: ["Engine, Inc."] }),
+      },
+    );
+    expect(response.status).toBe(200);
+    expect(
+      mocks.opensearchSearch.mock.calls[0][0].body.query.bool.filter[0]
+        .terms_set["lastBuilds.technologies.technology.keyword"].terms,
+    ).toEqual(["Engine, Inc."]);
+  });
+
+  it.each([
+    "null",
+    "[]",
+    "broken",
+    '{"title":{}}',
+    '{"tags":"a"}',
+    '{"onSale":"false"}',
+    '{"limit":1.5}',
+    '{"price":{"min":"0"}}',
+    '{"sortBy":"prices.private"}',
+  ])("rejects malformed POST input before redirecting: %s", async (body) => {
+    const response = await app.request("/search/v2/search", {
       method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ limit: 3 }),
+      body,
     });
+    expect(response.status).toBe(400);
+    expect(response.headers.has("location")).toBe(false);
+    expect(mocks.opensearchSearch).not.toHaveBeenCalled();
+    expect(mocks.redisGet).not.toHaveBeenCalled();
+  });
+
+  it("makes GET pricing independent of cookies when country is absent", async () => {
+    await app.request("/search/v2/search", {
+      headers: { cookie: "EGDATA_COUNTRY=FR" },
+    });
+    expect(
+      mocks.opensearchSearch.mock.calls[0][0].body.aggregations.price_stats
+        .stats.field,
+    ).toBe("prices.US.price.discountPrice");
+  });
+
+  it("preserves explicit country and normalized locale over cookie values", async () => {
+    const response = await app.request(
+      "/search/v2/search?country=DE&locale=fr-fr",
+      {
+        method: "POST",
+        headers: { cookie: "EGDATA_COUNTRY=US" },
+        body: "{}",
+      },
+    );
+    expect(response.status).toBe(303);
+    expect(response.headers.get("location")).toBe(
+      "/search/v2/search?country=DE&locale=fr-FR",
+    );
+  });
+
+  it.each([
+    "page=1.5",
+    "limit=NaN",
+    "priceMin=Infinity",
+    "onSale=maybe",
+    "sortBy=privateField",
+    "sortDir=other",
+  ])("rejects invalid GET filters: %s", async (query) => {
+    const response = await app.request(`/search/v2/search?${query}`);
+    expect(response.status).toBe(400);
+    expect(mocks.opensearchSearch).not.toHaveBeenCalled();
+    expect(mocks.redisGet).not.toHaveBeenCalled();
+  });
+
+  it("rejects invalid POST locale before redirecting", async () => {
+    const response = await app.request("/search/v2/search?locale=bad_locale", {
+      method: "POST",
+      body: "{}",
+    });
+    expect(response.status).toBe(400);
+    expect(response.headers.has("location")).toBe(false);
+  });
+
+  it("follows the 303 over real HTTP with fetch, CORS, compression and conditional GET", async () => {
+    const httpApp = new Hono();
+    const methods: string[] = [];
+    httpApp.use("*", async (c, next) => {
+      methods.push(c.req.method);
+      if (c.req.method === "GET") expect(await c.req.text()).toBe("");
+      await next();
+    });
+    httpApp.use("*", compress({ threshold: 512 }));
+    httpApp.use("*", apiCors());
+    httpApp.use("*", responseEtag);
+    httpApp.use("*", edgeCacheHeaders);
+    httpApp.route("/search", SearchRoute);
+    const server = serve({
+      fetch: httpApp.fetch,
+      hostname: "127.0.0.1",
+      port: 0,
+    });
+    await once(server, "listening");
+    try {
+      const address = server.address();
+      if (!address || typeof address === "string")
+        throw new Error("Missing HTTP port");
+      const endpoint = `http://127.0.0.1:${address.port}/search/v2/search`;
+      const headers = {
+        "Content-Type": "application/json",
+        Origin: "https://egdata.app",
+        "Accept-Encoding": "gzip",
+      };
+      const body = JSON.stringify({ title: "A & B + 100%", limit: 2 });
+      const manual = await fetch(endpoint, {
+        method: "POST",
+        headers,
+        body,
+        redirect: "manual",
+      });
+      expect(manual.status).toBe(303);
+      expect(manual.headers.get("access-control-allow-origin")).toBe(
+        "https://egdata.app",
+      );
+      expect(manual.headers.get("cache-control")).toBe("no-store");
+      expect(await manual.text()).toBe("");
+      expect(mocks.opensearchSearch).not.toHaveBeenCalled();
+
+      const followed = await fetch(endpoint, { method: "POST", headers, body });
+      expect(followed.status).toBe(200);
+      expect(followed.redirected).toBe(true);
+      expect(methods).toEqual(["POST", "POST", "GET"]);
+      expect(new URL(followed.url).searchParams.get("title")).toBe(
+        "A & B + 100%",
+      );
+      expect(followed.headers.get("access-control-allow-origin")).toBe(
+        "https://egdata.app",
+      );
+      expect(followed.headers.get("content-encoding")).toBe("gzip");
+      expect(followed.headers.get("cdn-cache-control")).toContain(
+        "max-age=300",
+      );
+      expect(followed.headers.get("vary")).toContain("Origin");
+      const fresh = await followed.json();
+      expect(fresh.offers).toHaveLength(2);
+
+      const cached = await fetch(followed.url, { headers });
+      const etag = cached.headers.get("etag");
+      expect(etag).toBeTruthy();
+      expect(await cached.json()).toEqual({
+        ...fresh,
+        meta: { ...fresh.meta, cached: true },
+      });
+      const conditional = await fetch(followed.url, {
+        headers: { ...headers, "If-None-Match": etag ?? "" },
+      });
+      expect(conditional.status).toBe(304);
+      expect(await conditional.text()).toBe("");
+      expect(mocks.opensearchSearch).toHaveBeenCalledTimes(1);
+    } finally {
+      await new Promise<void>((resolve, reject) =>
+        server.close((error) => (error ? reject(error) : resolve())),
+      );
+    }
+  });
+
+  it.each([
+    "a,b",
+    "a+b",
+    "a&b=c#d",
+    "%2C",
+    "[brackets]",
+    "\u65e5\u672c\u8a9e",
+    "\ud83c\udfae",
+  ])("preserves special characters across POST to GET: %s", async (value) => {
+    const response = await requestFollowingRedirect(app, "/search/v2/search", {
+      method: "POST",
+      body: JSON.stringify({
+        title: value,
+        technologies: [value],
+        seller: value,
+      }),
+    });
+    expect(response.status).toBe(200);
+    const query = mocks.opensearchSearch.mock.calls[0][0].body.query.bool;
+    expect(query.must[0].bool.should[0].multi_match.query).toBe(value);
+    expect(query.filter).toContainEqual({
+      term: { "seller.id.keyword": value },
+    });
+    expect(
+      query.filter[0].terms_set["lastBuilds.technologies.technology.keyword"]
+        .terms,
+    ).toEqual([value]);
+  });
+
+  it("maps fixture-backed OpenSearch hits through /search/v2/search", async () => {
+    const res = await requestFollowingRedirect(
+      app,
+      "/search/v2/search?country=FR",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ limit: 3 }),
+      },
+    );
 
     expect(res.status).toBe(200);
     expect(res.headers.get("cache-control")).toBe(
@@ -208,7 +496,7 @@ describe("search route with SeaQA fixtures", () => {
 
   it("serves repeated searches from Redis without querying or rewriting results", async () => {
     const request = () =>
-      app.request("/search/v2/search?country=US", {
+      requestFollowingRedirect(app, "/search/v2/search?country=US", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ limit: 3 }),
@@ -251,11 +539,15 @@ describe("search route with SeaQA fixtures", () => {
 
     for (const cached of [false, true]) {
       for (const { page, limit } of variants) {
-        const response = await app.request("/search/v2/search?country=US", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ page, limit }),
-        });
+        const response = await requestFollowingRedirect(
+          app,
+          "/search/v2/search?country=US",
+          {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ page, limit }),
+          },
+        );
         expect(response.status).toBe(200);
         const body = await response.json();
         expect(body).toMatchObject({ page, limit, meta: { cached } });
@@ -279,11 +571,15 @@ describe("search route with SeaQA fixtures", () => {
     ],
   ])("shares a cache entry for equivalent normalized pagination: %j and %j", async (first, second) => {
     for (const body of [first, second]) {
-      const response = await app.request("/search/v2/search?country=US", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const response = await requestFollowingRedirect(
+        app,
+        "/search/v2/search?country=US",
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(body),
+        },
+      );
       expect(response.status).toBe(200);
     }
     expect(mocks.opensearchSearch).toHaveBeenCalledTimes(1);
@@ -292,7 +588,8 @@ describe("search route with SeaQA fixtures", () => {
 
   it("keeps regional response caches separate without explicit price filters", async () => {
     for (const country of ["US", "FR", "US", "FR"]) {
-      const response = await app.request(
+      const response = await requestFollowingRedirect(
+        app,
         `/search/v2/search?country=${country}`,
         {
           method: "POST",
@@ -318,7 +615,7 @@ describe("search route with SeaQA fixtures", () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-10-23T12:00:00Z"));
     const request = () =>
-      app.request("/search/v2/search?country=US", {
+      requestFollowingRedirect(app, "/search/v2/search?country=US", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ sortBy, sortDir, limit: 1 }),
@@ -347,7 +644,7 @@ describe("search route with SeaQA fixtures", () => {
   });
 
   it("builds deterministic OpenSearch query clauses for region-specific search", async () => {
-    await app.request("/search/v2/search?country=FR", {
+    await requestFollowingRedirect(app, "/search/v2/search?country=FR", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -392,14 +689,18 @@ describe("search route with SeaQA fixtures", () => {
   });
 
   it("filters by every selected technology and returns technology facets", async () => {
-    const res = await app.request("/search/v2/search?country=US", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        technologies: [" Unreal ", "NVIDIA_DLSS", "Unreal"],
-        limit: 10,
-      }),
-    });
+    const res = await requestFollowingRedirect(
+      app,
+      "/search/v2/search?country=US",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          technologies: [" Unreal ", "NVIDIA_DLSS", "Unreal"],
+          limit: 10,
+        }),
+      },
+    );
 
     expect(mocks.opensearchSearch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -412,7 +713,7 @@ describe("search route with SeaQA fixtures", () => {
                 {
                   terms_set: {
                     "lastBuilds.technologies.technology.keyword": {
-                      terms: ["Unreal", "NVIDIA_DLSS"],
+                      terms: ["NVIDIA_DLSS", "Unreal"],
                       minimum_should_match_script: {
                         source: "2",
                       },
@@ -442,11 +743,15 @@ describe("search route with SeaQA fixtures", () => {
 
   it("rejects non-array and empty technology filters", async () => {
     for (const technologies of ["Unreal", [" "]]) {
-      const res = await app.request("/search/v2/search?country=US", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ technologies }),
-      });
+      const res = await requestFollowingRedirect(
+        app,
+        "/search/v2/search?country=US",
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ technologies }),
+        },
+      );
 
       expect(res.status).toBe(400);
       await expect(res.json()).resolves.toEqual({
@@ -490,18 +795,22 @@ describe("search route with SeaQA fixtures", () => {
       },
     });
 
-    const res = await app.request("/search/v2/search?country=US", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        isLowestPriceEver: true,
-        price: { min: 1 },
-        sortBy: "priceUpdatedAt",
-        sortDir: "desc",
-        page: 1,
-        limit: 25,
-      }),
-    });
+    const res = await requestFollowingRedirect(
+      app,
+      "/search/v2/search?country=US",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          isLowestPriceEver: true,
+          price: { min: 1 },
+          sortBy: "priceUpdatedAt",
+          sortDir: "desc",
+          page: 1,
+          limit: 25,
+        }),
+      },
+    );
 
     expect(res.status).toBe(200);
     expect(mocks.opensearchSearch).toHaveBeenCalledWith(
@@ -551,7 +860,7 @@ describe("search route with SeaQA fixtures", () => {
   });
 
   it("falls back unknown countries to the US price region", async () => {
-    await app.request("/search/v2/search?country=ZZ", {
+    await requestFollowingRedirect(app, "/search/v2/search?country=ZZ", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ limit: 1 }),
@@ -571,11 +880,15 @@ describe("search route with SeaQA fixtures", () => {
   });
 
   it("defaults to full facets, including developer, publisher and seller aggregations", async () => {
-    const res = await app.request("/search/v2/search?country=US", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ limit: 2 }),
-    });
+    const res = await requestFollowingRedirect(
+      app,
+      "/search/v2/search?country=US",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ limit: 2 }),
+      },
+    );
 
     expect(res.status).toBe(200);
     const request = mocks.opensearchSearch.mock.calls[0]?.[0];
@@ -613,11 +926,15 @@ describe("search route with SeaQA fixtures", () => {
   });
 
   it("returns minimal facets when explicitly requested", async () => {
-    const res = await app.request("/search/v2/search?country=US", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ limit: 2, facets: "minimal" }),
-    });
+    const res = await requestFollowingRedirect(
+      app,
+      "/search/v2/search?country=US",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ limit: 2, facets: "minimal" }),
+      },
+    );
 
     expect(res.status).toBe(200);
     expect(mocks.opensearchSearch).toHaveBeenCalledWith(
@@ -646,11 +963,15 @@ describe("search route with SeaQA fixtures", () => {
   });
 
   it("omits the aggregations request and response when facets=none", async () => {
-    const res = await app.request("/search/v2/search?country=US", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ limit: 1, facets: "none" }),
-    });
+    const res = await requestFollowingRedirect(
+      app,
+      "/search/v2/search?country=US",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ limit: 1, facets: "none" }),
+      },
+    );
 
     expect(res.status).toBe(200);
     const request = mocks.opensearchSearch.mock.calls[0]?.[0];
@@ -660,11 +981,15 @@ describe("search route with SeaQA fixtures", () => {
 
   it("keeps facet modes in separate response cache entries", async () => {
     for (const facets of ["minimal", "full", "none"]) {
-      const res = await app.request("/search/v2/search?country=US", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ limit: 1, facets }),
-      });
+      const res = await requestFollowingRedirect(
+        app,
+        "/search/v2/search?country=US",
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ limit: 1, facets }),
+        },
+      );
       expect(res.status).toBe(200);
     }
 
@@ -673,19 +998,24 @@ describe("search route with SeaQA fixtures", () => {
   });
 
   it("serves the same results through GET and POST /search/v2/search", async () => {
-    const getResponse = await app.request(
+    const getResponse = await requestFollowingRedirect(
+      app,
       "/search/v2/search?country=US&limit=2&page=1&sortBy=releaseDate&sortDir=desc",
     );
-    const postResponse = await app.request("/search/v2/search?country=US", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        limit: 2,
-        page: 1,
-        sortBy: "releaseDate",
-        sortDir: "desc",
-      }),
-    });
+    const postResponse = await requestFollowingRedirect(
+      app,
+      "/search/v2/search?country=US",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          limit: 2,
+          page: 1,
+          sortBy: "releaseDate",
+          sortDir: "desc",
+        }),
+      },
+    );
 
     expect(getResponse.status).toBe(200);
     expect(postResponse.status).toBe(200);
@@ -703,7 +1033,7 @@ describe("search route with SeaQA fixtures", () => {
     );
   });
 
-  it("records normalized traversal features on both GET and POST cache hits", async () => {
+  it("records traversal once on GET and after following a POST redirect", async () => {
     const recorded = vi.fn();
     const observed = new Hono();
     observed.use("*", async (c, next) => {
@@ -714,10 +1044,11 @@ describe("search route with SeaQA fixtures", () => {
     mocks.redisGet.mockResolvedValue(
       JSON.stringify({ elements: [], page: 2, limit: 50, total: 0, meta: {} }),
     );
-    const get = await observed.request(
+    const get = await requestFollowingRedirect(
+      observed,
       "/search/v2/search?title=game&page=2&limit=50&tracking=ignored",
     );
-    const post = await observed.request("/search/v2/search", {
+    const post = await requestFollowingRedirect(observed, "/search/v2/search", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -742,7 +1073,8 @@ describe("search route with SeaQA fixtures", () => {
     expect(recorded.mock.calls[0][0].titleHash).toMatch(/^[a-f0-9]{64}$/);
     expect(mocks.opensearchSearch).not.toHaveBeenCalled();
     mocks.redisGet.mockResolvedValueOnce(null);
-    await observed.request(
+    await requestFollowingRedirect(
+      observed,
       "/search/v2/search?title=other-game&page=1&limit=12",
     );
     expect(recorded.mock.calls[2][0].cacheHit).toBe(false);
@@ -750,7 +1082,8 @@ describe("search route with SeaQA fixtures", () => {
   });
 
   it("maps GET query parameters into the search body", async () => {
-    await app.request(
+    await requestFollowingRedirect(
+      app,
       "/search/v2/search?country=FR&tags=Action,RPG&technologies=Unreal,NVIDIA_DLSS&priceMin=0&priceMax=2000&onSale=true&excludeBlockchain=true&limit=5&page=2",
     );
 
@@ -774,7 +1107,7 @@ describe("search route with SeaQA fixtures", () => {
                 {
                   terms_set: {
                     "lastBuilds.technologies.technology.keyword": {
-                      terms: ["Unreal", "NVIDIA_DLSS"],
+                      terms: ["NVIDIA_DLSS", "Unreal"],
                       minimum_should_match_script: { source: "2" },
                     },
                   },
@@ -803,7 +1136,8 @@ describe("search route with SeaQA fixtures", () => {
   });
 
   it("returns full offer fields by default and when expand=true", async () => {
-    const expanded = await app.request(
+    const expanded = await requestFollowingRedirect(
+      app,
       "/search/v2/search?country=US&expand=true",
       {
         method: "POST",
@@ -824,11 +1158,15 @@ describe("search route with SeaQA fixtures", () => {
     expect(expandedBody.offers[0]).toHaveProperty("items");
     expect(expandedBody.offers[0]).toHaveProperty("customAttributes");
 
-    const defaultResponse = await app.request("/search/v2/search?country=US", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ limit: 2 }),
-    });
+    const defaultResponse = await requestFollowingRedirect(
+      app,
+      "/search/v2/search?country=US",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ limit: 2 }),
+      },
+    );
     const defaultBody = await defaultResponse.json();
     expect(defaultBody.offers[0]).toHaveProperty("description");
     expect(defaultBody.offers[0]).toHaveProperty("longDescription");
@@ -840,8 +1178,8 @@ describe("search route with SeaQA fixtures", () => {
 
   it("retires the legacy search endpoint with 410 without touching backends", async () => {
     const responses = [
-      await app.request("/search"),
-      await app.request("/search", {
+      await requestFollowingRedirect(app, "/search"),
+      await requestFollowingRedirect(app, "/search", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ limit: 1 }),
@@ -878,11 +1216,15 @@ describe("search route with SeaQA fixtures", () => {
       Promise.resolve([offer]) as unknown as ReturnType<typeof Offer.find>,
     );
 
-    const res = await app.request("/search/natural-language", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ query: "  open world adventure  ", topK: 5 }),
-    });
+    const res = await requestFollowingRedirect(
+      app,
+      "/search/natural-language",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ query: "  open world adventure  ", topK: 5 }),
+      },
+    );
 
     expect(res.status).toBe(200);
     expect(mocks.vectorizeSearch).toHaveBeenCalledWith(
@@ -910,11 +1252,15 @@ describe("search route with SeaQA fixtures", () => {
   });
 
   it("rejects invalid natural-language search bodies before querying Cloudflare", async () => {
-    const res = await app.request("/search/natural-language", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ query: "", topK: 51 }),
-    });
+    const res = await requestFollowingRedirect(
+      app,
+      "/search/natural-language",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ query: "", topK: 51 }),
+      },
+    );
 
     expect(res.status).toBe(400);
     expect(mocks.vectorizeSearch).not.toHaveBeenCalled();
@@ -968,7 +1314,8 @@ describe("search route with SeaQA fixtures", () => {
       },
     ]);
 
-    const res = await app.request(
+    const res = await requestFollowingRedirect(
+      app,
       "/search/changelog?query=home&page=1&limit=1",
     );
     expect(res.status).toBe(200);
@@ -1001,7 +1348,10 @@ describe("search route with SeaQA fixtures", () => {
     mockChangelogFind([newestChange]);
     vi.spyOn(Changelog, "countDocuments").mockResolvedValue(1);
 
-    const res = await app.request("/search/changelog?query=&page=1&limit=1");
+    const res = await requestFollowingRedirect(
+      app,
+      "/search/changelog?query=&page=1&limit=1",
+    );
 
     expect(res.status).toBe(200);
     await expect(res.json()).resolves.toMatchObject({
@@ -1069,7 +1419,8 @@ describe("search route with SeaQA fixtures", () => {
       );
     mockChangelogFind([]);
 
-    const res = await app.request(
+    const res = await requestFollowingRedirect(
+      app,
       "/search/changelog?query=home&page=1&limit=1",
     );
     expect(res.status).toBe(200);
@@ -1109,7 +1460,8 @@ describe("search route with SeaQA fixtures", () => {
     mockChangelogFind([]);
     vi.spyOn(Offer, "findOne").mockRejectedValue(new Error("lookup timed out"));
 
-    const res = await app.request(
+    const res = await requestFollowingRedirect(
+      app,
       "/search/changelog?query=offer&page=1&limit=1",
     );
     expect(res.status).toBe(200);

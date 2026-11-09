@@ -34,6 +34,10 @@ import {
   localizeOffers,
 } from "../utils/offer-localization.js";
 import { orderOffersObject } from "../utils/order-offers-object.js";
+import {
+  searchV2InputSchema,
+  searchV2QueryParams,
+} from "../utils/search-v2-input.js";
 
 type AggregationContainer = Types.Common_Aggregations.AggregationContainer;
 type PipelineStage = Record<string, unknown>;
@@ -97,10 +101,6 @@ interface SearchBody {
   isLowestPrice?: boolean;
   isLowestPriceEver?: boolean;
   facets?: FacetMode;
-}
-
-interface SearchV2Body extends SearchBody {
-  technologies?: string[];
 }
 
 const SEARCH_CACHE_HEADERS = {
@@ -168,7 +168,7 @@ const parseBooleanQueryParam = (value: string | undefined) => {
     return false;
   }
 
-  return undefined;
+  return normalized;
 };
 
 const parseNumberQueryParam = (value: string | undefined) => {
@@ -177,7 +177,7 @@ const parseNumberQueryParam = (value: string | undefined) => {
   }
 
   const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : undefined;
+  return parsed;
 };
 
 const parseCsvQueryParam = (value: string | undefined) => {
@@ -193,8 +193,10 @@ const parseCsvQueryParam = (value: string | undefined) => {
   return items.length > 0 ? items : undefined;
 };
 
-const parseSearchV2Query = (c: Context): SearchV2Body => {
+const parseSearchV2Query = (c: Context) => {
   const params = c.req.query();
+  const list = (key: string) =>
+    c.req.queries(`${key}[]`) ?? parseCsvQueryParam(params[key]);
   const price: { min?: number; max?: number } = {};
   const priceMin = parseNumberQueryParam(params.priceMin);
   const priceMax = parseNumberQueryParam(params.priceMax);
@@ -209,9 +211,9 @@ const parseSearchV2Query = (c: Context): SearchV2Body => {
   return {
     title: params.title,
     offerType: params.offerType as SearchBody["offerType"],
-    tags: parseCsvQueryParam(params.tags),
-    categories: parseCsvQueryParam(params.categories),
-    customAttributes: parseCsvQueryParam(params.customAttributes),
+    tags: list("tags"),
+    categories: list("categories"),
+    customAttributes: list("customAttributes"),
     seller: params.seller,
     developerDisplayName: params.developerDisplayName,
     publisherDisplayName: params.publisherDisplayName,
@@ -227,7 +229,7 @@ const parseSearchV2Query = (c: Context): SearchV2Body => {
     limit: parseNumberQueryParam(params.limit),
     page: parseNumberQueryParam(params.page),
     facets: normalizeFacetMode(params.facets),
-    technologies: parseCsvQueryParam(params.technologies),
+    technologies: list("technologies"),
     ...(Object.keys(price).length > 0 ? { price } : {}),
   };
 };
@@ -893,7 +895,8 @@ app.post("/natural-language", async (c) => {
   }
 });
 
-const runSearchV2 = async (c: Context, body: unknown) => {
+const handleSearchV2 = async (c: Context, body: unknown) => {
+  if (c.req.method === "POST") c.header("Cache-Control", "no-store");
   const localeResult = getLocaleOrErrorResponse(c);
   if (localeResult.errorResponse) {
     return localeResult.errorResponse;
@@ -901,7 +904,8 @@ const runSearchV2 = async (c: Context, body: unknown) => {
   const { locale } = localeResult;
   const country = c.req.query("country");
   const cookieCountry = getCookie(c, "EGDATA_COUNTRY");
-  const selectedCountry = country ?? cookieCountry ?? "US";
+  const selectedCountry =
+    country ?? (c.req.method === "POST" ? cookieCountry : undefined) ?? "US";
   const region =
     Object.keys(regions).find((r) =>
       regions[r].countries.includes(selectedCountry),
@@ -925,13 +929,36 @@ const runSearchV2 = async (c: Context, body: unknown) => {
     );
   }
 
-  const facets = normalizeFacetMode(rawBody.facets);
+  const parsed = searchV2InputSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    return c.json(
+      { message: "Invalid search filters", issues: parsed.error.issues },
+      400,
+      { "Cache-Control": "no-store" },
+    );
+  }
+  const q = parsed.data;
+
+  if (c.req.method === "POST") {
+    const params = searchV2QueryParams(q);
+    // Resolve cookie-based pricing before redirecting to a shareable cache key.
+    params.set(
+      "country",
+      Object.values(regions).some((entry) =>
+        entry.countries.includes(selectedCountry),
+      )
+        ? selectedCountry
+        : "US",
+    );
+    if (locale !== "en-US") params.set("locale", locale);
+    if (wantsExpandedOffers(c)) params.set("expand", "true");
+    params.sort();
+    c.header("Cache-Control", "no-store");
+    return c.redirect(`/search/v2/search?${params}`, 303);
+  }
+
+  const facets = q.facets;
   const expand = wantsExpandedOffers(c);
-  const q: SearchV2Body = {
-    ...(rawBody as SearchV2Body),
-    technologies: parsedTechnologies.data,
-    facets,
-  };
 
   const limit = Math.min(q.limit ?? 10, 100);
   const page = Math.max(q.page ?? 1, 1);
@@ -1266,14 +1293,10 @@ const runSearchV2 = async (c: Context, body: unknown) => {
 
 app.post("/v2/search", async (c) => {
   const body = await c.req.json().catch(() => null);
-  if (!body) {
-    return c.json({ message: "Invalid body" }, 400);
-  }
-
-  return runSearchV2(c, body);
+  return handleSearchV2(c, body);
 });
 
-app.get("/v2/search", (c) => runSearchV2(c, parseSearchV2Query(c)));
+app.get("/v2/search", (c) => handleSearchV2(c, parseSearchV2Query(c)));
 
 app.get("/:id", async (c) => {
   const { id } = c.req.param();

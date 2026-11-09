@@ -12232,13 +12232,17 @@
         "tags": [
           "Search"
         ],
-        "summary": "Search offers with OpenSearch-backed filters and aggregations",
+        "summary": "Redirect sanitized search filters to GET",
+        "description": "Compatibility endpoint. Validates filter types and sort options, strips unknown fields, trims strings, sorts and deduplicates lists, clamps integer pagination, and returns a bodyless 303 redirect to GET /search/v2/search. The Location URL contains the effective country (query, EGDATA_COUNTRY cookie, or US), locale and expand option. Redirects are no-store; only the following GET executes the search. Invalid JSON or filters return 400.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and HTTP 204 No Content with X-Egdata-Mitigation: tarpit regardless of session. Historical token scores do not prevent recovery after current risk clears. Normal responses retain existing cache policies and ETags; challenges, bodyless tarpits and canary lists are private/no-store. Baseline rate limits remain active and can return 429. Cloudflare cache hits bypass origin scoring and require separate edge controls. Existing account authentication requirements still apply. In observe mode an operator can apply the same policy to exact trusted fingerprints on offer-detail or catalog-search routes for an expiring trial of at most 15 minutes. Catalog search and sandbox-offer pagination contribute traversal evidence, grouped by normalized filters; ordinary isolated queries remain low-risk.",
         "parameters": [
           {
             "$ref": "#/components/parameters/country"
           },
           {
             "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/expand"
           }
         ],
         "requestBody": {
@@ -12255,14 +12259,11 @@
         "x-egdata-visibility": "public",
         "responses": {
           "200": {
-            "description": "Successful response.",
+            "description": "Conditional anti-abuse challenge only; successful searches redirect with 303.",
             "content": {
               "application/json": {
                 "schema": {
                   "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchResponse"
-                    },
                     {
                       "$ref": "#/components/schemas/SessionChallengeRequired"
                     }
@@ -12308,6 +12309,25 @@
               }
             }
           },
+          "303": {
+            "description": "Follow Location with GET to retrieve cacheable search results. No response body.",
+            "headers": {
+              "Location": {
+                "description": "Relative URL containing sanitized search query parameters.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              }
+            }
+          },
           "400": {
             "description": "Invalid request.",
             "content": {
@@ -12339,7 +12359,6 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and HTTP 204 No Content with X-Egdata-Mitigation: tarpit regardless of session. Historical token scores do not prevent recovery after current risk clears. Normal responses retain existing cache policies and ETags; challenges, bodyless tarpits and canary lists are private/no-store. Baseline rate limits remain active and can return 429. Cloudflare cache hits bypass origin scoring and require separate edge controls. Existing account authentication requirements still apply. In observe mode an operator can apply the same policy to exact trusted fingerprints on offer-detail or catalog-search routes for an expiring trial of at most 15 minutes. Catalog search and sandbox-offer pagination contribute traversal evidence, grouped by normalized filters; ordinary isolated queries remain low-risk.",
         "security": [
           {},
           {
@@ -12356,7 +12375,7 @@
           "Search"
         ],
         "summary": "Search offers with query parameters (edge-cacheable)",
-        "description": "Query-parameter alias of POST /search/v2/search. Intended for browser and edge-cacheable searches. Returns full offer documents.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and HTTP 204 No Content with X-Egdata-Mitigation: tarpit regardless of session. Historical token scores do not prevent recovery after current risk clears. Normal responses retain existing cache policies and ETags; challenges, bodyless tarpits and canary lists are private/no-store. Baseline rate limits remain active and can return 429. Cloudflare cache hits bypass origin scoring and require separate edge controls. Existing account authentication requirements still apply. In observe mode an operator can apply the same policy to exact trusted fingerprints on offer-detail or catalog-search routes for an expiring trial of at most 15 minutes. Catalog search and sandbox-offer pagination contribute traversal evidence, grouped by normalized filters; ordinary isolated queries remain low-risk.",
+        "description": "Primary catalog search endpoint. Returns full offer documents with public cache headers (browser 60 seconds, CDN 300 seconds). Country defaults to US and does not use cookies. Unknown parameters are ignored; strings are trimmed, list values deduplicated and sorted, and integer page/limit values clamped to at least 1 (limit at most 100). Invalid filter types or sort options return 400. POST redirects here after sanitization.\n\nWhen ANTI_ABUSE_MODE=enforce, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and HTTP 204 No Content with X-Egdata-Mitigation: tarpit regardless of session. Historical token scores do not prevent recovery after current risk clears. Normal responses retain existing cache policies and ETags; challenges, bodyless tarpits and canary lists are private/no-store. Baseline rate limits remain active and can return 429. Cloudflare cache hits bypass origin scoring and require separate edge controls. Existing account authentication requirements still apply. In observe mode an operator can apply the same policy to exact trusted fingerprints on offer-detail or catalog-search routes for an expiring trial of at most 15 minutes. Catalog search and sandbox-offer pagination contribute traversal evidence, grouped by normalized filters; ordinary isolated queries remain low-risk.",
         "parameters": [
           {
             "$ref": "#/components/parameters/country"
@@ -12476,6 +12495,62 @@
             "description": "Comma-separated detected build technologies.",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "tags[]",
+            "in": "query",
+            "description": "Repeated tags values preserving literal commas. Takes precedence over the comma-separated parameter.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          {
+            "name": "categories[]",
+            "in": "query",
+            "description": "Repeated categories values preserving literal commas. Takes precedence over the comma-separated parameter.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          {
+            "name": "customAttributes[]",
+            "in": "query",
+            "description": "Repeated customAttributes values preserving literal commas. Takes precedence over the comma-separated parameter.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          {
+            "name": "technologies[]",
+            "in": "query",
+            "description": "Repeated technologies values preserving literal commas. Takes precedence over the comma-separated parameter.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
             }
           },
           {

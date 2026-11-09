@@ -1685,20 +1685,43 @@ export const paths: EgdataPaths = {
     post: operation({
       operationId: "searchOffersV2",
       tags: ["Search"],
-      summary: "Search offers with OpenSearch-backed filters and aggregations",
-      parameters: [parameterRef("country"), parameterRef("locale")],
+      summary: "Redirect sanitized search filters to GET",
+      description:
+        "Compatibility endpoint. Validates filter types and sort options, strips unknown fields, trims strings, sorts and deduplicates lists, clamps integer pagination, and returns a bodyless 303 redirect to GET /search/v2/search. The Location URL contains the effective country (query, EGDATA_COUNTRY cookie, or US), locale and expand option. Redirects are no-store; only the following GET executes the search. Invalid JSON or filters return 400.",
+      parameters: [
+        parameterRef("country"),
+        parameterRef("locale"),
+        parameterRef("expand"),
+      ],
       requestBody: jsonBody(
         "Search filters and sort options.",
         ref("SearchV2Body"),
       ),
-      response: ref("SearchResponse"),
+      response: {
+        200: {
+          description:
+            "Conditional anti-abuse challenge only; successful searches redirect with 303.",
+        },
+        303: {
+          description:
+            "Follow Location with GET to retrieve cacheable search results. No response body.",
+          headers: {
+            Location: {
+              description:
+                "Relative URL containing sanitized search query parameters.",
+              schema: { type: "string" },
+            },
+            "Cache-Control": { schema: { type: "string", enum: ["no-store"] } },
+          },
+        },
+      },
     }),
     get: operation({
       operationId: "searchOffersV2Get",
       tags: ["Search"],
       summary: "Search offers with query parameters (edge-cacheable)",
       description:
-        "Query-parameter alias of POST /search/v2/search. Intended for browser and edge-cacheable searches. Returns full offer documents.",
+        "Primary catalog search endpoint. Returns full offer documents with public cache headers (browser 60 seconds, CDN 300 seconds). Country defaults to US and does not use cookies. Unknown parameters are ignored; strings are trimmed, list values deduplicated and sorted, and integer page/limit values clamped to at least 1 (limit at most 100). Invalid filter types or sort options return 400. POST redirects here after sanitization.",
       parameters: [
         parameterRef("country"),
         parameterRef("locale"),
@@ -1721,6 +1744,19 @@ export const paths: EgdataPaths = {
         stringQuery(
           "technologies",
           "Comma-separated detected build technologies.",
+        ),
+        ...["tags", "categories", "customAttributes", "technologies"].map(
+          (name) => ({
+            name: `${name}[]`,
+            in: "query" as const,
+            description: `Repeated ${name} values preserving literal commas. Takes precedence over the comma-separated parameter.`,
+            style: "form" as const,
+            explode: true,
+            schema: {
+              type: "array" as const,
+              items: { type: "string", minLength: 1 } as const,
+            },
+          }),
         ),
         stringQuery("priceMin", "Minimum discount price in minor units."),
         stringQuery("priceMax", "Maximum discount price in minor units."),

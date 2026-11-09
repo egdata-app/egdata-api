@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Made GET the primary search v2 endpoint. POST now validates and sanitizes filters and returns a bodyless 303 redirect to a deterministic, cacheable GET URL without querying search or response caches. GET pricing defaults to US independently of cookies; POST resolves cookie country into the URL. Updated search validation, docs, OpenAPI, and redirect/cache regression coverage, including real HTTP fetch, CORS headers, compression, ETags and special-character round trips. Documented remaining staging checks and redirect rate-limit accounting.
+
 - Changed high-risk tarpits to bodyless HTTP 204 responses with a CORS-exposed `X-Egdata-Mitigation: tarpit` marker. Existing delays, sleeper limits, no-store headers and HTTP 200 PoW challenges remain unchanged. Updated the public contract and regression tests; deploy compatible frontend handling first.
 
 - Added an operator-only daily PoW cohort report that deduplicates challenge responses and accepted proof replays, separates pending cohorts from those with no solution observed after five minutes, and flags storage saturation. Bounded asynchronous Redis tracking uses trusted fingerprint hashes, not unique-person identities; enforcement and the public protocol are unchanged.

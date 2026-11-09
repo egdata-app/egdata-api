@@ -75,7 +75,7 @@ Settings:
 
 ## 2. Cache Rule: offer search GET
 
-The new `GET /search/v2/search` alias is edge-cacheable:
+`GET /search/v2/search` is the primary, edge-cacheable search endpoint:
 
 ```text
 (http.request.method eq "GET" and
@@ -84,7 +84,29 @@ The new `GET /search/v2/search` alias is edge-cacheable:
 
 Use the same query-string key policy as above, including `facets` and `expand`.
 Edge TTL 5 minutes, browser TTL 60 seconds. Leave `POST /search/v2/search`
-uncached (Cloudflare does not cache POST).
+uncached (Cloudflare does not cache POST). POST now returns a bodyless, no-store
+303 redirect after sanitizing filters; the following GET can be served from the
+edge cache. GET defaults to US without reading cookies; POST writes the resolved
+country into the redirect URL. Prefer direct GET requests to avoid a round trip.
+
+Before rollout, verify the change with a real browser and the deployed CDN:
+
+- Confirm an existing POST search follows a 303 with a bodyless GET and returns
+  the expected offers, prices, locale and filters.
+- Repeat the exact GET URL and check for `CF-Cache-Status: HIT`. Origin cache
+  headers and a Redis cache hit alone do not establish a CDN hit.
+- Change country, locale, filters and page independently; verify they do not
+  reuse another query's response. Check CORS from each supported frontend origin.
+- Exercise the largest filter selections the frontend permits; the serialized
+  URL must fit the proxy/CDN request-URL limits.
+- Account for the existing general and search rate limiters counting both the
+  POST and redirected GET when both reach the origin. Direct GET avoids this
+  extra quota use; a CDN hit avoids the GET's origin quota use.
+
+The local search tests include real HTTP redirect following with Node fetch,
+CORS headers, compression, ETags and special-character round trips. Their search
+and Redis dependencies are mocked, so they do not verify browser enforcement,
+live search results, deployed cache rules or actual egress savings.
 
 ## 3. Cache Rule: generated preview images
 
