@@ -176,7 +176,7 @@ export function analyzeEvents(events: AbuseEvent[]): AbuseAssessment {
     Math.max(...searchTimes) - Math.min(...searchTimes) >= 25000;
   const sweep =
     sequential >= 8 ||
-    unique >= 30 ||
+    unique >= 60 ||
     titleSweep ||
     pageSweep ||
     routeHammering;
@@ -191,7 +191,7 @@ export function analyzeEvents(events: AbuseEvent[]): AbuseAssessment {
     sequential >= 8 ? "sequential-pages" : "",
     pageSweep ? "page-sweep" : "",
     routeHammering ? "route-hammering" : "",
-    unique >= 30 ? "unique-id-sweep" : "",
+    unique >= 60 ? "unique-id-sweep" : "",
     titleSweep ? "title-lookup-sweep" : "",
     regular ? "regular-intervals" : "",
     highVolume ? "high-volume" : "",

@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Raised the anti-abuse `unique-id-sweep` threshold from 30 to 60 distinct resource IDs within the rolling 60-second window. Other scoring weights, volume/pagination thresholds, and enforcement behavior remain unchanged.
+
 - Made GET the primary search v2 endpoint. POST now validates and sanitizes filters and returns a bodyless 303 redirect to a deterministic, cacheable GET URL without querying search or response caches. GET pricing defaults to US independently of cookies; POST resolves cookie country into the URL. Updated search validation, docs, OpenAPI, and redirect/cache regression coverage, including real HTTP fetch, CORS headers, compression, ETags and special-character round trips. Documented remaining staging checks and redirect rate-limit accounting.
 
 - Changed high-risk tarpits to bodyless HTTP 204 responses with a CORS-exposed `X-Egdata-Mitigation: tarpit` marker. Existing delays, sleeper limits, no-store headers and HTTP 200 PoW challenges remain unchanged. Updated the public contract and regression tests; deploy compatible frontend handling first.

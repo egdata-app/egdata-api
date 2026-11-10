@@ -312,7 +312,7 @@ describe("sliding feature aggregation", () => {
   it("scores unique ID sweeps, but never convicts a deep-only slow reader", () => {
     expect(
       scoreEvents(
-        Array.from({ length: 40 }, (_, i) => ({
+        Array.from({ length: 60 }, (_, i) => ({
           ...event(i * 100, 1),
           itemId: `item${i}`,
         })),
@@ -492,24 +492,22 @@ describe("Hono integration", () => {
     f.scorer.close();
   });
 
-  it("continues aggregating tokenless traffic and stops challenging when evidence expires", async () => {
+  it("continues aggregating tokenless traffic and stops mitigating when evidence expires", async () => {
     const f = fixture();
     const fingerprint = extractFingerprint(
       new Request("https://api.test/items", { headers: headers() }),
       { edgeSecret },
     );
     const key = `fp:${fingerprint.fingerprintHash}`;
-    // An irregularly timed unique-ID sweep scores 0.65 without robotic timing.
-    for (let i = 0; i < 30; i++) {
+    // Sixty unique IDs also activate high-volume, scoring 0.85 without cadence.
+    for (let i = 0; i < 60; i++) {
       const res = await f.request(`/items/game-${i}`);
       expect((await res.json()).total).toBe(1);
       await f.scorer.drain();
       f.tick(i % 2 ? 900 : 100);
     }
-    expect(f.scorer.risk([key])).toBeCloseTo(0.65);
-    expect(
-      (await (await f.request("/items/next-game")).json()).error.code,
-    ).toBe("SESSION_CHALLENGE_REQUIRED");
+    expect(f.scorer.risk([key])).toBeCloseTo(0.85);
+    expect((await f.request("/items/next-game")).status).toBe(204);
     await f.scorer.drain();
     f.tick(60_001);
     expect((await (await f.request("/items/next-game")).json()).total).toBe(1);

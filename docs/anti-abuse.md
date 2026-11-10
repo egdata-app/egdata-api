@@ -166,7 +166,7 @@ below. Normal desktop clients need no integration changes.
   its final title. No additional multi-minute state is stored.
 - At least 12 raw events are needed beyond mismatch scoring. A sweep adds +0.45
   once if any of these hold: eight consecutive page increments less than five
-  seconds apart; 30 distinct resource IDs; or 18 distinct logical title hashes,
+  seconds apart; 60 distinct resource IDs; or 18 distinct logical title hashes,
   at least 80% distinct among qualifying logical title searches, with at least
   25 seconds between first/last qualifying raw title-search events. Short and
   empty titles do not enter that title ratio or span.

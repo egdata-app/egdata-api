@@ -214,9 +214,12 @@ describe("GraphQL abuse telemetry", () => {
       support: false,
       route: "/graphql",
       mismatch: 0,
-      resources: [{ route: "/graphql/Query.item", itemId: `game-${i}` }],
+      resources: [
+        { route: "/graphql/Query.item", itemId: `game-${i * 2}` },
+        { route: "/graphql/Query.item", itemId: `game-${i * 2 + 1}` },
+      ],
     }));
-    expect(scoreEvents(events)).toBeGreaterThan(0.8);
+    expect(scoreEvents(events)).toBeCloseTo(0.85);
     expect(scoreEvents([...events].reverse())).toBe(scoreEvents(events));
   });
 });

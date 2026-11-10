@@ -308,6 +308,23 @@ describe("logical offer work", () => {
         .reasons,
     ).toContain("regular-intervals");
   });
+  it("requires 60 distinct IDs and does not count repeated IDs toward the sweep", () => {
+    const events = Array.from({ length: 60 }, (_, i) =>
+      read(
+        base + Math.floor(i / 2) * 1000 + (i % 2) * 100,
+        `/offers/${id(i)}/regional-price`,
+      ),
+    );
+    expect(analyzeEvents(events.slice(0, 59)).score).toBe(0);
+    const repeated = [
+      ...events.slice(0, 59),
+      read(events[59].at, `/offers/${id(0)}/regional-price`),
+    ];
+    expect(analyzeEvents(repeated).reasons).not.toContain("unique-id-sweep");
+    expect(analyzeEvents(repeated).score).toBeCloseTo(0.4);
+    expect(analyzeEvents(events).reasons).toContain("unique-id-sweep");
+    expect(analyzeEvents(events).score).toBeCloseTo(0.85);
+  });
   it("keeps the regional-price scraper high risk", () => {
     const events = Array.from({ length: 60 }, (_, i) => ({
       ...read(base + i * 1000, `/offers/${id(i)}/regional-price`),
@@ -417,13 +434,10 @@ describe("60-second title sweeps", () => {
     }));
     const result = analyzeEvents(events);
     expect(result.reasons).toEqual(
-      expect.arrayContaining([
-        "title-lookup-sweep",
-        "unique-id-sweep",
-        "sequential-pages",
-      ]),
+      expect.arrayContaining(["title-lookup-sweep", "sequential-pages"]),
     );
     expect(result.score).toBe(0.65);
+    expect(result.reasons).not.toContain("unique-id-sweep");
     expect(analyzeEvents(sweep(6)).score).toBe(0);
   });
 });
