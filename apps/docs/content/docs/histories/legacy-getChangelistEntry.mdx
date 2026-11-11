@@ -5,4 +5,13 @@ description: History for GET /changelist/{id}
 
 `GET /changelist/{id}` — active. Recorded dates are not deployment dates.
 
-No dated records for this operation.
+## 2026-11-11 — Keep API startup available while v1 indexes are provisioned separately
+
+Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-app/egdata-api/blob/main/changes/records/keep-api-startup-independent-of-v1-indexes.json).
+
+- **legacy GET /changelist/&#123;id&#125;** (getChangelistEntry; fixed; compatible)
+  - Before: GET /changelist/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /changelist/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+
+Verification: tests/server-startup.test.ts: stalled v1 index builds do not delay HTTP startup; database connectivity remains required; pnpm test; pnpm build; pnpm docs:check; pnpm release:check --base origin/main.

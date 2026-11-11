@@ -5,6 +5,17 @@ description: History for GET /v1/open-api.json
 
 `GET /v1/open-api.json` — active. Recorded dates are not deployment dates.
 
+## 2026-11-11 — Keep API startup available while v1 indexes are provisioned separately
+
+Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-app/egdata-api/blob/main/changes/records/keep-api-startup-independent-of-v1-indexes.json).
+
+- **v1 GET /v1/open-api.json** (getV1OpenApi; fixed; compatible)
+  - Before: GET /v1/open-api.json was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/open-api.json becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+
+Verification: tests/server-startup.test.ts: stalled v1 index builds do not delay HTTP startup; database connectivity remains required; pnpm test; pnpm build; pnpm docs:check; pnpm release:check --base origin/main.
+
 ## 2026-11-11 — Preserve public v1 metadata responses through the Worker
 
 Record: [public-v1-metadata-response](https://github.com/egdata-app/egdata-api/blob/main/changes/records/public-v1-metadata-response.json).

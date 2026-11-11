@@ -3,6 +3,1303 @@ title: Endpoint histories
 description: Dated API behavior changes, independent of deployment.
 ---
 
+## 2026-11-11 — Keep API startup available while v1 indexes are provisioned separately
+
+Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-app/egdata-api/blob/main/changes/records/keep-api-startup-independent-of-v1-indexes.json).
+
+- **legacy GET /autocomplete** (autocompleteOffers; fixed; compatible)
+  - Before: GET /autocomplete was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /autocomplete becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy POST /offers/exists** (checkOffersExist; fixed; compatible)
+  - Before: POST /offers/exists was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /offers/exists becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /builds/&#123;targetId&#125;/compare/&#123;baseId&#125;** (compareBuilds; fixed; compatible)
+  - Before: GET /builds/&#123;targetId&#125;/compare/&#123;baseId&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /builds/&#123;targetId&#125;/compare/&#123;baseId&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /search/&#123;id&#125;/count** (countSavedSearchResults; fixed; compatible)
+  - Before: GET /search/&#123;id&#125;/count was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /search/&#123;id&#125;/count becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy POST /auth/challenge** (createAbuseChallenge; fixed; compatible)
+  - Before: POST /auth/challenge was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /auth/challenge becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /builds/&#123;id&#125;** (getBuild; fixed; compatible)
+  - Before: GET /builds/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /builds/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /builds/&#123;id&#125;/tree** (getBuildFileTree; fixed; compatible)
+  - Before: GET /builds/&#123;id&#125;/tree was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /builds/&#123;id&#125;/tree becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /builds/&#123;id&#125;/history** (getBuildHistory; fixed; compatible)
+  - Before: GET /builds/&#123;id&#125;/history was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /builds/&#123;id&#125;/history becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /builds/&#123;id&#125;/install-options** (getBuildInstallOptions; fixed; compatible)
+  - Before: GET /builds/&#123;id&#125;/install-options was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /builds/&#123;id&#125;/install-options becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /changelist/&#123;id&#125;** (getChangelistEntry; fixed; compatible)
+  - Before: GET /changelist/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /changelist/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /free-games** (getFreeGames; fixed; compatible)
+  - Before: GET /free-games was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /free-games becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /free-games/stats** (getFreeGamesStats; fixed; compatible)
+  - Before: GET /free-games/stats was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /free-games/stats becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /health** (getHealth; fixed; compatible)
+  - Before: GET /health was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /health becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /stats/homepage** (getHomepageStats; fixed; compatible)
+  - Before: GET /stats/homepage was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /stats/homepage becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /items/&#123;id&#125;** (getItem; fixed; compatible)
+  - Before: GET /items/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /items/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /items/&#123;id&#125;/assets** (getItemAssets; fixed; compatible)
+  - Before: GET /items/&#123;id&#125;/assets was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /items/&#123;id&#125;/assets becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /items/&#123;id&#125;/builds** (getItemBuilds; fixed; compatible)
+  - Before: GET /items/&#123;id&#125;/builds was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /items/&#123;id&#125;/builds becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /items/&#123;id&#125;/changelog** (getItemChangelog; fixed; compatible)
+  - Before: GET /items/&#123;id&#125;/changelog was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /items/&#123;id&#125;/changelog becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /items/&#123;id&#125;/offer** (getItemOffer; fixed; compatible)
+  - Before: GET /items/&#123;id&#125;/offer was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /items/&#123;id&#125;/offer becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy POST /items/bulk** (getItemsBulk; fixed; compatible)
+  - Before: POST /items/bulk was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /items/bulk becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /stats/creations/monthly** (getMonthlyCreationStats; fixed; compatible)
+  - Before: GET /stats/creations/monthly was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /stats/creations/monthly becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /stats/releases/monthly** (getMonthlyReleaseStats; fixed; compatible)
+  - Before: GET /stats/releases/monthly was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /stats/releases/monthly becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;** (getOffer; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/age-rating** (getOfferAgeRating; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/age-rating was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/age-rating becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/bundle** (getOfferBundle; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/bundle was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/bundle becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/changelog/stats** (getOfferChangelogStats; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/changelog/stats was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/changelog/stats becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/collections/&#123;collection&#125;** (getOfferCollectionPosition; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/collections/&#123;collection&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/collections/&#123;collection&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/events/&#123;id&#125;** (getOfferEvent; fixed; compatible)
+  - Before: GET /offers/events/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/events/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/features** (getOfferFeatures; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/features was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/features becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/hltb** (getOfferHowLongToBeat; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/hltb was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/hltb becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/igdb** (getOfferIgdb; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/igdb was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/igdb becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/mappings** (getOfferMappings; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/mappings was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/mappings becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/media** (getOfferMedia; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/media was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/media becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/og** (getOfferOgPng; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/og was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/og becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/og.webp** (getOfferOgWebp; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/og.webp was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/og.webp becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/overview** (getOfferOverview; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/overview was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/overview becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/polls** (getOfferPolls; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/polls was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/polls becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/has-prepurchase** (getOfferPrepurchaseAlternative; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/has-prepurchase was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/has-prepurchase becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/price** (getOfferPrice; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/price was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/price becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/price/fairness** (getOfferPriceFairness; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/price/fairness was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/price/fairness becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/price-history** (getOfferPriceHistory; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/price-history was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/price-history becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/price-stats** (getOfferPriceStats; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/price-stats was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/price-stats becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/ratings** (getOfferRatings; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/ratings was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/ratings becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/regional-price** (getOfferRegionalPrices; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/regional-price was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/regional-price becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/has-regular** (getOfferRegularAlternative; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/has-regular was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/has-regular becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/requirements** (getOfferRequirements; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/requirements was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/requirements becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/reviews-summary** (getOfferReviewsSummary; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/reviews-summary was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/reviews-summary becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy POST /items/bulk/offers** (getOffersForItemsBulk; fixed; compatible)
+  - Before: POST /items/bulk/offers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /items/bulk/offers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/tops** (getOfferTopPositions; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/tops was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/tops becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /region** (getRegionForCountry; fixed; compatible)
+  - Before: GET /region was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /region becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sandboxes/&#123;sandboxId&#125;** (getSandbox; fixed; compatible)
+  - Before: GET /sandboxes/&#123;sandboxId&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sandboxes/&#123;sandboxId&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sandboxes/&#123;sandboxId&#125;/base-game** (getSandboxBaseGame; fixed; compatible)
+  - Before: GET /sandboxes/&#123;sandboxId&#125;/base-game was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sandboxes/&#123;sandboxId&#125;/base-game becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sandboxes/&#123;sandboxId&#125;/og** (getSandboxOgPng; fixed; compatible)
+  - Before: GET /sandboxes/&#123;sandboxId&#125;/og was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sandboxes/&#123;sandboxId&#125;/og becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sandboxes/&#123;sandboxId&#125;/og.webp** (getSandboxOgWebp; fixed; compatible)
+  - Before: GET /sandboxes/&#123;sandboxId&#125;/og.webp was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sandboxes/&#123;sandboxId&#125;/og.webp becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sandboxes/&#123;sandboxId&#125;/stats** (getSandboxStats; fixed; compatible)
+  - Before: GET /sandboxes/&#123;sandboxId&#125;/stats was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sandboxes/&#123;sandboxId&#125;/stats becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /search/&#123;id&#125;** (getSavedSearchQuery; fixed; compatible)
+  - Before: GET /search/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /search/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sellers/&#123;id&#125;/cover** (getSellerCoverOffers; fixed; compatible)
+  - Before: GET /sellers/&#123;id&#125;/cover was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sellers/&#123;id&#125;/cover becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sellers/&#123;id&#125;/stats** (getSellerStats; fixed; compatible)
+  - Before: GET /sellers/&#123;id&#125;/stats was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sellers/&#123;id&#125;/stats becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /stats** (getStats; fixed; compatible)
+  - Before: GET /stats was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /stats becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /stats/creations/yearly** (getYearlyCreationStats; fixed; compatible)
+  - Before: GET /stats/creations/yearly was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /stats/creations/yearly becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /stats/releases/yearly** (getYearlyReleaseStats; fixed; compatible)
+  - Before: GET /stats/releases/yearly was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /stats/releases/yearly becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy POST /catalog/hydrate** (hydrateCatalogGraph; fixed; compatible)
+  - Before: POST /catalog/hydrate was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /catalog/hydrate becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /** (legacyGet__c767025d; fixed; compatible)
+  - Before: GET / was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET / becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /assets/&#123;id&#125;** (legacyGet_assets_id__fe67ede6; fixed; compatible)
+  - Before: GET /assets/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /assets/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /base-game/&#123;namespace&#125;** (legacyGet_base_game_namespace__43947330; fixed; compatible)
+  - Before: GET /base-game/&#123;namespace&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /base-game/&#123;namespace&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /changelog** (legacyGet_changelog_038722cc; fixed; compatible)
+  - Before: GET /changelog was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /changelog becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /collections/&#123;slug&#125;** (legacyGet_collections_slug__c9e20bbf; fixed; compatible)
+  - Before: GET /collections/&#123;slug&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /collections/&#123;slug&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /collections/&#123;slug&#125;/&#123;week&#125;** (legacyGet_collections_slug_week__e7c64eb1; fixed; compatible)
+  - Before: GET /collections/&#123;slug&#125;/&#123;week&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /collections/&#123;slug&#125;/&#123;week&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /collections/&#123;slug&#125;/&#123;week&#125;/og** (legacyGet_collections_slug_week_og_abb2fde5; fixed; compatible)
+  - Before: GET /collections/&#123;slug&#125;/&#123;week&#125;/og was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /collections/&#123;slug&#125;/&#123;week&#125;/og becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /doc** (legacyGet_doc_f5f543a0; fixed; compatible)
+  - Before: GET /doc was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /doc becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /franchises/&#123;slug&#125;** (legacyGet_franchises_slug__468d5cca; fixed; compatible)
+  - Before: GET /franchises/&#123;slug&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /franchises/&#123;slug&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /free-games/og** (legacyGet_free_games_og_656b6e88; fixed; compatible)
+  - Before: GET /free-games/og was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /free-games/og becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /game-awards** (legacyGet_game_awards_5a8ac742; fixed; compatible)
+  - Before: GET /game-awards was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /game-awards becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /game-awards/og** (legacyGet_game_awards_og_aa6a5f28; fixed; compatible)
+  - Before: GET /game-awards/og was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /game-awards/og becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /graphql** (legacyGet_graphql_220e6fb1; fixed; compatible)
+  - Before: GET /graphql was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /graphql becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+  - Schema fields: Query.offer, Query.offers, Query.upcoming, Query.latestReleased, Query.topSellers, Query.topWishlisted, Query.featuredDiscounts, Query.item, Query.items, Query.sandbox, Query.sandboxHub, Query.sandboxes, Query.profile, Query.build, Query.builds, Query.changelog, Query.events, Query.event, Query.genres, Query.latestAchievements
+- **legacy GET /items-from-offer/&#123;id&#125;** (legacyGet_items_from_offer_id__f652bc56; fixed; compatible)
+  - Before: GET /items-from-offer/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /items-from-offer/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /items/sitemap.xml** (legacyGet_items_sitemap_xml_57b8dd19; fixed; compatible)
+  - Before: GET /items/sitemap.xml was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /items/sitemap.xml becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /items-sitemap.xml** (legacyGet_items_sitemap_xml_e6f8185b; fixed; compatible)
+  - Before: GET /items-sitemap.xml was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /items-sitemap.xml becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /multisearch** (legacyGet_multisearch_229582ca; fixed; compatible)
+  - Before: GET /multisearch was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /multisearch becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /multisearch/items** (legacyGet_multisearch_items_6adf1480; fixed; compatible)
+  - Before: GET /multisearch/items was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /multisearch/items becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /multisearch/offers** (legacyGet_multisearch_offers_f0c29182; fixed; compatible)
+  - Before: GET /multisearch/offers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /multisearch/offers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /multisearch/sellers** (legacyGet_multisearch_sellers_c239406a; fixed; compatible)
+  - Before: GET /multisearch/sellers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /multisearch/sellers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offer-by-slug/&#123;slug&#125;** (legacyGet_offer_by_slug_slug__5aadfed6; fixed; compatible)
+  - Before: GET /offer-by-slug/&#123;slug&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offer-by-slug/&#123;slug&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /open-api.json** (legacyGet_open_api_json_d5453718; fixed; compatible)
+  - Before: GET /open-api.json was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /open-api.json becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /ping** (legacyGet_ping_f7c2b7c6; fixed; compatible)
+  - Before: GET /ping was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /ping becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /profiles/&#123;id&#125;** (legacyGet_profiles_id__f0000a67; fixed; compatible)
+  - Before: GET /profiles/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /profiles/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /profiles/&#123;id&#125;/achievements** (legacyGet_profiles_id_achievements_e2c38dc7; fixed; compatible)
+  - Before: GET /profiles/&#123;id&#125;/achievements was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /profiles/&#123;id&#125;/achievements becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /profiles/&#123;id&#125;/achievements/&#123;sandboxId&#125;** (legacyGet_profiles_id_achievements_sandboxId__3f40ec52; fixed; compatible)
+  - Before: GET /profiles/&#123;id&#125;/achievements/&#123;sandboxId&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /profiles/&#123;id&#125;/achievements/&#123;sandboxId&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /profiles/&#123;id&#125;/games** (legacyGet_profiles_id_games_35bd6af2; fixed; compatible)
+  - Before: GET /profiles/&#123;id&#125;/games was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /profiles/&#123;id&#125;/games becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /profiles/&#123;id&#125;/information** (legacyGet_profiles_id_information_1a333c76; fixed; compatible)
+  - Before: GET /profiles/&#123;id&#125;/information was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /profiles/&#123;id&#125;/information becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /profiles/&#123;id&#125;/random-game** (legacyGet_profiles_id_random_game_bdccf825; fixed; compatible)
+  - Before: GET /profiles/&#123;id&#125;/random-game was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /profiles/&#123;id&#125;/random-game becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /profiles/&#123;id&#125;/rare-achievements** (legacyGet_profiles_id_rare_achievements_0a3d8b68; fixed; compatible)
+  - Before: GET /profiles/&#123;id&#125;/rare-achievements was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /profiles/&#123;id&#125;/rare-achievements becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /profiles/&#123;id&#125;/rare-achievements/&#123;sandboxId&#125;** (legacyGet_profiles_id_rare_achievements_sandboxId__c761732b; fixed; compatible)
+  - Before: GET /profiles/&#123;id&#125;/rare-achievements/&#123;sandboxId&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /profiles/&#123;id&#125;/rare-achievements/&#123;sandboxId&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /profiles/&#123;id&#125;/refresh-status** (legacyGet_profiles_id_refresh_status_ee9656f7; fixed; compatible)
+  - Before: GET /profiles/&#123;id&#125;/refresh-status was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /profiles/&#123;id&#125;/refresh-status becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /profiles/leaderboard** (legacyGet_profiles_leaderboard_7a07d3bc; fixed; compatible)
+  - Before: GET /profiles/leaderboard was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /profiles/leaderboard becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /profiles/sitemap.xml** (legacyGet_profiles_sitemap_xml_0e16a159; fixed; compatible)
+  - Before: GET /profiles/sitemap.xml was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /profiles/sitemap.xml becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /promotions** (legacyGet_promotions_83dd267d; fixed; compatible)
+  - Before: GET /promotions was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /promotions becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /promotions/&#123;id&#125;** (legacyGet_promotions_id__ca5d27b1; fixed; compatible)
+  - Before: GET /promotions/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /promotions/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /promotions/&#123;id&#125;/cover** (legacyGet_promotions_id_cover_2c62e571; fixed; compatible)
+  - Before: GET /promotions/&#123;id&#125;/cover was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /promotions/&#123;id&#125;/cover becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /promotions-sitemap.xml** (legacyGet_promotions_sitemap_xml_3578dc8e; fixed; compatible)
+  - Before: GET /promotions-sitemap.xml was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /promotions-sitemap.xml becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /push/vapid-public-key** (legacyGet_push_vapid_public_key_472be0da; fixed; compatible)
+  - Before: GET /push/vapid-public-key was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /push/vapid-public-key becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /robots.txt** (legacyGet_robots_txt_deae90bd; fixed; compatible)
+  - Before: GET /robots.txt was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /robots.txt becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sandboxes/sitemap.xml** (legacyGet_sandboxes_sitemap_xml_5773ff84; fixed; compatible)
+  - Before: GET /sandboxes/sitemap.xml was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sandboxes/sitemap.xml becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /search** (legacyGet_search_82dab022; fixed; compatible)
+  - Before: GET /search was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /search becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sitemap.xml** (legacyGet_sitemap_xml_efe3322f; fixed; compatible)
+  - Before: GET /sitemap.xml was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sitemap.xml becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /tags** (legacyGet_tags_803dea8c; fixed; compatible)
+  - Before: GET /tags was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /tags becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /ui** (legacyGet_ui_64976efd; fixed; compatible)
+  - Before: GET /ui was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /ui becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy OPTIONS /ping** (legacyOptions_ping_9143aa8e; fixed; compatible)
+  - Before: OPTIONS /ping was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: OPTIONS /ping becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy POST /graphql** (legacyPost_graphql_fac042a8; fixed; compatible)
+  - Before: POST /graphql was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /graphql becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+  - Schema fields: Query.offer, Query.offers, Query.upcoming, Query.latestReleased, Query.topSellers, Query.topWishlisted, Query.featuredDiscounts, Query.item, Query.items, Query.sandbox, Query.sandboxHub, Query.sandboxes, Query.profile, Query.build, Query.builds, Query.changelog, Query.events, Query.event, Query.genres, Query.latestAchievements
+- **legacy POST /ping** (legacyPost_ping_4242a078; fixed; compatible)
+  - Before: POST /ping was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /ping becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /active-sales** (listActiveSales; fixed; compatible)
+  - Before: GET /active-sales was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /active-sales becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /builds/&#123;id&#125;/files** (listBuildFiles; fixed; compatible)
+  - Before: GET /builds/&#123;id&#125;/files was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /builds/&#123;id&#125;/files becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /builds/&#123;id&#125;/items** (listBuildItems; fixed; compatible)
+  - Before: GET /builds/&#123;id&#125;/items was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /builds/&#123;id&#125;/items becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /builds** (listBuilds; fixed; compatible)
+  - Before: GET /builds was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /builds becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/in-bundle** (listBundlesContainingOffer; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/in-bundle was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/in-bundle becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /changelist** (listChangelist; fixed; compatible)
+  - Before: GET /changelist was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /changelist becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /countries** (listCountries; fixed; compatible)
+  - Before: GET /countries was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /countries becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/featured-discounts** (listFeaturedDiscounts; fixed; compatible)
+  - Before: GET /offers/featured-discounts was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/featured-discounts becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /featured** (listFeaturedGames; fixed; compatible)
+  - Before: GET /featured was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /featured becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /free-games/history** (listFreeGamesHistory; fixed; compatible)
+  - Before: GET /free-games/history was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /free-games/history becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /free-games/sellers** (listFreeGamesSellers; fixed; compatible)
+  - Before: GET /free-games/sellers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /free-games/sellers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /items** (listItems; fixed; compatible)
+  - Before: GET /items was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /items becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/latest-achievements** (listLatestAchievementOffers; fixed; compatible)
+  - Before: GET /offers/latest-achievements was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/latest-achievements becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /latest-games** (listLatestGames; fixed; compatible)
+  - Before: GET /latest-games was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /latest-games becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/latest-released** (listLatestReleasedOffers; fixed; compatible)
+  - Before: GET /offers/latest-released was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/latest-released becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /free-games/mobile** (listMobileFreeGames; fixed; compatible)
+  - Before: GET /free-games/mobile was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /free-games/mobile becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/achievements** (listOfferAchievements; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/achievements was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/achievements becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/assets** (listOfferAssets; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/assets was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/assets becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/builds** (listOfferBuilds; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/builds was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/builds becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/changelog** (listOfferChangelog; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/changelog was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/changelog becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/collection** (listOfferCollectionOffers; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/collection was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/collection becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/genres** (listOfferDetailGenres; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/genres was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/genres becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/events** (listOfferEvents; fixed; compatible)
+  - Before: GET /offers/events was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/events becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/franchises** (listOfferFranchises; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/franchises was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/franchises becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/genres** (listOfferGenres; fixed; compatible)
+  - Before: GET /offers/genres was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/genres becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/giveaways** (listOfferGiveaways; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/giveaways was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/giveaways becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/items** (listOfferItems; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/items was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/items becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/reviews** (listOfferReviews; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/reviews was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/reviews becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers** (listOffers; fixed; compatible)
+  - Before: GET /offers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/suggestions** (listOfferSuggestions; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/suggestions was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/suggestions becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/technologies** (listOfferTechnologies; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/technologies was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/technologies becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /regions** (listRegions; fixed; compatible)
+  - Before: GET /regions was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /regions becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/related** (listRelatedOffers; fixed; compatible)
+  - Before: GET /offers/&#123;id&#125;/related was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/&#123;id&#125;/related becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sales** (listSaleOffers; fixed; compatible)
+  - Before: GET /sales was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sales becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sandboxes/&#123;sandboxId&#125;/achievements** (listSandboxAchievements; fixed; compatible)
+  - Before: GET /sandboxes/&#123;sandboxId&#125;/achievements was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sandboxes/&#123;sandboxId&#125;/achievements becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sandboxes/&#123;sandboxId&#125;/assets** (listSandboxAssets; fixed; compatible)
+  - Before: GET /sandboxes/&#123;sandboxId&#125;/assets was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sandboxes/&#123;sandboxId&#125;/assets becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sandboxes/&#123;sandboxId&#125;/builds** (listSandboxBuilds; fixed; compatible)
+  - Before: GET /sandboxes/&#123;sandboxId&#125;/builds was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sandboxes/&#123;sandboxId&#125;/builds becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sandboxes/&#123;sandboxId&#125;/changelog** (listSandboxChangelog; fixed; compatible)
+  - Before: GET /sandboxes/&#123;sandboxId&#125;/changelog was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sandboxes/&#123;sandboxId&#125;/changelog becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sandboxes** (listSandboxes; fixed; compatible)
+  - Before: GET /sandboxes was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sandboxes becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sandboxes/&#123;sandboxId&#125;/items** (listSandboxItems; fixed; compatible)
+  - Before: GET /sandboxes/&#123;sandboxId&#125;/items was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sandboxes/&#123;sandboxId&#125;/items becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sandboxes/&#123;sandboxId&#125;/offers** (listSandboxOffers; fixed; compatible)
+  - Before: GET /sandboxes/&#123;sandboxId&#125;/offers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sandboxes/&#123;sandboxId&#125;/offers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /search/developers** (listSearchDevelopers; fixed; compatible)
+  - Before: GET /search/developers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /search/developers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /search/offer-types** (listSearchOfferTypes; fixed; compatible)
+  - Before: GET /search/offer-types was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /search/offer-types becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /search/publishers** (listSearchPublishers; fixed; compatible)
+  - Before: GET /search/publishers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /search/publishers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /search/tags** (listSearchTags; fixed; compatible)
+  - Before: GET /search/tags was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /search/tags becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sellers/&#123;id&#125;** (listSellerOffers; fixed; compatible)
+  - Before: GET /sellers/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sellers/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /sellers** (listSellers; fixed; compatible)
+  - Before: GET /sellers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /sellers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/top-sellers** (listTopSellersOffers; fixed; compatible)
+  - Before: GET /offers/top-sellers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/top-sellers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/top-wishlisted** (listTopWishlistedOffers; fixed; compatible)
+  - Before: GET /offers/top-wishlisted was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/top-wishlisted becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /offers/upcoming** (listUpcomingOffers; fixed; compatible)
+  - Before: GET /offers/upcoming was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /offers/upcoming becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy POST /builds/resolve-launcher-records** (resolveLauncherRecords; fixed; compatible)
+  - Before: POST /builds/resolve-launcher-records was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /builds/resolve-launcher-records becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy POST /offers/slugs** (resolveOfferSlugs; fixed; compatible)
+  - Before: POST /offers/slugs was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /offers/slugs becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /search/changelog** (searchChangelog; fixed; compatible)
+  - Before: GET /search/changelog was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /search/changelog becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /free-games/search** (searchFreeGames; fixed; compatible)
+  - Before: GET /free-games/search was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /free-games/search becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy POST /search** (searchOffersLegacy; fixed; compatible)
+  - Before: POST /search was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /search becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy POST /search/v2/search** (searchOffersV2; fixed; compatible)
+  - Before: POST /search/v2/search was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /search/v2/search becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy GET /search/v2/search** (searchOffersV2Get; fixed; compatible)
+  - Before: GET /search/v2/search was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /search/v2/search becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **legacy POST /search/natural-language** (searchOffersWithNaturalLanguage; fixed; compatible)
+  - Before: POST /search/natural-language was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /search/natural-language becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/autocomplete** (autocomplete; fixed; compatible)
+  - Before: GET /v1/autocomplete was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/autocomplete becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 POST /v1/offers/exists** (checkOfferExistence; fixed; compatible)
+  - Before: POST /v1/offers/exists was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /v1/offers/exists becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 POST /v1/offers/slugs** (checkOfferSlugs; fixed; compatible)
+  - Before: POST /v1/offers/slugs was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /v1/offers/slugs becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125;** (compareBuilds; fixed; compatible)
+  - Before: GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/assets/&#123;id&#125;** (getAsset; fixed; compatible)
+  - Before: GET /v1/assets/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/assets/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/base-game/&#123;namespace&#125;** (getBaseGame; fixed; compatible)
+  - Before: GET /v1/base-game/&#123;namespace&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/base-game/&#123;namespace&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;** (getBuild; fixed; compatible)
+  - Before: GET /v1/builds/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/builds/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/history** (getBuildHistory; fixed; compatible)
+  - Before: GET /v1/builds/&#123;id&#125;/history was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/builds/&#123;id&#125;/history becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/install-options** (getBuildInstallOptions; fixed; compatible)
+  - Before: GET /v1/builds/&#123;id&#125;/install-options was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/builds/&#123;id&#125;/install-options becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/tree** (getBuildTree; fixed; compatible)
+  - Before: GET /v1/builds/&#123;id&#125;/tree was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/builds/&#123;id&#125;/tree becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/changelist/&#123;id&#125;** (getChangelogEntry; fixed; compatible)
+  - Before: GET /v1/changelist/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/changelist/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;** (getCollection; fixed; compatible)
+  - Before: GET /v1/collections/&#123;slug&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/collections/&#123;slug&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;/&#123;week&#125;** (getCollectionWeek; fixed; compatible)
+  - Before: GET /v1/collections/&#123;slug&#125;/&#123;week&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/collections/&#123;slug&#125;/&#123;week&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;/&#123;week&#125;/og** (getCollectionWeekOg; fixed; compatible)
+  - Before: GET /v1/collections/&#123;slug&#125;/&#123;week&#125;/og was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/collections/&#123;slug&#125;/&#123;week&#125;/og becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/featured** (getFeaturedGames; fixed; compatible)
+  - Before: GET /v1/featured was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/featured becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/franchises/&#123;slug&#125;** (getFranchise; fixed; compatible)
+  - Before: GET /v1/franchises/&#123;slug&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/franchises/&#123;slug&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/free-games/og** (getFreeGamesOg; fixed; compatible)
+  - Before: GET /v1/free-games/og was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/free-games/og becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/free-games/stats** (getFreeGamesStats; fixed; compatible)
+  - Before: GET /v1/free-games/stats was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/free-games/stats becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/game-awards** (getGameAwards; fixed; compatible)
+  - Before: GET /v1/game-awards was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/game-awards becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/game-awards/og** (getGameAwardsOg; fixed; compatible)
+  - Before: GET /v1/game-awards/og was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/game-awards/og becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/health** (getHealth; fixed; compatible)
+  - Before: GET /v1/health was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/health becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/stats/homepage** (getHomepageStats; fixed; compatible)
+  - Before: GET /v1/stats/homepage was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/stats/homepage becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;** (getItem; fixed; compatible)
+  - Before: GET /v1/items/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/items/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/assets** (getItemAssets; fixed; compatible)
+  - Before: GET /v1/items/&#123;id&#125;/assets was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/items/&#123;id&#125;/assets becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/builds** (getItemBuilds; fixed; compatible)
+  - Before: GET /v1/items/&#123;id&#125;/builds was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/items/&#123;id&#125;/builds becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/changelog** (getItemChangelog; fixed; compatible)
+  - Before: GET /v1/items/&#123;id&#125;/changelog was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/items/&#123;id&#125;/changelog becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/offer** (getItemOffer; fixed; compatible)
+  - Before: GET /v1/items/&#123;id&#125;/offer was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/items/&#123;id&#125;/offer becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 POST /v1/items/bulk** (getItemsBulk; fixed; compatible)
+  - Before: POST /v1/items/bulk was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /v1/items/bulk becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/items-sitemap.xml** (getItemsSitemap; fixed; compatible)
+  - Before: GET /v1/items-sitemap.xml was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/items-sitemap.xml becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/items/sitemap.xml** (getItemsSitemapAlias; fixed; compatible)
+  - Before: GET /v1/items/sitemap.xml was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/items/sitemap.xml becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/latest-games** (getLatestGames; fixed; compatible)
+  - Before: GET /v1/latest-games was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/latest-games becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/stats/creations/monthly** (getMonthlyCreationStats; fixed; compatible)
+  - Before: GET /v1/stats/creations/monthly was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/stats/creations/monthly becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/stats/releases/monthly** (getMonthlyReleaseStats; fixed; compatible)
+  - Before: GET /v1/stats/releases/monthly was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/stats/releases/monthly becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;** (getOffer; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/achievements** (getOfferAchievements; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/achievements was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/achievements becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/age-rating** (getOfferAgeRating; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/age-rating was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/age-rating becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/assets** (getOfferAssets; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/assets was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/assets becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/builds** (getOfferBuilds; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/builds was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/builds becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/bundle** (getOfferBundle; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/bundle was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/bundle becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offer-by-slug/&#123;slug&#125;** (getOfferBySlug; fixed; compatible)
+  - Before: GET /v1/offer-by-slug/&#123;slug&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offer-by-slug/&#123;slug&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/changelog/stats** (getOfferChangelogStats; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/changelog/stats was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/changelog/stats becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/collection** (getOfferCollection; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/collection was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/collection becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/collections/&#123;collection&#125;** (getOfferCollectionEntry; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/collections/&#123;collection&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/collections/&#123;collection&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/events/&#123;id&#125;** (getOfferEvent; fixed; compatible)
+  - Before: GET /v1/offers/events/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/events/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/features** (getOfferFeatures; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/features was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/features becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/franchises** (getOfferFranchises; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/franchises was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/franchises becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/genres** (getOfferGenres; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/genres was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/genres becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/giveaways** (getOfferGiveaways; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/giveaways was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/giveaways becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/has-prepurchase** (getOfferHasPrepurchase; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/has-prepurchase was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/has-prepurchase becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/has-regular** (getOfferHasRegular; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/has-regular was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/has-regular becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/hltb** (getOfferHltb; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/hltb was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/hltb becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/igdb** (getOfferIgdb; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/igdb was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/igdb becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/items** (getOfferItems; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/items was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/items becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/mappings** (getOfferMappings; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/mappings was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/mappings becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/media** (getOfferMedia; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/media was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/media becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/og** (getOfferOg; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/og was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/og becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/og.webp** (getOfferOgWebp; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/og.webp was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/og.webp becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/overview** (getOfferOverview; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/overview was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/overview becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/polls** (getOfferPolls; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/polls was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/polls becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price** (getOfferPrice; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/price was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/price becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price/fairness** (getOfferPriceFairness; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/price/fairness was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/price/fairness becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price-stats** (getOfferPriceStats; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/price-stats was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/price-stats becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/ratings** (getOfferRatings; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/ratings was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/ratings becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/regional-price** (getOfferRegionalPrice; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/regional-price was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/regional-price becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/requirements** (getOfferRequirements; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/requirements was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/requirements becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews-summary** (getOfferReviewsSummary; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/reviews-summary was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/reviews-summary becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 POST /v1/items/bulk/offers** (getOffersForItemsBulk; fixed; compatible)
+  - Before: POST /v1/items/bulk/offers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /v1/items/bulk/offers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/suggestions** (getOfferSuggestions; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/suggestions was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/suggestions becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/technologies** (getOfferTechnologies; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/technologies was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/technologies becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/tops** (getOfferTops; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/tops was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/tops becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;** (getProfile; fixed; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/profiles/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/achievements/&#123;sandboxId&#125;** (getProfileAchievements; fixed; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/achievements/&#123;sandboxId&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/profiles/&#123;id&#125;/achievements/&#123;sandboxId&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/information** (getProfileInformation; fixed; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/information was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/profiles/&#123;id&#125;/information becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/random-game** (getProfileRandomGame; fixed; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/random-game was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/profiles/&#123;id&#125;/random-game becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/rare-achievements/&#123;sandboxId&#125;** (getProfileRareAchievements; fixed; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/rare-achievements/&#123;sandboxId&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/profiles/&#123;id&#125;/rare-achievements/&#123;sandboxId&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/sitemap.xml** (getProfilesSitemap; fixed; compatible)
+  - Before: GET /v1/profiles/sitemap.xml was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/profiles/sitemap.xml becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;/cover** (getPromotionCover; fixed; compatible)
+  - Before: GET /v1/promotions/&#123;id&#125;/cover was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/promotions/&#123;id&#125;/cover becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/promotions-sitemap.xml** (getPromotionsSitemap; fixed; compatible)
+  - Before: GET /v1/promotions-sitemap.xml was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/promotions-sitemap.xml becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/region** (getRegion; fixed; compatible)
+  - Before: GET /v1/region was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/region becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/related** (getRelatedOffers; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/related was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/related becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/robots.txt** (getRobots; fixed; compatible)
+  - Before: GET /v1/robots.txt was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/robots.txt becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;** (getSandbox; fixed; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sandboxes/&#123;sandboxId&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/base-game** (getSandboxBaseGame; fixed; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/base-game was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sandboxes/&#123;sandboxId&#125;/base-game becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/changelog** (getSandboxChangelog; fixed; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/changelog was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sandboxes/&#123;sandboxId&#125;/changelog becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/sitemap.xml** (getSandboxesSitemap; fixed; compatible)
+  - Before: GET /v1/sandboxes/sitemap.xml was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sandboxes/sitemap.xml becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/og** (getSandboxOg; fixed; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/og was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sandboxes/&#123;sandboxId&#125;/og becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/og.webp** (getSandboxOgWebp; fixed; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/og.webp was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sandboxes/&#123;sandboxId&#125;/og.webp becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/stats** (getSandboxStats; fixed; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/stats was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sandboxes/&#123;sandboxId&#125;/stats becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/search/&#123;id&#125;** (getSearchQuery; fixed; compatible)
+  - Before: GET /v1/search/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/search/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/search/&#123;id&#125;/count** (getSearchQueryCount; fixed; compatible)
+  - Before: GET /v1/search/&#123;id&#125;/count was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/search/&#123;id&#125;/count becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;/cover** (getSellerCoverOffers; fixed; compatible)
+  - Before: GET /v1/sellers/&#123;id&#125;/cover was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sellers/&#123;id&#125;/cover becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;/stats** (getSellerStats; fixed; compatible)
+  - Before: GET /v1/sellers/&#123;id&#125;/stats was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sellers/&#123;id&#125;/stats becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sitemap.xml** (getSitemap; fixed; compatible)
+  - Before: GET /v1/sitemap.xml was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sitemap.xml becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/stats** (getStats; fixed; compatible)
+  - Before: GET /v1/stats was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/stats becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/open-api.json** (getV1OpenApi; fixed; compatible)
+  - Before: GET /v1/open-api.json was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/open-api.json becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/stats/creations/yearly** (getYearlyCreationStats; fixed; compatible)
+  - Before: GET /v1/stats/creations/yearly was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/stats/creations/yearly becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/stats/releases/yearly** (getYearlyReleaseStats; fixed; compatible)
+  - Before: GET /v1/stats/releases/yearly was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/stats/releases/yearly becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 POST /v1/catalog/hydrate** (hydrateCatalog; fixed; compatible)
+  - Before: POST /v1/catalog/hydrate was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /v1/catalog/hydrate becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/active-sales** (listActiveSales; fixed; compatible)
+  - Before: GET /v1/active-sales was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/active-sales becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/files** (listBuildFiles; fixed; compatible)
+  - Before: GET /v1/builds/&#123;id&#125;/files was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/builds/&#123;id&#125;/files becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/items** (listBuildItems; fixed; compatible)
+  - Before: GET /v1/builds/&#123;id&#125;/items was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/builds/&#123;id&#125;/items becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/builds** (listBuilds; fixed; compatible)
+  - Before: GET /v1/builds was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/builds becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/in-bundle** (listBundlesContainingOffer; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/in-bundle was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/in-bundle becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/changelist** (listChangelist; fixed; compatible)
+  - Before: GET /v1/changelist was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/changelist becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/changelog** (listChangelog; fixed; compatible)
+  - Before: GET /v1/changelog was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/changelog becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/countries** (listCountries; fixed; compatible)
+  - Before: GET /v1/countries was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/countries becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/featured-discounts** (listFeaturedDiscounts; fixed; compatible)
+  - Before: GET /v1/offers/featured-discounts was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/featured-discounts becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/free-games** (listFreeGames; fixed; compatible)
+  - Before: GET /v1/free-games was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/free-games becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/free-games/sellers** (listFreeGameSellers; fixed; compatible)
+  - Before: GET /v1/free-games/sellers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/free-games/sellers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/free-games/history** (listFreeGamesHistory; fixed; compatible)
+  - Before: GET /v1/free-games/history was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/free-games/history becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/items** (listItems; fixed; compatible)
+  - Before: GET /v1/items was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/items becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/items-from-offer/&#123;id&#125;** (listItemsFromOffer; fixed; compatible)
+  - Before: GET /v1/items-from-offer/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/items-from-offer/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/latest-achievements** (listLatestAchievements; fixed; compatible)
+  - Before: GET /v1/offers/latest-achievements was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/latest-achievements becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/latest-released** (listLatestReleased; fixed; compatible)
+  - Before: GET /v1/offers/latest-released was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/latest-released becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/free-games/mobile** (listMobileFreeGames; fixed; compatible)
+  - Before: GET /v1/free-games/mobile was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/free-games/mobile becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/changelog** (listOfferChangelog; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/changelog was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/changelog becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/events** (listOfferEvents; fixed; compatible)
+  - Before: GET /v1/offers/events was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/events becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/genres** (listOfferGenres; fixed; compatible)
+  - Before: GET /v1/offers/genres was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/genres becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price-history** (listOfferPriceHistory; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/price-history was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/price-history becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews** (listOfferReviews; fixed; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/reviews was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/&#123;id&#125;/reviews becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers** (listOffers; fixed; compatible)
+  - Before: GET /v1/offers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/achievements** (listProfileAchievements; fixed; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/achievements was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/profiles/&#123;id&#125;/achievements becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/games** (listProfileGames; fixed; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/games was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/profiles/&#123;id&#125;/games becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/leaderboard** (listProfileLeaderboard; fixed; compatible)
+  - Before: GET /v1/profiles/leaderboard was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/profiles/leaderboard becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/rare-achievements** (listProfileRareAchievements; fixed; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/rare-achievements was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/profiles/&#123;id&#125;/rare-achievements becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;** (listPromotionOffers; fixed; compatible)
+  - Before: GET /v1/promotions/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/promotions/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/promotions** (listPromotions; fixed; compatible)
+  - Before: GET /v1/promotions was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/promotions becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/regions** (listRegions; fixed; compatible)
+  - Before: GET /v1/regions was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/regions becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sales** (listSales; fixed; compatible)
+  - Before: GET /v1/sales was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sales becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/achievements** (listSandboxAchievements; fixed; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/achievements was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sandboxes/&#123;sandboxId&#125;/achievements becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/assets** (listSandboxAssets; fixed; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/assets was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sandboxes/&#123;sandboxId&#125;/assets becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/builds** (listSandboxBuilds; fixed; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/builds was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sandboxes/&#123;sandboxId&#125;/builds becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes** (listSandboxes; fixed; compatible)
+  - Before: GET /v1/sandboxes was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sandboxes becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/items** (listSandboxItems; fixed; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/items was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sandboxes/&#123;sandboxId&#125;/items becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/offers** (listSandboxOffers; fixed; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/offers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sandboxes/&#123;sandboxId&#125;/offers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/search/developers** (listSearchDevelopers; fixed; compatible)
+  - Before: GET /v1/search/developers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/search/developers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/search/offer-types** (listSearchOfferTypes; fixed; compatible)
+  - Before: GET /v1/search/offer-types was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/search/offer-types becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/search/publishers** (listSearchPublishers; fixed; compatible)
+  - Before: GET /v1/search/publishers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/search/publishers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/search/tags** (listSearchTags; fixed; compatible)
+  - Before: GET /v1/search/tags was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/search/tags becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;** (listSellerOffers; fixed; compatible)
+  - Before: GET /v1/sellers/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sellers/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/sellers** (listSellers; fixed; compatible)
+  - Before: GET /v1/sellers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sellers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/tags** (listTags; fixed; compatible)
+  - Before: GET /v1/tags was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/tags becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/top-sellers** (listTopSellers; fixed; compatible)
+  - Before: GET /v1/offers/top-sellers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/top-sellers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/top-wishlisted** (listTopWishlisted; fixed; compatible)
+  - Before: GET /v1/offers/top-wishlisted was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/top-wishlisted becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/offers/upcoming** (listUpcomingOffers; fixed; compatible)
+  - Before: GET /v1/offers/upcoming was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/offers/upcoming becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/multisearch/items** (multisearchItems; fixed; compatible)
+  - Before: GET /v1/multisearch/items was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/multisearch/items becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/multisearch/offers** (multisearchOffers; fixed; compatible)
+  - Before: GET /v1/multisearch/offers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/multisearch/offers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/multisearch/sellers** (multisearchSellers; fixed; compatible)
+  - Before: GET /v1/multisearch/sellers was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/multisearch/sellers becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 POST /v1/search/natural-language** (naturalLanguageSearch; fixed; compatible)
+  - Before: POST /v1/search/natural-language was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /v1/search/natural-language becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 POST /v1/builds/resolve-launcher-records** (resolveLauncherRecords; fixed; compatible)
+  - Before: POST /v1/builds/resolve-launcher-records was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /v1/builds/resolve-launcher-records becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/search/changelog** (searchChangelog; fixed; compatible)
+  - Before: GET /v1/search/changelog was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/search/changelog becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/free-games/search** (searchFreeGames; fixed; compatible)
+  - Before: GET /v1/free-games/search was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/free-games/search becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 GET /v1/search** (searchOffers; fixed; compatible)
+  - Before: GET /v1/search was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/search becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+- **v1 POST /v1/search** (searchOffersRedirect; fixed; compatible)
+  - Before: POST /v1/search was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /v1/search becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+
+Verification: tests/server-startup.test.ts: stalled v1 index builds do not delay HTTP startup; database connectivity remains required; pnpm test; pnpm build; pnpm docs:check; pnpm release:check --base origin/main.
+
 ## 2026-11-11 — Preserve public v1 metadata responses through the Worker
 
 Record: [public-v1-metadata-response](https://github.com/egdata-app/egdata-api/blob/main/changes/records/public-v1-metadata-response.json).

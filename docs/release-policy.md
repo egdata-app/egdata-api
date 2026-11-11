@@ -42,3 +42,13 @@ and main publishes validated change records; neither calls Coolify. A maintainer
 must run the `Test` workflow on `main` with `deploy_production` enabled to request
 an origin deployment after all checks pass. The default is disabled. This gate
 does not change DNS, Worker routes, or require a deployment to merge documentation.
+
+Dokploy has an independent automatic deployment trigger. Keep `autoDeploy`
+disabled for the production API application; the GitHub workflow gate cannot
+prevent a deployment initiated by Dokploy. Confirm both controls before merging
+when production deployment must remain manual.
+
+Run `pnpm v1:indexes` as an explicit provisioning step before enabling v1 traffic.
+It can take substantial time on populated collections and must not run in the
+HTTP startup path. Existing legacy endpoints must remain available while v1
+indexes are provisioned.
