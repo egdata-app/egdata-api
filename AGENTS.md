@@ -31,7 +31,7 @@ pnpm biome check --write .
 
 ## Documentation & Release Policy
 
-Every user-facing or maintainer-facing change must include a concise entry to `CHANGELOG.md` under `Unreleased`.
+Every public behavior change needs a validated, dated JSON record in `changes/records/` enumerating all affected stable operation IDs. Generate `CHANGELOG.md`, histories, and the manifest with `pnpm changelog:generate`; do not edit generated output. Unrelated maintenance and documentation-only changes need no public entries. API implementation, contracts, shared middleware, and gateway changes require a current validated impact assessment (`pnpm changelog:assess --base <base-ref>`), including explicit reasons for preserved behavior. Merged records and endpoint identities are append-only; corrections use new records. No bypass label. See `docs/release-policy.md`.
 
 Any structural public endpoint change must also update the public docs in `apps/docs/` and the OpenAPI contract in `src/openapi/` or `openapi/`. Structural endpoint changes include adding, removing, or renaming routes, HTTP methods, query/path/body parameters, filters, sort options, request validation, response fields, status codes, authentication requirements, pagination behavior, documented errors, or deprecations.
 
@@ -39,8 +39,9 @@ When changing public routes, run the relevant checks before handoff:
 
 ```bash
 pnpm openapi:generate
+pnpm changelog:generate
 pnpm docs:check
-pnpm release:check
+pnpm release:check --base <base-ref>
 ```
 
 ## Architecture

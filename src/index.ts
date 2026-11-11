@@ -22,6 +22,7 @@ import { createLoaders } from "./graphql/loaders.js";
 import { disconnectPersistedQueryStore } from "./graphql/persisted-queries.js";
 import { honoMiddleware } from "./middlewares/apollo.js";
 import { edgeCacheHeaders } from "./middlewares/edge-cache.js";
+import { originAuth } from "./middlewares/origin-auth.js";
 import {
   bulkRateLimit,
   disconnectRateLimitStore,
@@ -69,6 +70,8 @@ import SellersRoute from "./routes/sellers.js";
 import StatsRoute from "./routes/stats.js";
 import UsersRoute from "./routes/users.js";
 import UsersServiceRoute from "./routes/users-service.js";
+import { v1Router } from "./v1/router.js";
+import { ensureV1Indexes } from "./v1/indexes.js";
 import { createAntiAbuseRuntime } from "./services/anti-abuse-runtime.js";
 import { getAikidoAnonymousIdentity } from "./utils/aikido-rate-limit-group.js";
 import { attributesToObject } from "./utils/attributes-to-object.js";
@@ -102,6 +105,9 @@ const internalNamespaces = [
 const app = new Hono();
 const openApiDocument = buildOpenApiDocument();
 
+// Protect the dedicated hostname; global enforcement is an explicit later cutover.
+app.use("/*", originAuth());
+
 app.use("/*", async (c, next) => {
   const anonymousIdentity = getAikidoAnonymousIdentity(c.req.raw.headers);
 
@@ -134,6 +140,11 @@ await graphqlServer
   });
 
 app.use("/*", apiCors());
+
+// v1 is registered before the anonymous per-IP middleware. The Worker gateway
+// is the only entry point for v1 and enforces exact per-key quotas; legacy
+// anonymous limits and browser challenges must not consume or block v1.
+app.route("/v1", v1Router);
 
 app.use("/*", antiAbuse.middleware);
 app.post("/auth/challenge", antiAbuse.challenge);
@@ -1629,6 +1640,7 @@ async function startServer() {
   try {
     await db.connect();
     await ensureCatalogHydrationIndexes(db.db);
+    await ensureV1Indexes(db.db);
 
     const httpServer = serve({
       fetch: app.fetch,

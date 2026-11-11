@@ -1,0 +1,17 @@
+---
+title: v1 listPromotionOffers
+description: History for GET /v1/promotions/{id}
+---
+
+`GET /v1/promotions/{id}` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/promotions/&#123;id&#125;** (listPromotionOffers; added; compatible)
+  - Before: GET /v1/promotions/&#123;id&#125; was not available in the versioned API.
+  - After: Offers in a promotion. Cursor-paginated offers carrying the promotion's event tag. Results are ordered by `sortBy` and `sortDir` with the offer ID ascending as a unique tie-breaker, defaulting to `lastModifiedDate` descending. `price` sorting uses the current price engine row for the selected region. `q` filters titles case-insensitively. Cursors are bound to the promotion, query, ordering, country, locale, and page size. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

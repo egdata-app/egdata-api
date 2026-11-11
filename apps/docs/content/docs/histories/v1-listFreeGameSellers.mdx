@@ -1,0 +1,17 @@
+---
+title: v1 listFreeGameSellers
+description: History for GET /v1/free-games/sellers
+---
+
+`GET /v1/free-games/sellers` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/free-games/sellers** (listFreeGameSellers; added; compatible)
+  - Before: GET /v1/free-games/sellers was not available in the versioned API.
+  - After: Free game sellers. Returns every seller that has appeared in the giveaway catalog, with the number of distinct giveaways attributed to it, ordered by that count descending. The aggregate is global and does not depend on a pricing country. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

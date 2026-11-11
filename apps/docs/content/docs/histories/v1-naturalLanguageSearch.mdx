@@ -1,0 +1,17 @@
+---
+title: v1 naturalLanguageSearch
+description: History for POST /v1/search/natural-language
+---
+
+`POST /v1/search/natural-language` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 POST /v1/search/natural-language** (naturalLanguageSearch; added; compatible)
+  - Before: POST /v1/search/natural-language was not available in the versioned API.
+  - After: Natural-language offer search. Response media: application/json. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

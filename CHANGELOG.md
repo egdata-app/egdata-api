@@ -1,112 +1,645 @@
 # Changelog
 
-All notable public API, documentation, release, and sustainability changes should be recorded here.
+Generated from validated change records. Recorded dates are not deployment dates.
 
-## Unreleased
+## 2026-11-11 — Preserve public v1 metadata responses through the Worker
 
-- Raised the anti-abuse `unique-id-sweep` threshold from 30 to 60 distinct resource IDs within the rolling 60-second window. Other scoring weights, volume/pagination thresholds, and enforcement behavior remain unchanged.
+Record: [public-v1-metadata-response](https://github.com/egdata-app/egdata-api/blob/main/changes/records/public-v1-metadata-response.json).
 
-- Made GET the primary search v2 endpoint. POST now validates and sanitizes filters and returns a bodyless 303 redirect to a deterministic, cacheable GET URL without querying search or response caches. GET pricing defaults to US independently of cookies; POST resolves cookie country into the URL. Updated search validation, docs, OpenAPI, and redirect/cache regression coverage, including real HTTP fetch, CORS headers, compression, ETags and special-character round trips. Documented remaining staging checks and redirect rate-limit accounting.
+- **v1 GET /v1/health** (getHealth; fixed; compatible)
+  - Before: The Worker could throw while modifying immutable upstream response headers, returning HTTP 500 instead of forwarding the health response.
+  - After: The Worker clones the response before applying its existing headers, preserving the upstream health status and streaming body. Public authentication and quota behavior are unchanged.
+  - Client action: None
+- **v1 GET /v1/open-api.json** (getV1OpenApi; fixed; compatible)
+  - Before: The Worker could throw while modifying immutable upstream response headers, returning HTTP 500 and preventing the explorer from loading the deployed contract.
+  - After: The Worker clones the response before applying its existing headers, preserving the deployed OpenAPI response status and streaming body. The API contract and routing are unchanged.
+  - Client action: None
 
-- Changed high-risk tarpits to bodyless HTTP 204 responses with a CORS-exposed `X-Egdata-Mitigation: tarpit` marker. Existing delays, sleeper limits, no-store headers and HTTP 200 PoW challenges remain unchanged. Updated the public contract and regression tests; deploy compatible frontend handling first.
+Verification: dashboard/tests/v1-gateway.test.ts; pnpm dashboard:test; pnpm openapi:check.
 
-- Added an operator-only daily PoW cohort report that deduplicates challenge responses and accepted proof replays, separates pending cohorts from those with no solution observed after five minutes, and flags storage saturation. Bounded asynchronous Redis tracking uses trusted fingerprint hashes, not unique-person identities; enforcement and the public protocol are unchanged.
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
 
-- Added asynchronous server-side PoW outcome counters and an operator report for challenge responses, puzzle issuance/replacement, accepted/rejected proofs, requests admitted with valid sessions, and observe-mode would-challenge/would-tarpit decisions. Existing 24-hour Redis summaries remain bounded and private; no public endpoint, frontend telemetry, or enforcement change.
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
 
-- Detect out-of-order pagination (10 distinct pages per semantic resource) and route hammering (120 logical requests per concrete resource) within the existing bounded 60-second anti-abuse window. Both share the existing sweep weight and appear in observation summaries; hydration collapsing, caching, and deployment mode remain unchanged. These signals describe behavior, not measured origin bandwidth cost.
+- **v1 GET /v1/autocomplete** (autocomplete; added; compatible)
+  - Before: GET /v1/autocomplete was not available in the versioned API.
+  - After: Offer title autocomplete. Response media: application/json. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 POST /v1/offers/exists** (checkOfferExistence; added; compatible)
+  - Before: POST /v1/offers/exists was not available in the versioned API.
+  - After: Check multiple offer IDs. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 POST /v1/offers/slugs** (checkOfferSlugs; added; compatible)
+  - Before: POST /v1/offers/slugs was not available in the versioned API.
+  - After: Resolve multiple offer slugs. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125;** (compareBuilds; added; compatible)
+  - Before: GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125; was not available in the versioned API.
+  - After: Compare two stored build snapshots. Compares immutable file snapshots by full path, ordered by `fileName` in the requested direction with an opaque `fileName` cursor. Responding requires streaming both stored snapshots so the summary, top files, and top directories are complete; the page size is bounded, the scan is not. Full-download deltas are not patch-download estimates. Response media: application/json. Requires an API key with builds:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/assets/&#123;id&#125;** (getAsset; added; compatible)
+  - Before: GET /v1/assets/&#123;id&#125; was not available in the versioned API.
+  - After: Get an asset. Looks up a single catalog asset by its Epic Games artifact ID and returns the serialized asset document. Returns `404` when no asset matches. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/base-game/&#123;namespace&#125;** (getBaseGame; added; compatible)
+  - Before: GET /v1/base-game/&#123;namespace&#125; was not available in the versioned API.
+  - After: Resolve a namespace's base game. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;** (getBuild; added; compatible)
+  - Before: GET /v1/builds/&#123;id&#125; was not available in the versioned API.
+  - After: Get a sanitized build snapshot. Returns one build summary with manifest status, sizes, technologies, and stored size fallbacks from the matching platform asset. Raw manifest locations are never returned. Response media: application/json. Requires an API key with builds:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/history** (getBuildHistory; added; compatible)
+  - Before: GET /v1/builds/&#123;id&#125;/history was not available in the versioned API.
+  - After: List comparison candidates for a build. Returns chronological observations for the same label stream or platform as the build, ordered by `firstSeenAt` descending, `createdAt` descending, and `_id` descending. Each entry reports whether it has a comparable stored snapshot and whether it belongs to the same stream; `meta.previousComparableBuildId` identifies the previous comparable snapshot. Response media: application/json. Requires an API key with builds:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/install-options** (getBuildInstallOptions; added; compatible)
+  - Before: GET /v1/builds/&#123;id&#125;/install-options was not available in the versioned API.
+  - After: Summarize install tags in a build. Returns a bounded map keyed by install tag, with file counts and total bytes. The map is not paginated; `meta.truncated` reports whether the safety cap was reached. Response media: application/json. Requires an API key with builds:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/tree** (getBuildTree; added; compatible)
+  - Before: GET /v1/builds/&#123;id&#125;/tree was not available in the versioned API.
+  - After: Expand one directory of a build file tree. Returns only the immediate child files and directories of the requested manifest directory, ordered by node type and then name. Expand a directory by passing the `path` returned for that node. Pass `meta.pagination.nextCursor` as `cursor` to fetch the next page. Response media: application/json. Requires an API key with builds:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/changelist/&#123;id&#125;** (getChangelogEntry; added; compatible)
+  - Before: GET /v1/changelist/&#123;id&#125; was not available in the versioned API.
+  - After: Get a catalog change. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;** (getCollection; added; compatible)
+  - Before: GET /v1/collections/&#123;slug&#125; was not available in the versioned API.
+  - After: Get a collection. Cursor-paginated collection positions ordered by `position` ascending with the offer ID as a unique tie-breaker. Positions with a non-positive position are excluded. `country` selects the pricing region and `locale` localizes offer text; cookies are never used. Cursors are bound to the collection, ordering, country, locale, and page size. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;/&#123;week&#125;** (getCollectionWeek; added; compatible)
+  - Before: GET /v1/collections/&#123;slug&#125;/&#123;week&#125; was not available in the versioned API.
+  - After: Get a collection for one ISO week. Cursor-paginated positions for one ISO week. Each offer is represented by its most recent in-week position; only entries with a positive position are included. The `week` path parameter must match `YYYYWNN` and name a real ISO week, otherwise the endpoint returns a 400 problem instead of the legacy 500. Cursors are bound to the collection, week, ordering, country, locale, and page size. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;/&#123;week&#125;/og** (getCollectionWeekOg; added; compatible)
+  - Before: GET /v1/collections/&#123;slug&#125;/&#123;week&#125;/og was not available in the versioned API.
+  - After: Weekly collection share image. Compatibility redirect to the canonical native weekly collection image. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/featured** (getFeaturedGames; added; compatible)
+  - Before: GET /v1/featured was not available in the versioned API.
+  - After: Featured storefront games. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/franchises/&#123;slug&#125;** (getFranchise; added; compatible)
+  - Before: GET /v1/franchises/&#123;slug&#125; was not available in the versioned API.
+  - After: Get a franchise. Returns a franchise and a cursor-paginated page of its offers, ordered by `releaseDate` descending with the offer `id` ascending as tie-breaker. Offers are localized with `locale` and priced for the Epic pricing region that contains `country`. The `stats` object aggregates achievements and time-to-beat data over every offer in the franchise, not only the returned page. Cookies are never used. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/free-games/og** (getFreeGamesOg; added; compatible)
+  - Before: GET /v1/free-games/og was not available in the versioned API.
+  - After: Free games share image. Compatibility redirect to the canonical native free-games image. Existing image URLs remain available for embeds and crawlers. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/free-games/stats** (getFreeGamesStats; added; compatible)
+  - Before: GET /v1/free-games/stats was not available in the versioned API.
+  - After: Free game statistics. Returns giveaway totals, distinct seller counts, repeated giveaways, and the summed value of all recorded giveaways for the selected pricing region. When no price rows exist the value object is still returned with zero amounts and nullable currency codes instead of failing. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/game-awards** (getGameAwards; added; compatible)
+  - Before: GET /v1/game-awards was not available in the versioned API.
+  - After: The Game Awards modules. Returns the storefront modules for The Game Awards event, each with its localized and expanded offers and current regional price. Modules are ordered by `moduleIndex`; modules without referenced offers are omitted. OG image generation remains outside v1. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/game-awards/og** (getGameAwardsOg; added; compatible)
+  - Before: GET /v1/game-awards/og was not available in the versioned API.
+  - After: The Game Awards share image. Compatibility redirect to the canonical native Game Awards image. Requires an API key with stats:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/health** (getHealth; added; compatible)
+  - Before: GET /v1/health was not available in the versioned API.
+  - After: Service health. Reports Redis and MongoDB connectivity. This endpoint is public and does not require an API key. Response media: application/json. Public metadata operation; no API key required.
+  - Client action: None
+- **v1 GET /v1/stats/homepage** (getHomepageStats; added; compatible)
+  - Before: GET /v1/stats/homepage was not available in the versioned API.
+  - After: Homepage counters. Returns the counters shown on the egdata homepage: tracked offers, price changes observed in the last 72 hours, active discounts, and current giveaways. Counts are resolved for the Epic pricing region that contains `country`. Cookies are never used; `country` defaults to US. Response media: application/json. Requires an API key with stats:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;** (getItem; added; compatible)
+  - Before: GET /v1/items/&#123;id&#125; was not available in the versioned API.
+  - After: Get an item. Returns one catalog item. The catalog `id` is preferred; legacy `_id` values also resolve. Response media: application/json. Requires an API key with items:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/assets** (getItemAssets; added; compatible)
+  - Before: GET /v1/items/&#123;id&#125;/assets was not available in the versioned API.
+  - After: List item assets. Returns the asset records whose `itemId` matches the item identifier. Response media: application/json. Requires an API key with items:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/builds** (getItemBuilds; added; compatible)
+  - Before: GET /v1/items/&#123;id&#125;/builds was not available in the versioned API.
+  - After: List item builds. Returns build summaries for every app referenced by the item's release info, including manifest status, platform, and size metadata. Response media: application/json. Requires an API key with items:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/changelog** (getItemChangelog; added; compatible)
+  - Before: GET /v1/items/&#123;id&#125;/changelog was not available in the versioned API.
+  - After: List item changelog entries. Returns changelog entries for the item, its assets, and its builds as `&#123; metadata, timestamp, document &#125;` rows ordered by `timestamp` descending with `_id` descending as a stable tie-breaker. Pass `meta.pagination.nextCursor` as `cursor` to fetch the next page. Response media: application/json. Requires an API key with items:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/offer** (getItemOffer; added; compatible)
+  - Before: GET /v1/items/&#123;id&#125;/offer was not available in the versioned API.
+  - After: Get the current base-game offer for an item. Selects the current base-game offer for the item, preferring offers that are not pre-purchases, and returns it with the current regional price. Offers are filtered by country eligibility before selection. Response media: application/json. Requires an API key with items:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 POST /v1/items/bulk** (getItemsBulk; added; compatible)
+  - Before: POST /v1/items/bulk was not available in the versioned API.
+  - After: Get multiple items. Resolves up to 100 item identifiers in one request. Found items are returned in input order, and identifiers that do not resolve are listed in `meta.missing`. Response media: application/json. Requires an API key with items:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/items-sitemap.xml** (getItemsSitemap; added; compatible)
+  - Before: GET /v1/items-sitemap.xml was not available in the versioned API.
+  - After: Item sitemap. Native XML sitemap for website item pages. Response media: application/xml. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/items/sitemap.xml** (getItemsSitemapAlias; added; compatible)
+  - Before: GET /v1/items/sitemap.xml was not available in the versioned API.
+  - After: Item sitemap (legacy alias). Response media: application/xml. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/latest-games** (getLatestGames; added; compatible)
+  - Before: GET /v1/latest-games was not available in the versioned API.
+  - After: Latest catalog additions. Returns the 25 most recently created base games, DLC, and add-ons with current regional prices. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/stats/creations/monthly** (getMonthlyCreationStats; added; compatible)
+  - Before: GET /v1/stats/creations/monthly was not available in the versioned API.
+  - After: Monthly base-game creations. Returns the number of base-game offers created per month since December 2018. Pre-purchases and code-redemption-only offers are excluded. Results are cached for one day. Response media: application/json. Requires an API key with stats:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/stats/releases/monthly** (getMonthlyReleaseStats; added; compatible)
+  - Before: GET /v1/stats/releases/monthly was not available in the versioned API.
+  - After: Monthly base-game releases. Returns the number of base-game releases per month since the Epic Games Store launch in December 2018. Pre-purchases and code-redemption-only offers are excluded. Results are cached for one day. Response media: application/json. Requires an API key with stats:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;** (getOffer; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125; was not available in the versioned API.
+  - After: Get an offer. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/achievements** (getOfferAchievements; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/achievements was not available in the versioned API.
+  - After: Offer achievements. Returns the achievement sets tracked for the offer's sandbox. Base games and add-ons use different achievement sets. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/age-rating** (getOfferAgeRating; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/age-rating was not available in the versioned API.
+  - After: Offer age rating. Returns every age rating stored for the offer's sandbox, or only the rating system that applies to the requested country when `single=true`. Missing rating data returns 404. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/assets** (getOfferAssets; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/assets was not available in the versioned API.
+  - After: Offer assets. Returns the assets belonging to the items of this offer, including sub-items and items linked by offer ID. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/builds** (getOfferBuilds; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/builds was not available in the versioned API.
+  - After: Offer builds. Returns up to 50 recently updated builds for the offer's assets, including manifest and size summaries. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/bundle** (getOfferBundle; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/bundle was not available in the versioned API.
+  - After: Bundle contents. Returns the offers inside a bundle with their regional prices, the bundle price, and the summed contents price. Non-bundle offers return 404. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offer-by-slug/&#123;slug&#125;** (getOfferBySlug; added; compatible)
+  - Before: GET /v1/offer-by-slug/&#123;slug&#125; was not available in the versioned API.
+  - After: Resolve an offer slug. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/changelog/stats** (getOfferChangelogStats; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/changelog/stats was not available in the versioned API.
+  - After: Offer change log statistics. Aggregates the offer's change log between two ISO 8601 timestamps into daily counts, weekday counts, change-type counts, and changed-field counts. Invalid or missing timestamps return 400. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/collection** (getOfferCollection; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/collection was not available in the versioned API.
+  - After: Offers in the offer's collection. Returns the offers referenced by this offer's collection attributes with current regional prices. Offers that are not part of a collection return 404. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/collections/&#123;collection&#125;** (getOfferCollectionEntry; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/collections/&#123;collection&#125; was not available in the versioned API.
+  - After: Offer position in a collection. Returns the offer's chart entry in one collection, including the collection name. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/events/&#123;id&#125;** (getOfferEvent; added; compatible)
+  - Before: GET /v1/offers/events/&#123;id&#125; was not available in the versioned API.
+  - After: Get offers in an event. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/features** (getOfferFeatures; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/features was not available in the versioned API.
+  - After: Offer gameplay features. Derives launcher, gameplay features, and Epic feature flags from the offer's tags and the custom attributes of its items. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/franchises** (getOfferFranchises; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/franchises was not available in the versioned API.
+  - After: Franchises containing an offer. Returns the franchises whose offer list includes this offer. Franchises whose offers all belong to the same namespace are omitted. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/genres** (getOfferGenres; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/genres was not available in the versioned API.
+  - After: Offer genres. Returns the active storefront genre tags attached to the offer. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/giveaways** (getOfferGiveaways; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/giveaways was not available in the versioned API.
+  - After: Offer giveaways. Returns every giveaway promotion recorded for this offer, most recent first. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/has-prepurchase** (getOfferHasPrepurchase; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/has-prepurchase was not available in the versioned API.
+  - After: Offer has a prepurchase edition. Reports whether another base game in the same namespace is available for prepurchase. Always returns an object with `hasPrepurchase`, plus the prepurchase `offer` when one exists. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/has-regular** (getOfferHasRegular; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/has-regular was not available in the versioned API.
+  - After: Offer has a regular edition. For a prepurchase base game, reports whether a regular (non-prepurchase) base game exists in the same namespace. Always returns an object with `isPrepurchase`, plus the regular `offer` when one exists. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/hltb** (getOfferHltb; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/hltb was not available in the versioned API.
+  - After: Offer HowLongToBeat data. Returns HowLongToBeat estimates for the offer. Offers without a matched HowLongToBeat entry return 404. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/igdb** (getOfferIgdb; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/igdb was not available in the versioned API.
+  - After: Offer IGDB data. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/items** (getOfferItems; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/items was not available in the versioned API.
+  - After: Offer items. Returns the items referenced by the offer, its sub-items, and any item that links back to the offer. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/mappings** (getOfferMappings; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/mappings was not available in the versioned API.
+  - After: Offer store mappings. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/media** (getOfferMedia; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/media was not available in the versioned API.
+  - After: Offer media. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/og** (getOfferOg; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/og was not available in the versioned API.
+  - After: Offer share image (PNG). Native 1200×630 PNG share image. The response is not JSON-wrapped. Response media: image/png, image/webp. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/og.webp** (getOfferOgWebp; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/og.webp was not available in the versioned API.
+  - After: Offer share image (WebP). Response media: image/png, image/webp. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/overview** (getOfferOverview; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/overview was not available in the versioned API.
+  - After: Offer overview. Combines the localized offer, current price, media, IGDB data, features, age rating, giveaways, poll, genres, and technologies in a single response. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/polls** (getOfferPolls; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/polls was not available in the versioned API.
+  - After: Offer rating poll. Returns the rating poll for the offer's sandbox as `&#123; poll &#125;`. When no poll exists, `poll` is null instead of an empty body. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price** (getOfferPrice; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/price was not available in the versioned API.
+  - After: Current offer price. Returns the latest regional price for the offer. Offers that are not priced in the requested country return 404. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price/fairness** (getOfferPriceFairness; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/price/fairness was not available in the versioned API.
+  - After: Offer price fairness score. Returns the regional pricing fairness score computed for the offer in the requested country. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price-stats** (getOfferPriceStats; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/price-stats was not available in the versioned API.
+  - After: Offer price statistics. Returns the current price, the lowest discounted price ever recorded, and the most recent discounted price for the requested region. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/ratings** (getOfferRatings; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/ratings was not available in the versioned API.
+  - After: Offer player ratings. Returns the Epic player-rating document for the offer's product. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/regional-price** (getOfferRegionalPrice; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/regional-price was not available in the versioned API.
+  - After: Regional price comparison. Returns the current price, historical minimum and maximum, and USD equivalents. With `country` the response is a single object; without it the response is a map keyed by pricing region. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/requirements** (getOfferRequirements; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/requirements was not available in the versioned API.
+  - After: Offer system requirements. Returns the normalized Windows and macOS minimum and recommended requirements, following a validated DLC parent when applicable. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews-summary** (getOfferReviewsSummary; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/reviews-summary was not available in the versioned API.
+  - After: Offer review summary. Aggregates the offer's public reviews into an average score and recommendation percentages. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/suggestions** (getOfferSuggestions; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/suggestions was not available in the versioned API.
+  - After: Suggested offers. Returns up to 25 offers sharing genres with this offer, excluding the same namespace, with current regional prices. Bounded and not paginated. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/technologies** (getOfferTechnologies; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/technologies was not available in the versioned API.
+  - After: Offer technologies. Returns the deduplicated technologies reported by the latest build of each asset belonging to the offer. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/tops** (getOfferTops; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/tops was not available in the versioned API.
+  - After: Offer chart positions. Returns a map of collection ID to the offer's current position in that chart. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 POST /v1/items/bulk/offers** (getOffersForItemsBulk; added; compatible)
+  - Before: POST /v1/items/bulk/offers was not available in the versioned API.
+  - After: Get the best current offer for multiple items. Resolves up to 100 item identifiers and returns one offer per item, combining direct item links with `offersubitems` mappings and ranking base games ahead of other offer types and released offers ahead of pre-purchases. Country-ineligible offers are skipped. Response media: application/json. Requires an API key with items:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;** (getProfile; added; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125; was not available in the versioned API.
+  - After: Get a player profile. Returns the public Epic profile, the linked Discord account metadata egdata stores, the profile creation date, the review count, and a per-sandbox achievement summary. Private self-profile and mutation endpoints are not part of v1. Response media: application/json. Requires an API key with profiles:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/achievements/&#123;sandboxId&#125;** (getProfileAchievements; added; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/achievements/&#123;sandboxId&#125; was not available in the versioned API.
+  - After: Get profile achievements for one sandbox. Returns the stored player achievement records for one sandbox together with the achievement-set metadata referenced by those records. Empty arrays are returned when the profile has no recorded achievements for the sandbox. Response media: application/json. Requires an API key with profiles:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/information** (getProfileInformation; added; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/information was not available in the versioned API.
+  - After: Get profile details and statistics. Returns the public Epic profile together with aggregate achievement statistics (games played, unlocked achievements, awards, total XP, reviews), the donation details stored for the account, and whether a Discord account is linked. This resource is not paginated. Response media: application/json. Requires an API key with profiles:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/random-game** (getProfileRandomGame; added; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/random-game was not available in the versioned API.
+  - After: Get a random owned game. Returns the full offer for a game the profile has achievement data for. When `sandbox` is supplied, that game is returned instead of a random one. This resource is bounded and not paginated. Response media: application/json. Requires an API key with profiles:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/rare-achievements/&#123;sandboxId&#125;** (getProfileRareAchievements; added; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/rare-achievements/&#123;sandboxId&#125; was not available in the versioned API.
+  - After: Get rarest profile achievements for one sandbox. Returns up to three of the rarest unlocked achievements for one sandbox, ordered by `completedPercent` ascending. This collection is bounded and not paginated. Response media: application/json. Requires an API key with profiles:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/sitemap.xml** (getProfilesSitemap; added; compatible)
+  - Before: GET /v1/profiles/sitemap.xml was not available in the versioned API.
+  - After: Public profile sitemap. Response media: application/xml. Requires an API key with profiles:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;/cover** (getPromotionCover; added; compatible)
+  - Before: GET /v1/promotions/&#123;id&#125;/cover was not available in the versioned API.
+  - After: Promotion cover offer. Returns the localized base-game offer from the first namespace referenced by the promotion. This is the offer metadata the legacy endpoint returned; it is not a rendered image. OG image routes remain outside v1. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/promotions-sitemap.xml** (getPromotionsSitemap; added; compatible)
+  - Before: GET /v1/promotions-sitemap.xml was not available in the versioned API.
+  - After: Promotion sitemap. Response media: application/xml. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/region** (getRegion; added; compatible)
+  - Before: GET /v1/region was not available in the versioned API.
+  - After: Resolve a country's pricing region. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/related** (getRelatedOffers; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/related was not available in the versioned API.
+  - After: Related offers. Returns up to 25 offers from the same namespace with current regional prices. Bounded and not paginated. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/robots.txt** (getRobots; added; compatible)
+  - Before: GET /v1/robots.txt was not available in the versioned API.
+  - After: Crawler policy. Native text/plain robots policy for API consumers. Sitemap and share-image paths remain crawlable; catalog data remains disallowed. Response media: text/plain. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;** (getSandbox; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125; was not available in the versioned API.
+  - After: Get a sandbox. Returns the stored sandbox record, falling back to the corresponding namespace record when no sandbox document exists. Sandboxes from the list operation are always retrievable. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/base-game** (getSandboxBaseGame; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/base-game was not available in the versioned API.
+  - After: Get the base game for a sandbox. Returns the released base-game offer for the sandbox with its current regional price and localized text. When no released base game exists it falls back to a pre-purchase base game, then to an executable item, which is returned with `isItem: true`. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/changelog** (getSandboxChangelog; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/changelog was not available in the versioned API.
+  - After: List changelog entries for a sandbox. Returns changelog entries for the sandbox, its offers, its items, their assets, and their builds as `&#123; hits &#125;`, ordered by `timestamp` descending with `_id` descending as a stable tie-breaker. Each hit carries the resolved context document in `metadata.context`. Totals are not calculated; use `meta.pagination.hasMore`. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/og** (getSandboxOg; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/og was not available in the versioned API.
+  - After: Sandbox share image (PNG). Response media: image/png, image/webp. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/og.webp** (getSandboxOgWebp; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/og.webp was not available in the versioned API.
+  - After: Sandbox share image (WebP). Response media: image/png, image/webp. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/stats** (getSandboxStats; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/stats was not available in the versioned API.
+  - After: Get sandbox statistics. Returns offer, item, asset, build, and achievement counts for the sandbox. The asset count includes synthetic assets generated from release info without a stored artifact. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/sitemap.xml** (getSandboxesSitemap; added; compatible)
+  - Before: GET /v1/sandboxes/sitemap.xml was not available in the versioned API.
+  - After: Sandbox sitemap. Response media: application/xml. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/search/&#123;id&#125;** (getSearchQuery; added; compatible)
+  - Before: GET /v1/search/&#123;id&#125; was not available in the versioned API.
+  - After: Get a cached search query. Response media: application/json. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/search/&#123;id&#125;/count** (getSearchQueryCount; added; compatible)
+  - Before: GET /v1/search/&#123;id&#125;/count was not available in the versioned API.
+  - After: Count and facet a cached search query. Response media: application/json. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;/cover** (getSellerCoverOffers; added; compatible)
+  - Before: GET /v1/sellers/&#123;id&#125;/cover was not available in the versioned API.
+  - After: Get cover offers for a seller. Returns up to five offers from the top-sellers collection for the seller, falling back to the seller's most recently modified offers. Each offer carries the current regional price and the response carries localization metadata. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;/stats** (getSellerStats; added; compatible)
+  - Before: GET /v1/sellers/&#123;id&#125;/stats was not available in the versioned API.
+  - After: Get seller statistics. Returns offer, item, game, and free-game counts for the seller, together with the serialized seller record. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sitemap.xml** (getSitemap; added; compatible)
+  - Before: GET /v1/sitemap.xml was not available in the versioned API.
+  - After: Offer sitemap. Native XML sitemap for website offer pages. Omit `page` for the index. Sitemaps are crawler interfaces and retain page-based paging. Response media: application/xml. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/stats** (getStats; added; compatible)
+  - Before: GET /v1/stats was not available in the versioned API.
+  - After: Catalog totals. Returns total document counts for offers, items, tags, assets, price-engine rows, changelogs, sandboxes, and products, plus the number of offers and items created in the current year. Counts are cached for one hour. Response media: application/json. Requires an API key with stats:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/open-api.json** (getV1OpenApi; added; compatible)
+  - Before: GET /v1/open-api.json was not available in the versioned API.
+  - After: Version 1 OpenAPI document. Machine-readable OpenAPI 3.0 contract for the versioned public API. The legacy contract remains at /open-api.json. Response media: application/json. Public metadata operation; no API key required.
+  - Client action: None
+- **v1 GET /v1/stats/creations/yearly** (getYearlyCreationStats; added; compatible)
+  - Before: GET /v1/stats/creations/yearly was not available in the versioned API.
+  - After: Yearly base-game creations. Returns the number of base-game offers created per year since December 2018. Pre-purchases and code-redemption-only offers are excluded. Results are cached for one day. Response media: application/json. Requires an API key with stats:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/stats/releases/yearly** (getYearlyReleaseStats; added; compatible)
+  - Before: GET /v1/stats/releases/yearly was not available in the versioned API.
+  - After: Yearly base-game releases. Returns the number of base-game releases per year since the Epic Games Store launch in December 2018. Pre-purchases and code-redemption-only offers are excluded. Results are cached for one day. Response media: application/json. Requires an API key with stats:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 POST /v1/catalog/hydrate** (hydrateCatalog; added; compatible)
+  - Before: POST /v1/catalog/hydrate was not available in the versioned API.
+  - After: Hydrate a bounded catalog graph. Read-only bulk cache-warming protocol. Returns one NDJSON line per requested root in input order. Unknown records are omitted unless they changed. Responses are never shared-cached. Response media: application/x-ndjson. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/active-sales** (listActiveSales; added; compatible)
+  - Before: GET /v1/active-sales was not available in the versioned API.
+  - After: Active promotional events. Returns promotional tag groups whose regional prices are currently discounted, with up to three representative offers each. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/files** (listBuildFiles; added; compatible)
+  - Before: GET /v1/builds/&#123;id&#125;/files was not available in the versioned API.
+  - After: List files in a build snapshot. Returns file snapshot records ordered by `depth`, `fileName`, or `fileSize` with a `fileName` tie-breaker, filtered by literal path search and extension. Items without the sort value use the natural BSON null order for the requested direction. Response media: application/json. Requires an API key with builds:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/items** (listBuildItems; added; compatible)
+  - Before: GET /v1/builds/&#123;id&#125;/items was not available in the versioned API.
+  - After: List catalog items associated with a build. Returns catalog items whose release info references the build app name, ordered by catalog `id` ascending. Response media: application/json. Requires an API key with builds:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/builds** (listBuilds; added; compatible)
+  - Before: GET /v1/builds was not available in the versioned API.
+  - After: List observed builds. Returns observed builds ordered by the requested timestamp field with `_id` as a tie-breaker in the same direction and missing timestamps last. Each entry is a build summary with the matching executable catalog item when one is known. Response media: application/json. Requires an API key with builds:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/in-bundle** (listBundlesContainingOffer; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/in-bundle was not available in the versioned API.
+  - After: Bundles containing an offer. Returns up to one entry per bundle that contains this offer, with the bundle offer and its regional price. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/changelist** (listChangelist; added; compatible)
+  - Before: GET /v1/changelist was not available in the versioned API.
+  - After: Recent catalog changes with context. Compatibility alias for /v1/changelog. Returns the same keyset-paginated change feed. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/changelog** (listChangelog; added; compatible)
+  - Before: GET /v1/changelog was not available in the versioned API.
+  - After: Recent catalog changes. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/countries** (listCountries; added; compatible)
+  - Before: GET /v1/countries was not available in the versioned API.
+  - After: List pricing countries. Returns the ISO 3166-1 alpha-2 countries supported by the pricing API. This is a bounded reference list and is not paginated. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/featured-discounts** (listFeaturedDiscounts; added; compatible)
+  - Before: GET /v1/offers/featured-discounts was not available in the versioned API.
+  - After: Featured discounted offers. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/free-games/sellers** (listFreeGameSellers; added; compatible)
+  - Before: GET /v1/free-games/sellers was not available in the versioned API.
+  - After: Free game sellers. Returns every seller that has appeared in the giveaway catalog, with the number of distinct giveaways attributed to it, ordered by that count descending. The aggregate is global and does not depend on a pricing country. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/free-games** (listFreeGames; added; compatible)
+  - Before: GET /v1/free-games was not available in the versioned API.
+  - After: Current free games. Returns current and announced giveaways from the desktop free-games catalog and the mobile freebies feed. Offer documents are expanded and localized, and every entry carries `giveaway` metadata (including the full desktop giveaway history), the current regional price, and the items unlocked by the offer. Cookies are never used. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/free-games/history** (listFreeGamesHistory; added; compatible)
+  - Before: GET /v1/free-games/history was not available in the versioned API.
+  - After: Free game history. Cursor-paginated giveaway history ordered by `endDate` descending and then `id` descending. Each entry contains the giveaway record, the expanded localized offer, and the current regional price. Cursors are bound to the filter set, ordering, country, locale, and page size, and expire after 24 hours. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/items** (listItems; added; compatible)
+  - Before: GET /v1/items was not available in the versioned API.
+  - After: List catalog items. Returns catalog items ordered by `lastModifiedDate` descending with `id` ascending as a stable tie-breaker; items without a modification date sort last. Pass `meta.pagination.nextCursor` as `cursor` to fetch the next page. Response media: application/json. Requires an API key with items:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/items-from-offer/&#123;id&#125;** (listItemsFromOffer; added; compatible)
+  - Before: GET /v1/items-from-offer/&#123;id&#125; was not available in the versioned API.
+  - After: List items linked to an offer. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/latest-achievements** (listLatestAchievements; added; compatible)
+  - Before: GET /v1/offers/latest-achievements was not available in the versioned API.
+  - After: Offers with newly tracked achievements. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/latest-released** (listLatestReleased; added; compatible)
+  - Before: GET /v1/offers/latest-released was not available in the versioned API.
+  - After: Recently released offers. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/free-games/mobile** (listMobileFreeGames; added; compatible)
+  - Before: GET /v1/free-games/mobile was not available in the versioned API.
+  - After: Current mobile free games. Returns the mobile freebies that are active now, expanded with the localized offer, the normalized giveaway record, and the current regional price. Entries without a matching offer document are omitted. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/changelog** (listOfferChangelog; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/changelog was not available in the versioned API.
+  - After: Offer change log. Keyset-paginated change history for the offer, its items, and its assets, newest first. Each entry includes the changed document. Cursors expire after 24 hours and are bound to the filter set. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/events** (listOfferEvents; added; compatible)
+  - Before: GET /v1/offers/events was not available in the versioned API.
+  - After: List active offer events. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/genres** (listOfferGenres; added; compatible)
+  - Before: GET /v1/offers/genres was not available in the versioned API.
+  - After: List storefront genres. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price-history** (listOfferPriceHistory; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/price-history was not available in the versioned API.
+  - After: Offer price history. Keyset-paginated historical prices for one region, newest first, ordered by `date` and `_id` descending. When neither `country` nor `region` is given, the response is an object keyed by pricing region instead (bounded by the region list and not paginated). Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews** (listOfferReviews; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/reviews was not available in the versioned API.
+  - After: Offer reviews. Keyset-paginated public reviews for the offer, newest first. Reviews are not personalized: no user identity is read from the request, and cursors are bound to the `verified` filter. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers** (listOffers; added; compatible)
+  - Before: GET /v1/offers was not available in the versioned API.
+  - After: List offers. Live keyset-paginated offer list ordered by last modification time. Catalog changes can move records during traversal; cursors are bound to the filter set and expire after 24 hours. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/achievements** (listProfileAchievements; added; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/achievements was not available in the versioned API.
+  - After: List unlocked profile achievements. Lists the profile's unlocked achievements, joined with the achievement-set metadata and the owning base-game or DLC offer. Ordered by unlock date descending, with `sandboxId` and `achievementName` as unique tie-breakers. `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`. Response media: application/json. Requires an API key with profiles:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/games** (listProfileGames; added; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/games was not available in the versioned API.
+  - After: List profile games. Returns one achievement-completion summary per sandbox the profile has played, ordered by the selected `sort` with `sandboxId` as the unique tie-breaker. Use `platinum=true` to keep only games with a platinum award. `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`; the legacy `page` parameter is replaced by the cursor. Response media: application/json. Requires an API key with profiles:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/leaderboard** (listProfileLeaderboard; added; compatible)
+  - Before: GET /v1/profiles/leaderboard was not available in the versioned API.
+  - After: Profile XP leaderboard. Ranks public Epic player profiles by the achievement XP stored for every sandbox they have played. Ties share the same `rank`; entries are ordered by `rank` ascending and then `accountId` ascending. `data` is the leaderboard array and `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`. Response media: application/json. Requires an API key with profiles:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/rare-achievements** (listProfileRareAchievements; added; compatible)
+  - Before: GET /v1/profiles/&#123;id&#125;/rare-achievements was not available in the versioned API.
+  - After: List rarest unlocked profile achievements. Returns the 25 rarest unlocked achievements across all of the profile's games, ordered by `completedPercent` ascending. Each entry includes the matching base-game offer when one is available. This collection is bounded and not paginated. Response media: application/json. Requires an API key with profiles:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;** (listPromotionOffers; added; compatible)
+  - Before: GET /v1/promotions/&#123;id&#125; was not available in the versioned API.
+  - After: Offers in a promotion. Cursor-paginated offers carrying the promotion's event tag. Results are ordered by `sortBy` and `sortDir` with the offer ID ascending as a unique tie-breaker, defaulting to `lastModifiedDate` descending. `price` sorting uses the current price engine row for the selected region. `q` filters titles case-insensitively. Cursors are bound to the promotion, query, ordering, country, locale, and page size. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/promotions** (listPromotions; added; compatible)
+  - Before: GET /v1/promotions was not available in the versioned API.
+  - After: Active promotions. Returns a bounded list of active event tags ordered by their number of referenced offers. The legacy endpoint returned every active event; v1 caps the list with `limit` and never uses cookies. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/regions** (listRegions; added; compatible)
+  - Before: GET /v1/regions was not available in the versioned API.
+  - After: List Epic pricing regions. Returns every Epic pricing region, its currency, description, and member countries. Bounded reference data, not paginated. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sales** (listSales; added; compatible)
+  - Before: GET /v1/sales was not available in the versioned API.
+  - After: Currently discounted offers. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/achievements** (listSandboxAchievements; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/achievements was not available in the versioned API.
+  - After: List achievement sets for a sandbox. Returns every achievement set stored for the sandbox. The bounded reference response is not paginated. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/assets** (listSandboxAssets; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/assets was not available in the versioned API.
+  - After: List assets in a sandbox. Returns stored asset records merged with synthetic assets generated from item release info that has no stored artifact, ordered by `updatedAt` descending with `artifactId` and then `platform` ascending. Synthetic assets report zero sizes, the source item title, and a deterministic `_id` so cursors stay stable. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/builds** (listSandboxBuilds; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/builds was not available in the versioned API.
+  - After: List builds for a sandbox. Returns build summaries for every build app referenced by the sandbox's items, ordered by `updatedAt` descending with `_id` descending as a stable tie-breaker. Use `platform` to restrict the items whose release info is considered. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/items** (listSandboxItems; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/items was not available in the versioned API.
+  - After: List items in a sandbox. Returns catalog items whose namespace matches the sandbox, ordered by `lastModifiedDate` descending with `id` ascending as a stable tie-breaker; items without a modification date sort last. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/offers** (listSandboxOffers; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/offers was not available in the versioned API.
+  - After: List offers in a sandbox. Returns offers whose namespace matches the sandbox, ordered by `lastModifiedDate` descending with `id` ascending as a stable tie-breaker. Each offer is localized for the requested locale and carries the current price for the country's Epic pricing region when one is stored. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes** (listSandboxes; added; compatible)
+  - Before: GET /v1/sandboxes was not available in the versioned API.
+  - After: List sandboxes. Returns the known Epic namespaces (sandboxes) ordered by namespace identifier (`_id`) ascending. Pass `meta.pagination.nextCursor` as `cursor` to fetch the next page. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/search/developers** (listSearchDevelopers; added; compatible)
+  - Before: GET /v1/search/developers was not available in the versioned API.
+  - After: List developers with offer counts. Response media: application/json. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/search/offer-types** (listSearchOfferTypes; added; compatible)
+  - Before: GET /v1/search/offer-types was not available in the versioned API.
+  - After: List offer types with counts. Response media: application/json. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/search/publishers** (listSearchPublishers; added; compatible)
+  - Before: GET /v1/search/publishers was not available in the versioned API.
+  - After: List publishers with offer counts. Response media: application/json. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/search/tags** (listSearchTags; added; compatible)
+  - Before: GET /v1/search/tags was not available in the versioned API.
+  - After: List active search tags. Response media: application/json. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;** (listSellerOffers; added; compatible)
+  - Before: GET /v1/sellers/&#123;id&#125; was not available in the versioned API.
+  - After: List offers for a seller. Returns a cursor-paginated list of the seller's offers with the current regional price attached, ordered by `lastModifiedDate` descending with `id` ascending as a stable tie-breaker. Use `offerType` to restrict the offer type and `ignoredSandboxes` to exclude namespaces. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/sellers** (listSellers; added; compatible)
+  - Before: GET /v1/sellers was not available in the versioned API.
+  - After: List sellers. Returns the bounded reference list of sellers referenced by at least one offer, sorted by display name. The list is not paginated; `meta.truncated` reports whether the safety cap was reached. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/tags** (listTags; added; compatible)
+  - Before: GET /v1/tags was not available in the versioned API.
+  - After: List catalog tags. Bounded reference data. Use the optional group filter for a single tag group. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/top-sellers** (listTopSellers; added; compatible)
+  - Before: GET /v1/offers/top-sellers was not available in the versioned API.
+  - After: Top selling offers. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/top-wishlisted** (listTopWishlisted; added; compatible)
+  - Before: GET /v1/offers/top-wishlisted was not available in the versioned API.
+  - After: Top wishlisted offers. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/offers/upcoming** (listUpcomingOffers; added; compatible)
+  - Before: GET /v1/offers/upcoming was not available in the versioned API.
+  - After: List upcoming offers. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/multisearch/items** (multisearchItems; added; compatible)
+  - Before: GET /v1/multisearch/items was not available in the versioned API.
+  - After: Cross-catalog item search. Response media: application/json. Requires an API key with items:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/multisearch/offers** (multisearchOffers; added; compatible)
+  - Before: GET /v1/multisearch/offers was not available in the versioned API.
+  - After: Cross-catalog offer search. OpenSearch offer search with legacy multisearch filters. Cursor pagination uses search_after. Response media: application/json. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/multisearch/sellers** (multisearchSellers; added; compatible)
+  - Before: GET /v1/multisearch/sellers was not available in the versioned API.
+  - After: Cross-catalog seller search. Response media: application/json. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 POST /v1/search/natural-language** (naturalLanguageSearch; added; compatible)
+  - Before: POST /v1/search/natural-language was not available in the versioned API.
+  - After: Natural-language offer search. Response media: application/json. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 POST /v1/builds/resolve-launcher-records** (resolveLauncherRecords; added; compatible)
+  - Before: POST /v1/builds/resolve-launcher-records was not available in the versioned API.
+  - After: Resolve parsed Windows manifests to launcher metadata. Resolves bounded, path-free metadata from parsed Windows manifests. Results preserve request order and echo each `requestId` with its per-candidate status. Ambiguous catalog, asset, and parent relationships are reported as `ambiguous` instead of guessing. Response media: application/json. Requires an API key with builds:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/search/changelog** (searchChangelog; added; compatible)
+  - Before: GET /v1/search/changelog was not available in the versioned API.
+  - After: Search catalog changes. Response media: application/json. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/free-games/search** (searchFreeGames; added; compatible)
+  - Before: GET /v1/free-games/search was not available in the versioned API.
+  - After: Search free games. Searches the `egdata.offers` OpenSearch index for offers with giveaway entries, using the legacy title, offer type, tag, and category filters. Pagination uses `search_after` instead of offsets, so cursors stay stable while the index changes. Results default to `lastModifiedDate` descending with `id.keyword` ascending as a unique tie-breaker. `meta.result.total` is an OpenSearch estimate and may be a lower bound when the index reports a `gte` relation. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 GET /v1/search** (searchOffers; added; compatible)
+  - Before: GET /v1/search was not available in the versioned API.
+  - After: Search offers. OpenSearch-backed offer search. Pagination uses `search_after`; cursors are bound to the normalized filters, ordering, country, locale, and page size. `meta.result.total` is deliberately omitted for live cursor traversal. Response media: application/json. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+- **v1 POST /v1/search** (searchOffersRedirect; added; compatible)
+  - Before: POST /v1/search was not available in the versioned API.
+  - After: Normalize search filters to a cacheable GET request. Validates a JSON filter document and returns a bodyless 303 redirect to the equivalent GET URL. No search is executed and no result body is returned. Requires an API key with search:read permission; the gateway enforces per-key quotas.
+  - Client action: None
 
-- Updated anti-abuse fingerprints/scoring to v2: preserve relative header order while ignoring Apollo/CORS plumbing, collapse offer hydration and typing bursts, and detect sustained distinct-title lookups within the existing bounded 60-second window. Browse routes count as support and deep-only traffic alone adds no risk. Added a 600-second global CORS preflight lifetime and strict HTTPS egdata.app hostname boundaries. Deployment mode remains operator-controlled; rollout stays in observe with canaries disabled.
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.
 
-- Added catalog-search and sandbox-offer traversal scoring using normalized filter fingerprints, including sequential pages up to five seconds apart. Added bounded, asynchronous 24-hour summaries of request scores, reasons, routes, and encoded origin body bytes. Added operator-only fingerprint-scoped trials with automatic expiry and rollback, plus a browser PoW staging harness; ordinary public caching and baseline rate limits remain active.
+## Undated historical notes
 
-- Reduced the default GraphQL POST quota from 120 to 30 requests per minute per client IP (`RATE_LIMIT_GRAPHQL_POST_PER_MINUTE`). GraphQL GET/APQ retains its separate 1200/minute quota; throttled requests return 429 with Retry-After.
-
-- Preserved normal CDN caching, ETags and baseline rate limits during anti-abuse enforcement to avoid increasing origin bandwidth. Added unpaginated sales coverage and bounded GraphQL telemetry from executed pagination/ID arguments, including GET variables and APQ. Telemetry now prefers dedicated `ANTI_ABUSE_REDIS_*` or existing private `CACHE_REDIS_*` settings before legacy shared Redis. Rollout remains observational; cache hits need separate edge controls.
-
-- Made PoW conditional on current suspicious behavior: clean clients (risk <= 0.5), including unchanged desktop apps, can access protected data without sessions even in enforcement mode. Suspicious clients require a recent valid session, confirmed abuse retains tarpitting, and historical token scores no longer prevent recovery after risk clears. Updated public docs and OpenAPI to make PoW authentication conditional while preserving existing account requirements.
-
-- Fixed anti-abuse fingerprint spoofing through client-supplied `cf-ja3-hash`/`cf-ja4` headers. Forwarded bot headers are now ignored unless explicitly enabled with authenticated edge forwarding and Cloudflare's managed Bot Management transform; corrected rollout instructions because request-header Transform Rules cannot remove these reserved headers.
-
-- Added opt-in transport/session anti-abuse protection with `POST /auth/challenge`, fingerprint-bound HMAC/PoW sessions, asynchronous Redis sliding-window scoring across rotating IPs/UAs, and HTTP 200 session challenges or bounded tarpits with truncated responses. Enforcement protects catalog/pagination/GraphQL routes, bypasses their legacy IP limits and shared caching, and optionally adds signed synthetic item canaries. Added rollout/client documentation, OpenAPI contracts, tests, and a latency benchmark; defaults remain off until clients and edge forwarding are configured.
-
-- Capped anonymous `GET /offers` at 5 requests per minute per client IP (`RATE_LIMIT_OFFERS_LIST_PER_MINUTE`). The counter is keyed by client identity instead of the request URL, so changing or adding query parameters cannot reset the quota, and the limiter runs on the list handler itself so encoded path variants cannot skip it; throttled responses are `429` with `Retry-After`.
-
-- Fixed the in-process rate-limit fallback to apply the configured window when Redis is unavailable; previously its counters never expired, so a Redis outage could block a client permanently.
-
-- Reverted the compact offer cards, item projections, profile pagination, seller caps, multisearch price removal, and price-history limits after frontend compatibility issues; list endpoints return full offer documents again. Compression, caching, rate limiting, and GraphQL APQ remain. Response-cache keys are versioned so old compact payloads are no longer served after deploy.
-
-- Split GraphQL rate limits by method: cacheable GET/APQ gets 1200/minute (`RATE_LIMIT_GRAPHQL_GET_PER_MINUTE`) while uncached POST gets 120/minute (`RATE_LIMIT_GRAPHQL_POST_PER_MINUTE`). Raised the general limit to 1200/minute and namespaced every limiter's Redis counter so general, search, GraphQL GET/POST, heavy, and bulk requests no longer share one bucket.
-
-- Added GraphQL GET support with Automatic Persisted Queries (Redis-backed hash store with local fallback), Apollo cache-control hints, and CDN-friendly `Cache-Control`/`CDN-Cache-Control` headers for hash URLs; GraphQL POST responses are `no-store`.
-
-- Compressed text responses at the origin and added explicit `Cache-Control` / `CDN-Cache-Control` headers for public GET endpoints; documented the required Cloudflare cache rules, bot controls, and path-normalised analytics in `docs/edge-caching.md`.
-
-- Added Redis-backed anonymous rate limits for general, expensive, and bulk routes with fail-open local fallback, `429` responses, and `Retry-After` headers.
-
-- Added an `X-Route-Template` response header so edge and origin analytics can group id-bearing routes such as `/offers/{id}` and `/profiles/{id}`.
-
-- Changed offer list endpoints to return compact offer cards by default; pass `expand=true` to receive the previous full offer documents.
-
-- Added `GET /search/v2/search`, added `facets=minimal|full|none` to search v2 (default `minimal`), reduced facet bucket sizes, and changed the legacy `POST /search` route to return `410 Gone`.
-
-- Capped GraphQL list page sizes, added query depth/alias/size validation, and made introspection opt-in in production via `GRAPHQL_INTROSPECTION=true`.
-
-- Paginated profile achievements, capped seller offer lists by default, removed the multi-region `prices` map from multisearch offer hits, reduced offer suggestions and price-history payloads, and re-enabled the offer overview response cache.
-
-- Extended generated OG image caching with versioned immutable URLs and longer edge TTLs.
-
-- Added an optional private Redis response cache with bounded, fail-open operations while preserving shared OAuth state, saved searches, and achievement refresh coordination on the existing Redis.
-
-- Restored search v2 response cache reads, isolated normalized pagination in cache keys, and kept release-date search keys stable as time advances.
-
-- Added `GET /offers/{id}/requirements` for resolved Windows and macOS technical requirements, including validated DLC inheritance.
-
-- Added PNG and WebP sandbox OG database summaries with offers, items, asset counts, and the sandbox's last update; allowed sandbox OG paths in `robots.txt` and shared the Takumi renderer with offer cards.
-
-- Redesigned offer OG cards as database summaries with regional price, catalog update date, and latest download size; added `GET /offers/{id}/og.webp` alongside the existing PNG route using Takumi rendering, and allowed offer/item OG image paths in `robots.txt`.
-
-- Reorganized the API docs around developer tasks, added request examples and practical route guidance, and redirected retired guide URLs.
-
-- Enforced offer country restrictions before current-price cache reads, omitted unavailable regions from regional pricing, and preserved access to historical observations after current prices are retired.
-
-- Added validated detected-build technology filtering and documented technology facet counts to `POST /search/v2/search`.
-- Routed Epic Store GraphQL profile requests through Node's core HTTP transport with the current Epic Games Launcher identity to avoid Cloudflare challenges against Undici.
-- Routed offer, item, and achievement regeneration requests through the signed Temporal job API while preserving existing public endpoint contracts and achievement cooldowns.
-- Fixed empty changelog searches to return the latest canonical MongoDB records instead of waiting for OpenSearch indexing.
-- Replaced bulk catalog exports with `POST /catalog/hydrate` schema v2, which streams independently bounded, content-aware root graphs directly from authoritative collections for incremental local-first clients.
-- Added idempotent catalog resolver indexes and an explicit confirmation-gated command for removing legacy materialized catalog collections after rollout verification.
-- Added `POST /builds/resolve-launcher-records` for resolving bounded, path-free Windows manifest metadata to normalized Epic Games Launcher records without guessing ambiguous catalog, asset, or parent relationships.
-- Replaced production-captured route snapshots in pull-request CI with deterministic fixture tests and a scheduled public API smoke test that requires no production credentials.
-- Added `priceUpdatedAt` sorting to `POST /search/v2/search` for ordering offers by the selected region's latest price update.
-- Added `expiryDate` to the GraphQL `Offer` schema.
-- Added `GET /builds/{id}/tree` for lazily expanding build manifest directories with recursive directory file and byte totals.
-- Fixed build snapshot comparisons and file queries to use the legacy and verified manifest path indexes instead of scanning all files by path.
-- Added verified build-manifest history and file comparison endpoints, sanitized build responses, bounded build query validation, and correct historical size fallbacks.
-- Hardened build comparisons with Mongo-compatible path ordering, bounded offsets, consistent sanitized Build DTOs, aggregated install options, and exact OpenAPI response contracts.
-- Added `POST /search/natural-language` to rank offer vectors with Cloudflare Workers AI and Vectorize, then hydrate the matching offer documents from MongoDB.
-- Added public cache headers to sandbox offer list responses so edge caches can absorb repeated crawler traffic.
-- Updated Aikido Zen firewall to 1.8.29 and preloaded instrumentation for native ESM server startup.
-- Added anonymous Aikido user and rate-limit grouping from Cloudflare client IP and User-Agent fingerprints.
-- Sanitized Epic Store GraphQL upstream error logging, detected Cloudflare challenge responses, and sent consistent Epic Store request headers for profile lookups.
-- Switched the Google deployment Dockerfile from Bun to Node.js 26 with direct pnpm installation and noninteractive frozen builds for production runtime alignment.
-- Added a PowerShell helper script for quoting dotenv values before pasting them into deployment environments.
-- Made OpenSearch client configuration lazy and added clear errors for missing, blank, or partial credentials.
-- Reduced normal request-path logging volume, removed offer RAM usage logs, and added debug-level request logging with Cloudflare location headers.
-- Decoupled production deployment from the live MongoDB integration job while keeping build, docs, and release checks as deploy gates.
-- Increased the route snapshot test setup timeout to reduce CI failures during slow live MongoDB connections.
-- Removed Redis caching from sitemap XML responses to avoid storing large generated sitemap payloads in Redis.
-- Reduced public sitemap crawl fan-out by publishing canonical offer and item URLs instead of every localized or section URL.
-- Removed volatile sitemap index timestamps so sitemap responses remain stable and edge-cacheable.
-- Added `locale` overlays for REST and GraphQL offer DTO responses, including exact-locale fallback metadata.
-- Normalized free-game promotion responses so `countriesBlacklist`, `giveaway.offerId`, and `giveaway.platform` keep a stable shape.
-- Documented changelog context/search enrichment fields and made changelist list context enrichment use the shared safe resolver.
-- Fixed changelog search responses to hydrate old/new change values and made changelist detail context enrichment more resilient.
-- Added a public GraphQL `profile(id)` query for profile identity, highlights, featured games, achievements, and recent activity.
-- Fixed GraphQL profile achievements to read Epic unlocked achievement names, descriptions, and icon links from stored achievement metadata.
-- Added a GraphQL `sandboxHub` query that aggregates sandbox product data for user-facing product pages.
-- Added CodeRabbit configuration to enforce changelog updates and docs/OpenAPI coverage for public endpoint structure changes.
-- Tightened the release policy so user-facing and maintainer-facing changes require `CHANGELOG.md` entries.
-- Added an API-owned OpenAPI contract for the first public REST documentation slice.
-- Added an in-repo Fumadocs docs app scaffold under `apps/docs`.
-- Added OpenAPI, route coverage, README command, and lightweight release policy checks.
+Earlier notes are preserved verbatim in [the historical archive](changes/archive/undated.md). They have no inferred dates or endpoint mappings and never generate personalized alerts.

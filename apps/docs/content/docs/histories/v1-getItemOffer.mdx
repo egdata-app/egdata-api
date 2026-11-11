@@ -1,0 +1,17 @@
+---
+title: v1 getItemOffer
+description: History for GET /v1/items/{id}/offer
+---
+
+`GET /v1/items/{id}/offer` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/items/&#123;id&#125;/offer** (getItemOffer; added; compatible)
+  - Before: GET /v1/items/&#123;id&#125;/offer was not available in the versioned API.
+  - After: Get the current base-game offer for an item. Selects the current base-game offer for the item, preferring offers that are not pre-purchases, and returns it with the current regional price. Offers are filtered by country eligibility before selection. Response media: application/json. Requires an API key with items:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

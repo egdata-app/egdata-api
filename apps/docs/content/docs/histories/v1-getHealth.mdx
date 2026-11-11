@@ -1,0 +1,28 @@
+---
+title: v1 getHealth
+description: History for GET /v1/health
+---
+
+`GET /v1/health` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Preserve public v1 metadata responses through the Worker
+
+Record: [public-v1-metadata-response](https://github.com/egdata-app/egdata-api/blob/main/changes/records/public-v1-metadata-response.json).
+
+- **v1 GET /v1/health** (getHealth; fixed; compatible)
+  - Before: The Worker could throw while modifying immutable upstream response headers, returning HTTP 500 instead of forwarding the health response.
+  - After: The Worker clones the response before applying its existing headers, preserving the upstream health status and streaming body. Public authentication and quota behavior are unchanged.
+  - Client action: None
+
+Verification: dashboard/tests/v1-gateway.test.ts; pnpm dashboard:test; pnpm openapi:check.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/health** (getHealth; added; compatible)
+  - Before: GET /v1/health was not available in the versioned API.
+  - After: Service health. Reports Redis and MongoDB connectivity. This endpoint is public and does not require an API key. Response media: application/json. Public metadata operation; no API key required.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

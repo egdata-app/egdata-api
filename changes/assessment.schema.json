@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["baseCommit", "diffHash", "operations", "unknownFiles"],
+  "properties": {
+    "baseCommit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "diffHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "operations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["endpoint", "impact", "reason", "records"],
+        "properties": {
+          "endpoint": { "type": "string", "minLength": 4 },
+          "impact": { "enum": ["public", "none"] },
+          "reason": { "type": "string", "minLength": 20 },
+          "records": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "unknownFiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["file", "reason", "endpoints"],
+        "properties": {
+          "file": { "type": "string", "minLength": 1 },
+          "reason": { "type": "string", "minLength": 20 },
+          "endpoints": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 4 }
+          }
+        }
+      }
+    }
+  }
+}

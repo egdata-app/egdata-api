@@ -1,0 +1,17 @@
+---
+title: v1 getPromotionCover
+description: History for GET /v1/promotions/{id}/cover
+---
+
+`GET /v1/promotions/{id}/cover` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/promotions/&#123;id&#125;/cover** (getPromotionCover; added; compatible)
+  - Before: GET /v1/promotions/&#123;id&#125;/cover was not available in the versioned API.
+  - After: Promotion cover offer. Returns the localized base-game offer from the first namespace referenced by the promotion. This is the offer metadata the legacy endpoint returned; it is not a rendered image. OG image routes remain outside v1. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

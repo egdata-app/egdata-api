@@ -1,0 +1,195 @@
+import { describe, expect, it, vi, afterEach } from "vitest";
+import {
+  executeOperation,
+  executable,
+  redactedSnippet,
+  requestUrl,
+  safeDocument,
+  operationReference,
+  type Operation,
+} from "../src/lib/explorer";
+
+const op: Operation = {
+  operationId: "getOffer",
+  method: "GET",
+  path: "/v1/offers/{id}",
+  operation: { operationId: "getOffer", responses: {} },
+};
+
+afterEach(() => vi.unstubAllGlobals());
+
+describe("fixed gateway request console", () => {
+  it("keeps build-only or removed operations read-only when deployment differs", () => {
+    const snapshot = safeDocument({
+      openapi: "3.0.3",
+      paths: {
+        [op.path]: { get: op.operation },
+      },
+    });
+    expect(
+      operationReference(op.operationId, null, snapshot).deployed,
+    ).toBeUndefined();
+    expect(
+      operationReference(op.operationId, null, snapshot).reference?.operationId,
+    ).toBe(op.operationId);
+    const deployed = safeDocument({ openapi: "3.0.3", paths: {} });
+    expect(
+      operationReference(op.operationId, deployed, snapshot).deployed,
+    ).toBeUndefined();
+    expect(
+      operationReference(op.operationId, snapshot, deployed).deployed
+        ?.operationId,
+    ).toBe(op.operationId);
+    expect(
+      executable({ ...op, path: "/v1/health", operationId: "unknown" }),
+    ).toBe(false);
+    expect(
+      executable({
+        ...op,
+        path: "/v1/health",
+        operationId: "getHealth",
+        method: "POST",
+      }),
+    ).toBe(false);
+  });
+  it("allows only registered v1 operations and blocks path/host injection", () => {
+    expect(requestUrl(op, { id: "abc" }, { country: "US" })).toBe(
+      "/proxy/v1/offers/abc?country=US",
+    );
+    for (const id of [
+      "../health",
+      "a/b",
+      "%2Fhealth",
+      "..",
+      "x?secret=y",
+      "x\\y",
+    ]) {
+      expect(() => requestUrl(op, { id }, {})).toThrow();
+    }
+    expect(
+      executable({ ...op, path: "https://evil.example/v1/offers/{id}" }),
+    ).toBe(false);
+    expect(() =>
+      requestUrl({ ...op, operationId: "removedOperation" }, { id: "abc" }, {}),
+    ).toThrow();
+  });
+  it("removes server overrides and rejects external schema references", () => {
+    const doc = safeDocument({
+      openapi: "3.0.3",
+      info: { title: "API", version: "1" },
+      servers: [{ url: "https://evil.example" }],
+      paths: {
+        "/v1/offers": {
+          servers: [{ url: "https://evil.example" }],
+          get: { operationId: "listOffers", responses: {} },
+        },
+        "/legacy": { get: {} },
+      },
+    });
+    expect(doc.servers).toEqual([
+      { url: "/proxy", description: "Same-origin v1 gateway" },
+    ]);
+    expect(doc.paths["/v1/offers"]?.servers).toBeUndefined();
+    expect(doc.paths["/legacy"]).toBeUndefined();
+    expect(() =>
+      safeDocument({
+        ...doc,
+        components: {
+          schemas: { Bad: { $ref: "https://evil.example/schema" } },
+        },
+      }),
+    ).toThrow("External");
+  });
+  it("sends credentials only to the proxy and redacts echoed keys and snippets", async () => {
+    vi.stubGlobal("location", { origin: "https://devs.egdata.app" });
+    const fetcher = vi.fn(
+      async (_url: string, _init?: RequestInit) =>
+        new Response(JSON.stringify({ echo: "private_key" }), {
+          status: 403,
+          headers: {
+            "Content-Type": "application/problem+json",
+            "X-API-Key": "private_key",
+          },
+        }),
+    );
+    vi.stubGlobal("fetch", fetcher);
+    const result = await executeOperation(
+      op,
+      "private_key",
+      { id: "abc" },
+      {},
+      "",
+      new AbortController().signal,
+    );
+    expect(fetcher.mock.calls[0][0]).toBe("/proxy/v1/offers/abc");
+    expect(result.status).toBe(403);
+    expect(result.kind).toBe("json");
+    expect(result.text).toContain("[REDACTED]");
+    expect(JSON.stringify(result)).not.toContain("private_key");
+    expect(redactedSnippet(op)).toContain("<YOUR_API_KEY>");
+    expect(redactedSnippet(op)).not.toContain("\n+");
+    const init = (fetcher.mock.calls[0] as unknown as [string, RequestInit])[1];
+    expect(init.credentials).toBe("omit");
+    expect(init.redirect).toBe("manual");
+  });
+  it("preserves XML, images and native binary responses", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () =>
+          new Response("<xml/>", {
+            headers: { "Content-Type": "application/xml" },
+          }),
+      ),
+    );
+    expect(
+      (
+        await executeOperation(
+          op,
+          "",
+          { id: "x" },
+          {},
+          "",
+          new AbortController().signal,
+        )
+      ).kind,
+    ).toBe("text");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () =>
+          new Response(new Uint8Array([0, 1, 2]), {
+            headers: { "Content-Type": "image/png" },
+          }),
+      ),
+    );
+    expect(
+      (
+        await executeOperation(
+          op,
+          "",
+          { id: "x" },
+          {},
+          "",
+          new AbortController().signal,
+        )
+      ).kind,
+    ).toBe("image");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response(new Uint8Array([0, 1, 2]))),
+    );
+    expect(
+      (
+        await executeOperation(
+          op,
+          "",
+          { id: "x" },
+          {},
+          "",
+          new AbortController().signal,
+        )
+      ).kind,
+    ).toBe("binary");
+  });
+});

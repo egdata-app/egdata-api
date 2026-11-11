@@ -1,0 +1,88 @@
+import { countryParameter, defineOperations } from "../route-types.js";
+
+export const statsOperations = defineOperations([
+  {
+    operationId: "getStats",
+    method: "GET",
+    path: "/v1/stats",
+    summary: "Catalog totals",
+    description:
+      "Returns total document counts for offers, items, tags, assets, price-engine rows, changelogs, sandboxes, and products, plus the number of offers and items created in the current year. Counts are cached for one hour.",
+    tags: ["Stats"],
+    scope: "stats:read",
+    auth: "key",
+    responseKind: "json",
+    parameters: [],
+    legacy: ["/stats"],
+  },
+  {
+    operationId: "getMonthlyReleaseStats",
+    method: "GET",
+    path: "/v1/stats/releases/monthly",
+    summary: "Monthly base-game releases",
+    description:
+      "Returns the number of base-game releases per month since the Epic Games Store launch in December 2018. Pre-purchases and code-redemption-only offers are excluded. Results are cached for one day.",
+    tags: ["Stats"],
+    scope: "stats:read",
+    auth: "key",
+    responseKind: "json",
+    parameters: [],
+    legacy: ["/stats/releases/monthly"],
+  },
+  {
+    operationId: "getYearlyReleaseStats",
+    method: "GET",
+    path: "/v1/stats/releases/yearly",
+    summary: "Yearly base-game releases",
+    description:
+      "Returns the number of base-game releases per year since the Epic Games Store launch in December 2018. Pre-purchases and code-redemption-only offers are excluded. Results are cached for one day.",
+    tags: ["Stats"],
+    scope: "stats:read",
+    auth: "key",
+    responseKind: "json",
+    parameters: [],
+    legacy: ["/stats/releases/yearly"],
+  },
+  {
+    operationId: "getMonthlyCreationStats",
+    method: "GET",
+    path: "/v1/stats/creations/monthly",
+    summary: "Monthly base-game creations",
+    description:
+      "Returns the number of base-game offers created per month since December 2018. Pre-purchases and code-redemption-only offers are excluded. Results are cached for one day.",
+    tags: ["Stats"],
+    scope: "stats:read",
+    auth: "key",
+    responseKind: "json",
+    parameters: [],
+    legacy: ["/stats/creations/monthly"],
+  },
+  {
+    operationId: "getYearlyCreationStats",
+    method: "GET",
+    path: "/v1/stats/creations/yearly",
+    summary: "Yearly base-game creations",
+    description:
+      "Returns the number of base-game offers created per year since December 2018. Pre-purchases and code-redemption-only offers are excluded. Results are cached for one day.",
+    tags: ["Stats"],
+    scope: "stats:read",
+    auth: "key",
+    responseKind: "json",
+    parameters: [],
+    legacy: ["/stats/creations/yearly"],
+  },
+  {
+    operationId: "getHomepageStats",
+    method: "GET",
+    path: "/v1/stats/homepage",
+    summary: "Homepage counters",
+    description:
+      "Returns the counters shown on the egdata homepage: tracked offers, price changes observed in the last 72 hours, active discounts, and current giveaways. Counts are resolved for the Epic pricing region that contains `country`. Cookies are never used; `country` defaults to US.",
+    tags: ["Stats"],
+    scope: "stats:read",
+    auth: "key",
+    responseKind: "json",
+    parameters: [countryParameter()],
+    legacy: ["/stats/homepage"],
+  },
+] as const);

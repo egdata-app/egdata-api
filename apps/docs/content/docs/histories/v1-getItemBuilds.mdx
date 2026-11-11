@@ -1,0 +1,17 @@
+---
+title: v1 getItemBuilds
+description: History for GET /v1/items/{id}/builds
+---
+
+`GET /v1/items/{id}/builds` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/items/&#123;id&#125;/builds** (getItemBuilds; added; compatible)
+  - Before: GET /v1/items/&#123;id&#125;/builds was not available in the versioned API.
+  - After: List item builds. Returns build summaries for every app referenced by the item's release info, including manifest status, platform, and size metadata. Response media: application/json. Requires an API key with items:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

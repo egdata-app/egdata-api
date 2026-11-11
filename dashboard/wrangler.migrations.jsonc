@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Remote D1 commands require an ID; deployment deliberately inherits DB.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "egdata-dashboard-db",
+      "database_id": "c0ea5b25-0361-4487-95cc-58803bdeb22d",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

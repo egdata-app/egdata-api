@@ -1,11 +1,17 @@
 ## Summary
 
+## Public impact
 
-## API / Docs Checklist
+- Change record IDs (public behavior changes):
+- Impact assessment file (API/gateway/shared code, including no-impact changes):
+- Explain preserved behavior where assessed as no impact:
 
-- [ ] `CHANGELOG.md` updated under `Unreleased` for this change.
-- [ ] Public endpoint structure changed: `apps/docs/` updated.
-- [ ] Public endpoint structure changed: OpenAPI updated with request, response, auth, and visibility metadata.
-- [ ] Contract snapshots or route coverage updated when public routes changed.
-- [ ] Not applicable: this PR has no public API or docs impact.
+## Validation
 
+- [ ] Every candidate operation is classified; unknown files are explicitly mapped.
+- [ ] Structural changes update OpenAPI and public docs; all shared schema consumers are covered.
+- [ ] Breaking changes include concrete migration instructions.
+- [ ] OpenAPI, generated histories, docs, and `pnpm release:check --base <base-ref>` pass.
+- [ ] Merged records and immutable endpoint identities are preserved.
+
+Documentation-only and unrelated maintenance do not need public entries. Behavior-only changes require author assessment and reviewer verification.

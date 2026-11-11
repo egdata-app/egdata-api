@@ -1,0 +1,122 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "egdata-dashboard",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-05-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "upload_source_maps": true,
+  "placement": { "mode": "off" },
+  "workers_dev": true,
+  "preview_urls": false,
+  // Dashboard only. Add api.egdata.app/* after an explicit production cutover.
+  "routes": [{ "pattern": "devs.egdata.app", "custom_domain": true }],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "assets": {
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "egdata-dashboard-db",
+      // Resolve by name so deployments inherit the existing DB binding.
+      // An explicit database_id forces regeneration, which can fail with 10021.
+      "migrations_dir": "migrations"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "API_KEY_RATE_LIMITER",
+        "class_name": "ApiKeyRateLimiter"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1-api-key-quota",
+      "new_sqlite_classes": ["ApiKeyRateLimiter"]
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "API_KEYS_KV",
+      "id": "5354a70218264bb4b418e24037318909"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "RATE_LIMITER_FREE",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 120,
+        "period": 60
+      }
+    },
+    {
+      "name": "RATE_LIMITER_PRO",
+      "namespace_id": "1002",
+      "simple": {
+        "limit": 1200,
+        "period": 60
+      }
+    },
+    {
+      "name": "RATE_LIMITER_ENTERPRISE",
+      "namespace_id": "1003",
+      "simple": {
+        "limit": 6000,
+        "period": 60
+      }
+    }
+  ],
+  "analytics_engine_datasets": [
+    {
+      "binding": "ANALYTICS",
+      "dataset": "egdata_api_usage"
+    }
+  ],
+  "send_email": [
+    {
+      "name": "EMAIL"
+    }
+  ],
+  "queues": {
+    "producers": [
+      { "binding": "ENDPOINT_USAGE_QUEUE", "queue": "egdata-endpoint-usage" }
+    ],
+    "consumers": [
+      {
+        "queue": "egdata-endpoint-usage",
+        "max_batch_size": 50,
+        "max_batch_timeout": 10,
+        "max_retries": 8,
+        "dead_letter_queue": "egdata-endpoint-usage-dead"
+      },
+      {
+        "queue": "egdata-endpoint-usage-dead",
+        "max_batch_size": 50,
+        "max_batch_timeout": 30,
+        "max_retries": 8
+      }
+    ]
+  },
+  "triggers": { "crons": ["17 3 * * *"] },
+  "vars": {
+    "USAGE_TRACKING_ENABLED": "true",
+    "USAGE_TRACKING_STARTED_AT": "2026-11-11T13:47:54.991Z",
+    "UPSTREAM_API_ORIGIN": "https://origin-api.egdata.app",
+    "API_PROXY_HOST": "api.egdata.app",
+    "DASHBOARD_ORIGIN": "https://devs.egdata.app",
+    "ADMIN_EMAIL": "admin@egdata.app",
+    "EMAIL_FROM_ADDRESS": "noreply@egdata.app",
+    "EMAIL_FROM_NAME": "egdata Developer Portal",
+    "REQUIRE_API_KEY": "false",
+    "ALLOW_FIRST_PARTY_ORIGINS": "https://egdata.app",
+    "RATE_LIMIT_ENVIRONMENT": "staging"
+  }
+}

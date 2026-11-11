@@ -1,0 +1,19 @@
+{
+  "dashboard/worker/proxy.ts": ["legacy", "v1"],
+  "dashboard/worker/v1.ts": ["v1"],
+  "dashboard/worker/upstream.ts": ["legacy", "v1"],
+  "dashboard/worker/rate-limiter.ts": ["v1"],
+  "dashboard/worker/rate-limiter-core.ts": ["v1"],
+  "dashboard/worker/permissions.ts": ["legacy", "v1"],
+  "dashboard/worker/key-cache.ts": ["legacy", "v1"],
+  "dashboard/worker/types.ts": ["legacy", "v1"],
+  "dashboard/worker/index.ts": ["legacy", "v1"],
+  "dashboard/worker/v1-routes.ts": ["v1"],
+  "dashboard/worker/v1-routes.generated.ts": ["v1"],
+  "dashboard/wrangler.jsonc": ["legacy", "v1"],
+  "package.json": ["legacy", "v1"],
+  "dashboard/package.json": ["legacy", "v1"],
+  "pnpm-lock.yaml": ["legacy", "v1"],
+  "pnpm-workspace.yaml": ["legacy", "v1"],
+  "Dockerfile": ["legacy", "v1"]
+}

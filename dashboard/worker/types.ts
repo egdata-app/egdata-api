@@ -1,0 +1,109 @@
+export type ApiKeyTier = "free" | "pro" | "enterprise";
+
+export const API_SCOPES = [
+  "catalog:read",
+  "offers:read",
+  "items:read",
+  "search:read",
+  "graphql:read",
+  "profiles:read",
+  "stats:read",
+  "builds:read",
+] as const;
+
+export type ApiScope = (typeof API_SCOPES)[number];
+
+export const HTTP_METHODS = ["GET", "HEAD", "POST"] as const;
+
+export type AllowedHttpMethod = (typeof HTTP_METHODS)[number];
+
+export interface CachedKeyMetadata {
+  keyId: string;
+  projectId: string;
+  ownerEpicId: string;
+  name: string;
+  tier: ApiKeyTier;
+  active: boolean;
+  scopes: ApiScope[];
+  allowedIps: string[];
+  allowedOrigins: string[];
+  allowedPaths: string[];
+  allowedMethods: AllowedHttpMethod[];
+  customRpm: number | null;
+  expiresAt: string | null;
+}
+
+export interface EpicSessionUser {
+  epicAccountId: string;
+  displayName: string;
+  avatarUrl: string;
+  preferredLanguage?: string;
+  email?: string;
+}
+
+export interface DashboardProject {
+  id: string;
+  ownerEpicId: string;
+  name: string;
+  slug: string;
+  description: string;
+  websiteUrl: string;
+  tier: ApiKeyTier;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DashboardApiKey {
+  id: string;
+  projectId: string;
+  ownerEpicId: string;
+  name: string;
+  keyPrefix: string;
+  tier: ApiKeyTier;
+  active: boolean;
+  scopes: ApiScope[];
+  allowedIps: string[];
+  allowedOrigins: string[];
+  allowedPaths: string[];
+  allowedMethods: AllowedHttpMethod[];
+  customRpm: number | null;
+  expiresAt: string | null;
+  lastUsedAt: string | null;
+  revokedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LimitIncreaseRequestRecord {
+  id: string;
+  ownerEpicId: string;
+  projectId: string;
+  projectName?: string;
+  contactEmail: string;
+  requestedTier: "pro" | "enterprise" | "custom";
+  requestedRpm: number;
+  expectedMonthlyRequests: number;
+  useCase: string;
+  websiteUrl: string;
+  status: "pending" | "approved" | "declined";
+  emailDeliveryStatus: string;
+  createdAt: string;
+}
+
+export interface DashboardEnv extends Env {
+  EPIC_CLIENT_ID?: string;
+  EPIC_CLIENT_SECRET?: string;
+  DASHBOARD_SESSION_SECRET?: string;
+  CF_ACCOUNT_ID?: string;
+  CF_ANALYTICS_API_TOKEN?: string;
+  ANTI_ABUSE_EDGE_SECRET?: string;
+  ORIGIN_AUTH_TOKEN?: string;
+  ENABLE_DEV_AUTH?: string;
+  /** One SQLite-backed quota object per environment and internal key ID. */
+  API_KEY_RATE_LIMITER: DurableObjectNamespace<
+    import("./rate-limiter.js").ApiKeyRateLimiter
+  >;
+  /** Prevents counter sharing between independently deployed environments. */
+  RATE_LIMIT_ENVIRONMENT: string;
+  CHANGELOG_INGEST_TOKEN?: string;
+}

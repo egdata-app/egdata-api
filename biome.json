@@ -18,6 +18,11 @@
     "formatWithErrors": false,
     "indentStyle": "space"
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "files": {
     "includes": [
       "**",
@@ -26,7 +31,13 @@
       "!apps/docs/.tanstack",
       "!apps/docs/.wrangler",
       "!apps/docs/dist",
-      "!apps/docs/routeTree.gen.ts"
+      "!apps/docs/routeTree.gen.ts",
+      "!dashboard/.tanstack",
+      "!dashboard/.wrangler",
+      "!dashboard/dist",
+      "!dashboard/src/routeTree.gen.ts",
+      "!dashboard/worker-configuration.d.ts",
+      "!dashboard/worker/v1-routes.generated.ts"
     ]
   }
 }

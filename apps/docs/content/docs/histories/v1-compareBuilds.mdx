@@ -1,0 +1,17 @@
+---
+title: v1 compareBuilds
+description: History for GET /v1/builds/{targetId}/compare/{baseId}
+---
+
+`GET /v1/builds/{targetId}/compare/{baseId}` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125;** (compareBuilds; added; compatible)
+  - Before: GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125; was not available in the versioned API.
+  - After: Compare two stored build snapshots. Compares immutable file snapshots by full path, ordered by `fileName` in the requested direction with an opaque `fileName` cursor. Responding requires streaming both stored snapshots so the summary, top files, and top directories are complete; the page size is bounded, the scan is not. Full-download deltas are not patch-download estimates. Response media: application/json. Requires an API key with builds:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

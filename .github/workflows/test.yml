@@ -5,13 +5,20 @@ on:
     types: [opened, synchronize, reopened, labeled, unlabeled]
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy_production:
+        description: "Deploy the production API after all checks pass (main only)"
+        type: boolean
+        required: true
+        default: false
 
 permissions:
   contents: read
 
 concurrency:
   group: test-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   lint-typecheck-build:
@@ -20,6 +27,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - uses: pnpm/action-setup@v4
 
@@ -54,36 +62,67 @@ jobs:
           pnpm readme:check
 
       - name: Release policy check
-        run: pnpm release:check
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE: ${{ github.event.before }}
+        run: |
+          BASE="${PR_BASE:-$PUSH_BASE}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Main's changes already passed the PR/push coverage check. Revalidate
+            # current records and generated output without inventing a PR base.
+            BASE="$(git rev-parse HEAD)"
+          fi
+          test -n "$BASE"
+          export CHANGELOG_BASE="$(git merge-base "$BASE" HEAD)"
+          pnpm release:check
 
-  deploy-preview:
+      - name: Dashboard tests and build
+        run: |
+          pnpm dashboard:test
+          pnpm dashboard:build
+
+  publish-changes:
     runs-on: ubuntu-latest
     needs: [lint-typecheck-build]
-    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
-      - name: Trigger api.egdata.app PR deployment
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Publish merged records independently of API deployment
         env:
-          COOLIFY_DEPLOY_URL: ${{ secrets.COOLIFY_DEPLOY_URL }}
-          COOLIFY_DEPLOY_KEY: ${{ secrets.COOLIFY_DEPLOY_KEY }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          if [ -z "$COOLIFY_DEPLOY_URL" ] || [ -z "$COOLIFY_DEPLOY_KEY" ]; then
-            echo "Coolify deploy secrets are missing."
-            exit 1
-          fi
-          curl --fail --show-error --silent --retry 3 -X POST "${COOLIFY_DEPLOY_URL}&pr=${PR_NUMBER}" \
-            -H "Authorization: Bearer ${COOLIFY_DEPLOY_KEY}"
+          PUBLICATION_BASE: ${{ github.event.before }}
+          CHANGELOG_INGEST_URL: ${{ vars.CHANGELOG_INGEST_URL }}
+          CHANGELOG_INGEST_TOKEN: ${{ secrets.CHANGELOG_INGEST_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: pnpm exec tsx scripts/publish-changes.ts
 
   deploy-production:
     runs-on: ubuntu-latest
     needs: [lint-typecheck-build]
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    # Never deploy the origin on push/PR. A maintainer must explicitly opt in.
+    if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true }}
     steps:
       - name: Trigger api.egdata.app deployment
         env:
+          GH_TOKEN: ${{ github.token }}
           COOLIFY_DEPLOY_URL: ${{ secrets.COOLIFY_DEPLOY_URL }}
           COOLIFY_DEPLOY_KEY: ${{ secrets.COOLIFY_DEPLOY_KEY }}
         run: |
+          CURRENT_MAIN="$(gh api "repos/${{ github.repository }}/git/ref/heads/main" --jq '.object.sha')"
+          if [ "$CURRENT_MAIN" != "${{ github.sha }}" ]; then
+            echo "Main changed during validation. Run the workflow again before deploying."
+            exit 1
+          fi
           if [ -z "$COOLIFY_DEPLOY_URL" ] || [ -z "$COOLIFY_DEPLOY_KEY" ]; then
             echo "Coolify deploy secrets are missing."
             exit 1

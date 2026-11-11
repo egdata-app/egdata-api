@@ -1,0 +1,17 @@
+---
+title: v1 getBuildHistory
+description: History for GET /v1/builds/{id}/history
+---
+
+`GET /v1/builds/{id}/history` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/builds/&#123;id&#125;/history** (getBuildHistory; added; compatible)
+  - Before: GET /v1/builds/&#123;id&#125;/history was not available in the versioned API.
+  - After: List comparison candidates for a build. Returns chronological observations for the same label stream or platform as the build, ordered by `firstSeenAt` descending, `createdAt` descending, and `_id` descending. Each entry reports whether it has a comparable stored snapshot and whether it belongs to the same stream; `meta.previousComparableBuildId` identifies the previous comparable snapshot. Response media: application/json. Requires an API key with builds:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.
