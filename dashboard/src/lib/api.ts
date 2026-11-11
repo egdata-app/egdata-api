@@ -20,6 +20,7 @@ export type {
 
 export interface SessionResponse {
   authenticated: boolean;
+  isAdmin: boolean;
   user: EpicSessionUser | null;
   projects: DashboardProject[];
   oauthConfigured: boolean;
@@ -129,6 +130,27 @@ export const dashboardClient = {
 
   getLimitRequests: () =>
     apiFetch<{ requests: LimitIncreaseRequestRecord[] }>("/limit-requests"),
+
+  getAdminLimitRequests: (
+    status: LimitIncreaseRequestRecord["status"],
+    offset = 0,
+  ) =>
+    apiFetch<{ requests: LimitIncreaseRequestRecord[]; hasMore: boolean }>(
+      `/admin/limit-requests?status=${status}&offset=${offset}`,
+    ),
+
+  reviewLimitRequest: (
+    id: string,
+    decision: "approved" | "declined",
+    note: string,
+  ) =>
+    apiFetch<{
+      request: LimitIncreaseRequestRecord;
+      quotaPropagationSeconds: number;
+    }>(`/admin/limit-requests/${encodeURIComponent(id)}/review`, {
+      method: "POST",
+      body: JSON.stringify({ decision, note }),
+    }),
 
   submitLimitRequest: (payload: {
     projectId: string;

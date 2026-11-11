@@ -3,6 +3,625 @@ title: Endpoint histories
 description: Dated API behavior changes, independent of deployment.
 ---
 
+## 2026-11-11 — Apply administrator-approved project limits to API keys and console sessions
+
+Record: [admin-reviewed-project-limits](https://github.com/egdata-app/egdata-api/blob/main/changes/records/admin-reviewed-project-limits.json).
+
+- **v1 GET /v1/autocomplete** (autocomplete; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 POST /v1/offers/exists** (checkOfferExistence; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 POST /v1/offers/slugs** (checkOfferSlugs; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125;** (compareBuilds; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/assets/&#123;id&#125;** (getAsset; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/base-game/&#123;namespace&#125;** (getBaseGame; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;** (getBuild; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/history** (getBuildHistory; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/install-options** (getBuildInstallOptions; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/tree** (getBuildTree; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/changelist/&#123;id&#125;** (getChangelogEntry; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;** (getCollection; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;/&#123;week&#125;** (getCollectionWeek; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;/&#123;week&#125;/og** (getCollectionWeekOg; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/featured** (getFeaturedGames; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/franchises/&#123;slug&#125;** (getFranchise; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/free-games/og** (getFreeGamesOg; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/free-games/stats** (getFreeGamesStats; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/game-awards** (getGameAwards; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/game-awards/og** (getGameAwardsOg; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/stats/homepage** (getHomepageStats; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;** (getItem; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/assets** (getItemAssets; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/builds** (getItemBuilds; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/changelog** (getItemChangelog; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/offer** (getItemOffer; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 POST /v1/items/bulk** (getItemsBulk; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/items-sitemap.xml** (getItemsSitemap; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/items/sitemap.xml** (getItemsSitemapAlias; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/latest-games** (getLatestGames; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/stats/creations/monthly** (getMonthlyCreationStats; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/stats/releases/monthly** (getMonthlyReleaseStats; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;** (getOffer; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/achievements** (getOfferAchievements; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/age-rating** (getOfferAgeRating; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/assets** (getOfferAssets; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/builds** (getOfferBuilds; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/bundle** (getOfferBundle; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offer-by-slug/&#123;slug&#125;** (getOfferBySlug; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/changelog/stats** (getOfferChangelogStats; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/collection** (getOfferCollection; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/collections/&#123;collection&#125;** (getOfferCollectionEntry; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/events/&#123;id&#125;** (getOfferEvent; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/features** (getOfferFeatures; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/franchises** (getOfferFranchises; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/genres** (getOfferGenres; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/giveaways** (getOfferGiveaways; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/has-prepurchase** (getOfferHasPrepurchase; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/has-regular** (getOfferHasRegular; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/hltb** (getOfferHltb; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/igdb** (getOfferIgdb; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/items** (getOfferItems; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/mappings** (getOfferMappings; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/media** (getOfferMedia; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/og** (getOfferOg; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/og.webp** (getOfferOgWebp; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/overview** (getOfferOverview; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/polls** (getOfferPolls; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price** (getOfferPrice; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price/fairness** (getOfferPriceFairness; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price-stats** (getOfferPriceStats; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/ratings** (getOfferRatings; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/regional-price** (getOfferRegionalPrice; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/requirements** (getOfferRequirements; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews-summary** (getOfferReviewsSummary; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 POST /v1/items/bulk/offers** (getOffersForItemsBulk; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/suggestions** (getOfferSuggestions; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/technologies** (getOfferTechnologies; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/tops** (getOfferTops; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;** (getProfile; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/achievements/&#123;sandboxId&#125;** (getProfileAchievements; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/information** (getProfileInformation; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/random-game** (getProfileRandomGame; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/rare-achievements/&#123;sandboxId&#125;** (getProfileRareAchievements; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/profiles/sitemap.xml** (getProfilesSitemap; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;/cover** (getPromotionCover; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/promotions-sitemap.xml** (getPromotionsSitemap; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/region** (getRegion; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/related** (getRelatedOffers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/robots.txt** (getRobots; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;** (getSandbox; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/base-game** (getSandboxBaseGame; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/changelog** (getSandboxChangelog; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sandboxes/sitemap.xml** (getSandboxesSitemap; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/og** (getSandboxOg; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/og.webp** (getSandboxOgWebp; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/stats** (getSandboxStats; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/search/&#123;id&#125;** (getSearchQuery; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/search/&#123;id&#125;/count** (getSearchQueryCount; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;/cover** (getSellerCoverOffers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;/stats** (getSellerStats; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sitemap.xml** (getSitemap; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/stats** (getStats; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/open-api.json** (getV1OpenApi; changed; compatible)
+  - Before: The v1 API description did not describe administrator review and inheritance of approved project quotas.
+  - After: The API description documents administrator-reviewed project limits, inheritance by keys and console sessions, and bounded cache propagation.
+  - Client action: None
+- **v1 GET /v1/stats/creations/yearly** (getYearlyCreationStats; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/stats/releases/yearly** (getYearlyReleaseStats; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 POST /v1/catalog/hydrate** (hydrateCatalog; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/active-sales** (listActiveSales; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/files** (listBuildFiles; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/items** (listBuildItems; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/builds** (listBuilds; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/in-bundle** (listBundlesContainingOffer; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/changelist** (listChangelist; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/changelog** (listChangelog; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/countries** (listCountries; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/featured-discounts** (listFeaturedDiscounts; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/free-games** (listFreeGames; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/free-games/sellers** (listFreeGameSellers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/free-games/history** (listFreeGamesHistory; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/items** (listItems; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/items-from-offer/&#123;id&#125;** (listItemsFromOffer; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/latest-achievements** (listLatestAchievements; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/latest-released** (listLatestReleased; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/free-games/mobile** (listMobileFreeGames; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/changelog** (listOfferChangelog; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/events** (listOfferEvents; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/genres** (listOfferGenres; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price-history** (listOfferPriceHistory; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews** (listOfferReviews; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers** (listOffers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/achievements** (listProfileAchievements; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/games** (listProfileGames; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/profiles/leaderboard** (listProfileLeaderboard; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/rare-achievements** (listProfileRareAchievements; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;** (listPromotionOffers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/promotions** (listPromotions; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/regions** (listRegions; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sales** (listSales; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/achievements** (listSandboxAchievements; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/assets** (listSandboxAssets; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/builds** (listSandboxBuilds; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sandboxes** (listSandboxes; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/items** (listSandboxItems; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/offers** (listSandboxOffers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/search/developers** (listSearchDevelopers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/search/offer-types** (listSearchOfferTypes; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/search/publishers** (listSearchPublishers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/search/tags** (listSearchTags; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;** (listSellerOffers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/sellers** (listSellers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/tags** (listTags; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/top-sellers** (listTopSellers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/top-wishlisted** (listTopWishlisted; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/offers/upcoming** (listUpcomingOffers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/multisearch/items** (multisearchItems; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/multisearch/offers** (multisearchOffers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/multisearch/sellers** (multisearchSellers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 POST /v1/search/natural-language** (naturalLanguageSearch; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 POST /v1/builds/resolve-launcher-records** (resolveLauncherRecords; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/search/changelog** (searchChangelog; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/free-games/search** (searchFreeGames; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 GET /v1/search** (searchOffers; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+- **v1 POST /v1/search** (searchOffersRedirect; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+
+Verification: dashboard/tests/limit-reviews.test.ts; dashboard/tests/console-sessions.test.ts; pnpm docs:check.
+
 ## 2026-11-11 — Match static v1 operations before parameter routes
 
 Record: [exact-v1-static-operation-matching](https://github.com/egdata-app/egdata-api/blob/main/changes/records/exact-v1-static-operation-matching.json).

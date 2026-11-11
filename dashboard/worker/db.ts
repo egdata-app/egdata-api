@@ -150,7 +150,7 @@ export async function listUserProjects(
 ): Promise<DashboardProject[]> {
   const { results } = await db
     .prepare(
-      `SELECT id, owner_epic_id, name, slug, description, website_url, tier, created_at, updated_at
+      `SELECT id, owner_epic_id, name, slug, description, website_url, tier, custom_rpm, created_at, updated_at
        FROM projects WHERE owner_epic_id = ? ORDER BY created_at ASC`,
     )
     .bind(ownerEpicId)
@@ -162,6 +162,7 @@ export async function listUserProjects(
       description: string;
       website_url: string;
       tier: ApiKeyTier;
+      custom_rpm: number | null;
       created_at: string;
       updated_at: string;
     }>();
@@ -174,6 +175,7 @@ export async function listUserProjects(
     description: r.description,
     websiteUrl: r.website_url,
     tier: r.tier,
+    customRpm: r.custom_rpm,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
   }));
@@ -216,6 +218,7 @@ export async function createProject(
     description: input.description,
     websiteUrl: input.websiteUrl,
     tier: "free",
+    customRpm: null,
     createdAt: now,
     updatedAt: now,
   };
@@ -300,7 +303,6 @@ export async function insertApiKey(
     name: string;
     keyPrefix: string;
     keyHash: string;
-    tier: ApiKeyTier;
     scopes: ApiScope[];
     allowedIps: string[];
     allowedOrigins: string[];
@@ -315,17 +317,15 @@ export async function insertApiKey(
       `INSERT INTO api_keys (
         id, project_id, owner_epic_id, name, key_prefix, key_hash, tier, active,
         scopes_json, allowed_ips_json, allowed_origins_json, allowed_paths_json, allowed_methods_json,
-        expires_at, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        expires_at, created_at, updated_at, custom_rpm
+      ) SELECT ?, p.id, p.owner_epic_id, ?, ?, ?, p.tier, 1, ?, ?, ?, ?, ?, ?, ?, ?, p.custom_rpm
+        FROM projects p WHERE p.id=? AND p.owner_epic_id=?`,
     )
     .bind(
       input.id,
-      input.projectId,
-      input.ownerEpicId,
       input.name,
       input.keyPrefix,
       input.keyHash,
-      input.tier,
       JSON.stringify(input.scopes),
       JSON.stringify(input.allowedIps),
       JSON.stringify(input.allowedOrigins),
@@ -334,6 +334,8 @@ export async function insertApiKey(
       input.expiresAt,
       now,
       now,
+      input.projectId,
+      input.ownerEpicId,
     )
     .run();
 
@@ -548,6 +550,9 @@ export async function listUserLimitRequests(
       status: "pending" | "approved" | "declined";
       email_delivery_status: string;
       created_at: string;
+      reviewed_by: string | null;
+      reviewed_at: string | null;
+      review_note: string;
     }>();
 
   return results.map((r) => ({
@@ -564,5 +569,8 @@ export async function listUserLimitRequests(
     status: r.status,
     emailDeliveryStatus: r.email_delivery_status,
     createdAt: r.created_at,
+    reviewedBy: r.reviewed_by,
+    reviewedAt: r.reviewed_at,
+    reviewNote: r.review_note,
   }));
 }

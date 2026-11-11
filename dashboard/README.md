@@ -10,7 +10,58 @@ Cloudflare Worker full-stack project implementing:
    - Enforces per-key legacy rate limits (`120` / `1,200` / `6,000` RPM) in-memory at each Cloudflare PoP via **Workers Rate Limiting bindings**. Version 1 uses exact global quotas in a SQLite-backed `ApiKeyRateLimiter` Durable Object instead: one RPC per request combines the global and any expensive-operation policy, one state row is written only on admission, and over-limit requests return Problem Details before the VM. The immutable object namespace is selected per `RATE_LIMIT_ENVIRONMENT` and internal key ID; never use the raw key as the object name.
    - Forwards the full path and query to the dedicated HTTPS origin with a private origin token, strips client API keys, preserves user JWTs and conditional requests, and streams bodies without buffering. CDN caching requires explicit configuration; stripping API keys alone does not enable caching.
    - Records `0ms` fire-and-forget telemetry to **Workers Analytics Engine** (`egdata_api_usage`).
-4. **Rate Limit Upgrade Requests via Cloudflare Email Service** (`env.EMAIL.send` binding).
+4. **Rate Limit Upgrade Requests** with email notifications and an administrator review queue.
+
+## Administrator roles and request reviews
+
+Apply `0004_limit_request_reviews.sql` before deploying this Worker/UI. It adds
+`user_roles(user_id, role, created_at)` alongside the existing `users` table,
+project-level custom RPM, and request review audit fields. The migration grants
+`admin` to existing Epic account `ac7b3a70e3ce4652b49c38e648001d9e`.
+It does not create a synthetic user. In a fresh database, sign in first and then
+insert the role for that exact account ID. Users without a role remain ordinary
+developers; email addresses, display names, and cookie role claims never grant
+administrator access. Roles are checked in D1 on every admin request.
+
+```sql
+-- Grant only after verifying the intended user's Epic account ID.
+INSERT INTO user_roles(user_id, role) VALUES ('<epic-account-id>', 'admin');
+-- Revoke without waiting for the user's session to expire.
+DELETE FROM user_roles WHERE user_id='<epic-account-id>' AND role='admin';
+```
+
+Admins see **Review limit requests** on **Rate Limits**, across all projects.
+The queue has Pending / Approved / Declined filters, 25-request pages, request
+details, and an explicit confirmation with an optional note visible to the
+requester. Approval applies the requested RPM to existing non-revoked keys and
+to future keys; custom requests use the enterprise tier plus the exact custom
+RPM. The API console reads the project's current limit on each request. Legacy
+gateway traffic continues to use tier defaults, and expensive v1 policy caps
+remain unchanged. Declining leaves quotas unchanged.
+
+The decision, reviewer ID, timestamp, note, project quota, and existing key
+quotas are committed in one D1 transaction. A second decision returns 409.
+Cache invalidation follows the commit; existing keys can take up to five minutes
+to refresh even if KV invalidation fails. Request admission and review never
+reset quota counters. The review flow sends no additional emails.
+
+Private session-authenticated endpoints (not part of the public API contract):
+
+- `GET /_dashboard/api/auth/session` includes `isAdmin` and project `customRpm`.
+- `GET /_dashboard/api/admin/limit-requests?status=pending&offset=0` returns
+  `{ requests, hasMore }`, sorted oldest first. Valid statuses: pending, approved,
+  declined; offset: integer 0–1,000,000. Default status: pending; page size: 25.
+- `POST /_dashboard/api/admin/limit-requests/:requestId/review` accepts
+  `{ decision: "approved" | "declined", note?: string }` (note: at most 2,000
+  characters), and returns `{ request, quotaPropagationSeconds }`.
+- Admin endpoints require a valid session (401), the D1 admin role (403), and
+  same-origin mutations (403). Invalid fields return 400, missing requests 404,
+  and already-reviewed requests 409. The existing owner-only request history
+  includes `reviewedBy`, `reviewedAt`, and `reviewNote`.
+
+For email notifications, `ADMIN_EMAIL` must be a verified Cloudflare destination
+address. An Email Routing alias pointing to a verified inbox is not itself a
+verified destination.
 
 ## Local Development
 

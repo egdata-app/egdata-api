@@ -17,7 +17,9 @@ Console requests count toward the selected project's usage and endpoint alerts.
 Select **API console** in the Usage page's key filter to see these requests.
 All sessions for the same project share a console quota at the project's tier,
 including per-operation limits. Starting a fresh session never resets these
-limits. The console quota is separate from each ordinary API key's quota.
+limits. An approved custom project RPM overrides the tier's global quota on the
+next console request, without renewing the session. The console quota is separate
+from each ordinary API key's quota.
 
 Credentials remain in page memory and clear on project change, logout, or leaving
 the explorer. Logout also revokes sessions for that login. Copies of request

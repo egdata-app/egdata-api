@@ -17,6 +17,7 @@ import {
 interface DashboardAuthContextValue {
   loading: boolean;
   authenticated: boolean;
+  isAdmin: boolean;
   user: EpicSessionUser | null;
   projects: DashboardProject[];
   selectedProject: DashboardProject | null;
@@ -39,6 +40,7 @@ export function DashboardAuthProvider({
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<SessionResponse>({
     authenticated: false,
+    isAdmin: false,
     user: null,
     projects: [],
     oauthConfigured: false,
@@ -62,6 +64,7 @@ export function DashboardAuthProvider({
       if (generation !== sessionGeneration.current) return;
       setSession({
         authenticated: false,
+        isAdmin: false,
         user: null,
         projects: [],
         oauthConfigured: false,
@@ -85,6 +88,7 @@ export function DashboardAuthProvider({
     setSession((prev) => ({
       ...prev,
       authenticated: false,
+      isAdmin: false,
       user: null,
       projects: [],
     }));
@@ -100,6 +104,7 @@ export function DashboardAuthProvider({
       value={{
         loading,
         authenticated: session.authenticated,
+        isAdmin: session.isAdmin,
         user: session.user,
         projects: session.projects,
         selectedProject,

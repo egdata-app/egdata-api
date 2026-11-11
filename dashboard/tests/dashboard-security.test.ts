@@ -1,23 +1,23 @@
 import { readFileSync } from "node:fs";
 import { Hono } from "hono";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { sqliteD1 } from "./fixtures/sqlite";
 import { signHmacToken, verifyHmacToken } from "../worker/crypto";
+import { insertLimitRequest } from "../worker/db";
+import { sendLimitIncreaseRequestEmail } from "../worker/email";
 import {
-  readDashboardSession,
-  issueDashboardSessionCookie,
-  startEpicOAuthRedirect,
   type AuthHonoEnv,
+  issueDashboardSessionCookie,
+  readDashboardSession,
+  startEpicOAuthRedirect,
 } from "../worker/epic-auth";
+import worker from "../worker/index";
 import {
   invalidateLocalKeyCache,
   resolveApiKeyMetadata,
   syncKeyToKv,
 } from "../worker/key-cache";
-import { insertLimitRequest } from "../worker/db";
 import type { CachedKeyMetadata, DashboardEnv } from "../worker/types";
-import worker from "../worker/index";
-import { sendLimitIncreaseRequestEmail } from "../worker/email";
+import { sqliteD1 } from "./fixtures/sqlite";
 
 vi.mock("../worker/email", () => ({
   sendLimitIncreaseRequestEmail: vi.fn(async () => ({ status: "sent" })),
@@ -34,6 +34,9 @@ const user = {
 function database() {
   const result = sqliteD1();
   result.sqlite.exec(readFileSync("migrations/0001_initial.sql", "utf8"));
+  result.sqlite.exec(
+    readFileSync("migrations/0004_limit_request_reviews.sql", "utf8"),
+  );
   result.sqlite.exec(
     "INSERT INTO users(epic_account_id,display_name) VALUES('owner','Owner'); INSERT INTO projects(id,owner_epic_id,name,slug) VALUES('project','owner','Project','project');",
   );
