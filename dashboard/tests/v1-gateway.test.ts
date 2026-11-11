@@ -75,7 +75,8 @@ async function setup(
   const env = {
     API_KEYS_KV: {
       get: vi.fn(async (key: string) => {
-        if (key === `apikey:${keyHash}`) return meta;
+        if (key === `apikey:${keyHash}`)
+          return { ...meta, cacheExpiresAt: Date.now() + 300_000 };
         return null;
       }),
       put: vi.fn(),

@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import {
@@ -44,10 +45,13 @@ export function DashboardAuthProvider({
     devAuthAvailable: false,
   });
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
+  const sessionGeneration = useRef(0);
 
   const refreshSession = useCallback(async () => {
+    const generation = ++sessionGeneration.current;
     try {
       const res = await dashboardClient.getSession();
+      if (generation !== sessionGeneration.current) return;
       setSession(res);
       if (res.projects.length > 0) {
         setSelectedProjectId((prev) =>
@@ -55,6 +59,7 @@ export function DashboardAuthProvider({
         );
       }
     } catch {
+      if (generation !== sessionGeneration.current) return;
       setSession({
         authenticated: false,
         user: null,
@@ -63,7 +68,7 @@ export function DashboardAuthProvider({
         devAuthAvailable: false,
       });
     } finally {
-      setLoading(false);
+      if (generation === sessionGeneration.current) setLoading(false);
     }
   }, []);
 
@@ -72,8 +77,11 @@ export function DashboardAuthProvider({
   }, [refreshSession]);
 
   const logout = useCallback(async () => {
+    ++sessionGeneration.current;
     window.dispatchEvent(new Event("egdata:clear-credentials"));
     await dashboardClient.logout();
+    ++sessionGeneration.current;
+    setSelectedProjectId("");
     setSession((prev) => ({
       ...prev,
       authenticated: false,

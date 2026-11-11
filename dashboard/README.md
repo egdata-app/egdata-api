@@ -21,6 +21,11 @@ pnpm dashboard:dev
 
 Open `http://localhost:4002`. On `localhost` when `EPIC_CLIENT_ID` is not set in `.dev.vars`, clicking **Continue with Epic Games** automatically signs in with a local Epic developer sandbox profile so you can test key creation, CIDR/Origin policies, `/proxy/*` edge requests, analytics charts, and upgrade request forms immediately.
 
+Local demo authentication requires `ENABLE_DEV_AUTH=true` and a localhost request. Deployed sessions always require `DASHBOARD_SESSION_SECRET` (at least 16 characters). Apply local migrations before starting the dashboard.
+
+Key revocation and permission changes can take up to five minutes to propagate
+through the bounded metadata cache. Credentials are never stored in that cache.
+
 ## Production Setup & Secrets
 
 1. Create your D1 database and KV namespace:
@@ -64,7 +69,7 @@ Open `http://localhost:4002`. On `localhost` when `EPIC_CLIENT_ID` is not set in
 
 4. Build & deploy:
    ```sh
-   pnpm deploy
+   pnpm run deploy
    ```
 
 ## Versioned v1 gateway

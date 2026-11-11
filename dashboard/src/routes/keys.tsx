@@ -144,6 +144,7 @@ function ApiKeysPage() {
       setNewPaths("");
       setNewScopes([...API_SCOPES]);
       setNewMethods(["GET", "HEAD"]);
+      setCopiedSecret(false);
       setRevealedSecret({ name: res.key.name, secret: res.secret });
       await loadKeys();
       notify({
@@ -450,6 +451,8 @@ function ApiKeysPage() {
       {/* One-Time Secret Reveal Modal */}
       <Modal
         isOpen={Boolean(revealedSecret)}
+        isDismissable={false}
+        isKeyboardDismissDisabled
         onOpenChange={(open) => {
           if (!open) setRevealedSecret(null);
         }}
@@ -479,15 +482,26 @@ function ApiKeysPage() {
               <div className="flex items-center justify-end gap-2 pt-2">
                 <Button
                   variant="secondary"
-                  onPress={() => {
+                  onPress={async () => {
                     if (revealedSecret) {
-                      void navigator.clipboard.writeText(revealedSecret.secret);
+                      try {
+                        await navigator.clipboard.writeText(
+                          revealedSecret.secret,
+                        );
+                      } catch {
+                        notify({
+                          title: "Copy failed",
+                          description:
+                            "Select and copy the key manually before closing.",
+                          tone: "danger",
+                        });
+                        return;
+                      }
                       setCopiedSecret(true);
                       notify({
                         title: "API key copied to clipboard",
                         tone: "success",
                       });
-                      setTimeout(() => setCopiedSecret(false), 2000);
                     }
                   }}
                 >
@@ -499,7 +513,7 @@ function ApiKeysPage() {
                   {copiedSecret ? "Copied" : "Copy Key"}
                 </Button>
                 <Button variant="primary" onPress={close}>
-                  Done
+                  {copiedSecret ? "Done" : "I saved the key"}
                 </Button>
               </div>
             </div>

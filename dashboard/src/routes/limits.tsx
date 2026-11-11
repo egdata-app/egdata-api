@@ -39,21 +39,26 @@ function RateLimitsPage() {
   const [useCase, setUseCase] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [history, setHistory] = useState<LimitIncreaseRequestRecord[]>([]);
+  const [historyError, setHistoryError] = useState(false);
 
   const loadHistory = useCallback(async () => {
+    setHistoryError(false);
     try {
       const res = await dashboardClient.getLimitRequests();
       setHistory(res.requests);
     } catch {
-      // ignore initial error
+      setHistoryError(true);
+      notify({
+        title: "Could not load request history",
+        description: "Reload the page to try again.",
+        tone: "danger",
+      });
     }
   }, []);
 
   useEffect(() => {
     void loadHistory();
-    if (selectedProject?.websiteUrl) {
-      setWebsiteUrl(selectedProject.websiteUrl);
-    }
+    setWebsiteUrl(selectedProject?.websiteUrl ?? "");
   }, [loadHistory, selectedProject]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -100,10 +105,11 @@ function RateLimitsPage() {
           Rate Limits
         </h1>
         <p className="text-sm text-epic-text-muted mt-1">
-          Compare exact request limits and ask for more capacity for your project.
-          Quotas use fixed, UTC-aligned 60-second windows and are enforced per key
-          in one request before the API origin is called. Expensive operations
-          keep their own per-key caps; a 429 response names the exhausted policy.
+          Compare exact request limits and ask for more capacity for your
+          project. Quotas use fixed, UTC-aligned 60-second windows and are
+          enforced per key in one request before the API origin is called.
+          Expensive operations keep their own per-key caps; a 429 response names
+          the exhausted policy.
         </p>
       </div>
 
@@ -247,7 +253,14 @@ function RateLimitsPage() {
               items={history}
               renderEmptyState={() => (
                 <div className="py-8 text-xs text-epic-text-muted">
-                  You haven’t requested a higher limit yet.
+                  {historyError ? (
+                    <>
+                      <p>Could not load request history.</p>
+                      <Button onPress={() => void loadHistory()}>Retry</Button>
+                    </>
+                  ) : (
+                    "You haven’t requested a higher limit yet."
+                  )}
                 </div>
               )}
             >

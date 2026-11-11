@@ -11,7 +11,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "../components/ui/Button";
+import { Button, buttonStyles } from "../components/ui/Button";
 import { Tag } from "../components/ui/Controls";
 import { notify } from "../components/ui/Toast";
 import {
@@ -34,15 +34,33 @@ function OverviewPage() {
   const [copiedCurl, setCopiedCurl] = useState(false);
 
   useEffect(() => {
+    let current = true;
+    setKeys([]);
+    setAnalytics(null);
     if (!selectedProject) return;
+    const failed = () => {
+      if (current)
+        notify({
+          title: "Could not load overview",
+          description: "Reload the page to try again.",
+          tone: "danger",
+        });
+    };
     void dashboardClient
       .getKeys(selectedProject.id)
-      .then((r) => setKeys(r.keys))
-      .catch(() => {});
+      .then((r) => {
+        if (current) setKeys(r.keys);
+      })
+      .catch(failed);
     void dashboardClient
       .getAnalytics({ hours: 24, projectId: selectedProject.id })
-      .then((r) => setAnalytics(r))
-      .catch(() => {});
+      .then((r) => {
+        if (current) setAnalytics(r);
+      })
+      .catch(failed);
+    return () => {
+      current = false;
+    };
   }, [selectedProject]);
 
   const activeKeys = keys.filter((k) => k.active);
@@ -75,17 +93,13 @@ function OverviewPage() {
           </p>
         </div>
         <div className="flex items-center gap-2.5">
-          <Link to="/keys">
-            <Button variant="primary">
-              <KeyRound className="w-4 h-4" />
-              Manage API Keys
-            </Button>
+          <Link to="/keys" className={buttonStyles({ variant: "primary" })}>
+            <KeyRound className="w-4 h-4" />
+            Manage API Keys
           </Link>
-          <Link to="/limits">
-            <Button variant="secondary">
-              <Sparkles className="w-4 h-4 text-epic-accent" />
-              Request Higher Limits
-            </Button>
+          <Link to="/limits" className={buttonStyles({ variant: "secondary" })}>
+            <Sparkles className="w-4 h-4 text-epic-accent" />
+            Request Higher Limits
           </Link>
         </div>
       </div>

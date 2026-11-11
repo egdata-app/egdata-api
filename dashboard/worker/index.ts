@@ -55,6 +55,17 @@ type AppContext = {
 const dashboardApi = new Hono<AppContext>();
 
 dashboardApi.use("/*", async (c, next) => {
+  if (
+    !["GET", "HEAD", "OPTIONS"].includes(c.req.method) &&
+    c.req.header("origin") !== new URL(c.req.url).origin
+  ) {
+    return c.json(
+      {
+        error: { code: "FORBIDDEN", message: "Same-origin request required." },
+      },
+      403,
+    );
+  }
   await next();
   c.header("Cache-Control", "no-store");
 });
@@ -74,8 +85,7 @@ dashboardApi.post("/auth/logout", (c) => {
 dashboardApi.get("/auth/session", async (c) => {
   const user = await readDashboardSession(c);
   const isLocal =
-    c.req.url.includes("localhost") ||
-    c.req.url.includes("127.0.0.1") ||
+    ["localhost", "127.0.0.1"].includes(new URL(c.req.url).hostname) &&
     c.env.ENABLE_DEV_AUTH === "true";
   const hasEpicCredentials = Boolean(
     c.env.EPIC_CLIENT_ID && c.env.EPIC_CLIENT_SECRET,
@@ -544,30 +554,35 @@ dashboardApi.post("/limit-requests", async (c) => {
     );
   }
 
-  const tempId = `req_${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`;
-  const emailResult = await sendLimitIncreaseRequestEmail(c.env, {
-    requestId: tempId,
-    user,
-    project,
-    contactEmail: parsed.data.contactEmail,
-    requestedTier: parsed.data.requestedTier,
-    requestedRpm: parsed.data.requestedRpm,
-    expectedMonthlyRequests: parsed.data.expectedMonthlyRequests,
-    useCase: parsed.data.useCase,
-    websiteUrl: parsed.data.websiteUrl,
-  });
-
   const saved = await insertLimitRequest(c.env.DB, {
     ownerEpicId: user.epicAccountId,
-    projectId: project.id,
-    contactEmail: parsed.data.contactEmail,
-    requestedTier: parsed.data.requestedTier,
-    requestedRpm: parsed.data.requestedRpm,
-    expectedMonthlyRequests: parsed.data.expectedMonthlyRequests,
-    useCase: parsed.data.useCase,
-    websiteUrl: parsed.data.websiteUrl,
-    emailDeliveryStatus: emailResult.status,
+    ...parsed.data,
+    emailDeliveryStatus: "queued",
   });
+  if (!saved) {
+    return c.json(
+      {
+        error: {
+          code: "REQUEST_LIMIT",
+          message:
+            "You already have a pending request for this project, or have submitted three requests in the last 24 hours.",
+        },
+      },
+      429,
+    );
+  }
+  const emailResult = await sendLimitIncreaseRequestEmail(c.env, {
+    requestId: saved.id,
+    user,
+    project,
+    ...parsed.data,
+  });
+  await c.env.DB.prepare(
+    "UPDATE limit_requests SET email_delivery_status=? WHERE id=?",
+  )
+    .bind(emailResult.status, saved.id)
+    .run();
+  saved.emailDeliveryStatus = emailResult.status;
 
   return c.json({ request: saved, emailDelivery: emailResult }, 201);
 });

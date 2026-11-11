@@ -11,7 +11,7 @@ export interface ButtonProps extends RACButtonProps {
   size?: "sm" | "md" | "lg";
 }
 
-const buttonStyles = tv({
+export const buttonStyles = tv({
   extend: focusRing,
   base: "relative inline-flex items-center justify-center gap-2 shrink-0 font-sans font-medium text-center transition duration-150 rounded-lg border cursor-pointer select-none [-webkit-tap-highlight-color:transparent] pressed:scale-[0.98]",
   variants: {
@@ -62,7 +62,7 @@ export function Button({ variant, size, ...props }: ButtonProps) {
             >
               <svg
                 aria-hidden="true"
-                className="w-4 h-4 animate-spin text-epic-text"
+                className="w-4 h-4 motion-safe:animate-spin text-epic-text"
                 viewBox="0 0 24 24"
                 fill="none"
               >

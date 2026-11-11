@@ -5,6 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  undici@>=7.0.0 <7.30.2: 7.30.2
   '@tanstack/router-generator>zod': ^3.24.2
   '@tanstack/router-plugin>zod': ^3.24.2
   '@tanstack/start-plugin-core>zod': ^3.24.2
@@ -7953,14 +7954,6 @@ packages:
   undici-types@7.24.6:
     resolution: {integrity: sha512-WRNW+sJgj5OBN4/0JpHFqtqzhpbnV0GuB+OozA9gCL7a993SmU+1JBZCzLNxYsbMfIeDL+lTsphD5jN5N+n0zg==}
 
-  undici@7.24.6:
-    resolution: {integrity: sha512-Xi4agocCbRzt0yYMZGMA6ApD7gvtUFaxm4ZmeacWI4cZxaF6C+8I8QfofC20NAePiB/IcvZmzkJ7XPa471AEtA==}
-    engines: {node: '>=20.18.1'}
-
-  undici@7.24.8:
-    resolution: {integrity: sha512-6KQ/+QxK49Z/p3HO6E5ZCZWNnCasyZLa5ExaVYyvPxUwKtbCPMKELJOqh7EqOle0t9cH/7d2TaaTRRa6Nhs4YQ==}
-    engines: {node: '>=20.18.1'}
-
   undici@7.30.2:
     resolution: {integrity: sha512-mLyPQnHwUxaM/rideoK/+KL8DaAJLRl4aBCfmX444aCSLnIaomqPLtNRe2jdCYcsk5wZzXrDIQC8ZeYNRAYyIA==}
     engines: {node: '>=20.18.1'}
@@ -9611,7 +9604,7 @@ snapshots:
       discord-api-types: 0.38.47
       magic-bytes.js: 1.13.0
       tslib: 2.8.1
-      undici: 7.24.6
+      undici: 7.30.2
       uuid: 13.0.2
 
   '@discordjs/util@2.0.0-dev.1774959152-339b8b565':
@@ -13750,7 +13743,7 @@ snapshots:
       parse5: 7.3.0
       parse5-htmlparser2-tree-adapter: 7.1.0
       parse5-parser-stream: 7.1.2
-      undici: 7.24.8
+      undici: 7.30.2
       whatwg-mimetype: 4.0.0
 
   chokidar@3.6.0:
@@ -15952,7 +15945,7 @@ snapshots:
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       sharp: 0.34.5
-      undici: 7.24.8
+      undici: 7.30.2
       workerd: 1.20260515.1
       ws: 8.18.0
       youch: 4.1.0-beta.10
@@ -17521,10 +17514,6 @@ snapshots:
   undici-types@7.16.0: {}
 
   undici-types@7.24.6: {}
-
-  undici@7.24.6: {}
-
-  undici@7.24.8: {}
 
   undici@7.30.2: {}
 

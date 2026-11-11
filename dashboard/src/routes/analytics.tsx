@@ -9,7 +9,7 @@ import {
   ShieldAlert,
   Zap,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../components/ui/Button";
 import { Tag } from "../components/ui/Controls";
 import { Select, SelectItem } from "../components/ui/Select";
@@ -77,9 +77,12 @@ function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [simulating, setSimulating] = useState(false);
 
+  const requestGeneration = useRef(0);
   const loadAnalytics = useCallback(async () => {
     if (!selectedProject) return;
+    const generation = ++requestGeneration.current;
     setLoading(true);
+    setData(null);
     try {
       const [keysRes, analyticsRes] = await Promise.all([
         dashboardClient.getKeys(selectedProject.id),
@@ -89,21 +92,26 @@ function AnalyticsPage() {
           keyId: selectedKeyFilter === "all" ? undefined : selectedKeyFilter,
         }),
       ]);
+      if (generation !== requestGeneration.current) return;
       setKeys(keysRes.keys);
       setData(analyticsRes);
     } catch (err) {
+      if (generation !== requestGeneration.current) return;
       notify({
         title: "Failed to load analytics",
         description: err instanceof Error ? err.message : "Unexpected error",
         tone: "danger",
       });
     } finally {
-      setLoading(false);
+      if (generation === requestGeneration.current) setLoading(false);
     }
   }, [selectedProject, hours, selectedKeyFilter]);
 
   useEffect(() => {
     void loadAnalytics();
+    return () => {
+      ++requestGeneration.current;
+    };
   }, [loadAnalytics]);
 
   async function handleSimulate() {
@@ -626,6 +634,9 @@ function TimeseriesChart({
           return (
             <div
               key={pt.bucket}
+              tabIndex={0}
+              role="img"
+              aria-label={`${label}: ${pt.requests} requests (${pt.cacheHits} cached, ${pt.rateLimited} rate limited)`}
               className="flex-1 min-w-0 h-full flex flex-col justify-end items-center group relative"
               title={`${label}: ${pt.requests} requests (${pt.cacheHits} cached, ${pt.rateLimited} rate limited)`}
             >

@@ -9,92 +9,7 @@ import type {
   LimitIncreaseRequestRecord,
 } from "./types.js";
 
-let schemaInitialized = false;
-
-export async function ensureSchema(db: D1Database): Promise<void> {
-  if (schemaInitialized) return;
-  await db.batch([
-    db.prepare(`
-      CREATE TABLE IF NOT EXISTS users (
-        epic_account_id TEXT PRIMARY KEY,
-        display_name TEXT NOT NULL,
-        avatar_url TEXT,
-        preferred_language TEXT,
-        email TEXT,
-        created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
-        updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
-      )
-    `),
-    db.prepare(`
-      CREATE TABLE IF NOT EXISTS projects (
-        id TEXT PRIMARY KEY,
-        owner_epic_id TEXT NOT NULL,
-        name TEXT NOT NULL,
-        slug TEXT NOT NULL,
-        description TEXT NOT NULL DEFAULT '',
-        website_url TEXT NOT NULL DEFAULT '',
-        tier TEXT NOT NULL DEFAULT 'free',
-        created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
-        updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
-      )
-    `),
-    db.prepare(
-      `CREATE INDEX IF NOT EXISTS idx_projects_owner ON projects(owner_epic_id)`,
-    ),
-    db.prepare(`
-      CREATE TABLE IF NOT EXISTS api_keys (
-        id TEXT PRIMARY KEY,
-        project_id TEXT NOT NULL,
-        owner_epic_id TEXT NOT NULL,
-        name TEXT NOT NULL,
-        key_prefix TEXT NOT NULL,
-        key_hash TEXT NOT NULL UNIQUE,
-        tier TEXT NOT NULL DEFAULT 'free',
-        active INTEGER NOT NULL DEFAULT 1,
-        scopes_json TEXT NOT NULL DEFAULT '["catalog:read","offers:read","items:read","search:read","graphql:read","profiles:read","stats:read"]',
-        allowed_ips_json TEXT NOT NULL DEFAULT '[]',
-        allowed_origins_json TEXT NOT NULL DEFAULT '[]',
-        allowed_paths_json TEXT NOT NULL DEFAULT '[]',
-        allowed_methods_json TEXT NOT NULL DEFAULT '["GET","HEAD"]',
-        custom_rpm INTEGER,
-        expires_at TEXT,
-        last_used_at TEXT,
-        revoked_at TEXT,
-        created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
-        updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
-      )
-    `),
-    db.prepare(
-      `CREATE INDEX IF NOT EXISTS idx_api_keys_owner ON api_keys(owner_epic_id)`,
-    ),
-    db.prepare(
-      `CREATE INDEX IF NOT EXISTS idx_api_keys_project ON api_keys(project_id)`,
-    ),
-    db.prepare(
-      `CREATE INDEX IF NOT EXISTS idx_api_keys_hash ON api_keys(key_hash)`,
-    ),
-    db.prepare(`
-      CREATE TABLE IF NOT EXISTS limit_requests (
-        id TEXT PRIMARY KEY,
-        owner_epic_id TEXT NOT NULL,
-        project_id TEXT NOT NULL,
-        contact_email TEXT NOT NULL,
-        requested_tier TEXT NOT NULL,
-        requested_rpm INTEGER NOT NULL,
-        expected_monthly_requests INTEGER NOT NULL,
-        use_case TEXT NOT NULL,
-        website_url TEXT NOT NULL DEFAULT '',
-        status TEXT NOT NULL DEFAULT 'pending',
-        email_delivery_status TEXT NOT NULL DEFAULT 'queued',
-        created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
-      )
-    `),
-    db.prepare(
-      `CREATE INDEX IF NOT EXISTS idx_limit_requests_owner ON limit_requests(owner_epic_id, created_at DESC)`,
-    ),
-  ]);
-  schemaInitialized = true;
-}
+// Apply Wrangler migrations before serving traffic; requests never create schema.
 
 function parseJsonArray<T extends string>(
   raw: string | null | undefined,
@@ -185,7 +100,6 @@ export async function upsertEpicUserAndDefaultProject(
   db: D1Database,
   user: EpicSessionUser,
 ): Promise<DashboardProject[]> {
-  await ensureSchema(db);
   const now = new Date().toISOString();
 
   await db
@@ -234,7 +148,6 @@ export async function listUserProjects(
   db: D1Database,
   ownerEpicId: string,
 ): Promise<DashboardProject[]> {
-  await ensureSchema(db);
   const { results } = await db
     .prepare(
       `SELECT id, owner_epic_id, name, slug, description, website_url, tier, created_at, updated_at
@@ -276,7 +189,6 @@ export async function createProject(
     websiteUrl: string;
   },
 ): Promise<DashboardProject> {
-  await ensureSchema(db);
   const id = `prj_${crypto.randomUUID().replace(/-/g, "").slice(0, 20)}`;
   const now = new Date().toISOString();
   await db
@@ -315,7 +227,6 @@ export async function updateProject(
   projectId: string,
   input: { name: string; description: string; websiteUrl: string },
 ): Promise<DashboardProject | null> {
-  await ensureSchema(db);
   const now = new Date().toISOString();
   await db
     .prepare(
@@ -341,7 +252,6 @@ export async function listUserApiKeys(
   ownerEpicId: string,
   projectId?: string,
 ): Promise<DashboardApiKey[]> {
-  await ensureSchema(db);
   const query = projectId
     ? db
         .prepare(
@@ -362,7 +272,6 @@ export async function findRawKeyByHash(
   db: D1Database,
   keyHash: string,
 ): Promise<RawApiKeyRow | null> {
-  await ensureSchema(db);
   return db
     .prepare(`SELECT * FROM api_keys WHERE key_hash = ? LIMIT 1`)
     .bind(keyHash)
@@ -374,7 +283,6 @@ export async function findRawKeyByIdAndOwner(
   keyId: string,
   ownerEpicId: string,
 ): Promise<RawApiKeyRow | null> {
-  await ensureSchema(db);
   return db
     .prepare(
       `SELECT * FROM api_keys WHERE id = ? AND owner_epic_id = ? LIMIT 1`,
@@ -401,7 +309,6 @@ export async function insertApiKey(
     expiresAt: string | null;
   },
 ): Promise<DashboardApiKey> {
-  await ensureSchema(db);
   const now = new Date().toISOString();
   await db
     .prepare(
@@ -456,7 +363,6 @@ export async function updateApiKeyPermissions(
   keyHash: string;
   cached: CachedKeyMetadata;
 } | null> {
-  await ensureSchema(db);
   const current = await findRawKeyByIdAndOwner(db, keyId, ownerEpicId);
   if (!current || current.revoked_at) return null;
 
@@ -526,7 +432,6 @@ export async function revokeAndDeleteApiKey(
   ownerEpicId: string,
   keyId: string,
 ): Promise<{ keyHash: string } | null> {
-  await ensureSchema(db);
   const existing = await findRawKeyByIdAndOwner(db, keyId, ownerEpicId);
   if (!existing) return null;
 
@@ -565,17 +470,18 @@ export async function insertLimitRequest(
     websiteUrl: string;
     emailDeliveryStatus: string;
   },
-): Promise<LimitIncreaseRequestRecord> {
-  await ensureSchema(db);
+): Promise<LimitIncreaseRequestRecord | null> {
   const id = `req_${crypto.randomUUID().replace(/-/g, "").slice(0, 20)}`;
   const now = new Date().toISOString();
 
-  await db
+  const inserted = await db
     .prepare(
       `INSERT INTO limit_requests (
         id, owner_epic_id, project_id, contact_email, requested_tier,
         requested_rpm, expected_monthly_requests, use_case, website_url, status, email_delivery_status, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
+      ) SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?
+        WHERE NOT EXISTS (SELECT 1 FROM limit_requests WHERE owner_epic_id=? AND project_id=? AND status='pending')
+          AND (SELECT COUNT(*) FROM limit_requests WHERE owner_epic_id=? AND created_at>=?) < 3`,
     )
     .bind(
       id,
@@ -589,8 +495,14 @@ export async function insertLimitRequest(
       input.websiteUrl,
       input.emailDeliveryStatus,
       now,
+      input.ownerEpicId,
+      input.projectId,
+      input.ownerEpicId,
+      new Date(Date.now() - 86_400_000).toISOString(),
     )
     .run();
+
+  if (inserted.meta.changes === 0) return null;
 
   return {
     id,
@@ -612,7 +524,6 @@ export async function listUserLimitRequests(
   db: D1Database,
   ownerEpicId: string,
 ): Promise<LimitIncreaseRequestRecord[]> {
-  await ensureSchema(db);
   const { results } = await db
     .prepare(
       `SELECT lr.*, p.name as project_name

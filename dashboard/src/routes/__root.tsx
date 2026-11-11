@@ -69,7 +69,7 @@ function DashboardShell() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex items-center gap-3 text-epic-text-muted text-sm">
-          <div className="w-4 h-4 rounded-full border-2 border-epic-accent border-t-transparent animate-spin" />
+          <div className="w-4 h-4 rounded-full border-2 border-epic-accent border-t-transparent motion-safe:animate-spin" />
           Loading egdata Developer Portal...
         </div>
       </div>
@@ -219,7 +219,13 @@ function DashboardShell() {
                 variant="icon"
                 aria-label="Sign out"
                 onPress={() => {
-                  void logout();
+                  void logout().catch(() =>
+                    notify({
+                      title: "Sign out failed",
+                      description: "Please try signing out again.",
+                      tone: "danger",
+                    }),
+                  );
                 }}
               >
                 <LogOut className="w-4 h-4" />
@@ -279,6 +285,7 @@ function DashboardShell() {
         <Button
           variant="secondary"
           size="md"
+          aria-label="Create new project"
           onPress={() => setNewProjectOpen(true)}
         >
           <FolderPlus className="w-4 h-4" />
@@ -287,7 +294,7 @@ function DashboardShell() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
-        <Outlet />
+        <Outlet key={selectedProject?.id ?? "none"} />
       </main>
 
       {/* Footer */}

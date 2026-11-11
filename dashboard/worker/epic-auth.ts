@@ -25,14 +25,27 @@ interface SignedOAuthState {
   exp: number;
 }
 
-function getSessionSecret(env: DashboardEnv): string {
+function getSessionSecret(env: DashboardEnv, requestUrl: string): string {
   if (
     env.DASHBOARD_SESSION_SECRET &&
     env.DASHBOARD_SESSION_SECRET.length >= 16
   ) {
     return env.DASHBOARD_SESSION_SECRET;
   }
-  return "egdata-local-dev-session-secret-change-in-prod-32b";
+  if (env.ENABLE_DEV_AUTH === "true" && isLocalUrl(requestUrl)) {
+    return "egdata-local-dev-session-secret-change-in-prod-32b";
+  }
+  throw new Error("DASHBOARD_SESSION_SECRET is not configured");
+}
+
+function safeLocalRedirect(value: string): string {
+  if (
+    !value.startsWith("/") ||
+    value.startsWith("//") ||
+    /[\\\u0000-\u0020\u007f]/.test(value)
+  )
+    return "/";
+  return value;
 }
 
 function isLocalUrl(urlStr: string): boolean {
@@ -59,12 +72,17 @@ export type AuthHonoEnv = {
 export async function readDashboardSession(
   c: Context<AuthHonoEnv>,
 ): Promise<EpicSessionUser | null> {
-  const secret = getSessionSecret(c.env);
   const rawToken = getCookie(c, SESSION_COOKIE_NAME);
   if (!rawToken) return null;
+  const secret = getSessionSecret(c.env, c.req.url);
 
   const parsed = await verifyHmacToken<SignedSessionPayload>(rawToken, secret);
-  if (!parsed || !parsed.user || Date.now() >= parsed.exp) {
+  if (
+    !parsed ||
+    !parsed.user ||
+    !Number.isFinite(parsed.exp) ||
+    Date.now() >= parsed.exp
+  ) {
     return null;
   }
   return parsed.user;
@@ -74,7 +92,7 @@ export async function issueDashboardSessionCookie(
   c: Context<AuthHonoEnv>,
   user: EpicSessionUser,
 ): Promise<void> {
-  const secret = getSessionSecret(c.env);
+  const secret = getSessionSecret(c.env, c.req.url);
   const now = Date.now();
   const token = await signHmacToken(
     {
@@ -129,17 +147,15 @@ export async function startEpicOAuthRedirect(
 ): Promise<Response> {
   const reqUrl = new URL(c.req.url);
   const redirectTo = reqUrl.searchParams.get("redirect") || "/";
-  const safeRedirect =
-    redirectTo.startsWith("/") && !redirectTo.startsWith("//")
-      ? redirectTo
-      : "/";
+  const safeRedirect = safeLocalRedirect(redirectTo);
 
   // Support frictionless local dev sign-in if EPIC_CLIENT_ID is not configured on localhost
   const clientId = c.env.EPIC_CLIENT_ID;
   const clientSecret = c.env.EPIC_CLIENT_SECRET;
   if (
     (!clientId || !clientSecret) &&
-    (isLocalUrl(c.req.url) || c.env.ENABLE_DEV_AUTH === "true")
+    isLocalUrl(c.req.url) &&
+    c.env.ENABLE_DEV_AUTH === "true"
   ) {
     const demoName = reqUrl.searchParams.get("name")?.trim() || "EpicDeveloper";
     const demoUser: EpicSessionUser = {
@@ -175,7 +191,7 @@ export async function startEpicOAuthRedirect(
       redirectTo: safeRedirect,
       exp: Date.now() + 10 * 60 * 1000,
     } satisfies SignedOAuthState,
-    getSessionSecret(c.env),
+    getSessionSecret(c.env, c.req.url),
   );
 
   const secure = !isLocalUrl(c.req.url);
@@ -219,11 +235,12 @@ export async function handleEpicOAuthCallback(
 
   const verifiedState = await verifyHmacToken<SignedOAuthState>(
     stateCookie,
-    getSessionSecret(c.env),
+    getSessionSecret(c.env, c.req.url),
   );
   if (
     !verifiedState ||
     verifiedState.nonce !== stateParam ||
+    !Number.isFinite(verifiedState.exp) ||
     Date.now() >= verifiedState.exp
   ) {
     return c.redirect("/?auth_error=expired_oauth_state", 302);
@@ -240,6 +257,10 @@ export async function handleEpicOAuthCallback(
   const tokenParams = new URLSearchParams();
   tokenParams.set("grant_type", "authorization_code");
   tokenParams.set("code", code);
+  tokenParams.set(
+    "redirect_uri",
+    `${reqUrl.origin}/_dashboard/api/auth/epic/callback`,
+  );
   tokenParams.set("scope", "basic_profile");
 
   const tokenRes = await fetch(EPIC_TOKEN_URL, {
@@ -319,5 +340,5 @@ export async function handleEpicOAuthCallback(
   await upsertEpicUserAndDefaultProject(c.env.DB, sessionUser);
   await issueDashboardSessionCookie(c, sessionUser);
 
-  return c.redirect(verifiedState.redirectTo || "/", 302);
+  return c.redirect(safeLocalRedirect(verifiedState.redirectTo || "/"), 302);
 }

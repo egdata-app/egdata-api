@@ -90,7 +90,7 @@ that the VM origin or a merged record has been deployed.
   the earlier gateway/v1 commits already on this PR branch. Added explicit
   records for all 154 new v1 operations; assessed 322 candidate operations.
 - API regression suite: 466 passing, 12 optional Redis integration tests skipped.
-  Dashboard suite: 68 passing. API build, dashboard build/typecheck, docs
+  Dashboard suite: 78 passing. API build, dashboard build/typecheck, docs
   build/typecheck, OpenAPI, README, and strict release checks passed.
 - Workflow YAML and the production job condition were checked: push/PR and
   default manual runs cannot deploy; only an explicit main manual run can.
@@ -103,3 +103,16 @@ that the VM origin or a merged record has been deployed.
   without the deployed operation. Full live authenticated quota/usage verification
   is deferred until a separately authorized origin rollout. The production API
   was not deployed. Unmerged records and archived notes were not published.
+- Follow-up review removed deployed fallback session secrets, restricted demo
+  authentication to explicit localhost development, blocked unsafe login redirects
+  and cross-origin dashboard mutations, and added bounded key-cache expiration.
+  Revocations/permission updates can take up to five minutes to propagate; old
+  KV entries without a deadline are refreshed from D1. No per-request usage writes
+  were added. Wrangler migrations are now the sole source of database schema.
+- Project switching remounts project pages to discard old keys/forms/secrets;
+  stale session and analytics responses are ignored. Secret copying reports
+  success only after the clipboard write succeeds. Limit requests are admitted
+  atomically before notification (one pending per project, three per owner/day).
+- Pinned affected undici 7.x dependencies to 7.30.2, preserving other locked
+  dependency versions. The follow-up npm audit reports zero undici advisories;
+  unrelated existing dependency advisories are outside this change.

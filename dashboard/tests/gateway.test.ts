@@ -147,7 +147,13 @@ describe("HMAC session tokens and API key proxy cache preservation", () => {
     const { rawKey } = generateApiKeySecret();
     const keyHash = await sha256Hex(rawKey);
     const kvMap = new Map<string, string>([
-      [`apikey:${keyHash}`, JSON.stringify(baseKeyMeta)],
+      [
+        `apikey:${keyHash}`,
+        JSON.stringify({
+          ...baseKeyMeta,
+          cacheExpiresAt: Date.now() + 300_000,
+        }),
+      ],
     ]);
 
     const seenUpstreamHeaders: Headers[] = [];

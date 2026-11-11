@@ -3,6 +3,7 @@ import type { CachedKeyMetadata, DashboardEnv } from "./types.js";
 
 const KV_KEY_PREFIX = "apikey:";
 const MEMORY_TTL_MS = 30_000;
+const KV_TTL_MS = 300_000;
 const MAX_MEMORY_KEYS = 2_000;
 
 interface MemoryEntry {
@@ -15,6 +16,7 @@ const memoryCache = new Map<string, MemoryEntry>();
 function setMemoryEntry(
   keyHash: string,
   value: CachedKeyMetadata | null,
+  validUntil = Date.now() + MEMORY_TTL_MS,
 ): void {
   if (memoryCache.size >= MAX_MEMORY_KEYS) {
     const oldest = memoryCache.keys().next().value;
@@ -24,7 +26,7 @@ function setMemoryEntry(
   }
   memoryCache.set(keyHash, {
     value,
-    expiresAt: Date.now() + MEMORY_TTL_MS,
+    expiresAt: Math.min(Date.now() + MEMORY_TTL_MS, validUntil),
   });
 }
 
@@ -37,8 +39,15 @@ export async function syncKeyToKv(
   keyHash: string,
   meta: CachedKeyMetadata,
 ): Promise<void> {
-  await env.API_KEYS_KV.put(`${KV_KEY_PREFIX}${keyHash}`, JSON.stringify(meta));
-  setMemoryEntry(keyHash, meta);
+  const cacheExpiresAt = Date.now() + KV_TTL_MS;
+  await env.API_KEYS_KV.put(
+    `${KV_KEY_PREFIX}${keyHash}`,
+    JSON.stringify({ ...meta, cacheExpiresAt }),
+    {
+      expiration: Math.ceil(cacheExpiresAt / 1000),
+    },
+  );
+  setMemoryEntry(keyHash, meta, cacheExpiresAt);
 }
 
 export async function removeKeyFromKv(
@@ -60,16 +69,21 @@ export async function resolveApiKeyMetadata(
     return mem.value;
   }
 
-  const fromKv = await env.API_KEYS_KV.get<CachedKeyMetadata>(
-    `${KV_KEY_PREFIX}${keyHash}`,
-    {
-      type: "json",
-      cacheTtl: 60,
-    },
-  );
+  const fromKv = await env.API_KEYS_KV.get<
+    CachedKeyMetadata & { cacheExpiresAt?: number }
+  >(`${KV_KEY_PREFIX}${keyHash}`, {
+    type: "json",
+    cacheTtl: 60,
+  });
 
-  if (fromKv) {
-    setMemoryEntry(keyHash, fromKv);
+  // Old entries without an absolute deadline must be refreshed from D1.
+  // Check the value too: KV edge caching can briefly outlive an expiration.
+  if (
+    fromKv &&
+    typeof fromKv.cacheExpiresAt === "number" &&
+    fromKv.cacheExpiresAt > now
+  ) {
+    setMemoryEntry(keyHash, fromKv, fromKv.cacheExpiresAt);
     return fromKv;
   }
 
@@ -81,9 +95,16 @@ export async function resolveApiKeyMetadata(
   }
 
   const hydrated = toCachedKeyMetadata(raw);
-  setMemoryEntry(keyHash, hydrated);
+  const cacheExpiresAt = now + KV_TTL_MS;
+  setMemoryEntry(keyHash, hydrated, cacheExpiresAt);
   ctx.waitUntil(
-    env.API_KEYS_KV.put(`${KV_KEY_PREFIX}${keyHash}`, JSON.stringify(hydrated)),
+    env.API_KEYS_KV.put(
+      `${KV_KEY_PREFIX}${keyHash}`,
+      JSON.stringify({ ...hydrated, cacheExpiresAt }),
+      {
+        expiration: Math.ceil(cacheExpiresAt / 1000),
+      },
+    ).catch((error) => console.error("API key cache backfill failed", error)),
   );
   return hydrated;
 }
