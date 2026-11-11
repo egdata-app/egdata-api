@@ -18,6 +18,8 @@ interface DashboardAuthContextValue {
   loading: boolean;
   authenticated: boolean;
   isAdmin: boolean;
+  analyticsScope: "project" | "all";
+  setAnalyticsScope: (scope: "project" | "all") => void;
   user: EpicSessionUser | null;
   projects: DashboardProject[];
   selectedProject: DashboardProject | null;
@@ -47,6 +49,9 @@ export function DashboardAuthProvider({
     devAuthAvailable: false,
   });
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
+  const [analyticsScope, setAnalyticsScope] = useState<"project" | "all">(
+    "project",
+  );
   const sessionGeneration = useRef(0);
 
   const refreshSession = useCallback(async () => {
@@ -85,6 +90,7 @@ export function DashboardAuthProvider({
     await dashboardClient.logout();
     ++sessionGeneration.current;
     setSelectedProjectId("");
+    setAnalyticsScope("project");
     setSession((prev) => ({
       ...prev,
       authenticated: false,
@@ -105,10 +111,15 @@ export function DashboardAuthProvider({
         loading,
         authenticated: session.authenticated,
         isAdmin: session.isAdmin,
+        analyticsScope: session.isAdmin ? analyticsScope : "project",
+        setAnalyticsScope,
         user: session.user,
         projects: session.projects,
         selectedProject,
-        setSelectedProjectId,
+        setSelectedProjectId: (id) => {
+          setSelectedProjectId(id);
+          setAnalyticsScope("project");
+        },
         oauthConfigured: session.oauthConfigured,
         devAuthAvailable: session.devAuthAvailable,
         refreshSession,

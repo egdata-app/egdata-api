@@ -14,29 +14,39 @@ import { useEffect, useState } from "react";
 import { Button, buttonStyles } from "../components/ui/Button";
 import { Tag } from "../components/ui/Controls";
 import { notify } from "../components/ui/Toast";
+import { AdminOverview } from "../components/usage/AdminOverview";
 import {
-  type AnalyticsDashboardSummary,
-  type DashboardApiKey,
-  dashboardClient,
-} from "../lib/api";
+  Coverage,
+  Freshness,
+  ScopeSelector,
+  UsageError,
+  UsageLoading,
+} from "../components/usage/UsageShared";
+import { type DashboardApiKey, dashboardClient } from "../lib/api";
 import { useDashboardAuth } from "../lib/auth-context";
+import { useUsage } from "../lib/usage";
 
 export const Route = createFileRoute("/")({
   component: OverviewPage,
 });
 
 function OverviewPage() {
+  const { analyticsScope } = useDashboardAuth();
+  return analyticsScope === "all" ? <AdminOverview /> : <ProjectOverview />;
+}
+
+function ProjectOverview() {
   const { selectedProject } = useDashboardAuth();
   const [keys, setKeys] = useState<DashboardApiKey[]>([]);
-  const [analytics, setAnalytics] = useState<AnalyticsDashboardSummary | null>(
-    null,
+  const result = useUsage(
+    selectedProject ? { hours: 24, projectId: selectedProject.id } : null,
   );
+  const analytics = result.data;
   const [copiedCurl, setCopiedCurl] = useState(false);
 
   useEffect(() => {
     let current = true;
     setKeys([]);
-    setAnalytics(null);
     if (!selectedProject) return;
     const failed = () => {
       if (current)
@@ -52,12 +62,6 @@ function OverviewPage() {
         if (current) setKeys(r.keys);
       })
       .catch(failed);
-    void dashboardClient
-      .getAnalytics({ hours: 24, projectId: selectedProject.id })
-      .then((r) => {
-        if (current) setAnalytics(r);
-      })
-      .catch(failed);
     return () => {
       current = false;
     };
@@ -65,11 +69,12 @@ function OverviewPage() {
 
   const activeKeys = keys.filter((k) => k.active);
   const rpmLimit =
-    selectedProject?.tier === "enterprise"
+    selectedProject?.customRpm ??
+    (selectedProject?.tier === "enterprise"
       ? 6000
       : selectedProject?.tier === "pro"
         ? 1200
-        : 120;
+        : 120);
 
   const sampleCurl = `curl -H "X-API-Key: egk_live_YOUR_API_KEY" \\
   "https://api.egdata.app/offers/top-sellers?country=US"`;
@@ -92,7 +97,8 @@ function OverviewPage() {
             Manage your API keys and review this project’s usage.
           </p>
         </div>
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <ScopeSelector />
           <Link to="/keys" className={buttonStyles({ variant: "primary" })}>
             <KeyRound className="w-4 h-4" />
             Manage API Keys
@@ -105,35 +111,51 @@ function OverviewPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          label="24h Requests"
-          value={(analytics?.totals.requests ?? 0).toLocaleString()}
-          sub={`${analytics?.totals.avgLatencyMs ?? 0} ms average processing time`}
-          icon={<Activity className="w-4 h-4 text-epic-accent" />}
-        />
-        <StatCard
-          label="Requests Served from Cache"
-          value={`${analytics?.totals.cacheHitRate ?? 0}%`}
-          sub={`${(analytics?.totals.cacheHits ?? 0).toLocaleString()} cached responses`}
-          icon={<Zap className="w-4 h-4 text-epic-success" />}
-        />
-        <StatCard
-          label="Active API Keys"
-          value={String(activeKeys.length)}
-          sub={`Up to ${rpmLimit.toLocaleString()} req/min per key`}
-          icon={<KeyRound className="w-4 h-4 text-epic-accent" />}
-        />
-        <StatCard
-          label="Blocked Requests (24h)"
-          value={(
-            (analytics?.totals.rateLimited ?? 0) +
-            (analytics?.totals.blockedPolicy ?? 0)
-          ).toLocaleString()}
-          sub={`${analytics?.totals.rateLimited ?? 0} over limit · ${analytics?.totals.blockedPolicy ?? 0} denied by permissions`}
-          icon={<ShieldAlert className="w-4 h-4 text-epic-warning" />}
+      <div className="flex flex-wrap justify-between items-center gap-3">
+        {analytics && <Coverage data={analytics} />}
+        <Freshness
+          updatedAt={result.updatedAt}
+          loading={result.loading}
+          onRefresh={result.refresh}
         />
       </div>
+      <UsageError
+        message={result.error}
+        retry={result.refresh}
+        stale={Boolean(analytics)}
+      />
+      {!analytics && result.loading && <UsageLoading />}
+      {analytics && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard
+            label="24h Requests"
+            value={(analytics?.totals.requests ?? 0).toLocaleString()}
+            sub={`${analytics?.totals.avgLatencyMs ?? 0} ms average processing time`}
+            icon={<Activity className="w-4 h-4 text-epic-accent" />}
+          />
+          <StatCard
+            label="Requests Served from Cache"
+            value={`${analytics?.totals.cacheHitRate ?? 0}%`}
+            sub={`${(analytics?.totals.cacheHits ?? 0).toLocaleString()} cached responses`}
+            icon={<Zap className="w-4 h-4 text-epic-success" />}
+          />
+          <StatCard
+            label="Active API Keys"
+            value={String(activeKeys.length)}
+            sub={`Up to ${rpmLimit.toLocaleString()} req/min per key`}
+            icon={<KeyRound className="w-4 h-4 text-epic-accent" />}
+          />
+          <StatCard
+            label="Blocked Requests (24h)"
+            value={(
+              (analytics?.totals.rateLimited ?? 0) +
+              (analytics?.totals.blockedPolicy ?? 0)
+            ).toLocaleString()}
+            sub={`${analytics?.totals.rateLimited ?? 0} over limit · ${analytics?.totals.blockedPolicy ?? 0} denied by permissions`}
+            icon={<ShieldAlert className="w-4 h-4 text-epic-warning" />}
+          />
+        </div>
+      )}
 
       <div className="grid lg:grid-cols-5 gap-6">
         {/* Quickstart Card */}
