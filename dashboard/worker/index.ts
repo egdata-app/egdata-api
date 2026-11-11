@@ -1,5 +1,11 @@
 import { Hono } from "hono";
 import {
+  CONSOLE_HEADER,
+  consoleProxy,
+  consoleSessionRoutes,
+  revokeConsoleLogin,
+} from "./console-sessions.js";
+import {
   alertRoutes,
   handleChangeIngestion,
   publicHistory,
@@ -77,7 +83,8 @@ dashboardApi.get("/auth/epic/login", (c) => startEpicOAuthRedirect(c));
 
 dashboardApi.get("/auth/epic/callback", (c) => handleEpicOAuthCallback(c));
 
-dashboardApi.post("/auth/logout", (c) => {
+dashboardApi.post("/auth/logout", async (c) => {
+  await revokeConsoleLogin(c);
   clearDashboardSessionCookie(c);
   return c.json({ ok: true });
 });
@@ -593,6 +600,7 @@ dashboardApi.post("/limit-requests", async (c) => {
 const rootApp = new Hono<AppContext>();
 
 dashboardApi.route("/alerts", alertRoutes);
+dashboardApi.route("/console-sessions", consoleSessionRoutes);
 
 rootApp.route("/_dashboard/api", dashboardApi);
 
@@ -658,6 +666,9 @@ export default {
       .toISOString()
       .slice(0, 10);
     await env.DB.batch([
+      env.DB.prepare("DELETE FROM console_sessions WHERE expires_at <= ?").bind(
+        Date.now(),
+      ),
       env.DB.prepare(`DELETE FROM usage_daily WHERE usage_date<?`).bind(oldest),
       env.DB.prepare(`DELETE FROM usage_dead_letters WHERE usage_date<?`).bind(
         oldest,
@@ -670,6 +681,10 @@ export default {
     ctx: ExecutionContext,
   ): Promise<Response> {
     const url = new URL(request.url);
+
+    if (request.headers.has(CONSOLE_HEADER)) {
+      return consoleProxy.fetch(request, env, ctx);
+    }
 
     // The API hostname owns every path, including /proxy and /_dashboard/api.
     if (

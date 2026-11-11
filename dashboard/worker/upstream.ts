@@ -1,6 +1,7 @@
 import type { DashboardEnv } from "./types.js";
 
 const INTERNAL_HEADERS = [
+  "x-egdata-console-session",
   "x-egdata-key-id",
   "x-egdata-key-tier",
   "x-egdata-key-project",

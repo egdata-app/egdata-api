@@ -300,7 +300,8 @@ export function buildV1OpenApiDocument(): OpenAPIV3.Document {
       description: [
         "Version 1 of the egdata public read-only REST API.",
         "Successful JSON responses use `{ data, meta }`. Paginated collections use opaque forward cursors with `meta.pagination`. Errors use RFC 9457 Problem Details (`application/problem+json`) with a stable `code` and `requestId`.",
-        "All data operations require an API key through the Cloudflare Worker gateway. `/v1/health`, `/v1/open-api.json`, and CORS preflights are unauthenticated.",
+        "Applications authenticate data operations with an API key through the Cloudflare Worker gateway. `/v1/health`, `/v1/open-api.json`, and CORS preflights are unauthenticated.",
+        "The signed-in dashboard API console can alternatively use a project-scoped session lasting at most 10 minutes. Console credentials require that dashboard login and are not portable API keys. Console requests use the same operation permissions and quota admission and count toward project usage.",
         "Breaking changes require a new major API version. Additive fields and operations may be introduced within v1.",
         "Shared HTTP caching is disabled for v1; every request, including conditional requests, passes authentication and exact quota admission. Internal origin caching and private ETag revalidation remain available.",
       ].join("\n\n"),

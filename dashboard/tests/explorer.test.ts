@@ -19,6 +19,62 @@ const op: Operation = {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("fixed gateway request console", () => {
+  it("uses a session only with same-origin cookies, redacts it, and rejects expiry", async () => {
+    vi.stubGlobal("location", { origin: "https://devs.egdata.app" });
+    const token = "egc_test_private_session";
+    const fetcher = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ detail: token }), {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Egdata-Console-Session": token,
+            "X-Diagnostic": token,
+          },
+        }),
+    );
+    vi.stubGlobal("fetch", fetcher);
+    const session = { token, expiresAt: Date.now() + 600000 };
+    const result = await executeOperation(
+      op,
+      "",
+      { id: "abc" },
+      {},
+      "",
+      new AbortController().signal,
+      session,
+    );
+    const init = (fetcher.mock.calls[0] as unknown as [string, RequestInit])[1];
+    expect(init.credentials).toBe("same-origin");
+    expect(init.redirect).toBe("manual");
+    expect(new Headers(init.headers).get("X-Egdata-Console-Session")).toBe(
+      token,
+    );
+    expect(JSON.stringify(result)).not.toContain(token);
+    expect(redactedSnippet(op)).not.toContain(token);
+    await expect(
+      executeOperation(
+        op,
+        "",
+        { id: "abc" },
+        {},
+        "",
+        new AbortController().signal,
+        { ...session, expiresAt: Date.now() },
+      ),
+    ).rejects.toThrow("expired");
+    await expect(
+      executeOperation(
+        op,
+        "key",
+        { id: "abc" },
+        {},
+        "",
+        new AbortController().signal,
+        session,
+      ),
+    ).rejects.toThrow("Choose");
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
   it("keeps build-only or removed operations read-only when deployment differs", () => {
     const snapshot = safeDocument({
       openapi: "3.0.3",

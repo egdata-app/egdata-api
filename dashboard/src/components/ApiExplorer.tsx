@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { OpenAPIV3 } from "openapi-types";
 import { Link } from "@tanstack/react-router";
 import { useDashboardAuth } from "../lib/auth-context";
+import { useConsoleSession, type ConsoleSession } from "../lib/console-session";
 import {
   executable,
   executeOperation,
@@ -43,6 +44,7 @@ export function ApiExplorer({ operationId }: { operationId?: string }) {
 
 function ExplorerSession({ operationId }: { operationId?: string }) {
   const { selectedProject } = useDashboardAuth();
+  const consoleAccess = useConsoleSession(selectedProject?.id);
   const [document, setDocument] = useState<ApiDocument | null>(null);
   const [snapshot, setSnapshot] = useState<ApiDocument | null>(null);
   const [history, setHistory] = useState<History>({
@@ -129,7 +131,9 @@ function ExplorerSession({ operationId }: { operationId?: string }) {
     if (!referenceDocument || !current) return null;
     return {
       ...referenceDocument,
-      tags: referenceDocument.tags?.filter((tag) => current.operation.tags?.includes(tag.name)),
+      tags: referenceDocument.tags?.filter((tag) =>
+        current.operation.tags?.includes(tag.name),
+      ),
       paths: {
         [current.path]: {
           parameters: referenceDocument.paths[current.path]?.parameters,
@@ -155,6 +159,42 @@ function ExplorerSession({ operationId }: { operationId?: string }) {
           Authentication, quotas and Problem Details error standard
         </a>
       </p>
+      <section
+        aria-label="Console access"
+        className="rounded-xl border border-epic-border p-4 space-y-3"
+      >
+        <h2 className="font-semibold">Try with this project</h2>
+        <p className="text-sm text-epic-text-muted">
+          Start a 10-minute session for{" "}
+          {selectedProject?.name ?? "the selected project"}. It works only in
+          the signed-in console. Requests count as API console usage for this
+          project, with shared console limits across sessions.
+        </p>
+        {consoleAccess.session ? (
+          <div className="flex items-center gap-4">
+            <span role="status">
+              Expires in {Math.floor(consoleAccess.remaining / 60)}:
+              {String(consoleAccess.remaining % 60).padStart(2, "0")}
+            </span>
+            <button className="text-epic-accent" onClick={consoleAccess.end}>
+              End console session
+            </button>
+          </div>
+        ) : (
+          <button
+            className="rounded-lg bg-epic-accent text-epic-bg px-4 py-2 disabled:opacity-50"
+            disabled={!selectedProject || consoleAccess.busy}
+            onClick={() => void consoleAccess.start()}
+          >
+            {consoleAccess.busy ? "Starting…" : "Start 10-minute session"}
+          </button>
+        )}
+        {consoleAccess.error && (
+          <p role="alert" className="text-epic-warning">
+            {consoleAccess.error}
+          </p>
+        )}
+      </section>
       <details className="rounded-xl border border-epic-border p-4">
         <summary className="cursor-pointer">Problem Details responses</summary>
         <p className="mt-3">
@@ -249,6 +289,8 @@ function ExplorerSession({ operationId }: { operationId?: string }) {
                       key={operationId}
                       operation={liveOperation}
                       document={document}
+                      consoleSession={consoleAccess.session}
+                      endConsoleSession={consoleAccess.end}
                     />
                   )}
                 </>
@@ -293,9 +335,13 @@ function ExplorerSession({ operationId }: { operationId?: string }) {
 function TryOperation({
   operation,
   document,
+  consoleSession,
+  endConsoleSession,
 }: {
   operation: Operation;
   document: ApiDocument;
+  consoleSession: ConsoleSession | null;
+  endConsoleSession: () => void;
 }) {
   const [key, setKey] = useState("");
   const [parameters, setParameters] = useState<Record<string, string>>({});
@@ -305,6 +351,12 @@ function TryOperation({
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const abort = useRef<AbortController | null>(null);
+  useEffect(() => {
+    abort.current?.abort();
+    setKey("");
+    setResult(null);
+    setBusy(false);
+  }, [consoleSession]);
   useEffect(() => {
     const clear = () => {
       abort.current?.abort();
@@ -339,11 +391,12 @@ function TryOperation({
       setResult(
         await executeOperation(
           operation,
-          key,
+          consoleSession ? "" : key,
           parameters,
           query,
           body,
           controller.signal,
+          consoleSession ?? undefined,
         ),
       );
     } catch (e) {
@@ -358,23 +411,27 @@ function TryOperation({
     <div className="rounded-xl border border-epic-border bg-epic-surface p-5 space-y-4">
       <h2 className="text-xl font-semibold">Try it</h2>
       <p className="text-sm text-epic-text-muted">
-        Paste your key; stored hashes cannot recover existing secrets. The key
-        stays in this page’s memory and clears on logout or project change.
-        Requests use your normal permissions and quotas and count toward
-        endpoint usage.
+        {consoleSession
+          ? "Using this project’s temporary console session."
+          : "Or paste your own key; stored hashes cannot recover existing secrets."}{" "}
+        The credential stays in this page’s memory and clears on logout or
+        project change. Requests use your normal permissions and quotas and
+        count toward endpoint usage.
       </p>
-      <label className="block space-y-1">
-        <span>Temporary API key</span>
-        <input
-          type="password"
-          autoComplete="off"
-          spellCheck={false}
-          data-lpignore="true"
-          className={inputClass}
-          value={key}
-          onChange={(e) => setKey(e.target.value)}
-        />
-      </label>
+      {!consoleSession && (
+        <label className="block space-y-1">
+          <span>Your API key</span>
+          <input
+            type="password"
+            autoComplete="off"
+            spellCheck={false}
+            data-lpignore="true"
+            className={inputClass}
+            value={key}
+            onChange={(e) => setKey(e.target.value)}
+          />
+        </label>
+      )}
       {params
         .filter((p) => p.in === "path" || p.in === "query")
         .map((p) => (
@@ -424,6 +481,7 @@ function TryOperation({
         <button
           className="text-epic-text-muted"
           onClick={() => {
+            endConsoleSession();
             abort.current?.abort();
             setKey("");
             setResult(null);

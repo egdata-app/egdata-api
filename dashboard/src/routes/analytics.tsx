@@ -137,6 +137,9 @@ function AnalyticsPage() {
   }
 
   const keyOptions = [
+    ...(selectedProject
+      ? [{ id: `console_${selectedProject.id}`, label: "API console" }]
+      : []),
     { id: "all", label: "All Project Keys" },
     ...keys.map((k) => ({ id: k.id, label: `${k.name} (${k.keyPrefix})` })),
   ];

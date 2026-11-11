@@ -154,17 +154,26 @@ export async function executeOperation(
   query: Record<string, string>,
   body: string,
   signal: AbortSignal,
+  consoleSession?: { token: string; expiresAt: number },
 ): Promise<TryResult> {
+  if (consoleSession && Date.now() >= consoleSession.expiresAt) {
+    throw new Error("Console session expired. Start a new session.");
+  }
+  if (consoleSession && key)
+    throw new Error("Choose a console session or an API key.");
   const url = requestUrl(operation, parameters, query);
   const start = performance.now();
   const response = await fetch(url, {
     method: operation.method,
-    credentials: "omit",
+    credentials: consoleSession ? "same-origin" : "omit",
     redirect: "manual",
     cache: "no-store",
     signal,
     headers: {
       ...(key ? { "X-API-Key": key } : {}),
+      ...(consoleSession
+        ? { "X-Egdata-Console-Session": consoleSession.token }
+        : {}),
       ...(body ? { "Content-Type": "application/json" } : {}),
     },
     ...(body && operation.method !== "GET" && operation.method !== "HEAD"
@@ -174,10 +183,16 @@ export async function executeOperation(
   const duration = Math.round(performance.now() - start);
   const headers = Object.fromEntries(
     [...response.headers]
-      .filter(([name]) => !/(authorization|api.?key|cookie)/i.test(name))
+      .filter(
+        ([name]) =>
+          !/(authorization|api.?key|cookie|console-session)/i.test(name),
+      )
       .map(([name, value]) => [
         name,
-        key ? value.replaceAll(key, "[REDACTED]") : value,
+        (key ? value.replaceAll(key, "[REDACTED]") : value).replaceAll(
+          consoleSession?.token ?? "\u0000",
+          "[REDACTED]",
+        ),
       ]),
   );
   const contentType =
@@ -205,6 +220,8 @@ export async function executeOperation(
   if (/json|xml|^text\//i.test(contentType)) {
     let text = await blob.text();
     if (key) text = text.replaceAll(key, "[REDACTED]");
+    if (consoleSession)
+      text = text.replaceAll(consoleSession.token, "[REDACTED]");
     const kind = contentType.includes("json") ? "json" : "text";
     if (kind === "json") {
       try {

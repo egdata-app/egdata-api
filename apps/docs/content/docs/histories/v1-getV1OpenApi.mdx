@@ -16,6 +16,17 @@ Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-a
 
 Verification: tests/server-startup.test.ts: stalled v1 index builds do not delay HTTP startup; database connectivity remains required; pnpm test; pnpm build; pnpm docs:check; pnpm release:check --base origin/main.
 
+## 2026-11-11 — Try v1 operations with ten-minute project console sessions
+
+Record: [project-console-sessions](https://github.com/egdata-app/egdata-api/blob/main/changes/records/project-console-sessions.json).
+
+- **v1 GET /v1/open-api.json** (getV1OpenApi; changed; compatible)
+  - Before: The v1 description documented only public API key authentication for data operations.
+  - After: The v1 description also documents optional ten-minute console sessions bound to the signed-in dashboard. Public application security schemes and operation schemas remain unchanged.
+  - Client action: None
+
+Verification: dashboard/tests/console-sessions.test.ts; dashboard/tests/explorer.test.ts.
+
 ## 2026-11-11 — Preserve public v1 metadata responses through the Worker
 
 Record: [public-v1-metadata-response](https://github.com/egdata-app/egdata-api/blob/main/changes/records/public-v1-metadata-response.json).
