@@ -11,7 +11,7 @@ export function buildOpenApiDocument(): OpenAPIV3.Document {
       title: "egdata.app API",
       version: API_VERSION,
       description:
-        "REST API for Epic Games Store catalog, pricing, search, and public egdata.app data. This contract starts with public stable REST endpoints and will expand as legacy routes are classified. The separately documented GraphQL endpoint defaults to 30 POST requests per minute per client IP (RATE_LIMIT_GRAPHQL_POST_PER_MINUTE); exceeding the quota returns 429 with Retry-After. GraphQL GET/APQ has a separate default quota of 1200 per minute.",
+        "REST API for Epic Games Store catalog, pricing, search, and public egdata.app data. Public access at https://api.egdata.app is unchanged while the Worker gateway is staged separately. The dedicated origin-api.egdata.app hostname requires a private Worker-to-origin credential; direct requests return 403 ORIGIN_ACCESS_DENIED (or 503 ORIGIN_NOT_CONFIGURED if the origin lacks configuration). Clients must not send or obtain X-Egdata-Origin-Token. Global origin enforcement and moving the public hostname to the Worker require a separate explicit cutover. This contract starts with public stable REST endpoints and will expand as legacy routes are classified. The separately documented GraphQL endpoint defaults to 30 POST requests per minute per client IP (RATE_LIMIT_GRAPHQL_POST_PER_MINUTE); exceeding the quota returns 429 with Retry-After. GraphQL GET/APQ has a separate default quota of 1200 per minute.",
       contact: {
         name: "egdata.app",
         url: "https://egdata.app",

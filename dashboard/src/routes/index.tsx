@@ -71,8 +71,7 @@ function OverviewPage() {
             {selectedProject ? selectedProject.name : "Developer Overview"}
           </h1>
           <p className="text-sm text-epic-text-muted mt-1">
-            Edge-validated API access with shared Cloudflare CDN caching and
-            real-time Analytics Engine telemetry.
+            Manage your API keys and review this project’s usage.
           </p>
         </div>
         <div className="flex items-center gap-2.5">
@@ -96,13 +95,13 @@ function OverviewPage() {
         <StatCard
           label="24h Requests"
           value={(analytics?.totals.requests ?? 0).toLocaleString()}
-          sub={`${analytics?.totals.avgLatencyMs ?? 0} ms avg edge latency`}
+          sub={`${analytics?.totals.avgLatencyMs ?? 0} ms average processing time`}
           icon={<Activity className="w-4 h-4 text-epic-accent" />}
         />
         <StatCard
-          label="CDN Cache Hit Ratio"
+          label="Requests Served from Cache"
           value={`${analytics?.totals.cacheHitRate ?? 0}%`}
-          sub={`${(analytics?.totals.cacheHits ?? 0).toLocaleString()} edge cache hits`}
+          sub={`${(analytics?.totals.cacheHits ?? 0).toLocaleString()} cached responses`}
           icon={<Zap className="w-4 h-4 text-epic-success" />}
         />
         <StatCard
@@ -112,12 +111,12 @@ function OverviewPage() {
           icon={<KeyRound className="w-4 h-4 text-epic-accent" />}
         />
         <StatCard
-          label="Throttled / Blocked (24h)"
+          label="Blocked Requests (24h)"
           value={(
             (analytics?.totals.rateLimited ?? 0) +
             (analytics?.totals.blockedPolicy ?? 0)
           ).toLocaleString()}
-          sub={`${analytics?.totals.rateLimited ?? 0} rate limited · ${analytics?.totals.blockedPolicy ?? 0} policy denied`}
+          sub={`${analytics?.totals.rateLimited ?? 0} over limit · ${analytics?.totals.blockedPolicy ?? 0} denied by permissions`}
           icon={<ShieldAlert className="w-4 h-4 text-epic-warning" />}
         />
       </div>
@@ -128,16 +127,14 @@ function OverviewPage() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-base font-semibold text-white">
-                Edge Gateway Quickstart
+                Make your first request
               </h2>
               <p className="text-xs text-epic-text-muted mt-0.5">
-                Pass your key via{" "}
-                <code className="font-mono text-epic-accent">X-API-Key</code> so
-                Cloudflare validates at the PoP without fragmenting the shared
-                cache key.
+                Replace the example key with your own and send it in the{" "}
+                <code className="font-mono text-epic-accent">X-API-Key</code>{" "}
+                header.
               </p>
             </div>
-            <Tag tone="accent">Zero Cache Fragmentation</Tag>
           </div>
 
           <div className="relative bg-epic-bg border border-epic-border rounded-lg p-4 font-mono text-xs text-epic-text overflow-x-auto">
@@ -157,28 +154,26 @@ function OverviewPage() {
           <div className="grid sm:grid-cols-3 gap-3 pt-1 text-xs">
             <div className="p-3 rounded-lg bg-epic-bg/60 border border-epic-border/70">
               <div className="font-semibold text-epic-text mb-0.5">
-                1. Edge Verification
+                1. Create a key
               </div>
               <div className="text-epic-text-muted">
-                SHA-256 key hash verified in PoP memory / KV in &lt;1ms.
+                Give it a name you’ll recognize, such as your app or service.
               </div>
             </div>
             <div className="p-3 rounded-lg bg-epic-bg/60 border border-epic-border/70">
               <div className="font-semibold text-epic-text mb-0.5">
-                2. Policy & Quota
+                2. Choose permissions
               </div>
               <div className="text-epic-text-muted">
-                CIDR IP, Origin, Scope & RPM limits enforced before cache
-                lookup.
+                Allow the endpoints and request methods your app needs.
               </div>
             </div>
             <div className="p-3 rounded-lg bg-epic-bg/60 border border-epic-border/70">
               <div className="font-semibold text-epic-text mb-0.5">
-                3. Shared CDN Hit
+                3. Send a request
               </div>
               <div className="text-epic-text-muted">
-                Header stripped upstream so all valid keys share Cloudflare
-                Cache + ETags.
+                Try the example above, then check Usage for recorded requests.
               </div>
             </div>
           </div>
@@ -192,7 +187,7 @@ function OverviewPage() {
                 Project Keys
               </h2>
               <span className="text-xs text-epic-text-muted font-mono">
-                {rpmLimit.toLocaleString()} RPM
+                {rpmLimit.toLocaleString()} requests/min per key
               </span>
             </div>
 
@@ -232,7 +227,7 @@ function OverviewPage() {
               to="/analytics"
               className="text-xs font-medium text-epic-accent hover:text-epic-accent-hover inline-flex items-center gap-1"
             >
-              View full analytics
+              View usage
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
             <Link

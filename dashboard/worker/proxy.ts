@@ -4,6 +4,8 @@ import { touchApiKeyLastUsed } from "./db.js";
 import { resolveApiKeyMetadata } from "./key-cache.js";
 import { evaluateKeyPermissions, originMatchesPattern } from "./permissions.js";
 import type { DashboardEnv } from "./types.js";
+import { forwardToUpstream } from "./upstream.js";
+import { handleV1ApiProxy } from "./v1.js";
 
 const PUBLIC_UNAUTHENTICATED_PATHS = new Set([
   "/health",
@@ -93,6 +95,12 @@ export async function handleEdgeApiProxy(
     options?.stripPrefix && reqUrl.pathname.startsWith(options.stripPrefix)
       ? reqUrl.pathname.slice(options.stripPrefix.length) || "/"
       : reqUrl.pathname;
+
+  // Version 1 has its own mandatory authentication, scope mapping, Durable
+  // Object quota admission, and trusted-provenance headers.
+  if (upstreamPath === "/v1" || upstreamPath.startsWith("/v1/")) {
+    return handleV1ApiProxy(request, env, ctx, upstreamPath);
+  }
 
   const originHeader = request.headers.get("origin");
   const clientIp =
@@ -254,18 +262,13 @@ export async function handleEdgeApiProxy(
     ctx.waitUntil(touchApiKeyLastUsed(env.DB, keyMeta.keyId).catch(() => {}));
   }
 
-  // 7. Forward clean request through Cloudflare's shared zone Cache & Tiered Cache!
-  // Stripping `x-api-key` ensures all validated keys share the exact same Cloudflare Cache Key!
+  // 7. Forward to the dedicated origin after permission/rate-limit checks.
   const upstreamResponse = await forwardToUpstream(
     request,
     env,
     upstreamPath,
     reqUrl.search,
     cfProps,
-    {
-      stripApiKey: true,
-      keyTier: keyMeta.tier,
-    },
   );
 
   const cacheStatus = upstreamResponse.headers.get("cf-cache-status") || "MISS";
@@ -299,54 +302,5 @@ export async function handleEdgeApiProxy(
     status: upstreamResponse.status,
     statusText: upstreamResponse.statusText,
     headers: outHeaders,
-  });
-}
-
-async function forwardToUpstream(
-  request: Request,
-  env: DashboardEnv,
-  pathname: string,
-  search: string,
-  cfProps:
-    | {
-        tlsCipher?: string;
-        tlsVersion?: string;
-        httpProtocol?: string;
-        asn?: number;
-      }
-    | undefined,
-  opts?: { stripApiKey?: boolean; keyTier?: string },
-): Promise<Response> {
-  const targetOrigin = env.UPSTREAM_API_ORIGIN || "https://api.egdata.app";
-  const upstreamUrl = new URL(`${pathname}${search}`, targetOrigin);
-
-  const headers = new Headers(request.headers);
-  if (opts?.stripApiKey) {
-    headers.delete("x-api-key");
-    const auth = headers.get("authorization");
-    if (auth && /^Bearer\s+egk_/i.test(auth)) {
-      headers.delete("authorization");
-    }
-  }
-
-  // Forward authenticated transport signals natively to egdata-api's anti-abuse engine
-  if (env.ANTI_ABUSE_EDGE_SECRET) {
-    headers.set("x-egdata-edge-secret", env.ANTI_ABUSE_EDGE_SECRET);
-    if (cfProps?.tlsCipher)
-      headers.set("x-egdata-tls-cipher", cfProps.tlsCipher);
-    if (cfProps?.tlsVersion)
-      headers.set("x-egdata-tls-version", cfProps.tlsVersion);
-    if (cfProps?.httpProtocol)
-      headers.set("x-egdata-http-protocol", cfProps.httpProtocol);
-    if (cfProps?.asn) headers.set("x-egdata-asn", String(cfProps.asn));
-  }
-
-  const hasBody = request.method !== "GET" && request.method !== "HEAD";
-
-  return fetch(upstreamUrl.toString(), {
-    method: request.method,
-    headers,
-    body: hasBody ? request.body : undefined,
-    redirect: "manual",
   });
 }

@@ -127,6 +127,21 @@ pnpm biome check .
 pnpm test
 ```
 
+## Versioned v1 API
+
+`/v1` is the versioned read-only REST contract. It is staged at `https://devs.egdata.app/proxy/v1`; legacy `api.egdata.app` routing is unchanged until an explicit cutover. v1 requires API keys and exact per-key quotas at the Worker, uses `{ data, meta }` responses, signed forward cursors, and RFC 9457 Problem Details. See `apps/docs/content/docs/versioned-api.mdx` and `dashboard/README.md` for deployment and verification steps.
+
+Maintainer checks:
+
+```bash
+pnpm openapi:generate   # regenerates legacy + v1 OpenAPI and the Worker route table
+pnpm openapi:check      # rejects undocumented v1 handlers and unexplained public coverage gaps
+pnpm docs:check
+pnpm release:check
+```
+
+Origin operators must apply `pnpm v1:indexes` and `pnpm v1:search-mappings` before enabling affected v1 search endpoints. Cursor signing uses the dedicated `V1_CURSOR_SECRET`; Worker provenance uses `V1_WORKER_TOKEN`/`ORIGIN_AUTH_TOKEN`.
+
 ## OpenAPI And Docs
 
 The API owns its OpenAPI contract in `src/openapi/**` and generates the committed artifact at `openapi/egdata.openapi.json`.

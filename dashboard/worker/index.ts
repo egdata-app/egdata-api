@@ -561,6 +561,8 @@ const rootApp = new Hono<AppContext>();
 
 rootApp.route("/_dashboard/api", dashboardApi);
 
+export { ApiKeyRateLimiter } from "./rate-limiter.js";
+
 export default {
   async fetch(
     request: Request,
@@ -569,7 +571,15 @@ export default {
   ): Promise<Response> {
     const url = new URL(request.url);
 
-    // 1. Dashboard internal API & Epic OAuth callbacks
+    // The API hostname owns every path, including /proxy and /_dashboard/api.
+    if (
+      env.API_PROXY_HOST &&
+      url.hostname.toLowerCase() === env.API_PROXY_HOST.toLowerCase()
+    ) {
+      return handleEdgeApiProxy(request, env, ctx);
+    }
+
+    // Dashboard internal API & Epic OAuth callbacks
     if (
       url.pathname === "/_dashboard/api" ||
       url.pathname.startsWith("/_dashboard/api/")
@@ -580,14 +590,6 @@ export default {
     // 2. Local/Explicit `/proxy/*` testing path -> Edge API Key Gateway
     if (url.pathname === "/proxy" || url.pathname.startsWith("/proxy/")) {
       return handleEdgeApiProxy(request, env, ctx, { stripPrefix: "/proxy" });
-    }
-
-    // 3. When deployed directly on `api.egdata.app`, intercept ALL traffic at the edge!
-    if (
-      env.API_PROXY_HOST &&
-      url.hostname.toLowerCase() === env.API_PROXY_HOST.toLowerCase()
-    ) {
-      return handleEdgeApiProxy(request, env, ctx);
     }
 
     // 4. Otherwise serve the Developer Dashboard SPA static assets

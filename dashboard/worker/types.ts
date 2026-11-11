@@ -96,5 +96,12 @@ export interface DashboardEnv extends Env {
   CF_ACCOUNT_ID?: string;
   CF_ANALYTICS_API_TOKEN?: string;
   ANTI_ABUSE_EDGE_SECRET?: string;
+  ORIGIN_AUTH_TOKEN?: string;
   ENABLE_DEV_AUTH?: string;
+  /** One SQLite-backed quota object per environment and internal key ID. */
+  API_KEY_RATE_LIMITER: DurableObjectNamespace<
+    import("./rate-limiter.js").ApiKeyRateLimiter
+  >;
+  /** Prevents counter sharing between independently deployed environments. */
+  RATE_LIMIT_ENVIRONMENT?: string;
 }

@@ -250,6 +250,7 @@ export function evaluateKeyPermissions(
     origin: string | null;
   },
   nowMs = Date.now(),
+  requiredScope?: ApiScope,
 ): PolicyEvaluationResult {
   if (!meta.active) {
     return {
@@ -312,7 +313,7 @@ export function evaluateKeyPermissions(
     };
   }
 
-  const neededScope = requiredScopeForPath(request.pathname);
+  const neededScope = requiredScope ?? requiredScopeForPath(request.pathname);
   if (
     meta.scopes.length > 0 &&
     !meta.scopes.includes(neededScope) &&

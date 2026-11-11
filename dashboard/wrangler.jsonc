@@ -5,6 +5,11 @@
   "compatibility_date": "2026-05-17",
   "compatibility_flags": ["nodejs_compat"],
   "upload_source_maps": true,
+  "placement": { "mode": "off" },
+  "workers_dev": true,
+  "preview_urls": false,
+  // Dashboard only. Add api.egdata.app/* after an explicit production cutover.
+  "routes": [{ "pattern": "devs.egdata.app", "custom_domain": true }],
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1
@@ -18,14 +23,28 @@
     {
       "binding": "DB",
       "database_name": "egdata-dashboard-db",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "c0ea5b25-0361-4487-95cc-58803bdeb22d",
       "migrations_dir": "migrations"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "API_KEY_RATE_LIMITER",
+        "class_name": "ApiKeyRateLimiter"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1-api-key-quota",
+      "new_sqlite_classes": ["ApiKeyRateLimiter"]
     }
   ],
   "kv_namespaces": [
     {
       "binding": "API_KEYS_KV",
-      "id": "00000000000000000000000000000000"
+      "id": "5354a70218264bb4b418e24037318909"
     }
   ],
   "ratelimits": [
@@ -66,13 +85,14 @@
     }
   ],
   "vars": {
-    "UPSTREAM_API_ORIGIN": "https://api.egdata.app",
+    "UPSTREAM_API_ORIGIN": "https://origin-api.egdata.app",
     "API_PROXY_HOST": "api.egdata.app",
-    "DASHBOARD_ORIGIN": "https://developers.egdata.app",
+    "DASHBOARD_ORIGIN": "https://devs.egdata.app",
     "ADMIN_EMAIL": "admin@egdata.app",
     "EMAIL_FROM_ADDRESS": "noreply@egdata.app",
     "EMAIL_FROM_NAME": "egdata Developer Portal",
-    "REQUIRE_API_KEY": "true",
-    "ALLOW_FIRST_PARTY_ORIGINS": "https://egdata.app"
+    "REQUIRE_API_KEY": "false",
+    "ALLOW_FIRST_PARTY_ORIGINS": "https://egdata.app",
+    "RATE_LIMIT_ENVIRONMENT": "staging"
   }
 }

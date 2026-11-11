@@ -13,4 +13,9 @@ const client = new IORedis({
   maxRetriesPerRequest: null,
 });
 
+// ioredis emits `error` events for connection failures. Without a listener,
+// Node prints an unhandled-error line for every retry (including read-only
+// tooling such as the OpenAPI coverage check).
+client.on("error", () => {});
+
 export default client;

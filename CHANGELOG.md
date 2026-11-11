@@ -4,6 +4,20 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Added the versioned `/v1` public read-only API, initially staged at `https://devs.egdata.app/proxy/v1` with legacy `api.egdata.app` routing unchanged. v1 adds mandatory API keys, explicit permission-scope mapping for `/v1` paths, `{ data, meta }` JSON envelopes, forward-only signed cursor pagination, RFC 9457 Problem Details with `X-Request-Id`, explicit `country=US`/`locale=en-US` defaults, native image/XML preservation, separate `v1:` response-cache keys, and separate legacy/v1 OpenAPI documents and coverage checks.
+
+- Added a SQLite-backed `ApiKeyRateLimiter` Durable Object for exact global per-key quotas (Free 120, Pro 1,200, Enterprise 6,000, validated `customRpm` override) with UTC-aligned 60-second windows, one RPC and one state-row write per admitted request, read-only denials, lazy window replacement, and retryable `503` when admission is uncertain. Existing expensive-operation limits remain per-key policies in the same object. Over-limit v1 requests receive `429` Problem Details with `Retry-After`, `RateLimit`, and `RateLimit-Policy` before reaching the VM, and Worker quota headers replace upstream values.
+
+- Added required additive MongoDB indexes for v1 keyset scans, lookup paths, and build/price/changelog sorting. v1 handlers use direct model access and shared serializers instead of mounting or proxying legacy routers. Authenticated v1 traffic bypasses legacy per-IP quota middleware; the Worker strips caller-supplied internal headers and asserts verified key identity only after quota admission.
+
+- Documented the v1 contract, authentication, quotas, cursor semantics, error format, and versioning policy; added Worker deployment, Durable Object namespace/counter preservation, database index, and OpenSearch mapping guidance. Legacy regression and release checks remain required.
+
+- Hosted the developer dashboard at `https://devs.egdata.app` and updated its origin and documented Epic OAuth callback URL. Public API routing remains unchanged.
+
+- Simplified dashboard copy across sign-in, overview, API keys, usage, and rate limits. Removed infrastructure jargon, unsupported speed and plan-benefit claims, and redundant badges; clarified setup steps, permission fields, revocation, and incomplete usage history.
+
+- Staged the dashboard Worker against a dedicated HTTPS VM origin with shared-secret authentication, safe upstream URL construction, and preserved paths, queries, streaming bodies and user authentication. Only the dedicated origin hostname is protected by default; global origin enforcement is opt-in. The public API DNS/routing remains unchanged, and the Worker configuration has no public API routes.
+
 - Added the `dashboard/` Cloudflare Worker project (`@egdata/dashboard`) with an edge API key gateway (D1 + Workers KV + PoP Rate Limiting + Workers Analytics Engine telemetry) that preserves shared Cloudflare CDN caching and ETags, a TanStack Router + React Aria developer portal with Epic Games OAuth, fine-grained IP/CIDR/Origin/path/scope permissions, usage analytics charts, and rate-limit upgrade requests via Cloudflare Email Service.
 
 - Raised the anti-abuse `unique-id-sweep` threshold from 30 to 60 distinct resource IDs within the rolling 60-second window. Other scoring weights, volume/pagination thresholds, and enforcement behavior remain unchanged.

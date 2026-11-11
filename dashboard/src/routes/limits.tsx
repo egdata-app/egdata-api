@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, Mail, Send, Sparkles, Zap } from "lucide-react";
+import { Mail, Send, Sparkles } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "../components/ui/Button";
 import { Tag } from "../components/ui/Controls";
@@ -22,9 +22,9 @@ export const Route = createFileRoute("/limits")({
 });
 
 const TIER_OPTIONS = [
-  { id: "pro", label: "Pro Tier (1,200 req/min)" },
-  { id: "enterprise", label: "Enterprise Tier (6,000 req/min)" },
-  { id: "custom", label: "Custom High-Volume Quota" },
+  { id: "pro", label: "Pro (1,200 requests/min)" },
+  { id: "enterprise", label: "Enterprise (6,000 requests/min)" },
+  { id: "custom", label: "Custom limit" },
 ];
 
 function RateLimitsPage() {
@@ -78,8 +78,8 @@ function RateLimitsPage() {
         title: "Limit increase request submitted",
         description:
           res.emailDelivery.status === "sent"
-            ? "Sent via Cloudflare Email Service to the egdata team."
-            : "Saved to D1 & queued for administrator review.",
+            ? "The egdata team has been notified."
+            : "Your request has been saved. You can check its status here.",
         tone: "success",
       });
     } catch (err) {
@@ -97,11 +97,13 @@ function RateLimitsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-white">
-          Rate Limits & Quota Upgrade
+          Rate Limits
         </h1>
         <p className="text-sm text-epic-text-muted mt-1">
-          Compare edge rate-limiting tiers and submit an upgrade request
-          directly via Cloudflare Email Service.
+          Compare exact request limits and ask for more capacity for your project.
+          Quotas use fixed, UTC-aligned 60-second windows and are enforced per key
+          in one request before the API origin is called. Expensive operations
+          keep their own per-key caps; a 429 response names the exhausted policy.
         </p>
       </div>
 
@@ -109,37 +111,21 @@ function RateLimitsPage() {
       <div className="grid md:grid-cols-3 gap-4">
         <TierCard
           name="Free"
-          rpm="120 req / min"
+          rpm="120 requests/min per key"
           current={selectedProject?.tier === "free"}
-          features={[
-            "Up to 25 scoped API keys per project",
-            "IPv4 / IPv6 CIDR & Origin restrictions",
-            "Shared Cloudflare Edge Cache & ETag 304s",
-            "Real-time Analytics Engine dashboard",
-          ]}
+          description="The default limit for new projects."
         />
         <TierCard
           name="Pro"
-          rpm="1,200 req / min"
-          highlight
+          rpm="1,200 requests/min per key"
           current={selectedProject?.tier === "pro"}
-          features={[
-            "10x per-PoP edge burst capacity",
-            "GraphQL APQ & Search v2 high-volume access",
-            "Priority support & webhook notifications",
-            "Zero anti-abuse PoW friction on clean server keys",
-          ]}
+          description="Request this limit when your project needs more capacity."
         />
         <TierCard
           name="Enterprise"
-          rpm="6,000+ req / min"
+          rpm="6,000 requests/min per key"
           current={selectedProject?.tier === "enterprise"}
-          features={[
-            "Custom RPM & dedicated partner quotas",
-            "Catalog Hydration (/catalog/hydrate) bulk sync",
-            "Custom CORS & multi-environment key policies",
-            "Direct maintainer contact channel",
-          ]}
+          description="Need a different limit? Choose Custom limit in your request."
         />
       </div>
 
@@ -154,13 +140,11 @@ function RateLimitsPage() {
                   Request Higher Limits
                 </h2>
                 <p className="text-xs text-epic-text-muted">
-                  Sends a transactional email via Cloudflare Email Service (
-                  <code className="font-mono">env.EMAIL.send</code>) with your
-                  Epic ID and project details.
+                  Tell the egdata team what you’re building and how many
+                  requests you need.
                 </p>
               </div>
             </div>
-            <Tag tone="accent">Cloudflare Email</Tag>
           </div>
 
           <Form onSubmit={handleSubmit}>
@@ -172,7 +156,7 @@ function RateLimitsPage() {
                 value={contactEmail}
                 onChange={setContactEmail}
                 placeholder="you@domain.com"
-                description="Used as Reply-To so we can follow up directly."
+                description="We’ll use this address to follow up on your request."
               />
 
               <Select
@@ -197,7 +181,7 @@ function RateLimitsPage() {
 
             <div className="grid sm:grid-cols-2 gap-4">
               <TextField
-                label="Target Requests / Minute (RPM)"
+                label="Requested Limit (Requests per Minute)"
                 type="number"
                 isRequired
                 value={requestedRpm}
@@ -227,7 +211,7 @@ function RateLimitsPage() {
               isRequired
               value={useCase}
               onChange={setUseCase}
-              placeholder="Describe the endpoints you call (e.g. /offers/{id}, /search/v2/search), whether you cache responses or send If-None-Match ETags, and why you need higher throughput..."
+              placeholder="What does your app do, which endpoints does it use, and why do you need a higher limit?"
               description="Minimum 20 characters."
             />
 
@@ -240,7 +224,7 @@ function RateLimitsPage() {
               </span>
               <Button type="submit" isPending={submitting}>
                 <Send className="w-4 h-4" />
-                Send Upgrade Request
+                Submit Request
               </Button>
             </div>
           </Form>
@@ -250,12 +234,12 @@ function RateLimitsPage() {
         <div className="lg:col-span-2 space-y-3">
           <h2 className="text-sm font-semibold text-white flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-epic-accent" />
-            Submitted Upgrade Requests
+            Request History
           </h2>
 
-          <Table aria-label="Submitted Upgrade Requests">
+          <Table aria-label="Limit request history">
             <TableHeader>
-              <Column isRowHeader>Tier & RPM</Column>
+              <Column isRowHeader>Requested Limit</Column>
               <Column>Status</Column>
               <Column>Date</Column>
             </TableHeader>
@@ -263,7 +247,7 @@ function RateLimitsPage() {
               items={history}
               renderEmptyState={() => (
                 <div className="py-8 text-xs text-epic-text-muted">
-                  No upgrade requests submitted yet.
+                  You haven’t requested a higher limit yet.
                 </div>
               )}
             >
@@ -274,7 +258,7 @@ function RateLimitsPage() {
                       {req.requestedTier}
                     </div>
                     <div className="text-[11px] font-mono text-epic-text-muted">
-                      {req.requestedRpm.toLocaleString()} RPM
+                      {req.requestedRpm.toLocaleString()} requests/min
                     </div>
                   </Cell>
                   <Cell>
@@ -306,20 +290,18 @@ function RateLimitsPage() {
 function TierCard({
   name,
   rpm,
-  features,
+  description,
   current,
-  highlight,
 }: {
   name: string;
   rpm: string;
-  features: string[];
+  description: string;
   current?: boolean;
-  highlight?: boolean;
 }) {
   return (
     <div
       className={`rounded-xl p-5 border space-y-4 ${
-        highlight
+        current
           ? "bg-epic-surface border-epic-accent/50 shadow-lg shadow-epic-accent/5"
           : "bg-epic-surface border-epic-border"
       }`}
@@ -331,24 +313,10 @@ function TierCard({
             {rpm}
           </div>
         </div>
-        {current ? (
-          <Tag tone="success">Current Plan</Tag>
-        ) : highlight ? (
-          <Tag tone="accent">
-            <Zap className="w-3 h-3" />
-            Popular
-          </Tag>
-        ) : null}
+        {current && <Tag tone="success">Current Limit</Tag>}
       </div>
 
-      <ul className="space-y-2 text-xs text-epic-text-muted">
-        {features.map((f) => (
-          <li key={f} className="flex items-start gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-epic-accent shrink-0 mt-0.5" />
-            <span>{f}</span>
-          </li>
-        ))}
-      </ul>
+      <p className="text-xs text-epic-text-muted">{description}</p>
     </div>
   );
 }

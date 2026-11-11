@@ -196,7 +196,8 @@ describe("HMAC session tokens and API key proxy cache preservation", () => {
         } as unknown as RateLimit,
         EMAIL: { send: vi.fn() } as unknown as SendEmail,
         ASSETS: { fetch: vi.fn() } as unknown as Fetcher,
-        UPSTREAM_API_ORIGIN: "https://api.egdata.app",
+        UPSTREAM_API_ORIGIN: "https://origin-api.egdata.app",
+        ORIGIN_AUTH_TOKEN: "test-origin-token",
         API_PROXY_HOST: "api.egdata.app",
         DASHBOARD_ORIGIN: "https://developers.egdata.app",
         ADMIN_EMAIL: "admin@egdata.app",
@@ -204,6 +205,19 @@ describe("HMAC session tokens and API key proxy cache preservation", () => {
         EMAIL_FROM_NAME: "egdata Developer Portal",
         REQUIRE_API_KEY: "true",
         ALLOW_FIRST_PARTY_ORIGINS: "https://egdata.app",
+        API_KEY_RATE_LIMITER: {
+          idFromName: vi.fn((name: string) => name),
+          get: vi.fn(() => ({
+            admit: vi.fn(async () => ({
+              allowed: true,
+              windowStart: Date.now(),
+              resetAt: Date.now() + 60_000,
+              retryAfter: 60,
+              exhaustedPolicy: null,
+              policies: [],
+            })),
+          })),
+        } as unknown as DashboardEnv["API_KEY_RATE_LIMITER"],
       } satisfies DashboardEnv;
 
       const ctx = {

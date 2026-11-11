@@ -44,6 +44,30 @@ const TIME_RANGES = [
   { id: "720", label: "Last 30 days" },
 ];
 
+const CACHE_STATUS_LABELS: Record<string, string> = {
+  HIT: "Served from cache",
+  MISS: "Not in cache",
+  EXPIRED: "Cached response expired",
+  STALE: "Served an older cached response",
+  UPDATING: "Cache refresh in progress",
+  REVALIDATED: "Cached response checked for updates",
+  BYPASS: "Cache skipped",
+  DYNAMIC: "Not cached",
+  EDGE_BLOCK: "Blocked before reaching the API",
+};
+
+const LIMIT_OUTCOME_LABELS: Record<string, string> = {
+  ok: "Allowed",
+  rate_limited: "Request limit reached",
+  key_inactive: "Key revoked or paused",
+  key_expired: "Key expired",
+  ip_denied: "IP address not allowed",
+  origin_denied: "Browser origin not allowed",
+  method_denied: "HTTP method not allowed",
+  path_denied: "Endpoint not allowed",
+  scope_denied: "Required permission missing",
+};
+
 function AnalyticsPage() {
   const { selectedProject } = useDashboardAuth();
   const [keys, setKeys] = useState<DashboardApiKey[]>([]);
@@ -87,14 +111,14 @@ function AnalyticsPage() {
     try {
       const res = await dashboardClient.simulateTraffic();
       notify({
-        title: `Recorded ${res.generated} sample edge events`,
-        description: "Analytics charts refreshed.",
+        title: `Added ${res.generated} sample requests`,
+        description: "Sample data is for previewing the charts.",
         tone: "success",
       });
       await loadAnalytics();
     } catch (err) {
       notify({
-        title: "Cannot simulate traffic",
+        title: "Could not add sample data",
         description:
           err instanceof Error ? err.message : "Create an API key first",
         tone: "danger",
@@ -123,26 +147,22 @@ function AnalyticsPage() {
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-2xl font-bold tracking-tight text-white">
-              Edge Analytics
+              Usage
             </h1>
-            {data && (
-              <Tag
-                tone={
-                  data.source === "cloudflare_analytics_engine"
-                    ? "accent"
-                    : "neutral"
-                }
-              >
-                {data.source === "cloudflare_analytics_engine"
-                  ? "Workers Analytics Engine SQL"
-                  : "Live Edge Buffer"}
-              </Tag>
+            {data?.source === "local_buffer" && (
+              <Tag tone="neutral">Recent activity only</Tag>
             )}
           </div>
           <p className="text-sm text-epic-text-muted mt-1">
-            Monitor normalized endpoints, Cloudflare cache hits, rate-limit
-            thresholds, origins, client IPs, and user agents.
+            Review requests made with your API keys and see which ones reached
+            their limits.
           </p>
+          {data?.source === "local_buffer" && (
+            <p className="text-xs text-epic-text-muted mt-1">
+              Full usage history is unavailable. These results may not cover the
+              entire selected period.
+            </p>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
@@ -193,7 +213,7 @@ function AnalyticsPage() {
               }}
             >
               <Play className="w-3.5 h-3.5 text-epic-accent" />
-              Sample Events
+              Add Sample Data
             </Button>
           )}
         </div>
@@ -207,22 +227,22 @@ function AnalyticsPage() {
           accent="text-white"
         />
         <MetricPill
-          label="Cache Hit Rate"
+          label="Served from Cache"
           value={`${data?.totals.cacheHitRate ?? 0}%`}
           accent="text-epic-success"
         />
         <MetricPill
-          label="Avg Edge Latency"
+          label="Avg Processing Time"
           value={`${data?.totals.avgLatencyMs ?? 0} ms`}
           accent="text-epic-accent"
         />
         <MetricPill
-          label="429 Rate Limited"
+          label="Rate Limited (429)"
           value={(data?.totals.rateLimited ?? 0).toLocaleString()}
           accent="text-epic-warning"
         />
         <MetricPill
-          label="Key RPM Threshold"
+          label="Limit per Key"
           value={`${rpmThreshold.toLocaleString()} / min`}
           accent="text-epic-text"
         />
@@ -236,25 +256,24 @@ function AnalyticsPage() {
             <div>
               <h2 className="text-sm font-semibold text-white flex items-center gap-2">
                 <Activity className="w-4 h-4 text-epic-accent" />
-                Request Throughput, Cache Hits & Rate-Limit Bursts
+                Requests over time
               </h2>
               <p className="text-xs text-epic-text-muted mt-0.5">
-                Stacked comparison of Cloudflare cache hits vs origin misses and
-                429 throttles.
+                Requests grouped by time and how they were handled.
               </p>
             </div>
             <div className="flex items-center gap-3 text-[11px] text-epic-text-muted">
               <span className="inline-flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-xs bg-epic-accent" />
-                Cache Hit
+                Cached
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-xs bg-epic-hover border border-epic-border-hover" />
-                Origin Miss
+                Other Requests
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-xs bg-epic-warning" />
-                429 Throttled
+                Rate Limited
               </span>
             </div>
           </div>
@@ -267,12 +286,12 @@ function AnalyticsPage() {
           <div>
             <h2 className="text-sm font-semibold text-white flex items-center gap-2">
               <Zap className="w-4 h-4 text-epic-success" />
-              CF-Cache-Status Distribution
+              Cache Results
             </h2>
             <div className="mt-3 space-y-2.5">
               {(data?.cacheBreakdown.length ?? 0) === 0 ? (
                 <p className="text-xs text-epic-text-muted py-4">
-                  No cache telemetry in range.
+                  No cache results for this period.
                 </p>
               ) : (
                 data?.cacheBreakdown.map((item) => {
@@ -283,7 +302,7 @@ function AnalyticsPage() {
                   return (
                     <HorizontalBar
                       key={item.status}
-                      label={item.status}
+                      label={CACHE_STATUS_LABELS[item.status] ?? item.status}
                       count={item.requests}
                       percent={pct}
                       color={
@@ -303,12 +322,12 @@ function AnalyticsPage() {
           <div className="pt-4 border-t border-epic-border">
             <h2 className="text-sm font-semibold text-white flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 text-epic-warning" />
-              Limit & Policy Outcomes
+              Access Checks
             </h2>
             <div className="mt-3 space-y-2.5">
               {(data?.limitOutcomes.length ?? 0) === 0 ? (
                 <p className="text-xs text-epic-text-muted py-2">
-                  No policy events recorded.
+                  No access checks recorded for this period.
                 </p>
               ) : (
                 data?.limitOutcomes.map((item) => {
@@ -319,7 +338,7 @@ function AnalyticsPage() {
                   return (
                     <HorizontalBar
                       key={item.outcome}
-                      label={item.outcome}
+                      label={LIMIT_OUTCOME_LABELS[item.outcome] ?? item.outcome}
                       count={item.requests}
                       percent={pct}
                       color={
@@ -337,23 +356,27 @@ function AnalyticsPage() {
       </div>
 
       {/* Detailed Dimension Tabs */}
+      <p className="text-xs text-epic-text-muted">
+        Version 1 traffic appears under `/v1/...` route templates alongside
+        legacy routes. Filter by API key to compare quota outcomes per key.
+      </p>
       <Tabs>
-        <TabList aria-label="Analytics Dimensions">
+        <TabList aria-label="Usage breakdown">
           <Tab id="endpoints">Top Endpoints</Tab>
-          <Tab id="origins">Origins</Tab>
-          <Tab id="ips">Client IPs & Geo</Tab>
+          <Tab id="origins">Browser Origins</Tab>
+          <Tab id="ips">IP Addresses</Tab>
           <Tab id="useragents">User Agents</Tab>
         </TabList>
 
         <TabPanel id="endpoints">
-          <Table aria-label="Top Endpoints Hit">
+          <Table aria-label="Most requested endpoints">
             <TableHeader>
-              <Column isRowHeader>Normalized Route (X-Route-Template)</Column>
+              <Column isRowHeader>Endpoint</Column>
               <Column>Method</Column>
               <Column>Requests</Column>
-              <Column>Cache Hits</Column>
-              <Column>429 Rate Limited</Column>
-              <Column>Avg Latency</Column>
+              <Column>Cached Responses</Column>
+              <Column>Rate Limited (429)</Column>
+              <Column>Avg Processing Time</Column>
             </TableHeader>
             <TableBody
               items={(data?.endpoints ?? []).map((e) => ({
@@ -362,7 +385,7 @@ function AnalyticsPage() {
               }))}
               renderEmptyState={() => (
                 <div className="py-8 text-xs text-epic-text-muted">
-                  No endpoint requests recorded for this filter.
+                  No requests match these filters.
                 </div>
               )}
             >
@@ -401,7 +424,7 @@ function AnalyticsPage() {
         <TabPanel id="origins">
           <Table aria-label="Request Origins">
             <TableHeader>
-              <Column isRowHeader>Origin Header</Column>
+              <Column isRowHeader>Browser Origin</Column>
               <Column>Requests</Column>
               <Column>Share</Column>
             </TableHeader>
@@ -409,7 +432,7 @@ function AnalyticsPage() {
               items={(data?.origins ?? []).map((o) => ({ ...o, id: o.origin }))}
               renderEmptyState={() => (
                 <div className="py-8 text-xs text-epic-text-muted">
-                  No Origin headers recorded.
+                  No browser origins recorded for this period.
                 </div>
               )}
             >
@@ -418,7 +441,9 @@ function AnalyticsPage() {
                   <Cell>
                     <div className="flex items-center gap-2 font-mono text-xs">
                       <Globe className="w-3.5 h-3.5 text-epic-accent" />
-                      {orig.origin}
+                      {orig.origin === "(direct)"
+                        ? "No origin provided"
+                        : orig.origin}
                     </div>
                   </Cell>
                   <Cell className="font-mono text-xs">
@@ -438,7 +463,7 @@ function AnalyticsPage() {
         <TabPanel id="ips">
           <Table aria-label="Client IP Addresses">
             <TableHeader>
-              <Column isRowHeader>Client IP (CF-Connecting-IP)</Column>
+              <Column isRowHeader>IP Address</Column>
               <Column>Country</Column>
               <Column>Requests</Column>
               <Column>Rate Limited (429)</Column>
@@ -480,7 +505,7 @@ function AnalyticsPage() {
         <TabPanel id="useragents">
           <Table aria-label="Client User Agents">
             <TableHeader>
-              <Column isRowHeader>User-Agent String</Column>
+              <Column isRowHeader>User Agent</Column>
               <Column>Requests</Column>
             </TableHeader>
             <TableBody
@@ -490,7 +515,7 @@ function AnalyticsPage() {
               }))}
               renderEmptyState={() => (
                 <div className="py-8 text-xs text-epic-text-muted">
-                  No User-Agents recorded.
+                  No user agents recorded for this period.
                 </div>
               )}
             >
@@ -573,12 +598,9 @@ function TimeseriesChart({
   if (points.length === 0) {
     return (
       <div className="h-56 flex flex-col items-center justify-center border border-dashed border-epic-border rounded-lg text-xs text-epic-text-muted gap-2">
-        <p>No time-series buckets recorded in this window yet.</p>
+        <p>No requests recorded for this period.</p>
         <p className="text-[11px]">
-          Make requests with your{" "}
-          <code className="font-mono text-epic-accent">X-API-Key</code> (or
-          click &ldquo;Sample Events&rdquo; in local dev) to populate live
-          charts.
+          Send a request with your API key, then refresh to check for activity.
         </p>
       </div>
     );
@@ -605,7 +627,7 @@ function TimeseriesChart({
             <div
               key={pt.bucket}
               className="flex-1 min-w-0 h-full flex flex-col justify-end items-center group relative"
-              title={`${label}: ${pt.requests} req (${pt.cacheHits} hits, ${pt.rateLimited} 429s)`}
+              title={`${label}: ${pt.requests} requests (${pt.cacheHits} cached, ${pt.rateLimited} rate limited)`}
             >
               <div
                 className="w-full max-w-8 rounded-t-sm overflow-hidden flex flex-col justify-end transition-all group-hover:brightness-110"

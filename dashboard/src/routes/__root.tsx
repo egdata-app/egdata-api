@@ -14,7 +14,6 @@ import {
   Plus,
   ShieldCheck,
   Sparkles,
-  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { EgdataLogo, EpicGamesIcon } from "../components/icons/BrandIcons";
@@ -109,9 +108,9 @@ function DashboardShell() {
 
   const navItems = [
     { to: "/", label: "Overview", icon: Activity },
-    { to: "/keys", label: "API Keys & Permissions", icon: KeyRound },
-    { to: "/analytics", label: "Edge Analytics", icon: BarChart3 },
-    { to: "/limits", label: "Rate Limits & Upgrade", icon: Sparkles },
+    { to: "/keys", label: "API Keys", icon: KeyRound },
+    { to: "/analytics", label: "Usage", icon: BarChart3 },
+    { to: "/limits", label: "Rate Limits", icon: Sparkles },
   ] as const;
 
   return (
@@ -274,10 +273,7 @@ function DashboardShell() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-epic-text-muted">
           <div className="flex items-center gap-2">
             <EgdataLogo className="w-4 h-4 opacity-75" />
-            <span>
-              egdata Edge API Gateway — Powered by Cloudflare Workers, D1, KV &
-              Analytics Engine
-            </span>
+            <span>egdata Developer Portal</span>
           </div>
           <div className="flex items-center gap-4">
             <a
@@ -386,38 +382,33 @@ function UnauthenticatedLanding({
 
       <div className="max-w-4xl mx-auto w-full grid md:grid-cols-2 gap-8 items-center my-12">
         <div className="space-y-5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-epic-surface border border-epic-border text-xs text-epic-accent font-medium">
-            <Zap className="w-3.5 h-3.5" />
-            Sub-millisecond Cloudflare Edge Gateway
-          </div>
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white leading-tight">
-            Build with the Epic Games Store catalog at the edge.
+            Build with Epic Games Store data.
           </h1>
           <p className="text-sm text-epic-text-muted leading-relaxed">
-            Generate scoped API keys, lock down IP CIDR ranges and browser
-            Origins, and monitor real-time endpoint throughput, Cloudflare CDN
-            cache hit ratios, and rate-limit thresholds.
+            Create API keys for your apps, choose what they can access, and
+            track their usage.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
             <div className="p-3.5 rounded-xl bg-epic-surface border border-epic-border">
               <div className="flex items-center gap-2 text-xs font-semibold text-epic-text mb-1">
                 <ShieldCheck className="w-4 h-4 text-epic-accent" />
-                Fine-Grained Security
+                Control access
               </div>
               <p className="text-xs text-epic-text-muted">
-                Restrict keys by IPv4/IPv6 CIDR, CORS Origin, HTTP methods, and
-                catalog scopes.
+                Choose which endpoints, IP addresses, and browser origins each
+                key can use.
               </p>
             </div>
             <div className="p-3.5 rounded-xl bg-epic-surface border border-epic-border">
               <div className="flex items-center gap-2 text-xs font-semibold text-epic-text mb-1">
                 <BarChart3 className="w-4 h-4 text-epic-accent" />
-                Live Edge Telemetry
+                Understand usage
               </div>
               <p className="text-xs text-epic-text-muted">
-                Inspect top routes, CF-Cache-Status hits, client IPs, user
-                agents, and 429 bursts.
+                See which endpoints your apps call and when they reach their
+                request limits.
               </p>
             </div>
           </div>
@@ -426,17 +417,16 @@ function UnauthenticatedLanding({
         <div className="bg-epic-surface border border-epic-border rounded-2xl p-7 shadow-2xl space-y-6">
           <div className="space-y-1.5">
             <h2 className="text-xl font-semibold text-white">
-              Sign in to Developer Portal
+              Sign in to manage your API keys
             </h2>
             <p className="text-xs text-epic-text-muted">
-              Authenticate with your Epic Games account (same identity used on
-              egdata.app) to manage your projects and API keys.
+              Use your Epic Games account to continue.
             </p>
           </div>
 
           {authError && (
             <div className="p-3 rounded-lg bg-epic-danger/15 border border-epic-danger/30 text-xs text-epic-danger">
-              Authentication failed ({authError}). Please try signing in again.
+              We couldn’t sign you in. Please try again.
             </div>
           )}
 
@@ -451,28 +441,21 @@ function UnauthenticatedLanding({
 
             {devAuthAvailable && (
               <p className="text-[11px] text-center text-epic-text-muted">
-                Local dev mode detected: clicking above signs in with a local
-                Epic developer sandbox profile until{" "}
-                <code className="font-mono text-epic-text">EPIC_CLIENT_ID</code>{" "}
-                is set.
+                Local preview: continue with a test account.
               </p>
             )}
           </div>
 
           <div className="pt-4 border-t border-epic-border space-y-2 text-xs text-epic-text-muted">
             <div className="flex items-center justify-between">
-              <span>Free Tier Quota</span>
-              <span className="font-mono text-epic-text">120 req / min</span>
+              <span>Free limit per key</span>
+              <span className="font-mono text-epic-text">120 requests/min</span>
             </div>
             <div className="flex items-center justify-between">
-              <span>Pro Tier Quota</span>
+              <span>Pro limit per key</span>
               <span className="font-mono text-epic-accent">
-                1,200 req / min
+                1,200 requests/min
               </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Shared Cloudflare Edge Cache</span>
-              <span className="text-epic-success font-medium">Preserved</span>
             </div>
           </div>
         </div>

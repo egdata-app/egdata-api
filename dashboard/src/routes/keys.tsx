@@ -142,7 +142,7 @@ function ApiKeysPage() {
       setRevealedSecret({ name: res.key.name, secret: res.secret });
       await loadKeys();
       notify({
-        title: "API Key created & synced to Edge KV",
+        title: "API key created",
         description: "Copy your secret key now — it will only be shown once.",
         tone: "success",
       });
@@ -175,7 +175,7 @@ function ApiKeysPage() {
       await loadKeys();
       notify({
         title: "Permissions updated",
-        description: "Synced globally to Cloudflare KV within 60 seconds.",
+        description: "Changes may take a short time to take effect.",
         tone: "success",
       });
     } catch (err) {
@@ -198,8 +198,7 @@ function ApiKeysPage() {
       await loadKeys();
       notify({
         title: "API key revoked",
-        description:
-          "Removed from D1 active keys and purged from Cloudflare KV.",
+        description: "Revocation may take a short time to take effect.",
         tone: "info",
       });
     } catch (err) {
@@ -218,14 +217,14 @@ function ApiKeysPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white">
-            API Keys & Permissions
+            API Keys
           </h1>
           <p className="text-sm text-epic-text-muted mt-1">
             Create keys for{" "}
             <span className="text-epic-text font-medium">
               {selectedProject?.name}
             </span>{" "}
-            and restrict IP CIDR ranges, browser Origins, paths, and scopes.
+            and choose what each key can access.
           </p>
         </div>
         <Button variant="primary" onPress={() => setCreateOpen(true)}>
@@ -255,8 +254,7 @@ function ApiKeysPage() {
                   : "No API keys in this project yet"}
               </div>
               <p className="text-xs text-epic-text-muted max-w-md mx-auto">
-                Create your first API key to authenticate requests at the
-                Cloudflare edge with zero cache fragmentation.
+                Create a key for your app, then choose its permissions.
               </p>
             </div>
           )}
@@ -354,12 +352,12 @@ function ApiKeysPage() {
                   slot="title"
                   className="text-lg font-semibold text-white"
                 >
-                  Create Scoped API Key
+                  Create API Key
                 </Heading>
               </div>
               <p className="text-xs text-epic-text-muted -mt-2">
-                Only the SHA-256 hash of your key is stored in D1 and Cloudflare
-                KV.
+                Choose what this key can access. You can change its permissions
+                later.
               </p>
 
               <TextField
@@ -374,7 +372,7 @@ function ApiKeysPage() {
                 label="Permission Scopes"
                 value={newScopes}
                 onChange={setNewScopes}
-                description="Limit which egdata catalog surfaces this key may query."
+                description="Choose which types of data this key can read."
               >
                 {API_SCOPES.map((scope) => (
                   <Checkbox key={scope} value={scope}>
@@ -402,26 +400,26 @@ function ApiKeysPage() {
                   value={newIps}
                   onChange={setNewIps}
                   placeholder={"203.0.113.0/24\n198.51.100.42\n2001:db8::/32"}
-                  description="One IPv4/IPv6 or CIDR per line. Leave blank to allow any IP."
+                  description="Enter one IP address or CIDR range per line. Leave blank to allow any IP."
                 />
                 <TextField
-                  label="Allowed CORS Origins (Optional)"
+                  label="Allowed Browser Origins (Optional)"
                   multiline
                   value={newOrigins}
                   onChange={setNewOrigins}
                   placeholder={
                     "https://myapp.example.com\nhttps://*.example.com"
                   }
-                  description="Restricts browser Origin header. Leave blank to allow server-to-server & any origin."
+                  description="Enter one origin per line, including https://. Wildcard subdomains are supported. Leave blank for no origin restriction."
                 />
               </div>
 
               <TextField
-                label="Allowed Endpoint Prefixes (Optional)"
+                label="Allowed Endpoint Paths (Optional)"
                 value={newPaths}
                 onChange={setNewPaths}
                 placeholder="/offers/*, /search/v2/search, /free-games"
-                description="Comma-separated path globs. Leave blank to allow all scoped routes."
+                description="Separate paths with commas. Path rules are evaluated against the full public path, including /v1. For example /v1/offers/* grants v1 offers but does not extend a legacy /offers/* grant. Use * to match multiple paths. Leave blank to allow all endpoints covered by the selected scopes."
               />
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-epic-border">
@@ -452,14 +450,14 @@ function ApiKeysPage() {
                 slot="title"
                 className="text-lg font-semibold text-white"
               >
-                Save Your Secret API Key
+                Save Your API Key
               </Heading>
               <p className="text-xs text-epic-text-muted">
-                For security, we only store a one-way SHA-256 hash of{" "}
+                Copy the key for{" "}
                 <strong className="text-epic-text">
                   {revealedSecret?.name}
-                </strong>
-                . You will not be able to view this full secret again.
+                </strong>{" "}
+                and store it somewhere safe. You won’t be able to view it again.
               </p>
 
               <div className="p-3.5 rounded-lg bg-epic-bg border border-epic-accent/40 font-mono text-xs text-epic-accent break-all select-all">
@@ -563,24 +561,24 @@ function ApiKeysPage() {
                   value={editIps}
                   onChange={setEditIps}
                   placeholder={"203.0.113.0/24\n198.51.100.42"}
-                  description="Empty = allow all IPs. Supports IPv4 & IPv6 CIDR notation."
+                  description="Enter one IP address or CIDR range per line. Leave blank to allow any IP."
                 />
                 <TextField
-                  label="Allowed CORS Origins"
+                  label="Allowed Browser Origins"
                   multiline
                   value={editOrigins}
                   onChange={setEditOrigins}
                   placeholder={"https://egdata.app\nhttps://*.myapp.dev"}
-                  description="Empty = allow all origins. Supports wildcard subdomains."
+                  description="Enter one origin per line, including https://. Wildcard subdomains are supported. Leave blank for no origin restriction."
                 />
               </div>
 
               <TextField
-                label="Allowed Endpoint Prefixes"
+                label="Allowed Endpoint Paths"
                 value={editPaths}
                 onChange={setEditPaths}
                 placeholder="/offers/*, /items/*, /search/v2/search"
-                description="Comma or newline separated path patterns."
+                description="Separate paths with commas. Path rules are evaluated against the full public path, including /v1. For example /v1/offers/* grants v1 offers but does not extend a legacy /offers/* grant. Use * to match multiple paths. Leave blank to allow all endpoints covered by the selected scopes."
               />
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-epic-border">
@@ -616,11 +614,9 @@ function ApiKeysPage() {
               <p className="text-xs text-epic-text-muted leading-relaxed">
                 Are you sure you want to permanently revoke{" "}
                 <strong className="text-epic-text">{deletingKey?.name}</strong>{" "}
-                (<code className="font-mono">{deletingKey?.keyPrefix}</code>)?
-                Any applications using this key will receive{" "}
-                <code className="font-mono text-epic-danger">401</code>{" "}
-                responses across all Cloudflare edge locations within 60
-                seconds.
+                (<code className="font-mono">{deletingKey?.keyPrefix}</code>)?{" "}
+                Apps using it will lose access once revocation takes effect.
+                Update them with a replacement key first. This cannot be undone.
               </p>
 
               <div className="flex items-center justify-end gap-2 pt-2">
