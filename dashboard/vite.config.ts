@@ -13,6 +13,11 @@ export default defineConfig({
     port: 4002,
   },
   resolve: {
+    // Scalar embeds Vue, and vue-sonner (its toaster) resolves Vue through the
+    // pnpm virtual store. Two Vue runtimes break ref ownership during mount
+    // ("Cannot read properties of null (reading 'refs')"), so force the single
+    // dashboard copy for every dependency.
+    dedupe: ["vue"],
     alias: {
       "@": appDirectory,
     },

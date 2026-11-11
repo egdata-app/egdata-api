@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Check,
   Copy,
@@ -9,10 +9,11 @@ import {
   Settings2,
   Shield,
   Trash2,
+  X,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { API_SCOPES, HTTP_METHODS } from "../../worker/types";
-import { Button } from "../components/ui/Button";
+import { Button, buttonStyles } from "../components/ui/Button";
 import {
   Checkbox,
   CheckboxGroup,
@@ -33,9 +34,9 @@ import { notify } from "../components/ui/Toast";
 import {
   type AllowedHttpMethod,
   type ApiScope,
+  apiFetch,
   type DashboardApiKey,
   dashboardClient,
-  apiFetch,
 } from "../lib/api";
 import { useDashboardAuth } from "../lib/auth-context";
 
@@ -692,26 +693,50 @@ function LinkedKey({ projectId, keyId }: { projectId: string; keyId: string }) {
     };
   }, [projectId, keyId]);
   return (
-    <section className="border border-epic-border rounded-xl p-4 space-y-2">
-      <h2 className="font-semibold">Affected API key</h2>
-      {error && <p role="alert">{error}</p>}
-      {key && (
-        <>
-          <p>
-            {key.name} · <code>{key.keyPrefix}</code>
+    <section className="bg-epic-surface border border-epic-border rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
+      <div className="space-y-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <KeyRound className="w-4 h-4 text-epic-accent" />
+          <h2 className="text-sm font-semibold text-white">Affected API key</h2>
+          {key && (
+            <Tag
+              tone={
+                key.revokedAt ? "danger" : key.active ? "success" : "warning"
+              }
+            >
+              {key.revokedAt ? "Revoked" : key.active ? "Active" : "Paused"}
+            </Tag>
+          )}
+        </div>
+        {error && (
+          <p role="alert" className="text-xs text-epic-danger">
+            {error}
           </p>
-          <p className="text-epic-text-muted">
-            {key.revokedAt
-              ? `Revoked ${key.revokedAt}. Earlier qualifying use remains in alerts.`
-              : key.active
-                ? "Active"
-                : "Inactive"}
-          </p>
-        </>
-      )}
-      <a href="/keys" className="text-epic-accent">
-        Show all active keys
-      </a>
+        )}
+        {key && (
+          <div className="text-xs text-epic-text-muted space-y-0.5">
+            <p className="text-epic-text font-medium">
+              {key.name} ·{" "}
+              <code className="font-mono text-epic-text-muted">
+                {key.keyPrefix}
+              </code>
+            </p>
+            {key.revokedAt && (
+              <p>
+                Revoked <code className="font-mono">{key.revokedAt}</code>.
+                Earlier qualifying use remains in alerts.
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+      <Link
+        to="/keys"
+        className={buttonStyles({ variant: "secondary", size: "sm" })}
+      >
+        <X className="w-3.5 h-3.5" />
+        Show all keys
+      </Link>
     </section>
   );
 }

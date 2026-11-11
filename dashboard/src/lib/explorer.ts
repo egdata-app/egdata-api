@@ -1,8 +1,8 @@
 import type { OpenAPIV3 } from "openapi-types";
 import {
   canonicalV1Path,
-  resolveV1Route,
   PUBLIC_V1_PATHS,
+  resolveV1Route,
 } from "../../worker/v1-routes";
 
 export type ApiDocument = OpenAPIV3.Document;
@@ -30,6 +30,58 @@ export function operations(document: ApiDocument): Operation[] {
     }
   }
   return result;
+}
+
+export type OperationGroup = {
+  name: string;
+  description?: string;
+  operations: Operation[];
+};
+
+/**
+ * Groups operations under their primary OpenAPI tag while preserving the
+ * canonical tag order declared in the OpenAPI document (`document.tags`).
+ * Any undeclared tags follow alphabetically, with "Merged history" and "Other" last.
+ */
+export function groupOperationsByResource(
+  ops: Operation[],
+  declaredTags: OpenAPIV3.TagObject[] = [],
+): OperationGroup[] {
+  const tagDescriptions = new Map<string, string | undefined>();
+  const declaredOrder = new Map<string, number>();
+  declaredTags.forEach((tag, index) => {
+    declaredOrder.set(tag.name, index);
+    if (tag.description) tagDescriptions.set(tag.name, tag.description);
+  });
+
+  const buckets = new Map<string, Operation[]>();
+  for (const op of ops) {
+    const primaryTag = op.operation.tags?.[0] ?? "Other";
+    const list = buckets.get(primaryTag);
+    if (list) list.push(op);
+    else buckets.set(primaryTag, [op]);
+  }
+
+  const tailRank = (name: string) =>
+    name === "Other" ? 2 : name === "Merged history" ? 1 : 0;
+
+  return [...buckets.entries()]
+    .sort(([a], [b]) => {
+      const rankA = tailRank(a);
+      const rankB = tailRank(b);
+      if (rankA !== rankB) return rankA - rankB;
+      const idxA = declaredOrder.get(a);
+      const idxB = declaredOrder.get(b);
+      if (idxA !== undefined && idxB !== undefined) return idxA - idxB;
+      if (idxA !== undefined) return -1;
+      if (idxB !== undefined) return 1;
+      return a.localeCompare(b);
+    })
+    .map(([name, operations]) => ({
+      name,
+      description: tagDescriptions.get(name),
+      operations,
+    }));
 }
 
 /** Drop executable server overrides and external references before giving Scalar a document. */
@@ -133,8 +185,33 @@ export function requestUrl(
   return `/proxy${path}${qs.size ? `?${qs}` : ""}`;
 }
 
-export function redactedSnippet(operation: Operation): string {
-  return `curl -X ${operation.method} '${location.origin}/proxy${operation.path}' \\\n  -H 'X-API-Key: <YOUR_API_KEY>'`;
+export function redactedSnippet(
+  operation: Operation,
+  parameters: Record<string, string> = {},
+  query: Record<string, string> = {},
+  body = "",
+): string {
+  const path = operation.path.replace(/\{([^}]+)\}/g, (match, name: string) => {
+    const value = parameters[name];
+    if (!value || /[\\/\0%?#]/.test(value) || value === "." || value === "..") {
+      return match;
+    }
+    return encodeURIComponent(value);
+  });
+  const qs = new URLSearchParams(
+    Object.entries(query).filter(([, value]) => value !== ""),
+  );
+  const fullUrl = `${location.origin}/proxy${path}${qs.size ? `?${qs}` : ""}`;
+  const escapedUrl = fullUrl.replaceAll("'", "'\\''");
+  const lines = [
+    `curl -X ${operation.method} '${escapedUrl}'`,
+    `  -H 'X-API-Key: <YOUR_API_KEY>'`,
+  ];
+  if (body && operation.method !== "GET" && operation.method !== "HEAD") {
+    lines.push(`  -H 'Content-Type: application/json'`);
+    lines.push(`  -d '${body.replaceAll("'", "'\\''")}'`);
+  }
+  return lines.join(" \\\n");
 }
 
 export type TryResult = {

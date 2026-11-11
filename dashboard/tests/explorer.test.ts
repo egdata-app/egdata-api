@@ -1,12 +1,13 @@
-import { describe, expect, it, vi, afterEach } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  executeOperation,
   executable,
+  executeOperation,
+  groupOperationsByResource,
+  type Operation,
+  operationReference,
   redactedSnippet,
   requestUrl,
   safeDocument,
-  operationReference,
-  type Operation,
 } from "../src/lib/explorer";
 
 const op: Operation = {
@@ -247,5 +248,89 @@ describe("fixed gateway request console", () => {
         )
       ).kind,
     ).toBe("binary");
+  });
+  it("groups operations by primary resource tag in declared OpenAPI order without duplicates", () => {
+    const multiTagged: Operation = {
+      operationId: "autocomplete",
+      method: "GET",
+      path: "/v1/autocomplete",
+      operation: {
+        operationId: "autocomplete",
+        tags: ["Catalog", "Search"],
+        responses: {},
+      },
+    };
+    const searchOp: Operation = {
+      operationId: "searchOffers",
+      method: "POST",
+      path: "/v1/search",
+      operation: {
+        operationId: "searchOffers",
+        tags: ["Search"],
+        responses: {},
+      },
+    };
+    const historyOp: Operation = {
+      operationId: "legacyRemoved",
+      method: "GET",
+      path: "/v1/legacy",
+      operation: {
+        operationId: "legacyRemoved",
+        tags: ["Merged history"],
+        responses: {},
+      },
+    };
+    const untagged: Operation = {
+      operationId: "misc",
+      method: "GET",
+      path: "/v1/misc",
+      operation: {
+        operationId: "misc",
+        responses: {},
+      },
+    };
+
+    const groups = groupOperationsByResource(
+      [untagged, historyOp, searchOp, multiTagged],
+      [
+        { name: "Catalog", description: "Cross-catalog discovery." },
+        { name: "Search", description: "Faceted search." },
+      ],
+    );
+
+    expect(groups.map((g) => g.name)).toEqual([
+      "Catalog",
+      "Search",
+      "Merged history",
+      "Other",
+    ]);
+    expect(groups[0]?.description).toBe("Cross-catalog discovery.");
+    expect(groups[0]?.operations.map((o) => o.operationId)).toEqual([
+      "autocomplete",
+    ]);
+    expect(groups[1]?.operations.map((o) => o.operationId)).toEqual([
+      "searchOffers",
+    ]);
+  });
+  it("builds redacted cURL snippets with filled parameters and request body", () => {
+    vi.stubGlobal("location", { origin: "https://devs.egdata.app" });
+    const postOp: Operation = {
+      operationId: "searchPost",
+      method: "POST",
+      path: "/v1/offers/{id}/search",
+      operation: { operationId: "searchPost", responses: {} },
+    };
+    const snippet = redactedSnippet(
+      postOp,
+      { id: "fn" },
+      { country: "US", empty: "" },
+      '{"title":"Fortnite"}',
+    );
+    expect(snippet).toContain(
+      "https://devs.egdata.app/proxy/v1/offers/fn/search?country=US",
+    );
+    expect(snippet).toContain("-H 'X-API-Key: <YOUR_API_KEY>'");
+    expect(snippet).toContain("-H 'Content-Type: application/json'");
+    expect(snippet).toContain('-d \'{"title":"Fortnite"}\'');
   });
 });
