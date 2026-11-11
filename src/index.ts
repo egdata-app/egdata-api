@@ -71,7 +71,6 @@ import StatsRoute from "./routes/stats.js";
 import UsersRoute from "./routes/users.js";
 import UsersServiceRoute from "./routes/users-service.js";
 import { v1Router } from "./v1/router.js";
-import { ensureV1Indexes } from "./v1/indexes.js";
 import { createAntiAbuseRuntime } from "./services/anti-abuse-runtime.js";
 import { getAikidoAnonymousIdentity } from "./utils/aikido-rate-limit-group.js";
 import { attributesToObject } from "./utils/attributes-to-object.js";
@@ -1640,7 +1639,8 @@ async function startServer() {
   try {
     await db.connect();
     await ensureCatalogHydrationIndexes(db.db);
-    await ensureV1Indexes(db.db);
+    // Provision v1 indexes with `pnpm v1:indexes` before enabling v1 traffic.
+    // Large index builds must not keep legacy HTTP routes offline at startup.
 
     const httpServer = serve({
       fetch: app.fetch,

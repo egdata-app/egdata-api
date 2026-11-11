@@ -1,0 +1,239 @@
+{
+  "baseCommit": "fab211e2318542aef7e7afcd1bc6a48004be3d42",
+  "diffHash": "4916f92633ea76dd8924c1b72f19d8ed28ff41d6b4b2e886fb560fdc1eb1c75b",
+  "operations": [
+    {
+      "endpoint": "legacy:autocompleteOffers",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:getChangelistEntry",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:getHealth",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:getRegionForCountry",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet__c767025d",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_base_game_namespace__43947330",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_changelog_038722cc",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_doc_f5f543a0",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_graphql_220e6fb1",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_items_from_offer_id__f652bc56",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_items_sitemap_xml_e6f8185b",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_offer_by_slug_slug__5aadfed6",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_open_api_json_d5453718",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_ping_f7c2b7c6",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_promotions_sitemap_xml_3578dc8e",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_robots_txt_deae90bd",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_sitemap_xml_efe3322f",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_tags_803dea8c",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_ui_64976efd",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyOptions_ping_9143aa8e",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyPost_graphql_fac042a8",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyPost_ping_4242a078",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:listActiveSales",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:listChangelist",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:listCountries",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:listFeaturedGames",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:listLatestGames",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:listRegions",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSaleOffers",
+      "impact": "public",
+      "reason": "Shared HTTP startup no longer waits for v1 index provisioning, restoring endpoint availability during index builds. Route handlers, CORS policy, contracts and authentication are unchanged.",
+      "records": [
+        "keep-api-startup-independent-of-v1-indexes"
+      ]
+    }
+  ],
+  "unknownFiles": []
+}

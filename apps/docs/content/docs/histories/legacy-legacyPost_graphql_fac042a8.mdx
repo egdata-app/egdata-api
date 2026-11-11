@@ -5,4 +5,14 @@ description: History for POST /graphql
 
 `POST /graphql` — active. Recorded dates are not deployment dates.
 
-No dated records for this operation.
+## 2026-11-11 — Keep API startup available while v1 indexes are provisioned separately
+
+Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-app/egdata-api/blob/main/changes/records/keep-api-startup-independent-of-v1-indexes.json).
+
+- **legacy POST /graphql** (legacyPost_graphql_fac042a8; fixed; compatible)
+  - Before: POST /graphql was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: POST /graphql becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+  - Schema fields: Query.offer, Query.offers, Query.upcoming, Query.latestReleased, Query.topSellers, Query.topWishlisted, Query.featuredDiscounts, Query.item, Query.items, Query.sandbox, Query.sandboxHub, Query.sandboxes, Query.profile, Query.build, Query.builds, Query.changelog, Query.events, Query.event, Query.genres, Query.latestAchievements
+
+Verification: tests/server-startup.test.ts: stalled v1 index builds do not delay HTTP startup; database connectivity remains required; pnpm test; pnpm build; pnpm docs:check; pnpm release:check --base origin/main.

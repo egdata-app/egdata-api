@@ -5,6 +5,17 @@ description: History for GET /v1/sellers/{id}
 
 `GET /v1/sellers/{id}` — active. Recorded dates are not deployment dates.
 
+## 2026-11-11 — Keep API startup available while v1 indexes are provisioned separately
+
+Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-app/egdata-api/blob/main/changes/records/keep-api-startup-independent-of-v1-indexes.json).
+
+- **v1 GET /v1/sellers/&#123;id&#125;** (listSellerOffers; fixed; compatible)
+  - Before: GET /v1/sellers/&#123;id&#125; was unavailable during API startup while v1 MongoDB index creation was pending; the proxy returned 502 before HTTP began listening.
+  - After: GET /v1/sellers/&#123;id&#125; becomes available after the existing database and catalog initialization, without waiting for v1 index provisioning. Its route, authentication, response format and limits are preserved.
+  - Client action: None
+
+Verification: tests/server-startup.test.ts: stalled v1 index builds do not delay HTTP startup; database connectivity remains required; pnpm test; pnpm build; pnpm docs:check; pnpm release:check --base origin/main.
+
 ## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
 
 Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
