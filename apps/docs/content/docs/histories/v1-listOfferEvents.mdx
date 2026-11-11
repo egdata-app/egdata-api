@@ -5,6 +5,17 @@ description: History for GET /v1/offers/events
 
 `GET /v1/offers/events` — active. Recorded dates are not deployment dates.
 
+## 2026-11-11 — Match static v1 operations before parameter routes
+
+Record: [exact-v1-static-operation-matching](https://github.com/egdata-app/egdata-api/blob/main/changes/records/exact-v1-static-operation-matching.json).
+
+- **v1 GET /v1/offers/events** (listOfferEvents; fixed; compatible)
+  - Before: The gateway could attribute requests for a static path overlapping /v1/offers/&#123;id&#125; to getOffer before examining /v1/offers/events.
+  - After: Static registry paths take precedence over parameter paths. Requests to /v1/offers/events use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.
+  - Client action: None
+
+Verification: dashboard/tests/console-sessions.test.ts; dashboard/tests/v1-gateway.test.ts.
+
 ## 2026-11-11 — Keep API startup available while v1 indexes are provisioned separately
 
 Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-app/egdata-api/blob/main/changes/records/keep-api-startup-independent-of-v1-indexes.json).
@@ -15,6 +26,17 @@ Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-a
   - Client action: None
 
 Verification: tests/server-startup.test.ts: stalled v1 index builds do not delay HTTP startup; database connectivity remains required; pnpm test; pnpm build; pnpm docs:check; pnpm release:check --base origin/main.
+
+## 2026-11-11 — Try v1 operations with ten-minute project console sessions
+
+Record: [project-console-sessions](https://github.com/egdata-app/egdata-api/blob/main/changes/records/project-console-sessions.json).
+
+- **v1 GET /v1/offers/events** (listOfferEvents; added; compatible)
+  - Before: Trying GET /v1/offers/events in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/events with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+
+Verification: dashboard/tests/console-sessions.test.ts; dashboard/tests/explorer.test.ts.
 
 ## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
 

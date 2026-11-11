@@ -1,0 +1,110 @@
+{
+  "id": "exact-v1-static-operation-matching",
+  "recordedDate": "2026-11-11",
+  "title": "Match static v1 operations before parameter routes",
+  "verification": [
+    "dashboard/tests/console-sessions.test.ts",
+    "dashboard/tests/v1-gateway.test.ts"
+  ],
+  "endpoints": [
+    {
+      "apiVersion": "v1",
+      "operationId": "getOffer",
+      "method": "GET",
+      "path": "/v1/offers/{id}",
+      "type": "fixed",
+      "compatibility": "compatible",
+      "before": "The gateway could attribute requests for a static path overlapping /v1/offers/{id} to getOffer before examining /v1/offers/latest-released.",
+      "after": "Static registry paths take precedence over parameter paths. Requests to /v1/offers/{id} use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "listOfferEvents",
+      "method": "GET",
+      "path": "/v1/offers/events",
+      "type": "fixed",
+      "compatibility": "compatible",
+      "before": "The gateway could attribute requests for a static path overlapping /v1/offers/{id} to getOffer before examining /v1/offers/events.",
+      "after": "Static registry paths take precedence over parameter paths. Requests to /v1/offers/events use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "listUpcomingOffers",
+      "method": "GET",
+      "path": "/v1/offers/upcoming",
+      "type": "fixed",
+      "compatibility": "compatible",
+      "before": "The gateway could attribute requests for a static path overlapping /v1/offers/{id} to getOffer before examining /v1/offers/upcoming.",
+      "after": "Static registry paths take precedence over parameter paths. Requests to /v1/offers/upcoming use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "listOfferGenres",
+      "method": "GET",
+      "path": "/v1/offers/genres",
+      "type": "fixed",
+      "compatibility": "compatible",
+      "before": "The gateway could attribute requests for a static path overlapping /v1/offers/{id} to getOffer before examining /v1/offers/genres.",
+      "after": "Static registry paths take precedence over parameter paths. Requests to /v1/offers/genres use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "listTopWishlisted",
+      "method": "GET",
+      "path": "/v1/offers/top-wishlisted",
+      "type": "fixed",
+      "compatibility": "compatible",
+      "before": "The gateway could attribute requests for a static path overlapping /v1/offers/{id} to getOffer before examining /v1/offers/top-wishlisted.",
+      "after": "Static registry paths take precedence over parameter paths. Requests to /v1/offers/top-wishlisted use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "listTopSellers",
+      "method": "GET",
+      "path": "/v1/offers/top-sellers",
+      "type": "fixed",
+      "compatibility": "compatible",
+      "before": "The gateway could attribute requests for a static path overlapping /v1/offers/{id} to getOffer before examining /v1/offers/top-sellers.",
+      "after": "Static registry paths take precedence over parameter paths. Requests to /v1/offers/top-sellers use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "listFeaturedDiscounts",
+      "method": "GET",
+      "path": "/v1/offers/featured-discounts",
+      "type": "fixed",
+      "compatibility": "compatible",
+      "before": "The gateway could attribute requests for a static path overlapping /v1/offers/{id} to getOffer before examining /v1/offers/featured-discounts.",
+      "after": "Static registry paths take precedence over parameter paths. Requests to /v1/offers/featured-discounts use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "listLatestAchievements",
+      "method": "GET",
+      "path": "/v1/offers/latest-achievements",
+      "type": "fixed",
+      "compatibility": "compatible",
+      "before": "The gateway could attribute requests for a static path overlapping /v1/offers/{id} to getOffer before examining /v1/offers/latest-achievements.",
+      "after": "Static registry paths take precedence over parameter paths. Requests to /v1/offers/latest-achievements use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "listLatestReleased",
+      "method": "GET",
+      "path": "/v1/offers/latest-released",
+      "type": "fixed",
+      "compatibility": "compatible",
+      "before": "The gateway could attribute requests for a static path overlapping /v1/offers/{id} to getOffer before examining /v1/offers/latest-released.",
+      "after": "Static registry paths take precedence over parameter paths. Requests to /v1/offers/latest-released use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.",
+      "clientAction": "None"
+    }
+  ]
+}

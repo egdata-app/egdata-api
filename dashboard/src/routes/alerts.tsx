@@ -236,9 +236,13 @@ function ProjectInbox({
               <a
                 key={id}
                 className="text-epic-accent"
-                href={`/keys?keyId=${encodeURIComponent(id)}`}
+                href={
+                  id.startsWith("console_")
+                    ? "/docs"
+                    : `/keys?keyId=${encodeURIComponent(id)}`
+                }
               >
-                Key {id}
+                {id.startsWith("console_") ? "API console" : `Key ${id}`}
               </a>
             ))}
           </div>

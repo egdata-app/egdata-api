@@ -34,7 +34,17 @@ function patternFor(path: string): RegExp {
 const COMPILED = ROUTES.map((route) => ({
   ...route,
   pattern: patternFor(route.path),
-}));
+})).sort((a, b) => {
+  const left = a.path.split("/");
+  const right = b.path.split("/");
+  // Static segments take precedence over parameters, just like the origin router.
+  for (let i = 0; i < Math.min(left.length, right.length); i++) {
+    const parameterDifference =
+      Number(left[i].startsWith("{")) - Number(right[i].startsWith("{"));
+    if (parameterDifference) return parameterDifference;
+  }
+  return right.length - left.length;
+});
 
 export const PUBLIC_V1_PATHS = new Set(["/v1/health", "/v1/open-api.json"]);
 

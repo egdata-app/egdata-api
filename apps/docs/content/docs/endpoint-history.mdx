@@ -3,6 +3,49 @@ title: Endpoint histories
 description: Dated API behavior changes, independent of deployment.
 ---
 
+## 2026-11-11 — Match static v1 operations before parameter routes
+
+Record: [exact-v1-static-operation-matching](https://github.com/egdata-app/egdata-api/blob/main/changes/records/exact-v1-static-operation-matching.json).
+
+- **v1 GET /v1/offers/&#123;id&#125;** (getOffer; fixed; compatible)
+  - Before: The gateway could attribute requests for a static path overlapping /v1/offers/&#123;id&#125; to getOffer before examining /v1/offers/latest-released.
+  - After: Static registry paths take precedence over parameter paths. Requests to /v1/offers/&#123;id&#125; use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.
+  - Client action: None
+- **v1 GET /v1/offers/events** (listOfferEvents; fixed; compatible)
+  - Before: The gateway could attribute requests for a static path overlapping /v1/offers/&#123;id&#125; to getOffer before examining /v1/offers/events.
+  - After: Static registry paths take precedence over parameter paths. Requests to /v1/offers/events use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.
+  - Client action: None
+- **v1 GET /v1/offers/upcoming** (listUpcomingOffers; fixed; compatible)
+  - Before: The gateway could attribute requests for a static path overlapping /v1/offers/&#123;id&#125; to getOffer before examining /v1/offers/upcoming.
+  - After: Static registry paths take precedence over parameter paths. Requests to /v1/offers/upcoming use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.
+  - Client action: None
+- **v1 GET /v1/offers/genres** (listOfferGenres; fixed; compatible)
+  - Before: The gateway could attribute requests for a static path overlapping /v1/offers/&#123;id&#125; to getOffer before examining /v1/offers/genres.
+  - After: Static registry paths take precedence over parameter paths. Requests to /v1/offers/genres use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.
+  - Client action: None
+- **v1 GET /v1/offers/top-wishlisted** (listTopWishlisted; fixed; compatible)
+  - Before: The gateway could attribute requests for a static path overlapping /v1/offers/&#123;id&#125; to getOffer before examining /v1/offers/top-wishlisted.
+  - After: Static registry paths take precedence over parameter paths. Requests to /v1/offers/top-wishlisted use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.
+  - Client action: None
+- **v1 GET /v1/offers/top-sellers** (listTopSellers; fixed; compatible)
+  - Before: The gateway could attribute requests for a static path overlapping /v1/offers/&#123;id&#125; to getOffer before examining /v1/offers/top-sellers.
+  - After: Static registry paths take precedence over parameter paths. Requests to /v1/offers/top-sellers use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.
+  - Client action: None
+- **v1 GET /v1/offers/featured-discounts** (listFeaturedDiscounts; fixed; compatible)
+  - Before: The gateway could attribute requests for a static path overlapping /v1/offers/&#123;id&#125; to getOffer before examining /v1/offers/featured-discounts.
+  - After: Static registry paths take precedence over parameter paths. Requests to /v1/offers/featured-discounts use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.
+  - Client action: None
+- **v1 GET /v1/offers/latest-achievements** (listLatestAchievements; fixed; compatible)
+  - Before: The gateway could attribute requests for a static path overlapping /v1/offers/&#123;id&#125; to getOffer before examining /v1/offers/latest-achievements.
+  - After: Static registry paths take precedence over parameter paths. Requests to /v1/offers/latest-achievements use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.
+  - Client action: None
+- **v1 GET /v1/offers/latest-released** (listLatestReleased; fixed; compatible)
+  - Before: The gateway could attribute requests for a static path overlapping /v1/offers/&#123;id&#125; to getOffer before examining /v1/offers/latest-released.
+  - After: Static registry paths take precedence over parameter paths. Requests to /v1/offers/latest-released use their actual registered operation for permission scopes, expensive-operation limits, analytics and durable endpoint history matching; the origin URL and response contract are unchanged.
+  - Client action: None
+
+Verification: dashboard/tests/console-sessions.test.ts; dashboard/tests/v1-gateway.test.ts.
+
 ## 2026-11-11 — Keep API startup available while v1 indexes are provisioned separately
 
 Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-app/egdata-api/blob/main/changes/records/keep-api-startup-independent-of-v1-indexes.json).
@@ -1299,6 +1342,625 @@ Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-a
   - Client action: None
 
 Verification: tests/server-startup.test.ts: stalled v1 index builds do not delay HTTP startup; database connectivity remains required; pnpm test; pnpm build; pnpm docs:check; pnpm release:check --base origin/main.
+
+## 2026-11-11 — Try v1 operations with ten-minute project console sessions
+
+Record: [project-console-sessions](https://github.com/egdata-app/egdata-api/blob/main/changes/records/project-console-sessions.json).
+
+- **v1 GET /v1/autocomplete** (autocomplete; added; compatible)
+  - Before: Trying GET /v1/autocomplete in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/autocomplete with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 POST /v1/offers/exists** (checkOfferExistence; added; compatible)
+  - Before: Trying POST /v1/offers/exists in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try POST /v1/offers/exists with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 POST /v1/offers/slugs** (checkOfferSlugs; added; compatible)
+  - Before: Trying POST /v1/offers/slugs in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try POST /v1/offers/slugs with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125;** (compareBuilds; added; compatible)
+  - Before: Trying GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/assets/&#123;id&#125;** (getAsset; added; compatible)
+  - Before: Trying GET /v1/assets/&#123;id&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/assets/&#123;id&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/base-game/&#123;namespace&#125;** (getBaseGame; added; compatible)
+  - Before: Trying GET /v1/base-game/&#123;namespace&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/base-game/&#123;namespace&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;** (getBuild; added; compatible)
+  - Before: Trying GET /v1/builds/&#123;id&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/builds/&#123;id&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/history** (getBuildHistory; added; compatible)
+  - Before: Trying GET /v1/builds/&#123;id&#125;/history in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/builds/&#123;id&#125;/history with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/install-options** (getBuildInstallOptions; added; compatible)
+  - Before: Trying GET /v1/builds/&#123;id&#125;/install-options in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/builds/&#123;id&#125;/install-options with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/tree** (getBuildTree; added; compatible)
+  - Before: Trying GET /v1/builds/&#123;id&#125;/tree in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/builds/&#123;id&#125;/tree with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/changelist/&#123;id&#125;** (getChangelogEntry; added; compatible)
+  - Before: Trying GET /v1/changelist/&#123;id&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/changelist/&#123;id&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;** (getCollection; added; compatible)
+  - Before: Trying GET /v1/collections/&#123;slug&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/collections/&#123;slug&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;/&#123;week&#125;** (getCollectionWeek; added; compatible)
+  - Before: Trying GET /v1/collections/&#123;slug&#125;/&#123;week&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/collections/&#123;slug&#125;/&#123;week&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;/&#123;week&#125;/og** (getCollectionWeekOg; added; compatible)
+  - Before: Trying GET /v1/collections/&#123;slug&#125;/&#123;week&#125;/og in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/collections/&#123;slug&#125;/&#123;week&#125;/og with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/featured** (getFeaturedGames; added; compatible)
+  - Before: Trying GET /v1/featured in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/featured with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/franchises/&#123;slug&#125;** (getFranchise; added; compatible)
+  - Before: Trying GET /v1/franchises/&#123;slug&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/franchises/&#123;slug&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/free-games/og** (getFreeGamesOg; added; compatible)
+  - Before: Trying GET /v1/free-games/og in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/free-games/og with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/free-games/stats** (getFreeGamesStats; added; compatible)
+  - Before: Trying GET /v1/free-games/stats in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/free-games/stats with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/game-awards** (getGameAwards; added; compatible)
+  - Before: Trying GET /v1/game-awards in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/game-awards with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/game-awards/og** (getGameAwardsOg; added; compatible)
+  - Before: Trying GET /v1/game-awards/og in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/game-awards/og with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/stats/homepage** (getHomepageStats; added; compatible)
+  - Before: Trying GET /v1/stats/homepage in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/stats/homepage with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;** (getItem; added; compatible)
+  - Before: Trying GET /v1/items/&#123;id&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/items/&#123;id&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/assets** (getItemAssets; added; compatible)
+  - Before: Trying GET /v1/items/&#123;id&#125;/assets in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/items/&#123;id&#125;/assets with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/builds** (getItemBuilds; added; compatible)
+  - Before: Trying GET /v1/items/&#123;id&#125;/builds in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/items/&#123;id&#125;/builds with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/changelog** (getItemChangelog; added; compatible)
+  - Before: Trying GET /v1/items/&#123;id&#125;/changelog in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/items/&#123;id&#125;/changelog with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/offer** (getItemOffer; added; compatible)
+  - Before: Trying GET /v1/items/&#123;id&#125;/offer in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/items/&#123;id&#125;/offer with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 POST /v1/items/bulk** (getItemsBulk; added; compatible)
+  - Before: Trying POST /v1/items/bulk in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try POST /v1/items/bulk with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/items-sitemap.xml** (getItemsSitemap; added; compatible)
+  - Before: Trying GET /v1/items-sitemap.xml in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/items-sitemap.xml with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/items/sitemap.xml** (getItemsSitemapAlias; added; compatible)
+  - Before: Trying GET /v1/items/sitemap.xml in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/items/sitemap.xml with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/latest-games** (getLatestGames; added; compatible)
+  - Before: Trying GET /v1/latest-games in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/latest-games with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/stats/creations/monthly** (getMonthlyCreationStats; added; compatible)
+  - Before: Trying GET /v1/stats/creations/monthly in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/stats/creations/monthly with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/stats/releases/monthly** (getMonthlyReleaseStats; added; compatible)
+  - Before: Trying GET /v1/stats/releases/monthly in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/stats/releases/monthly with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;** (getOffer; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/achievements** (getOfferAchievements; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/achievements in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/achievements with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/age-rating** (getOfferAgeRating; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/age-rating in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/age-rating with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/assets** (getOfferAssets; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/assets in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/assets with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/builds** (getOfferBuilds; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/builds in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/builds with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/bundle** (getOfferBundle; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/bundle in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/bundle with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offer-by-slug/&#123;slug&#125;** (getOfferBySlug; added; compatible)
+  - Before: Trying GET /v1/offer-by-slug/&#123;slug&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offer-by-slug/&#123;slug&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/changelog/stats** (getOfferChangelogStats; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/changelog/stats in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/changelog/stats with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/collection** (getOfferCollection; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/collection in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/collection with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/collections/&#123;collection&#125;** (getOfferCollectionEntry; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/collections/&#123;collection&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/collections/&#123;collection&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/events/&#123;id&#125;** (getOfferEvent; added; compatible)
+  - Before: Trying GET /v1/offers/events/&#123;id&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/events/&#123;id&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/features** (getOfferFeatures; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/features in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/features with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/franchises** (getOfferFranchises; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/franchises in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/franchises with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/genres** (getOfferGenres; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/genres in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/genres with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/giveaways** (getOfferGiveaways; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/giveaways in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/giveaways with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/has-prepurchase** (getOfferHasPrepurchase; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/has-prepurchase in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/has-prepurchase with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/has-regular** (getOfferHasRegular; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/has-regular in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/has-regular with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/hltb** (getOfferHltb; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/hltb in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/hltb with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/igdb** (getOfferIgdb; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/igdb in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/igdb with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/items** (getOfferItems; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/items in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/items with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/mappings** (getOfferMappings; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/mappings in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/mappings with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/media** (getOfferMedia; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/media in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/media with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/og** (getOfferOg; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/og in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/og with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/og.webp** (getOfferOgWebp; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/og.webp in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/og.webp with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/overview** (getOfferOverview; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/overview in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/overview with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/polls** (getOfferPolls; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/polls in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/polls with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price** (getOfferPrice; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/price in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/price with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price/fairness** (getOfferPriceFairness; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/price/fairness in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/price/fairness with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price-stats** (getOfferPriceStats; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/price-stats in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/price-stats with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/ratings** (getOfferRatings; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/ratings in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/ratings with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/regional-price** (getOfferRegionalPrice; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/regional-price in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/regional-price with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/requirements** (getOfferRequirements; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/requirements in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/requirements with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews-summary** (getOfferReviewsSummary; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/reviews-summary in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/reviews-summary with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 POST /v1/items/bulk/offers** (getOffersForItemsBulk; added; compatible)
+  - Before: Trying POST /v1/items/bulk/offers in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try POST /v1/items/bulk/offers with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/suggestions** (getOfferSuggestions; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/suggestions in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/suggestions with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/technologies** (getOfferTechnologies; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/technologies in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/technologies with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/tops** (getOfferTops; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/tops in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/tops with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;** (getProfile; added; compatible)
+  - Before: Trying GET /v1/profiles/&#123;id&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/profiles/&#123;id&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/achievements/&#123;sandboxId&#125;** (getProfileAchievements; added; compatible)
+  - Before: Trying GET /v1/profiles/&#123;id&#125;/achievements/&#123;sandboxId&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/profiles/&#123;id&#125;/achievements/&#123;sandboxId&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/information** (getProfileInformation; added; compatible)
+  - Before: Trying GET /v1/profiles/&#123;id&#125;/information in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/profiles/&#123;id&#125;/information with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/random-game** (getProfileRandomGame; added; compatible)
+  - Before: Trying GET /v1/profiles/&#123;id&#125;/random-game in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/profiles/&#123;id&#125;/random-game with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/rare-achievements/&#123;sandboxId&#125;** (getProfileRareAchievements; added; compatible)
+  - Before: Trying GET /v1/profiles/&#123;id&#125;/rare-achievements/&#123;sandboxId&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/profiles/&#123;id&#125;/rare-achievements/&#123;sandboxId&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/sitemap.xml** (getProfilesSitemap; added; compatible)
+  - Before: Trying GET /v1/profiles/sitemap.xml in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/profiles/sitemap.xml with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;/cover** (getPromotionCover; added; compatible)
+  - Before: Trying GET /v1/promotions/&#123;id&#125;/cover in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/promotions/&#123;id&#125;/cover with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/promotions-sitemap.xml** (getPromotionsSitemap; added; compatible)
+  - Before: Trying GET /v1/promotions-sitemap.xml in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/promotions-sitemap.xml with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/region** (getRegion; added; compatible)
+  - Before: Trying GET /v1/region in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/region with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/related** (getRelatedOffers; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/related in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/related with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/robots.txt** (getRobots; added; compatible)
+  - Before: Trying GET /v1/robots.txt in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/robots.txt with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;** (getSandbox; added; compatible)
+  - Before: Trying GET /v1/sandboxes/&#123;sandboxId&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sandboxes/&#123;sandboxId&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/base-game** (getSandboxBaseGame; added; compatible)
+  - Before: Trying GET /v1/sandboxes/&#123;sandboxId&#125;/base-game in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sandboxes/&#123;sandboxId&#125;/base-game with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/changelog** (getSandboxChangelog; added; compatible)
+  - Before: Trying GET /v1/sandboxes/&#123;sandboxId&#125;/changelog in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sandboxes/&#123;sandboxId&#125;/changelog with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/sitemap.xml** (getSandboxesSitemap; added; compatible)
+  - Before: Trying GET /v1/sandboxes/sitemap.xml in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sandboxes/sitemap.xml with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/og** (getSandboxOg; added; compatible)
+  - Before: Trying GET /v1/sandboxes/&#123;sandboxId&#125;/og in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sandboxes/&#123;sandboxId&#125;/og with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/og.webp** (getSandboxOgWebp; added; compatible)
+  - Before: Trying GET /v1/sandboxes/&#123;sandboxId&#125;/og.webp in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sandboxes/&#123;sandboxId&#125;/og.webp with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/stats** (getSandboxStats; added; compatible)
+  - Before: Trying GET /v1/sandboxes/&#123;sandboxId&#125;/stats in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sandboxes/&#123;sandboxId&#125;/stats with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/search/&#123;id&#125;** (getSearchQuery; added; compatible)
+  - Before: Trying GET /v1/search/&#123;id&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/search/&#123;id&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/search/&#123;id&#125;/count** (getSearchQueryCount; added; compatible)
+  - Before: Trying GET /v1/search/&#123;id&#125;/count in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/search/&#123;id&#125;/count with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;/cover** (getSellerCoverOffers; added; compatible)
+  - Before: Trying GET /v1/sellers/&#123;id&#125;/cover in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sellers/&#123;id&#125;/cover with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;/stats** (getSellerStats; added; compatible)
+  - Before: Trying GET /v1/sellers/&#123;id&#125;/stats in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sellers/&#123;id&#125;/stats with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sitemap.xml** (getSitemap; added; compatible)
+  - Before: Trying GET /v1/sitemap.xml in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sitemap.xml with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/stats** (getStats; added; compatible)
+  - Before: Trying GET /v1/stats in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/stats with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/stats/creations/yearly** (getYearlyCreationStats; added; compatible)
+  - Before: Trying GET /v1/stats/creations/yearly in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/stats/creations/yearly with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/stats/releases/yearly** (getYearlyReleaseStats; added; compatible)
+  - Before: Trying GET /v1/stats/releases/yearly in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/stats/releases/yearly with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 POST /v1/catalog/hydrate** (hydrateCatalog; added; compatible)
+  - Before: Trying POST /v1/catalog/hydrate in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try POST /v1/catalog/hydrate with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/active-sales** (listActiveSales; added; compatible)
+  - Before: Trying GET /v1/active-sales in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/active-sales with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/files** (listBuildFiles; added; compatible)
+  - Before: Trying GET /v1/builds/&#123;id&#125;/files in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/builds/&#123;id&#125;/files with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/items** (listBuildItems; added; compatible)
+  - Before: Trying GET /v1/builds/&#123;id&#125;/items in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/builds/&#123;id&#125;/items with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/builds** (listBuilds; added; compatible)
+  - Before: Trying GET /v1/builds in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/builds with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/in-bundle** (listBundlesContainingOffer; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/in-bundle in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/in-bundle with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/changelist** (listChangelist; added; compatible)
+  - Before: Trying GET /v1/changelist in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/changelist with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/changelog** (listChangelog; added; compatible)
+  - Before: Trying GET /v1/changelog in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/changelog with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/countries** (listCountries; added; compatible)
+  - Before: Trying GET /v1/countries in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/countries with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/featured-discounts** (listFeaturedDiscounts; added; compatible)
+  - Before: Trying GET /v1/offers/featured-discounts in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/featured-discounts with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/free-games** (listFreeGames; added; compatible)
+  - Before: Trying GET /v1/free-games in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/free-games with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/free-games/sellers** (listFreeGameSellers; added; compatible)
+  - Before: Trying GET /v1/free-games/sellers in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/free-games/sellers with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/free-games/history** (listFreeGamesHistory; added; compatible)
+  - Before: Trying GET /v1/free-games/history in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/free-games/history with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/items** (listItems; added; compatible)
+  - Before: Trying GET /v1/items in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/items with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/items-from-offer/&#123;id&#125;** (listItemsFromOffer; added; compatible)
+  - Before: Trying GET /v1/items-from-offer/&#123;id&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/items-from-offer/&#123;id&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/latest-achievements** (listLatestAchievements; added; compatible)
+  - Before: Trying GET /v1/offers/latest-achievements in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/latest-achievements with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/latest-released** (listLatestReleased; added; compatible)
+  - Before: Trying GET /v1/offers/latest-released in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/latest-released with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/free-games/mobile** (listMobileFreeGames; added; compatible)
+  - Before: Trying GET /v1/free-games/mobile in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/free-games/mobile with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/changelog** (listOfferChangelog; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/changelog in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/changelog with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/events** (listOfferEvents; added; compatible)
+  - Before: Trying GET /v1/offers/events in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/events with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/genres** (listOfferGenres; added; compatible)
+  - Before: Trying GET /v1/offers/genres in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/genres with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price-history** (listOfferPriceHistory; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/price-history in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/price-history with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews** (listOfferReviews; added; compatible)
+  - Before: Trying GET /v1/offers/&#123;id&#125;/reviews in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/&#123;id&#125;/reviews with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers** (listOffers; added; compatible)
+  - Before: Trying GET /v1/offers in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/achievements** (listProfileAchievements; added; compatible)
+  - Before: Trying GET /v1/profiles/&#123;id&#125;/achievements in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/profiles/&#123;id&#125;/achievements with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/games** (listProfileGames; added; compatible)
+  - Before: Trying GET /v1/profiles/&#123;id&#125;/games in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/profiles/&#123;id&#125;/games with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/leaderboard** (listProfileLeaderboard; added; compatible)
+  - Before: Trying GET /v1/profiles/leaderboard in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/profiles/leaderboard with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/rare-achievements** (listProfileRareAchievements; added; compatible)
+  - Before: Trying GET /v1/profiles/&#123;id&#125;/rare-achievements in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/profiles/&#123;id&#125;/rare-achievements with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;** (listPromotionOffers; added; compatible)
+  - Before: Trying GET /v1/promotions/&#123;id&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/promotions/&#123;id&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/promotions** (listPromotions; added; compatible)
+  - Before: Trying GET /v1/promotions in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/promotions with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/regions** (listRegions; added; compatible)
+  - Before: Trying GET /v1/regions in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/regions with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sales** (listSales; added; compatible)
+  - Before: Trying GET /v1/sales in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sales with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/achievements** (listSandboxAchievements; added; compatible)
+  - Before: Trying GET /v1/sandboxes/&#123;sandboxId&#125;/achievements in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sandboxes/&#123;sandboxId&#125;/achievements with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/assets** (listSandboxAssets; added; compatible)
+  - Before: Trying GET /v1/sandboxes/&#123;sandboxId&#125;/assets in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sandboxes/&#123;sandboxId&#125;/assets with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/builds** (listSandboxBuilds; added; compatible)
+  - Before: Trying GET /v1/sandboxes/&#123;sandboxId&#125;/builds in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sandboxes/&#123;sandboxId&#125;/builds with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes** (listSandboxes; added; compatible)
+  - Before: Trying GET /v1/sandboxes in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sandboxes with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/items** (listSandboxItems; added; compatible)
+  - Before: Trying GET /v1/sandboxes/&#123;sandboxId&#125;/items in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sandboxes/&#123;sandboxId&#125;/items with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/offers** (listSandboxOffers; added; compatible)
+  - Before: Trying GET /v1/sandboxes/&#123;sandboxId&#125;/offers in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sandboxes/&#123;sandboxId&#125;/offers with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/search/developers** (listSearchDevelopers; added; compatible)
+  - Before: Trying GET /v1/search/developers in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/search/developers with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/search/offer-types** (listSearchOfferTypes; added; compatible)
+  - Before: Trying GET /v1/search/offer-types in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/search/offer-types with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/search/publishers** (listSearchPublishers; added; compatible)
+  - Before: Trying GET /v1/search/publishers in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/search/publishers with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/search/tags** (listSearchTags; added; compatible)
+  - Before: Trying GET /v1/search/tags in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/search/tags with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;** (listSellerOffers; added; compatible)
+  - Before: Trying GET /v1/sellers/&#123;id&#125; in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sellers/&#123;id&#125; with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/sellers** (listSellers; added; compatible)
+  - Before: Trying GET /v1/sellers in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/sellers with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/tags** (listTags; added; compatible)
+  - Before: Trying GET /v1/tags in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/tags with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/top-sellers** (listTopSellers; added; compatible)
+  - Before: Trying GET /v1/offers/top-sellers in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/top-sellers with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/top-wishlisted** (listTopWishlisted; added; compatible)
+  - Before: Trying GET /v1/offers/top-wishlisted in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/top-wishlisted with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/offers/upcoming** (listUpcomingOffers; added; compatible)
+  - Before: Trying GET /v1/offers/upcoming in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/offers/upcoming with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/multisearch/items** (multisearchItems; added; compatible)
+  - Before: Trying GET /v1/multisearch/items in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/multisearch/items with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/multisearch/offers** (multisearchOffers; added; compatible)
+  - Before: Trying GET /v1/multisearch/offers in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/multisearch/offers with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/multisearch/sellers** (multisearchSellers; added; compatible)
+  - Before: Trying GET /v1/multisearch/sellers in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/multisearch/sellers with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 POST /v1/search/natural-language** (naturalLanguageSearch; added; compatible)
+  - Before: Trying POST /v1/search/natural-language in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try POST /v1/search/natural-language with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 POST /v1/builds/resolve-launcher-records** (resolveLauncherRecords; added; compatible)
+  - Before: Trying POST /v1/builds/resolve-launcher-records in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try POST /v1/builds/resolve-launcher-records with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/search/changelog** (searchChangelog; added; compatible)
+  - Before: Trying GET /v1/search/changelog in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/search/changelog with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/free-games/search** (searchFreeGames; added; compatible)
+  - Before: Trying GET /v1/free-games/search in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/free-games/search with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/search** (searchOffers; added; compatible)
+  - Before: Trying GET /v1/search in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/search with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 POST /v1/search** (searchOffersRedirect; added; compatible)
+  - Before: Trying POST /v1/search in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try POST /v1/search with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+- **v1 GET /v1/open-api.json** (getV1OpenApi; changed; compatible)
+  - Before: The v1 description documented only public API key authentication for data operations.
+  - After: The v1 description also documents optional ten-minute console sessions bound to the signed-in dashboard. Public application security schemes and operation schemas remain unchanged.
+  - Client action: None
+
+Verification: dashboard/tests/console-sessions.test.ts; dashboard/tests/explorer.test.ts.
 
 ## 2026-11-11 — Preserve public v1 metadata responses through the Worker
 

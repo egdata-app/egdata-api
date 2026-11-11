@@ -85,6 +85,32 @@ The staged versioned API is exposed at `https://devs.egdata.app/proxy/v1` and re
 
 ## Dedicated VM origin
 
+### Temporary API console sessions
+
+The API Reference offers **Start 10-minute session** for the selected project.
+No existing API key secret is recovered or persisted in the browser. The opaque
+console credential stays in page memory, expires server-side after ten minutes,
+and requires the same signed-in dashboard cookie on every request. It is accepted
+only on the configured dashboard origin under `/proxy/v1/`, with same-origin
+browser request metadata. An Origin header by itself is not authentication.
+Project ownership and the current project tier are checked on each console request.
+
+All sessions for a project use one stable `console_<projectId>` quota identity.
+Renewing a session, opening another tab, or signing in again cannot reset its
+minute counters or expensive-operation limits. Analytics includes these requests
+under **API console**, and durable endpoint usage includes them for alerts.
+Console credentials are stored only as hashes in `console_sessions`, separately
+from public API keys. Their lifetime is independent of retained usage history.
+Ending a session revokes it; logout revokes all console sessions for that dashboard
+login. Project changes and leaving the explorer clear credentials and request
+revocation. Expired records are removed by the daily scheduled cleanup.
+
+Apply D1 migration `0003_console_sessions.sql` before deploying this Worker/UI
+change. No new secret or VM deployment is needed. Existing public API keys and
+legacy endpoints retain their authentication and routing. Static v1 registry
+paths now take precedence over parameter paths for quota/usage attribution
+(for example, `/v1/offers/genres` is `listOfferGenres`, not `getOffer`).
+
 The dashboard is hosted at `https://devs.egdata.app`, with `https://egdata-dashboard.snpm.workers.dev` retained for testing. The gateway is **staged only**: `/proxy/*` → `https://origin-api.egdata.app/*` → Traefik → `egdata-api-nywbml:4000` on the `egdata-dockploy` VM (`europe-west1-d`). `api.egdata.app` keeps its existing DNS and routing; `wrangler.jsonc` attaches only the dashboard custom domain. Test with `/proxy/health` or `/proxy/countries`. Hostname routing is ready for a future cutover and runs before dashboard/local-prefix routes.
 
 - Create a **DNS-only** A record for `origin-api.egdata.app` pointing to the VM and add that HTTPS domain to the API application in Dokploy. Do not put a public CDN cache in front of this origin hostname: cache hits there could skip origin authentication.

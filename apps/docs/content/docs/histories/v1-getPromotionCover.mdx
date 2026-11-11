@@ -16,6 +16,17 @@ Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-a
 
 Verification: tests/server-startup.test.ts: stalled v1 index builds do not delay HTTP startup; database connectivity remains required; pnpm test; pnpm build; pnpm docs:check; pnpm release:check --base origin/main.
 
+## 2026-11-11 — Try v1 operations with ten-minute project console sessions
+
+Record: [project-console-sessions](https://github.com/egdata-app/egdata-api/blob/main/changes/records/project-console-sessions.json).
+
+- **v1 GET /v1/promotions/&#123;id&#125;/cover** (getPromotionCover; added; compatible)
+  - Before: Trying GET /v1/promotions/&#123;id&#125;/cover in the API Reference required pasting an existing API key secret.
+  - After: The project owner can also try GET /v1/promotions/&#123;id&#125;/cover with a console-only credential lasting at most ten minutes, bound to the same dashboard login. Requests share a stable per-project console quota and count toward project analytics and endpoint alerts. Public API key behavior is preserved.
+  - Client action: None
+
+Verification: dashboard/tests/console-sessions.test.ts; dashboard/tests/explorer.test.ts.
+
 ## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
 
 Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).

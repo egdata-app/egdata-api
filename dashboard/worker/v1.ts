@@ -4,7 +4,7 @@ import { touchApiKeyLastUsed } from "./db.js";
 import { resolveApiKeyMetadata } from "./key-cache.js";
 import { evaluateKeyPermissions } from "./permissions.js";
 import type { ApiKeyRateLimiter } from "./rate-limiter.js";
-import type { DashboardEnv } from "./types.js";
+import type { CachedKeyMetadata, DashboardEnv } from "./types.js";
 import {
   type CfProperties,
   edgeProblem,
@@ -190,6 +190,7 @@ export async function handleV1ApiProxy(
   env: DashboardEnv,
   ctx: ExecutionContext,
   rawPathname: string,
+  consoleIdentity?: CachedKeyMetadata,
 ): Promise<Response> {
   const startedAt = performance.now();
   const requestId = requestIdFor();
@@ -289,7 +290,7 @@ export async function handleV1ApiProxy(
       headers: corsFor(request),
     });
   }
-  if (!credentials.rawKey) {
+  if (!credentials.rawKey && !consoleIdentity) {
     return v1Problem(request, {
       requestId,
       status: 401,
@@ -303,8 +304,13 @@ export async function handleV1ApiProxy(
     });
   }
 
-  const keyHash = await sha256Hex(credentials.rawKey);
-  const meta = await resolveApiKeyMetadata(env, ctx, keyHash);
+  const meta =
+    consoleIdentity ??
+    (await resolveApiKeyMetadata(
+      env,
+      ctx,
+      await sha256Hex(credentials.rawKey!),
+    ));
   if (!meta) {
     return v1Problem(request, {
       requestId,
@@ -498,7 +504,7 @@ export async function handleV1ApiProxy(
   }
 
   const lastTouch = lastUsedTouchDebounce.get(meta.keyId) ?? 0;
-  if (Date.now() - lastTouch > 5 * 60 * 1000) {
+  if (!consoleIdentity && Date.now() - lastTouch > 5 * 60 * 1000) {
     lastUsedTouchDebounce.set(meta.keyId, Date.now());
     ctx.waitUntil(touchApiKeyLastUsed(env.DB, meta.keyId).catch(() => {}));
   }
