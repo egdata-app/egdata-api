@@ -1,3 +1,4 @@
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import {
   type CellProps,
   Collection,
@@ -133,13 +134,21 @@ export function Column(props: ColumnProps) {
         "text-start text-[11px] font-semibold uppercase tracking-wider text-epic-text-muted border-b border-epic-border px-4 py-3 select-none cursor-default",
       )}
     >
-      {composeRenderProps(props.children, (children) => (
+      {composeRenderProps(props.children, (children, state) => (
         <Group
           role="presentation"
           tabIndex={-1}
           className="flex items-center gap-1.5 outline-0"
         >
           <span className="truncate">{children}</span>
+          {props.allowsSorting &&
+            (state.sortDirection === "ascending" ? (
+              <ArrowUp className="w-3 h-3 shrink-0" />
+            ) : state.sortDirection === "descending" ? (
+              <ArrowDown className="w-3 h-3 shrink-0" />
+            ) : (
+              <ArrowUpDown className="w-3 h-3 shrink-0 opacity-50" />
+            ))}
         </Group>
       ))}
     </RACColumn>

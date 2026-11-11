@@ -1,5 +1,21 @@
 import type { AnalyticsDashboardSummary } from "../../worker/analytics";
 import type {
+  UsageFilters,
+  UsageTableFilters,
+  UsageTableResult,
+} from "../../worker/analytics-types";
+
+export type {
+  UsageDimension,
+  UsageFilters,
+  UsageMetrics,
+  UsageRow,
+  UsageSort,
+  UsageTableFilters,
+  UsageTableResult,
+} from "../../worker/analytics-types";
+
+import type {
   AllowedHttpMethod,
   ApiScope,
   DashboardApiKey,
@@ -25,6 +41,14 @@ export interface SessionResponse {
   projects: DashboardProject[];
   oauthConfigured: boolean;
   devAuthAvailable: boolean;
+}
+
+function usageQuery(params: UsageTableFilters) {
+  const qs = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== "") qs.set(key, String(value));
+  }
+  return qs.toString();
 }
 
 export async function apiFetch<T>(
@@ -112,16 +136,15 @@ export const dashboardClient = {
       },
     ),
 
-  getAnalytics: (params: {
-    hours: number;
-    projectId?: string;
-    keyId?: string;
-  }) => {
-    const qs = new URLSearchParams({ hours: String(params.hours) });
-    if (params.projectId) qs.set("projectId", params.projectId);
-    if (params.keyId) qs.set("keyId", params.keyId);
-    return apiFetch<AnalyticsDashboardSummary>(`/analytics?${qs.toString()}`);
-  },
+  getAnalytics: (params: UsageFilters, signal?: AbortSignal) =>
+    apiFetch<AnalyticsDashboardSummary>(`/analytics?${usageQuery(params)}`, {
+      signal,
+    }),
+
+  getUsageTable: (params: UsageTableFilters, signal?: AbortSignal) =>
+    apiFetch<UsageTableResult>(`/analytics/table?${usageQuery(params)}`, {
+      signal,
+    }),
 
   simulateTraffic: () =>
     apiFetch<{ ok: boolean; generated: number }>("/analytics/simulate", {

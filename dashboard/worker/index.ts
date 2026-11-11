@@ -5,7 +5,8 @@ import {
   handleChangeIngestion,
   publicHistory,
 } from "./alert-routes.js";
-import { queryDashboardAnalytics, recordApiTelemetry } from "./analytics.js";
+import { recordApiTelemetry } from "./analytics.js";
+import { analyticsRoutes } from "./analytics-routes.js";
 import {
   CONSOLE_HEADER,
   consoleProxy,
@@ -433,21 +434,7 @@ dashboardApi.delete("/keys/:keyId", async (c) => {
 // ---------------------------------------------------------
 // Analytics Queries + Demo Traffic Seeder (for local testing)
 // ---------------------------------------------------------
-dashboardApi.get("/analytics", async (c) => {
-  const user = c.get("user");
-  const rangeHours = Number(c.req.query("hours") || "24");
-  const projectId = c.req.query("projectId") || undefined;
-  const keyId = c.req.query("keyId") || undefined;
-
-  const summary = await queryDashboardAnalytics(c.env, {
-    ownerEpicId: user.epicAccountId,
-    projectId,
-    keyId,
-    rangeHours,
-  });
-
-  return c.json(summary);
-});
+dashboardApi.route("/analytics", analyticsRoutes);
 
 dashboardApi.post("/analytics/simulate", async (c) => {
   const user = c.get("user");

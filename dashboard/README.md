@@ -12,6 +12,60 @@ Cloudflare Worker full-stack project implementing:
    - Records `0ms` fire-and-forget telemetry to **Workers Analytics Engine** (`egdata_api_usage`).
 4. **Rate Limit Upgrade Requests** with email notifications and an administrator review queue.
 
+## Usage and platform overview
+
+Usage keeps the existing dashboard theme and adds request, processing-time, and
+error charts; request-weighted p50/p95/p99; previous-period comparisons; response
+status, cache, and access-check breakdowns; and searchable, sortable, paginated
+tables for endpoints, applications, keys, origins, IPs, and user agents. Endpoint
+details retain the selected app/key/time window. CSV export traverses every
+matching page with a fixed end time and escapes spreadsheet formulas. Late
+analytics ingestion may still change results within that window.
+
+Administrators can select **All projects** on both Overview and Usage. This
+includes recorded gateway traffic from every owner, with app/key names and
+rankings of endpoints and keys hitting limits. The scope is shared between the
+two screens during navigation. Changing scope or the selected project clears
+incompatible Usage drilldown filters. Normal developers remain owner-scoped;
+project/key query parameters cannot widen that boundary. Each global request
+checks the current D1 `user_roles` admin role, not session role claims. Names
+are enriched from D1 without exposing key secrets, hashes, or prefixes.
+
+Private session-authenticated reporting endpoints (outside the public API
+OpenAPI/operation registry):
+
+- `GET /_dashboard/api/analytics`: summary, previous totals, time series,
+  status/cache/access breakdowns and five app/key/endpoint highlights.
+- `GET /_dashboard/api/analytics/table`: one page of a dimension, with
+  `{ rows, hasMore, offset, end, source }`.
+
+Both accept `hours` (integer 1–720, default 24), `scope` (`project` by default,
+  or admin-only `all`), optional `projectId`, `keyId`, exact `route`, HTTP
+`method`, and ISO UTC `end`. The optional end time must be within the past
+60 days or at most one minute in the future. Tables also accept `dimension`
+(`endpoints`, `projects`, `keys`, `origins`, `ips`, `userAgents`), `search`
+(at most 180 characters), `sort` (`requests`, `cacheHitRate`, `rateLimited`,
+`blockedPolicy`, `errorRate`, `avgLatencyMs`, `p95LatencyMs`), `direction`
+(`asc`/`desc`), `offset` (0–1,000,000), and `limit` (1–100, default 25).
+App/key search matches names or IDs. Invalid parameters return 400; unsigned
+requests return 401; unauthorized global scope returns 403; analytics service
+failures return 503 without leaking upstream details.
+
+Remote queries use Analytics Engine sampling weights, including weighted
+percentiles. Counts may be estimates. Equal-length previous/current windows
+are adjacent and non-overlapping. Buckets are UTC-aligned (5 minutes for up to
+6 hours, hourly for up to 48 hours, 6-hourly for up to 7 days, daily otherwise);
+the UI displays the viewer's timezone. Complete remote results fill empty time
+buckets. The bounded in-isolate preview buffer is labeled incomplete and never
+fabricates historical zeroes or previous-period comparisons. Remote failures
+remain errors instead of silently substituting that buffer.
+
+HTTP errors include all 4xx/5xx, including 429s; the error chart separates 429s
+from other errors. Access allowed does not mean the upstream returned success.
+Processing time includes gateway checks and is not end-to-end client latency.
+The dashboard covers instrumented gateway requests, not uninstrumented origin
+traffic. No quota enforcement or public REST/GraphQL behavior changes here.
+
 ## Administrator roles and request reviews
 
 Apply `0004_limit_request_reviews.sql` before deploying this Worker/UI. It adds
