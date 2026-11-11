@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Send, Sparkles } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { LimitRequestReviews } from "../components/LimitRequestReviews";
 import { Button } from "../components/ui/Button";
 import { Tag } from "../components/ui/Controls";
 import { Select, SelectItem } from "../components/ui/Select";
@@ -28,7 +29,7 @@ const TIER_OPTIONS = [
 ];
 
 function RateLimitsPage() {
-  const { selectedProject } = useDashboardAuth();
+  const { selectedProject, isAdmin, refreshSession } = useDashboardAuth();
   const [contactEmail, setContactEmail] = useState("");
   const [requestedTier, setRequestedTier] = useState<
     "pro" | "enterprise" | "custom"
@@ -114,6 +115,22 @@ function RateLimitsPage() {
       </div>
 
       {/* Tier Cards */}
+      {isAdmin && (
+        <LimitRequestReviews
+          onReviewed={async () => {
+            await Promise.all([refreshSession(), loadHistory()]);
+          }}
+        />
+      )}
+      {selectedProject?.customRpm != null && (
+        <p className="rounded-xl border border-epic-accent/30 bg-epic-surface p-4 text-sm text-epic-text">
+          Approved v1 limit for {selectedProject.name}:{" "}
+          <strong>
+            {selectedProject.customRpm.toLocaleString()} requests/min per key
+          </strong>
+          . Existing keys may take up to five minutes to refresh.
+        </p>
+      )}
       <div className="grid md:grid-cols-3 gap-4">
         <TierCard
           name="Free"
@@ -286,6 +303,11 @@ function RateLimitsPage() {
                     >
                       {req.status}
                     </Tag>
+                    {req.reviewNote && (
+                      <p className="mt-2 max-w-64 whitespace-pre-wrap break-words text-xs text-epic-text-muted">
+                        {req.reviewNote}
+                      </p>
+                    )}
                   </Cell>
                   <Cell className="text-xs text-epic-text-muted">
                     {new Date(req.createdAt).toLocaleDateString()}
@@ -326,7 +348,7 @@ function TierCard({
             {rpm}
           </div>
         </div>
-        {current && <Tag tone="success">Current Limit</Tag>}
+        {current && <Tag tone="success">Current Tier</Tag>}
       </div>
 
       <p className="text-xs text-epic-text-muted">{description}</p>

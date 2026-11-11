@@ -1,22 +1,17 @@
 import { Hono } from "hono";
+import { z } from "zod";
+import {
+  alertRoutes,
+  handleChangeIngestion,
+  publicHistory,
+} from "./alert-routes.js";
+import { queryDashboardAnalytics, recordApiTelemetry } from "./analytics.js";
 import {
   CONSOLE_HEADER,
   consoleProxy,
   consoleSessionRoutes,
   revokeConsoleLogin,
 } from "./console-sessions.js";
-import {
-  alertRoutes,
-  handleChangeIngestion,
-  publicHistory,
-} from "./alert-routes.js";
-import {
-  ingestUsage,
-  usageEventSchema,
-  type UsageEvent,
-} from "./endpoint-alerts.js";
-import { z } from "zod";
-import { queryDashboardAnalytics, recordApiTelemetry } from "./analytics.js";
 import { generateApiKeySecret, sha256Hex } from "./crypto.js";
 import {
   createProject,
@@ -32,6 +27,11 @@ import {
 } from "./db.js";
 import { sendLimitIncreaseRequestEmail } from "./email.js";
 import {
+  ingestUsage,
+  type UsageEvent,
+  usageEventSchema,
+} from "./endpoint-alerts.js";
+import {
   clearDashboardSessionCookie,
   handleEpicOAuthCallback,
   readDashboardSession,
@@ -39,6 +39,7 @@ import {
   startEpicOAuthRedirect,
 } from "./epic-auth.js";
 import { removeKeyFromKv, syncKeyToKv } from "./key-cache.js";
+import { isDashboardAdmin, limitReviewRoutes } from "./limit-reviews.js";
 import { isValidIpOrCidr } from "./permissions.js";
 import { handleEdgeApiProxy } from "./proxy.js";
 import {
@@ -101,6 +102,7 @@ dashboardApi.get("/auth/session", async (c) => {
   if (!user) {
     return c.json({
       authenticated: false,
+      isAdmin: false,
       user: null,
       projects: [],
       oauthConfigured: hasEpicCredentials,
@@ -111,6 +113,7 @@ dashboardApi.get("/auth/session", async (c) => {
   const projects = await upsertEpicUserAndDefaultProject(c.env.DB, user);
   return c.json({
     authenticated: true,
+    isAdmin: await isDashboardAdmin(c.env, user),
     user,
     projects,
     oauthConfigured: hasEpicCredentials,
@@ -136,6 +139,7 @@ dashboardApi.use("/analytics", requireDashboardUser);
 dashboardApi.use("/limit-requests/*", requireDashboardUser);
 
 dashboardApi.use("/limit-requests", requireDashboardUser);
+dashboardApi.route("/admin", limitReviewRoutes);
 
 const createProjectSchema = z.object({
   name: z.string().trim().min(2).max(64),
@@ -324,7 +328,6 @@ dashboardApi.post("/keys", async (c) => {
     name: parsed.data.name,
     keyPrefix,
     keyHash,
-    tier: project.tier,
     scopes: parsed.data.scopes as ApiScope[],
     allowedIps: parsed.data.allowedIps,
     allowedOrigins: parsed.data.allowedOrigins,

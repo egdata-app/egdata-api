@@ -1,11 +1,11 @@
 import { readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import worker from "../worker/index";
 import { CONSOLE_HEADER, CONSOLE_TTL_MS } from "../worker/console-sessions";
 import { signHmacToken } from "../worker/crypto";
-import { generatedV1Routes } from "../worker/v1-routes.generated";
-import { resolveV1Route } from "../worker/v1-routes";
+import worker from "../worker/index";
 import type { DashboardEnv } from "../worker/types";
+import { resolveV1Route } from "../worker/v1-routes";
+import { generatedV1Routes } from "../worker/v1-routes.generated";
 import { sqliteD1 } from "./fixtures/sqlite";
 
 afterEach(() => {
@@ -19,6 +19,7 @@ async function setup() {
     "0001_initial.sql",
     "0002_endpoint_alerts.sql",
     "0003_console_sessions.sql",
+    "0004_limit_request_reviews.sql",
   ])
     sqlite.exec(readFileSync(`migrations/${file}`, "utf8"));
   sqlite.exec(
@@ -134,6 +135,19 @@ async function setup() {
 }
 
 describe("project console credentials", () => {
+  it("uses the project's approved custom limit without renewing the console session", async () => {
+    const s = await setup();
+    const session = await s.start();
+    s.sqlite.exec(
+      "UPDATE projects SET tier='enterprise',custom_rpm=4321 WHERE id='prj_a'",
+    );
+    expect((await s.run(session.token)).status).toBe(200);
+    expect(s.admit.mock.calls[0][0].policies).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "global", limit: 4321 }),
+      ]),
+    );
+  });
   it("attributes every registered concrete route to its own operation", () => {
     for (const route of generatedV1Routes) {
       const path = route.path.replace(/\{[^}]+\}/g, "example-id");

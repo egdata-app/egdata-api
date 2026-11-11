@@ -5,6 +5,17 @@ description: History for GET /v1/sitemap.xml
 
 `GET /v1/sitemap.xml` — active. Recorded dates are not deployment dates.
 
+## 2026-11-11 — Apply administrator-approved project limits to API keys and console sessions
+
+Record: [admin-reviewed-project-limits](https://github.com/egdata-app/egdata-api/blob/main/changes/records/admin-reviewed-project-limits.json).
+
+- **v1 GET /v1/sitemap.xml** (getSitemap; changed; compatible)
+  - Before: Limit requests were saved without a dashboard approval action; new keys inherited only the project tier and console sessions ignored custom project RPM.
+  - After: After explicit administrator approval, existing and future project keys inherit the approved RPM. Console sessions use the current project custom RPM on each request. Key caches refresh within five minutes; operation caps and quota counters are unchanged. Projects without an approved change retain their existing limits.
+  - Client action: None
+
+Verification: dashboard/tests/limit-reviews.test.ts; dashboard/tests/console-sessions.test.ts; pnpm docs:check.
+
 ## 2026-11-11 — Keep API startup available while v1 indexes are provisioned separately
 
 Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-app/egdata-api/blob/main/changes/records/keep-api-startup-independent-of-v1-indexes.json).

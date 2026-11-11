@@ -49,6 +49,7 @@ export interface DashboardProject {
   description: string;
   websiteUrl: string;
   tier: ApiKeyTier;
+  customRpm: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -79,6 +80,7 @@ export interface LimitIncreaseRequestRecord {
   ownerEpicId: string;
   projectId: string;
   projectName?: string;
+  ownerDisplayName?: string;
   contactEmail: string;
   requestedTier: "pro" | "enterprise" | "custom";
   requestedRpm: number;
@@ -88,6 +90,9 @@ export interface LimitIncreaseRequestRecord {
   status: "pending" | "approved" | "declined";
   emailDeliveryStatus: string;
   createdAt: string;
+  reviewedBy?: string | null;
+  reviewedAt?: string | null;
+  reviewNote?: string;
 }
 
 export interface DashboardEnv extends Env {

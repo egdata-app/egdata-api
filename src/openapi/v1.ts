@@ -302,6 +302,7 @@ export function buildV1OpenApiDocument(): OpenAPIV3.Document {
         "Successful JSON responses use `{ data, meta }`. Paginated collections use opaque forward cursors with `meta.pagination`. Errors use RFC 9457 Problem Details (`application/problem+json`) with a stable `code` and `requestId`.",
         "Applications authenticate data operations with an API key through the Cloudflare Worker gateway. `/v1/health`, `/v1/open-api.json`, and CORS preflights are unauthenticated.",
         "The signed-in dashboard API console can alternatively use a project-scoped session lasting at most 10 minutes. Console credentials require that dashboard login and are not portable API keys. Console requests use the same operation permissions and quota admission and count toward project usage.",
+        "Administrators can review project limit requests in the developer dashboard. Approved RPM applies to existing and future project API keys and the API console; existing key caches can take up to five minutes to refresh. Custom requests use the enterprise tier with the approved RPM override. Expensive-operation caps remain unchanged and approval does not reset quota counters.",
         "Breaking changes require a new major API version. Additive fields and operations may be introduced within v1.",
         "Shared HTTP caching is disabled for v1; every request, including conditional requests, passes authentication and exact quota admission. Internal origin caching and private ETag revalidation remain available.",
       ].join("\n\n"),

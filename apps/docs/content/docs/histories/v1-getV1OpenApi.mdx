@@ -5,6 +5,17 @@ description: History for GET /v1/open-api.json
 
 `GET /v1/open-api.json` — active. Recorded dates are not deployment dates.
 
+## 2026-11-11 — Apply administrator-approved project limits to API keys and console sessions
+
+Record: [admin-reviewed-project-limits](https://github.com/egdata-app/egdata-api/blob/main/changes/records/admin-reviewed-project-limits.json).
+
+- **v1 GET /v1/open-api.json** (getV1OpenApi; changed; compatible)
+  - Before: The v1 API description did not describe administrator review and inheritance of approved project quotas.
+  - After: The API description documents administrator-reviewed project limits, inheritance by keys and console sessions, and bounded cache propagation.
+  - Client action: None
+
+Verification: dashboard/tests/limit-reviews.test.ts; dashboard/tests/console-sessions.test.ts; pnpm docs:check.
+
 ## 2026-11-11 — Keep API startup available while v1 indexes are provisioned separately
 
 Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-app/egdata-api/blob/main/changes/records/keep-api-startup-independent-of-v1-indexes.json).

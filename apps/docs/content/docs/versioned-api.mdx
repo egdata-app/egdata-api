@@ -43,7 +43,15 @@ Each API key has one exact global quota enforced by a SQLite-backed Durable Obje
 | Pro | 1,200 |
 | Enterprise | 6,000 |
 
-A validated `customRpm` overrides the tier default. Expensive operations also retain their existing per-key limits, evaluated in the same object and the same request:
+A validated `customRpm` overrides the tier default. Request more capacity under
+**Rate Limits** in the developer dashboard. An administrator can approve or
+decline the request and leave a note in your request history. Approval applies
+the requested RPM to the project's existing and future API keys and its API
+console. Existing keys can take up to five minutes to refresh; quota counters
+are not reset. Custom requests use the enterprise tier with the approved RPM
+override. Legacy gateway requests continue to use tier limits.
+
+Expensive operations also retain their existing per-key limits, evaluated in the same object and the same request:
 
 | Policy | Limit |
 | --- | ---: |

@@ -1,10 +1,10 @@
-import { Hono, type Context } from "hono";
+import { type Context, Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import { bytesToHex, sha256Hex } from "./crypto.js";
 import {
+  type AuthHonoEnv,
   readDashboardSession,
   requireDashboardUser,
-  type AuthHonoEnv,
 } from "./epic-auth.js";
 import {
   API_SCOPES,
@@ -130,11 +130,16 @@ consoleProxy.all("/*", async (c) => {
     );
   const hash = await sessionHash(c);
   const row =
-    await c.env.DB.prepare(`SELECT p.id, p.tier, s.expires_at FROM console_sessions s
+    await c.env.DB.prepare(`SELECT p.id, p.tier, p.custom_rpm, s.expires_at FROM console_sessions s
     JOIN projects p ON p.id=s.project_id
     WHERE s.token_hash=? AND s.dashboard_session_hash=? AND p.owner_epic_id=? AND s.expires_at>?`)
       .bind(await sha256Hex(token), hash, user.epicAccountId, Date.now())
-      .first<{ id: string; tier: ApiKeyTier; expires_at: number }>();
+      .first<{
+        id: string;
+        tier: ApiKeyTier;
+        custom_rpm: number | null;
+        expires_at: number;
+      }>();
   if (!row)
     return fail(
       401,
@@ -153,7 +158,7 @@ consoleProxy.all("/*", async (c) => {
     allowedOrigins: [],
     allowedPaths: [],
     allowedMethods: ["GET", "HEAD", "POST"],
-    customRpm: null,
+    customRpm: row.custom_rpm,
     expiresAt: new Date(row.expires_at).toISOString(),
   };
   // The stable project identity shares quotas and durable usage across renewals/tabs/logins.
