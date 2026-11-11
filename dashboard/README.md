@@ -29,7 +29,18 @@ Open `http://localhost:4002`. On `localhost` when `EPIC_CLIENT_ID` is not set in
    npx wrangler d1 create egdata-dashboard-db
    npx wrangler kv namespace create API_KEYS_KV
    ```
-   Update `database_id` and `id` in `dashboard/wrangler.jsonc`, then apply migrations:
+   Set the KV namespace `id` in `dashboard/wrangler.jsonc`. Keep D1 configured by
+   `database_name` without `database_id`: Wrangler resolves the existing database
+   by name on first deployment and inherits the matching deployed `DB` binding
+   on subsequent deployments. This avoids regenerating the D1 binding, which can
+   fail with Cloudflare error `10021` even while the database is healthy. The
+   existing dashboard database is `c0ea5b25-0361-4487-95cc-58803bdeb22d`; do not
+   replace it or change `database_name` to work around a deployment failure.
+   Remote D1 commands still require an explicit ID. `wrangler.migrations.jsonc`
+   pins that ID for `db:migrate:remote`; use `--config wrangler.migrations.jsonc`
+   for other remote D1 commands. For a new account, set the newly created database
+   ID in that migrations configuration. Local development and local migrations both use
+   the name-based binding in `wrangler.jsonc`. Then apply migrations:
    ```sh
    pnpm db:migrate:remote
    ```

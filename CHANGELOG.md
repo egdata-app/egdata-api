@@ -4,6 +4,8 @@ All notable public API, documentation, release, and sustainability changes shoul
 
 ## Unreleased
 
+- Fixed dashboard deployments failing with Cloudflare D1 binding error `10021` by resolving the existing database by name and inheriting its deployed binding; kept remote migrations pinned to the original database in a separate configuration.
+
 - Added the versioned `/v1` public read-only API, initially staged at `https://devs.egdata.app/proxy/v1` with legacy `api.egdata.app` routing unchanged. v1 adds mandatory API keys, explicit permission-scope mapping for `/v1` paths, `{ data, meta }` JSON envelopes, forward-only signed cursor pagination, RFC 9457 Problem Details with `X-Request-Id`, explicit `country=US`/`locale=en-US` defaults, native image/XML preservation, separate `v1:` response-cache keys, and separate legacy/v1 OpenAPI documents and coverage checks.
 
 - Added a SQLite-backed `ApiKeyRateLimiter` Durable Object for exact global per-key quotas (Free 120, Pro 1,200, Enterprise 6,000, validated `customRpm` override) with UTC-aligned 60-second windows, one RPC and one state-row write per admitted request, read-only denials, lazy window replacement, and retryable `503` when admission is uncertain. Existing expensive-operation limits remain per-key policies in the same object. Over-limit v1 requests receive `429` Problem Details with `Retry-After`, `RateLimit`, and `RateLimit-Policy` before reaching the VM, and Worker quota headers replace upstream values.

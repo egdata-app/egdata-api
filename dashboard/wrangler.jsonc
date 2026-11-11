@@ -23,7 +23,8 @@
     {
       "binding": "DB",
       "database_name": "egdata-dashboard-db",
-      "database_id": "c0ea5b25-0361-4487-95cc-58803bdeb22d",
+      // Resolve by name so deployments inherit the existing DB binding.
+      // An explicit database_id forces regeneration, which can fail with 10021.
       "migrations_dir": "migrations"
     }
   ],

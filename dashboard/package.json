@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "db:migrate:local": "wrangler d1 migrations apply egdata-dashboard-db --local",
-    "db:migrate:remote": "wrangler d1 migrations apply egdata-dashboard-db --remote"
+    "db:migrate:remote": "wrangler d1 migrations apply egdata-dashboard-db --remote --config wrangler.migrations.jsonc"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.132.2",
