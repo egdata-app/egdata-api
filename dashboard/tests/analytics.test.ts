@@ -329,6 +329,43 @@ describe("usage authorization and aggregation", () => {
     expect(queries[0]).not.toContain("index1 =");
   });
 
+  it("sorts remote dimensions by projected aliases accepted by Analytics Engine", async () => {
+    const { env, call } = await setup();
+    env.CF_ACCOUNT_ID = "test-account";
+    env.CF_ANALYTICS_API_TOKEN = "test-token";
+    const queries: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url, init) => {
+        const query = String(init.body);
+        queries.push(query);
+        // Reproduce the live SQL planner: source columns are no longer visible
+        // in ORDER BY after SELECT has renamed them to d0/d1.
+        const ordering = query.split("ORDER BY ")[1]?.split(" LIMIT")[0];
+        if (ordering && /\bblob\d+\b/.test(ordering))
+          return new Response("unable to find type of column", { status: 422 });
+        return Response.json({ data: [] });
+      }),
+    );
+    expect((await call()).status).toBe(200);
+    for (const [dimension, columns] of [
+      ["endpoints", 2],
+      ["projects", 1],
+      ["keys", 2],
+      ["origins", 1],
+      ["ips", 2],
+      ["userAgents", 1],
+    ] as const) {
+      const response = await call(
+        `/table?dimension=${dimension}&sort=p95LatencyMs&direction=asc&offset=25`,
+      );
+      expect(response.status).toBe(200);
+      expect(queries.at(-1)).toContain(
+        `ORDER BY p95LatencyMs ASC, d0 ASC${columns === 2 ? ", d1 ASC" : ""} LIMIT 26 OFFSET 25`,
+      );
+    }
+  });
+
   it("reports a remote failure instead of quietly substituting incomplete local history", async () => {
     const { env, call, event } = await setup();
     event();
