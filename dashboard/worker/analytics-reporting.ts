@@ -298,9 +298,11 @@ export async function queryUsageTable(
       const textMatch = `position(lowerUTF8(${literal(p.search)}) IN lowerUTF8(${cols[0]})) > 0`;
       filter = ` AND (${textMatch}${ids.length ? ` OR ${cols[0]} IN (${ids.map(literal).join(",")})` : ""})`;
     }
+    // Analytics Engine resolves ORDER BY against the projected columns. Once
+    // blobN is aliased to dN, the original name is unavailable to the sorter.
     const result = await sql(
       env,
-      `SELECT ${cols.map((col, i) => `${col} AS d${i}`).join(", ")}, ${metricSql} FROM egdata_api_usage ${where(p)}${filter} GROUP BY ${cols.join(", ")} ORDER BY ${sort} ${direction.toUpperCase()}, ${cols.map((col) => `${col} ASC`).join(", ")} LIMIT ${limit + 1} OFFSET ${offset} FORMAT JSON`,
+      `SELECT ${cols.map((col, i) => `${col} AS d${i}`).join(", ")}, ${metricSql} FROM egdata_api_usage ${where(p)}${filter} GROUP BY ${cols.join(", ")} ORDER BY ${sort} ${direction.toUpperCase()}, ${cols.map((_, i) => `d${i} ASC`).join(", ")} LIMIT ${limit + 1} OFFSET ${offset} FORMAT JSON`,
     );
     rows = result.map((r) =>
       usageRow(
