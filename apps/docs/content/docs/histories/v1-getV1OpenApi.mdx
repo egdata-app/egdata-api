@@ -1,0 +1,28 @@
+---
+title: v1 getV1OpenApi
+description: History for GET /v1/open-api.json
+---
+
+`GET /v1/open-api.json` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Preserve public v1 metadata responses through the Worker
+
+Record: [public-v1-metadata-response](https://github.com/egdata-app/egdata-api/blob/main/changes/records/public-v1-metadata-response.json).
+
+- **v1 GET /v1/open-api.json** (getV1OpenApi; fixed; compatible)
+  - Before: The Worker could throw while modifying immutable upstream response headers, returning HTTP 500 and preventing the explorer from loading the deployed contract.
+  - After: The Worker clones the response before applying its existing headers, preserving the deployed OpenAPI response status and streaming body. The API contract and routing are unchanged.
+  - Client action: None
+
+Verification: dashboard/tests/v1-gateway.test.ts; pnpm dashboard:test; pnpm openapi:check.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/open-api.json** (getV1OpenApi; added; compatible)
+  - Before: GET /v1/open-api.json was not available in the versioned API.
+  - After: Version 1 OpenAPI document. Machine-readable OpenAPI 3.0 contract for the versioned public API. The legacy contract remains at /open-api.json. Response media: application/json. Public metadata operation; no API key required.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

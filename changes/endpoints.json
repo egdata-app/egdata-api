@@ -1,0 +1,3374 @@
+[
+  {
+    "apiVersion": "legacy",
+    "operationId": "autocompleteOffers",
+    "method": "GET",
+    "path": "/autocomplete",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "checkOffersExist",
+    "method": "POST",
+    "path": "/offers/exists",
+    "sources": [
+      "src/routes/offers/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "compareBuilds",
+    "method": "GET",
+    "path": "/builds/{targetId}/compare/{baseId}",
+    "sources": [
+      "src/routes/builds.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "countSavedSearchResults",
+    "method": "GET",
+    "path": "/search/{id}/count",
+    "sources": [
+      "src/routes/search.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "createAbuseChallenge",
+    "method": "POST",
+    "path": "/auth/challenge",
+    "sources": [],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getBuild",
+    "method": "GET",
+    "path": "/builds/{id}",
+    "sources": [
+      "src/routes/builds.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getBuildFileTree",
+    "method": "GET",
+    "path": "/builds/{id}/tree",
+    "sources": [
+      "src/routes/builds.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getBuildHistory",
+    "method": "GET",
+    "path": "/builds/{id}/history",
+    "sources": [
+      "src/routes/builds.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getBuildInstallOptions",
+    "method": "GET",
+    "path": "/builds/{id}/install-options",
+    "sources": [
+      "src/routes/builds.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getChangelistEntry",
+    "method": "GET",
+    "path": "/changelist/{id}",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getFreeGames",
+    "method": "GET",
+    "path": "/free-games",
+    "sources": [
+      "src/routes/free-games.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getFreeGamesStats",
+    "method": "GET",
+    "path": "/free-games/stats",
+    "sources": [
+      "src/routes/free-games.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getHealth",
+    "method": "GET",
+    "path": "/health",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getHomepageStats",
+    "method": "GET",
+    "path": "/stats/homepage",
+    "sources": [
+      "src/routes/stats.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getItem",
+    "method": "GET",
+    "path": "/items/{id}",
+    "sources": [
+      "src/routes/items.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getItemAssets",
+    "method": "GET",
+    "path": "/items/{id}/assets",
+    "sources": [
+      "src/routes/items.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getItemBuilds",
+    "method": "GET",
+    "path": "/items/{id}/builds",
+    "sources": [
+      "src/routes/items.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getItemChangelog",
+    "method": "GET",
+    "path": "/items/{id}/changelog",
+    "sources": [
+      "src/routes/items.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getItemOffer",
+    "method": "GET",
+    "path": "/items/{id}/offer",
+    "sources": [
+      "src/routes/items.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getItemsBulk",
+    "method": "POST",
+    "path": "/items/bulk",
+    "sources": [
+      "src/routes/items.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getMonthlyCreationStats",
+    "method": "GET",
+    "path": "/stats/creations/monthly",
+    "sources": [
+      "src/routes/stats.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getMonthlyReleaseStats",
+    "method": "GET",
+    "path": "/stats/releases/monthly",
+    "sources": [
+      "src/routes/stats.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOffer",
+    "method": "GET",
+    "path": "/offers/{id}",
+    "sources": [
+      "src/routes/offers/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferAgeRating",
+    "method": "GET",
+    "path": "/offers/{id}/age-rating",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferBundle",
+    "method": "GET",
+    "path": "/offers/{id}/bundle",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferChangelogStats",
+    "method": "GET",
+    "path": "/offers/{id}/changelog/stats",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferCollectionPosition",
+    "method": "GET",
+    "path": "/offers/{id}/collections/{collection}",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferEvent",
+    "method": "GET",
+    "path": "/offers/events/{id}",
+    "sources": [
+      "src/routes/offers/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferFeatures",
+    "method": "GET",
+    "path": "/offers/{id}/features",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferHowLongToBeat",
+    "method": "GET",
+    "path": "/offers/{id}/hltb",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferIgdb",
+    "method": "GET",
+    "path": "/offers/{id}/igdb",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferMappings",
+    "method": "GET",
+    "path": "/offers/{id}/mappings",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferMedia",
+    "method": "GET",
+    "path": "/offers/{id}/media",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferOgPng",
+    "method": "GET",
+    "path": "/offers/{id}/og",
+    "sources": [
+      "src/routes/offers/og.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferOgWebp",
+    "method": "GET",
+    "path": "/offers/{id}/og.webp",
+    "sources": [
+      "src/routes/offers/og.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferOverview",
+    "method": "GET",
+    "path": "/offers/{id}/overview",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferPolls",
+    "method": "GET",
+    "path": "/offers/{id}/polls",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferPrepurchaseAlternative",
+    "method": "GET",
+    "path": "/offers/{id}/has-prepurchase",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferPrice",
+    "method": "GET",
+    "path": "/offers/{id}/price",
+    "sources": [
+      "src/routes/offers/price.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferPriceFairness",
+    "method": "GET",
+    "path": "/offers/{id}/price/fairness",
+    "sources": [
+      "src/routes/offers/price.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferPriceHistory",
+    "method": "GET",
+    "path": "/offers/{id}/price-history",
+    "sources": [
+      "src/routes/offers/price.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferPriceStats",
+    "method": "GET",
+    "path": "/offers/{id}/price-stats",
+    "sources": [
+      "src/routes/offers/price.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferRatings",
+    "method": "GET",
+    "path": "/offers/{id}/ratings",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferRegionalPrices",
+    "method": "GET",
+    "path": "/offers/{id}/regional-price",
+    "sources": [
+      "src/routes/offers/price.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferRegularAlternative",
+    "method": "GET",
+    "path": "/offers/{id}/has-regular",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferRequirements",
+    "method": "GET",
+    "path": "/offers/{id}/requirements",
+    "sources": [
+      "src/routes/offers/requirements.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferReviewsSummary",
+    "method": "GET",
+    "path": "/offers/{id}/reviews-summary",
+    "sources": [
+      "src/routes/offers/reviews.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOffersForItemsBulk",
+    "method": "POST",
+    "path": "/items/bulk/offers",
+    "sources": [
+      "src/routes/items.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getOfferTopPositions",
+    "method": "GET",
+    "path": "/offers/{id}/tops",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getRegionForCountry",
+    "method": "GET",
+    "path": "/region",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getSandbox",
+    "method": "GET",
+    "path": "/sandboxes/{sandboxId}",
+    "sources": [
+      "src/routes/sandbox.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getSandboxBaseGame",
+    "method": "GET",
+    "path": "/sandboxes/{sandboxId}/base-game",
+    "sources": [
+      "src/routes/sandbox.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getSandboxOgPng",
+    "method": "GET",
+    "path": "/sandboxes/{sandboxId}/og",
+    "sources": [
+      "src/routes/sandbox-og.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getSandboxOgWebp",
+    "method": "GET",
+    "path": "/sandboxes/{sandboxId}/og.webp",
+    "sources": [
+      "src/routes/sandbox-og.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getSandboxStats",
+    "method": "GET",
+    "path": "/sandboxes/{sandboxId}/stats",
+    "sources": [
+      "src/routes/sandbox.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getSavedSearchQuery",
+    "method": "GET",
+    "path": "/search/{id}",
+    "sources": [
+      "src/routes/search.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getSellerCoverOffers",
+    "method": "GET",
+    "path": "/sellers/{id}/cover",
+    "sources": [
+      "src/routes/sellers.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getSellerStats",
+    "method": "GET",
+    "path": "/sellers/{id}/stats",
+    "sources": [
+      "src/routes/sellers.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getStats",
+    "method": "GET",
+    "path": "/stats",
+    "sources": [
+      "src/routes/stats.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getYearlyCreationStats",
+    "method": "GET",
+    "path": "/stats/creations/yearly",
+    "sources": [
+      "src/routes/stats.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "getYearlyReleaseStats",
+    "method": "GET",
+    "path": "/stats/releases/yearly",
+    "sources": [
+      "src/routes/stats.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "hydrateCatalogGraph",
+    "method": "POST",
+    "path": "/catalog/hydrate",
+    "sources": [
+      "src/routes/catalog-hydrate.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet__c767025d",
+    "method": "GET",
+    "path": "/",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_assets_id__fe67ede6",
+    "method": "GET",
+    "path": "/assets/{id}",
+    "sources": [
+      "src/routes/assets.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_base_game_namespace__43947330",
+    "method": "GET",
+    "path": "/base-game/{namespace}",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_changelog_038722cc",
+    "method": "GET",
+    "path": "/changelog",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_collections_slug__c9e20bbf",
+    "method": "GET",
+    "path": "/collections/{slug}",
+    "sources": [
+      "src/routes/collections.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_collections_slug_week__e7c64eb1",
+    "method": "GET",
+    "path": "/collections/{slug}/{week}",
+    "sources": [
+      "src/routes/collections.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_collections_slug_week_og_abb2fde5",
+    "method": "GET",
+    "path": "/collections/{slug}/{week}/og",
+    "sources": [
+      "src/routes/collections.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_doc_f5f543a0",
+    "method": "GET",
+    "path": "/doc",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_franchises_slug__468d5cca",
+    "method": "GET",
+    "path": "/franchises/{slug}",
+    "sources": [
+      "src/routes/franchises.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_free_games_og_656b6e88",
+    "method": "GET",
+    "path": "/free-games/og",
+    "sources": [
+      "src/routes/free-games.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_game_awards_5a8ac742",
+    "method": "GET",
+    "path": "/game-awards",
+    "sources": [
+      "src/routes/game-awards.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_game_awards_og_aa6a5f28",
+    "method": "GET",
+    "path": "/game-awards/og",
+    "sources": [
+      "src/routes/game-awards.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_graphql_220e6fb1",
+    "method": "GET",
+    "path": "/graphql",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_items_from_offer_id__f652bc56",
+    "method": "GET",
+    "path": "/items-from-offer/{id}",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_items_sitemap_xml_57b8dd19",
+    "method": "GET",
+    "path": "/items/sitemap.xml",
+    "sources": [
+      "src/routes/items.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_items_sitemap_xml_e6f8185b",
+    "method": "GET",
+    "path": "/items-sitemap.xml",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_multisearch_229582ca",
+    "method": "GET",
+    "path": "/multisearch",
+    "sources": [
+      "src/routes/multisearch.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_multisearch_items_6adf1480",
+    "method": "GET",
+    "path": "/multisearch/items",
+    "sources": [
+      "src/routes/multisearch.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_multisearch_offers_f0c29182",
+    "method": "GET",
+    "path": "/multisearch/offers",
+    "sources": [
+      "src/routes/multisearch.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_multisearch_sellers_c239406a",
+    "method": "GET",
+    "path": "/multisearch/sellers",
+    "sources": [
+      "src/routes/multisearch.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_offer_by_slug_slug__5aadfed6",
+    "method": "GET",
+    "path": "/offer-by-slug/{slug}",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_open_api_json_d5453718",
+    "method": "GET",
+    "path": "/open-api.json",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_ping_f7c2b7c6",
+    "method": "GET",
+    "path": "/ping",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_profiles_id__f0000a67",
+    "method": "GET",
+    "path": "/profiles/{id}",
+    "sources": [
+      "src/routes/profiles.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_profiles_id_achievements_e2c38dc7",
+    "method": "GET",
+    "path": "/profiles/{id}/achievements",
+    "sources": [
+      "src/routes/profiles.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_profiles_id_achievements_sandboxId__3f40ec52",
+    "method": "GET",
+    "path": "/profiles/{id}/achievements/{sandboxId}",
+    "sources": [
+      "src/routes/profiles.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_profiles_id_games_35bd6af2",
+    "method": "GET",
+    "path": "/profiles/{id}/games",
+    "sources": [
+      "src/routes/profiles.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_profiles_id_information_1a333c76",
+    "method": "GET",
+    "path": "/profiles/{id}/information",
+    "sources": [
+      "src/routes/profiles.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_profiles_id_random_game_bdccf825",
+    "method": "GET",
+    "path": "/profiles/{id}/random-game",
+    "sources": [
+      "src/routes/profiles.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_profiles_id_rare_achievements_0a3d8b68",
+    "method": "GET",
+    "path": "/profiles/{id}/rare-achievements",
+    "sources": [
+      "src/routes/profiles.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_profiles_id_rare_achievements_sandboxId__c761732b",
+    "method": "GET",
+    "path": "/profiles/{id}/rare-achievements/{sandboxId}",
+    "sources": [
+      "src/routes/profiles.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_profiles_id_refresh_status_ee9656f7",
+    "method": "GET",
+    "path": "/profiles/{id}/refresh-status",
+    "sources": [
+      "src/routes/profiles.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_profiles_leaderboard_7a07d3bc",
+    "method": "GET",
+    "path": "/profiles/leaderboard",
+    "sources": [
+      "src/routes/profiles.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_profiles_sitemap_xml_0e16a159",
+    "method": "GET",
+    "path": "/profiles/sitemap.xml",
+    "sources": [
+      "src/routes/profiles.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_promotions_83dd267d",
+    "method": "GET",
+    "path": "/promotions",
+    "sources": [
+      "src/routes/promotions.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_promotions_id__ca5d27b1",
+    "method": "GET",
+    "path": "/promotions/{id}",
+    "sources": [
+      "src/routes/promotions.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_promotions_id_cover_2c62e571",
+    "method": "GET",
+    "path": "/promotions/{id}/cover",
+    "sources": [
+      "src/routes/promotions.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_promotions_sitemap_xml_3578dc8e",
+    "method": "GET",
+    "path": "/promotions-sitemap.xml",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_push_vapid_public_key_472be0da",
+    "method": "GET",
+    "path": "/push/vapid-public-key",
+    "sources": [
+      "src/routes/push.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_robots_txt_deae90bd",
+    "method": "GET",
+    "path": "/robots.txt",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_sandboxes_sitemap_xml_5773ff84",
+    "method": "GET",
+    "path": "/sandboxes/sitemap.xml",
+    "sources": [
+      "src/routes/sandbox.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_search_82dab022",
+    "method": "GET",
+    "path": "/search",
+    "sources": [
+      "src/routes/search.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_sitemap_xml_efe3322f",
+    "method": "GET",
+    "path": "/sitemap.xml",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_tags_803dea8c",
+    "method": "GET",
+    "path": "/tags",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyGet_ui_64976efd",
+    "method": "GET",
+    "path": "/ui",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyOptions_ping_9143aa8e",
+    "method": "OPTIONS",
+    "path": "/ping",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyPost_graphql_fac042a8",
+    "method": "POST",
+    "path": "/graphql",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "legacyPost_ping_4242a078",
+    "method": "POST",
+    "path": "/ping",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listActiveSales",
+    "method": "GET",
+    "path": "/active-sales",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listBuildFiles",
+    "method": "GET",
+    "path": "/builds/{id}/files",
+    "sources": [
+      "src/routes/builds.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listBuildItems",
+    "method": "GET",
+    "path": "/builds/{id}/items",
+    "sources": [
+      "src/routes/builds.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listBuilds",
+    "method": "GET",
+    "path": "/builds",
+    "sources": [
+      "src/routes/builds.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listBundlesContainingOffer",
+    "method": "GET",
+    "path": "/offers/{id}/in-bundle",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listChangelist",
+    "method": "GET",
+    "path": "/changelist",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listCountries",
+    "method": "GET",
+    "path": "/countries",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listFeaturedDiscounts",
+    "method": "GET",
+    "path": "/offers/featured-discounts",
+    "sources": [
+      "src/routes/offers/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listFeaturedGames",
+    "method": "GET",
+    "path": "/featured",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listFreeGamesHistory",
+    "method": "GET",
+    "path": "/free-games/history",
+    "sources": [
+      "src/routes/free-games.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listFreeGamesSellers",
+    "method": "GET",
+    "path": "/free-games/sellers",
+    "sources": [
+      "src/routes/free-games.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listItems",
+    "method": "GET",
+    "path": "/items",
+    "sources": [
+      "src/routes/items.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listLatestAchievementOffers",
+    "method": "GET",
+    "path": "/offers/latest-achievements",
+    "sources": [
+      "src/routes/offers/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listLatestGames",
+    "method": "GET",
+    "path": "/latest-games",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listLatestReleasedOffers",
+    "method": "GET",
+    "path": "/offers/latest-released",
+    "sources": [
+      "src/routes/offers/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listMobileFreeGames",
+    "method": "GET",
+    "path": "/free-games/mobile",
+    "sources": [
+      "src/routes/free-games.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferAchievements",
+    "method": "GET",
+    "path": "/offers/{id}/achievements",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferAssets",
+    "method": "GET",
+    "path": "/offers/{id}/assets",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferBuilds",
+    "method": "GET",
+    "path": "/offers/{id}/builds",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferChangelog",
+    "method": "GET",
+    "path": "/offers/{id}/changelog",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferCollectionOffers",
+    "method": "GET",
+    "path": "/offers/{id}/collection",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferDetailGenres",
+    "method": "GET",
+    "path": "/offers/{id}/genres",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferEvents",
+    "method": "GET",
+    "path": "/offers/events",
+    "sources": [
+      "src/routes/offers/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferFranchises",
+    "method": "GET",
+    "path": "/offers/{id}/franchises",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferGenres",
+    "method": "GET",
+    "path": "/offers/genres",
+    "sources": [
+      "src/routes/offers/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferGiveaways",
+    "method": "GET",
+    "path": "/offers/{id}/giveaways",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferItems",
+    "method": "GET",
+    "path": "/offers/{id}/items",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferReviews",
+    "method": "GET",
+    "path": "/offers/{id}/reviews",
+    "sources": [
+      "src/routes/offers/reviews.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOffers",
+    "method": "GET",
+    "path": "/offers",
+    "sources": [
+      "src/routes/offers/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferSuggestions",
+    "method": "GET",
+    "path": "/offers/{id}/suggestions",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listOfferTechnologies",
+    "method": "GET",
+    "path": "/offers/{id}/technologies",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listRegions",
+    "method": "GET",
+    "path": "/regions",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listRelatedOffers",
+    "method": "GET",
+    "path": "/offers/{id}/related",
+    "sources": [
+      "src/routes/offers/data.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSaleOffers",
+    "method": "GET",
+    "path": "/sales",
+    "sources": [
+      "src/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSandboxAchievements",
+    "method": "GET",
+    "path": "/sandboxes/{sandboxId}/achievements",
+    "sources": [
+      "src/routes/sandbox.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSandboxAssets",
+    "method": "GET",
+    "path": "/sandboxes/{sandboxId}/assets",
+    "sources": [
+      "src/routes/sandbox.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSandboxBuilds",
+    "method": "GET",
+    "path": "/sandboxes/{sandboxId}/builds",
+    "sources": [
+      "src/routes/sandbox.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSandboxChangelog",
+    "method": "GET",
+    "path": "/sandboxes/{sandboxId}/changelog",
+    "sources": [
+      "src/routes/sandbox.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSandboxes",
+    "method": "GET",
+    "path": "/sandboxes",
+    "sources": [
+      "src/routes/sandbox.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSandboxItems",
+    "method": "GET",
+    "path": "/sandboxes/{sandboxId}/items",
+    "sources": [
+      "src/routes/sandbox.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSandboxOffers",
+    "method": "GET",
+    "path": "/sandboxes/{sandboxId}/offers",
+    "sources": [
+      "src/routes/sandbox.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSearchDevelopers",
+    "method": "GET",
+    "path": "/search/developers",
+    "sources": [
+      "src/routes/search.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSearchOfferTypes",
+    "method": "GET",
+    "path": "/search/offer-types",
+    "sources": [
+      "src/routes/search.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSearchPublishers",
+    "method": "GET",
+    "path": "/search/publishers",
+    "sources": [
+      "src/routes/search.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSearchTags",
+    "method": "GET",
+    "path": "/search/tags",
+    "sources": [
+      "src/routes/search.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSellerOffers",
+    "method": "GET",
+    "path": "/sellers/{id}",
+    "sources": [
+      "src/routes/sellers.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listSellers",
+    "method": "GET",
+    "path": "/sellers",
+    "sources": [
+      "src/routes/sellers.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listTopSellersOffers",
+    "method": "GET",
+    "path": "/offers/top-sellers",
+    "sources": [
+      "src/routes/offers/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listTopWishlistedOffers",
+    "method": "GET",
+    "path": "/offers/top-wishlisted",
+    "sources": [
+      "src/routes/offers/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "listUpcomingOffers",
+    "method": "GET",
+    "path": "/offers/upcoming",
+    "sources": [
+      "src/routes/offers/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "resolveLauncherRecords",
+    "method": "POST",
+    "path": "/builds/resolve-launcher-records",
+    "sources": [
+      "src/routes/build-launcher-records.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "resolveOfferSlugs",
+    "method": "POST",
+    "path": "/offers/slugs",
+    "sources": [
+      "src/routes/offers/index.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "searchChangelog",
+    "method": "GET",
+    "path": "/search/changelog",
+    "sources": [
+      "src/routes/search.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "searchFreeGames",
+    "method": "GET",
+    "path": "/free-games/search",
+    "sources": [
+      "src/routes/free-games.tsx"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "searchOffersLegacy",
+    "method": "POST",
+    "path": "/search",
+    "sources": [
+      "src/routes/search.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "searchOffersV2",
+    "method": "POST",
+    "path": "/search/v2/search",
+    "sources": [
+      "src/routes/search.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "searchOffersV2Get",
+    "method": "GET",
+    "path": "/search/v2/search",
+    "sources": [
+      "src/routes/search.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "legacy",
+    "operationId": "searchOffersWithNaturalLanguage",
+    "method": "POST",
+    "path": "/search/natural-language",
+    "sources": [
+      "src/routes/search.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "autocomplete",
+    "method": "GET",
+    "path": "/v1/autocomplete",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "checkOfferExistence",
+    "method": "POST",
+    "path": "/v1/offers/exists",
+    "sources": [
+      "src/v1/operations/offers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "checkOfferSlugs",
+    "method": "POST",
+    "path": "/v1/offers/slugs",
+    "sources": [
+      "src/v1/operations/offers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "compareBuilds",
+    "method": "GET",
+    "path": "/v1/builds/{targetId}/compare/{baseId}",
+    "sources": [
+      "src/v1/operations/builds.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getAsset",
+    "method": "GET",
+    "path": "/v1/assets/{id}",
+    "sources": [
+      "src/v1/operations/assets.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getBaseGame",
+    "method": "GET",
+    "path": "/v1/base-game/{namespace}",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getBuild",
+    "method": "GET",
+    "path": "/v1/builds/{id}",
+    "sources": [
+      "src/v1/operations/builds.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getBuildHistory",
+    "method": "GET",
+    "path": "/v1/builds/{id}/history",
+    "sources": [
+      "src/v1/operations/builds.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getBuildInstallOptions",
+    "method": "GET",
+    "path": "/v1/builds/{id}/install-options",
+    "sources": [
+      "src/v1/operations/builds.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getBuildTree",
+    "method": "GET",
+    "path": "/v1/builds/{id}/tree",
+    "sources": [
+      "src/v1/operations/builds.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getChangelogEntry",
+    "method": "GET",
+    "path": "/v1/changelist/{id}",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getCollection",
+    "method": "GET",
+    "path": "/v1/collections/{slug}",
+    "sources": [
+      "src/v1/operations/collections.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getCollectionWeek",
+    "method": "GET",
+    "path": "/v1/collections/{slug}/{week}",
+    "sources": [
+      "src/v1/operations/collections.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getCollectionWeekOg",
+    "method": "GET",
+    "path": "/v1/collections/{slug}/{week}/og",
+    "sources": [
+      "src/v1/operations/og.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getFeaturedGames",
+    "method": "GET",
+    "path": "/v1/featured",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getFranchise",
+    "method": "GET",
+    "path": "/v1/franchises/{slug}",
+    "sources": [
+      "src/v1/operations/franchises.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getFreeGamesOg",
+    "method": "GET",
+    "path": "/v1/free-games/og",
+    "sources": [
+      "src/v1/operations/og.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getFreeGamesStats",
+    "method": "GET",
+    "path": "/v1/free-games/stats",
+    "sources": [
+      "src/v1/operations/free-games.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getGameAwards",
+    "method": "GET",
+    "path": "/v1/game-awards",
+    "sources": [
+      "src/v1/operations/game-awards.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getGameAwardsOg",
+    "method": "GET",
+    "path": "/v1/game-awards/og",
+    "sources": [
+      "src/v1/operations/og.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getHealth",
+    "method": "GET",
+    "path": "/v1/health",
+    "sources": [
+      "src/v1/operations/system.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getHomepageStats",
+    "method": "GET",
+    "path": "/v1/stats/homepage",
+    "sources": [
+      "src/v1/operations/stats.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getItem",
+    "method": "GET",
+    "path": "/v1/items/{id}",
+    "sources": [
+      "src/v1/operations/items.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getItemAssets",
+    "method": "GET",
+    "path": "/v1/items/{id}/assets",
+    "sources": [
+      "src/v1/operations/items.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getItemBuilds",
+    "method": "GET",
+    "path": "/v1/items/{id}/builds",
+    "sources": [
+      "src/v1/operations/items.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getItemChangelog",
+    "method": "GET",
+    "path": "/v1/items/{id}/changelog",
+    "sources": [
+      "src/v1/operations/items.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getItemOffer",
+    "method": "GET",
+    "path": "/v1/items/{id}/offer",
+    "sources": [
+      "src/v1/operations/items.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getItemsBulk",
+    "method": "POST",
+    "path": "/v1/items/bulk",
+    "sources": [
+      "src/v1/operations/items.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getItemsSitemap",
+    "method": "GET",
+    "path": "/v1/items-sitemap.xml",
+    "sources": [
+      "src/v1/operations/native.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getItemsSitemapAlias",
+    "method": "GET",
+    "path": "/v1/items/sitemap.xml",
+    "sources": [
+      "src/v1/operations/native.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getLatestGames",
+    "method": "GET",
+    "path": "/v1/latest-games",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getMonthlyCreationStats",
+    "method": "GET",
+    "path": "/v1/stats/creations/monthly",
+    "sources": [
+      "src/v1/operations/stats.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getMonthlyReleaseStats",
+    "method": "GET",
+    "path": "/v1/stats/releases/monthly",
+    "sources": [
+      "src/v1/operations/stats.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOffer",
+    "method": "GET",
+    "path": "/v1/offers/{id}",
+    "sources": [
+      "src/v1/operations/offers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferAchievements",
+    "method": "GET",
+    "path": "/v1/offers/{id}/achievements",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferAgeRating",
+    "method": "GET",
+    "path": "/v1/offers/{id}/age-rating",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferAssets",
+    "method": "GET",
+    "path": "/v1/offers/{id}/assets",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferBuilds",
+    "method": "GET",
+    "path": "/v1/offers/{id}/builds",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferBundle",
+    "method": "GET",
+    "path": "/v1/offers/{id}/bundle",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferBySlug",
+    "method": "GET",
+    "path": "/v1/offer-by-slug/{slug}",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferChangelogStats",
+    "method": "GET",
+    "path": "/v1/offers/{id}/changelog/stats",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferCollection",
+    "method": "GET",
+    "path": "/v1/offers/{id}/collection",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferCollectionEntry",
+    "method": "GET",
+    "path": "/v1/offers/{id}/collections/{collection}",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferEvent",
+    "method": "GET",
+    "path": "/v1/offers/events/{id}",
+    "sources": [
+      "src/v1/operations/offers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferFeatures",
+    "method": "GET",
+    "path": "/v1/offers/{id}/features",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferFranchises",
+    "method": "GET",
+    "path": "/v1/offers/{id}/franchises",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferGenres",
+    "method": "GET",
+    "path": "/v1/offers/{id}/genres",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferGiveaways",
+    "method": "GET",
+    "path": "/v1/offers/{id}/giveaways",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferHasPrepurchase",
+    "method": "GET",
+    "path": "/v1/offers/{id}/has-prepurchase",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferHasRegular",
+    "method": "GET",
+    "path": "/v1/offers/{id}/has-regular",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferHltb",
+    "method": "GET",
+    "path": "/v1/offers/{id}/hltb",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferIgdb",
+    "method": "GET",
+    "path": "/v1/offers/{id}/igdb",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferItems",
+    "method": "GET",
+    "path": "/v1/offers/{id}/items",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferMappings",
+    "method": "GET",
+    "path": "/v1/offers/{id}/mappings",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferMedia",
+    "method": "GET",
+    "path": "/v1/offers/{id}/media",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferOg",
+    "method": "GET",
+    "path": "/v1/offers/{id}/og",
+    "sources": [
+      "src/v1/operations/og.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferOgWebp",
+    "method": "GET",
+    "path": "/v1/offers/{id}/og.webp",
+    "sources": [
+      "src/v1/operations/og.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferOverview",
+    "method": "GET",
+    "path": "/v1/offers/{id}/overview",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferPolls",
+    "method": "GET",
+    "path": "/v1/offers/{id}/polls",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferPrice",
+    "method": "GET",
+    "path": "/v1/offers/{id}/price",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferPriceFairness",
+    "method": "GET",
+    "path": "/v1/offers/{id}/price/fairness",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferPriceStats",
+    "method": "GET",
+    "path": "/v1/offers/{id}/price-stats",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferRatings",
+    "method": "GET",
+    "path": "/v1/offers/{id}/ratings",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferRegionalPrice",
+    "method": "GET",
+    "path": "/v1/offers/{id}/regional-price",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferRequirements",
+    "method": "GET",
+    "path": "/v1/offers/{id}/requirements",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferReviewsSummary",
+    "method": "GET",
+    "path": "/v1/offers/{id}/reviews-summary",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOffersForItemsBulk",
+    "method": "POST",
+    "path": "/v1/items/bulk/offers",
+    "sources": [
+      "src/v1/operations/items.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferSuggestions",
+    "method": "GET",
+    "path": "/v1/offers/{id}/suggestions",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferTechnologies",
+    "method": "GET",
+    "path": "/v1/offers/{id}/technologies",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getOfferTops",
+    "method": "GET",
+    "path": "/v1/offers/{id}/tops",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getProfile",
+    "method": "GET",
+    "path": "/v1/profiles/{id}",
+    "sources": [
+      "src/v1/operations/profiles.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getProfileAchievements",
+    "method": "GET",
+    "path": "/v1/profiles/{id}/achievements/{sandboxId}",
+    "sources": [
+      "src/v1/operations/profiles.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getProfileInformation",
+    "method": "GET",
+    "path": "/v1/profiles/{id}/information",
+    "sources": [
+      "src/v1/operations/profiles.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getProfileRandomGame",
+    "method": "GET",
+    "path": "/v1/profiles/{id}/random-game",
+    "sources": [
+      "src/v1/operations/profiles.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getProfileRareAchievements",
+    "method": "GET",
+    "path": "/v1/profiles/{id}/rare-achievements/{sandboxId}",
+    "sources": [
+      "src/v1/operations/profiles.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getProfilesSitemap",
+    "method": "GET",
+    "path": "/v1/profiles/sitemap.xml",
+    "sources": [
+      "src/v1/operations/native.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getPromotionCover",
+    "method": "GET",
+    "path": "/v1/promotions/{id}/cover",
+    "sources": [
+      "src/v1/operations/promotions.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getPromotionsSitemap",
+    "method": "GET",
+    "path": "/v1/promotions-sitemap.xml",
+    "sources": [
+      "src/v1/operations/native.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getRegion",
+    "method": "GET",
+    "path": "/v1/region",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getRelatedOffers",
+    "method": "GET",
+    "path": "/v1/offers/{id}/related",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getRobots",
+    "method": "GET",
+    "path": "/v1/robots.txt",
+    "sources": [
+      "src/v1/operations/native.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getSandbox",
+    "method": "GET",
+    "path": "/v1/sandboxes/{sandboxId}",
+    "sources": [
+      "src/v1/operations/sandboxes.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getSandboxBaseGame",
+    "method": "GET",
+    "path": "/v1/sandboxes/{sandboxId}/base-game",
+    "sources": [
+      "src/v1/operations/sandboxes.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getSandboxChangelog",
+    "method": "GET",
+    "path": "/v1/sandboxes/{sandboxId}/changelog",
+    "sources": [
+      "src/v1/operations/sandboxes.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getSandboxesSitemap",
+    "method": "GET",
+    "path": "/v1/sandboxes/sitemap.xml",
+    "sources": [
+      "src/v1/operations/native.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getSandboxOg",
+    "method": "GET",
+    "path": "/v1/sandboxes/{sandboxId}/og",
+    "sources": [
+      "src/v1/operations/og.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getSandboxOgWebp",
+    "method": "GET",
+    "path": "/v1/sandboxes/{sandboxId}/og.webp",
+    "sources": [
+      "src/v1/operations/og.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getSandboxStats",
+    "method": "GET",
+    "path": "/v1/sandboxes/{sandboxId}/stats",
+    "sources": [
+      "src/v1/operations/sandboxes.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getSearchQuery",
+    "method": "GET",
+    "path": "/v1/search/{id}",
+    "sources": [
+      "src/v1/operations/search.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getSearchQueryCount",
+    "method": "GET",
+    "path": "/v1/search/{id}/count",
+    "sources": [
+      "src/v1/operations/search.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getSellerCoverOffers",
+    "method": "GET",
+    "path": "/v1/sellers/{id}/cover",
+    "sources": [
+      "src/v1/operations/sellers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getSellerStats",
+    "method": "GET",
+    "path": "/v1/sellers/{id}/stats",
+    "sources": [
+      "src/v1/operations/sellers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getSitemap",
+    "method": "GET",
+    "path": "/v1/sitemap.xml",
+    "sources": [
+      "src/v1/operations/native.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getStats",
+    "method": "GET",
+    "path": "/v1/stats",
+    "sources": [
+      "src/v1/operations/stats.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getV1OpenApi",
+    "method": "GET",
+    "path": "/v1/open-api.json",
+    "sources": [
+      "src/v1/operations/system.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getYearlyCreationStats",
+    "method": "GET",
+    "path": "/v1/stats/creations/yearly",
+    "sources": [
+      "src/v1/operations/stats.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "getYearlyReleaseStats",
+    "method": "GET",
+    "path": "/v1/stats/releases/yearly",
+    "sources": [
+      "src/v1/operations/stats.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "hydrateCatalog",
+    "method": "POST",
+    "path": "/v1/catalog/hydrate",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listActiveSales",
+    "method": "GET",
+    "path": "/v1/active-sales",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listBuildFiles",
+    "method": "GET",
+    "path": "/v1/builds/{id}/files",
+    "sources": [
+      "src/v1/operations/builds.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listBuildItems",
+    "method": "GET",
+    "path": "/v1/builds/{id}/items",
+    "sources": [
+      "src/v1/operations/builds.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listBuilds",
+    "method": "GET",
+    "path": "/v1/builds",
+    "sources": [
+      "src/v1/operations/builds.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listBundlesContainingOffer",
+    "method": "GET",
+    "path": "/v1/offers/{id}/in-bundle",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listChangelist",
+    "method": "GET",
+    "path": "/v1/changelist",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listChangelog",
+    "method": "GET",
+    "path": "/v1/changelog",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listCountries",
+    "method": "GET",
+    "path": "/v1/countries",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listFeaturedDiscounts",
+    "method": "GET",
+    "path": "/v1/offers/featured-discounts",
+    "sources": [
+      "src/v1/operations/offers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listFreeGames",
+    "method": "GET",
+    "path": "/v1/free-games",
+    "sources": [
+      "src/v1/operations/free-games.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listFreeGameSellers",
+    "method": "GET",
+    "path": "/v1/free-games/sellers",
+    "sources": [
+      "src/v1/operations/free-games.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listFreeGamesHistory",
+    "method": "GET",
+    "path": "/v1/free-games/history",
+    "sources": [
+      "src/v1/operations/free-games.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listItems",
+    "method": "GET",
+    "path": "/v1/items",
+    "sources": [
+      "src/v1/operations/items.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listItemsFromOffer",
+    "method": "GET",
+    "path": "/v1/items-from-offer/{id}",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listLatestAchievements",
+    "method": "GET",
+    "path": "/v1/offers/latest-achievements",
+    "sources": [
+      "src/v1/operations/offers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listLatestReleased",
+    "method": "GET",
+    "path": "/v1/offers/latest-released",
+    "sources": [
+      "src/v1/operations/offers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listMobileFreeGames",
+    "method": "GET",
+    "path": "/v1/free-games/mobile",
+    "sources": [
+      "src/v1/operations/free-games.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listOfferChangelog",
+    "method": "GET",
+    "path": "/v1/offers/{id}/changelog",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listOfferEvents",
+    "method": "GET",
+    "path": "/v1/offers/events",
+    "sources": [
+      "src/v1/operations/offers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listOfferGenres",
+    "method": "GET",
+    "path": "/v1/offers/genres",
+    "sources": [
+      "src/v1/operations/offers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listOfferPriceHistory",
+    "method": "GET",
+    "path": "/v1/offers/{id}/price-history",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listOfferReviews",
+    "method": "GET",
+    "path": "/v1/offers/{id}/reviews",
+    "sources": [
+      "src/v1/operations/offer-details.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listOffers",
+    "method": "GET",
+    "path": "/v1/offers",
+    "sources": [
+      "src/v1/operations/offers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listProfileAchievements",
+    "method": "GET",
+    "path": "/v1/profiles/{id}/achievements",
+    "sources": [
+      "src/v1/operations/profiles.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listProfileGames",
+    "method": "GET",
+    "path": "/v1/profiles/{id}/games",
+    "sources": [
+      "src/v1/operations/profiles.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listProfileLeaderboard",
+    "method": "GET",
+    "path": "/v1/profiles/leaderboard",
+    "sources": [
+      "src/v1/operations/profiles.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listProfileRareAchievements",
+    "method": "GET",
+    "path": "/v1/profiles/{id}/rare-achievements",
+    "sources": [
+      "src/v1/operations/profiles.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listPromotionOffers",
+    "method": "GET",
+    "path": "/v1/promotions/{id}",
+    "sources": [
+      "src/v1/operations/promotions.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listPromotions",
+    "method": "GET",
+    "path": "/v1/promotions",
+    "sources": [
+      "src/v1/operations/promotions.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listRegions",
+    "method": "GET",
+    "path": "/v1/regions",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listSales",
+    "method": "GET",
+    "path": "/v1/sales",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listSandboxAchievements",
+    "method": "GET",
+    "path": "/v1/sandboxes/{sandboxId}/achievements",
+    "sources": [
+      "src/v1/operations/sandboxes.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listSandboxAssets",
+    "method": "GET",
+    "path": "/v1/sandboxes/{sandboxId}/assets",
+    "sources": [
+      "src/v1/operations/sandboxes.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listSandboxBuilds",
+    "method": "GET",
+    "path": "/v1/sandboxes/{sandboxId}/builds",
+    "sources": [
+      "src/v1/operations/sandboxes.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listSandboxes",
+    "method": "GET",
+    "path": "/v1/sandboxes",
+    "sources": [
+      "src/v1/operations/sandboxes.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listSandboxItems",
+    "method": "GET",
+    "path": "/v1/sandboxes/{sandboxId}/items",
+    "sources": [
+      "src/v1/operations/sandboxes.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listSandboxOffers",
+    "method": "GET",
+    "path": "/v1/sandboxes/{sandboxId}/offers",
+    "sources": [
+      "src/v1/operations/sandboxes.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listSearchDevelopers",
+    "method": "GET",
+    "path": "/v1/search/developers",
+    "sources": [
+      "src/v1/operations/search.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listSearchOfferTypes",
+    "method": "GET",
+    "path": "/v1/search/offer-types",
+    "sources": [
+      "src/v1/operations/search.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listSearchPublishers",
+    "method": "GET",
+    "path": "/v1/search/publishers",
+    "sources": [
+      "src/v1/operations/search.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listSearchTags",
+    "method": "GET",
+    "path": "/v1/search/tags",
+    "sources": [
+      "src/v1/operations/search.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listSellerOffers",
+    "method": "GET",
+    "path": "/v1/sellers/{id}",
+    "sources": [
+      "src/v1/operations/sellers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listSellers",
+    "method": "GET",
+    "path": "/v1/sellers",
+    "sources": [
+      "src/v1/operations/sellers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listTags",
+    "method": "GET",
+    "path": "/v1/tags",
+    "sources": [
+      "src/v1/operations/catalog.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listTopSellers",
+    "method": "GET",
+    "path": "/v1/offers/top-sellers",
+    "sources": [
+      "src/v1/operations/offers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listTopWishlisted",
+    "method": "GET",
+    "path": "/v1/offers/top-wishlisted",
+    "sources": [
+      "src/v1/operations/offers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "listUpcomingOffers",
+    "method": "GET",
+    "path": "/v1/offers/upcoming",
+    "sources": [
+      "src/v1/operations/offers.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "multisearchItems",
+    "method": "GET",
+    "path": "/v1/multisearch/items",
+    "sources": [
+      "src/v1/operations/multisearch.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "multisearchOffers",
+    "method": "GET",
+    "path": "/v1/multisearch/offers",
+    "sources": [
+      "src/v1/operations/multisearch.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "multisearchSellers",
+    "method": "GET",
+    "path": "/v1/multisearch/sellers",
+    "sources": [
+      "src/v1/operations/multisearch.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "naturalLanguageSearch",
+    "method": "POST",
+    "path": "/v1/search/natural-language",
+    "sources": [
+      "src/v1/operations/search.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "resolveLauncherRecords",
+    "method": "POST",
+    "path": "/v1/builds/resolve-launcher-records",
+    "sources": [
+      "src/v1/operations/builds.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "searchChangelog",
+    "method": "GET",
+    "path": "/v1/search/changelog",
+    "sources": [
+      "src/v1/operations/search.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "searchFreeGames",
+    "method": "GET",
+    "path": "/v1/free-games/search",
+    "sources": [
+      "src/v1/operations/free-games.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "searchOffers",
+    "method": "GET",
+    "path": "/v1/search",
+    "sources": [
+      "src/v1/operations/search.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  },
+  {
+    "apiVersion": "v1",
+    "operationId": "searchOffersRedirect",
+    "method": "POST",
+    "path": "/v1/search",
+    "sources": [
+      "src/v1/operations/search.ts",
+      "src/v1/router.ts"
+    ],
+    "status": "active"
+  }
+]

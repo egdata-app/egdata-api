@@ -1,0 +1,17 @@
+---
+title: v1 listFreeGamesHistory
+description: History for GET /v1/free-games/history
+---
+
+`GET /v1/free-games/history` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/free-games/history** (listFreeGamesHistory; added; compatible)
+  - Before: GET /v1/free-games/history was not available in the versioned API.
+  - After: Free game history. Cursor-paginated giveaway history ordered by `endDate` descending and then `id` descending. Each entry contains the giveaway record, the expanded localized offer, and the current regional price. Cursors are bound to the filter set, ordering, country, locale, and page size, and expire after 24 hours. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

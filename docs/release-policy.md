@@ -1,38 +1,44 @@
-# Release Policy
+# Release policy
 
-egdata API uses a lightweight release process while the public contract is being stabilized.
+Public behavior changes require validated JSON records in `changes/records/`.
+Unrelated maintenance and documentation-only changes do not create public entries.
+Dates describe when a change was recorded, never deployment. No release number or
+package version bump is required.
 
-## Changelog
+1. Run `pnpm changelog:new <unique-id> v1:<operationId> [legacy:<operationId> ...]`.
+2. Describe concrete before/after behavior, compatibility, client action (`None`
+   only for compatible changes), and test/contract references. Enumerate every
+   affected operation; GraphQL entries enumerate affected `Type.field` names too.
+3. Update OpenAPI and public docs for structural changes. Removed operations stay
+   in the registry. Renames use new IDs and explicit `replaces` and `replacement`
+   references. Removals declare `replacement: null` if none exists.
+4. Run `pnpm changelog:assess --base <base-ref>` and edit the assessment. Each
+   candidate operation needs public impact with new record IDs, or a concrete
+   explanation of preserved behavior. Classify every unknown source file. The
+   assessment is bound to the merge base and source digest; refresh after edits.
+   CI cannot establish semantic equivalence: reviewers must check it.
+5. Run `pnpm openapi:generate`, `pnpm changelog:generate`, `pnpm docs:check`, and
+   `pnpm release:check --base <base-ref>`. Check commands never write files.
 
-Every user-facing or maintainer-facing change must include a concise `CHANGELOG.md` entry under `Unreleased`. Use the `skip-changelog` PR label only for intentionally exempt maintenance changes.
+CI checks both route inventories, transitive local imports, explicit gateway
+configuration mappings, and resolved legacy/v1 contracts. No-impact explanations
+cannot override structural contract changes. Unknown impact fails closed. Merged
+records and endpoint identities are immutable; corrections append a new record
+with `corrects`. Unmerged records are editable. Do not edit generated files.
 
-## Public API Changes
+The original changelog is preserved verbatim in `changes/archive/undated.md`.
+Never infer its dates, endpoint mappings, or alerts.
 
-Any structural public endpoint change must include all of:
+The `Test / lint-typecheck-build` check must be required in the GitHub main branch
+ruleset. There is no bypass label. Repository administrators configure this;
+the workflow alone cannot enforce branch protection.
 
-- a `CHANGELOG.md` entry under `Unreleased`,
-- documentation updates under `apps/docs/`,
-- OpenAPI source or generated contract updates under `src/openapi/` or `openapi/`.
+After a validated merge to main, CI publishes records independently of VM
+deployment. Alerts say **Merged; deployment not verified.** See
+`docs/endpoint-alerts-rollout.md` for secrets and rollout prerequisites.
 
-Structural endpoint changes include adding, removing, or renaming routes, HTTP methods, query/path/body parameters, filters, sort options, request validation, response fields, status codes, authentication behavior, pagination behavior, documented errors, or deprecations.
-
-Use PR labels to make intent visible:
-
-- `api:addition` for new public endpoints or fields,
-- `api:change` for compatible behavior or schema changes,
-- `api:breaking` for removals or incompatible changes,
-- `docs-required` when docs must change before merge.
-
-## Deprecations
-
-Prefer additive changes first. For removals or incompatible behavior changes:
-
-- document the replacement,
-- keep the old route or field working when practical,
-- add deprecation notes before removing behavior,
-- update `apps/docs/`, OpenAPI, and contract snapshots in the same PR.
-
-## Versioning
-
-The API version is currently sourced from `src/version.ts` and used by root metadata and OpenAPI. Strict semver and URL versioning are intentionally deferred until the REST contract has broader coverage.
-
+Production API deployment is manual. Push and pull-request workflows run checks
+and main publishes validated change records; neither calls Coolify. A maintainer
+must run the `Test` workflow on `main` with `deploy_production` enabled to request
+an origin deployment after all checks pass. The default is disabled. This gate
+does not change DNS, Worker routes, or require a deployment to merge documentation.

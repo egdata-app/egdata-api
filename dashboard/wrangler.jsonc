@@ -85,7 +85,30 @@
       "name": "EMAIL"
     }
   ],
+  "queues": {
+    "producers": [
+      { "binding": "ENDPOINT_USAGE_QUEUE", "queue": "egdata-endpoint-usage" }
+    ],
+    "consumers": [
+      {
+        "queue": "egdata-endpoint-usage",
+        "max_batch_size": 50,
+        "max_batch_timeout": 10,
+        "max_retries": 8,
+        "dead_letter_queue": "egdata-endpoint-usage-dead"
+      },
+      {
+        "queue": "egdata-endpoint-usage-dead",
+        "max_batch_size": 50,
+        "max_batch_timeout": 30,
+        "max_retries": 8
+      }
+    ]
+  },
+  "triggers": { "crons": ["17 3 * * *"] },
   "vars": {
+    "USAGE_TRACKING_ENABLED": "true",
+    "USAGE_TRACKING_STARTED_AT": "2026-11-11T13:47:54.991Z",
     "UPSTREAM_API_ORIGIN": "https://origin-api.egdata.app",
     "API_PROXY_HOST": "api.egdata.app",
     "DASHBOARD_ORIGIN": "https://devs.egdata.app",

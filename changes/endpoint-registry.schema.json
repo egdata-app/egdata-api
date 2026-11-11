@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "apiVersion",
+      "operationId",
+      "method",
+      "path",
+      "sources",
+      "status"
+    ],
+    "properties": {
+      "apiVersion": { "enum": ["legacy", "v1"] },
+      "operationId": {
+        "type": "string",
+        "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+      },
+      "method": {
+        "enum": ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+      },
+      "path": { "type": "string", "pattern": "^/[^*?:]*$" },
+      "sources": {
+        "type": "array",
+        "uniqueItems": true,
+        "items": { "type": "string", "minLength": 1 }
+      },
+      "status": { "enum": ["active", "removed"] }
+    }
+  }
+}

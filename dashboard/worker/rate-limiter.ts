@@ -1,4 +1,12 @@
 import { DurableObject } from "cloudflare:workers";
+import type { DashboardEnv } from "./types.js";
+import {
+  createUsageOutbox,
+  captureUsage,
+  scheduleUsage,
+  flushUsage,
+} from "./usage-outbox.js";
+import { generatedV1Routes } from "./v1-routes.generated.js";
 import {
   type AdmissionResult,
   decideAdmission,
@@ -10,6 +18,7 @@ import {
 export type AdmissionRequest = {
   keyId: string;
   policies: QuotaPolicy[];
+  usage?: { projectId: string; operationId: string };
 };
 
 type StateRow = {
@@ -22,11 +31,11 @@ type StateRow = {
  * One SQLite-backed object per environment and internal API key identifier.
  *
  * The raw API key never reaches this class. State is a single bounded row per
- * key: the current 60-second window, the global counter, and at most a few
- * endpoint counters. No history, alarms, timers, or background work are kept.
+ * key: the current 60-second window, global and endpoint counters. Optional
+ * usage buckets and their durable outbox share the admission transaction.
  */
-export class ApiKeyRateLimiter extends DurableObject<Env> {
-  constructor(ctx: DurableObjectState, env: Env) {
+export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
+  constructor(ctx: DurableObjectState, env: DashboardEnv) {
     super(ctx, env);
     ctx.storage.sql.exec(`
       CREATE TABLE IF NOT EXISTS rate_limit_state (
@@ -37,6 +46,7 @@ export class ApiKeyRateLimiter extends DurableObject<Env> {
         updated_at INTEGER NOT NULL
       )
     `);
+    createUsageOutbox(ctx.storage);
   }
 
   private readState(keyId: string): QuotaState | null {
@@ -94,11 +104,20 @@ export class ApiKeyRateLimiter extends DurableObject<Env> {
    * Single RPC conjoining the global and endpoint policies. The row is
    * persisted before admission is acknowledged; denials perform a read only.
    */
-  admit(request: AdmissionRequest): AdmissionResult {
+  async admit(request: AdmissionRequest): Promise<AdmissionResult> {
     if (!request || typeof request.keyId !== "string" || !request.keyId) {
       throw new Error("Invalid admission request");
     }
     validatePolicies(request.policies);
+    if (
+      request.usage &&
+      (!request.usage.projectId ||
+        !generatedV1Routes.some(
+          (r) => r.operationId === request.usage!.operationId,
+        ))
+    ) {
+      throw new Error("Invalid usage identity");
+    }
 
     const now = Date.now();
     const state = this.readState(request.keyId);
@@ -112,7 +131,50 @@ export class ApiKeyRateLimiter extends DurableObject<Env> {
       return decision.result;
     }
 
-    this.writeState(request.keyId, decision.nextState, now);
+    if (request.usage && this.env.USAGE_TRACKING_ENABLED === "true") {
+      const usage = request.usage;
+      this.ctx.storage.transactionSync(() => {
+        this.writeState(request.keyId, decision.nextState, now);
+        captureUsage(this.ctx.storage, {
+          keyId: request.keyId,
+          projectId: usage.projectId,
+          operationId: usage.operationId,
+          usageDate: new Date(now).toISOString().slice(0, 10),
+          firstUsedAt: now,
+        });
+      });
+      await scheduleUsage(this.ctx.storage, now);
+    } else this.writeState(request.keyId, decision.nextState, now);
     return decision.result;
+  }
+
+  async alarm() {
+    await flushUsage(
+      this.ctx.storage,
+      this.env.ENDPOINT_USAGE_QUEUE,
+      async (attempts) => {
+        await this.env.DB.prepare(
+          `INSERT INTO tracking_health (id, value, updated_at)
+           VALUES (?, ?, ?)
+           ON CONFLICT(id) DO UPDATE SET
+             value = excluded.value,
+             updated_at = excluded.updated_at`,
+        )
+          .bind(
+            `outbox:${this.ctx.id.toString()}`,
+            `delivery_failed:${attempts}`,
+            Date.now(),
+          )
+          .run();
+      },
+    );
+  }
+
+  /** Operator recovery for retained, exhausted events; never a public RPC route. */
+  async retryUsage() {
+    this.ctx.storage.sql.exec(
+      `UPDATE usage_outbox SET attempts = 0, next_attempt = 0 WHERE delivered = 0`,
+    );
+    await scheduleUsage(this.ctx.storage);
   }
 }

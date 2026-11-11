@@ -1,0 +1,2263 @@
+{
+  "baseCommit": "6ebec023e5e5b071cba3b0369f189a172998da90",
+  "diffHash": "bbf1a349118df264dff7ab4ce479bd757d6b3bf58c147a588e2b4f3a51369441",
+  "operations": [
+    {
+      "endpoint": "legacy:autocompleteOffers",
+      "impact": "none",
+      "reason": "GET /autocomplete retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:checkOffersExist",
+      "impact": "none",
+      "reason": "POST /offers/exists retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:compareBuilds",
+      "impact": "none",
+      "reason": "GET /builds/{targetId}/compare/{baseId} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:countSavedSearchResults",
+      "impact": "none",
+      "reason": "GET /search/{id}/count retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:createAbuseChallenge",
+      "impact": "none",
+      "reason": "POST /auth/challenge retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getBuild",
+      "impact": "none",
+      "reason": "GET /builds/{id} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getBuildFileTree",
+      "impact": "none",
+      "reason": "GET /builds/{id}/tree retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getBuildHistory",
+      "impact": "none",
+      "reason": "GET /builds/{id}/history retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getBuildInstallOptions",
+      "impact": "none",
+      "reason": "GET /builds/{id}/install-options retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getChangelistEntry",
+      "impact": "none",
+      "reason": "GET /changelist/{id} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getFreeGames",
+      "impact": "none",
+      "reason": "GET /free-games retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getFreeGamesStats",
+      "impact": "none",
+      "reason": "GET /free-games/stats retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getHealth",
+      "impact": "none",
+      "reason": "GET /health retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getHomepageStats",
+      "impact": "none",
+      "reason": "GET /stats/homepage retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getItem",
+      "impact": "none",
+      "reason": "GET /items/{id} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getItemAssets",
+      "impact": "none",
+      "reason": "GET /items/{id}/assets retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getItemBuilds",
+      "impact": "none",
+      "reason": "GET /items/{id}/builds retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getItemChangelog",
+      "impact": "none",
+      "reason": "GET /items/{id}/changelog retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getItemOffer",
+      "impact": "none",
+      "reason": "GET /items/{id}/offer retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getItemsBulk",
+      "impact": "none",
+      "reason": "POST /items/bulk retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getMonthlyCreationStats",
+      "impact": "none",
+      "reason": "GET /stats/creations/monthly retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getMonthlyReleaseStats",
+      "impact": "none",
+      "reason": "GET /stats/releases/monthly retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOffer",
+      "impact": "none",
+      "reason": "GET /offers/{id} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferAgeRating",
+      "impact": "none",
+      "reason": "GET /offers/{id}/age-rating retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferBundle",
+      "impact": "none",
+      "reason": "GET /offers/{id}/bundle retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferChangelogStats",
+      "impact": "none",
+      "reason": "GET /offers/{id}/changelog/stats retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferCollectionPosition",
+      "impact": "none",
+      "reason": "GET /offers/{id}/collections/{collection} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferEvent",
+      "impact": "none",
+      "reason": "GET /offers/events/{id} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferFeatures",
+      "impact": "none",
+      "reason": "GET /offers/{id}/features retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferHowLongToBeat",
+      "impact": "none",
+      "reason": "GET /offers/{id}/hltb retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferIgdb",
+      "impact": "none",
+      "reason": "GET /offers/{id}/igdb retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferMappings",
+      "impact": "none",
+      "reason": "GET /offers/{id}/mappings retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferMedia",
+      "impact": "none",
+      "reason": "GET /offers/{id}/media retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferOgPng",
+      "impact": "none",
+      "reason": "GET /offers/{id}/og retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferOgWebp",
+      "impact": "none",
+      "reason": "GET /offers/{id}/og.webp retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferOverview",
+      "impact": "none",
+      "reason": "GET /offers/{id}/overview retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferPolls",
+      "impact": "none",
+      "reason": "GET /offers/{id}/polls retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferPrepurchaseAlternative",
+      "impact": "none",
+      "reason": "GET /offers/{id}/has-prepurchase retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferPrice",
+      "impact": "none",
+      "reason": "GET /offers/{id}/price retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferPriceFairness",
+      "impact": "none",
+      "reason": "GET /offers/{id}/price/fairness retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferPriceHistory",
+      "impact": "none",
+      "reason": "GET /offers/{id}/price-history retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferPriceStats",
+      "impact": "none",
+      "reason": "GET /offers/{id}/price-stats retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferRatings",
+      "impact": "none",
+      "reason": "GET /offers/{id}/ratings retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferRegionalPrices",
+      "impact": "none",
+      "reason": "GET /offers/{id}/regional-price retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferRegularAlternative",
+      "impact": "none",
+      "reason": "GET /offers/{id}/has-regular retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferRequirements",
+      "impact": "none",
+      "reason": "GET /offers/{id}/requirements retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferReviewsSummary",
+      "impact": "none",
+      "reason": "GET /offers/{id}/reviews-summary retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOfferTopPositions",
+      "impact": "none",
+      "reason": "GET /offers/{id}/tops retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getOffersForItemsBulk",
+      "impact": "none",
+      "reason": "POST /items/bulk/offers retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getRegionForCountry",
+      "impact": "none",
+      "reason": "GET /region retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getSandbox",
+      "impact": "none",
+      "reason": "GET /sandboxes/{sandboxId} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getSandboxBaseGame",
+      "impact": "none",
+      "reason": "GET /sandboxes/{sandboxId}/base-game retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getSandboxOgPng",
+      "impact": "none",
+      "reason": "GET /sandboxes/{sandboxId}/og retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getSandboxOgWebp",
+      "impact": "none",
+      "reason": "GET /sandboxes/{sandboxId}/og.webp retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getSandboxStats",
+      "impact": "none",
+      "reason": "GET /sandboxes/{sandboxId}/stats retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getSavedSearchQuery",
+      "impact": "none",
+      "reason": "GET /search/{id} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getSellerCoverOffers",
+      "impact": "none",
+      "reason": "GET /sellers/{id}/cover retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getSellerStats",
+      "impact": "none",
+      "reason": "GET /sellers/{id}/stats retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getStats",
+      "impact": "none",
+      "reason": "GET /stats retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getYearlyCreationStats",
+      "impact": "none",
+      "reason": "GET /stats/creations/yearly retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:getYearlyReleaseStats",
+      "impact": "none",
+      "reason": "GET /stats/releases/yearly retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:hydrateCatalogGraph",
+      "impact": "none",
+      "reason": "POST /catalog/hydrate retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet__c767025d",
+      "impact": "none",
+      "reason": "GET / retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_assets_id__fe67ede6",
+      "impact": "none",
+      "reason": "GET /assets/{id} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_base_game_namespace__43947330",
+      "impact": "none",
+      "reason": "GET /base-game/{namespace} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_changelog_038722cc",
+      "impact": "none",
+      "reason": "GET /changelog retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_collections_slug__c9e20bbf",
+      "impact": "none",
+      "reason": "GET /collections/{slug} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_collections_slug_week__e7c64eb1",
+      "impact": "none",
+      "reason": "GET /collections/{slug}/{week} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_collections_slug_week_og_abb2fde5",
+      "impact": "none",
+      "reason": "GET /collections/{slug}/{week}/og retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_doc_f5f543a0",
+      "impact": "none",
+      "reason": "GET /doc retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_franchises_slug__468d5cca",
+      "impact": "none",
+      "reason": "GET /franchises/{slug} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_free_games_og_656b6e88",
+      "impact": "none",
+      "reason": "GET /free-games/og retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_game_awards_5a8ac742",
+      "impact": "none",
+      "reason": "GET /game-awards retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_game_awards_og_aa6a5f28",
+      "impact": "none",
+      "reason": "GET /game-awards/og retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_graphql_220e6fb1",
+      "impact": "none",
+      "reason": "GET /graphql retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_items_from_offer_id__f652bc56",
+      "impact": "none",
+      "reason": "GET /items-from-offer/{id} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_items_sitemap_xml_57b8dd19",
+      "impact": "none",
+      "reason": "GET /items/sitemap.xml retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_items_sitemap_xml_e6f8185b",
+      "impact": "none",
+      "reason": "GET /items-sitemap.xml retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_multisearch_229582ca",
+      "impact": "none",
+      "reason": "GET /multisearch retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_multisearch_items_6adf1480",
+      "impact": "none",
+      "reason": "GET /multisearch/items retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_multisearch_offers_f0c29182",
+      "impact": "none",
+      "reason": "GET /multisearch/offers retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_multisearch_sellers_c239406a",
+      "impact": "none",
+      "reason": "GET /multisearch/sellers retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_offer_by_slug_slug__5aadfed6",
+      "impact": "none",
+      "reason": "GET /offer-by-slug/{slug} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_open_api_json_d5453718",
+      "impact": "none",
+      "reason": "GET /open-api.json retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_ping_f7c2b7c6",
+      "impact": "none",
+      "reason": "GET /ping retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id__f0000a67",
+      "impact": "none",
+      "reason": "GET /profiles/{id} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_achievements_e2c38dc7",
+      "impact": "none",
+      "reason": "GET /profiles/{id}/achievements retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_achievements_sandboxId__3f40ec52",
+      "impact": "none",
+      "reason": "GET /profiles/{id}/achievements/{sandboxId} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_games_35bd6af2",
+      "impact": "none",
+      "reason": "GET /profiles/{id}/games retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_information_1a333c76",
+      "impact": "none",
+      "reason": "GET /profiles/{id}/information retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_random_game_bdccf825",
+      "impact": "none",
+      "reason": "GET /profiles/{id}/random-game retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_rare_achievements_0a3d8b68",
+      "impact": "none",
+      "reason": "GET /profiles/{id}/rare-achievements retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_rare_achievements_sandboxId__c761732b",
+      "impact": "none",
+      "reason": "GET /profiles/{id}/rare-achievements/{sandboxId} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_refresh_status_ee9656f7",
+      "impact": "none",
+      "reason": "GET /profiles/{id}/refresh-status retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_leaderboard_7a07d3bc",
+      "impact": "none",
+      "reason": "GET /profiles/leaderboard retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_sitemap_xml_0e16a159",
+      "impact": "none",
+      "reason": "GET /profiles/sitemap.xml retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_promotions_83dd267d",
+      "impact": "none",
+      "reason": "GET /promotions retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_promotions_id__ca5d27b1",
+      "impact": "none",
+      "reason": "GET /promotions/{id} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_promotions_id_cover_2c62e571",
+      "impact": "none",
+      "reason": "GET /promotions/{id}/cover retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_promotions_sitemap_xml_3578dc8e",
+      "impact": "none",
+      "reason": "GET /promotions-sitemap.xml retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_push_vapid_public_key_472be0da",
+      "impact": "none",
+      "reason": "GET /push/vapid-public-key retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_robots_txt_deae90bd",
+      "impact": "none",
+      "reason": "GET /robots.txt retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_sandboxes_sitemap_xml_5773ff84",
+      "impact": "none",
+      "reason": "GET /sandboxes/sitemap.xml retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_search_82dab022",
+      "impact": "none",
+      "reason": "GET /search retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_sitemap_xml_efe3322f",
+      "impact": "none",
+      "reason": "GET /sitemap.xml retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_tags_803dea8c",
+      "impact": "none",
+      "reason": "GET /tags retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyGet_ui_64976efd",
+      "impact": "none",
+      "reason": "GET /ui retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyOptions_ping_9143aa8e",
+      "impact": "none",
+      "reason": "OPTIONS /ping retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyPost_graphql_fac042a8",
+      "impact": "none",
+      "reason": "POST /graphql retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:legacyPost_ping_4242a078",
+      "impact": "none",
+      "reason": "POST /ping retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listActiveSales",
+      "impact": "none",
+      "reason": "GET /active-sales retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listBuildFiles",
+      "impact": "none",
+      "reason": "GET /builds/{id}/files retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listBuildItems",
+      "impact": "none",
+      "reason": "GET /builds/{id}/items retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listBuilds",
+      "impact": "none",
+      "reason": "GET /builds retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listBundlesContainingOffer",
+      "impact": "none",
+      "reason": "GET /offers/{id}/in-bundle retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listChangelist",
+      "impact": "none",
+      "reason": "GET /changelist retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listCountries",
+      "impact": "none",
+      "reason": "GET /countries retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listFeaturedDiscounts",
+      "impact": "none",
+      "reason": "GET /offers/featured-discounts retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listFeaturedGames",
+      "impact": "none",
+      "reason": "GET /featured retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listFreeGamesHistory",
+      "impact": "none",
+      "reason": "GET /free-games/history retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listFreeGamesSellers",
+      "impact": "none",
+      "reason": "GET /free-games/sellers retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listItems",
+      "impact": "none",
+      "reason": "GET /items retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listLatestAchievementOffers",
+      "impact": "none",
+      "reason": "GET /offers/latest-achievements retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listLatestGames",
+      "impact": "none",
+      "reason": "GET /latest-games retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listLatestReleasedOffers",
+      "impact": "none",
+      "reason": "GET /offers/latest-released retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listMobileFreeGames",
+      "impact": "none",
+      "reason": "GET /free-games/mobile retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferAchievements",
+      "impact": "none",
+      "reason": "GET /offers/{id}/achievements retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferAssets",
+      "impact": "none",
+      "reason": "GET /offers/{id}/assets retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferBuilds",
+      "impact": "none",
+      "reason": "GET /offers/{id}/builds retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferChangelog",
+      "impact": "none",
+      "reason": "GET /offers/{id}/changelog retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferCollectionOffers",
+      "impact": "none",
+      "reason": "GET /offers/{id}/collection retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferDetailGenres",
+      "impact": "none",
+      "reason": "GET /offers/{id}/genres retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferEvents",
+      "impact": "none",
+      "reason": "GET /offers/events retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferFranchises",
+      "impact": "none",
+      "reason": "GET /offers/{id}/franchises retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferGenres",
+      "impact": "none",
+      "reason": "GET /offers/genres retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferGiveaways",
+      "impact": "none",
+      "reason": "GET /offers/{id}/giveaways retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferItems",
+      "impact": "none",
+      "reason": "GET /offers/{id}/items retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferReviews",
+      "impact": "none",
+      "reason": "GET /offers/{id}/reviews retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferSuggestions",
+      "impact": "none",
+      "reason": "GET /offers/{id}/suggestions retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOfferTechnologies",
+      "impact": "none",
+      "reason": "GET /offers/{id}/technologies retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listOffers",
+      "impact": "none",
+      "reason": "GET /offers retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listRegions",
+      "impact": "none",
+      "reason": "GET /regions retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listRelatedOffers",
+      "impact": "none",
+      "reason": "GET /offers/{id}/related retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSaleOffers",
+      "impact": "none",
+      "reason": "GET /sales retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSandboxAchievements",
+      "impact": "none",
+      "reason": "GET /sandboxes/{sandboxId}/achievements retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSandboxAssets",
+      "impact": "none",
+      "reason": "GET /sandboxes/{sandboxId}/assets retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSandboxBuilds",
+      "impact": "none",
+      "reason": "GET /sandboxes/{sandboxId}/builds retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSandboxChangelog",
+      "impact": "none",
+      "reason": "GET /sandboxes/{sandboxId}/changelog retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSandboxItems",
+      "impact": "none",
+      "reason": "GET /sandboxes/{sandboxId}/items retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSandboxOffers",
+      "impact": "none",
+      "reason": "GET /sandboxes/{sandboxId}/offers retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSandboxes",
+      "impact": "none",
+      "reason": "GET /sandboxes retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSearchDevelopers",
+      "impact": "none",
+      "reason": "GET /search/developers retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSearchOfferTypes",
+      "impact": "none",
+      "reason": "GET /search/offer-types retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSearchPublishers",
+      "impact": "none",
+      "reason": "GET /search/publishers retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSearchTags",
+      "impact": "none",
+      "reason": "GET /search/tags retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSellerOffers",
+      "impact": "none",
+      "reason": "GET /sellers/{id} retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listSellers",
+      "impact": "none",
+      "reason": "GET /sellers retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listTopSellersOffers",
+      "impact": "none",
+      "reason": "GET /offers/top-sellers retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listTopWishlistedOffers",
+      "impact": "none",
+      "reason": "GET /offers/top-wishlisted retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:listUpcomingOffers",
+      "impact": "none",
+      "reason": "GET /offers/upcoming retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:resolveLauncherRecords",
+      "impact": "none",
+      "reason": "POST /builds/resolve-launcher-records retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:resolveOfferSlugs",
+      "impact": "none",
+      "reason": "POST /offers/slugs retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:searchChangelog",
+      "impact": "none",
+      "reason": "GET /search/changelog retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:searchFreeGames",
+      "impact": "none",
+      "reason": "GET /free-games/search retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:searchOffersLegacy",
+      "impact": "none",
+      "reason": "POST /search retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:searchOffersV2",
+      "impact": "none",
+      "reason": "POST /search/v2/search retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:searchOffersV2Get",
+      "impact": "none",
+      "reason": "GET /search/v2/search retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "legacy:searchOffersWithNaturalLanguage",
+      "impact": "none",
+      "reason": "POST /search/natural-language retains its existing legacy handler, request validation and response contract. Shared package/config changes add a separately mounted v1 API and dashboard-only Worker route; they do not cut over api.egdata.app. Origin authentication is limited to the dedicated origin hostname unless explicitly enabled; this merge does not enable it for public legacy traffic. Redis error handling only suppresses unhandled connection-error logging.",
+      "records": []
+    },
+    {
+      "endpoint": "v1:autocomplete",
+      "impact": "public",
+      "reason": "Adds GET /v1/autocomplete as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:checkOfferExistence",
+      "impact": "public",
+      "reason": "Adds POST /v1/offers/exists as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:checkOfferSlugs",
+      "impact": "public",
+      "reason": "Adds POST /v1/offers/slugs as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:compareBuilds",
+      "impact": "public",
+      "reason": "Adds GET /v1/builds/{targetId}/compare/{baseId} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getAsset",
+      "impact": "public",
+      "reason": "Adds GET /v1/assets/{id} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getBaseGame",
+      "impact": "public",
+      "reason": "Adds GET /v1/base-game/{namespace} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getBuild",
+      "impact": "public",
+      "reason": "Adds GET /v1/builds/{id} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getBuildHistory",
+      "impact": "public",
+      "reason": "Adds GET /v1/builds/{id}/history as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getBuildInstallOptions",
+      "impact": "public",
+      "reason": "Adds GET /v1/builds/{id}/install-options as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getBuildTree",
+      "impact": "public",
+      "reason": "Adds GET /v1/builds/{id}/tree as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getChangelogEntry",
+      "impact": "public",
+      "reason": "Adds GET /v1/changelist/{id} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getCollection",
+      "impact": "public",
+      "reason": "Adds GET /v1/collections/{slug} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getCollectionWeek",
+      "impact": "public",
+      "reason": "Adds GET /v1/collections/{slug}/{week} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getCollectionWeekOg",
+      "impact": "public",
+      "reason": "Adds GET /v1/collections/{slug}/{week}/og as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getFeaturedGames",
+      "impact": "public",
+      "reason": "Adds GET /v1/featured as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getFranchise",
+      "impact": "public",
+      "reason": "Adds GET /v1/franchises/{slug} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getFreeGamesOg",
+      "impact": "public",
+      "reason": "Adds GET /v1/free-games/og as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getFreeGamesStats",
+      "impact": "public",
+      "reason": "Adds GET /v1/free-games/stats as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getGameAwards",
+      "impact": "public",
+      "reason": "Adds GET /v1/game-awards as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getGameAwardsOg",
+      "impact": "public",
+      "reason": "Adds GET /v1/game-awards/og as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getHealth",
+      "impact": "public",
+      "reason": "Adds GET /v1/health as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api",
+        "public-v1-metadata-response"
+      ]
+    },
+    {
+      "endpoint": "v1:getHomepageStats",
+      "impact": "public",
+      "reason": "Adds GET /v1/stats/homepage as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getItem",
+      "impact": "public",
+      "reason": "Adds GET /v1/items/{id} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemAssets",
+      "impact": "public",
+      "reason": "Adds GET /v1/items/{id}/assets as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemBuilds",
+      "impact": "public",
+      "reason": "Adds GET /v1/items/{id}/builds as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemChangelog",
+      "impact": "public",
+      "reason": "Adds GET /v1/items/{id}/changelog as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemOffer",
+      "impact": "public",
+      "reason": "Adds GET /v1/items/{id}/offer as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemsBulk",
+      "impact": "public",
+      "reason": "Adds POST /v1/items/bulk as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemsSitemap",
+      "impact": "public",
+      "reason": "Adds GET /v1/items-sitemap.xml as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemsSitemapAlias",
+      "impact": "public",
+      "reason": "Adds GET /v1/items/sitemap.xml as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getLatestGames",
+      "impact": "public",
+      "reason": "Adds GET /v1/latest-games as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getMonthlyCreationStats",
+      "impact": "public",
+      "reason": "Adds GET /v1/stats/creations/monthly as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getMonthlyReleaseStats",
+      "impact": "public",
+      "reason": "Adds GET /v1/stats/releases/monthly as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOffer",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferAchievements",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/achievements as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferAgeRating",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/age-rating as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferAssets",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/assets as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferBuilds",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/builds as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferBundle",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/bundle as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferBySlug",
+      "impact": "public",
+      "reason": "Adds GET /v1/offer-by-slug/{slug} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferChangelogStats",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/changelog/stats as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferCollection",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/collection as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferCollectionEntry",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/collections/{collection} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferEvent",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/events/{id} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferFeatures",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/features as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferFranchises",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/franchises as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferGenres",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/genres as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferGiveaways",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/giveaways as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferHasPrepurchase",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/has-prepurchase as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferHasRegular",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/has-regular as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferHltb",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/hltb as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferIgdb",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/igdb as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferItems",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/items as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferMappings",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/mappings as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferMedia",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/media as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferOg",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/og as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferOgWebp",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/og.webp as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferOverview",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/overview as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferPolls",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/polls as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferPrice",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/price as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferPriceFairness",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/price/fairness as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferPriceStats",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/price-stats as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferRatings",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/ratings as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferRegionalPrice",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/regional-price as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferRequirements",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/requirements as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferReviewsSummary",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/reviews-summary as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferSuggestions",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/suggestions as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferTechnologies",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/technologies as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferTops",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/tops as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getOffersForItemsBulk",
+      "impact": "public",
+      "reason": "Adds POST /v1/items/bulk/offers as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getProfile",
+      "impact": "public",
+      "reason": "Adds GET /v1/profiles/{id} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getProfileAchievements",
+      "impact": "public",
+      "reason": "Adds GET /v1/profiles/{id}/achievements/{sandboxId} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getProfileInformation",
+      "impact": "public",
+      "reason": "Adds GET /v1/profiles/{id}/information as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getProfileRandomGame",
+      "impact": "public",
+      "reason": "Adds GET /v1/profiles/{id}/random-game as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getProfileRareAchievements",
+      "impact": "public",
+      "reason": "Adds GET /v1/profiles/{id}/rare-achievements/{sandboxId} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getProfilesSitemap",
+      "impact": "public",
+      "reason": "Adds GET /v1/profiles/sitemap.xml as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getPromotionCover",
+      "impact": "public",
+      "reason": "Adds GET /v1/promotions/{id}/cover as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getPromotionsSitemap",
+      "impact": "public",
+      "reason": "Adds GET /v1/promotions-sitemap.xml as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getRegion",
+      "impact": "public",
+      "reason": "Adds GET /v1/region as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getRelatedOffers",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/related as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getRobots",
+      "impact": "public",
+      "reason": "Adds GET /v1/robots.txt as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandbox",
+      "impact": "public",
+      "reason": "Adds GET /v1/sandboxes/{sandboxId} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandboxBaseGame",
+      "impact": "public",
+      "reason": "Adds GET /v1/sandboxes/{sandboxId}/base-game as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandboxChangelog",
+      "impact": "public",
+      "reason": "Adds GET /v1/sandboxes/{sandboxId}/changelog as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandboxOg",
+      "impact": "public",
+      "reason": "Adds GET /v1/sandboxes/{sandboxId}/og as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandboxOgWebp",
+      "impact": "public",
+      "reason": "Adds GET /v1/sandboxes/{sandboxId}/og.webp as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandboxStats",
+      "impact": "public",
+      "reason": "Adds GET /v1/sandboxes/{sandboxId}/stats as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandboxesSitemap",
+      "impact": "public",
+      "reason": "Adds GET /v1/sandboxes/sitemap.xml as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getSearchQuery",
+      "impact": "public",
+      "reason": "Adds GET /v1/search/{id} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getSearchQueryCount",
+      "impact": "public",
+      "reason": "Adds GET /v1/search/{id}/count as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getSellerCoverOffers",
+      "impact": "public",
+      "reason": "Adds GET /v1/sellers/{id}/cover as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getSellerStats",
+      "impact": "public",
+      "reason": "Adds GET /v1/sellers/{id}/stats as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getSitemap",
+      "impact": "public",
+      "reason": "Adds GET /v1/sitemap.xml as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getStats",
+      "impact": "public",
+      "reason": "Adds GET /v1/stats as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getV1OpenApi",
+      "impact": "public",
+      "reason": "Adds GET /v1/open-api.json as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api",
+        "public-v1-metadata-response"
+      ]
+    },
+    {
+      "endpoint": "v1:getYearlyCreationStats",
+      "impact": "public",
+      "reason": "Adds GET /v1/stats/creations/yearly as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:getYearlyReleaseStats",
+      "impact": "public",
+      "reason": "Adds GET /v1/stats/releases/yearly as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:hydrateCatalog",
+      "impact": "public",
+      "reason": "Adds POST /v1/catalog/hydrate as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listActiveSales",
+      "impact": "public",
+      "reason": "Adds GET /v1/active-sales as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listBuildFiles",
+      "impact": "public",
+      "reason": "Adds GET /v1/builds/{id}/files as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listBuildItems",
+      "impact": "public",
+      "reason": "Adds GET /v1/builds/{id}/items as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listBuilds",
+      "impact": "public",
+      "reason": "Adds GET /v1/builds as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listBundlesContainingOffer",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/in-bundle as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listChangelist",
+      "impact": "public",
+      "reason": "Adds GET /v1/changelist as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listChangelog",
+      "impact": "public",
+      "reason": "Adds GET /v1/changelog as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listCountries",
+      "impact": "public",
+      "reason": "Adds GET /v1/countries as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listFeaturedDiscounts",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/featured-discounts as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listFreeGameSellers",
+      "impact": "public",
+      "reason": "Adds GET /v1/free-games/sellers as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listFreeGames",
+      "impact": "public",
+      "reason": "Adds GET /v1/free-games as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listFreeGamesHistory",
+      "impact": "public",
+      "reason": "Adds GET /v1/free-games/history as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listItems",
+      "impact": "public",
+      "reason": "Adds GET /v1/items as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listItemsFromOffer",
+      "impact": "public",
+      "reason": "Adds GET /v1/items-from-offer/{id} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listLatestAchievements",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/latest-achievements as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listLatestReleased",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/latest-released as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listMobileFreeGames",
+      "impact": "public",
+      "reason": "Adds GET /v1/free-games/mobile as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listOfferChangelog",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/changelog as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listOfferEvents",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/events as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listOfferGenres",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/genres as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listOfferPriceHistory",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/price-history as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listOfferReviews",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/{id}/reviews as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listOffers",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listProfileAchievements",
+      "impact": "public",
+      "reason": "Adds GET /v1/profiles/{id}/achievements as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listProfileGames",
+      "impact": "public",
+      "reason": "Adds GET /v1/profiles/{id}/games as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listProfileLeaderboard",
+      "impact": "public",
+      "reason": "Adds GET /v1/profiles/leaderboard as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listProfileRareAchievements",
+      "impact": "public",
+      "reason": "Adds GET /v1/profiles/{id}/rare-achievements as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listPromotionOffers",
+      "impact": "public",
+      "reason": "Adds GET /v1/promotions/{id} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listPromotions",
+      "impact": "public",
+      "reason": "Adds GET /v1/promotions as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listRegions",
+      "impact": "public",
+      "reason": "Adds GET /v1/regions as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listSales",
+      "impact": "public",
+      "reason": "Adds GET /v1/sales as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listSandboxAchievements",
+      "impact": "public",
+      "reason": "Adds GET /v1/sandboxes/{sandboxId}/achievements as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listSandboxAssets",
+      "impact": "public",
+      "reason": "Adds GET /v1/sandboxes/{sandboxId}/assets as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listSandboxBuilds",
+      "impact": "public",
+      "reason": "Adds GET /v1/sandboxes/{sandboxId}/builds as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listSandboxItems",
+      "impact": "public",
+      "reason": "Adds GET /v1/sandboxes/{sandboxId}/items as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listSandboxOffers",
+      "impact": "public",
+      "reason": "Adds GET /v1/sandboxes/{sandboxId}/offers as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listSandboxes",
+      "impact": "public",
+      "reason": "Adds GET /v1/sandboxes as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listSearchDevelopers",
+      "impact": "public",
+      "reason": "Adds GET /v1/search/developers as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listSearchOfferTypes",
+      "impact": "public",
+      "reason": "Adds GET /v1/search/offer-types as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listSearchPublishers",
+      "impact": "public",
+      "reason": "Adds GET /v1/search/publishers as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listSearchTags",
+      "impact": "public",
+      "reason": "Adds GET /v1/search/tags as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listSellerOffers",
+      "impact": "public",
+      "reason": "Adds GET /v1/sellers/{id} as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listSellers",
+      "impact": "public",
+      "reason": "Adds GET /v1/sellers as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listTags",
+      "impact": "public",
+      "reason": "Adds GET /v1/tags as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listTopSellers",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/top-sellers as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listTopWishlisted",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/top-wishlisted as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:listUpcomingOffers",
+      "impact": "public",
+      "reason": "Adds GET /v1/offers/upcoming as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:multisearchItems",
+      "impact": "public",
+      "reason": "Adds GET /v1/multisearch/items as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:multisearchOffers",
+      "impact": "public",
+      "reason": "Adds GET /v1/multisearch/offers as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:multisearchSellers",
+      "impact": "public",
+      "reason": "Adds GET /v1/multisearch/sellers as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:naturalLanguageSearch",
+      "impact": "public",
+      "reason": "Adds POST /v1/search/natural-language as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:resolveLauncherRecords",
+      "impact": "public",
+      "reason": "Adds POST /v1/builds/resolve-launcher-records as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:searchChangelog",
+      "impact": "public",
+      "reason": "Adds GET /v1/search/changelog as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:searchFreeGames",
+      "impact": "public",
+      "reason": "Adds GET /v1/free-games/search as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:searchOffers",
+      "impact": "public",
+      "reason": "Adds GET /v1/search as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    },
+    {
+      "endpoint": "v1:searchOffersRedirect",
+      "impact": "public",
+      "reason": "Adds POST /v1/search as a separate v1 operation with the documented response contract, explicit gateway scopes and per-key quota admission. Existing legacy handlers remain unchanged.",
+      "records": [
+        "versioned-v1-api"
+      ]
+    }
+  ],
+  "unknownFiles": [
+    {
+      "file": "src/openapi/v1-coverage.ts",
+      "reason": "Build-time contract coverage checker; it is not mounted as a runtime route and does not change endpoint responses.",
+      "endpoints": []
+    },
+    {
+      "file": "src/v1/search-mappings.ts",
+      "reason": "Explicit operator CLI for preparing v1 search mappings; it is not executed by runtime startup, merge checks, or this rollout. The added v1 search operations are independently recorded.",
+      "endpoints": [
+        "v1:searchOffers",
+        "v1:naturalLanguageSearch"
+      ]
+    }
+  ]
+}

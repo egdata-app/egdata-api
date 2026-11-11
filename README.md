@@ -137,7 +137,8 @@ Maintainer checks:
 pnpm openapi:generate   # regenerates legacy + v1 OpenAPI and the Worker route table
 pnpm openapi:check      # rejects undocumented v1 handlers and unexplained public coverage gaps
 pnpm docs:check
-pnpm release:check
+pnpm changelog:generate
+pnpm release:check --base origin/main
 ```
 
 Origin operators must apply `pnpm v1:indexes` and `pnpm v1:search-mappings` before enabling affected v1 search endpoints. Cursor signing uses the dedicated `V1_CURSOR_SECRET`; Worker provenance uses `V1_WORKER_TOKEN`/`ORIGIN_AUTH_TOKEN`.
@@ -178,4 +179,4 @@ Route documentation coverage is enforced by `pnpm openapi:check`, which discover
 
 ## Release Notes
 
-Public API changes should update `CHANGELOG.md` or add a changeset note. See `docs/release-policy.md`.
+Public API behavior changes need validated records in `changes/records/`, with every affected stable operation ID, concrete before/after behavior, client actions, and verification. Use `pnpm changelog:new`, `pnpm changelog:generate`, and `pnpm changelog:check --base origin/main`. API/gateway/shared code also needs an impact assessment (`pnpm changelog:assess --base origin/main`), including explicit no-impact reasons. Documentation-only and unrelated maintenance need no public entries. See [release policy](docs/release-policy.md).

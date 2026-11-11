@@ -1,4 +1,14 @@
 import { Hono } from "hono";
+import {
+  alertRoutes,
+  handleChangeIngestion,
+  publicHistory,
+} from "./alert-routes.js";
+import {
+  ingestUsage,
+  usageEventSchema,
+  type UsageEvent,
+} from "./endpoint-alerts.js";
 import { z } from "zod";
 import { queryDashboardAnalytics, recordApiTelemetry } from "./analytics.js";
 import { generateApiKeySecret, sha256Hex } from "./crypto.js";
@@ -53,6 +63,7 @@ dashboardApi.use("/*", async (c, next) => {
 // Epic Games Authentication Routes
 // ---------------------------------------------------------
 dashboardApi.get("/auth/epic/login", (c) => startEpicOAuthRedirect(c));
+
 dashboardApi.get("/auth/epic/callback", (c) => handleEpicOAuthCallback(c));
 
 dashboardApi.post("/auth/logout", (c) => {
@@ -94,12 +105,19 @@ dashboardApi.get("/auth/session", async (c) => {
 // Protected Dashboard Routes (Require Epic Games Session)
 // ---------------------------------------------------------
 dashboardApi.use("/projects/*", requireDashboardUser);
+
 dashboardApi.use("/projects", requireDashboardUser);
+
 dashboardApi.use("/keys/*", requireDashboardUser);
+
 dashboardApi.use("/keys", requireDashboardUser);
+
 dashboardApi.use("/analytics/*", requireDashboardUser);
+
 dashboardApi.use("/analytics", requireDashboardUser);
+
 dashboardApi.use("/limit-requests/*", requireDashboardUser);
+
 dashboardApi.use("/limit-requests", requireDashboardUser);
 
 const createProjectSchema = z.object({
@@ -559,11 +577,78 @@ dashboardApi.post("/limit-requests", async (c) => {
 // ---------------------------------------------------------
 const rootApp = new Hono<AppContext>();
 
+dashboardApi.route("/alerts", alertRoutes);
+
 rootApp.route("/_dashboard/api", dashboardApi);
 
 export { ApiKeyRateLimiter } from "./rate-limiter.js";
 
 export default {
+  async queue(batch: MessageBatch<UsageEvent>, env: DashboardEnv) {
+    if (batch.queue.endsWith("-dead")) {
+      console.error(
+        JSON.stringify({
+          event: "usage_delivery_dead_letter",
+          messages: batch.messages.length,
+        }),
+      );
+      await env.DB.prepare(
+        `INSERT INTO tracking_health (id, value, updated_at)
+         VALUES ('deadLetter', ?, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           value = excluded.value,
+           updated_at = excluded.updated_at`,
+      )
+        .bind("Usage deliveries require operator replay", Date.now())
+        .run();
+      const validEvents = batch.messages
+        .map((m) => usageEventSchema.safeParse(m.body))
+        .filter((result) => result.success)
+        .map((result) => result.data);
+      if (validEvents.length !== batch.messages.length) {
+        console.error(
+          JSON.stringify({
+            event: "invalid_usage_dead_letter",
+            count: batch.messages.length - validEvents.length,
+          }),
+        );
+      }
+      if (validEvents.length) {
+        await env.DB.batch(
+          validEvents.map((event) =>
+            env.DB.prepare(
+              `INSERT OR IGNORE INTO usage_dead_letters(key_id,operation_id,usage_date,event_json,received_at) VALUES(?,?,?,?,?)`,
+            ).bind(
+              event.keyId,
+              event.operationId,
+              event.usageDate,
+              JSON.stringify(event),
+              Date.now(),
+            ),
+          ),
+        );
+      }
+      // Persist original events for operator replay before acknowledging the DLQ.
+      batch.ackAll();
+      return;
+    }
+    await ingestUsage(
+      env.DB,
+      batch.messages.map((m) => m.body),
+    );
+    batch.ackAll();
+  },
+  async scheduled(_event: ScheduledController, env: DashboardEnv) {
+    const oldest = new Date(Date.now() - 34 * 86_400_000)
+      .toISOString()
+      .slice(0, 10);
+    await env.DB.batch([
+      env.DB.prepare(`DELETE FROM usage_daily WHERE usage_date<?`).bind(oldest),
+      env.DB.prepare(`DELETE FROM usage_dead_letters WHERE usage_date<?`).bind(
+        oldest,
+      ),
+    ]);
+  },
   async fetch(
     request: Request,
     env: DashboardEnv,
@@ -577,6 +662,16 @@ export default {
       url.hostname.toLowerCase() === env.API_PROXY_HOST.toLowerCase()
     ) {
       return handleEdgeApiProxy(request, env, ctx);
+    }
+
+    if (url.pathname === "/_internal/change-records") {
+      return handleChangeIngestion(request, env);
+    }
+    if (
+      url.pathname === "/_dashboard/reference/history" &&
+      request.method === "GET"
+    ) {
+      return publicHistory(env);
     }
 
     // Dashboard internal API & Epic OAuth callbacks
@@ -594,6 +689,25 @@ export default {
 
     // 4. Otherwise serve the Developer Dashboard SPA static assets
     if (env.ASSETS && typeof env.ASSETS.fetch === "function") {
+      if (url.pathname === "/docs" || url.pathname.startsWith("/docs/")) {
+        const response = await env.ASSETS.fetch(request);
+        const headers = new Headers(response.headers);
+        // Scalar and the console may connect only to this origin. No external docs services.
+        // Vite development injects an inline React preamble and HMR socket.
+        // The build-time flag is false in every deployed production bundle.
+        if (!import.meta.env.DEV) {
+          headers.set(
+            "Content-Security-Policy",
+            "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://cdn.egdata.app https://*.epicgames.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'",
+          );
+        }
+        headers.set("Referrer-Policy", "no-referrer");
+        return new Response(response.body, {
+          status: response.status,
+          statusText: response.statusText,
+          headers,
+        });
+      }
       return env.ASSETS.fetch(request);
     }
 

@@ -1,0 +1,30 @@
+{
+  "id": "public-v1-metadata-response",
+  "recordedDate": "2026-11-11",
+  "title": "Preserve public v1 metadata responses through the Worker",
+  "endpoints": [
+    {
+      "apiVersion": "v1",
+      "operationId": "getHealth",
+      "method": "GET",
+      "path": "/v1/health",
+      "type": "fixed",
+      "compatibility": "compatible",
+      "before": "The Worker could throw while modifying immutable upstream response headers, returning HTTP 500 instead of forwarding the health response.",
+      "after": "The Worker clones the response before applying its existing headers, preserving the upstream health status and streaming body. Public authentication and quota behavior are unchanged.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "getV1OpenApi",
+      "method": "GET",
+      "path": "/v1/open-api.json",
+      "type": "fixed",
+      "compatibility": "compatible",
+      "before": "The Worker could throw while modifying immutable upstream response headers, returning HTTP 500 and preventing the explorer from loading the deployed contract.",
+      "after": "The Worker clones the response before applying its existing headers, preserving the deployed OpenAPI response status and streaming body. The API contract and routing are unchanged.",
+      "clientAction": "None"
+    }
+  ],
+  "verification": ["dashboard/tests/v1-gateway.test.ts", "pnpm dashboard:test", "pnpm openapi:check"]
+}

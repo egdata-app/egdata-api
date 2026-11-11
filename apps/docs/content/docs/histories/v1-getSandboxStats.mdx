@@ -1,0 +1,17 @@
+---
+title: v1 getSandboxStats
+description: History for GET /v1/sandboxes/{sandboxId}/stats
+---
+
+`GET /v1/sandboxes/{sandboxId}/stats` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/stats** (getSandboxStats; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/stats was not available in the versioned API.
+  - After: Get sandbox statistics. Returns offer, item, asset, build, and achievement counts for the sandbox. The asset count includes synthetic assets generated from release info without a stored artifact. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

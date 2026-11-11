@@ -11,8 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LimitsRouteImport } from './routes/limits'
 import { Route as KeysRouteImport } from './routes/keys'
+import { Route as DocsRouteImport } from './routes/docs'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as AlertsRouteImport } from './routes/alerts'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DocsIndexRouteImport } from './routes/docs.index'
+import { Route as DocsOperationIdRouteImport } from './routes/docs.$operationId'
 
 const LimitsRoute = LimitsRouteImport.update({
   id: '/limits',
@@ -24,9 +28,19 @@ const KeysRoute = KeysRouteImport.update({
   path: '/keys',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocsRoute = DocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AlertsRoute = AlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -34,37 +48,84 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocsIndexRoute = DocsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsOperationIdRoute = DocsOperationIdRouteImport.update({
+  id: '/$operationId',
+  path: '/$operationId',
+  getParentRoute: () => DocsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/alerts': typeof AlertsRoute
   '/analytics': typeof AnalyticsRoute
+  '/docs': typeof DocsRouteWithChildren
   '/keys': typeof KeysRoute
   '/limits': typeof LimitsRoute
+  '/docs/$operationId': typeof DocsOperationIdRoute
+  '/docs/': typeof DocsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/alerts': typeof AlertsRoute
   '/analytics': typeof AnalyticsRoute
   '/keys': typeof KeysRoute
   '/limits': typeof LimitsRoute
+  '/docs/$operationId': typeof DocsOperationIdRoute
+  '/docs': typeof DocsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/alerts': typeof AlertsRoute
   '/analytics': typeof AnalyticsRoute
+  '/docs': typeof DocsRouteWithChildren
   '/keys': typeof KeysRoute
   '/limits': typeof LimitsRoute
+  '/docs/$operationId': typeof DocsOperationIdRoute
+  '/docs/': typeof DocsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analytics' | '/keys' | '/limits'
+  fullPaths:
+    | '/'
+    | '/alerts'
+    | '/analytics'
+    | '/docs'
+    | '/keys'
+    | '/limits'
+    | '/docs/$operationId'
+    | '/docs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analytics' | '/keys' | '/limits'
-  id: '__root__' | '/' | '/analytics' | '/keys' | '/limits'
+  to:
+    | '/'
+    | '/alerts'
+    | '/analytics'
+    | '/keys'
+    | '/limits'
+    | '/docs/$operationId'
+    | '/docs'
+  id:
+    | '__root__'
+    | '/'
+    | '/alerts'
+    | '/analytics'
+    | '/docs'
+    | '/keys'
+    | '/limits'
+    | '/docs/$operationId'
+    | '/docs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AlertsRoute: typeof AlertsRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  DocsRoute: typeof DocsRouteWithChildren
   KeysRoute: typeof KeysRoute
   LimitsRoute: typeof LimitsRoute
 }
@@ -85,11 +146,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KeysRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/analytics': {
       id: '/analytics'
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/alerts': {
+      id: '/alerts'
+      path: '/alerts'
+      fullPath: '/alerts'
+      preLoaderRoute: typeof AlertsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -99,12 +174,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/docs/': {
+      id: '/docs/'
+      path: '/'
+      fullPath: '/docs/'
+      preLoaderRoute: typeof DocsIndexRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/$operationId': {
+      id: '/docs/$operationId'
+      path: '/$operationId'
+      fullPath: '/docs/$operationId'
+      preLoaderRoute: typeof DocsOperationIdRouteImport
+      parentRoute: typeof DocsRoute
+    }
   }
 }
 
+interface DocsRouteChildren {
+  DocsOperationIdRoute: typeof DocsOperationIdRoute
+  DocsIndexRoute: typeof DocsIndexRoute
+}
+
+const DocsRouteChildren: DocsRouteChildren = {
+  DocsOperationIdRoute: DocsOperationIdRoute,
+  DocsIndexRoute: DocsIndexRoute,
+}
+
+const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AlertsRoute: AlertsRoute,
   AnalyticsRoute: AnalyticsRoute,
+  DocsRoute: DocsRouteWithChildren,
   KeysRoute: KeysRoute,
   LimitsRoute: LimitsRoute,
 }

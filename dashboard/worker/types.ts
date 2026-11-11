@@ -14,6 +14,7 @@ export const API_SCOPES = [
 export type ApiScope = (typeof API_SCOPES)[number];
 
 export const HTTP_METHODS = ["GET", "HEAD", "POST"] as const;
+
 export type AllowedHttpMethod = (typeof HTTP_METHODS)[number];
 
 export interface CachedKeyMetadata {
@@ -103,5 +104,6 @@ export interface DashboardEnv extends Env {
     import("./rate-limiter.js").ApiKeyRateLimiter
   >;
   /** Prevents counter sharing between independently deployed environments. */
-  RATE_LIMIT_ENVIRONMENT?: string;
+  RATE_LIMIT_ENVIRONMENT: string;
+  CHANGELOG_INGEST_TOKEN?: string;
 }

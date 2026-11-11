@@ -1,0 +1,17 @@
+---
+title: v1 listBuilds
+description: History for GET /v1/builds
+---
+
+`GET /v1/builds` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/builds** (listBuilds; added; compatible)
+  - Before: GET /v1/builds was not available in the versioned API.
+  - After: List observed builds. Returns observed builds ordered by the requested timestamp field with `_id` as a tie-breaker in the same direction and missing timestamps last. Each entry is a build summary with the matching executable catalog item when one is known. Response media: application/json. Requires an API key with builds:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

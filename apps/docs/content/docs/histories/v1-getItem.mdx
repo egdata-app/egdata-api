@@ -1,0 +1,17 @@
+---
+title: v1 getItem
+description: History for GET /v1/items/{id}
+---
+
+`GET /v1/items/{id}` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/items/&#123;id&#125;** (getItem; added; compatible)
+  - Before: GET /v1/items/&#123;id&#125; was not available in the versioned API.
+  - After: Get an item. Returns one catalog item. The catalog `id` is preferred; legacy `_id` values also resolve. Response media: application/json. Requires an API key with items:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

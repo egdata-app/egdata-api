@@ -1,0 +1,17 @@
+---
+title: v1 resolveLauncherRecords
+description: History for POST /v1/builds/resolve-launcher-records
+---
+
+`POST /v1/builds/resolve-launcher-records` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 POST /v1/builds/resolve-launcher-records** (resolveLauncherRecords; added; compatible)
+  - Before: POST /v1/builds/resolve-launcher-records was not available in the versioned API.
+  - After: Resolve parsed Windows manifests to launcher metadata. Resolves bounded, path-free metadata from parsed Windows manifests. Results preserve request order and echo each `requestId` with its per-candidate status. Ambiguous catalog, asset, and parent relationships are reported as `ambiguous` instead of guessing. Response media: application/json. Requires an API key with builds:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

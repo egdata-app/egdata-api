@@ -1,0 +1,17 @@
+---
+title: v1 listSandboxOffers
+description: History for GET /v1/sandboxes/{sandboxId}/offers
+---
+
+`GET /v1/sandboxes/{sandboxId}/offers` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/offers** (listSandboxOffers; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/offers was not available in the versioned API.
+  - After: List offers in a sandbox. Returns offers whose namespace matches the sandbox, ordered by `lastModifiedDate` descending with `id` ascending as a stable tie-breaker. Each offer is localized for the requested locale and carries the current price for the country's Epic pricing region when one is stored. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

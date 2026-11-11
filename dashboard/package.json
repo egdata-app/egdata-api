@@ -14,6 +14,7 @@
     "db:migrate:remote": "wrangler d1 migrations apply egdata-dashboard-db --remote --config wrangler.migrations.jsonc"
   },
   "dependencies": {
+    "@scalar/api-reference-react": "^0.9.88",
     "@tanstack/react-router": "^1.132.2",
     "hono": "4.12.18",
     "lucide-react": "^0.517.0",

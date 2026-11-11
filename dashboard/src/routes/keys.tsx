@@ -35,10 +35,14 @@ import {
   type ApiScope,
   type DashboardApiKey,
   dashboardClient,
+  apiFetch,
 } from "../lib/api";
 import { useDashboardAuth } from "../lib/auth-context";
 
 export const Route = createFileRoute("/keys")({
+  validateSearch: (search: Record<string, unknown>): { keyId?: string } => ({
+    keyId: typeof search.keyId === "string" ? search.keyId : undefined,
+  }),
   component: ApiKeysPage,
 });
 
@@ -50,6 +54,7 @@ function splitListInput(raw: string): string[] {
 }
 
 function ApiKeysPage() {
+  const { keyId } = Route.useSearch();
   const { selectedProject } = useDashboardAuth();
   const [keys, setKeys] = useState<DashboardApiKey[]>([]);
   const [loading, setLoading] = useState(true);
@@ -214,6 +219,13 @@ function ApiKeysPage() {
 
   return (
     <div className="space-y-6">
+      {keyId && selectedProject && (
+        <LinkedKey
+          key={`${selectedProject.id}:${keyId}`}
+          projectId={selectedProject.id}
+          keyId={keyId}
+        />
+      )}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white">
@@ -244,7 +256,7 @@ function ApiKeysPage() {
           <Column>Actions</Column>
         </TableHeader>
         <TableBody
-          items={keys}
+          items={keyId ? keys.filter((key) => key.id === keyId) : keys}
           renderEmptyState={() => (
             <div className="py-12 px-4 text-center space-y-3">
               <KeyRound className="w-8 h-8 text-epic-text-muted mx-auto" />
@@ -638,5 +650,54 @@ function ApiKeysPage() {
         </Dialog>
       </Modal>
     </div>
+  );
+}
+
+function LinkedKey({ projectId, keyId }: { projectId: string; keyId: string }) {
+  const [key, setKey] = useState<{
+    id: string;
+    name: string;
+    keyPrefix: string;
+    revokedAt: string | null;
+    active: number;
+  } | null>(null);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let active = true;
+    void apiFetch<{ key: NonNullable<typeof key> }>(
+      `/alerts/${encodeURIComponent(projectId)}/keys/${encodeURIComponent(keyId)}`,
+    )
+      .then((result) => {
+        if (active) setKey(result.key);
+      })
+      .catch((e) => {
+        if (active) setError(e.message);
+      });
+    return () => {
+      active = false;
+    };
+  }, [projectId, keyId]);
+  return (
+    <section className="border border-epic-border rounded-xl p-4 space-y-2">
+      <h2 className="font-semibold">Affected API key</h2>
+      {error && <p role="alert">{error}</p>}
+      {key && (
+        <>
+          <p>
+            {key.name} · <code>{key.keyPrefix}</code>
+          </p>
+          <p className="text-epic-text-muted">
+            {key.revokedAt
+              ? `Revoked ${key.revokedAt}. Earlier qualifying use remains in alerts.`
+              : key.active
+                ? "Active"
+                : "Inactive"}
+          </p>
+        </>
+      )}
+      <a href="/keys" className="text-epic-accent">
+        Show all active keys
+      </a>
+    </section>
   );
 }

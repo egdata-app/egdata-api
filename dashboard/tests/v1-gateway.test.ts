@@ -127,6 +127,72 @@ function mockUpstream(status = 200) {
 }
 
 describe("v1 Worker gateway", () => {
+  it("handles immutable upstream headers for public health and the deployed contract", async () => {
+    const { env, admit } = await setup();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        Response.redirect("https://origin-api.egdata.app/v1/health", 302),
+      ),
+    );
+    for (const path of ["/v1/health", "/v1/open-api.json"]) {
+      const result = await handleV1ApiProxy(
+        new Request(`https://devs.egdata.app/proxy${path}`),
+        env,
+        ctx,
+        path,
+      );
+      expect(result.status).toBe(302);
+      expect(result.headers.get("X-Request-Id")).toMatch(/^req_/);
+      expect(result.headers.get("Location")).toBe(
+        "https://origin-api.egdata.app/v1/health",
+      );
+    }
+    expect(admit).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+  it("attaches exact operation usage to the existing admission RPC, including failed responses", async () => {
+    const { env, rawKey, admit } = await setup();
+    env.USAGE_TRACKING_ENABLED = "true";
+    vi.stubGlobal("fetch", mockUpstream(500));
+    const response = await handleV1ApiProxy(
+      new Request("https://devs.egdata.app/proxy/v1/offers/abc", {
+        headers: { "X-API-Key": rawKey },
+      }),
+      env,
+      ctx,
+      "/v1/offers/abc",
+    );
+    expect(response.status).toBe(500);
+    expect(admit).toHaveBeenCalledOnce();
+    expect(admit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        usage: { projectId: baseKey.projectId, operationId: "getOffer" },
+      }),
+    );
+    expect(JSON.stringify(admit.mock.calls)).not.toContain(rawKey);
+    vi.unstubAllGlobals();
+  });
+  it("excludes preflights, unknown paths and permission failures from usage admission", async () => {
+    const { env, rawKey, admit } = await setup({ scopes: ["items:read"] });
+    env.USAGE_TRACKING_ENABLED = "true";
+    for (const [path, method] of [
+      ["/v1/offers/abc", "OPTIONS"],
+      ["/v1/not-registered", "GET"],
+      ["/v1/offers/abc", "GET"],
+    ]) {
+      await handleV1ApiProxy(
+        new Request(`https://devs.egdata.app/proxy${path}`, {
+          method,
+          headers: { "X-API-Key": rawKey },
+        }),
+        env,
+        ctx,
+        path,
+      );
+    }
+    expect(admit).not.toHaveBeenCalled();
+  });
   it("is exposed at devs.egdata.app/proxy/v1", async () => {
     const { env, rawKey } = await setup();
     const upstream = mockUpstream();

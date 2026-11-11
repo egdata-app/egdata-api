@@ -25,7 +25,11 @@
     "dashboard:typecheck": "pnpm --filter @egdata/dashboard typecheck",
     "dashboard:test": "pnpm --filter @egdata/dashboard test",
     "readme:check": "node scripts/check-readme-commands.mjs",
-    "release:check": "node scripts/check-release-policy.mjs"
+    "release:check": "node scripts/check-release-policy.mjs",
+    "changelog:new": "tsx scripts/changelog.ts new",
+    "changelog:generate": "tsx scripts/changelog.ts generate",
+    "changelog:check": "tsx scripts/changelog.ts check",
+    "changelog:assess": "tsx scripts/changelog.ts assess"
   },
   "type": "module",
   "dependencies": {
@@ -107,6 +111,8 @@
     "@types/node": "25.2.3",
     "@types/pg": "^8.16.0",
     "@types/react": "^19.2.14",
+    "ajv": "8.20.0",
+    "ajv-formats": "^3.0.1",
     "tsup": "8.5.1",
     "tsx": "4.21.0",
     "typescript": "5.9.3",

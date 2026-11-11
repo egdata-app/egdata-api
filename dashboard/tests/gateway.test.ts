@@ -204,6 +204,10 @@ describe("HMAC session tokens and API key proxy cache preservation", () => {
         EMAIL_FROM_ADDRESS: "noreply@egdata.app",
         EMAIL_FROM_NAME: "egdata Developer Portal",
         REQUIRE_API_KEY: "true",
+        RATE_LIMIT_ENVIRONMENT: "test",
+        USAGE_TRACKING_ENABLED: "false",
+        USAGE_TRACKING_STARTED_AT: "",
+        ENDPOINT_USAGE_QUEUE: { sendBatch: vi.fn() } as unknown as Queue,
         ALLOW_FIRST_PARTY_ORIGINS: "https://egdata.app",
         API_KEY_RATE_LIMITER: {
           idFromName: vi.fn((name: string) => name),

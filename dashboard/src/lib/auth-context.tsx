@@ -72,6 +72,7 @@ export function DashboardAuthProvider({
   }, [refreshSession]);
 
   const logout = useCallback(async () => {
+    window.dispatchEvent(new Event("egdata:clear-credentials"));
     await dashboardClient.logout();
     setSession((prev) => ({
       ...prev,

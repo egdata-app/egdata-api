@@ -1,0 +1,17 @@
+---
+title: v1 getFranchise
+description: History for GET /v1/franchises/{slug}
+---
+
+`GET /v1/franchises/{slug}` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/franchises/&#123;slug&#125;** (getFranchise; added; compatible)
+  - Before: GET /v1/franchises/&#123;slug&#125; was not available in the versioned API.
+  - After: Get a franchise. Returns a franchise and a cursor-paginated page of its offers, ordered by `releaseDate` descending with the offer `id` ascending as tie-breaker. Offers are localized with `locale` and priced for the Epic pricing region that contains `country`. The `stats` object aggregates achievements and time-to-beat data over every offer in the franchise, not only the returned page. Cookies are never used. Response media: application/json. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

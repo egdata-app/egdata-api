@@ -1,0 +1,17 @@
+---
+title: v1 listSandboxBuilds
+description: History for GET /v1/sandboxes/{sandboxId}/builds
+---
+
+`GET /v1/sandboxes/{sandboxId}/builds` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/builds** (listSandboxBuilds; added; compatible)
+  - Before: GET /v1/sandboxes/&#123;sandboxId&#125;/builds was not available in the versioned API.
+  - After: List builds for a sandbox. Returns build summaries for every build app referenced by the sandbox's items, ordered by `updatedAt` descending with `_id` descending as a stable tie-breaker. Use `platform` to restrict the items whose release info is considered. Response media: application/json. Requires an API key with catalog:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.

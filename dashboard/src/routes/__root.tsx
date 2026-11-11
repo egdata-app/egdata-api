@@ -8,6 +8,8 @@ import {
   Activity,
   ArrowUpRight,
   BarChart3,
+  BookOpen,
+  Bell,
   FolderPlus,
   KeyRound,
   LogOut,
@@ -25,6 +27,7 @@ import { Form, TextField } from "../components/ui/TextField";
 import { AppToastRegion, notify } from "../components/ui/Toast";
 import { dashboardClient } from "../lib/api";
 import { DashboardAuthProvider, useDashboardAuth } from "../lib/auth-context";
+import { useUnreadAlerts } from "../lib/alerts";
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -58,6 +61,9 @@ function DashboardShell() {
   const [projectDesc, setProjectDesc] = useState("");
   const [projectWebsite, setProjectWebsite] = useState("");
   const [creatingProject, setCreatingProject] = useState(false);
+  const unreadAlerts = useUnreadAlerts(
+    authenticated ? selectedProject?.id : undefined,
+  );
 
   if (loading) {
     return (
@@ -71,6 +77,16 @@ function DashboardShell() {
   }
 
   if (!authenticated || !user) {
+    if (currentPath === "/docs" || currentPath.startsWith("/docs/")) {
+      return (
+        <main className="max-w-7xl mx-auto p-6">
+          <a href="/" className="text-epic-accent block mb-6">
+            egdata Developers · Sign in to manage projects and alerts
+          </a>
+          <Outlet />
+        </main>
+      );
+    }
     return <UnauthenticatedLanding devAuthAvailable={devAuthAvailable} />;
   }
 
@@ -111,6 +127,12 @@ function DashboardShell() {
     { to: "/keys", label: "API Keys", icon: KeyRound },
     { to: "/analytics", label: "Usage", icon: BarChart3 },
     { to: "/limits", label: "Rate Limits", icon: Sparkles },
+    { to: "/docs", label: "API Reference", icon: BookOpen },
+    {
+      to: "/alerts",
+      label: `Alerts${unreadAlerts ? ` (${unreadAlerts})` : ""}`,
+      icon: Bell,
+    },
   ] as const;
 
   return (

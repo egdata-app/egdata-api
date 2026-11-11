@@ -3,6 +3,7 @@ import { ApiKeyRateLimiter } from "../worker/rate-limiter";
 import { decideAdmission, utcWindowStart } from "../worker/rate-limiter-core";
 
 const globalPolicy = { name: "global", limit: 120 };
+
 const searchPolicy = { name: "search", limit: 300 };
 
 describe("exact per-key quota decision", () => {
@@ -168,15 +169,15 @@ function fakeLimiter() {
   const sql = new FakeSql();
   const limiter = new ApiKeyRateLimiter(
     { storage: { sql } } as unknown as DurableObjectState,
-    {} as Env,
+    {} as import("../worker/types").DashboardEnv,
   );
   return { limiter, sql };
 }
 
 describe("ApiKeyRateLimiter Durable Object", () => {
-  it("persists exactly one bounded state row per admitted request", () => {
+  it("persists exactly one bounded state row per admitted request", async () => {
     const { limiter, sql } = fakeLimiter();
-    const result = limiter.admit({
+    const result = await limiter.admit({
       keyId: "key_test",
       policies: [globalPolicy, searchPolicy],
     });
@@ -188,7 +189,7 @@ describe("ApiKeyRateLimiter Durable Object", () => {
     expect(JSON.parse(row?.policies_json ?? "{}")).toEqual({ search: 1 });
   });
 
-  it("does not rewrite exhausted counters for denied requests", () => {
+  it("does not rewrite exhausted counters for denied requests", async () => {
     const { limiter, sql } = fakeLimiter();
     sql.rows.set("key_test", {
       key_id: "key_test",
@@ -196,7 +197,7 @@ describe("ApiKeyRateLimiter Durable Object", () => {
       global_count: 120,
       policies_json: JSON.stringify({ search: 3 }),
     });
-    const result = limiter.admit({
+    const result = await limiter.admit({
       keyId: "key_test",
       policies: [globalPolicy, searchPolicy],
     });
@@ -205,7 +206,7 @@ describe("ApiKeyRateLimiter Durable Object", () => {
     expect(sql.writes).toBe(0);
   });
 
-  it("replaces expired windows in the same bounded row", () => {
+  it("replaces expired windows in the same bounded row", async () => {
     const { limiter, sql } = fakeLimiter();
     sql.rows.set("key_test", {
       key_id: "key_test",
@@ -213,7 +214,7 @@ describe("ApiKeyRateLimiter Durable Object", () => {
       global_count: 120,
       policies_json: JSON.stringify({ search: 300 }),
     });
-    const result = limiter.admit({
+    const result = await limiter.admit({
       keyId: "key_test",
       policies: [globalPolicy, searchPolicy],
     });

@@ -26,7 +26,10 @@ export interface SessionResponse {
   devAuthAvailable: boolean;
 }
 
-async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+export async function apiFetch<T>(
+  path: string,
+  init?: RequestInit,
+): Promise<T> {
   const res = await fetch(`/_dashboard/api${path}`, {
     ...init,
     credentials: "include",

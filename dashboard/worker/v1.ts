@@ -21,6 +21,7 @@ import {
 } from "./v1-routes.js";
 
 const lastUsedTouchDebounce = new Map<string, number>();
+
 const MAX_TIMEOUT_MS = 3_000;
 
 type V1ProblemOptions = {
@@ -235,7 +236,7 @@ export async function handleV1ApiProxy(
   };
 
   if (PUBLIC_V1_PATHS.has(pathname)) {
-    const response = await forwardToUpstream(
+    const upstream = await forwardToUpstream(
       request,
       env,
       pathname,
@@ -243,6 +244,9 @@ export async function handleV1ApiProxy(
       cfProps,
       { headers: baseHeaders, stripCookies: true },
     );
+    // Fetch responses have immutable headers in Workers. Preserve the upstream
+    // status/body while applying the same public metadata headers as before.
+    const response = new Response(upstream.body, upstream);
     response.headers.set("X-Request-Id", requestId);
     response.headers.set(
       "Cache-Control",
@@ -388,7 +392,18 @@ export async function handleV1ApiProxy(
     );
     const stub = env.API_KEY_RATE_LIMITER.get(objectId);
     admission = await withTimeout(
-      stub.admit({ keyId: meta.keyId, policies }),
+      stub.admit({
+        keyId: meta.keyId,
+        policies,
+        ...(env.USAGE_TRACKING_ENABLED === "true"
+          ? {
+              usage: {
+                projectId: meta.projectId,
+                operationId: route.operationId,
+              },
+            }
+          : {}),
+      }),
       MAX_TIMEOUT_MS,
     );
   } catch {

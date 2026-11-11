@@ -1,0 +1,17 @@
+---
+title: v1 getOfferOg
+description: History for GET /v1/offers/{id}/og
+---
+
+`GET /v1/offers/{id}/og` — active. Recorded dates are not deployment dates.
+
+## 2026-11-11 — Add the versioned v1 API with explicit scopes and per-key quotas
+
+Record: [versioned-v1-api](https://github.com/egdata-app/egdata-api/blob/main/changes/records/versioned-v1-api.json).
+
+- **v1 GET /v1/offers/&#123;id&#125;/og** (getOfferOg; added; compatible)
+  - Before: GET /v1/offers/&#123;id&#125;/og was not available in the versioned API.
+  - After: Offer share image (PNG). Native 1200×630 PNG share image. The response is not JSON-wrapped. Response media: image/png, image/webp. Requires an API key with offers:read permission; the gateway enforces per-key quotas.
+  - Client action: None
+
+Verification: tests/v1-router.test.ts; tests/v1-operations.test.ts; tests/v1-origin-provenance.test.ts; tests/middleware-origin-auth.test.ts; dashboard/tests/v1-gateway.test.ts; dashboard/tests/rate-limiter.test.ts; pnpm openapi:check.
