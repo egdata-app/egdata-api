@@ -17,6 +17,10 @@
     "docs:build": "pnpm --filter @egdata/docs build",
     "docs:check": "pnpm openapi:check && pnpm --filter @egdata/docs typecheck",
     "docs:generate": "pnpm openapi:generate && pnpm --filter @egdata/docs generate",
+    "dashboard:dev": "pnpm --filter @egdata/dashboard dev",
+    "dashboard:build": "pnpm --filter @egdata/dashboard build",
+    "dashboard:typecheck": "pnpm --filter @egdata/dashboard typecheck",
+    "dashboard:test": "pnpm --filter @egdata/dashboard test",
     "readme:check": "node scripts/check-readme-commands.mjs",
     "release:check": "node scripts/check-release-policy.mjs"
   },

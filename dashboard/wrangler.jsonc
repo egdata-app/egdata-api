@@ -1,0 +1,78 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "egdata-dashboard",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-05-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "upload_source_maps": true,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "assets": {
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "egdata-dashboard-db",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "API_KEYS_KV",
+      "id": "00000000000000000000000000000000"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "RATE_LIMITER_FREE",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 120,
+        "period": 60
+      }
+    },
+    {
+      "name": "RATE_LIMITER_PRO",
+      "namespace_id": "1002",
+      "simple": {
+        "limit": 1200,
+        "period": 60
+      }
+    },
+    {
+      "name": "RATE_LIMITER_ENTERPRISE",
+      "namespace_id": "1003",
+      "simple": {
+        "limit": 6000,
+        "period": 60
+      }
+    }
+  ],
+  "analytics_engine_datasets": [
+    {
+      "binding": "ANALYTICS",
+      "dataset": "egdata_api_usage"
+    }
+  ],
+  "send_email": [
+    {
+      "name": "EMAIL"
+    }
+  ],
+  "vars": {
+    "UPSTREAM_API_ORIGIN": "https://api.egdata.app",
+    "API_PROXY_HOST": "api.egdata.app",
+    "DASHBOARD_ORIGIN": "https://developers.egdata.app",
+    "ADMIN_EMAIL": "admin@egdata.app",
+    "EMAIL_FROM_ADDRESS": "noreply@egdata.app",
+    "EMAIL_FROM_NAME": "egdata Developer Portal",
+    "REQUIRE_API_KEY": "true",
+    "ALLOW_FIRST_PARTY_ORIGINS": "https://egdata.app"
+  }
+}

@@ -1,6 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
+  - "dashboard"
 allowBuilds:
   "@apollo/protobufjs": true
   core-js: false

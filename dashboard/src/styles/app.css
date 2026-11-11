@@ -1,0 +1,91 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "tailwindcss-react-aria-components";
+
+@theme {
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  --font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+
+  /* Epic Games Store & egdata Dark Palette */
+  --color-epic-bg: #101014;
+  --color-epic-surface: #18181c;
+  --color-epic-elevated: #202024;
+  --color-epic-hover: #28282e;
+  --color-epic-pressed: #32323a;
+
+  --color-epic-border: #26262c;
+  --color-epic-border-hover: #3a3a44;
+  --color-epic-border-subtle: rgba(255, 255, 255, 0.08);
+
+  --color-epic-accent: #26bbff;
+  --color-epic-accent-hover: #57cbff;
+  --color-epic-accent-pressed: #00a3f0;
+  --color-epic-accent-muted: rgba(38, 187, 255, 0.14);
+  --color-epic-accent-fg: #101014;
+
+  --color-epic-text: #f5f5f7;
+  --color-epic-text-muted: #9a9aa6;
+  --color-epic-text-disabled: #555562;
+
+  --color-epic-danger: #ff4d4f;
+  --color-epic-danger-hover: #ff6b6d;
+  --color-epic-success: #2ecc71;
+  --color-epic-warning: #f5a623;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  min-height: 100%;
+  background-color: var(--color-epic-bg);
+  color: var(--color-epic-text);
+  font-family: var(--font-sans);
+}
+
+/* Subtle Epic ambient top glow matching egdata.app */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 360px;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse 70% 50% at 50% -10%,
+    rgba(38, 187, 255, 0.075),
+    transparent 70%
+  );
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* View Transition animations for React Aria Toast */
+::view-transition-new(.toast):only-child {
+  animation: toast-slide-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+::view-transition-old(.toast):only-child {
+  animation: toast-slide-out 180ms ease-in forwards;
+}
+@keyframes toast-slide-in {
+  from {
+    translate: 100% 0;
+    opacity: 0;
+  }
+}
+@keyframes toast-slide-out {
+  to {
+    translate: 100% 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+}
