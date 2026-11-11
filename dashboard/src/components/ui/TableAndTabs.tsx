@@ -16,7 +16,6 @@ import {
   TabPanel as RACTabPanel,
   Tabs as RACTabs,
   type RowProps,
-  SelectionIndicator,
   type TabListProps,
   type TableBodyProps,
   type TableHeaderProps,
@@ -69,10 +68,13 @@ export function Tab(props: TabProps) {
         tabStyles({ ...renderProps, className: cls }),
       )}
     >
-      {composeRenderProps(props.children, (children) => (
+      {composeRenderProps(props.children, (children, { isSelected }) => (
         <>
           {children}
-          <SelectionIndicator className="absolute bottom-0 left-0 right-0 h-[2px] bg-epic-accent rounded-t-full motion-safe:transition-[translate,width] duration-200" />
+          <span
+            aria-hidden="true"
+            className={`pointer-events-none absolute bottom-0 left-0 right-0 h-[2px] bg-epic-accent rounded-t-full motion-safe:transition-opacity duration-200 ${isSelected ? "opacity-100" : "opacity-0"}`}
+          />
         </>
       ))}
     </RACTab>
