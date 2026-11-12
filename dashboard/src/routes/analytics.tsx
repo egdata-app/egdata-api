@@ -6,6 +6,7 @@ import { Button } from "../components/ui/Button";
 import { Switch, Tag } from "../components/ui/Controls";
 import { Dialog, Heading, Modal } from "../components/ui/Modal";
 import { Select, SelectItem } from "../components/ui/Select";
+import { MonthlyQuotaPanel } from "../components/usage/MonthlyQuotaPanel";
 import { UsageChart } from "../components/usage/UsageCharts";
 import {
   Coverage,
@@ -243,6 +244,7 @@ function UsagePage() {
           />
         </div>
       </div>
+      {analyticsScope !== "all" && <MonthlyQuotaPanel />}
       <UsageError
         message={result.error}
         retry={result.refresh}

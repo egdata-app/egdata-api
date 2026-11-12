@@ -221,21 +221,21 @@ describe("HMAC session tokens and API key proxy cache preservation", () => {
         API_KEY_RATE_LIMITER: {
           idFromName: vi.fn((name: string) => name),
           get: vi.fn(() => ({
-            admit: vi.fn(async () => ({
+            admit: vi.fn(async (req: any) => ({
               allowed: true,
               windowStart: Date.now(),
               resetAt: Date.now() + 60_000,
               retryAfter: 60,
               exhaustedPolicy: null,
-              policies: [
-                {
-                  name: "global",
-                  limit: 120,
-                  used: 1,
-                  remaining: 119,
-                  resetAt: Date.now() + 60_000,
-                },
-              ],
+              policies: req.policies.map((policy: any) => ({
+                name: policy.name,
+                limit: policy.limit,
+                used: 1,
+                remaining: policy.limit - 1,
+                resetAt: Date.now() + 60_000,
+                window: policy.window ?? "minute",
+                windowSeconds: policy.window === "month" ? 2_592_000 : 60,
+              })),
             })),
           })),
         } as unknown as DashboardEnv["API_KEY_RATE_LIMITER"],

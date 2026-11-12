@@ -5,6 +5,17 @@ description: History for GET /v1/items-sitemap.xml
 
 `GET /v1/items-sitemap.xml` — active. Recorded dates are not deployment dates.
 
+## 2026-11-12 — Enforce shared 100,000 requests/month allowance across free account projects
+
+Record: [free-account-monthly-quota](https://github.com/egdata-app/egdata-api/blob/main/changes/records/free-account-monthly-quota.json).
+
+- **v1 GET /v1/items-sitemap.xml** (getItemsSitemap; changed; breaking)
+  - Before: Free projects were governed only by the 120 requests/minute per-project quota and expensive v1 per-operation limits without a monthly account cap, and RateLimit-Policy headers assumed 60-second windows.
+  - After: Free accounts share an authoritative 100,000 requests/month allowance across all free projects, API keys, and console sessions across legacy and v1 gateways, resetting on the 1st of each calendar month at 00:00 UTC alongside existing per-project minute and expensive-operation limits. Paid projects (pro, enterprise) are exempt, while custom RPM overrides on free projects retain the monthly cap. Key rotation/deletion and project recreation never reset account usage. Monthly exhaustion returns 429 MONTHLY_QUOTA_EXCEEDED with Retry-After until reset and calendar-aware RateLimit headers; unavailable accounting returns 503 QUOTA_UNAVAILABLE.
+  - Client action: Track free-account monthly usage in the developer portal or via RateLimit headers, respect Retry-After until 00:00 UTC on the 1st of next month on 429 MONTHLY_QUOTA_EXCEEDED, or request a Pro/Enterprise tier upgrade in Rate Limits.
+
+Verification: dashboard/tests/monthly-quota.test.ts: simultaneous cap enforcement across keys/projects/console/gateways, calendar and leap-year rollovers, cache hits and upstream 5xx counting, auth/permission/public bypass exclusions, recreation/RPM/tier persistence, dashboard /quota thresholds (80%, 95%, exhausted), and 503 QUOTA_UNAVAILABLE fail-closed handling; dashboard/tests/project-quota.test.ts and dashboard/tests/rate-limiter.test.ts: atomic project minute and expensive-operation admission alongside account monthly policies; src/openapi/project-quota.ts, src/openapi/v1.ts, apps/docs/content/docs/versioned-api.mdx, and dashboard/src/lib/docs/problems.ts; pnpm openapi:generate; pnpm changelog:generate; pnpm docs:check.
+
 ## 2026-11-12 — Share gateway quotas across project keys and restrict project creation
 
 Record: [project-shared-quotas](https://github.com/egdata-app/egdata-api/blob/main/changes/records/project-shared-quotas.json).

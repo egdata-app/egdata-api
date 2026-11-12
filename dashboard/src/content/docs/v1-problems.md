@@ -30,7 +30,7 @@ context. Field issues can include `pointer`, `parameter`, `code`, and `message`.
 | Missing resource | `NOT_FOUND`, `OFFER_NOT_FOUND`, `ITEM_NOT_FOUND`, `BUILD_NOT_FOUND`, `SANDBOX_NOT_FOUND`, `MEDIA_NOT_FOUND`, `BUNDLE_NOT_FOUND`, `EVENT_NOT_FOUND`, `PROMOTION_NOT_FOUND`, `SELLER_NOT_FOUND` | Check the identifier and operation in the deployed contract. |
 | Unsupported method/content | `METHOD_NOT_ALLOWED`, `UNSUPPORTED_MEDIA_TYPE` | Use the documented method and content type; consult `Allow` where present. |
 | Bounded work | `CATALOG_ROOT_TOO_LARGE`, `CATALOG_HYDRATION_TOO_LARGE`, `MANIFEST_NOT_COMPARABLE` | Reduce requested work or choose comparable resources as described by the operation. |
-| Quota exhausted | `RATE_LIMITED` | Wait for `Retry-After`; inspect `RateLimit`, `RateLimit-Policy`, and `X-RateLimit-Policy`. |
+| Quota exhausted | `RATE_LIMITED`, `MONTHLY_QUOTA_EXCEEDED` | Wait for `Retry-After` (60s window or next 00:00 UTC calendar-month reset); inspect `RateLimit`, `RateLimit-Policy`, and `X-RateLimit-Policy`, or request a paid tier upgrade. |
 | Quota uncertain | `QUOTA_UNAVAILABLE` | Retry after the indicated delay. The request was not forwarded without confirmed admission. |
 | Upstream/service unavailable | `ORIGIN_UNAVAILABLE`, `SEARCH_UNAVAILABLE`, `NATURAL_LANGUAGE_SEARCH_UNAVAILABLE`, `INTERNAL_ERROR` | Retry with backoff where appropriate; report persistent failures with the request ID. |
 | Operator configuration/provenance | `ORIGIN_NOT_CONFIGURED`, `WORKER_AUTH_NOT_CONFIGURED`, `UNTRUSTED_WORKER`, `MISSING_KEY_CONTEXT`, `INVALID_KEY_CONTEXT`, `NATURAL_LANGUAGE_SEARCH_NOT_CONFIGURED` | Contact the operator. Never obtain or send private Worker-to-origin credentials. |

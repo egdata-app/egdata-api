@@ -11,7 +11,7 @@ import type { DashboardEnv } from "./types.js";
  * blob4:  method (GET, HEAD, POST, ...)
  * blob5:  statusCode ("200", "304", "401", "403", "429", "500")
  * blob6:  cacheStatus ("HIT", "MISS", "STALE", "REVALIDATED", "BYPASS", "DYNAMIC", "EDGE_BLOCK")
- * blob7:  limitOutcome ("ok", "rate_limited", "ip_denied", "origin_denied", "path_denied", "scope_denied", "method_denied")
+ * blob7:  limitOutcome ("ok", "rate_limited", "monthly_quota_exceeded", "ip_denied", "origin_denied", "path_denied", "scope_denied", "method_denied")
  * blob8:  origin (Origin request header or "(direct)")
  * blob9:  clientIp (masked or raw client IP for user diagnostics)
  * blob10: userAgent (truncated to 160 chars)
@@ -61,7 +61,11 @@ export function recordApiTelemetry(
       ? 1
       : 0;
   const isRateLimited =
-    event.limitOutcome === "rate_limited" || event.statusCode === 429 ? 1 : 0;
+    event.limitOutcome === "rate_limited" ||
+    event.limitOutcome === "monthly_quota_exceeded" ||
+    event.statusCode === 429
+      ? 1
+      : 0;
   const isError = event.statusCode >= 400 ? 1 : 0;
 
   try {

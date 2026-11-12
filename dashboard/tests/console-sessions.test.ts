@@ -212,7 +212,7 @@ describe("project console credentials", () => {
     expect((await s.run(third.token)).status).toBe(429);
     expect(s.upstream).toHaveBeenCalledTimes(2);
     expect(s.env.API_KEY_RATE_LIMITER.idFromName).toHaveBeenLastCalledWith(
-      "project:test:prj_a",
+      "account:test:alice",
     );
   });
 

@@ -35,23 +35,31 @@ The Worker validates the key, permission scope, allowed IP/CIDR, allowed origin,
 
 ## Exact global quotas
 
-Each project has one exact global quota enforced by a SQLite-backed Durable Object.
-All its API keys and console sessions share this allowance across legacy and v1
-gateway requests, including cache hits. Creating or rotating keys does not add capacity:
+Each account's quotas are enforced atomically in a SQLite-backed Durable Object.
+Every project has an exact 60-second global allowance shared across all its API
+keys, console sessions, and authenticated legacy/v1 gateway requests, including
+cache hits and subsequent upstream errors. In addition, all free projects owned
+by an account share a single **100,000 requests/month** allowance that resets on
+the first day of each calendar month at `00:00 UTC`. Creating, rotating, or
+deleting keys or recreating projects never resets account or project usage:
 
-| Tier | Requests per UTC-aligned minute |
-| --- | ---: |
-| Free | 120 |
-| Pro | 1,200 |
-| Enterprise | 6,000 |
+| Tier | Requests per UTC-aligned minute (per project) | Monthly free-account allowance |
+| --- | ---: | --- |
+| Free | 120 | 100,000 / calendar month (shared across all free projects on the account) |
+| Pro | 1,200 | Exempt |
+| Enterprise | 6,000 | Exempt |
 
-A validated `customRpm` overrides the tier default. Request more capacity under
-**Rate Limits** in the developer dashboard. An administrator can approve or
-decline the request and leave a note in your request history. Approval applies
-the requested RPM to the project's existing and future API keys and its API
-console. Existing keys can take up to five minutes to refresh; quota counters
-are not reset. Custom requests use the enterprise tier with the approved RPM
-override. Legacy gateway requests use the same approved project RPM and counter.
+A validated `customRpm` overrides the tier's per-minute default. Request more
+capacity under **Rate Limits** in the developer dashboard. An administrator can
+approve or decline the request and leave a note in your request history.
+Approval applies the requested RPM to the project's existing and future API keys
+and its API console. Existing keys can take up to five minutes to refresh; quota
+counters are not reset across tier or limit changes. An RPM increase alone on a
+`free` project does not remove the 100,000-request monthly cap; upgrading a
+project to `pro` or `enterprise` exempts that project while preserving recorded
+account usage. Custom requests use the enterprise tier with the approved RPM
+override. Legacy gateway requests use the same approved project RPM and account
+monthly counter.
 
 Expensive v1 operations also have shared per-project limits, evaluated in the same object and the same request:
 
@@ -62,7 +70,7 @@ Expensive v1 operations also have shared per-project limits, evaluated in the sa
 | `heavy` (images, profiles, seller detail, collection, promotion detail, natural language, query counts) | 60/minute |
 | `bulk` (launcher record resolution) | 10/minute |
 
-Admission is persisted before the origin is called. A request that is admitted and then fails validation or upstream still consumes quota. An exhausted request receives `429` Problem Details with `Retry-After`, `RateLimit`, `RateLimit-Policy`, and `X-RateLimit-Policy` before it reaches the origin. If the quota service cannot confirm a decision, the Worker returns retryable `503 QUOTA_UNAVAILABLE` instead of using an approximate counter.
+Admission is persisted before edge cache lookup or origin forwarding. Failed authentication, permission denials, quota-rejected requests, and unauthenticated bypasses are excluded. A request that is admitted and hits the cache or later fails validation or upstream still consumes quota. Minute or operation exhaustion returns `429 RATE_LIMITED`, while free monthly exhaustion returns `429 MONTHLY_QUOTA_EXCEEDED` with `Retry-After` seconds until the next calendar-month reset, alongside calendar-aware `RateLimit`, `RateLimit-Policy`, and `X-RateLimit-Policy` headers before reaching the origin. If the quota service cannot confirm a decision, the Worker returns retryable `503 QUOTA_UNAVAILABLE` instead of using an approximate counter.
 
 Each quota check is one Durable Object RPC and one bounded state-row write on admission; denials are read-only. A planning estimate of 27.14M monthly non-preflight requests implies roughly $4.05 in incremental Durable Object request charges assuming unused included allowances, while one counter-row write per admission remains below the included 50M writes. This is not a total-cost guarantee; measure actual duration and writes in staging.
 
@@ -74,7 +82,8 @@ Accounts include one project by default. Contact the egdata team for approval of
 additional projects. Existing projects remain usable if an account exceeds its
 allowance, but further creation is blocked. Project creation is limited to once
 every 24 hours per account, including after deletion and automatic creation at
-login. Each approved additional project has its own quota.
+login. Each approved additional project has its own per-minute quota, while free
+projects on the same account share the 100,000-request monthly free allowance.
 
 ## Response envelope
 

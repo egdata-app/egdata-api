@@ -4,7 +4,11 @@ import { touchApiKeyLastUsed } from "./db.js";
 import { fetchV1WithEdgeCache } from "./edge-cache.js";
 import { resolveApiKeyMetadata } from "./key-cache.js";
 import { evaluateKeyPermissions } from "./permissions.js";
-import { admitProjectRequest, rateLimitHeaders } from "./project-quota.js";
+import {
+  admitProjectRequest,
+  MONTHLY_POLICY_NAME,
+  rateLimitHeaders,
+} from "./project-quota.js";
 import type { AdmissionResult } from "./rate-limiter-core.js";
 import type { CachedKeyMetadata, DashboardEnv } from "./types.js";
 import {
@@ -377,6 +381,7 @@ export async function handleV1ApiProxy(
   const quotaHeaders = rateLimitHeaders(admission, now);
 
   if (!admission.allowed) {
+    const monthlyExhausted = admission.exhaustedPolicy === MONTHLY_POLICY_NAME;
     const exhausted = admission.policies.find(
       (entry) => entry.name === admission.exhaustedPolicy,
     );
@@ -386,7 +391,9 @@ export async function handleV1ApiProxy(
         routeTemplate: route.path,
         statusCode: 429,
         cacheStatus: "EDGE_BLOCK",
-        limitOutcome: "rate_limited",
+        limitOutcome: monthlyExhausted
+          ? "monthly_quota_exceeded"
+          : "rate_limited",
         startedAt,
         country,
         clientIp,
@@ -396,10 +403,12 @@ export async function handleV1ApiProxy(
     return v1Problem(request, {
       requestId,
       status: 429,
-      code: "RATE_LIMITED",
-      detail: exhausted
-        ? `The ${exhausted.name} quota of ${exhausted.limit} requests per 60 seconds for this project is exhausted.`
-        : "The project quota for this operation is exhausted.",
+      code: monthlyExhausted ? "MONTHLY_QUOTA_EXCEEDED" : "RATE_LIMITED",
+      detail: monthlyExhausted
+        ? `The free account monthly quota of ${exhausted?.limit.toLocaleString() ?? "100,000"} requests is exhausted across all free projects, API keys, and console sessions until the first day of the next calendar month at 00:00 UTC.`
+        : exhausted
+          ? `The ${exhausted.name} quota of ${exhausted.limit} requests per 60 seconds for this project is exhausted.`
+          : "The project quota for this operation is exhausted.",
       headers: {
         ...corsFor(request),
         ...quotaHeaders,

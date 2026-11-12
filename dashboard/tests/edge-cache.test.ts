@@ -170,12 +170,14 @@ async function createTestHarness() {
               resetAt: Date.now() + 60_000,
               retryAfter: 60,
               exhaustedPolicy: null,
-              policies: req.policies.map((p) => ({
+              policies: req.policies.map((p: any) => ({
                 name: p.name,
                 limit: p.limit,
                 used: count,
                 remaining: Math.max(0, p.limit - count),
                 resetAt: Date.now() + 60_000,
+                window: p.window ?? "minute",
+                windowSeconds: p.window === "month" ? 2_592_000 : 60,
               })),
             };
           },

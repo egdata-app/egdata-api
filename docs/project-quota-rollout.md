@@ -6,6 +6,9 @@ Recorded 2026-11-12. Deployment is a separate operator action.
 
 - All keys and console sessions in a project share one quota across authenticated
   legacy and v1 gateway requests. Existing project tier/custom RPM is authoritative.
+- All free projects owned by one account share a single 100,000-request calendar-month
+  allowance, resetting on the first day of each month at 00:00 UTC. Paid projects
+  (`pro`, `enterprise`) are exempt. A custom RPM grant alone does not remove the cap.
 - Expensive v1 operations share their existing numerical caps at project scope.
 - One project per account by default. Additional projects require operator approval.
 - Project creation has a 24-hour account cooldown, including automatic creation
@@ -39,6 +42,18 @@ existing administrator limit-review flow. Notify existing users that their keys
 remain valid but now share the project's allowance. Recommend coordinating request
 budgets and respecting `Retry-After` rather than rotating keys.
 
+Before enabling the monthly allowance, list the accounts whose free projects will
+share the new cap so heavy integrations can be contacted or upgraded first:
+
+```sql
+SELECT p.owner_epic_id, COUNT(*) AS free_project_count,
+       SUM(p.custom_rpm IS NOT NULL) AS free_projects_with_custom_rpm
+FROM projects p
+WHERE p.deleted_at IS NULL AND p.tier = 'free'
+GROUP BY p.owner_epic_id
+ORDER BY free_project_count DESC;
+```
+
 ## Deployment order
 
 1. Apply D1 migration `0006_project_creation_policy.sql` with the existing dashboard
@@ -47,15 +62,22 @@ budgets and respecting `Retry-After` rather than rotating keys.
    the account cap and cooldown with insert triggers.
 2. Deploy the dashboard Worker and updated public docs through the normal manual
    release process. No API key rotation or Durable Object class migration is needed.
-3. New requests route to `project:<environment>:<projectId>`. The deployed
-   `ApiKeyRateLimiter` class/binding name stays stable so old usage outbox alarms and
-   in-flight old-version RPCs can finish. Cutover starts new project counters;
-   previous per-key minute counts are not aggregated. Schedule a minute-boundary
-   cutover and avoid a prolonged mixed-version rollout.
+3. New requests route to `account:<environment>:<ownerEpicId>` so the free
+   account monthly allowance and each project's minute/expensive counters share
+   one atomic object. The deployed `ApiKeyRateLimiter` class/binding name stays
+   stable so old `project:<environment>:<projectId>` objects, usage outbox alarms,
+   and in-flight old-version RPCs can finish draining. Cutover starts new account
+   and project counters; previous per-key or per-project minute counts and any
+   pre-existing monthly usage are not aggregated. Prefer a low-traffic minute
+   boundary (`00:00 UTC` on the first of a month is ideal for the monthly cap) and
+   avoid a prolonged mixed-version rollout.
 4. Allow up to five minutes for pre-existing key metadata caches to expire after
-   grant changes. Check two keys from one project, a console session, and both
-   gateways: they should consume one allowance. Verify an unrelated project has
-   an independent allowance and unavailable admission returns 503, not a bypass.
+   grant changes. Check two keys from one project, a second free project with the
+   same owner, a console session, and both gateways: the two free projects share
+   the 100,000/month account allowance while keeping independent minute counters.
+   Verify a paid project on the same account is exempt from the monthly cap, an
+   unrelated account is fully independent, and unavailable admission returns 503,
+   not a bypass.
 
 ## Approving additional projects
 

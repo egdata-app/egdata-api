@@ -25,6 +25,8 @@ describe("exact per-key quota decision", () => {
         used: 1,
         remaining: 119,
         resetAt: Date.parse("2026-05-01T12:01:00.000Z"),
+        window: "minute",
+        windowSeconds: 60,
       },
       {
         name: "search",
@@ -32,6 +34,8 @@ describe("exact per-key quota decision", () => {
         used: 1,
         remaining: 299,
         resetAt: Date.parse("2026-05-01T12:01:00.000Z"),
+        window: "minute",
+        windowSeconds: 60,
       },
     ]);
     expect(decision.nextState).toEqual({

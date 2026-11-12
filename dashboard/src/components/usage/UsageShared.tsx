@@ -216,6 +216,7 @@ export const outcomeLabels: Record<string, string> = {
   missing_api_key: "API key missing",
   invalid_api_key: "API key invalid or revoked",
   rate_limited: "Request limit reached",
+  monthly_quota_exceeded: "Monthly free quota reached",
   key_inactive: "Key paused or revoked",
   key_expired: "Key expired",
   ip_denied: "IP not allowed",

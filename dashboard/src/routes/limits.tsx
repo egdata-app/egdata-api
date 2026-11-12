@@ -15,6 +15,7 @@ import {
 } from "../components/ui/TableAndTabs";
 import { Form, TextField } from "../components/ui/TextField";
 import { notify } from "../components/ui/Toast";
+import { MonthlyQuotaPanel } from "../components/usage/MonthlyQuotaPanel";
 import { dashboardClient, type LimitIncreaseRequestRecord } from "../lib/api";
 import { useDashboardAuth } from "../lib/auth-context";
 
@@ -107,12 +108,15 @@ function RateLimitsPage() {
         </h1>
         <p className="text-sm text-epic-text-muted mt-1">
           Compare exact request limits and ask for more capacity for your
-          project. Quotas use fixed, UTC-aligned 60-second windows and are
-          shared by all keys and console sessions in a project, across legacy
-          and v1 requests. Expensive v1 operations have shared project caps; a
-          429 response names the exhausted policy.
+          project. Quotas use fixed, UTC-aligned 60-second windows per project
+          and a shared 100,000-request calendar-month allowance across all free
+          projects, API keys, and console sessions on an account. Paid tiers are
+          exempt from the free monthly cap. Expensive v1 operations have shared
+          project caps; a 429 response names the exhausted policy.
         </p>
       </div>
+
+      <MonthlyQuotaPanel showLimitLink={false} />
 
       {/* Tier Cards */}
       {isAdmin && (
@@ -135,21 +139,21 @@ function RateLimitsPage() {
       <div className="grid md:grid-cols-3 gap-4">
         <TierCard
           name="Free"
-          rpm="120 requests/min per project"
+          rpm="120 requests/min per project · 100,000/month per account"
           current={selectedProject?.tier === "free"}
-          description="The default limit for new projects."
+          description="Default tier for new projects. Monthly allowance is shared across all free projects on your account and resets on the 1st at 00:00 UTC."
         />
         <TierCard
           name="Pro"
           rpm="1,200 requests/min per project"
           current={selectedProject?.tier === "pro"}
-          description="Request this limit when your project needs more capacity."
+          description="Exempt from the free monthly cap. Request this tier when your project needs sustained capacity."
         />
         <TierCard
           name="Enterprise"
           rpm="6,000 requests/min per project"
           current={selectedProject?.tier === "enterprise"}
-          description="Need a different limit? Choose Custom limit in your request."
+          description="Exempt from the free monthly cap. Need a different limit? Choose Custom limit in your request."
         />
       </div>
 

@@ -12,18 +12,31 @@ export function quotaNamespace() {
       let object = objects.get(name);
       if (!object) {
         const { sqlite } = sqliteD1();
-        const sql = {
-          exec(query: string, ...values: SQLInputValue[]) {
-            const statement = sqlite.prepare(query);
-            if (!statement.columns().length) {
-              statement.run(...values);
-              return { toArray: () => [] };
+        const storage = {
+          sql: {
+            exec(query: string, ...values: SQLInputValue[]) {
+              const statement = sqlite.prepare(query);
+              if (!statement.columns().length) {
+                statement.run(...values);
+                return { toArray: () => [] };
+              }
+              return { toArray: () => statement.all(...values) };
+            },
+          },
+          transactionSync<T>(fn: () => T): T {
+            sqlite.exec("BEGIN");
+            try {
+              const result = fn();
+              sqlite.exec("COMMIT");
+              return result;
+            } catch (error) {
+              sqlite.exec("ROLLBACK");
+              throw error;
             }
-            return { toArray: () => statement.all(...values) };
           },
         };
         object = new ApiKeyRateLimiter(
-          { storage: { sql } } as unknown as DurableObjectState,
+          { storage } as unknown as DurableObjectState,
           {} as DashboardEnv,
         );
         objects.set(name, object);

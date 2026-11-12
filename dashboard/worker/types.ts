@@ -95,6 +95,15 @@ export interface LimitIncreaseRequestRecord {
   reviewNote?: string;
 }
 
+export interface AccountMonthlyQuotaStatus {
+  used: number;
+  remaining: number;
+  allowance: number;
+  monthStart: string;
+  resetAt: string;
+  status: "ok" | "warning" | "critical" | "exhausted";
+}
+
 export interface DashboardEnv extends Env {
   EPIC_CLIENT_ID?: string;
   EPIC_CLIENT_SECRET?: string;
@@ -104,7 +113,7 @@ export interface DashboardEnv extends Env {
   ANTI_ABUSE_EDGE_SECRET?: string;
   ORIGIN_AUTH_TOKEN?: string;
   ENABLE_DEV_AUTH?: string;
-  /** One SQLite-backed quota object per environment and project ID. Binding name retained for deployment compatibility. */
+  /** One SQLite-backed quota object per environment and account ID. Binding name retained for deployment compatibility. */
   API_KEY_RATE_LIMITER: DurableObjectNamespace<
     import("./rate-limiter.js").ApiKeyRateLimiter
   >;

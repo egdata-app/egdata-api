@@ -44,6 +44,7 @@ import { removeKeyFromKv, syncKeyToKv } from "./key-cache.js";
 import { isDashboardAdmin, limitReviewRoutes } from "./limit-reviews.js";
 import { isValidIpOrCidr } from "./permissions.js";
 import { ProjectCreationError } from "./project-policy.js";
+import { readAccountMonthlyQuota } from "./project-quota.js";
 import { purgeDeletedProjects } from "./project-retention.js";
 import { handleEdgeApiProxy } from "./proxy.js";
 import {
@@ -183,6 +184,10 @@ dashboardApi.use("/analytics", requireDashboardUser);
 dashboardApi.use("/limit-requests/*", requireDashboardUser);
 
 dashboardApi.use("/limit-requests", requireDashboardUser);
+
+dashboardApi.use("/quota/*", requireDashboardUser);
+
+dashboardApi.use("/quota", requireDashboardUser);
 dashboardApi.route("/admin", limitReviewRoutes);
 
 const optionalHttpUrlSchema = z
@@ -595,6 +600,25 @@ dashboardApi.get("/limit-requests", async (c) => {
   const user = c.get("user");
   const requests = await listUserLimitRequests(c.env.DB, user.epicAccountId);
   return c.json({ requests });
+});
+
+dashboardApi.get("/quota", async (c) => {
+  const user = c.get("user");
+  try {
+    const monthly = await readAccountMonthlyQuota(c.env, user.epicAccountId);
+    return c.json({ monthly });
+  } catch {
+    return c.json(
+      {
+        error: {
+          code: "QUOTA_UNAVAILABLE",
+          message:
+            "Account monthly quota usage is temporarily unavailable. Please retry shortly.",
+        },
+      },
+      503,
+    );
+  }
 });
 
 dashboardApi.post("/limit-requests", async (c) => {

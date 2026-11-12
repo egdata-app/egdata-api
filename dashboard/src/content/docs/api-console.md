@@ -15,12 +15,14 @@ hostname. Use a regular API key for your applications.
 
 Console requests count toward the selected project's usage and endpoint alerts.
 Select **API console** in the Usage page's key filter to see these requests.
-All sessions and ordinary API keys for the same project share one global quota
-across legacy and v1 gateway requests, including shared v1 per-operation limits.
-Starting a fresh session or rotating a key never resets these limits. An approved
-custom project RPM overrides the tier's global quota on the next console request,
-without renewing the session; existing API key metadata can take up to five
-minutes to refresh.
+All sessions and ordinary API keys for the same project share one global 60-second
+quota across legacy and v1 gateway requests, including shared v1 per-operation
+limits, and free projects also share the account's 100,000-request calendar-month
+allowance. Starting a fresh session, rotating or deleting a key, or recreating a
+project never resets these limits. An approved custom project RPM overrides the
+tier's per-minute quota on the next console request without renewing the session,
+while keeping the monthly free cap unless the project tier is upgraded to Pro or
+Enterprise; existing API key metadata can take up to five minutes to refresh.
 
 Credentials remain in page memory and clear on project change, logout, or leaving
 the explorer. Logout also revokes sessions for that login. Copies of request
