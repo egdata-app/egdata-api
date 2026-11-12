@@ -145,6 +145,7 @@ function UsagePage() {
               selectedKey={search.apiVersion ?? "all"}
               onSelectionChange={(key) =>
                 updateSearch({
+                  ...search,
                   apiVersion: key === "legacy" || key === "v1" ? key : "all",
                 })
               }
