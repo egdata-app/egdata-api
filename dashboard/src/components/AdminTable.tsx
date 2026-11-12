@@ -170,8 +170,12 @@ export function AdminRowActions({
 }) {
   return (
     <MenuTrigger>
-      <Button variant="icon" aria-label={`Actions for ${label}`}>
-        <MoreHorizontal aria-hidden="true" className="w-4 h-4" />
+      <Button
+        variant="icon"
+        aria-label={`Actions for ${label}`}
+        className="w-9 h-9 p-0"
+      >
+        <MoreHorizontal aria-hidden="true" className="w-5 h-5 shrink-0" />
       </Button>
       <Popover placement="bottom end">
         <Menu
