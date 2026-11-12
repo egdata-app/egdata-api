@@ -64,7 +64,7 @@ Admission is persisted before the origin is called. A request that is admitted a
 
 Each quota check is one Durable Object RPC and one bounded state-row write on admission; denials are read-only. A planning estimate of 27.14M monthly non-preflight requests implies roughly $4.05 in incremental Durable Object request charges assuming unused included allowances, while one counter-row write per admission remains below the included 50M writes. This is not a total-cost guarantee; measure actual duration and writes in staging.
 
-Shared HTTP caching is disabled on outgoing v1 responses (`Cache-Control: private, no-cache`; `CDN-Cache-Control: no-store`). Every request, including `If-None-Match` revalidation, passes authentication and quota admission before the Worker serves from its internal post-auth edge cache or forwards to the origin. Conditional requests can still return `304 Not Modified`; the body is empty and the request was still admitted.
+Shared HTTP caching is disabled on outgoing authenticated v1 data responses (`Cache-Control: private, no-cache`; `CDN-Cache-Control: no-store`). Every authenticated data request, including `If-None-Match` revalidation, passes API key or dashboard-session authentication, permission checks, and quota admission before the Worker serves from its internal post-auth edge cache or forwards to the origin. Conditional requests can still return `304 Not Modified`; the body is empty and the request was still admitted. `/v1/health` and `/v1/open-api.json` are unauthenticated, skip quota admission and the Worker edge cache, and successful responses use `Cache-Control: public, max-age=60` with `CDN-Cache-Control: no-store`. CORS preflights also skip authentication and quota admission.
 
 ## Response envelope
 

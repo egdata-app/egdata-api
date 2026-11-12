@@ -73,11 +73,13 @@ function getDefaultCache(): Cache | null {
   return storage?.default ?? null;
 }
 
-function canonicalSearchParams(search: string): string {
+export function canonicalSearchParams(search: string): string {
   if (!search || search === "?") return "";
   const params = new URLSearchParams(search);
-  const entries = [...params.entries()].sort(
-    ([k1, v1], [k2, v2]) => k1.localeCompare(k2) || v1.localeCompare(v2),
+  // Query parsers commonly use the first value for repeated names. Sort names
+  // only; stable sorting preserves the original order of values per name.
+  const entries = [...params.entries()].sort(([k1], [k2]) =>
+    k1 < k2 ? -1 : k1 > k2 ? 1 : 0,
   );
   if (entries.length === 0) return "";
   const sorted = new URLSearchParams();
@@ -130,6 +132,10 @@ export function isV1RequestCacheable(
   return true;
 }
 
+function hasRangeCondition(request: Request): boolean {
+  return request.headers.has("range") || request.headers.has("if-range");
+}
+
 function parseSharedMaxAgeSeconds(headerValue: string | null): number | null {
   if (!headerValue) return null;
   if (
@@ -160,11 +166,12 @@ export function legacyResponseEdgeTtlSeconds(
   if (vary.trim() === "*" || /\b(?:cookie|authorization)\b/i.test(vary)) {
     return null;
   }
-  const cdnTtl = parseSharedMaxAgeSeconds(
-    response.headers.get("cloudflare-cdn-cache-control") ??
-      response.headers.get("cdn-cache-control"),
-  );
-  if (cdnTtl !== null) return cdnTtl;
+  // CDN-specific directives override Cache-Control. A present directive with
+  // no usable positive TTL (including no-store) must not fall through.
+  for (const name of ["cloudflare-cdn-cache-control", "cdn-cache-control"]) {
+    const value = response.headers.get(name);
+    if (value !== null) return parseSharedMaxAgeSeconds(value);
+  }
   return parseSharedMaxAgeSeconds(response.headers.get("cache-control"));
 }
 
@@ -238,7 +245,7 @@ export async function fetchV1WithEdgeCache(options: {
   const { request, ctx, pathname, search, fetchUpstream } = options;
   const method = request.method.toUpperCase();
 
-  if (!isV1RequestCacheable(method, pathname)) {
+  if (!isV1RequestCacheable(method, pathname) || hasRangeCondition(request)) {
     const response = await fetchUpstream(request);
     const cfStatus = response.headers.get("cf-cache-status");
     return {
@@ -381,7 +388,10 @@ export async function fetchLegacyWithEdgeCache(options: {
   const { request, ctx, pathname, search, fetchUpstream } = options;
   const method = request.method.toUpperCase();
 
-  if (!isLegacyRequestCacheable(request, pathname)) {
+  if (
+    !isLegacyRequestCacheable(request, pathname) ||
+    hasRangeCondition(request)
+  ) {
     const response = await fetchUpstream(request);
     const cfStatus = response.headers.get("cf-cache-status");
     return {

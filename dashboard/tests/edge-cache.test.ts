@@ -1,7 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { getLocalTelemetry } from "../worker/analytics";
 import { generateApiKeySecret, sha256Hex } from "../worker/crypto";
-import { etagMatches, v1EdgeCacheTtlSeconds } from "../worker/edge-cache";
+import {
+  canonicalSearchParams,
+  etagMatches,
+  legacyResponseEdgeTtlSeconds,
+  v1EdgeCacheTtlSeconds,
+} from "../worker/edge-cache";
 import { handleEdgeApiProxy } from "../worker/proxy";
 import type { CachedKeyMetadata, DashboardEnv } from "../worker/types";
 import { handleV1ApiProxy } from "../worker/v1";
@@ -196,6 +201,45 @@ afterEach(() => {
 });
 
 describe("Worker-level post-auth edge caching", () => {
+  it("canonicalizes distinct query keys without reordering repeated values", () => {
+    expect(canonicalSearchParams("?locale=en-US&country=US")).toBe(
+      canonicalSearchParams("?country=US&locale=en-US"),
+    );
+    expect(canonicalSearchParams("?sortDir=asc&sortDir=desc")).not.toBe(
+      canonicalSearchParams("?sortDir=desc&sortDir=asc"),
+    );
+  });
+
+  it("does not fall back past an explicit CDN cache directive", () => {
+    const response = (headers: Record<string, string>) =>
+      new Response("{}", { status: 200, headers });
+
+    expect(
+      legacyResponseEdgeTtlSeconds(
+        response({
+          "Cache-Control": "public, max-age=60",
+          "CDN-Cache-Control": "no-store",
+        }),
+      ),
+    ).toBeNull();
+    expect(
+      legacyResponseEdgeTtlSeconds(
+        response({
+          "Cache-Control": "public, max-age=60",
+          "CDN-Cache-Control": "public, max-age=300",
+          "Cloudflare-CDN-Cache-Control": "no-store",
+        }),
+      ),
+    ).toBeNull();
+    expect(
+      legacyResponseEdgeTtlSeconds(
+        response({
+          "Cache-Control": "public, max-age=60, s-maxage=300",
+        }),
+      ),
+    ).toBe(300);
+  });
+
   it("assigns tiered edge TTLs to v1 routes", () => {
     expect(v1EdgeCacheTtlSeconds("/v1/countries")).toBe(86_400);
     expect(v1EdgeCacheTtlSeconds("/v1/sitemap.xml")).toBe(3_600);
@@ -315,6 +359,81 @@ describe("Worker-level post-auth edge caching", () => {
       "HIT",
       "REVALIDATED",
     ]);
+  });
+
+  it("bypasses an existing edge entry for Range and If-Range requests", async () => {
+    const { caches, defaultCache } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+    const forwardedRanges: Array<string | null> = [];
+    const upstream = vi.fn(async (_url: string, init?: RequestInit) => {
+      forwardedRanges.push(new Headers(init?.headers).get("range"));
+      return new Response("full representation", {
+        status: 200,
+        headers: {
+          "Content-Type": "text/plain",
+          "Cache-Control": "private, no-cache",
+          ETag: '"range-test"',
+        },
+      });
+    });
+    vi.stubGlobal("fetch", upstream);
+
+    const { env, keyA } = await createTestHarness();
+    const ctx = createExecutionContext();
+    const url = "https://api.egdata.app/v1/offers/range-test";
+    const call = (extra: Record<string, string> = {}) =>
+      handleV1ApiProxy(
+        new Request(url, { headers: { "X-API-Key": keyA.rawKey, ...extra } }),
+        env,
+        ctx,
+        "/v1/offers/range-test",
+      );
+
+    await call();
+    await ctx.flush();
+    const matchCallsBeforeRange = defaultCache.match.mock.calls.length;
+    const ranged = await call({ Range: "bytes=0-3" });
+    expect(ranged.status).toBe(200);
+    expect(defaultCache.match).toHaveBeenCalledTimes(matchCallsBeforeRange);
+    expect(upstream).toHaveBeenCalledTimes(2);
+    expect(forwardedRanges[1]).toBe("bytes=0-3");
+
+    const matchCallsBeforeIfRange = defaultCache.match.mock.calls.length;
+    await call({ "If-Range": '"range-test"' });
+    expect(defaultCache.match).toHaveBeenCalledTimes(matchCallsBeforeIfRange);
+    expect(upstream).toHaveBeenCalledTimes(3);
+
+    const legacyUpstream = vi.fn(
+      async () =>
+        new Response("legacy representation", {
+          status: 200,
+          headers: {
+            "Content-Type": "text/plain",
+            "CDN-Cache-Control": "public, max-age=60",
+          },
+        }),
+    );
+    vi.stubGlobal("fetch", legacyUpstream);
+    const legacyUrl = "https://api.egdata.app/offers/range-test";
+    const legacyCall = (range?: string) =>
+      handleEdgeApiProxy(
+        new Request(legacyUrl, {
+          headers: {
+            "X-API-Key": keyA.rawKey,
+            ...(range ? { Range: range } : {}),
+          },
+        }),
+        env,
+        ctx,
+      );
+    await legacyCall();
+    await ctx.flush();
+    const legacyMatchCallsBeforeRange = defaultCache.match.mock.calls.length;
+    await legacyCall("bytes=0-3");
+    expect(defaultCache.match).toHaveBeenCalledTimes(
+      legacyMatchCallsBeforeRange,
+    );
+    expect(legacyUpstream).toHaveBeenCalledTimes(2);
   });
 
   it("never caches POST requests, error statuses, or no-store responses", async () => {
