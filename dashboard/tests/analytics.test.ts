@@ -4,6 +4,7 @@ import type {
   AnalyticsDashboardSummary,
   UsageTableResult,
 } from "../worker/analytics-types";
+import { UNATTRIBUTED_LEGACY_ID } from "../worker/analytics-types";
 import { signHmacToken } from "../worker/crypto";
 import type { DashboardEnv } from "../worker/types";
 import { sqliteD1 } from "./fixtures/sqlite";
@@ -101,6 +102,83 @@ async function setup() {
 }
 
 describe("usage authorization and aggregation", () => {
+  it("shows unowned legacy hits only in admin global scope and filters both API versions", async () => {
+    const { env, call, event } = await setup();
+    event();
+    event({ routeTemplate: "/offers/{id}" });
+    event({ routeTemplate: "/v1" });
+    event({ routeTemplate: "/v10/offers" });
+    const { default: worker } = await import("../worker/index");
+    Object.assign(env, {
+      REQUIRE_API_KEY: "false",
+      API_PROXY_HOST: "api.egdata.app",
+      UPSTREAM_API_ORIGIN: "https://origin-api.egdata.app",
+      ORIGIN_AUTH_TOKEN: "test-token",
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response("ok")),
+    );
+    vi.setSystemTime(new Date(now.getTime() - 60_000));
+    await worker.fetch(
+      new Request("https://api.egdata.app/free-games"),
+      env,
+      context,
+    );
+    vi.setSystemTime(now);
+    for (const path of [
+      "?scope=all&apiVersion=legacy",
+      "/table?scope=all&apiVersion=legacy",
+    ]) {
+      expect((await call(path)).status).toBe(403);
+    }
+    const own = (await (
+      await call("?apiVersion=legacy")
+    ).json()) as AnalyticsDashboardSummary;
+    expect(own.totals.requests).toBe(2);
+    const hidden = (await (
+      await call(`?apiVersion=legacy&projectId=${UNATTRIBUTED_LEGACY_ID}`)
+    ).json()) as AnalyticsDashboardSummary;
+    expect(hidden.totals.requests).toBe(0);
+    const legacy = (await (
+      await call("?scope=all&apiVersion=legacy", "admin")
+    ).json()) as AnalyticsDashboardSummary;
+    expect(legacy.totals.requests).toBe(3);
+    expect(legacy.projects).toContainEqual(
+      expect.objectContaining({
+        projectId: UNATTRIBUTED_LEGACY_ID,
+        label: "Unattributed legacy traffic",
+        requests: 1,
+      }),
+    );
+    const v1 = (await (
+      await call("?scope=all&apiVersion=v1", "admin")
+    ).json()) as AnalyticsDashboardSummary;
+    expect(v1.totals.requests).toBe(2);
+    const all = (await (
+      await call("?scope=all", "admin")
+    ).json()) as AnalyticsDashboardSummary;
+    expect(all.totals.requests).toBe(5);
+    const table = (await (
+      await call("/table?scope=all&apiVersion=legacy", "admin")
+    ).json()) as UsageTableResult;
+    expect(table.rows.map((r) => r.route).sort()).toEqual([
+      "/free-games",
+      "/offers/{id}",
+      "/v10/offers",
+    ]);
+    for (const dimension of ["projects", "keys"]) {
+      const named = (await (
+        await call(
+          `/table?scope=all&apiVersion=legacy&dimension=${dimension}&search=Unattributed`,
+          "admin",
+        )
+      ).json()) as UsageTableResult;
+      expect(named.rows).toHaveLength(1);
+      expect(named.rows[0].label).toBe("Unattributed legacy traffic");
+    }
+  });
+
   it("requires a live DB admin role for both global reporting routes, ignoring cookie claims", async () => {
     const { call, sqlite } = await setup();
     for (const path of ["?scope=all", "/table?scope=all"]) {
@@ -254,6 +332,7 @@ describe("usage authorization and aggregation", () => {
 
   it.each([
     "?scope=everyone",
+    "?apiVersion=v2",
     "?hours=-1",
     "?hours=721",
     "?hours=NaN",
@@ -367,6 +446,44 @@ describe("usage authorization and aggregation", () => {
         `ORDER BY p95LatencyMs ASC, d0 ASC${columns === 2 ? ", d1 ASC" : ""} LIMIT 26 OFFSET 25`,
       );
     }
+  });
+
+  it.each([
+    "legacy",
+    "v1",
+  ])("applies the %s filter to all remote charts, comparisons, and table pages", async (apiVersion) => {
+    const { env, call } = await setup();
+    env.CF_ACCOUNT_ID = "account";
+    env.CF_ANALYTICS_API_TOKEN = "token";
+    const queries: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url, init) => {
+        queries.push(String(init.body));
+        return Response.json({ data: [] });
+      }),
+    );
+    expect(
+      (await call(`?scope=all&apiVersion=${apiVersion}`, "admin")).status,
+    ).toBe(200);
+    expect(
+      (
+        await call(
+          `/table?scope=all&apiVersion=${apiVersion}&offset=25`,
+          "admin",
+        )
+      ).status,
+    ).toBe(200);
+    expect(queries).toHaveLength(10);
+    for (const query of queries) {
+      expect(query).toContain(
+        `AND ${apiVersion === "legacy" ? "NOT " : ""}(blob3 = '/v1' OR startsWith(blob3, '/v1/'))`,
+      );
+      expect(query).not.toContain("index1 =");
+    }
+    queries.length = 0;
+    await call(`/table?apiVersion=${apiVersion}`);
+    expect(queries[0]).toContain("index1 = 'alice'");
   });
 
   it("reports a remote failure instead of quietly substituting incomplete local history", async () => {

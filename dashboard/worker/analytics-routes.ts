@@ -12,6 +12,7 @@ const identifier = z
 const filters = z.object({
   hours: z.coerce.number().int().min(1).max(720).default(24),
   scope: z.enum(["project", "all"]).default("project"),
+  apiVersion: z.enum(["all", "legacy", "v1"]).default("all"),
   projectId: identifier,
   keyId: identifier,
   route: z.string().min(1).max(180).optional(),

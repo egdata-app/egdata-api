@@ -1,3 +1,6 @@
+// Reserved telemetry identity, never a real Epic account, project, or API key.
+export const UNATTRIBUTED_LEGACY_ID = "__legacy_unattributed__";
+
 export interface UsageMetrics {
   requests: number;
   cacheHits: number;
@@ -39,6 +42,7 @@ export interface UsageRow extends UsageMetrics {
 export interface UsageFilters {
   hours: number;
   scope?: "project" | "all";
+  apiVersion?: "all" | "legacy" | "v1";
   projectId?: string;
   keyId?: string;
   route?: string;
