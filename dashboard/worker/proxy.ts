@@ -1,4 +1,5 @@
 import { recordApiTelemetry } from "./analytics.js";
+import { UNATTRIBUTED_LEGACY_ID } from "./analytics-types.js";
 import { sha256Hex } from "./crypto.js";
 import { touchApiKeyLastUsed } from "./db.js";
 import { fetchLegacyWithEdgeCache } from "./edge-cache.js";
@@ -122,15 +123,53 @@ export async function handleEdgeApiProxy(
   ).cf;
   const country = cfProps?.country || "XX";
 
+  // Requests that bypass key validation have no trusted owner. Keep them in a
+  // reserved identity visible only through the admin's global analytics scope.
+  const recordUnattributed = (
+    response: Response,
+    limitOutcome = "ok",
+  ): Response => {
+    recordApiTelemetry(env, {
+      ownerEpicId: UNATTRIBUTED_LEGACY_ID,
+      keyId: UNATTRIBUTED_LEGACY_ID,
+      projectId: UNATTRIBUTED_LEGACY_ID,
+      routeTemplate: normalizeRouteTemplate(
+        upstreamPath,
+        response.headers.get("x-route-template"),
+      ),
+      method: request.method,
+      statusCode: response.status,
+      cacheStatus:
+        limitOutcome !== "ok"
+          ? "EDGE_BLOCK"
+          : response.status === 304
+            ? "REVALIDATED"
+            : response.headers.get("cf-cache-status") ||
+              response.headers.get("x-cache") ||
+              "DYNAMIC",
+      limitOutcome,
+      origin: originHeader ?? "(direct)",
+      clientIp: clientIp ?? "unknown",
+      userAgent,
+      country,
+      latencyMs: performance.now() - startMs,
+    });
+    return response;
+  };
+  const forwardUnattributed = async () =>
+    recordUnattributed(
+      await forwardToUpstream(
+        request,
+        env,
+        upstreamPath,
+        reqUrl.search,
+        cfProps,
+      ),
+    );
+
   // 1. Always pass CORS preflight OPTIONS directly (browsers never send X-API-Key on preflight)
   if (request.method === "OPTIONS") {
-    return forwardToUpstream(
-      request,
-      env,
-      upstreamPath,
-      reqUrl.search,
-      cfProps,
-    );
+    return forwardUnattributed();
   }
 
   // 2. Allow unauthenticated health/docs/auth/sitemap endpoints
@@ -139,13 +178,7 @@ export async function handleEdgeApiProxy(
     upstreamPath.endsWith("sitemap.xml") ||
     upstreamPath.startsWith("/auth/")
   ) {
-    return forwardToUpstream(
-      request,
-      env,
-      upstreamPath,
-      reqUrl.search,
-      cfProps,
-    );
+    return forwardUnattributed();
   }
 
   // 3. Extract and validate API key at the Cloudflare edge BEFORE checking CDN Cache
@@ -155,20 +188,17 @@ export async function handleEdgeApiProxy(
   if (!rawApiKey) {
     // Allow configured first-party web origins (e.g. https://egdata.app) if configured
     if (!requireKey || isAllowedFirstPartyOrigin(originHeader, env)) {
-      return forwardToUpstream(
-        request,
-        env,
-        upstreamPath,
-        reqUrl.search,
-        cfProps,
-      );
+      return forwardUnattributed();
     }
 
-    return edgeErrorJson(
-      401,
-      "MISSING_API_KEY",
-      "An API key is required. Pass your key in the `X-API-Key` header or create one in the egdata Developer Portal.",
-      originHeader,
+    return recordUnattributed(
+      edgeErrorJson(
+        401,
+        "MISSING_API_KEY",
+        "An API key is required. Pass your key in the `X-API-Key` header or create one in the egdata Developer Portal.",
+        originHeader,
+      ),
+      "missing_api_key",
     );
   }
 
@@ -176,11 +206,14 @@ export async function handleEdgeApiProxy(
   const keyMeta = await resolveApiKeyMetadata(env, ctx, keyHash);
 
   if (!keyMeta) {
-    return edgeErrorJson(
-      401,
-      "INVALID_API_KEY",
-      "The provided API key is invalid or has been revoked.",
-      originHeader,
+    return recordUnattributed(
+      edgeErrorJson(
+        401,
+        "INVALID_API_KEY",
+        "The provided API key is invalid or has been revoked.",
+        originHeader,
+      ),
+      "invalid_api_key",
     );
   }
 

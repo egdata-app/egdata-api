@@ -22,7 +22,7 @@ details retain the selected app/key/time window. CSV export traverses every
 matching page with a fixed end time and escapes spreadsheet formulas. Late
 analytics ingestion may still change results within that window.
 
-Administrators can select **All projects** on both Overview and Usage. This
+Administrators can select **All traffic** on both Overview and Usage. This
 includes recorded gateway traffic from every owner, with app/key names and
 rankings of endpoints and keys hitting limits. The scope is shared between the
 two screens during navigation. Changing scope or the selected project clears
@@ -30,6 +30,16 @@ incompatible Usage drilldown filters. Normal developers remain owner-scoped;
 project/key query parameters cannot widen that boundary. Each global request
 checks the current D1 `user_roles` admin role, not session role claims. Names
 are enriched from D1 without exposing key secrets, hashes, or prefixes.
+
+On `/analytics`, admins can filter **All API versions**, **Legacy (non-v1)**,
+or **v1**, including charts, comparisons, tables, CSV exports, and endpoint
+details. Legacy requests are recorded even when no key is required or a
+first-party origin bypasses key checks, including public health/docs/auth/sitemap
+paths, preflights, missing/invalid-key denials, and upstream errors. Requests
+without a verified key are grouped as **Unattributed legacy traffic**, using a
+reserved telemetry identity that is visible only in admin global scope. A supplied
+key on a bypassed route is not verified and does not establish attribution.
+Collection starts with deployment; previously unrecorded hits cannot be backfilled.
 
 Private session-authenticated reporting endpoints (outside the public API
 OpenAPI/operation registry):
@@ -40,7 +50,8 @@ OpenAPI/operation registry):
   `{ rows, hasMore, offset, end, source }`.
 
 Both accept `hours` (integer 1–720, default 24), `scope` (`project` by default,
-  or admin-only `all`), optional `projectId`, `keyId`, exact `route`, HTTP
+  or admin-only `all`), `apiVersion` (`all` by default, `legacy`, or `v1`),
+optional `projectId`, `keyId`, exact `route`, HTTP
 `method`, and ISO UTC `end`. The optional end time must be within the past
 60 days or at most one minute in the future. Tables also accept `dimension`
 (`endpoints`, `projects`, `keys`, `origins`, `ips`, `userAgents`), `search`

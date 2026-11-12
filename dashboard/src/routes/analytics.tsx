@@ -30,6 +30,7 @@ import { useDashboardAuth } from "../lib/auth-context";
 import { useUsage } from "../lib/usage";
 
 const searchSchema = z.object({
+  apiVersion: z.enum(["all", "legacy", "v1"]).optional(),
   projectId: z.string().optional(),
   keyId: z.string().optional(),
   route: z.string().optional(),
@@ -69,6 +70,7 @@ function UsagePage() {
   const filters: UsageFilters = {
     hours: Number(hours),
     scope: analyticsScope,
+    apiVersion: analyticsScope === "all" ? search.apiVersion : undefined,
     projectId,
     keyId: search.keyId,
   };
@@ -128,7 +130,7 @@ function UsagePage() {
               Usage
             </h1>
             {analyticsScope === "all" && (
-              <Tag tone="accent">Admin · All projects</Tag>
+              <Tag tone="accent">Admin · All traffic</Tag>
             )}
           </div>
           <p className="text-sm text-epic-text-muted mt-1">
@@ -137,6 +139,23 @@ function UsagePage() {
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
           <ScopeSelector />
+          {analyticsScope === "all" && (
+            <Select
+              aria-label="API version"
+              selectedKey={search.apiVersion ?? "all"}
+              onSelectionChange={(key) =>
+                updateSearch({
+                  ...search,
+                  apiVersion: key === "legacy" || key === "v1" ? key : "all",
+                })
+              }
+              className="w-40"
+            >
+              <SelectItem id="all">All API versions</SelectItem>
+              <SelectItem id="legacy">Legacy (non-v1)</SelectItem>
+              <SelectItem id="v1">v1</SelectItem>
+            </Select>
+          )}
           {analyticsScope !== "all" && (
             <Select
               aria-label="Filter by API key"
@@ -178,7 +197,10 @@ function UsagePage() {
       <div className="flex flex-wrap justify-between gap-3 items-center">
         <div className="flex flex-wrap items-center gap-2 text-xs text-epic-text-muted">
           {analyticsScope === "all" ? (
-            <span>All recorded application traffic</span>
+            <span>
+              Recorded gateway traffic, including legacy requests without API
+              keys
+            </span>
           ) : (
             <span>
               Project default: {quota.toLocaleString()} requests/min per key
@@ -188,7 +210,7 @@ function UsagePage() {
             <Button
               size="sm"
               variant="secondary"
-              onPress={() => updateSearch({})}
+              onPress={() => updateSearch({ apiVersion: search.apiVersion })}
             >
               App:{" "}
               {data?.projects.find((p) => p.projectId === search.projectId)
@@ -324,7 +346,7 @@ function EndpointDetail({
                 ? (data?.projects.find((p) => p.projectId === filters.projectId)
                     ?.label ?? filters.projectId)
                 : filters.scope === "all"
-                  ? "All projects"
+                  ? "All traffic"
                   : "Current project"}
             </p>
           </div>

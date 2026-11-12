@@ -28,7 +28,7 @@ export function ScopeSelector() {
         className="w-44"
       >
         <SelectItem id="project">Current project</SelectItem>
-        <SelectItem id="all">All projects</SelectItem>
+        <SelectItem id="all">All traffic</SelectItem>
       </Select>
     </div>
   );
@@ -213,6 +213,8 @@ export function UsageMetricsStrip({
 }
 export const outcomeLabels: Record<string, string> = {
   ok: "Allowed",
+  missing_api_key: "API key missing",
+  invalid_api_key: "API key invalid or revoked",
   rate_limited: "Request limit reached",
   key_inactive: "Key paused or revoked",
   key_expired: "Key expired",

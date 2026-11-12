@@ -8,6 +8,7 @@ import type {
   UsageTableFilters,
   UsageTableResult,
 } from "./analytics-types.js";
+import { UNATTRIBUTED_LEGACY_ID } from "./analytics-types.js";
 import type { DashboardEnv } from "./types.js";
 
 /** Only a route that has checked the DB admin role may supply a null owner. */
@@ -23,6 +24,8 @@ const dimensions = {
   ips: ["blob9", "blob11"],
   userAgents: ["blob10"],
 } satisfies Record<UsageDimension, string[]>;
+const unattributedLabel = "Unattributed legacy traffic";
+const unattributedDetail = "No verified API key or project";
 
 // Escape both string delimiters and backslashes before interpolating SQL text.
 function literal(value: string) {
@@ -44,6 +47,9 @@ function where(p: Params) {
     `timestamp < toDateTime('${end.slice(0, 19).replace("T", " ")}')`,
   ];
   if (p.ownerEpicId !== null) parts.push(`index1 = ${literal(p.ownerEpicId)}`);
+  const isV1 = "(blob3 = '/v1' OR startsWith(blob3, '/v1/'))";
+  if (p.apiVersion === "v1") parts.push(isV1);
+  if (p.apiVersion === "legacy") parts.push(`NOT ${isV1}`);
   if (p.projectId) parts.push(`blob2 = ${literal(p.projectId)}`);
   if (p.keyId) parts.push(`blob1 = ${literal(p.keyId)}`);
   if (p.route) parts.push(`blob3 = ${literal(p.route)}`);
@@ -117,6 +123,11 @@ function eventsFor(p: Params): Event[] {
       e.timestamp >= start &&
       e.timestamp < end &&
       (p.ownerEpicId === null || e.ownerEpicId === p.ownerEpicId) &&
+      (!p.apiVersion ||
+        p.apiVersion === "all" ||
+        (e.routeTemplate === "/v1" || e.routeTemplate.startsWith("/v1/")
+          ? "v1"
+          : "legacy") === p.apiVersion) &&
       (!p.projectId || e.projectId === p.projectId) &&
       (!p.keyId || e.keyId === p.keyId) &&
       (!p.route || e.routeTemplate === p.route) &&
@@ -219,6 +230,11 @@ async function enrich(
     }),
   );
   return rows.map((row, i) => {
+    if (
+      (dimension === "projects" ? row.projectId : row.keyId) ===
+      UNATTRIBUTED_LEGACY_ID
+    )
+      return { ...row, label: unattributedLabel, detail: unattributedDetail };
     const meta = results[i].results?.[0] as
       | { name: string; project?: string; owner: string }
       | undefined;
@@ -253,7 +269,15 @@ async function searchIds(
   if (p.ownerEpicId !== null) bindings.push(p.ownerEpicId);
   if (p.projectId) bindings.push(p.projectId);
   const { results } = await stmt.bind(...bindings).all<{ id: string }>();
-  return results.map((r) => r.id);
+  const ids = results.map((r) => r.id);
+  if (
+    p.ownerEpicId === null &&
+    `${unattributedLabel} ${unattributedDetail}`
+      .toLowerCase()
+      .includes((p.search ?? "").toLowerCase())
+  )
+    ids.push(UNATTRIBUTED_LEGACY_ID);
+  return ids;
 }
 
 export async function queryUsageTable(
