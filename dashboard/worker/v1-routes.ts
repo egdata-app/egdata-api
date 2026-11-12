@@ -1,3 +1,4 @@
+import { quotaForProject, tierQuotas } from "./project-quota.js";
 import type { ApiScope } from "./types.js";
 import { generatedV1Routes } from "./v1-routes.generated.js";
 
@@ -113,3 +114,69 @@ export const expensivePolicyLimits: Record<V1ExpensivePolicy, number> = {
   heavy: 60,
   bulk: 10,
 };
+
+/**
+ * Scales expensive operation limits proportionally to the project's effective
+ * RPM (`effectiveRpm / freeTierRpm`), clamped to `[1, effectiveRpm]`.
+ */
+export function expensivePolicyLimitForProject(
+  policy: V1ExpensivePolicy,
+  project: { tier: string; customRpm: number | null },
+): number {
+  const base = expensivePolicyLimits[policy];
+  const effectiveRpm = quotaForProject(project);
+  const scaled = Math.floor((base * effectiveRpm) / tierQuotas.free);
+  return Math.min(effectiveRpm, Math.max(1, scaled));
+}
+
+/**
+ * Maps legacy gateway paths to the same expensive policy tiers as `/v1` so
+ * callers cannot bypass per-operation limits via the legacy `/proxy` gateway.
+ */
+export function resolveLegacyExpensivePolicy(
+  pathname: string,
+  method: string,
+): V1ExpensivePolicy | undefined {
+  const upper = method.toUpperCase();
+  const isRead = upper === "GET" || upper === "HEAD";
+
+  if (pathname === "/offers" && isRead) return "offers-list";
+
+  if (
+    (pathname === "/autocomplete" && isRead) ||
+    (pathname === "/search/v2/search" && (isRead || upper === "POST")) ||
+    (pathname === "/search/changelog" && isRead) ||
+    (pathname === "/free-games/search" && isRead)
+  ) {
+    return "search";
+  }
+
+  if (
+    pathname === "/catalog" ||
+    pathname.startsWith("/catalog/") ||
+    pathname === "/builds/resolve-launcher-records"
+  ) {
+    return "bulk";
+  }
+
+  if (
+    pathname === "/graphql" ||
+    pathname === "/search/natural-language" ||
+    /^\/search\/[^/]+\/count$/.test(pathname) ||
+    pathname === "/multisearch" ||
+    pathname.startsWith("/multisearch/") ||
+    ((pathname === "/profiles" || pathname.startsWith("/profiles/")) &&
+      pathname !== "/profiles/sitemap.xml") ||
+    /^\/offers\/[^/]+\/og(?:\.webp)?$/.test(pathname) ||
+    /^\/sandboxes\/[^/]+\/og(?:\.webp)?$/.test(pathname) ||
+    pathname === "/game-awards/og" ||
+    pathname === "/free-games/og" ||
+    /^\/collections\/[^/]+(?:\/[^/]+)?(?:\/og)?$/.test(pathname) ||
+    /^\/promotions\/[^/]+$/.test(pathname) ||
+    /^\/sellers\/[^/]+(?:\/cover)?$/.test(pathname)
+  ) {
+    return "heavy";
+  }
+
+  return undefined;
+}

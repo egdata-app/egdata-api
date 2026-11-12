@@ -19,7 +19,7 @@ import {
 import {
   allowedMethodsForV1Path,
   canonicalV1Path,
-  expensivePolicyLimits,
+  expensivePolicyLimitForProject,
   isKnownV1Path,
   PUBLIC_V1_PATHS,
   resolveV1Route,
@@ -339,7 +339,12 @@ export async function handleV1ApiProxy(
   }
 
   const policies = route.expensive
-    ? [{ name: route.expensive, limit: expensivePolicyLimits[route.expensive] }]
+    ? [
+        {
+          name: route.expensive,
+          limit: expensivePolicyLimitForProject(route.expensive, meta),
+        },
+      ]
     : [];
 
   let admission: AdmissionResult;

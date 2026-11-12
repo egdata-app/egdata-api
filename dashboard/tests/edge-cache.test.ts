@@ -246,9 +246,119 @@ describe("Worker-level post-auth edge caching", () => {
     expect(v1EdgeCacheTtlSeconds("/v1/countries")).toBe(86_400);
     expect(v1EdgeCacheTtlSeconds("/v1/sitemap.xml")).toBe(3_600);
     expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/og.webp")).toBe(3_600);
+    expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/hltb")).toBe(3_600);
+    expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/igdb")).toBe(3_600);
+    expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/requirements")).toBe(3_600);
     expect(v1EdgeCacheTtlSeconds("/v1/tags")).toBe(900);
+    expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/achievements")).toBe(900);
+    expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/builds")).toBe(900);
     expect(v1EdgeCacheTtlSeconds("/v1/offers/top-sellers")).toBe(300);
+    expect(v1EdgeCacheTtlSeconds("/v1/offers")).toBe(300);
+    expect(v1EdgeCacheTtlSeconds("/v1/search")).toBe(300);
+    expect(v1EdgeCacheTtlSeconds("/v1/search/natural-language")).toBe(300);
     expect(v1EdgeCacheTtlSeconds("/v1/offers/abc")).toBe(60);
+  });
+
+  it("edge-caches POST /v1/search (303) and POST /v1/search/natural-language (200) by canonical body hash", async () => {
+    const { caches, defaultCache } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+
+    const upstream = vi.fn(async (url: string, init?: RequestInit) => {
+      const bodyText = init?.body ? await new Response(init.body).text() : "";
+      if (url.endsWith("/v1/search")) {
+        return new Response(null, {
+          status: 303,
+          headers: {
+            Location: `https://devs.egdata.app/proxy/v1/search?q=${encodeURIComponent(bodyText)}`,
+          },
+        });
+      }
+      return new Response(
+        JSON.stringify({ data: [{ query: bodyText }], meta: {} }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
+    vi.stubGlobal("fetch", upstream);
+
+    const { env, keyA, keyB } = await createTestHarness();
+    const ctx = createExecutionContext();
+
+    // 1. POST /v1/search -> MISS, stores 303
+    const s1 = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyA.rawKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: "alan", offerType: "BASE_GAME" }),
+      }),
+      env,
+      ctx,
+      "/v1/search",
+    );
+    await ctx.flush();
+    expect(s1.status).toBe(303);
+    expect(defaultCache.put).toHaveBeenCalledTimes(1);
+
+    // 2. Identical JSON with reordered keys -> HIT
+    const s2 = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyB.rawKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ offerType: "BASE_GAME", title: "alan" }),
+      }),
+      env,
+      ctx,
+      "/v1/search",
+    );
+    expect(s2.status).toBe(303);
+    expect(upstream).toHaveBeenCalledTimes(1);
+
+    // 3. POST /v1/search/natural-language -> MISS then HIT
+    const nl1 = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyA.rawKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: "cozy farming game", topK: 5 }),
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    await ctx.flush();
+    expect(nl1.status).toBe(200);
+    expect(upstream).toHaveBeenCalledTimes(2);
+
+    const nl2 = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyB.rawKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ topK: 5, query: "cozy farming game" }),
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    expect(nl2.status).toBe(200);
+    expect(upstream).toHaveBeenCalledTimes(2);
+
+    const statuses = getLocalTelemetry()
+      .slice(-4)
+      .map((e) => e.cacheStatus);
+    expect(statuses).toEqual(["MISS", "HIT", "MISS", "HIT"]);
   });
 
   it("caches v1 GET responses across keys after auth & quota admission while keeping per-request headers private", async () => {

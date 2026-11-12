@@ -40,7 +40,11 @@ const projectLimitsSchema = z
     customRpm: z.number().int().min(150).max(500_000).nullable(),
     reason: reasonSchema,
   })
-  .strict();
+  .strict()
+  .refine((data) => !(data.tier === "free" && data.customRpm !== null), {
+    message:
+      "Custom RPM overrides require pro or enterprise tier; free tier projects remain subject to the 100,000/month cap.",
+  });
 const invalid = {
   error: { code: "VALIDATION_ERROR", message: "Invalid fields or pagination." },
 };
