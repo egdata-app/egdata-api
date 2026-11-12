@@ -1,6 +1,11 @@
 import type { Context, Next } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
-import { bytesToHex, signHmacToken, verifyHmacToken } from "./crypto.js";
+import {
+  bytesToHex,
+  sha256Hex,
+  signHmacToken,
+  verifyHmacToken,
+} from "./crypto.js";
 import { upsertEpicUserAndDefaultProject } from "./db.js";
 import type { DashboardEnv, EpicSessionUser } from "./types.js";
 
@@ -85,6 +90,18 @@ export async function readDashboardSession(
   ) {
     return null;
   }
+
+  const tokenHash = await sha256Hex(rawToken);
+  // Use the D1 primary for auth checks; KV negative caching can delay revocations.
+  const revoked = await c.env.DB.prepare(
+    "SELECT 1 FROM dashboard_session_revocations WHERE token_hash = ? AND expires_at > ? LIMIT 1",
+  )
+    .bind(tokenHash, Date.now())
+    .first();
+  if (revoked) {
+    return null;
+  }
+
   return parsed.user;
 }
 
@@ -111,6 +128,34 @@ export async function issueDashboardSessionCookie(
     path: "/",
     maxAge: SESSION_TTL_SECONDS,
   });
+}
+
+export async function revokeDashboardSession(
+  c: Context<AuthHonoEnv>,
+): Promise<void> {
+  const rawToken = getCookie(c, SESSION_COOKIE_NAME);
+  if (!rawToken) return;
+
+  let parsed: SignedSessionPayload | null;
+  try {
+    const secret = getSessionSecret(c.env, c.req.url);
+    parsed = await verifyHmacToken<SignedSessionPayload>(rawToken, secret);
+  } catch {
+    // Ignore unconfigured secret or invalid token during logout
+    return;
+  }
+  if (!parsed || !Number.isFinite(parsed.exp) || Date.now() >= parsed.exp) {
+    return;
+  }
+
+  const tokenHash = await sha256Hex(rawToken);
+  await c.env.DB.prepare(
+    `INSERT INTO dashboard_session_revocations (token_hash, expires_at)
+     VALUES (?, ?)
+     ON CONFLICT(token_hash) DO UPDATE SET expires_at = excluded.expires_at`,
+  )
+    .bind(tokenHash, parsed.exp)
+    .run();
 }
 
 export function clearDashboardSessionCookie(c: Context<AuthHonoEnv>): void {

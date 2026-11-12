@@ -1,10 +1,9 @@
 import { Hono } from "hono";
 import { z } from "zod";
-import { requireDashboardUser } from "./epic-auth.js";
 import {
   signHmacToken,
-  verifyHmacToken,
   timingSafeStringEqual,
+  verifyHmacToken,
 } from "./crypto.js";
 import {
   importMergedRecord,
@@ -14,6 +13,7 @@ import {
   mergeLabel,
   projectOwned,
 } from "./endpoint-alerts.js";
+import { requireDashboardUser } from "./epic-auth.js";
 import type { DashboardEnv, EpicSessionUser } from "./types.js";
 
 type Context = { Bindings: DashboardEnv; Variables: { user: EpicSessionUser } };
@@ -210,7 +210,7 @@ export async function handleChangeIngestion(
     request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "";
   if (
     !env.CHANGELOG_INGEST_TOKEN ||
-    !timingSafeStringEqual(token, env.CHANGELOG_INGEST_TOKEN)
+    !(await timingSafeStringEqual(token, env.CHANGELOG_INGEST_TOKEN))
   ) {
     return new Response("Unauthorized", { status: 401 });
   }

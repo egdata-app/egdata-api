@@ -200,6 +200,9 @@ describe("HMAC session tokens and API key proxy cache preservation", () => {
         RATE_LIMITER_ENTERPRISE: {
           limit: vi.fn(async () => ({ success: true })),
         } as unknown as RateLimit,
+        RATE_LIMITER_DASHBOARD_API: {
+          limit: vi.fn(async () => ({ success: true })),
+        } as unknown as RateLimit,
         EMAIL: { send: vi.fn() } as unknown as SendEmail,
         ASSETS: { fetch: vi.fn() } as unknown as Fetcher,
         UPSTREAM_API_ORIGIN: "https://origin-api.egdata.app",

@@ -6,7 +6,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "upload_source_maps": true,
   "placement": { "mode": "off" },
-  "workers_dev": true,
+  "workers_dev": false,
   "preview_urls": false,
   // Dashboard only. Add api.egdata.app/* after an explicit production cutover.
   "routes": [{ "pattern": "devs.egdata.app", "custom_domain": true }],
@@ -70,6 +70,14 @@
       "namespace_id": "1003",
       "simple": {
         "limit": 6000,
+        "period": 60
+      }
+    },
+    {
+      "name": "RATE_LIMITER_DASHBOARD_API",
+      "namespace_id": "1004",
+      "simple": {
+        "limit": 120,
         "period": 60
       }
     }
