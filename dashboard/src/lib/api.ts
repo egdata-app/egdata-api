@@ -10,6 +10,8 @@ import type {
   UsageTableFilters,
   UsageTableResult,
 } from "../../worker/analytics-types";
+import type { DeveloperReceipt } from "../../worker/developer-receipts";
+import type { DeveloperStatus } from "../../worker/developer-status";
 
 export type {
   UsageDimension,
@@ -20,6 +22,8 @@ export type {
   UsageTableFilters,
   UsageTableResult,
 } from "../../worker/analytics-types";
+export type { DeveloperReceipt } from "../../worker/developer-receipts";
+export type { DeveloperStatus } from "../../worker/developer-status";
 
 import type {
   AccountMonthlyQuotaStatus,
@@ -49,6 +53,17 @@ export interface SessionResponse {
   projects: DashboardProject[];
   oauthConfigured: boolean;
   devAuthAvailable: boolean;
+  account?: DeveloperStatus;
+}
+
+export class DashboardApiError extends Error {
+  constructor(
+    message: string,
+    readonly code: string,
+    readonly status: number,
+  ) {
+    super(message);
+  }
 }
 
 function usageQuery(params: UsageTableFilters) {
@@ -77,13 +92,44 @@ export async function apiFetch<T>(
   };
 
   if (!res.ok) {
-    throw new Error(data?.error?.message || `Request failed (${res.status})`);
+    const code = data?.error?.code || "REQUEST_FAILED";
+    if (["AGREEMENT_REQUIRED", "EMAIL_VERIFICATION_REQUIRED"].includes(code))
+      window.dispatchEvent(new Event("egdata:account-changed"));
+    throw new DashboardApiError(
+      data?.error?.message || `Request failed (${res.status})`,
+      code,
+      res.status,
+    );
   }
 
   return data;
 }
 
 export const dashboardClient = {
+  getAgreementReceipts: (signal?: AbortSignal) =>
+    apiFetch<{ acceptances: DeveloperReceipt[] }>("/account/receipt", {
+      signal,
+    }),
+  requestEmailVerification: (email: string) =>
+    apiFetch<{ ok: boolean; pendingEmail: string }>("/account/email", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    }),
+  verifyEmail: (token: string) =>
+    apiFetch<DeveloperStatus>("/account/email/verify", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    }),
+  acceptTerms: (revision: string, version: string, sha256: string) =>
+    apiFetch<DeveloperStatus>("/account/agreements", {
+      method: "POST",
+      body: JSON.stringify({ revision, version, sha256, accepted: true }),
+    }),
+  deleteAccount: (confirmation: string) =>
+    apiFetch<{ ok: boolean; message: string }>("/account", {
+      method: "DELETE",
+      body: JSON.stringify({ confirmation }),
+    }),
   getAdminUsers: (search: string, offset: number, signal?: AbortSignal) =>
     apiFetch<AdminPage<AdminUser>>(
       `/admin/users?${new URLSearchParams({ search, offset: String(offset) })}`,

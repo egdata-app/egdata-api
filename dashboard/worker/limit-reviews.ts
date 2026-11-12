@@ -2,8 +2,10 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { projectAudit } from "./admin-audit.js";
 import { adminManagementRoutes } from "./admin-routes.js";
+import { developerMailAdmin } from "./developer-mail-admin.js";
 import { requireDashboardUser } from "./epic-auth.js";
 import { invalidateLocalKeyCache } from "./key-cache.js";
+import { privacyRequestRoutes } from "./privacy-requests.js";
 import type {
   DashboardEnv,
   EpicSessionUser,
@@ -57,6 +59,8 @@ const listSchema = z.object({
 });
 
 limitReviewRoutes.route("/", adminManagementRoutes);
+limitReviewRoutes.route("/privacy-requests", privacyRequestRoutes);
+limitReviewRoutes.route("/notifications", developerMailAdmin);
 
 limitReviewRoutes.get("/limit-requests", async (c) => {
   const parsed = listSchema.safeParse(c.req.query());

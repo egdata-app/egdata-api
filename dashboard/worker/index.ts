@@ -26,12 +26,16 @@ import {
   updateProject,
   upsertEpicUserAndDefaultProject,
 } from "./db.js";
-import { sendLimitIncreaseRequestEmail } from "./email.js";
 import {
-  ingestUsage,
-  type UsageEvent,
-  usageEventSchema,
-} from "./endpoint-alerts.js";
+  developerAccount,
+  publicLegalDocument,
+  publicLegalHistory,
+} from "./developer-account.js";
+import { deliverDeveloperMail } from "./developer-mail.js";
+import { ingestMailEvent } from "./developer-mail-events.js";
+import { developerStatus } from "./developer-status.js";
+import { sendLimitIncreaseRequestEmail } from "./email.js";
+import { ingestUsage, usageEventSchema } from "./endpoint-alerts.js";
 import {
   clearDashboardSessionCookie,
   handleEpicOAuthCallback,
@@ -43,6 +47,7 @@ import {
 import { removeKeyFromKv, syncKeyToKv } from "./key-cache.js";
 import { isDashboardAdmin, limitReviewRoutes } from "./limit-reviews.js";
 import { isValidIpOrCidr } from "./permissions.js";
+import { purgePrivacyRecords } from "./privacy-retention.js";
 import { ProjectCreationError } from "./project-policy.js";
 import { readAccountMonthlyQuota } from "./project-quota.js";
 import { purgeDeletedProjects } from "./project-retention.js";
@@ -155,12 +160,18 @@ dashboardApi.get("/auth/session", async (c) => {
     });
   }
 
-  const projects = await upsertEpicUserAndDefaultProject(c.env.DB, user);
+  const account = await developerStatus(c.env, user.epicAccountId);
+  const projects = await upsertEpicUserAndDefaultProject(
+    c.env.DB,
+    user,
+    account.eligible,
+  );
   return c.json({
     authenticated: true,
     isAdmin: await isDashboardAdmin(c.env, user),
     user,
-    projects,
+    projects: account.eligible ? projects : [],
+    account,
     oauthConfigured: hasEpicCredentials,
     devAuthAvailable: !hasEpicCredentials && isLocal,
   });
@@ -682,6 +693,7 @@ dashboardApi.post("/limit-requests", async (c) => {
 const rootApp = new Hono<AppContext>();
 
 dashboardApi.route("/alerts", alertRoutes);
+dashboardApi.route("/account", developerAccount);
 dashboardApi.route("/console-sessions", consoleSessionRoutes);
 
 rootApp.route("/_dashboard/api", dashboardApi);
@@ -689,7 +701,14 @@ rootApp.route("/_dashboard/api", dashboardApi);
 export { ApiKeyRateLimiter } from "./rate-limiter.js";
 
 export default {
-  async queue(batch: MessageBatch<UsageEvent>, env: DashboardEnv) {
+  async queue(batch: MessageBatch<unknown>, env: DashboardEnv) {
+    if (batch.queue === "egdata-developer-email-events") {
+      for (const message of batch.messages) {
+        await ingestMailEvent(env, message.body);
+        message.ack();
+      }
+      return;
+    }
     if (batch.queue.endsWith("-dead")) {
       console.error(
         JSON.stringify({
@@ -739,16 +758,28 @@ export default {
     }
     await ingestUsage(
       env.DB,
-      batch.messages.map((m) => m.body),
+      batch.messages.map((m) => usageEventSchema.parse(m.body)),
     );
     batch.ackAll();
   },
   async scheduled(_event: ScheduledController, env: DashboardEnv) {
+    await deliverDeveloperMail(env);
+    if (_event.cron !== "17 3 * * *") return;
     await purgeDeletedProjects(env.DB);
+    await purgePrivacyRecords(env.DB);
     const oldest = new Date(Date.now() - 34 * 86_400_000)
       .toISOString()
       .slice(0, 10);
     await env.DB.batch([
+      env.DB.prepare("DELETE FROM account_closures WHERE purge_after<?").bind(
+        Date.now(),
+      ),
+      env.DB.prepare(
+        "DELETE FROM legal_acceptances WHERE retain_until IS NOT NULL AND retain_until<?",
+      ).bind(Date.now()),
+      env.DB.prepare("DELETE FROM developer_mail WHERE created_at<?").bind(
+        Date.now() - 30 * 86_400_000,
+      ),
       env.DB.prepare("DELETE FROM console_sessions WHERE expires_at <= ?").bind(
         Date.now(),
       ),
@@ -799,6 +830,28 @@ export default {
       return handleChangeIngestion(request, env);
     }
     if (
+      url.pathname === "/legal/history" &&
+      ["GET", "HEAD"].includes(request.method)
+    ) {
+      const response = await publicLegalHistory(env.DB);
+      return request.method === "HEAD"
+        ? new Response(null, response)
+        : response;
+    }
+    const legalPath = /^\/(terms|privacy)(?:\/([A-Za-z0-9._-]+))?$/.exec(
+      url.pathname,
+    );
+    if (legalPath && ["GET", "HEAD"].includes(request.method)) {
+      const response = await publicLegalDocument(
+        env.DB,
+        legalPath[1] as "terms" | "privacy",
+        legalPath[2],
+      );
+      return request.method === "HEAD"
+        ? new Response(null, response)
+        : response;
+    }
+    if (
       url.pathname === "/_dashboard/reference/history" &&
       request.method === "GET"
     ) {
@@ -828,7 +881,7 @@ export default {
       if (!import.meta.env.DEV) {
         headers.set(
           "Content-Security-Policy",
-          "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://cdn.egdata.app https://*.epicgames.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'; frame-ancestors 'none'",
+          "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.egdata.app https://*.epicgames.com; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'; frame-ancestors 'none'",
         );
       }
       headers.set("X-Content-Type-Options", "nosniff");

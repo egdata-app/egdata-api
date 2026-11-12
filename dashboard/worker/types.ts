@@ -104,7 +104,11 @@ export interface AccountMonthlyQuotaStatus {
   status: "ok" | "warning" | "critical" | "exhausted";
 }
 
-export interface DashboardEnv extends Env {
+export interface DashboardEnv
+  extends Omit<
+    Env,
+    "EPIC_CLIENT_ID" | "EPIC_CLIENT_SECRET" | "ENABLE_DEV_AUTH"
+  > {
   EPIC_CLIENT_ID?: string;
   EPIC_CLIENT_SECRET?: string;
   DASHBOARD_SESSION_SECRET?: string;

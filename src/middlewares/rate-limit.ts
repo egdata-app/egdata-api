@@ -6,7 +6,6 @@ import {
   type Store,
 } from "hono-rate-limiter";
 import { Redis as IORedis } from "ioredis";
-import { getAikidoAnonymousIdentity } from "../utils/aikido-rate-limit-group.js";
 import { consola } from "../utils/logger.js";
 
 const RATE_LIMIT_PREFIX = "egdata:ratelimit:";
@@ -191,7 +190,7 @@ const clientKey = (c: Context) => {
     return ip;
   }
 
-  return getAikidoAnonymousIdentity(c.req.raw.headers)?.id ?? "unknown";
+  return "unknown";
 };
 
 const rateLimitHandler = (message: string) => {

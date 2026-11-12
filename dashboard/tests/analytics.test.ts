@@ -34,6 +34,7 @@ async function setup() {
   sqlite.exec(
     readFileSync("migrations/0005_dashboard_session_revocations.sql", "utf8"),
   );
+  sqlite.exec(readFileSync("migrations/0008_developer_accounts.sql", "utf8"));
   sqlite.exec(
     readFileSync("migrations/0004_limit_request_reviews.sql", "utf8"),
   );
@@ -102,6 +103,53 @@ async function setup() {
 }
 
 describe("usage authorization and aggregation", () => {
+  it("removes client identifiers before storage and only returns coarse dimensions", async () => {
+    const { env, event, call } = await setup();
+    event({
+      clientIp: "203.0.113.22",
+      userAgent: "Mozilla/5.0 private-user-marker",
+      origin: "https://private.example",
+    });
+    const { getLocalTelemetry } = await import("../worker/analytics");
+    for (const value of [
+      JSON.stringify(getLocalTelemetry()),
+      JSON.stringify(vi.mocked(env.ANALYTICS.writeDataPoint).mock.calls),
+    ]) {
+      expect(value).not.toContain("203.0.113.22");
+      expect(value).not.toContain("private-user-marker");
+      expect(value).not.toContain("private.example");
+    }
+    const countries = (await (
+      await call("/table?dimension=ips")
+    ).json()) as UsageTableResult;
+    expect(countries.rows[0]).toMatchObject({
+      label: "ES",
+      detail: "Country only",
+    });
+    const clients = (await (
+      await call("/table?dimension=userAgents")
+    ).json()) as UsageTableResult;
+    expect(clients.rows[0].label).toBe("browser");
+    env.CF_ACCOUNT_ID = "account";
+    env.CF_ANALYTICS_API_TOKEN = "token";
+    const queries: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url, init) => {
+        queries.push(String(init.body));
+        return Response.json({ data: [] });
+      }),
+    );
+    for (const dimension of ["ips", "origins", "userAgents"])
+      await call(`/table?dimension=${dimension}&search=private`);
+    expect(queries[0]).not.toContain("blob9");
+    expect(queries[1]).toContain(
+      "if(blob8 = '(direct)' OR blob8 = '', '(direct)', '(present)')",
+    );
+    expect(queries[2]).toContain(
+      "if(blob12 = 'privacy-v1', blob10, 'legacy (redacted)')",
+    );
+  });
   it("shows unowned legacy hits only in admin global scope and filters both API versions", async () => {
     const { env, call, event } = await setup();
     event();

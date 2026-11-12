@@ -9,10 +9,15 @@ import {
 } from "react";
 import {
   type DashboardProject,
+  type DeveloperStatus,
   dashboardClient,
   type EpicSessionUser,
   type SessionResponse,
 } from "./api";
+import {
+  clearVerificationToken,
+  rememberVerificationLink,
+} from "./email-verification";
 
 interface DashboardAuthContextValue {
   loading: boolean;
@@ -28,6 +33,8 @@ interface DashboardAuthContextValue {
   devAuthAvailable: boolean;
   refreshSession: () => Promise<void>;
   logout: () => Promise<void>;
+  account: DeveloperStatus | null;
+  sessionError: boolean;
 }
 
 const DashboardAuthContext = createContext<DashboardAuthContextValue | null>(
@@ -40,6 +47,7 @@ export function DashboardAuthProvider({
   children: React.ReactNode;
 }) {
   const [loading, setLoading] = useState(true);
+  const [sessionError, setSessionError] = useState(false);
   const [session, setSession] = useState<SessionResponse>({
     authenticated: false,
     isAdmin: false,
@@ -60,11 +68,14 @@ export function DashboardAuthProvider({
       const res = await dashboardClient.getSession();
       if (generation !== sessionGeneration.current) return;
       setSession(res);
+      setSessionError(false);
+      if (res.account?.eligible === false)
+        window.dispatchEvent(new Event("egdata:clear-credentials"));
       if (res.projects.length > 0) {
         setSelectedProjectId((prev) =>
           res.projects.some((p) => p.id === prev) ? prev : res.projects[0].id,
         );
-      }
+      } else setSelectedProjectId("");
     } catch {
       if (generation !== sessionGeneration.current) return;
       setSession({
@@ -75,19 +86,47 @@ export function DashboardAuthProvider({
         oauthConfigured: false,
         devAuthAvailable: false,
       });
+      setSessionError(true);
+      window.dispatchEvent(new Event("egdata:clear-credentials"));
     } finally {
       if (generation === sessionGeneration.current) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
+    rememberVerificationLink();
     void refreshSession();
+    const channel =
+      typeof BroadcastChannel === "undefined"
+        ? null
+        : new BroadcastChannel("egdata-account");
+    const refresh = () => {
+      void refreshSession();
+    };
+    const changed = () => {
+      window.dispatchEvent(new Event("egdata:clear-credentials"));
+      channel?.postMessage("changed");
+      refresh();
+    };
+    if (channel)
+      channel.onmessage = () => {
+        window.dispatchEvent(new Event("egdata:clear-credentials"));
+        refresh();
+      };
+    window.addEventListener("focus", refresh);
+    window.addEventListener("egdata:account-changed", changed);
+    return () => {
+      channel?.close();
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("egdata:account-changed", changed);
+    };
   }, [refreshSession]);
 
   const logout = useCallback(async () => {
     ++sessionGeneration.current;
     window.dispatchEvent(new Event("egdata:clear-credentials"));
     await dashboardClient.logout();
+    clearVerificationToken();
     ++sessionGeneration.current;
     setSelectedProjectId("");
     setAnalyticsScope("project");
@@ -98,6 +137,7 @@ export function DashboardAuthProvider({
       user: null,
       projects: [],
     }));
+    window.dispatchEvent(new Event("egdata:account-changed"));
   }, []);
 
   const selectedProject =
@@ -109,6 +149,8 @@ export function DashboardAuthProvider({
     <DashboardAuthContext.Provider
       value={{
         loading,
+        account: session.account ?? null,
+        sessionError,
         authenticated: session.authenticated,
         isAdmin: session.isAdmin,
         analyticsScope: session.isAdmin ? analyticsScope : "project",

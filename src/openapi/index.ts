@@ -90,6 +90,8 @@ export function buildOpenApiDocument(): OpenAPIV3.Document {
     paths,
     components,
   });
+  document.info.description +=
+    " The updated origin removes Aikido runtime instrumentation, telemetry and Aikido-specific blocking. Existing authentication, origin access controls, gateway quotas and legacy rate limits still apply; deployment is separate from contract publication.";
   return withProjectGatewayQuota(document);
 }
 

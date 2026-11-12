@@ -16,7 +16,7 @@
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1,
-    "redact_query_string": false,
+    "redact_query_string": true,
     "logs": {
       "enabled": true,
       "head_sampling_rate": 1,
@@ -115,6 +115,13 @@
     ],
     "consumers": [
       {
+        "queue": "egdata-developer-email-events",
+        "max_batch_size": 50,
+        "max_batch_timeout": 5,
+        "max_retries": 8,
+        "dead_letter_queue": "egdata-developer-email-dead"
+      },
+      {
         "queue": "egdata-endpoint-usage",
         "max_batch_size": 50,
         "max_batch_timeout": 10,
@@ -129,7 +136,7 @@
       }
     ]
   },
-  "triggers": { "crons": ["17 3 * * *"] },
+  "triggers": { "crons": ["*/5 * * * *", "17 3 * * *"] },
   "vars": {
     "USAGE_TRACKING_ENABLED": "true",
     "USAGE_TRACKING_STARTED_AT": "2026-11-11T13:47:54.991Z",
