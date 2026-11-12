@@ -60,7 +60,7 @@ function where(p: Params) {
 const metricSql = `SUM(_sample_interval * double1) AS requests,
   SUM(_sample_interval * double4) AS cacheHits,
   SUM(_sample_interval * double3) AS rateLimited,
-  SUM(_sample_interval * if(blob7 != 'ok' AND blob7 != 'rate_limited', 1, 0)) AS blockedPolicy,
+  SUM(_sample_interval * if(blob7 != 'ok' AND blob7 != 'rate_limited' AND blob7 != 'monthly_quota_exceeded', 1, 0)) AS blockedPolicy,
   SUM(_sample_interval * double5) AS errors,
   100 * SUM(_sample_interval * double4) / SUM(_sample_interval * double1) AS cacheHitRate,
   100 * SUM(_sample_interval * double5) / SUM(_sample_interval * double1) AS errorRate,
@@ -153,10 +153,16 @@ function aggregate(events: Event[]): UsageMetrics {
     cacheHits,
     cacheHitRate: requests ? (cacheHits / requests) * 100 : 0,
     rateLimited: events.filter(
-      (e) => e.statusCode === 429 || e.limitOutcome === "rate_limited",
+      (e) =>
+        e.statusCode === 429 ||
+        e.limitOutcome === "rate_limited" ||
+        e.limitOutcome === "monthly_quota_exceeded",
     ).length,
     blockedPolicy: events.filter(
-      (e) => !["ok", "rate_limited"].includes(e.limitOutcome),
+      (e) =>
+        !["ok", "rate_limited", "monthly_quota_exceeded"].includes(
+          e.limitOutcome,
+        ),
     ).length,
     errors,
     errorRate: requests ? (errors / requests) * 100 : 0,

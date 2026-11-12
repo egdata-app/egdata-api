@@ -68,6 +68,8 @@ async function setup(
         used: 1,
         remaining: policy.limit - 1,
         resetAt: Date.now() + 60_000,
+        window: policy.window ?? "minute",
+        windowSeconds: policy.window === "month" ? 2_592_000 : 60,
       })),
     };
   });
@@ -269,9 +271,12 @@ describe("v1 Worker gateway", () => {
     expect(res.status).toBe(200);
     expect(admitCalls).toHaveLength(1);
     expect(admitCalls[0].keyId).toBe(meta.keyId);
-    expect(admitCalls[0].policies).toEqual([{ name: "global", limit: 120 }]);
+    expect(admitCalls[0].policies).toEqual([
+      { name: "global", limit: 120, window: "minute" },
+      { name: "monthly", limit: 100_000, window: "month" },
+    ]);
     expect(env.API_KEY_RATE_LIMITER.idFromName).toHaveBeenCalledWith(
-      `project:test:${meta.projectId}`,
+      `account:test:${meta.ownerEpicId}`,
     );
     expect(upstream).toHaveBeenCalledTimes(1);
     const [url, init] = upstream.mock.calls[0];
@@ -331,12 +336,14 @@ describe("v1 Worker gateway", () => {
           resetAt: Date.now() + 42_000,
           retryAfter: 42,
           exhaustedPolicy: "global",
-          policies: request.policies.map((policy) => ({
+          policies: request.policies.map((policy: any) => ({
             name: policy.name,
             limit: policy.limit,
             used: policy.limit,
             remaining: 0,
             resetAt: Date.now() + 42_000,
+            window: policy.window ?? "minute",
+            windowSeconds: policy.window === "month" ? 2_592_000 : 60,
           })),
         }),
       },
@@ -374,7 +381,8 @@ describe("v1 Worker gateway", () => {
       "/v1/offers", // operation listOffers applies the offers-list policy
     );
     expect(admitCalls[0].policies).toEqual([
-      { name: "global", limit: 120 },
+      { name: "global", limit: 120, window: "minute" },
+      { name: "monthly", limit: 100_000, window: "month" },
       { name: "offers-list", limit: 5 },
     ]);
     vi.unstubAllGlobals();
@@ -391,7 +399,10 @@ describe("v1 Worker gateway", () => {
       ctx,
       "/v1/countries",
     );
-    expect(admitCalls[0].policies[0]).toEqual({ name: "global", limit: 450 });
+    expect(admitCalls[0].policies).toEqual([
+      { name: "global", limit: 450, window: "minute" },
+      { name: "monthly", limit: 100_000, window: "month" },
+    ]);
     vi.unstubAllGlobals();
   });
 

@@ -17,6 +17,7 @@ export function useUsageResource<T>(
   error?: string;
   loading: boolean;
   updatedAt?: number;
+  refreshKey: number;
   refresh: () => void;
 } {
   const key = JSON.stringify(params);
@@ -72,6 +73,7 @@ export function useUsageResource<T>(
   }, [autoRefresh]);
   return {
     ...(state.key === key && params ? state : { loading: Boolean(params) }),
+    refreshKey: revision,
     refresh: () => setRevision((r) => r + 1),
   };
 }

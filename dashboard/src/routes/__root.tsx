@@ -495,6 +495,12 @@ function UnauthenticatedLanding({
               <span className="font-mono text-epic-text">120 requests/min</span>
             </div>
             <div className="flex items-center justify-between">
+              <span>Free allowance per account</span>
+              <span className="font-mono text-epic-text">
+                100,000 requests/month
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
               <span>Pro limit per project</span>
               <span className="font-mono text-epic-accent">
                 1,200 requests/min

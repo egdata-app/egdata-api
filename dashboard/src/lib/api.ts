@@ -22,6 +22,7 @@ export type {
 } from "../../worker/analytics-types";
 
 import type {
+  AccountMonthlyQuotaStatus,
   AllowedHttpMethod,
   ApiScope,
   DashboardApiKey,
@@ -31,6 +32,7 @@ import type {
 } from "../../worker/types";
 
 export type {
+  AccountMonthlyQuotaStatus,
   AllowedHttpMethod,
   AnalyticsDashboardSummary,
   ApiScope,
@@ -229,6 +231,9 @@ export const dashboardClient = {
     apiFetch<{ ok: boolean; generated: number }>("/analytics/simulate", {
       method: "POST",
     }),
+
+  getMonthlyQuota: (signal?: AbortSignal) =>
+    apiFetch<{ monthly: AccountMonthlyQuotaStatus }>("/quota", { signal }),
 
   getLimitRequests: () =>
     apiFetch<{ requests: LimitIncreaseRequestRecord[] }>("/limit-requests"),

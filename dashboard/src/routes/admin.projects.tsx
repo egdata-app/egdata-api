@@ -393,7 +393,9 @@ function Projects({ owner }: { owner: string }) {
               }}
             />
             <p className="text-xs text-epic-text-muted">
-              Shared by all project keys and console sessions.{" "}
+              Shared by all project keys and console sessions. Changing custom
+              RPM alone on a free project keeps the 100,000/month free-account
+              allowance; switch tier to Pro or Enterprise to exempt the project.{" "}
               {propagationNotice}
             </p>
             <TextField

@@ -15,6 +15,7 @@ import { Button, buttonStyles } from "../components/ui/Button";
 import { Tag } from "../components/ui/Controls";
 import { notify } from "../components/ui/Toast";
 import { AdminOverview } from "../components/usage/AdminOverview";
+import { MonthlyQuotaPanel } from "../components/usage/MonthlyQuotaPanel";
 import {
   Coverage,
   Freshness,
@@ -109,6 +110,8 @@ function ProjectOverview() {
           </Link>
         </div>
       </div>
+
+      <MonthlyQuotaPanel refreshKey={result.refreshKey} />
 
       {/* KPI Cards */}
       <div className="flex flex-wrap justify-between items-center gap-3">

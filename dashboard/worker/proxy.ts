@@ -5,7 +5,11 @@ import { touchApiKeyLastUsed } from "./db.js";
 import { fetchLegacyWithEdgeCache } from "./edge-cache.js";
 import { resolveApiKeyMetadata } from "./key-cache.js";
 import { evaluateKeyPermissions, originMatchesPattern } from "./permissions.js";
-import { admitProjectRequest, rateLimitHeaders } from "./project-quota.js";
+import {
+  admitProjectRequest,
+  MONTHLY_POLICY_NAME,
+  rateLimitHeaders,
+} from "./project-quota.js";
 import type { AdmissionResult } from "./rate-limiter-core.js";
 import type { DashboardEnv } from "./types.js";
 import { forwardToUpstream } from "./upstream.js";
@@ -283,6 +287,7 @@ export async function handleEdgeApiProxy(
   const quotaHeaders = rateLimitHeaders(admission);
 
   if (!admission.allowed) {
+    const monthlyExhausted = admission.exhaustedPolicy === MONTHLY_POLICY_NAME;
     recordApiTelemetry(env, {
       ownerEpicId: keyMeta.ownerEpicId,
       keyId: keyMeta.keyId,
@@ -291,7 +296,9 @@ export async function handleEdgeApiProxy(
       method: request.method,
       statusCode: 429,
       cacheStatus: "EDGE_BLOCK",
-      limitOutcome: "rate_limited",
+      limitOutcome: monthlyExhausted
+        ? "monthly_quota_exceeded"
+        : "rate_limited",
       origin: originHeader ?? "(direct)",
       clientIp: clientIp ?? "unknown",
       userAgent,
@@ -301,8 +308,10 @@ export async function handleEdgeApiProxy(
 
     return edgeErrorJson(
       429,
-      "RATE_LIMITED",
-      `Project rate limit exceeded for ${keyMeta.tier} tier. All API keys share this allowance. Request higher limits in the egdata Developer Portal.`,
+      monthlyExhausted ? "MONTHLY_QUOTA_EXCEEDED" : "RATE_LIMITED",
+      monthlyExhausted
+        ? "Free account monthly quota of 100,000 requests is exhausted across all free projects, API keys, and console sessions until the next calendar month at 00:00 UTC. Request higher limits in the egdata Developer Portal."
+        : `Project rate limit exceeded for ${keyMeta.tier} tier. All API keys share this allowance. Request higher limits in the egdata Developer Portal.`,
       originHeader,
       {
         ...quotaHeaders,

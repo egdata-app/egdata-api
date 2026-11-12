@@ -22,7 +22,14 @@ export function withProjectGatewayQuota(
         type: "object",
         required: ["code", "message"],
         properties: {
-          code: { type: "string", enum: ["RATE_LIMITED", "QUOTA_UNAVAILABLE"] },
+          code: {
+            type: "string",
+            enum: [
+              "RATE_LIMITED",
+              "MONTHLY_QUOTA_EXCEEDED",
+              "QUOTA_UNAVAILABLE",
+            ],
+          },
           message: { type: "string" },
         },
       },
@@ -47,11 +54,11 @@ export function withProjectGatewayQuota(
       const operation = item[method];
       if (!operation) continue;
       operation.description =
-        `${operation.description ?? ""}\n\nWhen accessed through the Worker gateway with an API key, this operation consumes the project's shared UTC-aligned 60-second quota across all keys, console sessions, and legacy/v1 gateway requests. Free: 120/min; pro: 1200/min; enterprise: 6000/min, overridden by approved project RPM. Cache hits count. Exhaustion returns 429 RATE_LIMITED; unavailable admission returns 503 QUOTA_UNAVAILABLE with Retry-After: 1. Gateway errors use { error: { code, message } }. Public unauthenticated bypasses retain their existing behavior.`.trim();
+        `${operation.description ?? ""}\n\nWhen accessed through the Worker gateway with an API key, this operation consumes the project's shared UTC-aligned 60-second quota across all keys, console sessions, and legacy/v1 gateway requests (free: 120/min; pro: 1200/min; enterprise: 6000/min, overridden by approved project RPM), and free projects also consume the account's shared 100,000-request calendar-month allowance (resetting on the 1st of each month at 00:00 UTC). Paid tiers (pro, enterprise) are exempt from the free monthly cap. Cache hits count. Project minute exhaustion returns 429 RATE_LIMITED; free monthly exhaustion returns 429 MONTHLY_QUOTA_EXCEEDED with Retry-After until reset; unavailable admission returns 503 QUOTA_UNAVAILABLE with Retry-After: 1. Gateway errors use { error: { code, message } }. Public unauthenticated bypasses retain their existing behavior.`.trim();
       for (const [status, description] of [
         [
           "429",
-          "Project quota exhausted at the Worker gateway (RATE_LIMITED). Origin rate limits may also return this status.",
+          "Project minute quota or free-account monthly quota exhausted at the Worker gateway (RATE_LIMITED or MONTHLY_QUOTA_EXCEEDED). Origin rate limits may also return this status.",
         ],
         [
           "503",
@@ -92,7 +99,8 @@ export function withProjectGatewayQuota(
                     schema: { type: "string" },
                   },
                   "RateLimit-Policy": {
-                    description: "Project quota policy and 60-second window.",
+                    description:
+                      "Project minute and calendar-month quota policies and window lengths in seconds.",
                     schema: { type: "string" },
                   },
                 }

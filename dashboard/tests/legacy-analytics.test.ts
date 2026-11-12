@@ -189,9 +189,10 @@ describe("legacy gateway telemetry", () => {
     };
     const namespace = quotaNamespace();
     if (outcome === "quota") {
-      await namespace.get(`project:production:${meta.projectId}`).admit({
+      await namespace.get(`account:production:${meta.ownerEpicId}`).admit({
         keyId: meta.keyId,
         projectId: meta.projectId,
+        ownerEpicId: meta.ownerEpicId,
         policies: [{ name: "global", limit: 1 }],
       });
     }

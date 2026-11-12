@@ -590,8 +590,16 @@ const groups: ProblemGroup[] = [
         status: 429,
         title: "Rate limited",
         summary:
-          "The API key exhausted its global or per-operation quota for the current UTC-aligned window.",
+          "The project exhausted its global 60-second or per-operation quota for the current UTC-aligned window.",
         fix: "Wait for `Retry-After` seconds before retrying. Inspect `RateLimit`, `RateLimit-Policy`, and `X-RateLimit-Policy` to see which policy was exhausted.",
+      },
+      {
+        code: "MONTHLY_QUOTA_EXCEEDED",
+        status: 429,
+        title: "Monthly quota exceeded",
+        summary:
+          "The account exhausted its shared 100,000-request monthly free-tier allowance across all free projects, API keys, and console sessions.",
+        fix: "Wait until the next calendar month reset at 00:00 UTC (`Retry-After` seconds), or request a Pro/Enterprise tier upgrade in **Rate Limits**.",
       },
       {
         code: "QUOTA_UNAVAILABLE",
