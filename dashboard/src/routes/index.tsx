@@ -111,7 +111,7 @@ function ProjectOverview() {
         </div>
       </div>
 
-      <MonthlyQuotaPanel />
+      <MonthlyQuotaPanel refreshKey={result.refreshKey} />
 
       {/* KPI Cards */}
       <div className="flex flex-wrap justify-between items-center gap-3">

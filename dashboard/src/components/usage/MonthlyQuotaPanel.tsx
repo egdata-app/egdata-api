@@ -53,8 +53,10 @@ export function monthlyNoticeFor(
 
 export function MonthlyQuotaPanel({
   showLimitLink = true,
+  refreshKey = 0,
 }: {
   showLimitLink?: boolean;
+  refreshKey?: number;
 }) {
   const { projects, selectedProject } = useDashboardAuth();
   const [monthly, setMonthly] = useState<AccountMonthlyQuotaStatus | null>(
@@ -62,6 +64,8 @@ export function MonthlyQuotaPanel({
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [revision, setRevision] = useState(0);
+  const refresh = useCallback(() => setRevision((value) => value + 1), []);
 
   const hasFreeProject = projects.some((p) => p.tier === "free");
   const selectedIsPaid =
@@ -86,11 +90,33 @@ export function MonthlyQuotaPanel({
     }
   }, []);
 
+  // Both local and page refresh controls cancel any older in-flight read.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: revision and refreshKey trigger quota refreshes.
   useEffect(() => {
     const controller = new AbortController();
     void load(controller.signal);
     return () => controller.abort();
-  }, [load]);
+  }, [load, revision, refreshKey]);
+
+  useEffect(() => {
+    if (!monthly) return;
+    // A month can exceed the browser's signed 32-bit timeout limit. Wake early
+    // in that case and reschedule from the newly fetched reset timestamp.
+    const untilReset = Date.parse(monthly.resetAt) - Date.now();
+    const timer = window.setTimeout(
+      refresh,
+      Math.min(2_147_483_647, untilReset > 0 ? untilReset : 30_000),
+    );
+    return () => window.clearTimeout(timer);
+  }, [monthly, refresh]);
+
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [refresh]);
 
   if (!hasFreeProject && selectedIsPaid && !monthly?.used) {
     return (
@@ -162,15 +188,25 @@ export function MonthlyQuotaPanel({
             resets this counter.
           </p>
         </div>
-        {showLimitLink && (
-          <Link
-            to="/limits"
-            className={buttonStyles({ variant: "secondary", size: "sm" })}
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            size="sm"
+            variant="secondary"
+            isPending={loading}
+            onPress={refresh}
           >
-            <Sparkles className="w-3.5 h-3.5 text-epic-accent" />
-            Request Higher Limits
-          </Link>
-        )}
+            Refresh quota
+          </Button>
+          {showLimitLink && (
+            <Link
+              to="/limits"
+              className={buttonStyles({ variant: "secondary", size: "sm" })}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-epic-accent" />
+              Request Higher Limits
+            </Link>
+          )}
+        </div>
       </div>
 
       {error && (
@@ -179,7 +215,7 @@ export function MonthlyQuotaPanel({
           className="rounded-lg border border-epic-danger/30 bg-epic-bg p-3 flex flex-wrap items-center justify-between gap-3 text-xs text-epic-danger"
         >
           <span>{error}</span>
-          <Button size="sm" variant="secondary" onPress={() => void load()}>
+          <Button size="sm" variant="secondary" onPress={refresh}>
             Retry
           </Button>
         </div>

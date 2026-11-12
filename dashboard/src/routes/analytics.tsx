@@ -244,7 +244,9 @@ function UsagePage() {
           />
         </div>
       </div>
-      {analyticsScope !== "all" && <MonthlyQuotaPanel />}
+      {analyticsScope !== "all" && (
+        <MonthlyQuotaPanel refreshKey={result.refreshKey} />
+      )}
       <UsageError
         message={result.error}
         retry={result.refresh}
