@@ -39,7 +39,13 @@ function database() {
   const result = sqliteD1();
   result.sqlite.exec(readFileSync("migrations/0001_initial.sql", "utf8"));
   result.sqlite.exec(
+    readFileSync("migrations/0003_console_sessions.sql", "utf8"),
+  );
+  result.sqlite.exec(
     readFileSync("migrations/0004_limit_request_reviews.sql", "utf8"),
+  );
+  result.sqlite.exec(
+    readFileSync("migrations/0005_dashboard_session_revocations.sql", "utf8"),
   );
   result.sqlite.exec(
     "INSERT INTO users(epic_account_id,display_name) VALUES('owner','Owner'); INSERT INTO projects(id,owner_epic_id,name,slug) VALUES('project','owner','Project','project');",
@@ -399,6 +405,15 @@ describe("dashboard API hardening", () => {
     ).toBe(200);
     expect(limit).toHaveBeenCalledWith({ key: "dash:203.0.113.9" });
 
+    await worker.fetch(
+      new Request("https://devs.egdata.app/_dashboard/api/auth/session", {
+        headers: { "x-forwarded-for": "198.51.100.1" },
+      }),
+      env,
+      context,
+    );
+    expect(limit).toHaveBeenCalledWith({ key: "dash:unknown" });
+
     allowed = false;
     const blockedDash = await worker.fetch(
       new Request("https://devs.egdata.app/_dashboard/api/auth/session", {
@@ -414,7 +429,7 @@ describe("dashboard API hardening", () => {
       new Request("https://devs.egdata.app/_internal/change-records", {
         method: "POST",
         headers: {
-          "cf-connecting-ip": "203.0.113.9",
+          "x-forwarded-for": "198.51.100.2",
           authorization: "Bearer secret-ingest",
         },
         body: "{}",
@@ -423,23 +438,14 @@ describe("dashboard API hardening", () => {
       context,
     );
     expect(blockedIngest.status).toBe(429);
-    expect(limit).toHaveBeenCalledWith({ key: "ingest:203.0.113.9" });
+    expect(limit).toHaveBeenCalledWith({ key: "ingest:unknown" });
   });
 
   it("revokes dashboard session tokens server-side upon logout", async () => {
     const { db, sqlite } = database();
-    sqlite.exec(readFileSync("migrations/0003_console_sessions.sql", "utf8"));
-    const kv = new Map<string, string>();
-    const put = vi.fn(async (key: string, val: string) => {
-      kv.set(key, val);
-    });
     const env = {
       DB: db,
       DASHBOARD_SESSION_SECRET: secret,
-      API_KEYS_KV: {
-        get: vi.fn(async (key: string) => kv.get(key) ?? null),
-        put,
-      },
     } as unknown as DashboardEnv;
     const token = await signHmacToken(
       { user, exp: Date.now() + 60_000, iat: Date.now() },
@@ -460,7 +466,7 @@ describe("dashboard API hardening", () => {
       ).status,
     ).toBe(200);
 
-    // Logout revokes the token in KV
+    // Logout revokes the token in D1.
     const logoutRes = await worker.fetch(
       new Request("https://devs.egdata.app/_dashboard/api/auth/logout", {
         method: "POST",
@@ -470,7 +476,11 @@ describe("dashboard API hardening", () => {
       context,
     );
     expect(logoutRes.status).toBe(200);
-    expect(put).toHaveBeenCalledOnce();
+    expect(
+      sqlite
+        .prepare("SELECT token_hash FROM dashboard_session_revocations")
+        .all(),
+    ).toHaveLength(1);
 
     // Replaying the stolen cookie after logout is rejected (401)
     expect(
@@ -484,6 +494,40 @@ describe("dashboard API hardening", () => {
         )
       ).status,
     ).toBe(401);
+  });
+
+  it("does not report logout success when writing the revocation record fails", async () => {
+    const token = await signHmacToken(
+      { user, exp: Date.now() + 60_000, iat: Date.now() },
+      secret,
+    );
+    const failingDb = {
+      prepare: (query: string) => ({
+        bind: () => ({
+          run: async () => {
+            if (query.includes("dashboard_session_revocations")) {
+              throw new Error("D1 unavailable");
+            }
+            return {};
+          },
+        }),
+      }),
+    };
+    const response = await worker.fetch(
+      new Request("https://devs.egdata.app/_dashboard/api/auth/logout", {
+        method: "POST",
+        headers: {
+          origin: "https://devs.egdata.app",
+          cookie: `egdata_dash_session=${token}`,
+        },
+      }),
+      {
+        DB: failingDb,
+        DASHBOARD_SESSION_SECRET: secret,
+      } as unknown as DashboardEnv,
+      context,
+    );
+    expect(response.status).toBe(500);
   });
 
   it.each([

@@ -12,7 +12,6 @@ import type { DashboardEnv, EpicSessionUser } from "./types.js";
 const SESSION_COOKIE_NAME = "egdata_dash_session";
 const OAUTH_STATE_COOKIE_NAME = "egdata_epic_oauth_state";
 const SESSION_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
-const REVOKED_SESSION_KV_PREFIX = "revoked_session:";
 
 const EPIC_AUTHORIZE_URL = "https://www.epicgames.com/id/authorize";
 const EPIC_TOKEN_URL = "https://api.epicgames.dev/epic/oauth/v2/token";
@@ -92,14 +91,15 @@ export async function readDashboardSession(
     return null;
   }
 
-  if (c.env.API_KEYS_KV && typeof c.env.API_KEYS_KV.get === "function") {
-    const tokenHash = await sha256Hex(rawToken);
-    const revoked = await c.env.API_KEYS_KV.get(
-      `${REVOKED_SESSION_KV_PREFIX}${tokenHash}`,
-    );
-    if (revoked !== null) {
-      return null;
-    }
+  const tokenHash = await sha256Hex(rawToken);
+  // Use the D1 primary for auth checks; KV negative caching can delay revocations.
+  const revoked = await c.env.DB.prepare(
+    "SELECT 1 FROM dashboard_session_revocations WHERE token_hash = ? AND expires_at > ? LIMIT 1",
+  )
+    .bind(tokenHash, Date.now())
+    .first();
+  if (revoked) {
+    return null;
   }
 
   return parsed.user;
@@ -134,35 +134,28 @@ export async function revokeDashboardSession(
   c: Context<AuthHonoEnv>,
 ): Promise<void> {
   const rawToken = getCookie(c, SESSION_COOKIE_NAME);
-  if (
-    !rawToken ||
-    !c.env.API_KEYS_KV ||
-    typeof c.env.API_KEYS_KV.put !== "function"
-  ) {
-    return;
-  }
+  if (!rawToken) return;
+
+  let parsed: SignedSessionPayload | null;
   try {
     const secret = getSessionSecret(c.env, c.req.url);
-    const parsed = await verifyHmacToken<SignedSessionPayload>(
-      rawToken,
-      secret,
-    );
-    if (!parsed || !Number.isFinite(parsed.exp) || Date.now() >= parsed.exp) {
-      return;
-    }
-    const tokenHash = await sha256Hex(rawToken);
-    const ttlSeconds = Math.max(
-      60,
-      Math.ceil((parsed.exp - Date.now()) / 1000),
-    );
-    await c.env.API_KEYS_KV.put(
-      `${REVOKED_SESSION_KV_PREFIX}${tokenHash}`,
-      "1",
-      { expirationTtl: ttlSeconds },
-    );
+    parsed = await verifyHmacToken<SignedSessionPayload>(rawToken, secret);
   } catch {
     // Ignore unconfigured secret or invalid token during logout
+    return;
   }
+  if (!parsed || !Number.isFinite(parsed.exp) || Date.now() >= parsed.exp) {
+    return;
+  }
+
+  const tokenHash = await sha256Hex(rawToken);
+  await c.env.DB.prepare(
+    `INSERT INTO dashboard_session_revocations (token_hash, expires_at)
+     VALUES (?, ?)
+     ON CONFLICT(token_hash) DO UPDATE SET expires_at = excluded.expires_at`,
+  )
+    .bind(tokenHash, parsed.exp)
+    .run();
 }
 
 export function clearDashboardSessionCookie(c: Context<AuthHonoEnv>): void {

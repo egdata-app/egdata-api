@@ -98,10 +98,7 @@ dashboardApi.use("/*", async (c, next) => {
     c.env.RATE_LIMITER_DASHBOARD_API &&
     typeof c.env.RATE_LIMITER_DASHBOARD_API.limit === "function"
   ) {
-    const clientIp =
-      c.req.header("cf-connecting-ip") ||
-      c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ||
-      "local";
+    const clientIp = c.req.header("cf-connecting-ip") || "unknown";
     const { success } = await c.env.RATE_LIMITER_DASHBOARD_API.limit({
       key: `dash:${clientIp}`,
     });
@@ -737,6 +734,9 @@ export default {
       env.DB.prepare("DELETE FROM console_sessions WHERE expires_at <= ?").bind(
         Date.now(),
       ),
+      env.DB.prepare(
+        "DELETE FROM dashboard_session_revocations WHERE expires_at <= ?",
+      ).bind(Date.now()),
       env.DB.prepare(`DELETE FROM usage_daily WHERE usage_date<?`).bind(oldest),
       env.DB.prepare(`DELETE FROM usage_dead_letters WHERE usage_date<?`).bind(
         oldest,
@@ -767,10 +767,7 @@ export default {
         env.RATE_LIMITER_DASHBOARD_API &&
         typeof env.RATE_LIMITER_DASHBOARD_API.limit === "function"
       ) {
-        const clientIp =
-          request.headers.get("cf-connecting-ip") ||
-          request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-          "local";
+        const clientIp = request.headers.get("cf-connecting-ip") || "unknown";
         const { success } = await env.RATE_LIMITER_DASHBOARD_API.limit({
           key: `ingest:${clientIp}`,
         });

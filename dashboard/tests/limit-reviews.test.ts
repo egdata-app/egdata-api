@@ -24,6 +24,9 @@ afterEach(() => {
 async function setup() {
   const { db, sqlite } = sqliteD1();
   sqlite.exec(readFileSync("migrations/0001_initial.sql", "utf8"));
+  sqlite.exec(
+    readFileSync("migrations/0005_dashboard_session_revocations.sql", "utf8"),
+  );
   sqlite
     .prepare(
       "INSERT INTO users(epic_account_id,display_name) VALUES(?, 'Admin'),('owner','Owner'),('other','Other')",
