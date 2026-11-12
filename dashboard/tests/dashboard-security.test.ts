@@ -48,6 +48,12 @@ function database() {
     readFileSync("migrations/0005_dashboard_session_revocations.sql", "utf8"),
   );
   result.sqlite.exec(
+    readFileSync("migrations/0006_project_creation_policy.sql", "utf8"),
+  );
+  result.sqlite.exec(
+    readFileSync("migrations/0007_project_recovery.sql", "utf8"),
+  );
+  result.sqlite.exec(
     "INSERT INTO users(epic_account_id,display_name) VALUES('owner','Owner'); INSERT INTO projects(id,owner_epic_id,name,slug) VALUES('project','owner','Project','project');",
   );
   return result;

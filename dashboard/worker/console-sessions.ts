@@ -59,7 +59,7 @@ consoleSessionRoutes.use("/*", async (c, next) => {
 consoleSessionRoutes.post("/:projectId", async (c) => {
   const projectId = c.req.param("projectId");
   const project = await c.env.DB.prepare(
-    "SELECT id FROM projects WHERE id = ? AND owner_epic_id = ?",
+    "SELECT id FROM projects WHERE id = ? AND owner_epic_id = ? AND deleted_at IS NULL",
   )
     .bind(projectId, c.get("user").epicAccountId)
     .first();
@@ -132,7 +132,7 @@ consoleProxy.all("/*", async (c) => {
   const row =
     await c.env.DB.prepare(`SELECT p.id, p.tier, p.custom_rpm, s.expires_at FROM console_sessions s
     JOIN projects p ON p.id=s.project_id
-    WHERE s.token_hash=? AND s.dashboard_session_hash=? AND p.owner_epic_id=? AND s.expires_at>?`)
+    WHERE s.token_hash=? AND s.dashboard_session_hash=? AND p.owner_epic_id=? AND s.expires_at>? AND p.deleted_at IS NULL`)
       .bind(await sha256Hex(token), hash, user.epicAccountId, Date.now())
       .first<{
         id: string;

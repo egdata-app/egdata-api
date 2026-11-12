@@ -17,6 +17,8 @@ import { Route as AlertsRouteImport } from './routes/alerts'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DocsIndexRouteImport } from './routes/docs.index'
 import { Route as DocsSlugRouteImport } from './routes/docs.$slug'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminProjectsRouteImport } from './routes/admin.projects'
 
 const LimitsRoute = LimitsRouteImport.update({
   id: '/limits',
@@ -58,6 +60,16 @@ const DocsSlugRoute = DocsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => DocsRoute,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminProjectsRoute = AdminProjectsRouteImport.update({
+  id: '/admin/projects',
+  path: '/admin/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,6 +78,8 @@ export interface FileRoutesByFullPath {
   '/docs': typeof DocsRouteWithChildren
   '/keys': typeof KeysRoute
   '/limits': typeof LimitsRoute
+  '/admin/projects': typeof AdminProjectsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/docs/$slug': typeof DocsSlugRoute
   '/docs/': typeof DocsIndexRoute
 }
@@ -75,6 +89,8 @@ export interface FileRoutesByTo {
   '/analytics': typeof AnalyticsRoute
   '/keys': typeof KeysRoute
   '/limits': typeof LimitsRoute
+  '/admin/projects': typeof AdminProjectsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/docs/$slug': typeof DocsSlugRoute
   '/docs': typeof DocsIndexRoute
 }
@@ -86,6 +102,8 @@ export interface FileRoutesById {
   '/docs': typeof DocsRouteWithChildren
   '/keys': typeof KeysRoute
   '/limits': typeof LimitsRoute
+  '/admin/projects': typeof AdminProjectsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/docs/$slug': typeof DocsSlugRoute
   '/docs/': typeof DocsIndexRoute
 }
@@ -98,6 +116,8 @@ export interface FileRouteTypes {
     | '/docs'
     | '/keys'
     | '/limits'
+    | '/admin/projects'
+    | '/admin/users'
     | '/docs/$slug'
     | '/docs/'
   fileRoutesByTo: FileRoutesByTo
@@ -107,6 +127,8 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/keys'
     | '/limits'
+    | '/admin/projects'
+    | '/admin/users'
     | '/docs/$slug'
     | '/docs'
   id:
@@ -117,6 +139,8 @@ export interface FileRouteTypes {
     | '/docs'
     | '/keys'
     | '/limits'
+    | '/admin/projects'
+    | '/admin/users'
     | '/docs/$slug'
     | '/docs/'
   fileRoutesById: FileRoutesById
@@ -128,6 +152,8 @@ export interface RootRouteChildren {
   DocsRoute: typeof DocsRouteWithChildren
   KeysRoute: typeof KeysRoute
   LimitsRoute: typeof LimitsRoute
+  AdminProjectsRoute: typeof AdminProjectsRoute
+  AdminUsersRoute: typeof AdminUsersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -188,6 +214,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocsSlugRouteImport
       parentRoute: typeof DocsRoute
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/projects': {
+      id: '/admin/projects'
+      path: '/admin/projects'
+      fullPath: '/admin/projects'
+      preLoaderRoute: typeof AdminProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -210,6 +250,8 @@ const rootRouteChildren: RootRouteChildren = {
   DocsRoute: DocsRouteWithChildren,
   KeysRoute: KeysRoute,
   LimitsRoute: LimitsRoute,
+  AdminProjectsRoute: AdminProjectsRoute,
+  AdminUsersRoute: AdminUsersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -21,6 +21,8 @@ async function setup() {
     "0003_console_sessions.sql",
     "0004_limit_request_reviews.sql",
     "0005_dashboard_session_revocations.sql",
+    "0006_project_creation_policy.sql",
+    "0007_project_recovery.sql",
   ])
     sqlite.exec(readFileSync(`migrations/${file}`, "utf8"));
   sqlite.exec(

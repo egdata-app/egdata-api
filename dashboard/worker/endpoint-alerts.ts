@@ -1,8 +1,8 @@
 import { z } from "zod";
 import {
+  type ChangeRecord,
   canonicalJson,
   validateChangeRecord,
-  type ChangeRecord,
 } from "./change-validation.js";
 import { sha256Hex } from "./crypto.js";
 
@@ -237,7 +237,9 @@ export async function projectOwned(
   userId: string,
 ) {
   return !!(await db
-    .prepare(`SELECT id FROM projects WHERE id = ? AND owner_epic_id = ?`)
+    .prepare(
+      `SELECT id FROM projects WHERE id = ? AND owner_epic_id = ? AND deleted_at IS NULL`,
+    )
     .bind(projectId, userId)
     .first());
 }

@@ -79,6 +79,71 @@ traffic. No quota enforcement or public REST/GraphQL behavior changes here.
 
 ## Administrator roles and request reviews
 
+Admins also see **Users** (`/admin/users`) and **Projects** (`/admin/projects`)
+tabs. Both have search and 25-row pagination, active/total non-revoked key counts,
+last key use, and the last 24 hours of attributed requests, 429s, and HTTP errors
+(including 429s). Analytics Engine counts are estimates; local-buffer results
+are explicitly incomplete. Analytics outages show unavailable usage while
+retaining management controls. Unattributed traffic is not assigned to users.
+
+- Users: change the maximum project count (1–100), or view that user's projects.
+  Lowering the cap retains existing projects; the creation cooldown still applies.
+- Projects: edit the tier and optional exact RPM override (150–500,000; blank
+  restores the tier default), inspect/revoke keys, or soft-delete a project.
+  RPM is shared across its keys and console sessions; 24-hour usage is not the
+  live minute-window balance. Cached credentials may take up to five minutes to
+  reflect limit edits or deletions.
+- **Deleted projects** retains the project ID, owner, deletion time, administrator,
+  reason, and recovery deadline for 90 days. Deletion revokes all previously
+  non-revoked keys and ends console sessions, while retaining project records,
+  key metadata, limit requests and alerts for investigation. Ordinary developer
+  views hide deleted projects; accounts remain available for support.
+- **Restore** is admin-only, requires a reason and available space in the owner's
+  project allowance, and is rejected at/after the recovery deadline. Restored
+  projects retain their original ID and settings. All old keys remain revoked;
+  create new keys and console sessions to resume access. Deleted projects do not
+  consume the active project allowance; deletion/restoration never resets the
+  owner's creation cooldown. Session refresh does not automatically replace a
+  retained deleted project.
+- The existing daily cron purges up to 25 expired projects per invocation,
+  cascading keys, sessions and limit requests and explicitly removing alert/usage
+  rows. Larger backlogs drain on subsequent runs. Normal usage retention still
+  applies during the recovery window. Analytics Engine history follows its own
+  retention schedule. The database migration must precede Worker deployment.
+- **History** on users/projects and **All audit history** record actor, time,
+  reason, target/owner/project IDs and relevant before/after values. This includes
+  manual limit changes, approved limit requests, key revocations, project deletion,
+  restoration and purging. Audit writes and mutations are one D1 transaction;
+  failed audit writes roll back the mutation. Minimal audit records survive purging
+  indefinitely, with no credentials, hashes, permission lists or contact emails.
+  History begins with deployment; earlier actions cannot be reconstructed.
+- Admin key lists include retained revoked keys with pagination. Key revocations
+  are irreversible; there is no key restore action.
+
+These private session-authenticated endpoints are outside the public OpenAPI
+operation registry. Every request requires the current D1 admin role; mutations
+also require the dashboard's same-origin check:
+
+- `GET /_dashboard/api/admin/users`: `search` (max 200), `offset` (0–1,000,000).
+- `PATCH /_dashboard/api/admin/users/:userId/limits`: `{ projectLimit, reason }`.
+- `GET /_dashboard/api/admin/projects`: `search`, `offset`, optional exact `owner`,
+  `status=active|deleted` (default `active`).
+- `PATCH /_dashboard/api/admin/projects/:projectId/limits`: `{ tier, customRpm, reason }`.
+- `GET /_dashboard/api/admin/projects/:projectId/keys`: all retained keys, `offset`,
+  25-row pages returning `{ keys, hasMore }`; no secrets/hashes.
+- `DELETE /_dashboard/api/admin/keys/:keyId` and `/projects/:projectId`: `{ reason }`.
+- `POST /_dashboard/api/admin/projects/:projectId/restore`: `{ reason }`; returns
+  409 when already active, purged, expired, missing, or the owner's cap is reached.
+- `GET /_dashboard/api/admin/audit`: optional `projectId`, `owner`, and `offset`;
+  25-row pages `{ rows, hasMore }`, newest first, including purged targets.
+
+Admin mutation reasons are trimmed, required, and 3–2,000 characters long.
+
+Lists return `{ rows, hasMore, usage: { byId, source, start, end } }`. Missing
+records return 404, invalid fields return 400, missing sessions return 401,
+and non-admins return 403. Apply migrations through
+`0007_project_recovery.sql` before deploying this Worker/UI.
+
 Apply `0004_limit_request_reviews.sql` before deploying this Worker/UI. It adds
 `user_roles(user_id, role, created_at)` alongside the existing `users` table,
 project-level custom RPM, and request review audit fields. The migration grants

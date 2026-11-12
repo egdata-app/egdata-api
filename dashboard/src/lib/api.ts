@@ -1,3 +1,9 @@
+import type {
+  AdminAuditEntry,
+  AdminPage,
+  AdminProject,
+  AdminUser,
+} from "../../worker/admin-types";
 import type { AnalyticsDashboardSummary } from "../../worker/analytics";
 import type {
   UsageFilters,
@@ -76,6 +82,79 @@ export async function apiFetch<T>(
 }
 
 export const dashboardClient = {
+  getAdminUsers: (search: string, offset: number, signal?: AbortSignal) =>
+    apiFetch<AdminPage<AdminUser>>(
+      `/admin/users?${new URLSearchParams({ search, offset: String(offset) })}`,
+      { signal },
+    ),
+
+  getAdminProjects: (
+    search: string,
+    offset: number,
+    owner: string,
+    status: "active" | "deleted",
+    signal?: AbortSignal,
+  ) =>
+    apiFetch<AdminPage<AdminProject>>(
+      `/admin/projects?${new URLSearchParams({ search, offset: String(offset), owner, status })}`,
+      { signal },
+    ),
+
+  updateAdminUserLimits: (id: string, projectLimit: number, reason: string) =>
+    apiFetch<{ ok: boolean }>(`/admin/users/${encodeURIComponent(id)}/limits`, {
+      method: "PATCH",
+      body: JSON.stringify({ projectLimit, reason }),
+    }),
+
+  updateAdminProjectLimits: (
+    id: string,
+    tier: DashboardProject["tier"],
+    customRpm: number | null,
+    reason: string,
+  ) =>
+    apiFetch<{ ok: boolean }>(
+      `/admin/projects/${encodeURIComponent(id)}/limits`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({ tier, customRpm, reason }),
+      },
+    ),
+
+  getAdminProjectKeys: (id: string, offset: number, signal?: AbortSignal) =>
+    apiFetch<{ keys: DashboardApiKey[]; hasMore: boolean }>(
+      `/admin/projects/${encodeURIComponent(id)}/keys?offset=${offset}`,
+      { signal },
+    ),
+
+  deleteAdminProject: (id: string, reason: string) =>
+    apiFetch<{ ok: boolean }>(`/admin/projects/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      body: JSON.stringify({ reason }),
+    }),
+
+  deleteAdminKey: (id: string, reason: string) =>
+    apiFetch<{ ok: boolean }>(`/admin/keys/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      body: JSON.stringify({ reason }),
+    }),
+
+  restoreAdminProject: (id: string, reason: string) =>
+    apiFetch<{ ok: boolean }>(
+      `/admin/projects/${encodeURIComponent(id)}/restore`,
+      { method: "POST", body: JSON.stringify({ reason }) },
+    ),
+
+  getAdminAudit: (
+    projectId: string,
+    owner: string,
+    offset: number,
+    signal?: AbortSignal,
+  ) =>
+    apiFetch<{ rows: AdminAuditEntry[]; hasMore: boolean }>(
+      `/admin/audit?${new URLSearchParams({ projectId, owner, offset: String(offset) })}`,
+      { signal },
+    ),
+
   getSession: () => apiFetch<SessionResponse>("/auth/session"),
 
   logout: () => apiFetch<{ ok: boolean }>("/auth/logout", { method: "POST" }),

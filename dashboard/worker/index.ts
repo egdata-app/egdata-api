@@ -44,6 +44,7 @@ import { removeKeyFromKv, syncKeyToKv } from "./key-cache.js";
 import { isDashboardAdmin, limitReviewRoutes } from "./limit-reviews.js";
 import { isValidIpOrCidr } from "./permissions.js";
 import { ProjectCreationError } from "./project-policy.js";
+import { purgeDeletedProjects } from "./project-retention.js";
 import { handleEdgeApiProxy } from "./proxy.js";
 import {
   type AllowedHttpMethod,
@@ -719,6 +720,7 @@ export default {
     batch.ackAll();
   },
   async scheduled(_event: ScheduledController, env: DashboardEnv) {
+    await purgeDeletedProjects(env.DB);
     const oldest = new Date(Date.now() - 34 * 86_400_000)
       .toISOString()
       .slice(0, 10);

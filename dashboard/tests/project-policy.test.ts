@@ -24,6 +24,7 @@ function setup(applyPolicy = true) {
   const result = sqliteD1();
   for (const migration of [
     "0001_initial.sql",
+    "0003_console_sessions.sql",
     "0004_limit_request_reviews.sql",
     "0005_dashboard_session_revocations.sql",
   ]) {
@@ -40,6 +41,7 @@ function migrate(sqlite: ReturnType<typeof sqliteD1>["sqlite"]) {
   sqlite.exec(
     readFileSync("migrations/0006_project_creation_policy.sql", "utf8"),
   );
+  sqlite.exec(readFileSync("migrations/0007_project_recovery.sql", "utf8"));
 }
 
 afterEach(() => vi.restoreAllMocks());
