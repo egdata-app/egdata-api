@@ -103,8 +103,9 @@ Frozen-lockfile installation, API/dashboard builds, and all 727 non-skipped test
 passed after the update. The dependency change adds no public route, schema,
 authentication or pagination change; existing operation classifications remain
 applicable. The refreshed assessment still covers 322 operations with no unknown
-files. Aikido's repository scan passed on pushed commit `56bc39a`; the runtime-removal
-follow-up will receive its own scan.
+files. Aikido's repository scan passed on pushed commits `56bc39a` and `ab0918b`.
+The runtime-removal commit also passed the Test workflow and docs Worker build;
+production API deployment was skipped.
 
 ### Legal finalization and runtime minimization follow-up
 
@@ -115,6 +116,9 @@ is scoped to the developer portal/accounts/keys, console and v1. The custom lega
 anti-abuse system and its GCP technical-pattern fingerprints are outside that
 scope; MeiliSearch is unused. Direct-provider Mistral Large 4 reviewed the wording.
 Publication/effective dates remain an activation decision, not backdated facts.
+The unpublished terms also clarify that egdata grants only rights it can grant,
+attribution does not replace required third-party permission, and mandatory-law
+uses and individual facts remain outside any ownership claim.
 
 At the operator's request, the API's Aikido runtime SDK, instrumentation preloads,
 middleware and identity hooks were removed. Its unused identity helper and five

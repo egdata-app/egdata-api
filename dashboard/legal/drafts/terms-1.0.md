@@ -96,6 +96,14 @@ Subject to these terms and applicable third-party rights, you may use the API
 for personal, educational, research, open-source, and commercial projects,
 including websites, applications, bots, analysis, and data-based features.
 
+These permissions concern access to our service and rights egdata is entitled to
+grant. They do not grant rights in third-party content that egdata does not hold,
+including artwork, videos, original descriptions, and trademarks belonging to
+Epic Games, publishers, or other rights holders. Any permission required by
+applicable law for your use of that content must be obtained separately. Nothing
+in these terms limits uses permitted by mandatory law or claims ownership of
+individual facts.
+
 Access is currently provided free of charge, within the quotas and permissions
 assigned to your account and projects. A higher technical quota or a tier label
 does not create a paid subscription or service-level commitment. Approval of a
@@ -138,7 +146,8 @@ or prominence required for third-party notices.
 
 Attribution is encouraged for free public projects. Any additional notices
 required by a third-party rights holder must still be preserved. Attribution
-does not authorize bulk copying, grant trademark rights, or imply endorsement.
+does not authorize bulk copying, grant trademark rights, imply endorsement, or
+replace any third-party permission required by applicable law.
 
 ## 5. Caching, extraction, and redistribution
 
