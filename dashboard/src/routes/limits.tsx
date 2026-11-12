@@ -108,9 +108,9 @@ function RateLimitsPage() {
         <p className="text-sm text-epic-text-muted mt-1">
           Compare exact request limits and ask for more capacity for your
           project. Quotas use fixed, UTC-aligned 60-second windows and are
-          enforced per key in one request before the API origin is called.
-          Expensive operations keep their own per-key caps; a 429 response names
-          the exhausted policy.
+          shared by all keys and console sessions in a project, across legacy
+          and v1 requests. Expensive v1 operations have shared project caps; a
+          429 response names the exhausted policy.
         </p>
       </div>
 
@@ -124,9 +124,10 @@ function RateLimitsPage() {
       )}
       {selectedProject?.customRpm != null && (
         <p className="rounded-xl border border-epic-accent/30 bg-epic-surface p-4 text-sm text-epic-text">
-          Approved v1 limit for {selectedProject.name}:{" "}
+          Approved project limit for {selectedProject.name}:{" "}
           <strong>
-            {selectedProject.customRpm.toLocaleString()} requests/min per key
+            {selectedProject.customRpm.toLocaleString()} requests/min shared by
+            all keys
           </strong>
           . Existing keys may take up to five minutes to refresh.
         </p>
@@ -134,19 +135,19 @@ function RateLimitsPage() {
       <div className="grid md:grid-cols-3 gap-4">
         <TierCard
           name="Free"
-          rpm="120 requests/min per key"
+          rpm="120 requests/min per project"
           current={selectedProject?.tier === "free"}
           description="The default limit for new projects."
         />
         <TierCard
           name="Pro"
-          rpm="1,200 requests/min per key"
+          rpm="1,200 requests/min per project"
           current={selectedProject?.tier === "pro"}
           description="Request this limit when your project needs more capacity."
         />
         <TierCard
           name="Enterprise"
-          rpm="6,000 requests/min per key"
+          rpm="6,000 requests/min per project"
           current={selectedProject?.tier === "enterprise"}
           description="Need a different limit? Choose Custom limit in your request."
         />

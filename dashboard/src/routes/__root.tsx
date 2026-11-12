@@ -335,7 +335,10 @@ function DashboardShell() {
               </div>
               <p className="text-xs text-epic-text-muted -mt-2">
                 Group API keys, permissions, and usage analytics by application
-                or environment.
+                or environment. All keys in a project share its request
+                allowance. Accounts include one project; contact the egdata team
+                to approve more. You can create a project once every 24 hours,
+                including after deletion.
               </p>
 
               <TextField
@@ -472,11 +475,11 @@ function UnauthenticatedLanding({
 
           <div className="pt-4 border-t border-epic-border space-y-2 text-xs text-epic-text-muted">
             <div className="flex items-center justify-between">
-              <span>Free limit per key</span>
+              <span>Free limit per project</span>
               <span className="font-mono text-epic-text">120 requests/min</span>
             </div>
             <div className="flex items-center justify-between">
-              <span>Pro limit per key</span>
+              <span>Pro limit per project</span>
               <span className="font-mono text-epic-accent">
                 1,200 requests/min
               </span>

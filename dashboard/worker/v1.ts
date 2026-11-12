@@ -4,7 +4,8 @@ import { touchApiKeyLastUsed } from "./db.js";
 import { fetchV1WithEdgeCache } from "./edge-cache.js";
 import { resolveApiKeyMetadata } from "./key-cache.js";
 import { evaluateKeyPermissions } from "./permissions.js";
-import type { ApiKeyRateLimiter } from "./rate-limiter.js";
+import { admitProjectRequest, rateLimitHeaders } from "./project-quota.js";
+import type { AdmissionResult } from "./rate-limiter-core.js";
 import type { CachedKeyMetadata, DashboardEnv } from "./types.js";
 import {
   type CfProperties,
@@ -17,13 +18,10 @@ import {
   expensivePolicyLimits,
   isKnownV1Path,
   PUBLIC_V1_PATHS,
-  quotaForKey,
   resolveV1Route,
 } from "./v1-routes.js";
 
 const lastUsedTouchDebounce = new Map<string, number>();
-
-const MAX_TIMEOUT_MS = 3_000;
 
 type V1ProblemOptions = {
   requestId: string;
@@ -113,46 +111,6 @@ function extractCredentials(request: Request): {
     conflict: false,
     malformedAuthorization,
   };
-}
-
-function rateLimitHeaders(
-  result: {
-    policies: Array<{
-      name: string;
-      limit: number;
-      remaining: number;
-      resetAt: number;
-    }>;
-  },
-  now: number,
-): Record<string, string> {
-  const rateLimit = result.policies
-    .map((policy) => {
-      const seconds = Math.max(0, Math.ceil((policy.resetAt - now) / 1000));
-      return `${policy.name};q=${policy.limit};r=${policy.remaining};t=${seconds}`;
-    })
-    .join(", ");
-  const policy = result.policies
-    .map((entry) => `${entry.name};q=${entry.limit};w=60`)
-    .join(", ");
-  return {
-    RateLimit: rateLimit,
-    "RateLimit-Policy": policy,
-  };
-}
-
-async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  try {
-    return await Promise.race([
-      promise,
-      new Promise<T>((_, reject) => {
-        timer = setTimeout(() => reject(new Error("quota_timeout")), ms);
-      }),
-    ]);
-  } finally {
-    if (timer) clearTimeout(timer);
-  }
 }
 
 function baseTelemetry(
@@ -376,42 +334,17 @@ export async function handleV1ApiProxy(
     });
   }
 
-  const policies = [
-    { name: "global", limit: quotaForKey(meta) },
-    ...(route.expensive
-      ? [
-          {
-            name: route.expensive,
-            limit: expensivePolicyLimits[route.expensive],
-          },
-        ]
-      : []),
-  ];
+  const policies = route.expensive
+    ? [{ name: route.expensive, limit: expensivePolicyLimits[route.expensive] }]
+    : [];
 
-  let admission: Awaited<ReturnType<ApiKeyRateLimiter["admit"]>>;
+  let admission: AdmissionResult;
   try {
-    if (!env.API_KEY_RATE_LIMITER) {
-      throw new Error("quota_binding_missing");
-    }
-    const environment = env.RATE_LIMIT_ENVIRONMENT || "production";
-    const objectId = env.API_KEY_RATE_LIMITER.idFromName(
-      `v1:${environment}:${meta.keyId}`,
-    );
-    const stub = env.API_KEY_RATE_LIMITER.get(objectId);
-    admission = await withTimeout(
-      stub.admit({
-        keyId: meta.keyId,
-        policies,
-        ...(env.USAGE_TRACKING_ENABLED === "true"
-          ? {
-              usage: {
-                projectId: meta.projectId,
-                operationId: route.operationId,
-              },
-            }
-          : {}),
-      }),
-      MAX_TIMEOUT_MS,
+    admission = await admitProjectRequest(
+      env,
+      meta,
+      policies,
+      route.operationId,
     );
   } catch {
     recordApiTelemetry(
@@ -443,31 +376,6 @@ export async function handleV1ApiProxy(
   const now = Date.now();
   const quotaHeaders = rateLimitHeaders(admission, now);
 
-  if (
-    !admission ||
-    typeof admission.allowed !== "boolean" ||
-    !Array.isArray(admission.policies) ||
-    admission.policies.length !== policies.length ||
-    !Number.isInteger(admission.retryAfter) ||
-    !admission.policies.every(
-      (entry, index) =>
-        entry?.name === policies[index]?.name &&
-        entry?.limit === policies[index]?.limit,
-    )
-  ) {
-    return v1Problem(request, {
-      requestId,
-      status: 503,
-      code: "QUOTA_UNAVAILABLE",
-      detail:
-        "The quota service returned an uncertain decision. The request was not forwarded.",
-      headers: {
-        ...corsFor(request),
-        "Retry-After": "1",
-      },
-    });
-  }
-
   if (!admission.allowed) {
     const exhausted = admission.policies.find(
       (entry) => entry.name === admission.exhaustedPolicy,
@@ -490,8 +398,8 @@ export async function handleV1ApiProxy(
       status: 429,
       code: "RATE_LIMITED",
       detail: exhausted
-        ? `The ${exhausted.name} quota of ${exhausted.limit} requests per 60 seconds for this API key is exhausted.`
-        : "The API key quota for this operation is exhausted.",
+        ? `The ${exhausted.name} quota of ${exhausted.limit} requests per 60 seconds for this project is exhausted.`
+        : "The project quota for this operation is exhausted.",
       headers: {
         ...corsFor(request),
         ...quotaHeaders,

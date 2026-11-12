@@ -203,7 +203,8 @@ function UsagePage() {
             </span>
           ) : (
             <span>
-              Project default: {quota.toLocaleString()} requests/min per key
+              Project allowance: {quota.toLocaleString()} requests/min shared by
+              all keys
             </span>
           )}
           {analyticsScope === "all" && search.projectId && (

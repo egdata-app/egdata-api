@@ -5,6 +5,17 @@ description: History for GET /v1/assets/{id}
 
 `GET /v1/assets/{id}` — active. Recorded dates are not deployment dates.
 
+## 2026-11-12 — Share gateway quotas across project keys and restrict project creation
+
+Record: [project-shared-quotas](https://github.com/egdata-app/egdata-api/blob/main/changes/records/project-shared-quotas.json).
+
+- **v1 GET /v1/assets/&#123;id&#125;** (getAsset; changed; breaking)
+  - Before: Each API key had its own exact minute quota and expensive-operation counters; console sessions had a separate project-console counter. Accounts could create up to ten projects with a non-atomic check.
+  - After: All API keys and console sessions in a project share one exact UTC-aligned 60-second global quota across authenticated legacy/v1 gateway traffic, using project tier/custom RPM. Expensive v1 caps are shared per project. Cache hits count; quota exhaustion returns 429 and unavailable admission returns retryable 503 QUOTA_UNAVAILABLE. Legacy responses expose project RateLimit headers. Accounts include one project unless an operator approves more; atomic creation enforces a 24-hour cooldown that survives deletion. Existing projects and keys remain usable.
+  - Client action: Keep existing keys; coordinate request budgets across the project's keys, console and API versions. Respect Retry-After and request a project limit increase if necessary. Contact the egdata team for additional projects; creating or rotating keys no longer adds capacity. See docs/project-quota-rollout.md for migration and existing-grant review.
+
+Verification: dashboard/tests/project-quota.test.ts: shared legacy/v1 and console quotas, key rotation, project isolation, expensive policies, UTC reset and fail-closed admission; dashboard/tests/project-policy.test.ts: concurrent creation, login races, deletion cooldown, existing projects and grants, operator allowances and HTTP policy errors; dashboard/tests/usage-outbox.test.ts: shared project counters retain distinct admitted per-key usage events; dashboard/tests/edge-cache.test.ts: quota admission remains before authenticated cache hits and revalidation; src/openapi/project-quota.ts and src/openapi/v1.ts; pnpm openapi:generate; pnpm docs:check.
+
 ## 2026-11-12 — Expose API gateway hostname and harden Worker edge caching
 
 Record: [worker-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/worker-edge-cache.json).

@@ -113,24 +113,3 @@ export const expensivePolicyLimits: Record<V1ExpensivePolicy, number> = {
   heavy: 60,
   bulk: 10,
 };
-
-export const tierQuotas: Record<string, number> = {
-  free: 120,
-  pro: 1_200,
-  enterprise: 6_000,
-};
-
-export function quotaForKey(meta: {
-  tier: string;
-  customRpm: number | null;
-}): number {
-  if (
-    typeof meta.customRpm === "number" &&
-    Number.isInteger(meta.customRpm) &&
-    meta.customRpm >= 1 &&
-    meta.customRpm <= 1_000_000
-  ) {
-    return meta.customRpm;
-  }
-  return tierQuotas[meta.tier] ?? tierQuotas.free;
-}
