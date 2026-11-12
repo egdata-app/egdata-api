@@ -1,7 +1,7 @@
 import { type Context, Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import { bytesToHex, sha256Hex } from "./crypto.js";
-import { developerStatus } from "./developer-status.js";
+import { developerStatus, onboardingError } from "./developer-status.js";
 import {
   type AuthHonoEnv,
   readDashboardSession,
@@ -134,9 +134,7 @@ consoleProxy.all("/*", async (c) => {
     if (!status.eligible)
       return fail(
         403,
-        status.acceptedAt
-          ? "EMAIL_VERIFICATION_REQUIRED"
-          : "AGREEMENT_REQUIRED",
+        onboardingError(status).error.code,
         "Complete onboarding in the developer portal. Existing API keys keep working.",
       );
   } catch {
