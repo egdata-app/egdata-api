@@ -22,7 +22,11 @@ async function setup(customRpm = 2) {
         cacheExpiresAt: Date.now() + 300_000,
       }),
     },
-    DB: { prepare: () => ({ bind: () => ({ run: async () => ({}) }) }) },
+    DB: {
+      prepare: () => ({
+        bind: () => ({ run: async () => ({}), first: async () => null }),
+      }),
+    },
     ANALYTICS: { writeDataPoint: vi.fn() },
     UPSTREAM_API_ORIGIN: "https://origin-api.egdata.app",
     ORIGIN_AUTH_TOKEN: "test-token",

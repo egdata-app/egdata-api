@@ -45,7 +45,7 @@ export function Popover({
 }
 
 const overlayStyles = tv({
-  base: "fixed inset-0 w-full h-(--page-height) z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto",
+  base: "fixed inset-0 w-full h-dvh z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto",
   variants: {
     isEntering: { true: "animate-in fade-in duration-150 ease-out" },
     isExiting: { true: "animate-out fade-out duration-150 ease-in" },

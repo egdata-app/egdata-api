@@ -1,0 +1,823 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "egdata dashboard accounts and privacy operations",
+    "version": "1.0.0",
+    "description": "First-party, session-authenticated dashboard endpoints. These are separate from the public legacy/v1 game-data APIs. Privacy notice records are informational, not consent."
+  },
+  "servers": [{ "url": "https://devs.egdata.app" }],
+  "security": [{ "dashboardSession": [] }],
+  "paths": {
+    "/_dashboard/api/account/export": {
+      "get": {
+        "operationId": "exportDeveloperAccountData",
+        "summary": "Download account-scoped D1 records as NDJSON",
+        "description": "Available during onboarding with an open-account dashboard session. No parameters. Streams account, contact, projects, keys, limit_requests, acceptances, endpoint_usage and alert_reads sections in bounded pages. Credentials and verification secrets are excluded. Each line is a section plus record; initial export metadata describes scope, and a final complete section confirms successful completion. A storage error interrupts the stream; discard incomplete downloads. This is a live export, not a transaction snapshot or complete cross-store rights response. Contact contact@egdata.app for analytics, security, support and backups.",
+        "responses": {
+          "200": {
+            "description": "NDJSON attachment; Cache-Control: no-store; Content-Disposition: attachment; filename=egdata-account.ndjson. A stream failure after headers cannot change the status.",
+            "content": {
+              "application/x-ndjson": { "schema": { "type": "string" } }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, revoked or closed-account session."
+          },
+          "403": {
+            "description": "Request is not on the configured dashboard origin."
+          },
+          "429": { "description": "Dashboard rate limit exceeded." }
+        }
+      }
+    },
+    "/_dashboard/api/admin/privacy-requests": {
+      "get": {
+        "operationId": "listPrivacyRequests",
+        "summary": "List operator-managed rights cases",
+        "description": "Requires a live D1 admin role, dashboard session and completed onboarding when active. Returns up to 50 cases, open cases first, then response_due_at and id ascending. Cache-Control: no-store.",
+        "parameters": [{ "$ref": "#/components/parameters/AdminOffset" }],
+        "responses": {
+          "200": {
+            "description": "Cases and pagination flag.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["requests", "hasMore"],
+                  "properties": {
+                    "requests": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/PrivacyRequest" }
+                    },
+                    "hasMore": { "type": "boolean" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Invalid" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/AdminForbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      },
+      "post": {
+        "operationId": "createPrivacyRequest",
+        "summary": "Record a rights request and its one-calendar-month deadline",
+        "description": "Admin session and same-origin Origin header required. Records references, not copied correspondence. Supports non-account requesters with ownerId=null. Does not send a response or perform cross-store export/erasure. Maximum body 8192 bytes.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["ownerId", "caseReference", "kind", "receivedAt"],
+                "properties": {
+                  "ownerId": {
+                    "type": "string",
+                    "nullable": true,
+                    "maxLength": 128
+                  },
+                  "caseReference": {
+                    "$ref": "#/components/schemas/CaseReference"
+                  },
+                  "kind": { "$ref": "#/components/schemas/PrivacyKind" },
+                  "receivedAt": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Unix milliseconds, no later than now."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Case created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["id", "dueAt"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "dueAt": {
+                      "type": "integer",
+                      "description": "Unix milliseconds; calendar month clamped to last day."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Invalid" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/AdminForbidden" },
+          "413": { "$ref": "#/components/responses/CaseBodyTooLarge" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/_dashboard/api/admin/privacy-requests/{id}/extend": {
+      "parameters": [{ "$ref": "#/components/parameters/CaseId" }],
+      "post": {
+        "operationId": "extendPrivacyRequest",
+        "summary": "Record one justified, already-notified extension",
+        "description": "Admin session and same-origin Origin header required. Sets deadline to three calendar months after receipt. Only unresolved, not-yet-extended cases may be extended, before the original deadline. notifiedAt must be between receivedAt and both the original deadline and now. This endpoint records notification evidence; it does not notify the requester.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["reason", "notifiedAt"],
+                "properties": {
+                  "reason": { "$ref": "#/components/schemas/CaseExplanation" },
+                  "notifiedAt": { "type": "integer", "minimum": 0 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/CaseUpdated" },
+          "400": { "$ref": "#/components/responses/Invalid" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/AdminForbidden" },
+          "409": { "$ref": "#/components/responses/CaseConflict" },
+          "413": { "$ref": "#/components/responses/CaseBodyTooLarge" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/_dashboard/api/admin/privacy-requests/{id}/actions": {
+      "parameters": [{ "$ref": "#/components/parameters/CaseId" }],
+      "get": {
+        "operationId": "listPrivacyRequestActions",
+        "summary": "Read recorded store-action evidence",
+        "description": "Admin session required. Up to the first 500 actions in completed_at, id order; no pagination. Unknown cases return an empty array. Cache-Control: no-store.",
+        "responses": {
+          "200": {
+            "description": "Action records.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["actions"],
+                  "properties": {
+                    "actions": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/PrivacyAction" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/AdminForbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      },
+      "post": {
+        "operationId": "recordPrivacyRequestAction",
+        "summary": "Record completion evidence for a store action",
+        "description": "Admin session and same-origin Origin header required. Records evidence for an unresolved case; does not execute the action against the named store. Server supplies actor and completion time.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["store", "action", "evidenceReference"],
+                "properties": {
+                  "store": { "$ref": "#/components/schemas/CaseReference" },
+                  "action": {
+                    "$ref": "#/components/schemas/PrivacyActionKind"
+                  },
+                  "evidenceReference": {
+                    "$ref": "#/components/schemas/CaseReference"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "$ref": "#/components/responses/CaseUpdated" },
+          "400": { "$ref": "#/components/responses/Invalid" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/AdminForbidden" },
+          "409": { "$ref": "#/components/responses/CaseConflict" },
+          "413": { "$ref": "#/components/responses/CaseBodyTooLarge" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/_dashboard/api/admin/privacy-requests/{id}/resolve": {
+      "parameters": [{ "$ref": "#/components/parameters/CaseId" }],
+      "post": {
+        "operationId": "resolvePrivacyRequest",
+        "summary": "Record a case resolution",
+        "description": "Admin session and same-origin Origin header required. Records server resolution time. Resolved cases and their action evidence become eligible for daily cleanup after 12 calendar months. Response correspondence and cross-store work remain operator responsibilities.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["resolution"],
+                "properties": {
+                  "resolution": {
+                    "$ref": "#/components/schemas/CaseExplanation"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/CaseUpdated" },
+          "400": { "$ref": "#/components/responses/Invalid" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/AdminForbidden" },
+          "409": { "$ref": "#/components/responses/CaseConflict" },
+          "413": { "$ref": "#/components/responses/CaseBodyTooLarge" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/_dashboard/api/admin/notifications": {
+      "get": {
+        "operationId": "listDeveloperNotifications",
+        "summary": "Inspect notification dispatch and transport status",
+        "description": "Admin session required. Newest-first by created_at then id, 50 per page. Contains recipients, subjects and transport metadata, never message bodies or verification codes. sent_at means provider acceptance, delivered means recipient-server acceptance, neither proves reading. null transport_status means no tracked provider response. Cache-Control: no-store.",
+        "parameters": [{ "$ref": "#/components/parameters/AdminOffset" }],
+        "responses": {
+          "200": {
+            "description": "Messages, hasMore and explanatory note.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["messages", "hasMore", "note"],
+                  "properties": {
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DeveloperNotification"
+                      }
+                    },
+                    "hasMore": { "type": "boolean" },
+                    "note": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Invalid" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/AdminForbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/_dashboard/api/analytics/table": {
+      "get": {
+        "operationId": "getDeveloperUsageTable",
+        "summary": "Read coarse, account-scoped usage dimensions",
+        "description": "Requires dashboard session and completed onboarding when active. scope=all additionally requires the live admin role. Dimension IDs are retained for compatibility: origins returns Origin presence; ips returns country with Country only detail; userAgents returns browser/application/bot/other/unknown or legacy (redacted). Historical raw values are reduced before grouping/search/pagination. Raw IPs, user agents and Origin URLs are not returned. Historical underlying storage is not erased by this response transformation.",
+        "parameters": [
+          {
+            "name": "dimension",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "endpoints",
+                "projects",
+                "keys",
+                "origins",
+                "ips",
+                "userAgents"
+              ],
+              "default": "endpoints"
+            }
+          },
+          {
+            "name": "hours",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 720,
+              "default": 24
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["project", "all"],
+              "default": "project"
+            }
+          },
+          {
+            "name": "apiVersion",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["all", "legacy", "v1"],
+              "default": "all"
+            }
+          },
+          {
+            "name": "projectId",
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/UsageIdentifier" }
+          },
+          {
+            "name": "keyId",
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/UsageIdentifier" }
+          },
+          {
+            "name": "route",
+            "in": "query",
+            "schema": { "type": "string", "minLength": 1, "maxLength": 180 }
+          },
+          {
+            "name": "method",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "GET",
+                "HEAD",
+                "POST",
+                "PUT",
+                "PATCH",
+                "DELETE",
+                "OPTIONS"
+              ]
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "description": "Fixed UTC window end, no more than 60 days old or 60 seconds in the future.",
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": { "type": "string", "maxLength": 180 }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "requests",
+                "cacheHitRate",
+                "rateLimited",
+                "blockedPolicy",
+                "errorRate",
+                "avgLatencyMs",
+                "p95LatencyMs"
+              ],
+              "default": "requests"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "desc"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000,
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usage rows with metrics and paging metadata.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["rows", "hasMore", "offset", "end", "source"],
+                  "properties": {
+                    "rows": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/UsageRow" }
+                    },
+                    "hasMore": { "type": "boolean" },
+                    "offset": { "type": "integer" },
+                    "end": { "type": "string", "format": "date-time" },
+                    "source": {
+                      "type": "string",
+                      "enum": ["cloudflare_analytics_engine", "local_buffer"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Invalid" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": {
+            "description": "Onboarding incomplete, wrong dashboard host, or scope=all without admin role."
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "503": { "description": "ANALYTICS_UNAVAILABLE; retry later." }
+        }
+      }
+    },
+    "/_dashboard/api/account/receipt": {
+      "get": {
+        "operationId": "getDeveloperAgreementReceipts",
+        "summary": "Download the signed-in account's historical agreement receipts",
+        "description": "Returns newest-first retained active-account acceptance events, including the exact terms and privacy notice captured with each event. No onboarding eligibility is required beyond a valid, non-revoked session for an open account. Older events have null privacy fields and privacy_status=not_recorded; today's notice is never substituted. Profile or rollout changes do not rewrite evidence. The JSON download remains available for compatibility; the Profile UI offers Print / Save as PDF.",
+        "responses": {
+          "200": {
+            "description": "Account-scoped receipts, or an empty list when none exist.",
+            "headers": {
+              "Cache-Control": {
+                "schema": { "type": "string", "enum": ["no-store"] }
+              },
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string",
+                  "enum": ["attachment; filename=\"egdata-acceptances.json\""]
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["acceptances"],
+                  "properties": {
+                    "acceptances": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AgreementReceipt"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, revoked or closed-account dashboard session."
+          },
+          "500": {
+            "description": "Receipt storage could not be read. No receipt data is returned."
+          }
+        }
+      }
+    },
+    "/_dashboard/api/account/agreements": {
+      "post": {
+        "operationId": "acceptDeveloperAgreement",
+        "summary": "Explicitly accept the displayed Developer Terms",
+        "description": "Requires verified email and a same-origin authenticated session. Atomically records the exact terms, current privacy notice version/hash for the same rollout revision, a stable receipt ID, and a durable receipt email job. Privacy is supplied for information and is never recorded as consent. Repeated acceptance is idempotent for the active terms version and does not rewrite existing receipts.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["revision", "version", "sha256", "accepted"],
+                "properties": {
+                  "revision": { "type": "string", "maxLength": 100 },
+                  "version": { "type": "string", "maxLength": 100 },
+                  "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+                  "accepted": { "type": "boolean", "enum": [true] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated developer account status; receipt email queued durably. Provider acceptance is not proof of inbox delivery."
+          },
+          "400": {
+            "description": "Invalid input or explicit acceptance missing."
+          },
+          "401": { "description": "Dashboard session required." },
+          "403": {
+            "description": "Email verification required or request origin rejected."
+          },
+          "409": {
+            "description": "The displayed requirement, terms version or hash no longer matches."
+          },
+          "413": { "description": "Body exceeds 4096 bytes." },
+          "500": {
+            "description": "Storage failure; acceptance and outbox writes roll back together."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "AdminOffset": {
+        "name": "offset",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000,
+          "default": 0
+        }
+      },
+      "CaseId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      }
+    },
+    "responses": {
+      "Invalid": {
+        "description": "VALIDATION_ERROR: invalid fields, pagination or filters."
+      },
+      "Unauthenticated": {
+        "description": "Missing, expired, revoked or closed-account dashboard session."
+      },
+      "AdminForbidden": {
+        "description": "Completed onboarding and live D1 admin role required; dashboard host and same-origin Origin for mutations must match."
+      },
+      "RateLimited": { "description": "Dashboard rate limit exceeded." },
+      "CaseBodyTooLarge": { "description": "Request body exceeds 8192 bytes." },
+      "CaseConflict": {
+        "description": "CASE_CONFLICT: missing/resolved case, repeated extension or passed extension deadline."
+      },
+      "CaseUpdated": {
+        "description": "Evidence recorded; Cache-Control: no-store.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["ok"],
+              "properties": { "ok": { "type": "boolean", "enum": [true] } }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "dashboardSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "egdata_dash_session"
+      }
+    },
+    "schemas": {
+      "CaseReference": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 300,
+        "description": "Trimmed reference; no copied correspondence or identity documents."
+      },
+      "CaseExplanation": {
+        "type": "string",
+        "minLength": 10,
+        "maxLength": 2000,
+        "description": "Trimmed factual explanation."
+      },
+      "PrivacyKind": {
+        "type": "string",
+        "enum": [
+          "access",
+          "erasure",
+          "rectification",
+          "restriction",
+          "objection",
+          "portability"
+        ]
+      },
+      "PrivacyActionKind": {
+        "type": "string",
+        "enum": [
+          "export",
+          "erase",
+          "rectify",
+          "restrict",
+          "notify-recipient",
+          "restore-suppression",
+          "review-hold"
+        ]
+      },
+      "PrivacyRequest": {
+        "type": "object",
+        "description": "All timestamps are Unix milliseconds.",
+        "properties": {
+          "id": { "type": "string" },
+          "owner_id": { "type": "string", "nullable": true },
+          "case_reference": { "type": "string" },
+          "kind": { "$ref": "#/components/schemas/PrivacyKind" },
+          "received_at": { "type": "integer" },
+          "due_at": { "type": "integer" },
+          "response_due_at": { "type": "integer" },
+          "extended_due_at": { "type": "integer", "nullable": true },
+          "extension_reason": { "type": "string", "nullable": true },
+          "extension_notified_at": { "type": "integer", "nullable": true },
+          "resolved_at": { "type": "integer", "nullable": true },
+          "resolution": { "type": "string", "nullable": true },
+          "created_by": { "type": "string" }
+        }
+      },
+      "PrivacyAction": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "request_id": { "type": "string" },
+          "store": { "type": "string" },
+          "action": { "$ref": "#/components/schemas/PrivacyActionKind" },
+          "completed_at": { "type": "integer" },
+          "actor": { "type": "string" },
+          "evidence_reference": { "type": "string" }
+        }
+      },
+      "DeveloperNotification": {
+        "type": "object",
+        "description": "Timestamps are Unix milliseconds; verification jobs use attempts=8 to exclude automatic retry.",
+        "properties": {
+          "id": { "type": "string" },
+          "recipient": { "type": "string" },
+          "subject": { "type": "string" },
+          "created_at": { "type": "integer" },
+          "sent_at": { "type": "integer", "nullable": true },
+          "attempts": { "type": "integer" },
+          "next_attempt_at": { "type": "integer" },
+          "transport_status": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "queued",
+              "deferred",
+              "delivered",
+              "bounced",
+              "failed",
+              "rejected",
+              "complained",
+              null
+            ]
+          }
+        }
+      },
+      "UsageIdentifier": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9_.:@-]{1,96}$"
+      },
+      "UsageRow": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "detail": { "type": "string" },
+          "route": { "type": "string" },
+          "method": { "type": "string" },
+          "projectId": { "type": "string" },
+          "keyId": { "type": "string" },
+          "requests": { "type": "number" },
+          "cacheHits": { "type": "number" },
+          "cacheHitRate": { "type": "number" },
+          "rateLimited": { "type": "number" },
+          "blockedPolicy": { "type": "number" },
+          "errors": { "type": "number" },
+          "errorRate": { "type": "number" },
+          "avgLatencyMs": { "type": "number" },
+          "p50LatencyMs": { "type": "number" },
+          "p95LatencyMs": { "type": "number" },
+          "p99LatencyMs": { "type": "number" }
+        }
+      },
+      "LegalDocument": {
+        "type": "object",
+        "required": [
+          "kind",
+          "version",
+          "edition",
+          "sha256",
+          "body",
+          "published_at"
+        ],
+        "properties": {
+          "kind": { "type": "string", "enum": ["terms", "privacy"] },
+          "version": { "type": "string" },
+          "edition": { "type": "string" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "body": {
+            "type": "string",
+            "description": "Exact published UTF-8 Markdown text."
+          },
+          "published_at": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix milliseconds."
+          }
+        }
+      },
+      "AgreementReceipt": {
+        "type": "object",
+        "required": [
+          "receipt_id",
+          "account_id",
+          "accepted_at",
+          "accepted_at_iso",
+          "requirement_revision",
+          "version",
+          "sha256",
+          "body",
+          "terms",
+          "privacy",
+          "privacy_recorded_at",
+          "privacy_status"
+        ],
+        "properties": {
+          "receipt_id": {
+            "type": "string",
+            "description": "Stable opaque receipt identity."
+          },
+          "account_id": {
+            "type": "string",
+            "description": "Epic account identity recorded with acceptance, not the mutable display name or email."
+          },
+          "accepted_at": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Original acceptance time in Unix milliseconds."
+          },
+          "accepted_at_iso": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The same acceptance instant in UTC."
+          },
+          "requirement_revision": { "type": "string" },
+          "version": {
+            "type": "string",
+            "description": "Original terms version field, preserved for compatibility."
+          },
+          "sha256": {
+            "type": "string",
+            "description": "Original terms hash field, preserved for compatibility."
+          },
+          "body": {
+            "type": "string",
+            "description": "Original terms text field, preserved for compatibility."
+          },
+          "terms": { "$ref": "#/components/schemas/LegalDocument" },
+          "privacy": {
+            "type": "object",
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/LegalDocument" }],
+            "description": "Exact notice provided alongside the terms; null if it was not recorded."
+          },
+          "privacy_recorded_at": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "description": "Acceptance-event time when this notice was recorded as provided; not a reading, delivery or consent timestamp."
+          },
+          "privacy_status": {
+            "type": "string",
+            "enum": ["provided", "not_recorded"]
+          }
+        }
+      }
+    }
+  }
+}

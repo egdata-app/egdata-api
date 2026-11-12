@@ -13,6 +13,51 @@ gateway while signed in with the login that created them. A copied console
 credential alone cannot authenticate an external application or the public API
 hostname. Use a regular API key for your applications.
 
+After the initial legal documents are published, verify a notification email and
+explicitly accept the Developer Terms at `/profile/agreements` before using dashboard
+features or console sessions. This also applies to already-issued console sessions.
+The Privacy Notice is informational. Existing application API keys keep working
+during initial onboarding, even after an incomplete dashboard visit.
+
+The account menu offers **Profile** and **Log out**. Profile (`/profile`) contains
+email-only editing and account deletion. Agreements (`/profile/agreements`) and
+Receipts (`/profile/receipts`) share the same header and account navigation.
+Your display name remains managed by Epic. Deletion
+requires a recent sign-in and typed confirmation; it ends account sessions and
+credentials, including cached API keys. Closed-account keys return
+`401 INVALID_API_KEY`. If credential/account status cannot be verified, the gateway
+returns uncacheable `503 ACCOUNT_STATUS_UNAVAILABLE` with `Retry-After: 30` before
+quota/upstream access. Complete onboarding for a console `AGREEMENT_REQUIRED` or
+`EMAIL_VERIFICATION_REQUIRED` response rather than repeatedly retrying it.
+
+Receipts show a stable receipt ID, Epic account ID, UTC acceptance time, and the
+exact terms and privacy versions and hashes recorded for that event. Terms are
+accepted; the Privacy Notice is provided for information, not consent. Older
+receipts without a recorded privacy version explicitly say so. Later profile or
+document changes do not rewrite receipt history. Use **Print / Save as PDF** to
+include the receipt and both full documents, even when collapsed on screen.
+The original account-scoped JSON export remains at `/_dashboard/api/account/receipt`.
+Old `/agreements` and `/receipts` links redirect to the corresponding Profile pages.
+
+Profile offers **Export account data** via `GET /_dashboard/api/account/export`,
+including during onboarding. The uncacheable NDJSON attachment contains selected
+account-scoped D1 records, excludes credentials and verification secrets, and ends
+with `{"section":"complete"}`. Discard incomplete downloads and retry. This live
+export is not a complete cross-store rights response; email `contact@egdata.app`
+for analytics, security, support or backup records.
+
+Usage reports show Origin presence, countries and coarse client categories.
+The `origins`, `ips` and `userAgents` dimension IDs remain but do not return raw
+Origin URLs, IPs or user agents. Historical reporting is reduced before aggregation;
+underlying historical data needs separate rights/retention handling.
+
+Operator routes under `/_dashboard/api/admin/privacy-requests` record rights-case
+deadlines and action evidence; `/_dashboard/api/admin/notifications` exposes dispatch
+and transport status. Both require a live admin role, session and active onboarding
+completion; mutations require same-origin requests. They record evidence rather
+than performing cross-store erasure or sending rights replies. See the public API
+console guide and `openapi/egdata.dashboard.openapi.json` for fields and errors.
+
 Console requests count toward the selected project's usage and endpoint alerts.
 Select **API console** in the Usage page's key filter to see these requests.
 All sessions and ordinary API keys for the same project share one global 60-second

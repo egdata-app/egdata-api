@@ -9,17 +9,33 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ReceiptsRouteImport } from './routes/receipts'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LimitsRouteImport } from './routes/limits'
 import { Route as KeysRouteImport } from './routes/keys'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AlertsRouteImport } from './routes/alerts'
+import { Route as AgreementsRouteImport } from './routes/agreements'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfileIndexRouteImport } from './routes/profile.index'
 import { Route as DocsIndexRouteImport } from './routes/docs.index'
+import { Route as ProfileReceiptsRouteImport } from './routes/profile.receipts'
+import { Route as ProfileAgreementsRouteImport } from './routes/profile.agreements'
 import { Route as DocsSlugRouteImport } from './routes/docs.$slug'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminProjectsRouteImport } from './routes/admin.projects'
 
+const ReceiptsRoute = ReceiptsRouteImport.update({
+  id: '/receipts',
+  path: '/receipts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LimitsRoute = LimitsRouteImport.update({
   id: '/limits',
   path: '/limits',
@@ -45,15 +61,35 @@ const AlertsRoute = AlertsRouteImport.update({
   path: '/alerts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgreementsRoute = AgreementsRouteImport.update({
+  id: '/agreements',
+  path: '/agreements',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProfileRoute,
+} as any)
 const DocsIndexRoute = DocsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DocsRoute,
+} as any)
+const ProfileReceiptsRoute = ProfileReceiptsRouteImport.update({
+  id: '/receipts',
+  path: '/receipts',
+  getParentRoute: () => ProfileRoute,
+} as any)
+const ProfileAgreementsRoute = ProfileAgreementsRouteImport.update({
+  id: '/agreements',
+  path: '/agreements',
+  getParentRoute: () => ProfileRoute,
 } as any)
 const DocsSlugRoute = DocsSlugRouteImport.update({
   id: '/$slug',
@@ -73,91 +109,142 @@ const AdminProjectsRoute = AdminProjectsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agreements': typeof AgreementsRoute
   '/alerts': typeof AlertsRoute
   '/analytics': typeof AnalyticsRoute
   '/docs': typeof DocsRouteWithChildren
   '/keys': typeof KeysRoute
   '/limits': typeof LimitsRoute
+  '/profile': typeof ProfileRouteWithChildren
+  '/receipts': typeof ReceiptsRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/users': typeof AdminUsersRoute
   '/docs/$slug': typeof DocsSlugRoute
+  '/profile/agreements': typeof ProfileAgreementsRoute
+  '/profile/receipts': typeof ProfileReceiptsRoute
   '/docs/': typeof DocsIndexRoute
+  '/profile/': typeof ProfileIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agreements': typeof AgreementsRoute
   '/alerts': typeof AlertsRoute
   '/analytics': typeof AnalyticsRoute
   '/keys': typeof KeysRoute
   '/limits': typeof LimitsRoute
+  '/receipts': typeof ReceiptsRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/users': typeof AdminUsersRoute
   '/docs/$slug': typeof DocsSlugRoute
+  '/profile/agreements': typeof ProfileAgreementsRoute
+  '/profile/receipts': typeof ProfileReceiptsRoute
   '/docs': typeof DocsIndexRoute
+  '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agreements': typeof AgreementsRoute
   '/alerts': typeof AlertsRoute
   '/analytics': typeof AnalyticsRoute
   '/docs': typeof DocsRouteWithChildren
   '/keys': typeof KeysRoute
   '/limits': typeof LimitsRoute
+  '/profile': typeof ProfileRouteWithChildren
+  '/receipts': typeof ReceiptsRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/users': typeof AdminUsersRoute
   '/docs/$slug': typeof DocsSlugRoute
+  '/profile/agreements': typeof ProfileAgreementsRoute
+  '/profile/receipts': typeof ProfileReceiptsRoute
   '/docs/': typeof DocsIndexRoute
+  '/profile/': typeof ProfileIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/agreements'
     | '/alerts'
     | '/analytics'
     | '/docs'
     | '/keys'
     | '/limits'
+    | '/profile'
+    | '/receipts'
     | '/admin/projects'
     | '/admin/users'
     | '/docs/$slug'
+    | '/profile/agreements'
+    | '/profile/receipts'
     | '/docs/'
+    | '/profile/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/agreements'
     | '/alerts'
     | '/analytics'
     | '/keys'
     | '/limits'
+    | '/receipts'
     | '/admin/projects'
     | '/admin/users'
     | '/docs/$slug'
+    | '/profile/agreements'
+    | '/profile/receipts'
     | '/docs'
+    | '/profile'
   id:
     | '__root__'
     | '/'
+    | '/agreements'
     | '/alerts'
     | '/analytics'
     | '/docs'
     | '/keys'
     | '/limits'
+    | '/profile'
+    | '/receipts'
     | '/admin/projects'
     | '/admin/users'
     | '/docs/$slug'
+    | '/profile/agreements'
+    | '/profile/receipts'
     | '/docs/'
+    | '/profile/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgreementsRoute: typeof AgreementsRoute
   AlertsRoute: typeof AlertsRoute
   AnalyticsRoute: typeof AnalyticsRoute
   DocsRoute: typeof DocsRouteWithChildren
   KeysRoute: typeof KeysRoute
   LimitsRoute: typeof LimitsRoute
+  ProfileRoute: typeof ProfileRouteWithChildren
+  ReceiptsRoute: typeof ReceiptsRoute
   AdminProjectsRoute: typeof AdminProjectsRoute
   AdminUsersRoute: typeof AdminUsersRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/receipts': {
+      id: '/receipts'
+      path: '/receipts'
+      fullPath: '/receipts'
+      preLoaderRoute: typeof ReceiptsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/limits': {
       id: '/limits'
       path: '/limits'
@@ -193,6 +280,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlertsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agreements': {
+      id: '/agreements'
+      path: '/agreements'
+      fullPath: '/agreements'
+      preLoaderRoute: typeof AgreementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -200,12 +294,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/': {
+      id: '/profile/'
+      path: '/'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
+      parentRoute: typeof ProfileRoute
+    }
     '/docs/': {
       id: '/docs/'
       path: '/'
       fullPath: '/docs/'
       preLoaderRoute: typeof DocsIndexRouteImport
       parentRoute: typeof DocsRoute
+    }
+    '/profile/receipts': {
+      id: '/profile/receipts'
+      path: '/receipts'
+      fullPath: '/profile/receipts'
+      preLoaderRoute: typeof ProfileReceiptsRouteImport
+      parentRoute: typeof ProfileRoute
+    }
+    '/profile/agreements': {
+      id: '/profile/agreements'
+      path: '/agreements'
+      fullPath: '/profile/agreements'
+      preLoaderRoute: typeof ProfileAgreementsRouteImport
+      parentRoute: typeof ProfileRoute
     }
     '/docs/$slug': {
       id: '/docs/$slug'
@@ -243,13 +358,31 @@ const DocsRouteChildren: DocsRouteChildren = {
 
 const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
 
+interface ProfileRouteChildren {
+  ProfileAgreementsRoute: typeof ProfileAgreementsRoute
+  ProfileReceiptsRoute: typeof ProfileReceiptsRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
+}
+
+const ProfileRouteChildren: ProfileRouteChildren = {
+  ProfileAgreementsRoute: ProfileAgreementsRoute,
+  ProfileReceiptsRoute: ProfileReceiptsRoute,
+  ProfileIndexRoute: ProfileIndexRoute,
+}
+
+const ProfileRouteWithChildren =
+  ProfileRoute._addFileChildren(ProfileRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgreementsRoute: AgreementsRoute,
   AlertsRoute: AlertsRoute,
   AnalyticsRoute: AnalyticsRoute,
   DocsRoute: DocsRouteWithChildren,
   KeysRoute: KeysRoute,
   LimitsRoute: LimitsRoute,
+  ProfileRoute: ProfileRouteWithChildren,
+  ReceiptsRoute: ReceiptsRoute,
   AdminProjectsRoute: AdminProjectsRoute,
   AdminUsersRoute: AdminUsersRoute,
 }

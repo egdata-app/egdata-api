@@ -113,6 +113,7 @@ export function toCachedKeyMetadata(row: RawApiKeyRow): CachedKeyMetadata {
 export async function upsertEpicUserAndDefaultProject(
   db: D1Database,
   user: EpicSessionUser,
+  provision = true,
 ): Promise<DashboardProject[]> {
   const now = new Date().toISOString();
 
@@ -130,7 +131,7 @@ export async function upsertEpicUserAndDefaultProject(
     .bind(
       user.epicAccountId,
       user.displayName,
-      user.avatarUrl,
+      "",
       user.preferredLanguage ?? null,
       user.email ?? null,
       now,
@@ -139,7 +140,7 @@ export async function upsertEpicUserAndDefaultProject(
     .run();
 
   let projects = await listUserProjects(db, user.epicAccountId);
-  if (projects.length === 0) {
+  if (provision && projects.length === 0) {
     const defaultSlug =
       user.displayName
         .toLowerCase()

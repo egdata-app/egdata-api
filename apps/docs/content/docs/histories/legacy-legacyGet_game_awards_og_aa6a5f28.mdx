@@ -5,6 +5,17 @@ description: History for GET /game-awards/og
 
 `GET /game-awards/og` — active. Recorded dates are not deployment dates.
 
+## 2026-11-12 — Add verified-email onboarding, immutable receipts, privacy operations, and authoritative account closure
+
+Record: [developer-onboarding-account-closure](https://github.com/egdata-app/egdata-api/blob/main/changes/records/developer-onboarding-account-closure.json).
+
+- **legacy GET /game-awards/og** (legacyGet_game_awards_og_aa6a5f28; security; breaking)
+  - Before: The portal had no self-service account closure or verified-email/terms onboarding. Cached key identity could be used without a fresh account-closure lookup, and active console sessions did not check onboarding.
+  - After: Initial publication gates dashboard and console access on verified email followed by explicit terms acceptance. Existing external API keys keep working even after an incomplete dashboard visit. Account closure deletes active credentials and rejects warm/delayed key caches through a primary lookup before quota/cache/upstream access (401 INVALID_API_KEY). Credential/account lookup failure returns uncacheable 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30; HEAD has no body. Public and configured anonymous bypasses retain their prior behavior. Already-admitted requests may finish; acceptance does not restore revoked keys or reset quotas.
+  - Client action: Existing API-key integrations need no onboarding change for this initial rollout. Dashboard/console users must verify a notification email and accept published terms; closure permanently ends their credentials. Retry ACCOUNT_STATUS_UNAVAILABLE after Retry-After; do not automatically retry agreement-related 403 responses.
+
+Verification: dashboard/tests/privacy-operations.test.ts; dashboard/tests/developer-mail-events.test.ts; dashboard/tests/analytics.test.ts; dashboard/tests/legacy-analytics.test.ts; dashboard/legal/operations.md; dashboard/tests/developer-account.test.ts; dashboard/tests/legal-publication.test.ts; openapi/egdata.dashboard.openapi.json; src/openapi/project-quota.ts; src/openapi/v1.ts; apps/docs/content/docs/api-console.mdx; pnpm dashboard:test; pnpm dashboard:build; pnpm docs:check.
+
 ## 2026-11-12 — Enforce shared 100,000 requests/month allowance across free account projects
 
 Record: [free-account-monthly-quota](https://github.com/egdata-app/egdata-api/blob/main/changes/records/free-account-monthly-quota.json).

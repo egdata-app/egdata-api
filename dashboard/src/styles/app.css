@@ -4,11 +4,11 @@
 
 @theme {
   --font-sans:
-    "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    sans-serif;
+    "Inter Variable", ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, sans-serif;
   --font-mono:
-    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    monospace;
+    "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, monospace;
 
   /* Epic Games Store & egdata Dark Palette */
   --color-epic-bg: #101014;
@@ -136,6 +136,75 @@ body::before {
 
 .docs-markdown p {
   margin: 0;
+}
+
+/* Legal documents use the same escaped renderer with roomier reading styles. */
+.legal-markdown {
+  color: var(--color-epic-text);
+  font-size: 0.9375rem;
+  line-height: 1.85;
+}
+
+.legal-markdown > :first-child {
+  margin-top: 0;
+}
+
+.legal-markdown > p + p {
+  margin-top: 1rem;
+}
+
+.legal-markdown :is(h1, h2, h3, h4) {
+  scroll-margin-top: 2rem;
+}
+
+@media print {
+  @page {
+    margin: 16mm;
+  }
+  html:has(.agreement-receipt) {
+    color-scheme: light;
+    --color-epic-bg: white;
+    --color-epic-surface: white;
+    --color-epic-elevated: #f5f5f5;
+    --color-epic-text: #111;
+    --color-epic-text-muted: #444;
+    --color-epic-accent: #075a80;
+    --color-epic-success: #14532d;
+    --color-epic-border: #ccc;
+    background: white;
+    color: #111;
+  }
+
+  body:has(.agreement-receipt)::before,
+  .agreement-receipt .receipt-hash {
+    display: none;
+  }
+
+  .account-page {
+    max-width: none;
+    padding: 0;
+  }
+
+  .agreement-receipt {
+    border: 0;
+    padding: 0;
+  }
+
+  .agreement-receipt h2,
+  .agreement-receipt h3,
+  .agreement-receipt dt {
+    break-after: avoid;
+  }
+
+  .receipt-document {
+    overflow: visible;
+    border-radius: 0;
+  }
+
+  .agreement-receipt .legal-markdown {
+    font-size: 10.5pt;
+    line-height: 1.6;
+  }
 }
 
 .docs-markdown a {

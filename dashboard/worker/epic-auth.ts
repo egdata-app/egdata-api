@@ -7,6 +7,11 @@ import {
   verifyHmacToken,
 } from "./crypto.js";
 import { upsertEpicUserAndDefaultProject } from "./db.js";
+import {
+  accountClosed,
+  developerStatus,
+  onboardingError,
+} from "./developer-status.js";
 import type { DashboardEnv, EpicSessionUser } from "./types.js";
 
 const SESSION_COOKIE_NAME = "egdata_dash_session";
@@ -47,6 +52,7 @@ function safeLocalRedirect(value: string): string {
   if (
     !value.startsWith("/") ||
     value.startsWith("//") ||
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: Reject URL controls and whitespace before redirecting.
     /[\\\u0000-\u0020\u007f]/.test(value)
   )
     return "/";
@@ -102,7 +108,24 @@ export async function readDashboardSession(
     return null;
   }
 
+  if (await accountClosed(c.env.DB, parsed.user.epicAccountId)) return null;
+
   return parsed.user;
+}
+
+export async function hasRecentDashboardSession(c: Context<AuthHonoEnv>) {
+  const token = getCookie(c, SESSION_COOKIE_NAME);
+  if (!token) return false;
+  const parsed = await verifyHmacToken<SignedSessionPayload>(
+    token,
+    getSessionSecret(c.env, c.req.url),
+  );
+  return Boolean(
+    parsed &&
+      Number.isFinite(parsed.iat) &&
+      parsed.iat <= Date.now() &&
+      Date.now() - parsed.iat < 10 * 60_000,
+  );
 }
 
 export async function issueDashboardSessionCookie(
@@ -184,6 +207,29 @@ export async function requireDashboardUser(
     );
   }
   c.set("user", user);
+  // Deletion of credentials/console sessions remains available while onboarding.
+  const exitAction =
+    c.req.method === "DELETE" && /\/(keys|console-sessions)\//.test(c.req.path);
+  if (!exitAction) {
+    try {
+      const status = await developerStatus(c.env, user.epicAccountId);
+      if (!status.eligible)
+        return c.json(onboardingError(status), 403, {
+          "Cache-Control": "no-store",
+        });
+    } catch {
+      return c.json(
+        {
+          error: {
+            code: "LEGAL_STATUS_UNAVAILABLE",
+            message: "Account status is temporarily unavailable. Please retry.",
+          },
+        },
+        503,
+        { "Cache-Control": "no-store", "Retry-After": "30" },
+      );
+    }
+  }
   await next();
 }
 
@@ -206,11 +252,13 @@ export async function startEpicOAuthRedirect(
     const demoUser: EpicSessionUser = {
       epicAccountId: "epic_dev_7da0b3179a5b5ef4f1a2d118",
       displayName: demoName,
-      avatarUrl: defaultEpicAvatar(demoName),
+      avatarUrl: "",
       preferredLanguage: "en",
       email: "epic_dev_7da0b3179a5b5ef4f1a2d118@accounts.epicgames.com",
     };
-    await upsertEpicUserAndDefaultProject(c.env.DB, demoUser);
+    if (await accountClosed(c.env.DB, demoUser.epicAccountId))
+      return c.redirect("/?auth_error=account_closed", 302);
+    await upsertEpicUserAndDefaultProject(c.env.DB, demoUser, false);
     await issueDashboardSessionCookie(c, demoUser);
     return c.redirect(safeRedirect, 302);
   }
@@ -377,12 +425,14 @@ export async function handleEpicOAuthCallback(
   const sessionUser: EpicSessionUser = {
     epicAccountId: userInfo.sub,
     displayName,
-    avatarUrl: defaultEpicAvatar(displayName),
+    avatarUrl: "",
     preferredLanguage,
     email: `${userInfo.sub}@accounts.epicgames.com`,
   };
 
-  await upsertEpicUserAndDefaultProject(c.env.DB, sessionUser);
+  if (await accountClosed(c.env.DB, sessionUser.epicAccountId))
+    return c.redirect("/?auth_error=account_closed", 302);
+  await upsertEpicUserAndDefaultProject(c.env.DB, sessionUser, false);
   await issueDashboardSessionCookie(c, sessionUser);
 
   return c.redirect(safeLocalRedirect(verifiedState.redirectTo || "/"), 302);
