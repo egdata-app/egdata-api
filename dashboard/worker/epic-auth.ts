@@ -1,12 +1,18 @@
 import type { Context, Next } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
-import { bytesToHex, signHmacToken, verifyHmacToken } from "./crypto.js";
+import {
+  bytesToHex,
+  sha256Hex,
+  signHmacToken,
+  verifyHmacToken,
+} from "./crypto.js";
 import { upsertEpicUserAndDefaultProject } from "./db.js";
 import type { DashboardEnv, EpicSessionUser } from "./types.js";
 
 const SESSION_COOKIE_NAME = "egdata_dash_session";
 const OAUTH_STATE_COOKIE_NAME = "egdata_epic_oauth_state";
 const SESSION_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
+const REVOKED_SESSION_KV_PREFIX = "revoked_session:";
 
 const EPIC_AUTHORIZE_URL = "https://www.epicgames.com/id/authorize";
 const EPIC_TOKEN_URL = "https://api.epicgames.dev/epic/oauth/v2/token";
@@ -85,6 +91,17 @@ export async function readDashboardSession(
   ) {
     return null;
   }
+
+  if (c.env.API_KEYS_KV && typeof c.env.API_KEYS_KV.get === "function") {
+    const tokenHash = await sha256Hex(rawToken);
+    const revoked = await c.env.API_KEYS_KV.get(
+      `${REVOKED_SESSION_KV_PREFIX}${tokenHash}`,
+    );
+    if (revoked !== null) {
+      return null;
+    }
+  }
+
   return parsed.user;
 }
 
@@ -111,6 +128,41 @@ export async function issueDashboardSessionCookie(
     path: "/",
     maxAge: SESSION_TTL_SECONDS,
   });
+}
+
+export async function revokeDashboardSession(
+  c: Context<AuthHonoEnv>,
+): Promise<void> {
+  const rawToken = getCookie(c, SESSION_COOKIE_NAME);
+  if (
+    !rawToken ||
+    !c.env.API_KEYS_KV ||
+    typeof c.env.API_KEYS_KV.put !== "function"
+  ) {
+    return;
+  }
+  try {
+    const secret = getSessionSecret(c.env, c.req.url);
+    const parsed = await verifyHmacToken<SignedSessionPayload>(
+      rawToken,
+      secret,
+    );
+    if (!parsed || !Number.isFinite(parsed.exp) || Date.now() >= parsed.exp) {
+      return;
+    }
+    const tokenHash = await sha256Hex(rawToken);
+    const ttlSeconds = Math.max(
+      60,
+      Math.ceil((parsed.exp - Date.now()) / 1000),
+    );
+    await c.env.API_KEYS_KV.put(
+      `${REVOKED_SESSION_KV_PREFIX}${tokenHash}`,
+      "1",
+      { expirationTtl: ttlSeconds },
+    );
+  } catch {
+    // Ignore unconfigured secret or invalid token during logout
+  }
 }
 
 export function clearDashboardSessionCookie(c: Context<AuthHonoEnv>): void {

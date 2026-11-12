@@ -102,13 +102,19 @@ export async function verifyHmacToken<T>(
   }
 }
 
-export function timingSafeStringEqual(a: string, b: string): boolean {
-  const aBytes = encoder.encode(a);
-  const bBytes = encoder.encode(b);
-  if (aBytes.byteLength !== bBytes.byteLength) {
-    return false;
-  }
-  let diff = 0;
+export async function timingSafeStringEqual(
+  a: string,
+  b: string,
+): Promise<boolean> {
+  const aRaw = encoder.encode(a);
+  const bRaw = encoder.encode(b);
+  const [aDigest, bDigest] = await Promise.all([
+    crypto.subtle.digest("SHA-256", aRaw),
+    crypto.subtle.digest("SHA-256", bRaw),
+  ]);
+  const aBytes = new Uint8Array(aDigest);
+  const bBytes = new Uint8Array(bDigest);
+  let diff = aRaw.byteLength ^ bRaw.byteLength;
   for (let i = 0; i < aBytes.byteLength; i++) {
     diff |= aBytes[i] ^ bBytes[i];
   }

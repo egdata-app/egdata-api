@@ -37,6 +37,7 @@ import {
   handleEpicOAuthCallback,
   readDashboardSession,
   requireDashboardUser,
+  revokeDashboardSession,
   startEpicOAuthRedirect,
 } from "./epic-auth.js";
 import { removeKeyFromKv, syncKeyToKv } from "./key-cache.js";
@@ -63,16 +64,59 @@ type AppContext = {
 const dashboardApi = new Hono<AppContext>();
 
 dashboardApi.use("/*", async (c, next) => {
+  const reqUrl = new URL(c.req.url);
+  const isLocalHost = ["localhost", "127.0.0.1"].includes(reqUrl.hostname);
+  if (
+    c.env.DASHBOARD_ORIGIN &&
+    !isLocalHost &&
+    reqUrl.origin !== c.env.DASHBOARD_ORIGIN
+  ) {
+    return c.json(
+      {
+        error: {
+          code: "FORBIDDEN",
+          message: "Dashboard API requires the configured portal origin.",
+        },
+      },
+      403,
+      { "Cache-Control": "no-store" },
+    );
+  }
   if (
     !["GET", "HEAD", "OPTIONS"].includes(c.req.method) &&
-    c.req.header("origin") !== new URL(c.req.url).origin
+    c.req.header("origin") !== reqUrl.origin
   ) {
     return c.json(
       {
         error: { code: "FORBIDDEN", message: "Same-origin request required." },
       },
       403,
+      { "Cache-Control": "no-store" },
     );
+  }
+  if (
+    c.env.RATE_LIMITER_DASHBOARD_API &&
+    typeof c.env.RATE_LIMITER_DASHBOARD_API.limit === "function"
+  ) {
+    const clientIp =
+      c.req.header("cf-connecting-ip") ||
+      c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ||
+      "local";
+    const { success } = await c.env.RATE_LIMITER_DASHBOARD_API.limit({
+      key: `dash:${clientIp}`,
+    });
+    if (!success) {
+      return c.json(
+        {
+          error: {
+            code: "RATE_LIMITED",
+            message: "Too many dashboard requests. Please retry shortly.",
+          },
+        },
+        429,
+        { "Cache-Control": "no-store", "Retry-After": "60" },
+      );
+    }
   }
   await next();
   c.header("Cache-Control", "no-store");
@@ -86,7 +130,7 @@ dashboardApi.get("/auth/epic/login", (c) => startEpicOAuthRedirect(c));
 dashboardApi.get("/auth/epic/callback", (c) => handleEpicOAuthCallback(c));
 
 dashboardApi.post("/auth/logout", async (c) => {
-  await revokeConsoleLogin(c);
+  await Promise.all([revokeConsoleLogin(c), revokeDashboardSession(c)]);
   clearDashboardSessionCookie(c);
   return c.json({ ok: true });
 });
@@ -142,10 +186,29 @@ dashboardApi.use("/limit-requests/*", requireDashboardUser);
 dashboardApi.use("/limit-requests", requireDashboardUser);
 dashboardApi.route("/admin", limitReviewRoutes);
 
+const optionalHttpUrlSchema = z
+  .string()
+  .trim()
+  .max(200)
+  .optional()
+  .default("")
+  .refine(
+    (value) => {
+      if (!value) return true;
+      try {
+        const parsed = new URL(value);
+        return parsed.protocol === "http:" || parsed.protocol === "https:";
+      } catch {
+        return false;
+      }
+    },
+    { message: "Website URL must be a valid http:// or https:// URL." },
+  );
+
 const createProjectSchema = z.object({
   name: z.string().trim().min(2).max(64),
   description: z.string().trim().max(240).optional().default(""),
-  websiteUrl: z.string().trim().max(200).optional().default(""),
+  websiteUrl: optionalHttpUrlSchema,
 });
 
 dashboardApi.get("/projects", async (c) => {
@@ -438,6 +501,21 @@ dashboardApi.route("/analytics", analyticsRoutes);
 
 dashboardApi.post("/analytics/simulate", async (c) => {
   const user = c.get("user");
+  const isLocalDev =
+    ["localhost", "127.0.0.1"].includes(new URL(c.req.url).hostname) &&
+    c.env.ENABLE_DEV_AUTH === "true";
+  if (!isLocalDev && !(await isDashboardAdmin(c.env, user))) {
+    return c.json(
+      {
+        error: {
+          code: "FORBIDDEN",
+          message:
+            "Traffic simulation is restricted to local development or administrators.",
+        },
+      },
+      403,
+    );
+  }
   const keys = await listUserApiKeys(c.env.DB, user.epicAccountId);
   const sampleKey = keys[0];
   if (!sampleKey) {
@@ -512,7 +590,7 @@ const limitRequestSchema = z.object({
   requestedTier: z.enum(["pro", "enterprise", "custom"]),
   requestedRpm: z.number().int().min(150).max(500_000),
   expectedMonthlyRequests: z.number().int().min(10_000).max(10_000_000_000),
-  websiteUrl: z.string().trim().max(200).optional().default(""),
+  websiteUrl: optionalHttpUrlSchema,
   useCase: z
     .string()
     .trim()
@@ -685,6 +763,24 @@ export default {
     }
 
     if (url.pathname === "/_internal/change-records") {
+      if (
+        env.RATE_LIMITER_DASHBOARD_API &&
+        typeof env.RATE_LIMITER_DASHBOARD_API.limit === "function"
+      ) {
+        const clientIp =
+          request.headers.get("cf-connecting-ip") ||
+          request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+          "local";
+        const { success } = await env.RATE_LIMITER_DASHBOARD_API.limit({
+          key: `ingest:${clientIp}`,
+        });
+        if (!success) {
+          return new Response("Too Many Requests", {
+            status: 429,
+            headers: { "Cache-Control": "no-store", "Retry-After": "60" },
+          });
+        }
+      }
       return handleChangeIngestion(request, env);
     }
     if (
@@ -709,26 +805,30 @@ export default {
 
     // 4. Otherwise serve the Developer Dashboard SPA static assets
     if (env.ASSETS && typeof env.ASSETS.fetch === "function") {
-      if (url.pathname === "/docs" || url.pathname.startsWith("/docs/")) {
-        const response = await env.ASSETS.fetch(request);
-        const headers = new Headers(response.headers);
-        // Scalar and the console may connect only to this origin. No external docs services.
-        // Vite development injects an inline React preamble and HMR socket.
-        // The build-time flag is false in every deployed production bundle.
-        if (!import.meta.env.DEV) {
-          headers.set(
-            "Content-Security-Policy",
-            "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://cdn.egdata.app https://*.epicgames.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'",
-          );
-        }
-        headers.set("Referrer-Policy", "no-referrer");
-        return new Response(response.body, {
-          status: response.status,
-          statusText: response.statusText,
-          headers,
-        });
+      const response = await env.ASSETS.fetch(request);
+      const headers = new Headers(response.headers);
+      // Scalar, the console, and all portal routes may connect only to this origin.
+      // Vite development injects an inline React preamble and HMR socket.
+      // The build-time flag is false in every deployed production bundle.
+      if (!import.meta.env.DEV) {
+        headers.set(
+          "Content-Security-Policy",
+          "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://cdn.egdata.app https://*.epicgames.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'; frame-ancestors 'none'",
+        );
       }
-      return env.ASSETS.fetch(request);
+      headers.set("X-Content-Type-Options", "nosniff");
+      headers.set("X-Frame-Options", "DENY");
+      headers.set(
+        "Referrer-Policy",
+        url.pathname === "/docs" || url.pathname.startsWith("/docs/")
+          ? "no-referrer"
+          : "strict-origin-when-cross-origin",
+      );
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers,
+      });
     }
 
     return new Response("Not Found", { status: 404 });
