@@ -1,18 +1,15 @@
 # egdata Developer Terms of Service
 
-**Proposed version:** 1.0
+**Version:** 1.0
 
-**Draft prepared:** 12 November 2026
+**Prepared:** 12 November 2026
 
-**Publication date:** [TO COMPLETE]
+**Status:** Publication candidate; not published or effective.
 
-**Effective date:** [TO COMPLETE]
-
-> REVIEW DRAFT — not published or in force. The agreement flow described below
-> is implemented locally for initial portal onboarding but has not been activated.
-> Later material-update enforcement remains planned. This draft uses the adopted
-> material-change/30-day notice policy.
-> Remaining publication details are recorded in the accompanying implementation plan.
+> REVIEW DRAFT — publication and effective dates will be assigned when the initial
+> rollout is verified and activated. Operational prerequisites are recorded in
+> `dashboard/legal/operations.md`; publication follows `initial-rollout.md`.
+> Later material-update enforcement is a separate rollout under section 9.
 
 ## 1. Who provides the service
 
@@ -23,13 +20,15 @@ based in **Spain** (“egdata”, “we”, or “us”). Contact us at
 egdata is currently a free, non-commercial project.
 
 These terms govern your use of the developer portal at devs.egdata.app, your
-developer account, and API access provided through api.egdata.app or the portal's
-API console. They do not replace terms that independently apply to Epic Games
+developer account, and access to the versioned developer API at
+**api.egdata.app/v1/** or through the portal's API console. Legacy/unversioned
+API endpoints and their separate custom anti-abuse system are outside this
+agreement. These terms do not replace terms that independently apply to Epic Games
 or other third-party services.
 
 “Protected dashboard” means the authenticated project-management, analytics,
 quota, key-creation, and API-console features of the portal. “API access” includes
-requests to api.egdata.app using existing API keys and requests through the
+requests to api.egdata.app/v1/ using API keys and requests through the
 portal's API console. Section 9 explains the access paused for missing acceptance
 and the channels that remain available.
 
@@ -44,8 +43,9 @@ is not acceptance. Each acceptance is recorded as an immutable event containing
 the exact terms version and its SHA-256 fingerprint, the server time, and the
 Privacy Notice version provided at the same event. You receive a receipt that
 you can view at `/profile/receipts` and print or save as PDF from
-your browser (the receipt includes both full documents); a copy is also sent to
-your verified email address. Published versions never change after publication:
+your browser (the receipt includes both full documents). We queue an email to your
+verified address linking to that receipt; email delivery can fail, and the receipt
+remains available in your account. Published versions never change after publication:
 earlier versions remain readable at `/terms/:version` and `/privacy/:version`,
 and `/legal/history` lists their fingerprints and publication times.
 

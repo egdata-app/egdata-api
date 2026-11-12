@@ -10,9 +10,17 @@ the operator's name, Spain and contact email; a postal address/NIF is not treate
 an unconditional publication prerequisite. Reassess LSSI applicability if the
 economic context changes; see [operations.md](operations.md).
 
-Finalize the supplier and transfer inventory,
-actual security settings, retention and rights-handling procedures before approving
-the public text. The selected analytics minimization and broader retention targets
+The publication candidates now identify the confirmed providers: Cloudflare,
+Google Cloud (Belgium), Hetzner (Nuremberg, Germany), and Cloudflare routing to the
+operator's Gmail mailbox. MeiliSearch is unused. The developer documents cover
+the portal, accounts/keys, console and `/v1`; legacy custom anti-abuse is separate.
+The operator approved removing Aikido runtime telemetry; its historical records
+are disclosed without applying the new agreement retroactively.
+
+Complete the remaining supplier and transfer evidence,
+retention and rights-handling procedures before approving the public text; the
+specific actions are in [operations.md](operations.md#supplier-actions-and-publication-evidence).
+The selected analytics minimization and broader retention rules
 are implemented and tested locally, together with account export and rights-case
 tracking. They are not deployed. See [operations.md](operations.md) for production
 observations, supplier gaps and rights handling. Do not publish drafts as deployed facts.
@@ -22,7 +30,10 @@ inboxes before requiring email verification in production.
 
 ## Deployment order
 
-1. Apply migrations `0008_developer_accounts.sql` through `0011_email_delivery.sql`
+1. Deploy the origin build that removes Aikido's SDK, instrumentation preloads and
+   runtime hooks. Check external startup settings too and record the last possible
+   telemetry send. Resolve historical runtime-data retention/deletion separately.
+   Apply migrations `0008_developer_accounts.sql` through `0011_email_delivery.sql`
    before the new Worker. They enable account/receipt, privacy and email features
    but seed no documents or onboarding requirement. All four remain pending remotely.
    Migration 0010 clears legacy avatar URLs. Review the production restore procedure
@@ -30,8 +41,12 @@ inboxes before requiring email verification in production.
 2. Build and deploy the matching SPA/Worker. Check account menu, logout, receipt,
    recent-login deletion, email replacement and same-tab verification-link login.
    Check both existing users and a new account; verify mobile/keyboard navigation.
-3. Prepare finalized UTF-8 Markdown with actual version/publication/effective
-   metadata, public links, and no drafting instructions. Review retained exact bytes.
+3. Prepare finalized UTF-8 Markdown from the publication candidates with actual
+   version/publication/effective metadata and public links. Replace the candidate
+   header and remove its `REVIEW DRAFT` block only after the operational checks.
+   Use the actual activation date/time; do not backdate to the preparation date.
+   Review retained exact bytes. The offline script continues rejecting candidate
+   files so editing the prose alone cannot silently activate onboarding.
 4. From `dashboard/`, prepare SQL offline:
 
    ```sh

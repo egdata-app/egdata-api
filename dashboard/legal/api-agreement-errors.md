@@ -10,7 +10,9 @@ The current local implementation gates protected dashboard routes and existing/n
 console sessions after explicit publication. It requires verified email before
 terms acceptance. **Existing external API keys keep working**, including after an
 incomplete dashboard visit. The deadline/error-metadata model below describes the
-later universal-enforcement phase, not an active API-key terms requirement.
+later mandatory v1-update phase, not an active API-key terms requirement.
+Legacy/unversioned data routes remain outside this agreement; account closure
+and independent credential/security controls are separate from terms acceptance.
 
 Current account routes use `/_dashboard/api/account`: GET status, POST `/email`,
 POST `/email/verify`, POST `/agreements`, GET `/receipts`, GET `/receipt`,
@@ -62,8 +64,9 @@ unread notices, and declined optional consent never produce this error.
 
 ## Publication, notice, and cutoff
 
-Publishing a document does not itself change API eligibility. Initial access
-requires terms acceptance. An ordinary material terms update has an announced
+Publishing a document does not itself change API eligibility. Initial protected
+dashboard/console access requires acceptance; existing external API keys remain
+usable. A future ordinary material terms update has an announced
 effective time following at least 30 calendar days' advance notice. Before then,
 existing accounts that accepted the current edition continue to receive normal
 API responses, even if they have not yet accepted the upcoming edition. At the
@@ -154,11 +157,11 @@ For `ACCESS_SUSPENDED`, include `supportUrl: "mailto:contact@egdata.app"` with a
 generic explanation. A 503 must not fabricate a required version or imply the
 user has failed to agree.
 
-## Legacy API and private dashboard endpoints
+## Private dashboard endpoints
 
 Keep their established JSON error envelope and `application/json` content type.
 Put shared metadata inside `error`, alongside `code` and `message`. The same
-terms pause in the legacy/dashboard envelope is:
+terms pause in the dashboard envelope is:
 
 ```json
 {
@@ -183,7 +186,7 @@ terms pause in the legacy/dashboard envelope is:
 The private acceptance endpoint returns 409 with `error.code` set to
 `AGREEMENT_CHANGED` and the same metadata fields. For suspension, put
 `supportUrl` inside `error`. Preserve any existing request-ID headers; the new
-legal gate must not require changing unrelated legacy error responses.
+legal gate must not apply this agreement to legacy data routes.
 
 ## Headers, HEAD requests, and caches
 

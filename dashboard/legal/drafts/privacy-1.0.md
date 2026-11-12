@@ -1,27 +1,15 @@
 # egdata Developer Privacy Notice
 
-**Proposed version:** 1.0
+**Version:** 1.0
 
-**Draft prepared:** 12 November 2026
+**Prepared:** 12 November 2026
 
-**Publication date:** [TO COMPLETE]
+**Status:** Publication candidate; not published or effective.
 
-**Effective date:** [TO COMPLETE]
-
-> REVIEW DRAFT — not published. This draft reflects the reviewed developer
-> portal/gateway code and identifies information still needed about production
-> processing. Sections marked TO CONFIRM must be resolved before publication.
-> Initial terms acceptance, verified contact, receipts, and account closure are
-> implemented locally but undeployed. Material-update notice/deadline handling
-> remains planned; privacy revisions do not require acknowledgement for access.
-> Retention/minimization targets below are selected policy choices awaiting
-> production verification; provider-side controls remain unverified.
-> Telemetry minimization, finite D1 cleanups, the account export, and the
-> rights-case ledger described below are implemented and tested locally:
-> they are not deployed and do not erase already-stored historical rows.
-> Production email delivery to the operator's contact inbox was confirmed on
-> 12 November 2026; arbitrary-recipient capability and lifecycle tracking still
-> require verification. See sections 4 and 10.
+> REVIEW DRAFT — the reader-facing text below describes the initial rollout once
+> verified and activated. Publication and effective dates will be assigned at
+> activation. Deployment evidence and outstanding operational checks are kept in
+> `dashboard/legal/operations.md`; publication follows `initial-rollout.md`.
 
 ## 1. Who is responsible
 
@@ -30,11 +18,16 @@ for the personal data described in this notice.
 
 **Contact:** contact@egdata.app
 
-This notice covers the egdata Developer Portal, account and API-key management,
-API gateway traffic, developer support, and associated operational records. It
-also covers request metadata received when someone uses an application that
-calls our API. It is not a complete notice for every feature of egdata.app or
-for unrelated processing of personal data that may appear in API datasets.
+This notice covers the egdata Developer Portal at **devs.egdata.app**, developer
+accounts and API-key management, the versioned developer API at
+**api.egdata.app/v1/**, the portal's API console, developer support and associated
+operational records. It also covers request metadata received when an application
+calls that versioned API.
+
+Legacy/unversioned API routes and their separate custom anti-abuse system are
+outside this notice, as are the public website's browsing features and Google
+Analytics. That custom anti-abuse system does not apply to v1 requests. The
+developer portal does not use Google Analytics.
 
 Epic Games and developers of applications using our API may independently
 process personal data under their own notices.
@@ -44,9 +37,12 @@ processing of your request information. You may contact us directly to exercise
 rights concerning that processing; you do not need a developer account. The
 application provider must separately explain its own processing.
 
-**TO CONFIRM BEFORE PUBLICATION:** where other egdata processing, including
-personal data in API datasets, falls outside this notice, link the applicable
-notice so people can find the relevant controller, purposes, and rights channel.
+You can also contact **contact@egdata.app** about other egdata processing, including
+legacy API requests and personal information in datasets. You do not need to know
+which internal service holds the information. This notice is not a complete
+description of those separate activities.
+Providing this contact channel does not replace any obligation to give you
+information proactively about those activities.
 
 ## 2. Information we process and its sources
 
@@ -56,10 +52,6 @@ When you sign in with Epic Games, we receive an account identifier and basic
 profile information such as your display name and preferred language. We store
 that identity to operate the developer account. The portal displays a local
 account icon rather than requesting an Epic-hosted avatar.
-
-**DEPLOYMENT PENDING:** new logins/upserts use an empty avatar field and local
-migration 0010 clears legacy database URLs. Production records and older signed
-sessions may still contain URLs until migration/session expiry is verified.
 
 You enter your Epic Games password with Epic Games, not with egdata. The login
 flow exchanges authorization information with Epic Games to authenticate you.
@@ -101,23 +93,21 @@ processing time, cache and access-control outcomes; whether a browser Origin
 header was present; a coarse client category; and the approximate country
 derived from the network request.
 
-**DEPLOYMENT PENDING (local, undeployed):** routine telemetry now
-minimizes before it reaches either analytics sink — no raw IP address
-is stored at all (no hash or other stable identifier), the user agent is mapped
-to a coarse category (browser, application, bot, other, unknown), only the
-presence of an Origin header is kept, and only the country code is retained.
-This change does not erase historical rows already stored remotely; their
-treatment is described in section 7. **TO CONFIRM BEFORE PUBLICATION:** verify
-which behavior is actually deployed and when the change takes effect.
+Routine gateway usage records omit raw IP addresses and IP-derived identifiers.
+They keep a coarse client category (browser, application, bot, other or unknown),
+Origin-header presence rather than its value, and country rather than precise
+location. Account/project/key identifiers remain, so these records are not
+necessarily anonymous. Earlier records may contain raw IP addresses, user agents
+and Origin values; their treatment is described in section 7. Separate security
+and hosting processing below can still use IP addresses and detailed request data.
 
 Hosting, access, and security systems also process request URLs, network and
 protocol information, error events, and information needed to deliver requests.
 API request parameters and bodies are processed where necessary to answer the
-request. Worker invocation logs are enabled, and the checked-in configuration
-turns query-string redaction on, but deployed logging must still be verified:
-do not assume URLs or query values are never logged until production log fields
-and retention are inspected. Do not put credentials or unnecessary personal
-information in request URLs.
+request. Cloudflare invocation logs and error monitoring are enabled. We redact
+query strings in Worker observability, but this does not mean every provider's
+security report or application error is free of request information. Do not put
+credentials or unnecessary personal information in request URLs.
 
 If your application calls the API directly from an end user's browser, we receive
 that user's network/request information directly. With a server-to-server
@@ -128,26 +118,19 @@ that forwarded information. Developers should not forward unnecessary personal
 information. Their responsibility to explain their own processing does not
 replace our responsibility to inform people about egdata's processing.
 
-### Additional upstream security processing — deployment to confirm
+### Historical security information
 
-**TO CONFIRM BEFORE PUBLICATION:** the code also supports the following security
-processing. Establish which features, modes, and routes are active, then replace
-this drafting block with definite disclosures for the actual deployment:
+Before this rollout, our API origin used Aikido runtime security. That integration
+has been removed from the rollout. It previously processed a keyed identifier
+derived from IP address, user agent, language and country, together with security
+telemetry such as route/usage statistics, associated IP information, system
+information and suspected-attack details. Some of that information may still be
+held by Aikido until deleted under the applicable retention and rights procedures.
+Removing the integration does not itself erase prior records.
 
-- The anti-abuse system derives technical fingerprints from connection/protocol
-  characteristics and header structure, uses browser-consistency signals and
-  request patterns, and records risk indicators, session identifiers, and
-  challenge outcomes. Trusted gateway connection signals may be forwarded to
-  the origin for this purpose. Its fingerprint hash does not itself include raw
-  IP addresses or user-agent values, but those can be processed elsewhere.
-- The separate Aikido security integration can derive a keyed identifier from
-  IP address, user agent, language, and country, and supply it with a shortened
-  browser/country label to the security SDK for protection and rate-limit grouping.
-  Confirm SDK telemetry, provider access, storage, and retention independently.
-
-Derived or hashed identifiers are not assumed to be anonymous. Confirm their
-linkability, necessity, recipients, and retention along with the underlying data.
-The potential access consequences are described in section 9.
+This disclosure concerns any continuing retention of historical personal data;
+it does not apply the new Developer Terms to past activity or make terms acceptance
+consent for that processing. Section 8 also applies to requests about those records.
 
 ### Agreements, notifications, and administrative records
 
@@ -157,7 +140,8 @@ time, the requirement revision, a receipt ID, and the Privacy Notice version and
 fingerprint provided at that same event. Your receipts at `/profile/receipts`
 keep these references even if newer versions are published later; each receipt
 contains both full documents and can be printed or saved as PDF through your
-browser, and a copy is queued to your verified email address. Acceptances
+browser, and an email linking to the receipt is queued to your verified address.
+Email delivery can fail; the receipt remains available in your account. Acceptances
 recorded before this rollout may have no Privacy Notice version; we display that
 as "not recorded" and never backfill it. These pages live under `/profile`
 (`/profile`, `/profile/agreements`, `/profile/receipts`); older `/agreements` and
@@ -189,15 +173,9 @@ general request logging may still process them.
 An organizational representative or application end user is not automatically
 party to our developer contract. The corresponding legitimate-interest rows,
 rather than contractual necessity, apply to their information as described above.
-An optional project field does not become contractually necessary just because
-it appears on a form; confirm its purpose and basis before collecting it.
-
-**TO CONFIRM BEFORE PUBLICATION:** approve the necessity and balancing assessments
-for each legitimate-interest purpose, particularly raw-IP diagnostics, project-owner
-visibility into end-user details, security fingerprinting/scoring, and retention.
-Identify the specific duties supporting any other legal-obligation processing.
-Minimize or remove processing that cannot be justified; the table is not a blanket
-authorization for all fields that the code can collect.
+Optional project descriptions and website links help us understand an integration
+and assess support or quota requests; we process them for those legitimate
+interests, not as a condition of basic sign-in.
 
 The portal's Inter and JetBrains Mono fonts are bundled with its static assets
 and served from the portal's own origin through Cloudflare. The account icon is
@@ -224,40 +202,37 @@ use-case information for us to assess and answer it.
 
 ## 4. Who receives information
 
-- **The operator and authorized administrators** can access information needed
-  for support, security, operation, and access management.
+- **Ignacio Aldama Vicente, the sole operator**, accesses information needed for
+  support, security, operation and access management. No other person administers
+  egdata's developer accounts or support mailbox. Providers may allow their own
+  authorized personnel access as necessary to supply their services.
 - **Project owners** can see usage information associated with their own keys.
-  Selected reporting design (implemented locally, undeployed): aggregate-only
-  reports — historical IP addresses are grouped by country only, historical user
+  Reports group historical IP addresses by country only, historical user
   agents are redacted, and Origin is reduced to presence. For direct browser
   integrations, request details can concern the application's end users, not
   just the developer. Owners do not thereby gain access to other developers'
-  accounts. Administrators have broader platform reporting access.
-  **TO CONFIRM BEFORE PUBLICATION:** verify the deployed reporting behavior and
-  the transition/rights-handling decision for historical owner-visible raw
-  records before this notice takes effect.
-- **Cloudflare** provides the reviewed gateway/portal hosting, databases,
+  accounts. The operator has broader platform reporting access.
+- **Cloudflare** provides gateway/portal hosting, databases,
   key-metadata caching, quotas, analytics, queues, operational logging, and
   transactional email infrastructure.
-- **Upstream hosting and infrastructure providers** process forwarded API
-  requests and operational information. The repository describes a Google Cloud
-  hosted origin. **TO CONFIRM:** actual production providers and any managed
-  database/search, monitoring, backup, or other subprocessors receiving personal
-  information through developer/API operations.
-- **Security infrastructure — TO CONFIRM:** identify the operator/provider of
-  upstream Redis security stores and whether Aikido receives SDK telemetry or
-  can access request information. State actual recipients and their roles in the
-  published notice; installing an SDK alone does not establish what it exports.
-- **Email and support providers** process correspondence and administrator
-  and developer notifications, address verification, and delivery results.
+- **Google Cloud** hosts our self-managed API origin, main website and Redis
+  service in `europe-west1` (Belgium). It processes requests and operational data
+  through that infrastructure.
+- **Hetzner** hosts our self-managed MongoDB, OpenSearch and Redis services in
+  Nuremberg, Germany. These services support upstream storage, search and caching.
+- **Aikido Security** may retain historical runtime-security information described
+  in section 2. The removed runtime integration sends no new developer API
+  telemetry after the rollout. Repository security scanning is a separate activity.
+- **Cloudflare Email Sending and Email Routing, and Google (Gmail)** process
+  correspondence, administrator/developer notifications, address verification and
+  delivery information. Mail sent to `contact@egdata.app` is forwarded by Cloudflare
+  Email Routing to the operator's personal Gmail mailbox under Google's own terms.
+  Only the operator has access to that mailbox. There is no separate ticketing
+  service. The mailbox retention rule is in section 7.
   Limit-increase requests are emailed to the operator, including
   account/project details, contact address, and use-case description.
-  Cloudflare Email Sending is enabled for the egdata.app domain
-  (`noreply@egdata.app`); the operator confirmed receipt of a real delivery test
-  at contact@egdata.app on 12 November 2026. **TO CONFIRM:** verify arbitrary-
-  recipient delivery on the configured sender/domain and account plan before
-  relying on email verification or notices in production, and identify the
-  mailbox/support providers.
+  Transactional developer mail is sent from `noreply@egdata.app`; replies go to
+  `contact@egdata.app`. Your own email provider also processes messages sent to you.
 - **Epic Games** processes sign-in through its own services. The portal does not
   contact Epic's avatar hosts merely to display an account icon.
 - **Authorities, professional advisers, or other recipients** may receive
@@ -274,16 +249,32 @@ Our providers operate infrastructure in multiple countries. Being based in
 Spain, or placing an origin server in Europe, does not establish that all
 processing remains within the European Economic Area.
 
-**TO CONFIRM BEFORE PUBLICATION:** identify actual transfers outside the EEA,
-the applicable recipient/processor arrangements and transfer safeguards, such
-as an applicable adequacy decision or standard contractual clauses with any
-necessary supplementary measures. State how users can obtain information about
-or a copy of those safeguards. Do not claim a specific safeguard is in place
-until the actual provider arrangement has been checked.
+Our self-managed servers are in Germany and Belgium. Cloudflare's global network,
+Google's services (including the Gmail mailbox), and security-service suppliers
+can process information outside the EEA, including in the United States. European
+server placement is not a promise of exclusively European processing or support.
+
+Cloudflare's [Customer Data Processing Addendum](https://www.cloudflare.com/cloudflare-customer-dpa/)
+forms part of our self-service agreement. It provides for transfers covered by
+the EU–US Data Privacy Framework and, for restricted transfers, EU Standard
+Contractual Clauses and additional safeguards. Google's
+[Cloud Data Processing Addendum](https://cloud.google.com/terms/data-processing-addendum)
+sets out the transfer mechanisms for its cloud services; it does not cover the
+personal Gmail mailbox. Google's separate
+[international-transfer information](https://policies.google.com/privacy/frameworks)
+explains its adequacy and contractual safeguards for services covered by its
+Privacy Policy. Aikido's [data-processing terms](https://www.aikido.dev/legal/dpa)
+address safeguards for its processing and onward transfers.
+
+Where a transfer requires safeguards, the applicable mechanism must cover the
+recipient and processing concerned; a provider's European address alone is not
+a safeguard. You can ask **contact@egdata.app** for information about the applicable
+arrangements or a copy of the relevant safeguards, with unrelated confidential
+information removed where necessary.
 
 ## 6. Cookies and browser connections
 
-The reviewed portal uses these authentication cookies:
+The portal uses these authentication cookies:
 
 | Cookie | Purpose | Lifetime |
 | --- | --- | --- |
@@ -294,15 +285,6 @@ These cookies support requested sign-in and session security. Disabling them
 prevents those features from working. Logging out revokes the dashboard session
 and associated console access; it does not automatically erase usage history.
 
-**TO CONFIRM — upstream challenge cookie:** where the anti-abuse challenge flow
-is used, successful completion can set `__Host-egdata-session` on the responding
-host to recognize a short-lived security session. The reviewed code gives it
-up to 10 minutes per issuance; risk checks can require a new challenge sooner.
-This is separate from the developer login cookie. Confirm actual host, browser
-delivery, route coverage, and the applicable cookie/device-access requirements
-before including it as an active cookie in the published table. The current v1
-router bypasses this browser-challenge middleware.
-
 Operational API analytics is collected server-side. It does not depend on an
 advertising cookie. Necessary cookies do not justify unrelated tracking.
 Epic Games may use its own cookies on its sign-in pages. Portal fonts are served
@@ -312,32 +294,30 @@ as same-origin static assets, and the account icon needs no external image reque
 
 We keep personal information only for as long as needed for its stated purposes,
 including applicable legal obligations and justified claims-related retention.
-The following table distinguishes selected policy targets from existing behavior.
-**IMPLEMENTATION/PUBLICATION GATE:** implement and verify the selected limits,
-including provider-side copies, before presenting them as active retention rules.
-These are purpose-based policy choices, not statutory minimum retention periods.
+These are purpose-based retention rules, not statutory minimum periods. Scheduled
+deletions use bounded daily batches; eligibility at a cutoff does not mean every
+record is physically removed at that exact instant. We monitor and address cleanup
+backlogs. Earlier applicable erasure and restriction obligations still apply.
 
-| Category | Retention and current draft status |
+| Category | Retention |
 | --- | --- |
-| Developer account and active projects/key metadata | Selected target: account lifetime; revoke access promptly on verified closure and delete ordinary account/project/key records within 30 days. Any narrowly justified residual evidence follows its separate category below. The closure flow is implemented locally but undeployed; verify deployed cleanup before publication |
+| Developer account, projects, key metadata and verified contact in D1 | While the account is active; automatic closure deletes these active records and rejects keys and sessions. A minimal closure record prevents re-registration for 30 days, then becomes eligible for cleanup. Residual evidence follows its separate category below |
 | Soft-deleted projects | A 90-day recovery window; eligible records are purged by a bounded daily cleanup, so actual purge may occur later where a backlog exists |
 | Daily endpoint usage and failed usage-event records in D1 | A 34-day date cutoff, processed by daily cleanup; not an exact per-record deletion deadline |
-| Analytics Engine request records, including historical IP addresses | Routine writes are minimized in the local build (no raw IP, coarse client category, origin presence, country — see section 2), but this is undeployed and does not erase historical rows. Cloudflare documents three-month retention; confirm actual expiry, exports and historical rights handling before publication. A shorter query window does not delete records |
+| Analytics Engine request records, including historical IP addresses | Cloudflare's automatic retention is three months from writing a record. New routine records are minimized as described in section 2. Historical raw IP/user-agent/Origin values are redacted from project-owner reports, but reporting redaction and shorter query windows do not erase the stored records. Requests concerning these records are handled under section 8, including requests for earlier erasure or restriction |
 | Temporary console credentials | Valid for 10 minutes; expiry prevents use immediately, and expired records are removed by daily cleanup |
 | Dashboard revocation records | Until the corresponding session expires, then daily cleanup |
-| Support and limit-request correspondence, including mailbox copies | Selected target: 12 months after resolution; isolate evidence needed for a specific ongoing dispute. Local D1 cleanup removes non-pending limit requests older than 12 calendar months from review. Mailbox copies need separate verified controls |
-| Endpoint-change alert associations and reads | Local cleanup selects records older than 90 days from the related change's merge time; undeployed. Public change histories are separate |
-| Administrative audit records | Local cleanup selects records older than 24 calendar months after the action; undeployed. Verify restricted access and production cleanup |
-| Rights-case ledger and action references | Local cleanup selects resolved cases older than 12 calendar months from resolution, including their action evidence; open cases remain. The ledger records operational references, not full correspondence |
-| Verified developer contact and address-change records | Selected target: current address/status for account lifetime and up to 30 days for closure processing; retain the previous address/change event for at most 90 days. Minimum recipient evidence in the separate notification record follows its own schedule |
-| Contact-verification tokens | Selected target: hashed, single-use, 30-minute validity; delete on use and purge expired records within the next daily cleanup, targeting 24 hours after expiry |
-| Terms acceptance and material legal-notice evidence | Selected target: account lifetime plus 5 years after closure, restricted after closure to justified evidence/claims purposes. Verify necessity against applicable claims and duties before publication; this is not a universal statutory minimum. Keep only the necessary account link, document/hash, action/time, and notice recipient/content/outcome |
-| Routine service-email delivery/verification troubleshooting records | Local outbox/attempt cleanup uses 30 days from job creation; minimal lifecycle events use 30 days from ingestion. Verification plaintext tokens are not retained. Provider/queue copies require separate verification |
-| Routine diagnostic logs | Selected target: 7 days, with query strings/secrets redacted. Query-string redaction is enabled in the checked-in Worker configuration (local change); verify the deployed configuration and actual logged fields/retention before claiming it is active |
-| Restricted security diagnostics and incident records | Selected target: raw IP/user-agent diagnostics only where necessary, for at most 14 days in a store supporting rights handling; incident records up to 30 days after resolution. Longer preservation requires a specific documented need and review |
-| Backups | Selected target: rolling expiry within 35 days; confirm provider capability and any legally required exceptions. Restores must reapply deletion/restriction decisions; backup expiry does not extend ordinary production use |
-| Conditional upstream anti-abuse identifiers, risk windows, challenge/session records, and telemetry | **TO CONFIRM** enabled routes and production lifetimes, including Redis, in-memory state, exports, and backups; cookie/token validity is not the retention period for all associated records |
-| Aikido security identifiers and any SDK/provider telemetry | **TO CONFIRM** actual collection/export, recipient retention and deletion controls; assess separately from the custom anti-abuse stores |
+| Support and limit-request correspondence, including mailbox copies | Twelve months after resolution, unless specific dispute evidence is still needed. D1 cleanup selects non-pending limit requests older than 12 calendar months from review. Mailbox correspondence is reviewed and deleted separately on a monthly schedule |
+| Endpoint-change alert associations and reads | Eligible for daily cleanup 90 days after the related change's merge time; public change histories are separate |
+| Administrative audit records | Eligible for daily cleanup 24 calendar months after the action |
+| Rights-case ledger and action references | Eligible for daily cleanup 12 calendar months after resolution; open cases remain while the request is being handled. The ledger stores operational references, not full correspondence |
+| Previous notification email | Replaced in the active profile when the new address is verified. The old address remains in the address-change notification under the 30-day mail-job schedule; mailbox copies follow the correspondence rule |
+| Contact-verification tokens | Hashed, single-use and valid for 30 minutes; removed on use, with expired pending verification records selected by daily cleanup |
+| Terms-acceptance evidence | Account lifetime and a five-year retention deadline after closure, followed by daily cleanup; restricted after closure to necessary agreement/claims evidence. Includes the account identifier, exact document references/hashes, action time and receipt ID. We review necessity against applicable claims periods and retain for less time where sufficient. This is a policy limit, not a universal statutory minimum; earlier applicable erasure and restriction rights still apply |
+| Service-email jobs, attempts and lifecycle records | Jobs and attempts become eligible for deletion 30 days after job creation; minimal lifecycle records 30 days after ingestion. Verification plaintext tokens are not retained. Queues and email-provider copies have separate lifecycles |
+| Cloudflare Workers diagnostic logs | Up to seven days under the provider's Workers Logs retention. Error/issue records and separately retained incident evidence are assessed for their own diagnostic purpose, not treated as automatically deleted with logs |
+| Security diagnostics and incident evidence, including Aikido records | For the period needed to detect, investigate and resolve attacks, prevent recurring misuse and handle associated disputes. We consider the age and seriousness of the event, whether a restriction is still active, and whether particular evidence is still needed; provider-managed telemetry may follow a different lifecycle from local security state. Access/erasure/restriction requests include provider-held information where applicable |
+| Queue messages and recovery copies | Queue copies persist until successfully processed or their configured retention expires; unsuccessful messages can move to a dead-letter queue for investigation. Cloudflare Paid Queues allow retention up to 14 days. D1 Time Travel keeps automatic recovery history for up to 30 days on our Paid plan. Recovery copies are not used to extend ordinary production use; deletion/restriction decisions must be reapplied after restoration |
 
 Public copies of historical legal documents may remain available indefinitely;
 they do not need to identify the people who accepted them. Account-linked
@@ -358,9 +338,9 @@ we will explain the applicable reason and restrict it to that purpose.
 Account closure ends developer access but is distinct from erasing every record.
 You can request closure from the Profile page (`/profile`) — with a typed
 confirmation and a sign-in within the last 10 minutes — or by email to
-contact@egdata.app. The closure flow in the current local build (not yet
-deployed) deletes active account, project, key, and contact records in one
-step, rejects existing sessions and warm key-cache lookups, holds
+contact@egdata.app. Closure deletes active account, project, key, and contact
+records in our Cloudflare D1 database in one step, rejects existing sessions and
+cached-key access, holds
 re-registration of the same Epic Games account for 30 days, and queues a
 confirmation email to the verified address. We process closure requests without
 undue delay after any reasonably necessary identity verification and confirm
@@ -370,6 +350,13 @@ request exercising data-protection rights follows the response rules in section
 Terms to retain API datasets does not authorize indefinite retention of personal
 data or displace applicable data-protection duties. In particular, applicable
 erasure and restriction obligations continue for personal data within caches.
+
+Closure does not automatically erase every upstream database/cache record,
+Analytics Engine record, log, queue message, Aikido record or support email.
+Those records follow their applicable retention rules and the rights-request
+procedure below. We assess requests across the relevant stores and involve
+providers where needed; ordinary expiry is not a substitute for an applicable
+earlier erasure or restriction obligation.
 
 Where required, we communicate rectification, erasure, or processing restrictions
 to recipients to whom the information was disclosed, unless this is impossible
@@ -396,10 +383,10 @@ documents unless an appropriate verification process specifically requires them.
 Do not send passwords, API keys, or session tokens. Requests are normally free,
 subject to the limited exceptions in applicable law.
 
-**DEPLOYMENT PENDING (local, undeployed):** an account-data export and an
-operator rights-case ledger are implemented and tested locally. The export covers
-selected account-scoped D1 records, not every processing store. Until
-they are deployed and verified, submit requests by email as described above.
+The Profile account-data export covers selected account-scoped D1 records. It is
+not a complete export of every processing store or a substitute for a rights
+request. Contact us for information held elsewhere, including upstream or
+provider-held records. We keep a minimal case ledger to track requests and actions.
 
 We respond without undue delay and within one month of receiving your request.
 Where permitted because of the complexity or number of requests, we may extend
@@ -421,6 +408,11 @@ check verified contact and required terms acceptance. A failed check can deny th
 corresponding request. Existing external API keys are not gated by initial
 onboarding status; keys of a closed account are rejected.
 
+A denial can interrupt an API integration. Credential or account restrictions can
+affect repeated requests until the underlying issue is resolved; exhausting a
+quota restricts requests until its reset or an approved limit change. Completing
+onboarding does not remove an independent credential, quota or security restriction.
+
 A later mandatory material-update workflow is planned separately. If activated
 under the Terms' notice policy, an ordinary update's acceptance check would pause
 API access only at the announced effective time. This deadline enforcement is not
@@ -431,25 +423,18 @@ These checks use account and technical access information, not advertising
 profiles. Contact us to request human review of an incorrect access restriction.
 Administrative suspensions can also be imposed or reviewed by the operator.
 
-**TO CONFIRM — additional security decisions:** on covered legacy routes, the
-custom anti-abuse system can use connection/header consistency and patterns of
-requests to estimate automated misuse. Depending on deployment mode, it records
-indicators, requests a computational challenge, or delays and withholds a data
-response. Observe mode can include a targeted enforcement trial; its name alone
-does not establish that all requests are unaffected. The current v1 router
-bypasses this middleware. Separately assess the Aikido integration and any other
-edge/origin security restrictions. Replace this block with the actual scope,
-inputs, consequences, and human-review route before publication.
+Hosting security controls can inspect technical/request information for attack
+indicators and excessive or abusive traffic. Matching a security rule or exceeding
+a limit can block a request even when its API key is otherwise valid.
+These controls are separate from terms acceptance. The custom fingerprint-based
+challenge system on legacy endpoints does not run on v1 endpoints.
 
-**TO CONFIRM:** assess whether any deployed automated decision has legal or
-similarly significant effects within GDPR Article 22; if so, document its legal
-basis, meaningful information about its logic and consequences, and required
-safeguards before publication. Include agreement gating and security profiling,
-not just quota checks. A legitimate-interest basis for collecting security data
-does not itself supply an Article 22 exception for a solely automated significant
-decision. Where applicable, provide the right to human intervention, to express
-a point of view, and to contest the decision. Do not assume these decisions fall
-outside that provision merely because they are technical or not used in advertising.
+You can ask the operator to review a restriction, explain your circumstances and
+contest the result at **contact@egdata.app**, including if an automated restriction
+has a substantial effect on you. Review considers the actual reason, relevant
+request/account information and your explanation; it does not guarantee restoration
+where a justified restriction remains. Nothing in these terms or this notice
+waives protections that apply to solely automated decisions under GDPR Article 22.
 
 ## 10. Changes and notification
 
@@ -460,16 +445,13 @@ address before the changed processing begins, allowing appropriate time to
 understand the change and exercise applicable rights. The notice and its timing
 will reflect the nature of the change and applicable legal requirements.
 
-For affected application end users who have no developer contact address, notice
-must also reach them through the relevant integration or another appropriate
-channel. Emailing the developer alone does not establish that its users have been
-informed. **TO CONFIRM BEFORE PUBLICATION:** implement and verify that delivery
-path, including timely updates for direct and indirectly obtained information.
-Also verify production email delivery to arbitrary verified addresses (see
-section 4) before relying on email for required notices. Before a later mandatory
-terms update, complete and verify its separate notice/deadline workflow (advance
-notice, reminders, delivery-failure handling and postponement); that future phase
-is not deployed or required to activate the initial portal-only rollout.
+For affected application end users who have no developer contact address, we
+provide the public notice and work with the relevant application provider or use
+another appropriate channel to communicate relevant changes. Developers must
+provide an accessible, current notice link before direct browser requests begin
+and appropriate information about requests they forward. Emailing a developer
+alone does not establish that their users have been informed or discharge our
+own transparency obligations.
 
 You do not have to accept or acknowledge a privacy-notice revision to keep using
 the dashboard or API. Reading or dismissing a notice is optional, and a missing

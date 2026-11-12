@@ -1,6 +1,6 @@
 # Developer legal documents and enforcement plan
 
-Planning date: 2026-11-12. Status: initial onboarding implemented locally; legal text remains draft and unpublished.
+Planning date: 2026-11-12. Status: initial onboarding implemented locally; legal text is a publication candidate, unpublished and not effective.
 
 - [Developer Terms of Service, proposed version 1.0](drafts/terms-1.0.md)
 - [Developer Privacy Notice, proposed version 1.0](drafts/privacy-1.0.md)
@@ -11,6 +11,13 @@ Planning date: 2026-11-12. Status: initial onboarding implemented locally; legal
 These files are review drafts, not published policies. Runtime support is described
 below; nothing has been deployed or activated. Final publication dates,
 effective dates, and content hashes are assigned when the text is finalized.
+
+The current candidates use the confirmed Cloudflare self-service Paid account,
+Google Cloud Belgium and Hetzner Nuremberg hosting, and personal Gmail mailbox.
+They cover the portal/accounts/keys, console and `/v1`, excluding legacy custom
+anti-abuse and main-site GA. The operator approved removal of Aikido runtime;
+that code change awaits deployment and historical provider data needs separate
+handling. [Operations](operations.md) records the evidence and remaining actions.
 
 ## Initial implementation (portal-only rollout)
 
@@ -55,7 +62,7 @@ rights-case tracking are implemented/tested locally and await deployment.
 See [initial rollout operations](initial-rollout.md) for deployment/publication steps.
 See [privacy/email procedures and inventory](operations.md) for current production
 evidence, unresolved supplier facts, rights handling and email activation.
-Sections below describe the full target design; future universal API enforcement
+Sections below describe the full target design; future mandatory v1-update enforcement
 must not be enabled as part of this initial grandfathered rollout.
 
 ## Confirmed requirements
@@ -187,7 +194,9 @@ consent needs its own purpose-specific control, evidence, and withdrawal mechani
 
 ## 2. Strong API enforcement
 
-Future mandatory API-deadline phase, not the initial portal-only rollout. For every covered request:
+Future mandatory v1 API-deadline phase, not the initial portal-only rollout.
+Legacy/unversioned data routes are outside this agreement; account closure and
+independent credential/security controls still apply to them. For every covered request:
 
 1. Authenticate the key or dashboard/console session.
 2. Resolve its account and project identity.
@@ -216,7 +225,7 @@ uncacheable `503 LEGAL_STATUS_UNAVAILABLE`, rather than allow access.
 
 Missing terms acceptance returns `403 AGREEMENT_REQUIRED`, with the required terms version,
 effective time, and a fixed portal review URL. Use RFC 9457 Problem Details for
-v1 and the established legacy error envelope for legacy routes. Independent
+v1 and the established dashboard error envelope for private portal routes. Independent
 suspension returns `403 ACCESS_SUSPENDED`. Preserve CORS and request IDs. Record
 denial telemetry, but do not charge successful-admission quota for these denials.
 The [error contract](api-agreement-errors.md) specifies envelopes, fields,
@@ -249,29 +258,26 @@ availability of a project or repository is not permission for egdata to use its
 name, logo, or developer identity in promotional material. Do not bundle a
 showcase licence into credential-protection wording.
 
-## 3. Close unauthenticated access paths
+## 3. Verify covered access paths
 
-The checked-in `wrangler.jsonc` currently sets `REQUIRE_API_KEY=false`, and legacy
-`proxy.ts` accepts a configured browser Origin as an authentication bypass.
-A user could omit a suspended key or forge that header. Closing these paths is
-necessary before claiming that agreement enforcement covers API data access.
+Verify authentication and origin controls for covered v1 routes before the future
+mandatory-update phase. Legacy `REQUIRE_API_KEY` settings and first-party Origin
+bypasses do not expand this agreement to unversioned routes or GraphQL. Any future
+legacy agreement requires its own scope, notice and rollout decision.
 
-- Require a key on covered legacy data routes, including GraphQL where exposed.
-- Replace first-party Origin bypass with an authenticated first-party server
-  integration. A browser origin is not a credential; never ship a server secret
-  in the public web application.
+- Require authenticated credentials on covered v1 data routes. A browser origin
+  is not a credential; never ship a server secret in the public web application.
 - Inventory public exclusions, especially sitemap routes. Keep only deliberately
   public resources public, and document that account agreements cannot restrict
   anonymous access to those resources.
-- Cover both `api.egdata.app` and dashboard `/proxy` paths, including HEAD,
-  conditional requests, cache hits, and active console sessions.
+- Cover `/v1` requests on `api.egdata.app` and protected dashboard console paths,
+  including HEAD, conditional requests, cache hits, and active console sessions.
 - Confirm origin authentication and alternate-host routing prevent direct access
   around the gateway. Inspect shared/CDN caches before the Worker too.
 - Preflight, authentication callbacks, public documents, and health endpoints can
   remain available without granting access to protected data.
 
-Coordinate first-party migration before switching legacy enforcement on. The
-repository configuration describes intended behavior, not verified live settings.
+The repository configuration describes intended behavior, not verified live settings.
 
 ## 4. Portal flow and race handling
 
@@ -312,7 +318,8 @@ repository configuration describes intended behavior, not verified live settings
   replaced upcoming edition needs fresh acceptance and a fresh ordinary notice
   period; an equivalent editorial revision does not invalidate existing evidence.
 - Return a receipt with the exact terms version/hash, server timestamp, and
-  archive links. Make it downloadable and send a copy to the verified address.
+  archive links. Make it printable/savable and queue an email linking to the
+  signed-in receipt view; delivery can fail without removing the account copy.
   Refresh server status before unlocking the UI. Do not infer acceptance from
   login, continued use, scrolling, or a prechecked box.
 
@@ -340,7 +347,8 @@ The operator classifies each revision and records the reason. Changes to permitt
 uses, extraction/redistribution rights, attribution duties, liability, or update
 and suspension rights are material. Correcting a typo or formatting without
 changing meaning is editorial. A doubtful substantive change takes the material
-path, not the editorial path. Initial terms require acceptance before activation.
+path, not the editorial path. Initial terms require acceptance before protected
+dashboard/console access; existing external API keys remain usable.
 
 Previously accepted terms govern use during the notice period. After the cutoff,
 do not represent a non-accepting account as bound to the new edition: access is
@@ -473,7 +481,8 @@ These choices are implementation targets, not assertions about current productio
   production modes are unknown; do not silently disable active protections or
   claim observation has no effects when a targeted enforcement trial exists.
 
-Selected retention schedule (implement before publishing as active practice):
+Historical planning schedule (superseded where different by the publication
+candidate and `operations.md`; not a production inventory):
 
 | Records | Selected target |
 | --- | --- |
@@ -503,9 +512,12 @@ The five-year evidence target is a selected cap for ordinary post-closure retent
 not a claim that Spanish/EU law mandates keeping every record that long. Review
 necessity by claim/purpose and shorten where appropriate. Mail duplication must
 not defeat the schedule. Provider retention, access/erasure capabilities, transfers,
-production anti-abuse/Aikido settings are factual publication dependencies that
-delegated discretion cannot establish. The operator has supplied identity/contact
-details and confirmed the current non-commercial context.
+historical Aikido records are factual publication dependencies that delegated
+discretion cannot establish. The earlier 14/30/35-day security/backup targets above
+are planning targets, not verified universal provider retention. The current
+publication candidate and operations inventory supersede them with applicable
+product limits and purpose-specific criteria. The operator has supplied
+identity/contact details and confirmed the current non-commercial context.
 
 ### Current code and deployment checks
 
@@ -514,15 +526,15 @@ details and confirmed the current non-commercial context.
 | Local routine analytics omits raw IP, categorizes user agents, and retains Origin presence/country with account/project/key IDs and request metadata | Verify deployment and last historical raw write; reporting redaction does not erase historical rows |
 | Local owner/admin reporting redacts historical IP/UA/Origin into country, coarse client categories and Origin presence | Verify production behavior and historical analytics rights handling; administrators retain broader platform reporting scope |
 | Fonts are bundled from pinned Fontsource packages; local icons and empty avatar upserts are implemented; migration 0010 clears stored URLs | Verify deployed browser requests, migration completion and old signed-session expiry |
-| Upstream custom anti-abuse defaults to off but supports observation, enforcement, and targeted trials | Confirm deployed mode and covered routes; `/v1` is registered before the challenge middleware, so do not describe challenges as universal API behavior |
+| Custom anti-abuse enforcement and its technical-pattern fingerprint store are on GCP; `/v1` bypasses the challenge middleware | Outside the developer/v1 notice; disclose legacy processing separately and distinguish these fingerprints from the removed Aikido IP/UA identity |
 | `upstream.ts` can forward trusted transport signals; custom security stores contain derived identifiers, risk windows, and challenge telemetry | Inventory origin processing as well as the gateway, including Redis, local state, recipients, exports, and retention |
-| `src/index.ts` installs Aikido middleware and can supply an IP/UA/language/country-derived keyed identity | Assess SDK processing and actual exports separately from custom anti-abuse; identify provider role, necessity, retention and transfers |
+| Local Aikido runtime removal deletes the SDK, middleware, identity hooks and startup preloads | Deploy the origin and inspect external startup settings; resolve historical retention/deletion without implying retroactive terms acceptance |
 | Persisted Worker invocation logs are enabled; remote query-string redaction was false, while the checked-in configuration sets true | Verify post-deployment settings, actual logged fields and production retention |
 | Daily usage/dead letters use a 34-day date cutoff | Document approximate daily-cleanup retention, not instantaneous deletion |
 | Soft-deleted projects have a 90-day recovery deadline and bounded daily purge | Distinguish deletion/recovery from eventual purge and independent analytics retention |
 | Local bounded cleanup covers admin audits, reviewed limit requests, alerts, resolved rights cases and expired verification tokens | Verify daily execution/backlogs in production; mailbox/provider copies need separate controls |
 | Cloudflare Analytics Engine documents three-month retention | Verify the deployed service and any exports; a dashboard query window is not a retention period |
-| Cloudflare services plus a documented GCP-hosted upstream and email inboxes process data | Confirm actual suppliers, contracts, locations, backup policies, and transfer safeguards |
+| Cloudflare self-service Paid, GCP Belgium, Hetzner Nuremberg and Cloudflare Routing to personal Gmail are confirmed; MeiliSearch unused | Follow the remaining supplier/retention actions in operations.md; no European-only processing guarantee |
 
 Keep privacy rights and account-closure requests available by email even when
 the user declines an update or is suspended. Define an operational deletion
@@ -531,8 +543,8 @@ Account-linked audit evidence cannot simply be declared “anonymous.”
 
 ### Purpose-specific legal bases and deployment inventory
 
-Approve an operation-level inventory before replacing the privacy draft's
-conditional blocks with publication text. Distinguish individual contracting
+Review the operation-level inventory before activating the publication candidate.
+Distinguish individual contracting
 developers, organizational representatives, and application end users. Map account
 and contact administration, API delivery, security, owner-visible reports,
 acceptance/notice evidence, claims, and statutory rights handling separately.
@@ -545,15 +557,14 @@ include recipients and end-user impact, not just egdata's operational benefit.
 Apply the selected minimal fields and retention, including aggregate-only owner
 reports. Verify that the deployed portal fonts and account icon make no external
 Google Fonts/Epic-avatar requests; verify legacy avatar cleanup and session expiry.
-Assess any other upstream telemetry,
-including whether the separate Google Analytics event endpoint in `src/index.ts`
-and `src/clients/ga.ts` receives traffic within this notice's scope; if so, inventory
-its distinct purpose, fields, recipients and basis before publication.
+The Google Analytics event endpoint in `src/index.ts` is unversioned `/ping`,
+outside the v1 router. It receives main-website events and is outside this notice's
+scope; verify that production routing matches the checked-in separation.
 
 For custom anti-abuse, check `src/middleware/anti-abuse.ts`,
 `src/services/anti-abuse-runtime.ts`, and route ordering in `src/index.ts` against
 actual production settings. Observation still processes data, and scoped trials
-can enforce during observe mode. Assess the custom system and Aikido separately
+can enforce during observe mode. Assess legacy processing and historical Aikido data separately
 for profiling and Article 22 effects; a request-review mailbox alone does not
 establish that all required safeguards are implemented. Record any applicable
 Article 22 exception and meaningful human-review procedure; assess DPIA necessity
@@ -634,7 +645,7 @@ purpose/basis/recipient/retention mapping together.
 
 ## 7. Future mandatory-update delivery and verification
 
-This sequence covers the later universal-enforcement phase. For this PR's initial
+This sequence covers the later mandatory v1-update phase. For this PR's initial
 rollout and its validation, use [initial-rollout.md](initial-rollout.md) and the
 PR handoff in `docs/pr/developer-onboarding.md`.
 
@@ -644,7 +655,7 @@ PR handoff in `docs/pr/developer-onboarding.md`.
     and race-safe activation/acceptance, initially without an effective requirement.
 3. Implement verified contact/notification delivery, shared server checks, portal
    notice-period/blocked states, and independent suspension controls.
-4. Migrate first-party/legacy clients and close gateway/origin bypasses.
+4. Verify covered v1/console gateway and origin access paths.
 5. Verify in staging, publish final documents, and activate the first requirement.
 
 Required tests include: first/returning users; multiple keys/projects; terms-only
@@ -652,13 +663,13 @@ gating; privacy/editorial updates never blocking; exact evidence surviving edito
 changes; current/next edition handling; early acceptance; stale/duplicate/concurrent submissions;
 activation while tabs or consoles remain open; revoked keys remaining revoked;
 acceptance not lifting suspension or resetting quota; primary-read failure;
-warm KV/CDN caches; legacy/v1/HEAD/304 paths; forged Origin; omitted keys;
+warm KV/CDN caches; v1/HEAD/304 paths and preserved legacy behavior; forged Origin; omitted keys;
 alternate hosts; anonymous document access; same-origin protection; retained
 evidence; and rollback without bypass. Verify expiry boundaries with controlled time.
 Test the instant before/at the deadline without running a scheduled job, initial
 notice failure/postponement, notification idempotency, verification-token replay,
 contact replacement/resend, and optional-consent refusal preserving core access.
-Check the error contract across v1, legacy, dashboard, and HEAD responses,
+Check the error contract across v1, dashboard, and HEAD responses,
 including pending-document actions, safe fixed review URLs, no secret/account
 detail leakage, and no automatic client retry loop on a legal-access 403.
 

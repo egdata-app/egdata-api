@@ -42,6 +42,13 @@ Back off for at least `retryAfter` seconds. Bulk consumers should batch requests
 
 ## Errors
 
+The origin rollout removes Aikido's runtime firewall and telemetry integration.
+Requests reaching the updated origin are no longer subject to Aikido-specific
+blocking or rate-limit groups. Existing authentication, gateway quotas, origin
+access controls and legacy rate limits still apply. The custom legacy anti-abuse
+system remains separate and does not apply to `/v1`. This change requires origin
+deployment; a merged changelog entry is not deployment confirmation.
+
 Check `response.ok` or the status code before treating a response as data. Many errors have a JSON `message` or `error` field; its shape can vary by route.
 
 For example, an offer may return canonical English text when the exact requested locale is unavailable:

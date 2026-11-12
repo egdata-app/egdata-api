@@ -5,7 +5,7 @@
     "dev": "node scripts/dev.mjs",
     "build": "rslib build",
     "catalog:cleanup-legacy": "tsx scripts/cleanup-legacy-catalog-storage.ts",
-    "start": "node --env-file=.env --enable-source-maps -r @aikidosec/firewall/instrument dist/index.js",
+    "start": "node --env-file=.env --enable-source-maps dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:unit": "vitest run tests/utils tests/search-route.test.ts tests/items-route.test.ts tests/offers-localization-route.test.ts tests/offers-og-route.test.ts tests/sandbox-og-route.test.ts tests/graphql-offer-localization.test.ts tests/vectorize-client.test.ts",
@@ -33,7 +33,6 @@
   },
   "type": "module",
   "dependencies": {
-    "@aikidosec/firewall": "1.8.33",
     "@apollo/server": "^5.4.0",
     "@apollo/utils.withrequired": "^3.0.0",
     "@aws-sdk/client-s3": "^3.990.0",

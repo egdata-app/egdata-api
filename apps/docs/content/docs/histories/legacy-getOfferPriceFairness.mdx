@@ -38,6 +38,17 @@ Record: [project-shared-quotas](https://github.com/egdata-app/egdata-api/blob/ma
 
 Verification: dashboard/tests/project-quota.test.ts: shared legacy/v1 and console quotas, key rotation, project isolation, expensive policies, UTC reset and fail-closed admission; dashboard/tests/project-policy.test.ts: concurrent creation, login races, deletion cooldown, existing projects and grants, operator allowances and HTTP policy errors; dashboard/tests/usage-outbox.test.ts: shared project counters retain distinct admitted per-key usage events; dashboard/tests/edge-cache.test.ts: quota admission remains before authenticated cache hits and revalidation; src/openapi/project-quota.ts and src/openapi/v1.ts; pnpm openapi:generate; pnpm docs:check.
 
+## 2026-11-12 — Remove Aikido origin runtime blocking and telemetry
+
+Record: [remove-aikido-runtime](https://github.com/egdata-app/egdata-api/blob/main/changes/records/remove-aikido-runtime.json).
+
+- **legacy GET /offers/&#123;id&#125;/price/fairness** (getOfferPriceFairness; security; compatible)
+  - Before: Requests reaching the Node origin passed globally installed Aikido runtime instrumentation and middleware, which could send request/security telemetry and impose Aikido-specific blocking or rate-limit grouping before the route handler.
+  - After: The updated origin no longer loads the Aikido SDK, sends its runtime telemetry, creates its IP/UA-derived user identity, or applies its blocking/grouping. Existing authentication, origin access controls, gateway quotas, legacy rate limits and custom legacy anti-abuse remain. Gateway-local responses that never reach the origin retain their prior behavior. v1 remains outside custom legacy challenges. Historical provider data is not erased by this code change; origin deployment is required.
+  - Client action: None. Continue honoring existing authentication, quotas and Retry-After responses. This record does not confirm production deployment.
+
+Verification: src/index.ts; src/middlewares/rate-limit.ts; package.json; scripts/dev.mjs; tests/middleware-rate-limit.test.ts; tests/anti-abuse.test.ts; tests/v1-router.test.ts; src/openapi/index.ts; src/openapi/v1.ts; apps/docs/content/docs/regions-pagination-errors.mdx; pnpm test; pnpm build; pnpm docs:check.
+
 ## 2026-11-12 — Expose API gateway hostname and harden Worker edge caching
 
 Record: [worker-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/worker-edge-cache.json).

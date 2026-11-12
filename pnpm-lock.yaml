@@ -21,9 +21,6 @@ importers:
 
   .:
     dependencies:
-      '@aikidosec/firewall':
-        specifier: 1.8.33
-        version: 1.8.33
       '@apollo/server':
         specifier: ^5.4.0
         version: 5.5.1(graphql@16.11.0)
@@ -468,10 +465,6 @@ packages:
     engines: {node: '>=22'}
     peerDependencies:
       vue: ^3.3.4
-
-  '@aikidosec/firewall@1.8.33':
-    resolution: {integrity: sha512-hNqREwflthUDv0mEAW54io7A5ut4xyNX/cLEtdokwleUqNJvazLIBbXqgwF266lJj08J+etvJDfl5YXCKrCRQQ==}
-    engines: {node: '>=16'}
 
   '@apollo/cache-control-types@1.0.3':
     resolution: {integrity: sha512-F17/vCp7QVwom9eG7ToauIKdAxpSoadsJnqIfyryLFSkLSOEqu+eC5Z3N8OXcUVStuOMcNHlyraRsA6rRICu4g==}
@@ -9108,8 +9101,6 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/test-utils'
       - zod
-
-  '@aikidosec/firewall@1.8.33': {}
 
   '@apollo/cache-control-types@1.0.3(graphql@16.11.0)':
     dependencies:

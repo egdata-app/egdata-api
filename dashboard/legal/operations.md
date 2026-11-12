@@ -12,7 +12,8 @@ This is operational evidence, not public legal promises.
   screenshot dated 2026-11-12 (displayed message time 21:05). Gmail shows
   `egdata.app` as mailed-by and signed-by, TLS transport, and
   `contact@egdata.app` as Reply-To. Arbitrary-recipient sending remains unverified.
-  Plan inspection returned Cloudflare 10000 Authentication error.
+  The operator subsequently confirmed a Paid plan; API plan inspection returned
+  Cloudflare 10000 Authentication error. Paid-plan eligibility is not delivery evidence.
 - Remote queues `egdata-developer-email-events` and `egdata-developer-email-dead`
   exist. No lifecycle subscription was created. The checked-in Worker consumes only
   the events queue; the dead queue is reserved for operator replay.
@@ -130,17 +131,136 @@ procedure, not completed erasure.
 
 ## Supplier/storage inventory
 
+### Confirmed operator facts and read-only checks (2026-11-12)
+
+- The operator alone has access to developer accounts, databases, analytics and
+  support. There are no additional administrators, employees or contractors.
+- Two servers run self-hosted services: Hetzner hosts MongoDB, OpenSearch and Redis;
+  Google Cloud hosts the API, main website and another Redis instance. The operator
+  confirmed the Hetzner location as **Nuremberg, Germany** and supplied the origin
+  IP. RIPE RDAP identifies its allocation as `CLOUD-NBG1`, country `DE`, corroborating
+  the location. `dash.egdata.app` is proxied; public DNS returns Cloudflare addresses
+  and the available Wrangler credential was denied DNS-record access (10000).
+- Read-only `gcloud compute instances list` reports `egdata-dockploy` in
+  `europe-west1-d` (Belgium). This confirms the VM location, not exclusive EEA
+  processing by Google or the location of every copy.
+- Read-only `wrangler d1 info egdata-dashboard-db --json` reports Western Europe
+  (`WEUR`), no jurisdiction restriction, and read replication disabled. Worker
+  placement and a D1 region report are not global data-residency guarantees.
+- Both custom anti-abuse and Aikido runtime enforcement were enabled when inspected.
+  The operator subsequently approved removing the Aikido runtime integration.
+  The local change removes the SDK, startup preload, global middleware and SDK
+  identity hooks. Production removal awaits an origin deployment. The historical
+  SDK heartbeat included IP/user-agent statistics, routes, user identifiers,
+  package and outgoing-host information; historical retention/deletion must be
+  checked separately. GitHub repository scanning is a separate integration.
+- The operator clarified that the custom anti-abuse system and fingerprint store
+  are on **GCP**, not Hetzner. Its fingerprint describes a technical client pattern
+  (for example TLS characteristics and header ordering), without IP address, user
+  agent or Cloudflare datacenter inputs. Do not confuse it with the removed
+  Aikido IP/UA-derived identity. The custom system does not apply to v1 and is
+  outside the developer/v1 agreement and notice; legacy transparency remains a
+  separate task. No conclusion about identifiability is needed for that scope
+  decision, and neither hashing nor the word "anonymous" proves it.
+- MeiliSearch is unused, according to the operator. Its presence in source code
+  does not establish a current recipient; it is omitted from the notice.
+- Code review confirms `src/index.ts` mounts the v1 router before the custom
+  anti-abuse middleware. The outer response observer records only requests carrying
+  an `antiAbuseObservation`, which that legacy middleware supplies; it does not
+  independently fingerprint v1 requests. Verify the deployed origin matches this order.
+- Google Analytics is used on the main website, not the developer portal. The API's
+  unversioned `/ping` route stores website events and forwards them to Google Analytics;
+  it is outside the v1 router. Receiving those events is separate from ordinary
+  developer-API usage analytics.
+- `contact@egdata.app` is forwarded through Cloudflare Email Routing to the
+  operator's personal Gmail account. No support/ticketing service is used. Discord
+  was suggested as a possible future option, not adopted. The operator agreed to
+  delete resolved support/privacy correspondence after 12 months, except evidence
+  needed for a specific dispute. Mailbox and forwarding copies need separate
+  handling from D1 cleanup. Do not infer Google's GDPR role for all message content
+  merely from the absence of a consumer-mailbox processor agreement.
+- The operator reports no separately retained server/access logs, database exports
+  or backups outside Cloudflare's built-in storage. This is an operator statement,
+  not a container-runtime/disk audit; review automatic logging and host snapshots
+  before claiming their absence. Cloudflare observability/Issues is in use.
+- Cloudflare is a standard self-service account upgraded to Paid, confirmed by
+  the operator. Its Customer DPA is incorporated in the self-service agreement.
+  Google's standard Cloud terms also incorporate the Cloud DPA; retain evidence
+  of the applicable project arrangement. Hetzner DPA status is still being checked.
+- Both an HTTP fetch and a rendered-browser visit to `https://egdata.app/privacy`
+  returned the **About** page, not a privacy notice. Do not describe that URL as a
+  verified main-site privacy policy. Correct the main-site notice separately; the
+  developer notice must clearly state its own scope and rights contact.
+
 | Processing/store | Evidence | Production facts still needed |
 | --- | --- | --- |
 | Epic sign-in | Account ID/display name; separate verified contact; local icons | OAuth fields, roles/terms, transfers |
-| Cloudflare Worker/D1/KV | Dashboard, credentials, contact, legal evidence and sessions in code | DPA/subprocessors, storage regions, transfer safeguards, backups |
+| Cloudflare Worker/D1/KV | Standard self-service DPA; dashboard, credentials, contact, evidence and sessions; D1 WEUR, no jurisdiction restriction | Retain supplier/transfer evidence; verify Paid D1 automatic 30-day Time Travel and restore handling |
 | Analytics Engine | Local privacy-v1 minimization and historical reporting redaction | Last raw-write time after deploy, historical rights mechanism and actual expiry |
-| Cloudflare email/queues | Sending enabled, queues created; operator inbox receipt confirmed; lifecycle subscription blocked | Arbitrary-recipient capability, lifecycle evidence, suppression, retention/regions |
+| Cloudflare email/queues | Paid plan confirmed; sending enabled, queues created; operator inbox receipt confirmed; lifecycle subscription blocked | Controlled external-inbox delivery, lifecycle evidence, suppression, queue settings/regions |
 | Logs/traces | Remote query redaction false; checked-in config true | Post-deploy inspection, retention, access/exports |
-| Origin/API hosting | origin-api.egdata.app config and Aikido runtime instrumentation | Hosting contracts/regions, forwarded fields, Aikido mode/recipients/retention, abuse decisions |
-| Support mailbox | contact@egdata.app channel | Mailbox/forwarding providers, DPA/regions, retention/access |
-| Backups/restores | No complete production evidence inspected | Every store, expiry, access, restore suppression and processor deletion |
+| Origin/API hosting | Self-hosted Google Cloud API/website/Redis in europe-west1-d; Hetzner MongoDB/OpenSearch/Redis in Nuremberg; MeiliSearch unused | Hetzner DPA status, Google Cloud arrangement, deploy Aikido removal and resolve historical provider retention |
+| Support mailbox | Cloudflare Email Routing to personal Gmail; sole operator; 12-month resolved-mail deletion adopted | Provider roles/contract and transfer assessment; implement mailbox review/deletion procedure |
+| Backups/restores | Operator reports no separate backups/exports; Cloudflare built-in recovery remains | Verify automatic host/container copies; expiry, restore suppression and processor deletion |
 | Fonts/avatar UI | Bundled Fontsource and local icons | Production browser network smoke |
+
+### Manual mailbox and upstream rights work
+
+Review resolved support/privacy correspondence monthly and delete messages older
+than 12 months from resolution, including sent copies and attachments; clear Trash
+as the mailbox permits. Retain dispute evidence separately only with a recorded
+reason, limited access and an end/review date. Earlier applicable erasure or
+restriction requests take precedence over this routine schedule.
+
+Account closure automatically handles the developer D1 account records described
+in the rollout guide. It does **not** erase Hetzner/GCP stores, Aikido, Analytics
+Engine or the Gmail mailbox. For each rights request, identify relevant records
+there, perform and verify the action or escalate to the provider, and record the
+actual result. A data export, a reporting redaction, or waiting for ordinary expiry
+alone is not evidence that an applicable erasure/restriction duty was fulfilled.
+
+### Supplier actions and publication evidence
+
+- **Hetzner:** open <https://accounts.hetzner.com/account/dpa>. Its
+  [official instructions](https://docs.hetzner.com/general/company-and-policy/data-protection-at-hetzner/)
+  explain how to inspect/conclude the agreement and select data types and affected
+  groups. A handwritten signature is not required. Record the agreement date and
+  covered services privately; do not commit personal contract documents.
+- **Aikido runtime removal:** deploy the new origin build and start command; inspect
+  Dokploy/container commands and `NODE_OPTIONS` for any external instrumentation
+  preload. Remove unused runtime credentials from the deployment after cutover.
+  Confirm the SDK is absent and no runtime heartbeats continue. Record the last
+  possible send time; request deletion or obtain concrete retention information for
+  the runtime application's historical data. Keep the notice's historical disclosure
+  until the applicable records are confirmed gone. The new agreement is not
+  retroactive; ongoing personal-data retention is a separate privacy matter.
+- **Scope:** the developer documents cover the portal, accounts/keys, console and
+  `/v1` API. Custom legacy anti-abuse and main-site GA are separate. The scope does
+  not create a GDPR exemption for legacy processing or substitute an email address
+  for a complete notice where proactive information is required. Repair the main
+  site's notice and legacy disclosures in their own publication workflow.
+- **Necessity and safeguards:** record the necessity/balancing review for API
+  delivery, organizational contacts, diagnostics, security and evidence retention.
+  Assess material effects of automated access decisions on the actual use cases;
+  a review mailbox alone does not establish an Article 22 exception. Keep human
+  review real and documented; do not claim that accepting the terms supplies
+  consent for security profiling or makes significant automated decisions lawful.
+- **Retention:** the publication candidate uses the implemented D1 cutoffs, the
+  operator-approved mailbox procedure, documented Cloudflare product limits, and
+  purpose-specific criteria for security/issue records. Earlier 14-day diagnostic,
+  30-day incident and 35-day backup targets were not verified universal provider
+  limits and are not represented as such. Confirm actual queue/issue settings and
+  provider rights handling before activation. No historical erasure is claimed.
+
+Sources checked 2026-11-12: [Cloudflare DPA](https://www.cloudflare.com/cloudflare-customer-dpa/),
+[Google Cloud terms](https://cloud.google.com/terms),
+[Aikido runtime data](https://help.aikido.dev/zen-firewall/miscellaneous/data-sent-by-aikido-zen),
+[Analytics Engine limits](https://developers.cloudflare.com/analytics/analytics-engine/limits/),
+[Workers Logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/),
+[D1 Time Travel](https://developers.cloudflare.com/d1/reference/time-travel/).
+Direct-provider Mistral Large 4 reviewed the legal wording and scope. Its advice
+was checked against actual code/facts; it is not evidence of account-specific
+contracts, deployment, deletion or an approved impact assessment.
 
 ## Operator disclosure assessment
 
