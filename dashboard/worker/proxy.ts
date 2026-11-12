@@ -1,6 +1,7 @@
 import { recordApiTelemetry } from "./analytics.js";
 import { sha256Hex } from "./crypto.js";
 import { touchApiKeyLastUsed } from "./db.js";
+import { fetchLegacyWithEdgeCache } from "./edge-cache.js";
 import { resolveApiKeyMetadata } from "./key-cache.js";
 import { evaluateKeyPermissions, originMatchesPattern } from "./permissions.js";
 import type { DashboardEnv } from "./types.js";
@@ -262,16 +263,23 @@ export async function handleEdgeApiProxy(
     ctx.waitUntil(touchApiKeyLastUsed(env.DB, keyMeta.keyId).catch(() => {}));
   }
 
-  // 7. Forward to the dedicated origin after permission/rate-limit checks.
-  const upstreamResponse = await forwardToUpstream(
-    request,
-    env,
-    upstreamPath,
-    reqUrl.search,
-    cfProps,
-  );
+  // 7. Serve from Worker edge cache or forward to the dedicated origin after permission/rate-limit checks.
+  const { response: upstreamResponse, cacheStatus } =
+    await fetchLegacyWithEdgeCache({
+      request,
+      ctx,
+      pathname: upstreamPath,
+      search: reqUrl.search,
+      fetchUpstream: (upstreamRequest) =>
+        forwardToUpstream(
+          upstreamRequest,
+          env,
+          upstreamPath,
+          reqUrl.search,
+          cfProps,
+        ),
+    });
 
-  const cacheStatus = upstreamResponse.headers.get("cf-cache-status") || "MISS";
   const routeTemplate = normalizeRouteTemplate(
     upstreamPath,
     upstreamResponse.headers.get("x-route-template"),
@@ -297,6 +305,23 @@ export async function handleEdgeApiProxy(
   // Stream response body untouched (zero buffering, preserves strong/weak ETags & gzip/br)
   const outHeaders = new Headers(upstreamResponse.headers);
   outHeaders.set("X-Egdata-Key-Tier", keyMeta.tier);
+  if (originHeader) {
+    outHeaders.set("Access-Control-Allow-Origin", originHeader);
+    outHeaders.set("Access-Control-Allow-Credentials", "true");
+    outHeaders.set(
+      "Access-Control-Expose-Headers",
+      "Cache-Control, CDN-Cache-Control, ETag, X-Total-Count, X-Cache, X-Route-Template, X-Egdata-Mitigation, Retry-After, Server-Timing, RateLimit, RateLimit-Policy, X-Egdata-Key-Tier",
+    );
+    const existingVary = outHeaders.get("Vary");
+    if (!existingVary) {
+      outHeaders.set("Vary", "Origin");
+    } else if (!/(?:^|,)\s*Origin\s*(?:,|$)/i.test(existingVary)) {
+      outHeaders.set("Vary", `${existingVary}, Origin`);
+    }
+  } else {
+    outHeaders.delete("Access-Control-Allow-Origin");
+    outHeaders.delete("Access-Control-Allow-Credentials");
+  }
 
   return new Response(upstreamResponse.body, {
     status: upstreamResponse.status,

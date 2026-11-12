@@ -5,6 +5,18 @@ description: History for GET /graphql
 
 `GET /graphql` — active. Recorded dates are not deployment dates.
 
+## 2026-11-12 — Expose API gateway hostname and harden Worker edge caching
+
+Record: [worker-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/worker-edge-cache.json).
+
+- **legacy GET /graphql** (legacyGet_graphql_220e6fb1; changed; compatible)
+  - Before: The API gateway Worker was not bound to `api.egdata.app`; legacy responses forwarded through the Worker passed origin CORS and freshness headers through unchanged, and no Worker edge cache served these responses.
+  - After: The Worker is now bound to `api.egdata.app` for legacy gateway requests. Forwarded responses set caller-specific CORS headers and eligible GET/HEAD responses may be served from the post-authentication Worker edge cache with a route-specific public max-age instead of the origin CDN-Cache-Control header. Authentication, permissions, quota admission, response bodies, status codes, and error contracts are unchanged.
+  - Client action: None
+  - Schema fields: Query.offer, Query.offers, Query.upcoming, Query.latestReleased, Query.topSellers, Query.topWishlisted, Query.featuredDiscounts, Query.item, Query.items, Query.sandbox, Query.sandboxHub, Query.sandboxes, Query.profile, Query.build, Query.builds, Query.changelog, Query.events, Query.event, Query.genres, Query.latestAchievements
+
+Verification: dashboard/tests/edge-cache.test.ts; dashboard/tests/gateway.test.ts; dashboard/tests/v1-gateway.test.ts.
+
 ## 2026-11-11 — Keep API startup available while v1 indexes are provisioned separately
 
 Record: [keep-api-startup-independent-of-v1-indexes](https://github.com/egdata-app/egdata-api/blob/main/changes/records/keep-api-startup-independent-of-v1-indexes.json).

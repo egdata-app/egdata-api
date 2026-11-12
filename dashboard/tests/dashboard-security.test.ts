@@ -1,7 +1,11 @@
 import { readFileSync } from "node:fs";
 import { Hono } from "hono";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { signHmacToken, verifyHmacToken } from "../worker/crypto";
+import {
+  signHmacToken,
+  timingSafeStringEqual,
+  verifyHmacToken,
+} from "../worker/crypto";
 import { insertLimitRequest } from "../worker/db";
 import { sendLimitIncreaseRequestEmail } from "../worker/email";
 import {
@@ -35,7 +39,13 @@ function database() {
   const result = sqliteD1();
   result.sqlite.exec(readFileSync("migrations/0001_initial.sql", "utf8"));
   result.sqlite.exec(
+    readFileSync("migrations/0003_console_sessions.sql", "utf8"),
+  );
+  result.sqlite.exec(
     readFileSync("migrations/0004_limit_request_reviews.sql", "utf8"),
+  );
+  result.sqlite.exec(
+    readFileSync("migrations/0005_dashboard_session_revocations.sql", "utf8"),
   );
   result.sqlite.exec(
     "INSERT INTO users(epic_account_id,display_name) VALUES('owner','Owner'); INSERT INTO projects(id,owner_epic_id,name,slug) VALUES('project','owner','Project','project');",
@@ -248,5 +258,371 @@ describe("limit request admission", () => {
         .status,
     ).toBe(429);
     expect(sendLimitIncreaseRequestEmail).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("dashboard API hardening", () => {
+  it("rejects non-portal origins when DASHBOARD_ORIGIN is configured, while permitting localhost dev", async () => {
+    const { db } = database();
+    const env = {
+      DB: db,
+      DASHBOARD_SESSION_SECRET: secret,
+      DASHBOARD_ORIGIN: "https://devs.egdata.app",
+    } as DashboardEnv;
+    const workersDevRes = await worker.fetch(
+      new Request(
+        "https://egdata-dashboard.example.workers.dev/_dashboard/api/auth/session",
+      ),
+      env,
+      context,
+    );
+    expect(workersDevRes.status).toBe(403);
+    expect(workersDevRes.headers.get("cache-control")).toBe("no-store");
+
+    const portalRes = await worker.fetch(
+      new Request("https://devs.egdata.app/_dashboard/api/auth/session"),
+      env,
+      context,
+    );
+    expect(portalRes.status).toBe(200);
+
+    const localRes = await worker.fetch(
+      new Request("http://localhost:4002/_dashboard/api/auth/session"),
+      env,
+      context,
+    );
+    expect(localRes.status).toBe(200);
+  });
+
+  it("restricts /analytics/simulate to local development or administrators", async () => {
+    const { db, sqlite } = database();
+    sqlite.exec(
+      "INSERT INTO users(epic_account_id,display_name) VALUES('admin','Admin'); INSERT INTO user_roles(user_id,role) VALUES('admin','admin'); INSERT INTO api_keys(id,project_id,owner_epic_id,name,key_prefix,key_hash) VALUES('k1','project','owner','K','egk','h1'),('k2','project','admin','K','egk','h2');",
+    );
+    const writeDataPoint = vi.fn();
+    const env = {
+      DB: db,
+      DASHBOARD_SESSION_SECRET: secret,
+      ANALYTICS: { writeDataPoint },
+    } as unknown as DashboardEnv;
+
+    const ownerToken = await signHmacToken(
+      { user, exp: Date.now() + 60_000, iat: Date.now() },
+      secret,
+    );
+    const adminToken = await signHmacToken(
+      {
+        user: { ...user, epicAccountId: "admin" },
+        exp: Date.now() + 60_000,
+        iat: Date.now(),
+      },
+      secret,
+    );
+
+    // Ordinary user in production -> 403
+    expect(
+      (
+        await worker.fetch(
+          new Request(
+            "https://devs.egdata.app/_dashboard/api/analytics/simulate",
+            {
+              method: "POST",
+              headers: {
+                origin: "https://devs.egdata.app",
+                cookie: `egdata_dash_session=${ownerToken}`,
+              },
+            },
+          ),
+          env,
+          context,
+        )
+      ).status,
+    ).toBe(403);
+    expect(writeDataPoint).not.toHaveBeenCalled();
+
+    // Admin in production -> 200
+    expect(
+      (
+        await worker.fetch(
+          new Request(
+            "https://devs.egdata.app/_dashboard/api/analytics/simulate",
+            {
+              method: "POST",
+              headers: {
+                origin: "https://devs.egdata.app",
+                cookie: `egdata_dash_session=${adminToken}`,
+              },
+            },
+          ),
+          env,
+          context,
+        )
+      ).status,
+    ).toBe(200);
+
+    // Ordinary user in local dev with ENABLE_DEV_AUTH=true -> 200
+    expect(
+      (
+        await worker.fetch(
+          new Request(
+            "http://localhost:4002/_dashboard/api/analytics/simulate",
+            {
+              method: "POST",
+              headers: {
+                origin: "http://localhost:4002",
+                cookie: `egdata_dash_session=${ownerToken}`,
+              },
+            },
+          ),
+          { ...env, ENABLE_DEV_AUTH: "true" } as DashboardEnv,
+          context,
+        )
+      ).status,
+    ).toBe(200);
+  });
+
+  it("rate limits /_dashboard/api/* and /_internal/change-records per IP", async () => {
+    const { db } = database();
+    let allowed = true;
+    const limit = vi.fn(async () => ({ success: allowed }));
+    const env = {
+      DB: db,
+      DASHBOARD_SESSION_SECRET: secret,
+      CHANGELOG_INGEST_TOKEN: "secret-ingest",
+      RATE_LIMITER_DASHBOARD_API: { limit },
+    } as unknown as DashboardEnv;
+
+    expect(
+      (
+        await worker.fetch(
+          new Request("https://devs.egdata.app/_dashboard/api/auth/session", {
+            headers: { "cf-connecting-ip": "203.0.113.9" },
+          }),
+          env,
+          context,
+        )
+      ).status,
+    ).toBe(200);
+    expect(limit).toHaveBeenCalledWith({ key: "dash:203.0.113.9" });
+
+    await worker.fetch(
+      new Request("https://devs.egdata.app/_dashboard/api/auth/session", {
+        headers: { "x-forwarded-for": "198.51.100.1" },
+      }),
+      env,
+      context,
+    );
+    expect(limit).toHaveBeenCalledWith({ key: "dash:unknown" });
+
+    allowed = false;
+    const blockedDash = await worker.fetch(
+      new Request("https://devs.egdata.app/_dashboard/api/auth/session", {
+        headers: { "cf-connecting-ip": "203.0.113.9" },
+      }),
+      env,
+      context,
+    );
+    expect(blockedDash.status).toBe(429);
+    expect(blockedDash.headers.get("retry-after")).toBe("60");
+
+    const blockedIngest = await worker.fetch(
+      new Request("https://devs.egdata.app/_internal/change-records", {
+        method: "POST",
+        headers: {
+          "x-forwarded-for": "198.51.100.2",
+          authorization: "Bearer secret-ingest",
+        },
+        body: "{}",
+      }),
+      env,
+      context,
+    );
+    expect(blockedIngest.status).toBe(429);
+    expect(limit).toHaveBeenCalledWith({ key: "ingest:unknown" });
+  });
+
+  it("revokes dashboard session tokens server-side upon logout", async () => {
+    const { db, sqlite } = database();
+    const env = {
+      DB: db,
+      DASHBOARD_SESSION_SECRET: secret,
+    } as unknown as DashboardEnv;
+    const token = await signHmacToken(
+      { user, exp: Date.now() + 60_000, iat: Date.now() },
+      secret,
+    );
+    const cookie = `egdata_dash_session=${token}`;
+
+    // Before logout, session is valid
+    expect(
+      (
+        await worker.fetch(
+          new Request("https://devs.egdata.app/_dashboard/api/projects", {
+            headers: { cookie },
+          }),
+          env,
+          context,
+        )
+      ).status,
+    ).toBe(200);
+
+    // Logout revokes the token in D1.
+    const logoutRes = await worker.fetch(
+      new Request("https://devs.egdata.app/_dashboard/api/auth/logout", {
+        method: "POST",
+        headers: { origin: "https://devs.egdata.app", cookie },
+      }),
+      env,
+      context,
+    );
+    expect(logoutRes.status).toBe(200);
+    expect(
+      sqlite
+        .prepare("SELECT token_hash FROM dashboard_session_revocations")
+        .all(),
+    ).toHaveLength(1);
+
+    // Replaying the stolen cookie after logout is rejected (401)
+    expect(
+      (
+        await worker.fetch(
+          new Request("https://devs.egdata.app/_dashboard/api/projects", {
+            headers: { cookie },
+          }),
+          env,
+          context,
+        )
+      ).status,
+    ).toBe(401);
+  });
+
+  it("does not report logout success when writing the revocation record fails", async () => {
+    const token = await signHmacToken(
+      { user, exp: Date.now() + 60_000, iat: Date.now() },
+      secret,
+    );
+    const failingDb = {
+      prepare: (query: string) => ({
+        bind: () => ({
+          run: async () => {
+            if (query.includes("dashboard_session_revocations")) {
+              throw new Error("D1 unavailable");
+            }
+            return {};
+          },
+        }),
+      }),
+    };
+    const response = await worker.fetch(
+      new Request("https://devs.egdata.app/_dashboard/api/auth/logout", {
+        method: "POST",
+        headers: {
+          origin: "https://devs.egdata.app",
+          cookie: `egdata_dash_session=${token}`,
+        },
+      }),
+      {
+        DB: failingDb,
+        DASHBOARD_SESSION_SECRET: secret,
+      } as unknown as DashboardEnv,
+      context,
+    );
+    expect(response.status).toBe(500);
+  });
+
+  it.each([
+    "javascript:alert(1)",
+    "data:text/html,<script>alert(1)</script>",
+    "ftp://example.com",
+    "not-a-url",
+  ])("rejects unsafe websiteUrl protocol %s on projects and limit requests", async (badUrl) => {
+    const { db } = database();
+    const env = { DB: db, DASHBOARD_SESSION_SECRET: secret } as DashboardEnv;
+    const token = await signHmacToken(
+      { user, exp: Date.now() + 60_000, iat: Date.now() },
+      secret,
+    );
+    const headers = {
+      origin: "https://devs.egdata.app",
+      cookie: `egdata_dash_session=${token}`,
+      "content-type": "application/json",
+    };
+
+    expect(
+      (
+        await worker.fetch(
+          new Request("https://devs.egdata.app/_dashboard/api/projects", {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ name: "My App", websiteUrl: badUrl }),
+          }),
+          env,
+          context,
+        )
+      ).status,
+    ).toBe(400);
+
+    expect(
+      (
+        await worker.fetch(
+          new Request("https://devs.egdata.app/_dashboard/api/limit-requests", {
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+              projectId: "project",
+              contactEmail: "owner@example.com",
+              requestedTier: "pro",
+              requestedRpm: 1200,
+              expectedMonthlyRequests: 100_000,
+              useCase: "Valid long enough use case description here.",
+              websiteUrl: badUrl,
+            }),
+          }),
+          env,
+          context,
+        )
+      ).status,
+    ).toBe(400);
+  });
+
+  it("attaches security headers to all SPA routes, not only /docs", async () => {
+    const env = {
+      ASSETS: {
+        fetch: vi.fn(
+          async () => new Response("<html></html>", { status: 200 }),
+        ),
+      },
+    } as unknown as DashboardEnv;
+
+    const rootRes = await worker.fetch(
+      new Request("https://devs.egdata.app/keys"),
+      env,
+      context,
+    );
+    expect(rootRes.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(rootRes.headers.get("x-frame-options")).toBe("DENY");
+    expect(rootRes.headers.get("referrer-policy")).toBe(
+      "strict-origin-when-cross-origin",
+    );
+
+    const docsRes = await worker.fetch(
+      new Request("https://devs.egdata.app/docs"),
+      env,
+      context,
+    );
+    expect(docsRes.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(docsRes.headers.get("x-frame-options")).toBe("DENY");
+    expect(docsRes.headers.get("referrer-policy")).toBe("no-referrer");
+  });
+
+  it("compares strings using fixed-length SHA-256 digests without length early-return", async () => {
+    expect(await timingSafeStringEqual("alpha-secret", "alpha-secret")).toBe(
+      true,
+    );
+    expect(await timingSafeStringEqual("alpha-secret", "short")).toBe(false);
+    expect(await timingSafeStringEqual("alpha-secret", "alpha-secrex")).toBe(
+      false,
+    );
+    expect(await timingSafeStringEqual("", "")).toBe(true);
   });
 });

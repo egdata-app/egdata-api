@@ -5,6 +5,17 @@ description: History for GET /v1/items/{id}/builds
 
 `GET /v1/items/{id}/builds` — active. Recorded dates are not deployment dates.
 
+## 2026-11-12 — Expose API gateway hostname and harden Worker edge caching
+
+Record: [worker-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/worker-edge-cache.json).
+
+- **v1 GET /v1/items/&#123;id&#125;/builds** (getItemBuilds; fixed; compatible)
+  - Before: The API gateway Worker was not bound to `api.egdata.app`; additionally, eligible GET/HEAD requests used an edge-cache key that sorted repeated query values, allowing opposite value orders to share a cached representation.
+  - After: The Worker is now bound to `api.egdata.app` for v1 requests. Eligible GET/HEAD cache keys sort query parameter names while preserving the original order of values with the same name, preserving origin query semantics. Protected requests still pass authentication, permissions, and quota admission before cache access; response contracts and outgoing private/no-store headers are unchanged.
+  - Client action: None
+
+Verification: dashboard/tests/edge-cache.test.ts; dashboard/tests/gateway.test.ts; dashboard/tests/v1-gateway.test.ts.
+
 ## 2026-11-11 — Apply administrator-approved project limits to API keys and console sessions
 
 Record: [admin-reviewed-project-limits](https://github.com/egdata-app/egdata-api/blob/main/changes/records/admin-reviewed-project-limits.json).

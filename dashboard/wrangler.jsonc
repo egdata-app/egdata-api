@@ -6,7 +6,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "upload_source_maps": true,
   "placement": { "mode": "targeted", "region": "gcp:europe-west1" },
-  "workers_dev": true,
+  "workers_dev": false,
   "preview_urls": false,
   // Keep both live custom domains here so deployments preserve the API binding.
   "routes": [
@@ -84,6 +84,14 @@
       "namespace_id": "1003",
       "simple": {
         "limit": 6000,
+        "period": 60
+      }
+    },
+    {
+      "name": "RATE_LIMITER_DASHBOARD_API",
+      "namespace_id": "1004",
+      "simple": {
+        "limit": 120,
         "period": 60
       }
     }

@@ -7,6 +7,7 @@
   "dashboard/worker/permissions.ts": ["legacy", "v1"],
   "dashboard/worker/key-cache.ts": ["legacy", "v1"],
   "dashboard/worker/types.ts": ["legacy", "v1"],
+  "dashboard/worker/edge-cache.ts": ["legacy", "v1"],
   "dashboard/worker/index.ts": ["legacy", "v1"],
   "dashboard/worker/v1-routes.ts": ["v1"],
   "dashboard/worker/v1-routes.generated.ts": ["v1"],
