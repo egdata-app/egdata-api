@@ -1,6 +1,7 @@
 import { recordApiTelemetry } from "./analytics.js";
 import { sha256Hex } from "./crypto.js";
 import { touchApiKeyLastUsed } from "./db.js";
+import { fetchV1WithEdgeCache } from "./edge-cache.js";
 import { resolveApiKeyMetadata } from "./key-cache.js";
 import { evaluateKeyPermissions } from "./permissions.js";
 import type { ApiKeyRateLimiter } from "./rate-limiter.js";
@@ -510,25 +511,35 @@ export async function handleV1ApiProxy(
   }
 
   let upstreamResponse: Response;
+  let cacheStatus: string;
   try {
-    upstreamResponse = await forwardToUpstream(
+    const cachedResult = await fetchV1WithEdgeCache({
       request,
-      env,
+      ctx,
       pathname,
-      reqUrl.search,
-      cfProps,
-      {
-        stripCookies: true,
-        headers: {
-          ...baseHeaders,
-          "x-egdata-worker-token": env.ORIGIN_AUTH_TOKEN ?? "",
-          "x-egdata-key-id": meta.keyId,
-          "x-egdata-key-tier": meta.tier,
-          "x-egdata-key-project": meta.projectId,
-          "x-egdata-authenticated": "1",
-        },
-      },
-    );
+      search: reqUrl.search,
+      fetchUpstream: (upstreamRequest) =>
+        forwardToUpstream(
+          upstreamRequest,
+          env,
+          pathname,
+          reqUrl.search,
+          cfProps,
+          {
+            stripCookies: true,
+            headers: {
+              ...baseHeaders,
+              "x-egdata-worker-token": env.ORIGIN_AUTH_TOKEN ?? "",
+              "x-egdata-key-id": meta.keyId,
+              "x-egdata-key-tier": meta.tier,
+              "x-egdata-key-project": meta.projectId,
+              "x-egdata-authenticated": "1",
+            },
+          },
+        ),
+    });
+    upstreamResponse = cachedResult.response;
+    cacheStatus = cachedResult.cacheStatus;
   } catch {
     return v1Problem(request, {
       requestId,
@@ -545,7 +556,7 @@ export async function handleV1ApiProxy(
     baseTelemetry(request, meta, {
       routeTemplate,
       statusCode: upstreamResponse.status,
-      cacheStatus: upstreamResponse.headers.get("cf-cache-status") || "MISS",
+      cacheStatus,
       limitOutcome: "ok",
       startedAt,
       country,

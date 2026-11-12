@@ -56,6 +56,7 @@ export function recordApiTelemetry(
     event.cacheStatus === "HIT" ||
     event.cacheStatus === "STALE" ||
     event.cacheStatus === "UPDATING" ||
+    event.cacheStatus === "REVALIDATED" ||
     event.statusCode === 304
       ? 1
       : 0;

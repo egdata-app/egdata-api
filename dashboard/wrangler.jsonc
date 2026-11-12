@@ -8,8 +8,7 @@
   "placement": { "mode": "off" },
   "workers_dev": false,
   "preview_urls": false,
-  // Dashboard only. Add api.egdata.app/* after an explicit production cutover.
-  "routes": [{ "pattern": "devs.egdata.app", "custom_domain": true }],
+  "routes": [{ "pattern": "devs.egdata.app", "custom_domain": true }, {  "pattern": "api.egdata.app", "custom_domain": true  }],
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1
