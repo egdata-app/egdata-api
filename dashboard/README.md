@@ -210,8 +210,11 @@ Ending a session revokes it; logout revokes all console sessions for that dashbo
 login. Project changes and leaving the explorer clear credentials and request
 revocation. Expired records are removed by the daily scheduled cleanup.
 
-Apply D1 migration `0003_console_sessions.sql` before deploying this Worker/UI
-change. No new secret or VM deployment is needed. Existing public API keys and
+Apply D1 migrations `0003_console_sessions.sql` and
+`0005_dashboard_session_revocations.sql` before deploying this Worker/UI change.
+Dashboard logout revocation is stored in D1 so it is visible to auth checks
+without KV's cross-location cache delay. No new secret or VM deployment is
+needed. Existing public API keys and
 legacy endpoints retain their authentication and routing. Static v1 registry
 paths now take precedence over parameter paths for quota/usage attribution
 (for example, `/v1/offers/genres` is `listOfferGenres`, not `getOffer`).

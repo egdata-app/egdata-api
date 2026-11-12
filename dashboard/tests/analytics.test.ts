@@ -31,6 +31,9 @@ async function setup() {
   const { db, sqlite } = sqliteD1();
   sqlite.exec(readFileSync("migrations/0001_initial.sql", "utf8"));
   sqlite.exec(
+    readFileSync("migrations/0005_dashboard_session_revocations.sql", "utf8"),
+  );
+  sqlite.exec(
     readFileSync("migrations/0004_limit_request_reviews.sql", "utf8"),
   );
   sqlite.exec(
