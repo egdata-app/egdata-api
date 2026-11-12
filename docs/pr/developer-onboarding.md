@@ -57,7 +57,7 @@
 5. `dashboard/worker/developer-mail*.ts` and migration 0011: retries, verification
    token secrecy and duplicate/out-of-order events. Terminal failures take precedence
    over delivery, which takes precedence over deferral.
-6. `dashboard/legal/`: reviewed legal drafts, rollout order and operational evidence.
+6. `dashboard/legal/`: completed version 1.0 legal text, rollout order and operational evidence.
    Wording review used the direct Mistral provider (`mistral/mistral-large-4`).
 
 The generated endpoint-history diff is broad because the shared gateway's
@@ -109,16 +109,24 @@ production API deployment was skipped.
 
 ### Legal finalization and runtime minimization follow-up
 
-The terms/privacy files are now publication candidates: factual placeholders were
+The terms/privacy wording is complete in `dashboard/legal/terms-1.0.md` and
+`dashboard/legal/privacy-1.0.md`: factual placeholders were
 replaced with confirmed Cloudflare self-service Paid, Google Cloud Belgium,
 Hetzner Nuremberg and personal Gmail/Cloudflare Routing arrangements. The notice
 is scoped to the developer portal/accounts/keys, console and v1. The custom legacy
 anti-abuse system and its GCP technical-pattern fingerprints are outside that
 scope; MeiliSearch is unused. Direct-provider Mistral Large 4 reviewed the wording.
-Publication/effective dates remain an activation decision, not backdated facts.
+The public text refers to the immutable version history for publication dates;
+the Privacy Notice applies from publication, and the initial terms agreement
+starts on express acceptance. Publication remains an activation decision.
 The unpublished terms also clarify that egdata grants only rights it can grant,
 attribution does not replace required third-party permission, and mandatory-law
-uses and individual facts remain outside any ownership claim.
+uses and individual facts remain outside any ownership claim. The Privacy Notice
+also explains the browser-tab storage used to complete email verification.
+Final-text validation passed the existing publication test and an offline SQL
+preparation using both complete files, with exact body/hash and activation-order
+checks. The temporary SQL was deleted without execution. No publication date or
+legal requirement was written to production.
 
 At the operator's request, the API's Aikido runtime SDK, instrumentation preloads,
 middleware and identity hooks were removed. Its unused identity helper and five
@@ -147,8 +155,8 @@ behavior, then publish the approved immutable documents and initial requirement.
 Never roll back to a Worker that ignores closure after exposing account deletion.
 
 The implementation is prepared for review; production deployment and legal
-publication have not happened. The publication candidates use confirmed facts,
-with unset publication/effective dates and operational evidence still required. Use
+publication have not happened. The completed text describes the initial deployment;
+operational evidence and the actual publication timestamp are still required. Use
 [`dashboard/legal/operations.md`](../../dashboard/legal/operations.md):
 
 - Confirm remaining supplier arrangements, actual log/backup retention and

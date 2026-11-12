@@ -2,14 +2,7 @@
 
 **Version:** 1.0
 
-**Prepared:** 12 November 2026
-
-**Status:** Publication candidate; not published or effective.
-
-> REVIEW DRAFT — publication and effective dates will be assigned when the initial
-> rollout is verified and activated. Operational prerequisites are recorded in
-> `dashboard/legal/operations.md`; publication follows `initial-rollout.md`.
-> Later material-update enforcement is a separate rollout under section 9.
+**Publication record and version history:** https://devs.egdata.app/legal/history
 
 ## 1. Who provides the service
 
@@ -39,17 +32,21 @@ endorsed by Epic Games, Inc.
 
 To activate protected dashboard access, sign in, verify a notification email,
 and expressly accept the required version of these terms. Signing in by itself
-is not acceptance. Each acceptance is recorded as an immutable event containing
+is not acceptance. Your initial agreement takes effect when you expressly accept
+these terms; later revisions follow section 9. Publication alone does not bind
+you to these terms or apply them to past activity.
+
+Each acceptance is recorded as an immutable event containing
 the exact terms version and its SHA-256 fingerprint, the server time, and the
 Privacy Notice version provided at the same event. You receive a receipt that
 you can view at `/profile/receipts` and print or save as PDF from
-your browser (the receipt includes both full documents). We queue an email to your
-verified address linking to that receipt; email delivery can fail, and the receipt
-remains available in your account. Published versions never change after publication:
+your browser (the receipt includes both full documents). We queue a receipt email
+to your verified address, including a link to the account copy. Delivery can fail;
+the receipt remains available in your account. Published versions never change after publication:
 earlier versions remain readable at `/terms/:version` and `/privacy/:version`,
 and `/legal/history` lists their fingerprints and publication times.
 
-During the initial onboarding rollout, existing API keys continue working while
+During initial onboarding, existing API keys continue working while
 you complete these steps, including after a dashboard visit. A visit does not
 pause those integrations or count as acceptance. Creating new keys and using the
 portal console requires completed onboarding. Any later acceptance deadline for
@@ -87,8 +84,8 @@ create a replacement key once you have accepted the currently required terms,
 met the account's contact-verification requirements, and no independent
 restriction prevents key creation or the intended API access. If you cannot sign
 in or use these controls, contact contact@egdata.app for identity-verified
-assistance. Replacing a key does
-not bypass an agreement pause, quota, or independent restriction.
+assistance. Replacing a key does not bypass an agreement pause, quota, or
+independent restriction.
 
 ## 3. Permitted uses and free access
 
@@ -204,7 +201,10 @@ unification of data. These terms grant access and permissions only to the extent
 we are entitled to grant them; they do not claim ownership of third-party
 content or grant rights we do not hold.
 
-You are responsible for obtaining any additional permissions your use requires.
+You are responsible for obtaining any additional permissions your use requires
+under applicable law. Your own access to Epic Games or other third-party services
+is subject to any agreements that independently apply to that access; using
+egdata does not by itself make you a party to every third-party agreement.
 Do not present the data or your product as an official Epic Games product or
 claim that egdata or Epic Games endorses your use.
 
@@ -299,7 +299,7 @@ including those from automated integrations that continue calling the API withou
 opening the dashboard. Silence, an unopened notice, or an automated API call is
 not recorded as your express acceptance.
 Publishing an update alone does not pause an existing account's access. During
-the initial rollout described in section 2, no API pause is active and existing
+the initial onboarding described in section 2, no API pause is active and existing
 keys keep working; the API-key denial above applies only from the announced
 effective time of a later requirement that has been activated under this
 section.
@@ -332,9 +332,10 @@ obligations. The surviving provisions are described in section 12.
 
 ## 10. Privacy and ending use
 
-The separately versioned Developer Privacy Notice explains how we process
-personal data. Accepting these terms does not waive data-protection rights and
-does not constitute consent to advertising or other optional processing.
+The separately versioned [Developer Privacy Notice](https://devs.egdata.app/privacy)
+explains how we process personal data. Accepting these terms does not waive
+data-protection rights and does not constitute consent to advertising or other
+optional processing.
 
 If your application sends users' personal information to egdata, explain that
 connection and provide an accessible link to the current Developer Privacy

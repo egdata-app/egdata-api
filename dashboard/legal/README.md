@@ -1,18 +1,26 @@
 # Developer legal documents and enforcement plan
 
-Planning date: 2026-11-12. Status: initial onboarding implemented locally; legal text is a publication candidate, unpublished and not effective.
+Text finalized: 2026-11-12. Status: version 1.0 wording complete; unpublished and not effective. Initial onboarding is implemented locally.
 
-- [Developer Terms of Service, proposed version 1.0](drafts/terms-1.0.md)
-- [Developer Privacy Notice, proposed version 1.0](drafts/privacy-1.0.md)
+- [Developer Terms of Service, version 1.0](terms-1.0.md)
+- [Developer Privacy Notice, version 1.0](privacy-1.0.md)
 - [Proposed agreement/access API error contract](api-agreement-errors.md)
 - [Initial rollout and publication steps](initial-rollout.md)
 - [Production evidence and privacy/email operations](operations.md)
 
-These files are review drafts, not published policies. Runtime support is described
-below; nothing has been deployed or activated. Final publication dates,
-effective dates, and content hashes are assigned when the text is finalized.
+The two versioned Markdown files contain the completed reader-facing text, with
+operational instructions kept here and in the rollout guide. They describe the
+intended initial deployment and must be published only after that deployment is
+confirmed. Completing these files does not deploy or activate anything.
 
-The current candidates use the confirmed Cloudflare self-service Paid account,
+The publication command records the actual publication time and SHA-256 of each
+exact UTF-8 body. Both documents point to the public version history for that
+record; no preparation date is presented as an effective date. The Privacy Notice
+applies from publication, while an individual's initial terms agreement starts
+on express acceptance. The later material-update policy has its own notice and
+effective-time rules. Do not edit a published version.
+
+The completed documents use the confirmed Cloudflare self-service Paid account,
 Google Cloud Belgium and Hetzner Nuremberg hosting, and personal Gmail mailbox.
 They cover the portal/accounts/keys, console and `/v1`, excluding legacy custom
 anti-abuse and main-site GA. The operator approved removal of Aikido runtime;
@@ -481,8 +489,8 @@ These choices are implementation targets, not assertions about current productio
   production modes are unknown; do not silently disable active protections or
   claim observation has no effects when a targeted enforcement trial exists.
 
-Historical planning schedule (superseded where different by the publication
-candidate and `operations.md`; not a production inventory):
+Historical planning schedule (superseded where different by the completed Privacy
+Notice and `operations.md`; not a production inventory):
 
 | Records | Selected target |
 | --- | --- |
@@ -515,7 +523,7 @@ not defeat the schedule. Provider retention, access/erasure capabilities, transf
 historical Aikido records are factual publication dependencies that delegated
 discretion cannot establish. The earlier 14/30/35-day security/backup targets above
 are planning targets, not verified universal provider retention. The current
-publication candidate and operations inventory supersede them with applicable
+Privacy Notice and operations inventory supersede them with applicable
 product limits and purpose-specific criteria. The operator has supplied
 identity/contact details and confirmed the current non-commercial context.
 
@@ -543,7 +551,7 @@ Account-linked audit evidence cannot simply be declared “anonymous.”
 
 ### Purpose-specific legal bases and deployment inventory
 
-Review the operation-level inventory before activating the publication candidate.
+Review the operation-level inventory before publishing the completed documents.
 Distinguish individual contracting
 developers, organizational representatives, and application end users. Map account
 and contact administration, API delivery, security, owner-visible reports,
@@ -706,6 +714,6 @@ terms acceptance without claiming all other models are invalid. Publication
 review must assess consumer/digital-service applicability, durable notice,
 operator identification, and significant automated decisions on the actual facts.
 
-Source review and drafting are not verification of production configuration or
-a legal opinion about enforceability. The marked publication details require
-operator confirmation and appropriate Spanish/EU legal review.
+Source review and completed wording are not verification of production configuration.
+The remaining operational evidence and actual publication timestamp are tracked
+in `operations.md` and `initial-rollout.md`.

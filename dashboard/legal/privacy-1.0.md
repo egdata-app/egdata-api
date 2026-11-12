@@ -2,14 +2,10 @@
 
 **Version:** 1.0
 
-**Prepared:** 12 November 2026
+**Publication record and version history:** https://devs.egdata.app/legal/history
 
-**Status:** Publication candidate; not published or effective.
-
-> REVIEW DRAFT — the reader-facing text below describes the initial rollout once
-> verified and activated. Publication and effective dates will be assigned at
-> activation. Deployment evidence and outstanding operational checks are kept in
-> `dashboard/legal/operations.md`; publication follows `initial-rollout.md`.
+This version applies from its recorded publication time. It explains our
+processing; it does not require your agreement or authorize earlier processing.
 
 ## 1. Who is responsible
 
@@ -27,7 +23,7 @@ calls that versioned API.
 Legacy/unversioned API routes and their separate custom anti-abuse system are
 outside this notice, as are the public website's browsing features and Google
 Analytics. That custom anti-abuse system does not apply to v1 requests. The
-developer portal does not use Google Analytics.
+developer portal and v1 API do not use Google Analytics.
 
 Epic Games and developers of applications using our API may independently
 process personal data under their own notices.
@@ -41,8 +37,8 @@ You can also contact **contact@egdata.app** about other egdata processing, inclu
 legacy API requests and personal information in datasets. You do not need to know
 which internal service holds the information. This notice is not a complete
 description of those separate activities.
-Providing this contact channel does not replace any obligation to give you
-information proactively about those activities.
+We provide information about those activities proactively where required;
+this contact channel supplements that information.
 
 ## 2. Information we process and its sources
 
@@ -69,7 +65,7 @@ of that address, and retain verification status and relevant address-change
 records. Verification requests use short-lived tokens; the stored token is
 hashed. This notification address is not supplied by Epic sign-in.
 Email profile editing does not change your Epic-managed display name. During the
-initial onboarding rollout, email verification precedes terms acceptance and
+initial onboarding, email verification precedes terms acceptance and
 dashboard/console access; existing API keys keep working. Replacement addresses
 remain pending until verified, and we notify the previous verified address.
 Verification demonstrates control of the address, not proof of your identity or
@@ -120,9 +116,9 @@ replace our responsibility to inform people about egdata's processing.
 
 ### Historical security information
 
-Before this rollout, our API origin used Aikido runtime security. That integration
-has been removed from the rollout. It previously processed a keyed identifier
-derived from IP address, user agent, language and country, together with security
+Our API origin previously used Aikido runtime security. That integration has
+been removed. It processed a keyed identifier derived from IP address, user agent,
+language and country, together with security
 telemetry such as route/usage statistics, associated IP information, system
 information and suspected-attack details. Some of that information may still be
 held by Aikido until deleted under the applicable retention and rights procedures.
@@ -137,15 +133,15 @@ consent for that processing. Section 8 also applies to requests about those reco
 Each terms acceptance is stored as an immutable event linked to your developer
 account: the exact terms version, edition, and SHA-256 fingerprint, the server
 time, the requirement revision, a receipt ID, and the Privacy Notice version and
-fingerprint provided at that same event. Your receipts at `/profile/receipts`
+fingerprint provided at that same event. Your receipts at
+[Profile / Receipts](https://devs.egdata.app/profile/receipts)
 keep these references even if newer versions are published later; each receipt
 contains both full documents and can be printed or saved as PDF through your
-browser, and an email linking to the receipt is queued to your verified address.
+browser, and a receipt email is queued to your verified address with a link to
+the account copy.
 Email delivery can fail; the receipt remains available in your account. Acceptances
-recorded before this rollout may have no Privacy Notice version; we display that
-as "not recorded" and never backfill it. These pages live under `/profile`
-(`/profile`, `/profile/agreements`, `/profile/receipts`); older `/agreements` and
-`/receipts` links redirect there. For legal and service notices, we record what
+recorded before this notice was introduced may have no Privacy Notice version; we display that
+as "not recorded" and never backfill it. For legal and service notices, we record what
 was sent, to which contact address, when, and available delivery or failure
 information. We may record that a notice was presented or dismissed in the
 portal. These events are not evidence of consent or proof that you read the
@@ -196,9 +192,9 @@ dashboard features, issuing new API keys, or using the portal console, so essent
 notices can reach the person responsible for an integration. Existing external
 API keys continue working during initial onboarding, including after an incomplete
 dashboard visit. Without this information we cannot activate the protected portal
-features. Optional project details are
-not necessary to sign in; an access/limit request may need enough contact and
-use-case information for us to assess and answer it.
+features. Optional project details are not necessary to sign in; an access/limit
+request may need enough contact and use-case information for us to assess and
+answer it.
 
 ## 4. Who receives information
 
@@ -222,7 +218,7 @@ use-case information for us to assess and answer it.
   Nuremberg, Germany. These services support upstream storage, search and caching.
 - **Aikido Security** may retain historical runtime-security information described
   in section 2. The removed runtime integration sends no new developer API
-  telemetry after the rollout. Repository security scanning is a separate activity.
+  telemetry. Repository security scanning is a separate activity.
 - **Cloudflare Email Sending and Email Routing, and Google (Gmail)** process
   correspondence, administrator/developer notifications, address verification and
   delivery information. Mail sent to `contact@egdata.app` is forwarded by Cloudflare
@@ -290,6 +286,13 @@ advertising cookie. Necessary cookies do not justify unrelated tracking.
 Epic Games may use its own cookies on its sign-in pages. Portal fonts are served
 as same-origin static assets, and the account icon needs no external image request.
 
+When you open an email-verification link, the portal can temporarily keep the
+verification code in that browser tab's session storage so you can complete Epic
+sign-in and return to verification. The saved entry is usable by the portal for
+up to 30 minutes and is cleared after successful verification; session storage
+normally ends when the tab is closed. This storage supports the verification
+you requested and is not used for advertising.
+
 ## 7. Retention and deletion
 
 We keep personal information only for as long as needed for its stated purposes,
@@ -314,7 +317,7 @@ backlogs. Earlier applicable erasure and restriction obligations still apply.
 | Previous notification email | Replaced in the active profile when the new address is verified. The old address remains in the address-change notification under the 30-day mail-job schedule; mailbox copies follow the correspondence rule |
 | Contact-verification tokens | Hashed, single-use and valid for 30 minutes; removed on use, with expired pending verification records selected by daily cleanup |
 | Terms-acceptance evidence | Account lifetime and a five-year retention deadline after closure, followed by daily cleanup; restricted after closure to necessary agreement/claims evidence. Includes the account identifier, exact document references/hashes, action time and receipt ID. We review necessity against applicable claims periods and retain for less time where sufficient. This is a policy limit, not a universal statutory minimum; earlier applicable erasure and restriction rights still apply |
-| Service-email jobs, attempts and lifecycle records | Jobs and attempts become eligible for deletion 30 days after job creation; minimal lifecycle records 30 days after ingestion. Verification plaintext tokens are not retained. Queues and email-provider copies have separate lifecycles |
+| Service-email jobs, attempts and lifecycle records | Jobs and attempts become eligible for deletion 30 days after job creation; minimal lifecycle records 30 days after ingestion. Plaintext verification tokens are not retained in the server outbox. Queues and email-provider copies have separate lifecycles |
 | Cloudflare Workers diagnostic logs | Up to seven days under the provider's Workers Logs retention. Error/issue records and separately retained incident evidence are assessed for their own diagnostic purpose, not treated as automatically deleted with logs |
 | Security diagnostics and incident evidence, including Aikido records | For the period needed to detect, investigate and resolve attacks, prevent recurring misuse and handle associated disputes. We consider the age and seriousness of the event, whether a restriction is still active, and whether particular evidence is still needed; provider-managed telemetry may follow a different lifecycle from local security state. Access/erasure/restriction requests include provider-held information where applicable |
 | Queue messages and recovery copies | Queue copies persist until successfully processed or their configured retention expires; unsuccessful messages can move to a dead-letter queue for investigation. Cloudflare Paid Queues allow retention up to 14 days. D1 Time Travel keeps automatic recovery history for up to 30 days on our Paid plan. Recovery copies are not used to extend ordinary production use; deletion/restriction decisions must be reapplied after restoration |
@@ -324,8 +327,8 @@ they do not need to identify the people who accepted them. Account-linked
 acceptance evidence has a separate retention policy.
 
 Any longer preservation must identify the specific legal duty or ongoing claim,
-the minimum records needed, restricted access, and a review/end point. Review such
-holds at least every six months and delete when the justification ends. Routine
+the minimum records needed, restricted access, and a review/end point. We review
+such holds at least every six months and delete when the justification ends. Routine
 retention periods do not override an applicable earlier erasure or restriction
 obligation. A soft-deleted project's recovery window is not an automatic delay
 for account closure or an erasure request.
@@ -340,13 +343,12 @@ You can request closure from the Profile page (`/profile`) — with a typed
 confirmation and a sign-in within the last 10 minutes — or by email to
 contact@egdata.app. Closure deletes active account, project, key, and contact
 records in our Cloudflare D1 database in one step, rejects existing sessions and
-cached-key access, holds
-re-registration of the same Epic Games account for 30 days, and queues a
-confirmation email to the verified address. We process closure requests without
+cached-key access, holds re-registration of the same Epic Games account for 30 days,
+and queues a confirmation email to the verified address. We process closure requests without
 undue delay after any reasonably necessary identity verification and confirm
-completion or explain a material delay. A
-request exercising data-protection rights follows the response rules in section
-8, including when submitted together with a closure request. Permission under the
+completion or explain a material delay. A request exercising data-protection
+rights follows the response rules in section 8, including when submitted together
+with a closure request. Permission under the
 Terms to retain API datasets does not authorize indefinite retention of personal
 data or displace applicable data-protection duties. In particular, applicable
 erasure and restriction obligations continue for personal data within caches.
@@ -378,7 +380,7 @@ processing is needed to establish, exercise, or defend legal claims.
 
 Send requests to **contact@egdata.app**. You do not need a developer account or
 an accepted terms revision. Where we have reasonable doubts about identity, we
-may ask for proportionate information to confirm it; do not send identity
+may ask for proportionate information to verify it; do not send identity
 documents unless an appropriate verification process specifically requires them.
 Do not send passwords, API keys, or session tokens. Requests are normally free,
 subject to the limited exceptions in applicable law.
@@ -413,11 +415,11 @@ affect repeated requests until the underlying issue is resolved; exhausting a
 quota restricts requests until its reset or an approved limit change. Completing
 onboarding does not remove an independent credential, quota or security restriction.
 
-A later mandatory material-update workflow is planned separately. If activated
-under the Terms' notice policy, an ordinary update's acceptance check would pause
-API access only at the announced effective time. This deadline enforcement is not
-part of the initial rollout. Privacy-notice reading, dismissal, or acknowledgement
-is not part of either access decision.
+A later mandatory material terms update can introduce an API acceptance deadline
+under the notice policy in the [Developer Terms](https://devs.egdata.app/terms).
+An ordinary update's acceptance check would pause API access only at its announced
+effective time. No such deadline applies during initial onboarding. Privacy-notice
+reading, dismissal, or acknowledgement is not part of either access decision.
 
 These checks use account and technical access information, not advertising
 profiles. Contact us to request human review of an incorrect access restriction.
@@ -433,7 +435,7 @@ You can ask the operator to review a restriction, explain your circumstances and
 contest the result at **contact@egdata.app**, including if an automated restriction
 has a substantial effect on you. Review considers the actual reason, relevant
 request/account information and your explanation; it does not guarantee restoration
-where a justified restriction remains. Nothing in these terms or this notice
+where a justified restriction remains. Nothing in the Developer Terms or this notice
 waives protections that apply to solely automated decisions under GDPR Article 22.
 
 ## 10. Changes and notification

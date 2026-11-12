@@ -10,7 +10,7 @@ the operator's name, Spain and contact email; a postal address/NIF is not treate
 an unconditional publication prerequisite. Reassess LSSI applicability if the
 economic context changes; see [operations.md](operations.md).
 
-The publication candidates now identify the confirmed providers: Cloudflare,
+The finalized version 1.0 texts identify the confirmed providers: Cloudflare,
 Google Cloud (Belgium), Hetzner (Nuremberg, Germany), and Cloudflare routing to the
 operator's Gmail mailbox. MeiliSearch is unused. The developer documents cover
 the portal, accounts/keys, console and `/v1`; legacy custom anti-abuse is separate.
@@ -23,7 +23,8 @@ specific actions are in [operations.md](operations.md#supplier-actions-and-publi
 The selected analytics minimization and broader retention rules
 are implemented and tested locally, together with account export and rights-case
 tracking. They are not deployed. See [operations.md](operations.md) for production
-observations, supplier gaps and rights handling. Do not publish drafts as deployed facts.
+observations, supplier gaps and rights handling. Confirm the deployed behavior
+matches the completed text before publication.
 Confirm Cloudflare Email Sending supports arbitrary recipients for the configured
 verified sender/domain and account plan. Exercise delivery to real controlled
 inboxes before requiring email verification in production.
@@ -41,20 +42,23 @@ inboxes before requiring email verification in production.
 2. Build and deploy the matching SPA/Worker. Check account menu, logout, receipt,
    recent-login deletion, email replacement and same-tab verification-link login.
    Check both existing users and a new account; verify mobile/keyboard navigation.
-3. Prepare finalized UTF-8 Markdown from the publication candidates with actual
-   version/publication/effective metadata and public links. Replace the candidate
-   header and remove its `REVIEW DRAFT` block only after the operational checks.
-   Use the actual activation date/time; do not backdate to the preparation date.
-   Review retained exact bytes. The offline script continues rejecting candidate
-   files so editing the prose alone cannot silently activate onboarding.
+3. Review the completed UTF-8 files `legal/terms-1.0.md` and
+   `legal/privacy-1.0.md` against the verified deployment. Their wording is final;
+   operational evidence remains in this guide and `operations.md`. Both documents
+   refer to `/legal/history` for the publication record. Choose the actual
+   publication/activation time, not the preparation date. The notice applies from
+   that time; an individual's initial terms agreement starts on express acceptance.
+   Preserve the exact reviewed bytes used to prepare SQL. The script is offline:
+   finalized wording and SQL preparation alone do not activate onboarding.
 4. From `dashboard/`, prepare SQL offline:
 
    ```sh
-   node scripts/prepare-legal-rollout.mjs final-terms.md final-privacy.md 1.0 2026-11-12T00:00:00Z initial-legal.sql
+   node scripts/prepare-legal-rollout.mjs legal/terms-1.0.md legal/privacy-1.0.md 1.0 2026-11-12T00:00:00Z initial-legal.sql
    ```
 
-   Substitute the approved publication time. This command never applies SQL or
-   deploys anything. It rejects draft markers, invalid version/date inputs, and
+   The timestamp above is illustrative; substitute the actual approved publication
+   time. This command never applies SQL or deploys anything. It rejects draft
+   markers, invalid version/date inputs, and
    overwriting its output. Review the SQL/hashes before explicitly executing it
    against the intended D1 database using the project's migration configuration.
 5. Documents are inserted first; the final `legal_rollout` insert activates the

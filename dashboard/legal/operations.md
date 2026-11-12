@@ -245,7 +245,7 @@ alone is not evidence that an applicable erasure/restriction duty was fulfilled.
   a review mailbox alone does not establish an Article 22 exception. Keep human
   review real and documented; do not claim that accepting the terms supplies
   consent for security profiling or makes significant automated decisions lawful.
-- **Retention:** the publication candidate uses the implemented D1 cutoffs, the
+- **Retention:** the completed Privacy Notice uses the implemented D1 cutoffs, the
   operator-approved mailbox procedure, documented Cloudflare product limits, and
   purpose-specific criteria for security/issue records. Earlier 14-day diagnostic,
   30-day incident and 35-day backup targets were not verified universal provider
