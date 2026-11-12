@@ -1,12 +1,4 @@
 import { DurableObject } from "cloudflare:workers";
-import type { DashboardEnv } from "./types.js";
-import {
-  createUsageOutbox,
-  captureUsage,
-  scheduleUsage,
-  flushUsage,
-} from "./usage-outbox.js";
-import { generatedV1Routes } from "./v1-routes.generated.js";
 import {
   type AdmissionResult,
   decideAdmission,
@@ -14,9 +6,18 @@ import {
   type QuotaState,
   validatePolicies,
 } from "./rate-limiter-core.js";
+import type { DashboardEnv } from "./types.js";
+import {
+  captureUsage,
+  createUsageOutbox,
+  flushUsage,
+  scheduleUsage,
+} from "./usage-outbox.js";
+import { generatedV1Routes } from "./v1-routes.generated.js";
 
 export type AdmissionRequest = {
   keyId: string;
+  projectId?: string;
   policies: QuotaPolicy[];
   usage?: { projectId: string; operationId: string };
 };
@@ -28,10 +29,10 @@ type StateRow = {
 };
 
 /**
- * One SQLite-backed object per environment and internal API key identifier.
+ * One SQLite-backed object per environment and project identifier.
  *
  * The raw API key never reaches this class. State is a single bounded row per
- * key: the current 60-second window, global and endpoint counters. Optional
+ * project: the current 60-second window, global and endpoint counters. Optional
  * usage buckets and their durable outbox share the admission transaction.
  */
 export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
@@ -110,17 +111,29 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     }
     validatePolicies(request.policies);
     if (
-      request.usage &&
-      (!request.usage.projectId ||
+      request.projectId !== undefined &&
+      (typeof request.projectId !== "string" || !request.projectId)
+    ) {
+      throw new Error("Invalid project identity");
+    }
+    const usage = request.usage;
+    if (
+      usage &&
+      (!usage.projectId ||
+        (request.projectId !== undefined &&
+          usage.projectId !== request.projectId) ||
         !generatedV1Routes.some(
-          (r) => r.operationId === request.usage!.operationId,
+          (route) => route.operationId === usage.operationId,
         ))
     ) {
       throw new Error("Invalid usage identity");
     }
 
     const now = Date.now();
-    const state = this.readState(request.keyId);
+    // Keep the deployed class, table and old RPC shape for rolling updates and
+    // pending usage alarms. New gateways always supply a project identity.
+    const counterId = request.projectId ?? request.keyId;
+    const state = this.readState(counterId);
     const decision = decideAdmission({
       now,
       policies: request.policies,
@@ -131,10 +144,9 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       return decision.result;
     }
 
-    if (request.usage && this.env.USAGE_TRACKING_ENABLED === "true") {
-      const usage = request.usage;
+    if (usage && this.env.USAGE_TRACKING_ENABLED === "true") {
       this.ctx.storage.transactionSync(() => {
-        this.writeState(request.keyId, decision.nextState, now);
+        this.writeState(counterId, decision.nextState, now);
         captureUsage(this.ctx.storage, {
           keyId: request.keyId,
           projectId: usage.projectId,
@@ -144,7 +156,9 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
         });
       });
       await scheduleUsage(this.ctx.storage, now);
-    } else this.writeState(request.keyId, decision.nextState, now);
+    } else {
+      this.writeState(counterId, decision.nextState, now);
+    }
     return decision.result;
   }
 

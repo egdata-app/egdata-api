@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { UNATTRIBUTED_LEGACY_ID } from "../worker/analytics-types";
 import worker from "../worker/index";
 import type { CachedKeyMetadata, DashboardEnv } from "../worker/types";
+import { quotaNamespace } from "./fixtures/quota";
 
 const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
 function environment(overrides: Partial<DashboardEnv> = {}) {
@@ -183,9 +184,17 @@ describe("legacy gateway telemetry", () => {
       allowedOrigins: [],
       allowedPaths: [],
       allowedMethods: outcome === "policy" ? ["POST"] : ["GET"],
-      customRpm: null,
+      customRpm: 1,
       expiresAt: null,
     };
+    const namespace = quotaNamespace();
+    if (outcome === "quota") {
+      await namespace.get(`project:production:${meta.projectId}`).admit({
+        keyId: meta.keyId,
+        projectId: meta.projectId,
+        policies: [{ name: "global", limit: 1 }],
+      });
+    }
     const { env, writeDataPoint } = environment({
       API_KEYS_KV: {
         get: vi.fn(async () => ({
@@ -193,9 +202,8 @@ describe("legacy gateway telemetry", () => {
           cacheExpiresAt: Date.now() + 60_000,
         })),
       } as unknown as KVNamespace,
-      RATE_LIMITER_FREE: {
-        limit: vi.fn(async () => ({ success: outcome !== "quota" })),
-      } as unknown as RateLimit,
+      API_KEY_RATE_LIMITER:
+        namespace as unknown as DashboardEnv["API_KEY_RATE_LIMITER"],
     });
     vi.stubGlobal(
       "fetch",

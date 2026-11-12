@@ -217,7 +217,7 @@ function ReviewCard({
         <div>
           <dt className="text-epic-text-muted">Requested limit</dt>
           <dd className="font-semibold text-epic-accent">
-            {request.requestedRpm.toLocaleString()} requests/min per key
+            {request.requestedRpm.toLocaleString()} requests/min per project
           </dd>
         </div>
         <div>

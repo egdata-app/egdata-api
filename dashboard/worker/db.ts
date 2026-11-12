@@ -1,3 +1,7 @@
+import {
+  ProjectCreationError,
+  projectCreationError,
+} from "./project-policy.js";
 import type {
   AllowedHttpMethod,
   ApiKeyTier,
@@ -48,6 +52,15 @@ interface RawApiKeyRow {
   created_at: string;
   updated_at: string;
 }
+
+// Permissions and credential identity belong to the key; capacity belongs to
+// the project. Use the same projection for authentication and dashboard reads.
+const API_KEY_WITH_PROJECT_QUOTA = `
+  SELECT k.id, k.project_id, k.owner_epic_id, k.name, k.key_prefix, k.key_hash,
+         p.tier, p.custom_rpm, k.active, k.scopes_json, k.allowed_ips_json,
+         k.allowed_origins_json, k.allowed_paths_json, k.allowed_methods_json,
+         k.expires_at, k.last_used_at, k.revoked_at, k.created_at, k.updated_at
+  FROM api_keys k JOIN projects p ON p.id = k.project_id`;
 
 export function mapApiKeyRow(row: RawApiKeyRow): DashboardApiKey {
   return {
@@ -131,14 +144,23 @@ export async function upsertEpicUserAndDefaultProject(
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-|-$/g, "") || "default";
-    const created = await createProject(db, {
-      ownerEpicId: user.epicAccountId,
-      name: `${user.displayName}'s Project`,
-      slug: `${defaultSlug}-app`,
-      description: "Default egdata API project",
-      websiteUrl: "",
-    });
-    projects = [created];
+    try {
+      await createProject(
+        db,
+        {
+          ownerEpicId: user.epicAccountId,
+          name: `${user.displayName}'s Project`,
+          slug: `${defaultSlug}-app`,
+          description: "Default egdata API project",
+          websiteUrl: "",
+        },
+        { onlyIfEmpty: true },
+      );
+    } catch (error) {
+      // A recent deletion or concurrent creation must not prevent sign-in.
+      if (!(error instanceof ProjectCreationError)) throw error;
+    }
+    projects = await listUserProjects(db, user.epicAccountId);
   }
 
   return projects;
@@ -190,25 +212,37 @@ export async function createProject(
     description: string;
     websiteUrl: string;
   },
-): Promise<DashboardProject> {
+  options: { onlyIfEmpty?: boolean } = {},
+): Promise<DashboardProject | null> {
   const id = `prj_${crypto.randomUUID().replace(/-/g, "").slice(0, 20)}`;
   const now = new Date().toISOString();
-  await db
-    .prepare(
-      `INSERT INTO projects (id, owner_epic_id, name, slug, description, website_url, tier, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, 'free', ?, ?)`,
-    )
-    .bind(
-      id,
-      input.ownerEpicId,
-      input.name,
-      input.slug,
-      input.description,
-      input.websiteUrl,
-      now,
-      now,
-    )
-    .run();
+  let result: D1Result;
+  try {
+    result = await db
+      .prepare(
+        `INSERT INTO projects (id, owner_epic_id, name, slug, description, website_url, tier, created_at, updated_at)
+       SELECT ?, ?, ?, ?, ?, ?, 'free', ?, ?
+       WHERE ? = 0 OR NOT EXISTS (
+         SELECT 1 FROM projects WHERE owner_epic_id = ?
+       )`,
+      )
+      .bind(
+        id,
+        input.ownerEpicId,
+        input.name,
+        input.slug,
+        input.description,
+        input.websiteUrl,
+        now,
+        now,
+        options.onlyIfEmpty ? 1 : 0,
+        input.ownerEpicId,
+      )
+      .run();
+  } catch (error) {
+    throw projectCreationError(error) ?? error;
+  }
+  if (result.meta.changes === 0) return null;
 
   return {
     id,
@@ -258,12 +292,15 @@ export async function listUserApiKeys(
   const query = projectId
     ? db
         .prepare(
-          `SELECT * FROM api_keys WHERE owner_epic_id = ? AND project_id = ? AND revoked_at IS NULL ORDER BY created_at DESC`,
+          `${API_KEY_WITH_PROJECT_QUOTA}
+           WHERE k.owner_epic_id = ? AND k.project_id = ? AND k.revoked_at IS NULL
+           ORDER BY k.created_at DESC`,
         )
         .bind(ownerEpicId, projectId)
     : db
         .prepare(
-          `SELECT * FROM api_keys WHERE owner_epic_id = ? AND revoked_at IS NULL ORDER BY created_at DESC`,
+          `${API_KEY_WITH_PROJECT_QUOTA}
+           WHERE k.owner_epic_id = ? AND k.revoked_at IS NULL ORDER BY k.created_at DESC`,
         )
         .bind(ownerEpicId);
 
@@ -276,7 +313,8 @@ export async function findRawKeyByHash(
   keyHash: string,
 ): Promise<RawApiKeyRow | null> {
   return db
-    .prepare(`SELECT * FROM api_keys WHERE key_hash = ? LIMIT 1`)
+    .prepare(`${API_KEY_WITH_PROJECT_QUOTA}
+      WHERE k.key_hash = ? LIMIT 1`)
     .bind(keyHash)
     .first<RawApiKeyRow>();
 }
@@ -288,7 +326,8 @@ export async function findRawKeyByIdAndOwner(
 ): Promise<RawApiKeyRow | null> {
   return db
     .prepare(
-      `SELECT * FROM api_keys WHERE id = ? AND owner_epic_id = ? LIMIT 1`,
+      `${API_KEY_WITH_PROJECT_QUOTA}
+       WHERE k.id = ? AND k.owner_epic_id = ? LIMIT 1`,
     )
     .bind(keyId, ownerEpicId)
     .first<RawApiKeyRow>();

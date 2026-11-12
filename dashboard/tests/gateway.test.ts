@@ -227,7 +227,15 @@ describe("HMAC session tokens and API key proxy cache preservation", () => {
               resetAt: Date.now() + 60_000,
               retryAfter: 60,
               exhaustedPolicy: null,
-              policies: [],
+              policies: [
+                {
+                  name: "global",
+                  limit: 120,
+                  used: 1,
+                  remaining: 119,
+                  resetAt: Date.now() + 60_000,
+                },
+              ],
             })),
           })),
         } as unknown as DashboardEnv["API_KEY_RATE_LIMITER"],

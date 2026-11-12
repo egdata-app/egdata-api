@@ -6,7 +6,7 @@ import worker from "../worker/index";
 import { resolveApiKeyMetadata, syncKeyToKv } from "../worker/key-cache";
 import { isDashboardAdmin } from "../worker/limit-reviews";
 import type { DashboardEnv, EpicSessionUser } from "../worker/types";
-import { quotaForKey } from "../worker/v1-routes";
+import { quotaForProject } from "../worker/project-quota";
 import { sqliteD1 } from "./fixtures/sqlite";
 
 const adminId = "ac7b3a70e3ce4652b49c38e648001d9e";
@@ -225,7 +225,7 @@ describe("administrator limit reviews", () => {
       key: { tier: string; customRpm: number };
     };
     expect(body.key).toMatchObject({ tier: approvedTier, customRpm: 4321 });
-    expect(quotaForKey(body.key)).toBe(4321);
+    expect(quotaForProject(body.key)).toBe(4321);
     expect(
       (await review({ decision: "declined", note: "Overwrite attempt" }))
         .status,

@@ -34,11 +34,12 @@ async function setup() {
   const admit = vi.fn(
     async (input: {
       keyId: string;
+      projectId: string;
       policies: Array<{ name: string; limit: number }>;
       usage?: unknown;
     }) => {
-      const n = (used.get(input.keyId) ?? 0) + 1;
-      used.set(input.keyId, n);
+      const n = (used.get(input.projectId) ?? 0) + 1;
+      used.set(input.projectId, n);
       const allowed = n <= 2;
       return {
         allowed,
@@ -209,7 +210,7 @@ describe("project console credentials", () => {
     expect((await s.run(third.token)).status).toBe(429);
     expect(s.upstream).toHaveBeenCalledTimes(2);
     expect(s.env.API_KEY_RATE_LIMITER.idFromName).toHaveBeenLastCalledWith(
-      "v1:test:console_prj_a",
+      "project:test:prj_a",
     );
   });
 

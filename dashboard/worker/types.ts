@@ -104,7 +104,7 @@ export interface DashboardEnv extends Env {
   ANTI_ABUSE_EDGE_SECRET?: string;
   ORIGIN_AUTH_TOKEN?: string;
   ENABLE_DEV_AUTH?: string;
-  /** One SQLite-backed quota object per environment and internal key ID. */
+  /** One SQLite-backed quota object per environment and project ID. Binding name retained for deployment compatibility. */
   API_KEY_RATE_LIMITER: DurableObjectNamespace<
     import("./rate-limiter.js").ApiKeyRateLimiter
   >;

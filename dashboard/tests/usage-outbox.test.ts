@@ -6,13 +6,13 @@ const { DatabaseSync } = createRequire(import.meta.url)(
 
 import { describe, expect, it, vi } from "vitest";
 import { ApiKeyRateLimiter } from "../worker/rate-limiter";
+import type { DashboardEnv } from "../worker/types";
 import {
-  OUTBOX_MAX_ATTEMPTS,
-  flushUsage,
   captureUsage,
+  flushUsage,
+  OUTBOX_MAX_ATTEMPTS,
   retryDelay,
 } from "../worker/usage-outbox";
-import type { DashboardEnv } from "../worker/types";
 
 function setup(fail = false) {
   const sqlite = new DatabaseSync(":memory:");
@@ -73,6 +73,35 @@ function setup(fail = false) {
 }
 
 describe("durable admission outbox", () => {
+  it("shares project counters while retaining distinct per-key usage events", async () => {
+    const { limiter, sqlite } = setup();
+    const request = {
+      projectId: "project_shared",
+      policies: [{ name: "global", limit: 2 }],
+      usage: { projectId: "project_shared", operationId: "getOffer" },
+    };
+    expect((await limiter.admit({ ...request, keyId: "key_a" })).allowed).toBe(
+      true,
+    );
+    expect((await limiter.admit({ ...request, keyId: "key_b" })).allowed).toBe(
+      true,
+    );
+    expect((await limiter.admit({ ...request, keyId: "key_c" })).allowed).toBe(
+      false,
+    );
+    expect(
+      sqlite.prepare("SELECT key_id, global_count FROM rate_limit_state").all(),
+    ).toEqual([{ key_id: "project_shared", global_count: 2 }]);
+    expect(
+      sqlite
+        .prepare("SELECT key_id, project_id FROM usage_outbox ORDER BY key_id")
+        .all(),
+    ).toEqual([
+      { key_id: "key_a", project_id: "project_shared" },
+      { key_id: "key_b", project_id: "project_shared" },
+    ]);
+  });
+
   it("prunes expired daily buckets without maintenance-only alarms", () => {
     const { storage, sqlite, getAlarm } = setup();
     const event = {

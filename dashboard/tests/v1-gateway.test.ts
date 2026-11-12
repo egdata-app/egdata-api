@@ -271,7 +271,7 @@ describe("v1 Worker gateway", () => {
     expect(admitCalls[0].keyId).toBe(meta.keyId);
     expect(admitCalls[0].policies).toEqual([{ name: "global", limit: 120 }]);
     expect(env.API_KEY_RATE_LIMITER.idFromName).toHaveBeenCalledWith(
-      `v1:test:${meta.keyId}`,
+      `project:test:${meta.projectId}`,
     );
     expect(upstream).toHaveBeenCalledTimes(1);
     const [url, init] = upstream.mock.calls[0];

@@ -35,7 +35,9 @@ The Worker validates the key, permission scope, allowed IP/CIDR, allowed origin,
 
 ## Exact global quotas
 
-Each API key has one exact global quota enforced by a SQLite-backed Durable Object:
+Each project has one exact global quota enforced by a SQLite-backed Durable Object.
+All its API keys and console sessions share this allowance across legacy and v1
+gateway requests, including cache hits. Creating or rotating keys does not add capacity:
 
 | Tier | Requests per UTC-aligned minute |
 | --- | ---: |
@@ -49,9 +51,9 @@ decline the request and leave a note in your request history. Approval applies
 the requested RPM to the project's existing and future API keys and its API
 console. Existing keys can take up to five minutes to refresh; quota counters
 are not reset. Custom requests use the enterprise tier with the approved RPM
-override. Legacy gateway requests continue to use tier limits.
+override. Legacy gateway requests use the same approved project RPM and counter.
 
-Expensive operations also retain their existing per-key limits, evaluated in the same object and the same request:
+Expensive v1 operations also have shared per-project limits, evaluated in the same object and the same request:
 
 | Policy | Limit |
 | --- | ---: |
@@ -65,6 +67,14 @@ Admission is persisted before the origin is called. A request that is admitted a
 Each quota check is one Durable Object RPC and one bounded state-row write on admission; denials are read-only. A planning estimate of 27.14M monthly non-preflight requests implies roughly $4.05 in incremental Durable Object request charges assuming unused included allowances, while one counter-row write per admission remains below the included 50M writes. This is not a total-cost guarantee; measure actual duration and writes in staging.
 
 Shared HTTP caching is disabled on outgoing authenticated v1 data responses (`Cache-Control: private, no-cache`; `CDN-Cache-Control: no-store`). Every authenticated data request, including `If-None-Match` revalidation, passes API key or dashboard-session authentication, permission checks, and quota admission before the Worker serves from its internal post-auth edge cache or forwards to the origin. Conditional requests can still return `304 Not Modified`; the body is empty and the request was still admitted. `/v1/health` and `/v1/open-api.json` are unauthenticated, skip quota admission and the Worker edge cache, and successful responses use `Cache-Control: public, max-age=60` with `CDN-Cache-Control: no-store`. CORS preflights also skip authentication and quota admission.
+
+## Project creation
+
+Accounts include one project by default. Contact the egdata team for approval of
+additional projects. Existing projects remain usable if an account exceeds its
+allowance, but further creation is blocked. Project creation is limited to once
+every 24 hours per account, including after deletion and automatic creation at
+login. Each approved additional project has its own quota.
 
 ## Response envelope
 

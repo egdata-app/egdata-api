@@ -142,7 +142,7 @@ function ProjectOverview() {
           <StatCard
             label="Active API Keys"
             value={String(activeKeys.length)}
-            sub={`Up to ${rpmLimit.toLocaleString()} req/min per key`}
+            sub={`Up to ${rpmLimit.toLocaleString()} req/min per project`}
             icon={<KeyRound className="w-4 h-4 text-epic-accent" />}
           />
           <StatCard
@@ -223,7 +223,7 @@ function ProjectOverview() {
                 Project Keys
               </h2>
               <span className="text-xs text-epic-text-muted font-mono">
-                {rpmLimit.toLocaleString()} requests/min per key
+                {rpmLimit.toLocaleString()} requests/min shared by all keys
               </span>
             </div>
 

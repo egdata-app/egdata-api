@@ -5,6 +5,8 @@ import { touchApiKeyLastUsed } from "./db.js";
 import { fetchLegacyWithEdgeCache } from "./edge-cache.js";
 import { resolveApiKeyMetadata } from "./key-cache.js";
 import { evaluateKeyPermissions, originMatchesPattern } from "./permissions.js";
+import { admitProjectRequest, rateLimitHeaders } from "./project-quota.js";
+import type { AdmissionResult } from "./rate-limiter-core.js";
 import type { DashboardEnv } from "./types.js";
 import { forwardToUpstream } from "./upstream.js";
 import { handleV1ApiProxy } from "./v1.js";
@@ -250,17 +252,37 @@ export async function handleEdgeApiProxy(
     );
   }
 
-  // 5. Enforce per-key Rate Limiting at the Cloudflare PoP (0ms network hop)
-  const limiter =
-    keyMeta.tier === "enterprise"
-      ? env.RATE_LIMITER_ENTERPRISE
-      : keyMeta.tier === "pro"
-        ? env.RATE_LIMITER_PRO
-        : env.RATE_LIMITER_FREE;
+  // 5. Share one global project allowance with v1 and the API console.
+  let admission: AdmissionResult;
+  try {
+    admission = await admitProjectRequest(env, keyMeta);
+  } catch {
+    recordApiTelemetry(env, {
+      ownerEpicId: keyMeta.ownerEpicId,
+      keyId: keyMeta.keyId,
+      projectId: keyMeta.projectId,
+      routeTemplate: normalizeRouteTemplate(upstreamPath, null),
+      method: request.method,
+      statusCode: 503,
+      cacheStatus: "EDGE_BLOCK",
+      limitOutcome: "quota_unavailable",
+      origin: originHeader ?? "(direct)",
+      clientIp: clientIp ?? "unknown",
+      userAgent,
+      country,
+      latencyMs: performance.now() - startMs,
+    });
+    return edgeErrorJson(
+      503,
+      "QUOTA_UNAVAILABLE",
+      "The quota service could not confirm admission. Please retry shortly.",
+      originHeader,
+      { "Retry-After": "1" },
+    );
+  }
+  const quotaHeaders = rateLimitHeaders(admission);
 
-  const { success: withinLimit } = await limiter.limit({ key: keyMeta.keyId });
-
-  if (!withinLimit) {
+  if (!admission.allowed) {
     recordApiTelemetry(env, {
       ownerEpicId: keyMeta.ownerEpicId,
       keyId: keyMeta.keyId,
@@ -280,10 +302,11 @@ export async function handleEdgeApiProxy(
     return edgeErrorJson(
       429,
       "RATE_LIMITED",
-      `API key rate limit exceeded for ${keyMeta.tier} tier. Request higher limits in the egdata Developer Portal.`,
+      `Project rate limit exceeded for ${keyMeta.tier} tier. All API keys share this allowance. Request higher limits in the egdata Developer Portal.`,
       originHeader,
       {
-        "Retry-After": "60",
+        ...quotaHeaders,
+        "Retry-After": String(admission.retryAfter),
         "X-Egdata-Key-Tier": keyMeta.tier,
       },
     );
@@ -337,6 +360,9 @@ export async function handleEdgeApiProxy(
 
   // Stream response body untouched (zero buffering, preserves strong/weak ETags & gzip/br)
   const outHeaders = new Headers(upstreamResponse.headers);
+  for (const [name, value] of Object.entries(quotaHeaders)) {
+    outHeaders.set(name, value);
+  }
   outHeaders.set("X-Egdata-Key-Tier", keyMeta.tier);
   if (originHeader) {
     outHeaders.set("Access-Control-Allow-Origin", originHeader);

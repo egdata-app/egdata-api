@@ -43,6 +43,7 @@ import {
 import { removeKeyFromKv, syncKeyToKv } from "./key-cache.js";
 import { isDashboardAdmin, limitReviewRoutes } from "./limit-reviews.js";
 import { isValidIpOrCidr } from "./permissions.js";
+import { ProjectCreationError } from "./project-policy.js";
 import { handleEdgeApiProxy } from "./proxy.js";
 import {
   type AllowedHttpMethod,
@@ -227,34 +228,25 @@ dashboardApi.post("/projects", async (c) => {
     );
   }
 
-  const existing = await listUserProjects(c.env.DB, user.epicAccountId);
-  if (existing.length >= 10) {
-    return c.json(
-      {
-        error: {
-          code: "PROJECT_LIMIT_REACHED",
-          message: "Maximum of 10 projects per account.",
-        },
-      },
-      400,
-    );
-  }
-
   const slug =
     parsed.data.name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "") || "project";
 
-  const project = await createProject(c.env.DB, {
-    ownerEpicId: user.epicAccountId,
-    name: parsed.data.name,
-    slug,
-    description: parsed.data.description,
-    websiteUrl: parsed.data.websiteUrl,
-  });
-
-  return c.json({ project }, 201);
+  try {
+    const project = await createProject(c.env.DB, {
+      ownerEpicId: user.epicAccountId,
+      name: parsed.data.name,
+      slug,
+      description: parsed.data.description,
+      websiteUrl: parsed.data.websiteUrl,
+    });
+    return c.json({ project }, 201);
+  } catch (error) {
+    if (!(error instanceof ProjectCreationError)) throw error;
+    return c.json({ error: { code: error.code, message: error.message } }, 400);
+  }
 });
 
 dashboardApi.patch("/projects/:projectId", async (c) => {
