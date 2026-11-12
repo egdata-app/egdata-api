@@ -1,6 +1,11 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { AdminPage, AdminProject, AdminUser } from "../worker/admin-types";
+import type {
+  AdminPage,
+  AdminProject,
+  AdminUser,
+  AdminUserDetail,
+} from "../worker/admin-types";
 import { recordApiTelemetry } from "../worker/analytics";
 import { signHmacToken } from "../worker/crypto";
 import {
@@ -119,6 +124,7 @@ function setup() {
 describe("administrator user and project management", () => {
   const routes: [string, string, unknown?][] = [
     ["/users", "GET"],
+    ["/users/owner", "GET"],
     ["/projects", "GET"],
     ["/projects/project/keys", "GET"],
     ["/users/owner/limits", "PATCH", { projectLimit: 3 }],
@@ -892,5 +898,100 @@ describe("administrator user and project management", () => {
     ).json()) as AdminPage<AdminProject>;
     expect(failed.rows).toHaveLength(2);
     expect(failed.usage).toMatchObject({ source: "unavailable", byId: {} });
+  });
+
+  it("inspects a user with agreement acceptances, email verification, projects, and requests", async () => {
+    const { sqlite, call } = setup();
+    expect((await call("/users/missing-user")).status).toBe(404);
+
+    sqlite.exec(`
+      INSERT INTO legal_documents(kind,version,edition,sha256,body,published_at) VALUES
+        ('terms','2026-11-01','2026-11','terms-sha-1','Terms v1',1700000000000),
+        ('terms','2026-11-10','2026-11','terms-sha-2','Terms v2',1700050000000),
+        ('privacy','2026-11-01','2026-11','privacy-sha-1','Privacy v1',1700000000000);
+      INSERT INTO legal_rollout(id,revision,terms_version,privacy_version)
+        VALUES(1,'rev-2','2026-11-10','2026-11-01');
+      INSERT INTO developer_profiles(owner_id,contact_email,verified_at,pending_email) VALUES
+        ('admin','admin@example.com',1700100000000,NULL),
+        ('owner','dev@example.com',1700100000000,'next@example.com');
+      INSERT INTO legal_acceptances(owner_id,version,edition,sha256,accepted_at,requirement_revision,retain_until,receipt_id,privacy_version,privacy_sha256) VALUES
+        ('admin','2026-11-10','2026-11','terms-sha-2',1700090000000,'rev-2',NULL,'rcpt_admin','2026-11-01','privacy-sha-1'),
+        ('owner','2026-11-01','2026-11','terms-sha-1',1700010000000,'rev-1',1700200000000,'rcpt_old','2026-11-01','privacy-sha-1'),
+        ('owner','2026-11-10','2026-11','terms-sha-2',1700090000000,'rev-2',NULL,'rcpt_current','2026-11-01','privacy-sha-1');
+      INSERT INTO limit_requests(id,owner_epic_id,project_id,contact_email,requested_tier,requested_rpm,expected_monthly_requests,use_case,status)
+        VALUES('lr-1','owner','project','dev@example.com','pro',1000,500000,'Testing','pending');
+      INSERT INTO privacy_requests(id,owner_id,case_reference,kind,received_at,due_at,created_by)
+        VALUES('pr-1','owner','CASE-42','access',1700100000000,1702692000000,'admin');
+    `);
+
+    const ownerRes = await call("/users/owner");
+    expect(ownerRes.status).toBe(200);
+    const ownerDetail = (await ownerRes.json()) as AdminUserDetail;
+    expect(ownerDetail.user).toMatchObject({
+      id: "owner",
+      displayName: "Owner",
+      email: "owner@example.com",
+      projectCount: 1,
+      keyCount: 3,
+      activeKeyCount: 1,
+      closedAt: null,
+    });
+    expect(ownerDetail.onboarding).toEqual({
+      rolloutEnabled: true,
+      eligible: true,
+      revision: "rev-2",
+      requiredTermsVersion: "2026-11-10",
+      requiredTermsEdition: "2026-11",
+      requiredPrivacyVersion: "2026-11-01",
+      contactEmail: "dev@example.com",
+      pendingEmail: "next@example.com",
+      verifiedAt: 1700100000000,
+      acceptedCurrent: true,
+      acceptedAt: 1700090000000,
+    });
+    expect(ownerDetail.agreements).toHaveLength(2);
+    expect(ownerDetail.agreements[0]).toMatchObject({
+      receiptId: "rcpt_current",
+      version: "2026-11-10",
+      retainUntil: null,
+    });
+    expect(ownerDetail.projects).toHaveLength(1);
+    expect(ownerDetail.limitRequests).toHaveLength(1);
+    expect(ownerDetail.privacyRequests).toHaveLength(1);
+
+    const otherDetail = (await (
+      await call("/users/other")
+    ).json()) as AdminUserDetail;
+    expect(otherDetail.onboarding).toMatchObject({
+      rolloutEnabled: true,
+      eligible: false,
+      acceptedCurrent: false,
+      acceptedAt: null,
+      verifiedAt: null,
+    });
+    expect(otherDetail.agreements).toEqual([]);
+  });
+
+  it("inspects surviving agreement evidence for a closed account", async () => {
+    const { sqlite, call } = setup();
+    sqlite.exec(`
+      INSERT INTO legal_acceptances(owner_id,version,edition,sha256,accepted_at,requirement_revision,retain_until,receipt_id)
+        VALUES('closed-user','2026-11-01','2026-11','terms-sha-1',1700010000000,'rev-1',1700500000000,'rcpt_closed');
+      INSERT INTO account_closures(owner_id,closed_at,purge_after)
+        VALUES('closed-user',1700200000000,1702792000000);
+    `);
+
+    const res = await call("/users/closed-user");
+    expect(res.status).toBe(200);
+    const detail = (await res.json()) as AdminUserDetail;
+    expect(detail.user).toMatchObject({
+      id: "closed-user",
+      displayName: "Closed account",
+      closedAt: 1700200000000,
+      purgeAfter: 1702792000000,
+    });
+    expect(detail.onboarding.eligible).toBe(false);
+    expect(detail.agreements).toHaveLength(1);
+    expect(detail.agreements[0].receiptId).toBe("rcpt_closed");
   });
 });

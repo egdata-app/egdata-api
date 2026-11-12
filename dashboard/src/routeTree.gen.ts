@@ -25,6 +25,8 @@ import { Route as ProfileAgreementsRouteImport } from './routes/profile.agreemen
 import { Route as DocsSlugRouteImport } from './routes/docs.$slug'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminProjectsRouteImport } from './routes/admin.projects'
+import { Route as AdminUsersIndexRouteImport } from './routes/admin.users.index'
+import { Route as AdminUsersUserIdRouteImport } from './routes/admin.users.$userId'
 
 const ReceiptsRoute = ReceiptsRouteImport.update({
   id: '/receipts',
@@ -106,6 +108,16 @@ const AdminProjectsRoute = AdminProjectsRouteImport.update({
   path: '/admin/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUsersIndexRoute = AdminUsersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminUsersRoute,
+} as any)
+const AdminUsersUserIdRoute = AdminUsersUserIdRouteImport.update({
+  id: '/$userId',
+  path: '/$userId',
+  getParentRoute: () => AdminUsersRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -118,12 +130,14 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRouteWithChildren
   '/receipts': typeof ReceiptsRoute
   '/admin/projects': typeof AdminProjectsRoute
-  '/admin/users': typeof AdminUsersRoute
+  '/admin/users': typeof AdminUsersRouteWithChildren
   '/docs/$slug': typeof DocsSlugRoute
   '/profile/agreements': typeof ProfileAgreementsRoute
   '/profile/receipts': typeof ProfileReceiptsRoute
   '/docs/': typeof DocsIndexRoute
   '/profile/': typeof ProfileIndexRoute
+  '/admin/users/$userId': typeof AdminUsersUserIdRoute
+  '/admin/users/': typeof AdminUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -134,12 +148,13 @@ export interface FileRoutesByTo {
   '/limits': typeof LimitsRoute
   '/receipts': typeof ReceiptsRoute
   '/admin/projects': typeof AdminProjectsRoute
-  '/admin/users': typeof AdminUsersRoute
   '/docs/$slug': typeof DocsSlugRoute
   '/profile/agreements': typeof ProfileAgreementsRoute
   '/profile/receipts': typeof ProfileReceiptsRoute
   '/docs': typeof DocsIndexRoute
   '/profile': typeof ProfileIndexRoute
+  '/admin/users/$userId': typeof AdminUsersUserIdRoute
+  '/admin/users': typeof AdminUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -153,12 +168,14 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRouteWithChildren
   '/receipts': typeof ReceiptsRoute
   '/admin/projects': typeof AdminProjectsRoute
-  '/admin/users': typeof AdminUsersRoute
+  '/admin/users': typeof AdminUsersRouteWithChildren
   '/docs/$slug': typeof DocsSlugRoute
   '/profile/agreements': typeof ProfileAgreementsRoute
   '/profile/receipts': typeof ProfileReceiptsRoute
   '/docs/': typeof DocsIndexRoute
   '/profile/': typeof ProfileIndexRoute
+  '/admin/users/$userId': typeof AdminUsersUserIdRoute
+  '/admin/users/': typeof AdminUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -179,6 +196,8 @@ export interface FileRouteTypes {
     | '/profile/receipts'
     | '/docs/'
     | '/profile/'
+    | '/admin/users/$userId'
+    | '/admin/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -189,12 +208,13 @@ export interface FileRouteTypes {
     | '/limits'
     | '/receipts'
     | '/admin/projects'
-    | '/admin/users'
     | '/docs/$slug'
     | '/profile/agreements'
     | '/profile/receipts'
     | '/docs'
     | '/profile'
+    | '/admin/users/$userId'
+    | '/admin/users'
   id:
     | '__root__'
     | '/'
@@ -213,6 +233,8 @@ export interface FileRouteTypes {
     | '/profile/receipts'
     | '/docs/'
     | '/profile/'
+    | '/admin/users/$userId'
+    | '/admin/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -226,7 +248,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRouteWithChildren
   ReceiptsRoute: typeof ReceiptsRoute
   AdminProjectsRoute: typeof AdminProjectsRoute
-  AdminUsersRoute: typeof AdminUsersRoute
+  AdminUsersRoute: typeof AdminUsersRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -343,6 +365,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProjectsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/users/': {
+      id: '/admin/users/'
+      path: '/'
+      fullPath: '/admin/users/'
+      preLoaderRoute: typeof AdminUsersIndexRouteImport
+      parentRoute: typeof AdminUsersRoute
+    }
+    '/admin/users/$userId': {
+      id: '/admin/users/$userId'
+      path: '/$userId'
+      fullPath: '/admin/users/$userId'
+      preLoaderRoute: typeof AdminUsersUserIdRouteImport
+      parentRoute: typeof AdminUsersRoute
+    }
   }
 }
 
@@ -373,6 +409,20 @@ const ProfileRouteChildren: ProfileRouteChildren = {
 const ProfileRouteWithChildren =
   ProfileRoute._addFileChildren(ProfileRouteChildren)
 
+interface AdminUsersRouteChildren {
+  AdminUsersUserIdRoute: typeof AdminUsersUserIdRoute
+  AdminUsersIndexRoute: typeof AdminUsersIndexRoute
+}
+
+const AdminUsersRouteChildren: AdminUsersRouteChildren = {
+  AdminUsersUserIdRoute: AdminUsersUserIdRoute,
+  AdminUsersIndexRoute: AdminUsersIndexRoute,
+}
+
+const AdminUsersRouteWithChildren = AdminUsersRoute._addFileChildren(
+  AdminUsersRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgreementsRoute: AgreementsRoute,
@@ -384,7 +434,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRouteWithChildren,
   ReceiptsRoute: ReceiptsRoute,
   AdminProjectsRoute: AdminProjectsRoute,
-  AdminUsersRoute: AdminUsersRoute,
+  AdminUsersRoute: AdminUsersRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
