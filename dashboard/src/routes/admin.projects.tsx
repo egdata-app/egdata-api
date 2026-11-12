@@ -1,4 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  History,
+  KeyRound,
+  RotateCcw,
+  SlidersHorizontal,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import type { AdminProject } from "../../worker/admin-types";
 import { AdminAudit } from "../components/AdminAudit";
@@ -7,10 +15,19 @@ import {
   AdminToolbar,
   AdminUsageNote,
   adminDate,
-  usageNumber,
   useAdminPage,
 } from "../components/AdminShared";
+import {
+  AdminErrorCounts,
+  AdminIdentity,
+  AdminKeyCount,
+  AdminLastUsed,
+  AdminRequestCount,
+  AdminRowActions,
+  AdminTableState,
+} from "../components/AdminTable";
 import { Button } from "../components/ui/Button";
+import { Badge } from "../components/ui/Controls";
 import { Dialog, Heading, Modal } from "../components/ui/Modal";
 import { Select, SelectItem } from "../components/ui/Select";
 import {
@@ -163,191 +180,260 @@ function Projects({ owner }: { owner: string }) {
   }
 
   return (
-    <div className="space-y-5">
-      <div>
-        <h1 className="text-2xl font-bold text-white">Projects</h1>
-        <p className="text-sm text-epic-text-muted mt-1">
-          Manage platform projects, shared request limits, and API keys.
-        </p>
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold tracking-tight text-white">
+              Projects
+            </h1>
+            <Badge tone="accent">
+              Admin · {owner ? "Owner scope" : "All projects"}
+            </Badge>
+          </div>
+          <p className="text-sm text-epic-text-muted mt-1">
+            Manage platform projects, shared request limits, and API keys.
+          </p>
+        </div>
+        <Button variant="secondary" onPress={() => setHistory("")}>
+          <History aria-hidden="true" className="w-4 h-4" />
+          Audit history
+        </Button>
       </div>
       {owner && (
-        <p className="text-sm text-epic-text-muted">
-          Owner: {owner} ·{" "}
+        <div className="flex flex-wrap items-center gap-2 text-xs text-epic-text-muted">
+          Filtered by owner
+          <span className="font-mono text-epic-text break-all">{owner}</span>
           <Link
             to="/admin/projects"
             search={{ owner: "" }}
-            className="text-epic-accent"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-epic-border bg-epic-elevated px-2 py-1 text-epic-text hover:bg-epic-hover focus-visible:outline-2 focus-visible:outline-epic-accent"
           >
             Show all projects
+            <X aria-hidden="true" className="w-3 h-3" />
           </Link>
-        </p>
+        </div>
       )}
-      <AdminToolbar
-        loading={loading}
-        reload={reload}
-        onSearch={(value) => {
-          setSearch(value);
-          setOffset(0);
-        }}
-      />
-      <div className="flex gap-3 items-end">
-        <Select
-          label="Project status"
-          selectedKey={status}
-          onSelectionChange={(key) => {
-            if (key === "active" || key === "deleted") {
-              setStatus(key);
-              setOffset(0);
-            }
+      <section
+        aria-label="Project directory"
+        className="rounded-xl border border-epic-border bg-epic-surface overflow-hidden"
+      >
+        <AdminToolbar
+          loading={loading}
+          reload={reload}
+          placeholder="Search project, ID, or owner…"
+          onSearch={(value) => {
+            setSearch(value);
+            setOffset(0);
           }}
-          items={[
-            { id: "active", name: "Active projects" },
-            { id: "deleted", name: "Deleted projects" },
-          ]}
         >
-          {(item) => <SelectItem id={item.id}>{item.name}</SelectItem>}
-        </Select>
-        <Button variant="secondary" onPress={() => setHistory("")}>
-          All audit history
-        </Button>
-      </div>
-      {loading && <output>Loading projects...</output>}
-      {error && (
-        <p role="alert" className="text-epic-danger">
-          {error}
-        </p>
-      )}
-      {page && (
-        <>
-          <AdminUsageNote usage={page.usage} />
-          <Table aria-label="Platform projects">
-            <TableHeader>
-              <Column isRowHeader>Project / owner</Column>
-              <Column>Limit / minute</Column>
-              <Column>Active / total keys</Column>
-              <Column>Requests (24h)</Column>
-              <Column>429s / errors (24h)</Column>
-              <Column>Last key use</Column>
-              <Column>Actions</Column>
-            </TableHeader>
-            <TableBody
-              items={page.rows}
-              renderEmptyState={() => "No projects found."}
-            >
-              {(project) => (
-                <Row id={project.id}>
-                  <Cell>
-                    <div className="font-medium">{project.name}</div>
-                    <div className="text-xs text-epic-text-muted">
-                      {project.ownerDisplayName}
-                    </div>
-                    <div className="text-xs text-epic-text-muted">
+          <Select
+            aria-label="Project status"
+            className="w-44"
+            selectedKey={status}
+            onSelectionChange={(key) => {
+              if (key === "active" || key === "deleted") {
+                setStatus(key);
+                setOffset(0);
+              }
+            }}
+            items={[
+              { id: "active", name: "Active projects" },
+              { id: "deleted", name: "Deleted projects" },
+            ]}
+          >
+            {(item) => <SelectItem id={item.id}>{item.name}</SelectItem>}
+          </Select>
+        </AdminToolbar>
+        <Table
+          aria-label="Platform projects"
+          aria-busy={loading}
+          className="border-0 rounded-none"
+        >
+          <TableHeader>
+            <Column isRowHeader>Project / owner</Column>
+            <Column>Rate limit</Column>
+            <Column>API keys</Column>
+            <Column>Requests · 24h</Column>
+            <Column>Errors · 24h</Column>
+            <Column>Last active</Column>
+            <Column>Actions</Column>
+          </TableHeader>
+          <TableBody
+            items={page?.rows ?? []}
+            renderEmptyState={() => (
+              <AdminTableState
+                loading={loading}
+                error={error}
+                noun="projects"
+                filtered={Boolean(search || owner || status === "deleted")}
+                retry={reload}
+              />
+            )}
+          >
+            {(project) => (
+              <Row id={project.id} textValue={project.name}>
+                <Cell>
+                  <AdminIdentity
+                    name={project.name}
+                    detail={project.ownerDisplayName}
+                    kind="project"
+                    badge={
+                      project.deletedAt ? (
+                        <Badge
+                          tone="danger"
+                          className="text-[10px] px-1.5 shrink-0"
+                        >
+                          Deleted
+                        </Badge>
+                      ) : undefined
+                    }
+                  >
+                    <div
+                      className="font-mono text-[10px] text-epic-text-muted truncate"
+                      title={project.id}
+                    >
                       {project.id}
                     </div>
-                    {project.deletedAt && (
-                      <div className="text-xs text-epic-text-muted space-y-1 mt-2">
+                  </AdminIdentity>
+                  {project.deletedAt && (
+                    <details className="text-[11px] text-epic-text-muted mt-2 max-w-80">
+                      <summary className="cursor-pointer text-epic-warning rounded focus-visible:outline-2 focus-visible:outline-epic-accent">
+                        Deletion & recovery details
+                      </summary>
+                      <div className="mt-2 space-y-1 border-l border-epic-border pl-3 break-words">
                         <p>
                           Deleted {adminDate(project.deletedAt)} by{" "}
                           {project.deletedBy}
                         </p>
-                        <p className="max-w-64 whitespace-pre-wrap">
+                        <p className="whitespace-pre-wrap">
                           {project.deletionReason}
                         </p>
                         <p>
                           Recovery deadline: {adminDate(project.purgeAfter)}
                         </p>
                       </div>
-                    )}
-                  </Cell>
-                  <Cell>
-                    <div>{project.effectiveRpm.toLocaleString()} RPM</div>
-                    <div className="text-xs text-epic-text-muted">
+                    </details>
+                  )}
+                </Cell>
+                <Cell>
+                  <div className="font-mono text-xs tabular-nums whitespace-nowrap">
+                    {project.effectiveRpm.toLocaleString()}{" "}
+                    <span className="text-epic-text-muted text-[10px]">
+                      / min
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-1.5">
+                    <Badge
+                      tone={project.tier === "free" ? "neutral" : "accent"}
+                      className="capitalize text-[10px] px-1.5"
+                    >
                       {project.tier}
-                      {project.customRpm !== null ? " · Custom" : ""}
-                    </div>
-                  </Cell>
-                  <Cell>
-                    {project.activeKeyCount} / {project.keyCount}
-                  </Cell>
-                  <Cell>{usageNumber(page.usage, project.id, "requests")}</Cell>
-                  <Cell>
-                    {usageNumber(page.usage, project.id, "rateLimited")} /{" "}
-                    {usageNumber(page.usage, project.id, "errors")}
-                  </Cell>
-                  <Cell>{adminDate(project.lastUsedAt)}</Cell>
-                  <Cell>
-                    <div className="flex flex-wrap gap-2">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onPress={() => setKeysProject(project)}
-                      >
-                        Keys
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        isDisabled={Boolean(project.deletedAt)}
-                        onPress={() => {
-                          setEditing(project);
-                          setReason("");
-                          setTier(project.tier);
-                          setRpm(
-                            project.customRpm === null
-                              ? ""
-                              : String(project.customRpm),
-                          );
-                        }}
-                      >
-                        Edit limits
-                      </Button>
-                      {project.deletedAt ? (
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          isDisabled={
-                            !project.purgeAfter ||
-                            Date.parse(project.purgeAfter) <= Date.now()
-                          }
-                          onPress={() => {
-                            setRestoring(project);
+                    </Badge>
+                    {project.customRpm !== null && (
+                      <span className="text-[10px] text-epic-text-muted">
+                        Custom
+                      </span>
+                    )}
+                  </div>
+                </Cell>
+                <Cell>
+                  <AdminKeyCount
+                    active={project.activeKeyCount}
+                    total={project.keyCount}
+                  />
+                </Cell>
+                <Cell>
+                  {page && (
+                    <AdminRequestCount usage={page.usage} id={project.id} />
+                  )}
+                </Cell>
+                <Cell>
+                  {page && (
+                    <AdminErrorCounts usage={page.usage} id={project.id} />
+                  )}
+                </Cell>
+                <Cell>
+                  <AdminLastUsed value={project.lastUsedAt} />
+                </Cell>
+                <Cell>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      size="sm"
+                      variant="quiet"
+                      aria-label={`View keys for ${project.name}`}
+                      onPress={() => setKeysProject(project)}
+                    >
+                      <KeyRound aria-hidden="true" className="w-3.5 h-3.5" />
+                      Keys
+                    </Button>
+                    <AdminRowActions
+                      label={project.name}
+                      actions={[
+                        {
+                          id: "edit",
+                          label: "Edit limits",
+                          icon: <SlidersHorizontal className="w-3.5 h-3.5" />,
+                          disabled: Boolean(project.deletedAt),
+                          onAction: () => {
+                            setEditing(project);
                             setReason("");
-                          }}
-                        >
-                          Restore
-                        </Button>
-                      ) : (
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onPress={() => {
-                            setDeleting(project);
-                            setReason("");
-                          }}
-                        >
-                          Delete
-                        </Button>
-                      )}
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onPress={() => setHistory(project.id)}
-                      >
-                        History
-                      </Button>
-                    </div>
-                  </Cell>
-                </Row>
-              )}
-            </TableBody>
-          </Table>
+                            setTier(project.tier);
+                            setRpm(
+                              project.customRpm === null
+                                ? ""
+                                : String(project.customRpm),
+                            );
+                          },
+                        },
+                        {
+                          id: "history",
+                          label: "View history",
+                          icon: <History className="w-3.5 h-3.5" />,
+                          onAction: () => setHistory(project.id),
+                        },
+                        project.deletedAt
+                          ? {
+                              id: "restore",
+                              label: "Restore project",
+                              icon: <RotateCcw className="w-3.5 h-3.5" />,
+                              disabled:
+                                !project.purgeAfter ||
+                                Date.parse(project.purgeAfter) <= Date.now(),
+                              onAction: () => {
+                                setRestoring(project);
+                                setReason("");
+                              },
+                            }
+                          : {
+                              id: "delete",
+                              label: "Delete project",
+                              icon: <Trash2 className="w-3.5 h-3.5" />,
+                              destructive: true,
+                              onAction: () => {
+                                setDeleting(project);
+                                setReason("");
+                              },
+                            },
+                      ]}
+                    />
+                  </div>
+                </Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+        <div className="p-4 border-t border-epic-border space-y-4">
           <AdminPagination
             offset={offset}
-            hasMore={page.hasMore}
+            hasMore={page?.hasMore ?? false}
+            count={page?.rows.length ?? 0}
+            loading={loading}
             onChange={setOffset}
           />
-        </>
-      )}
+          {page && <AdminUsageNote usage={page.usage} />}
+        </div>
+      </section>
 
       <Modal
         isOpen={editing !== null}
