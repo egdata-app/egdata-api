@@ -91,6 +91,20 @@ Completed locally on 2026-11-12:
 
 ## Deployment and publication
 
+### Dependency security follow-up
+
+The initial Aikido scan flagged `AIKIDO-2026-138234` in `ws@8.21.0`.
+The workspace override now resolves that version to `8.21.3`, including both
+Miniflare snapshots and the libSQL WebSocket adapter. The upstream fix starts in
+`8.21.1`: <https://github.com/websockets/ws/releases/tag/8.21.1>.
+Frozen-lockfile installation, API/dashboard builds, and all 727 non-skipped tests
+passed after the update. The dependency change adds no public route, schema,
+authentication or pagination change; existing operation classifications remain
+applicable. The refreshed assessment still covers 322 operations with no unknown
+files. Aikido must rescan the pushed commit to confirm its gate result.
+
+### Activation order
+
 Migrations seed no legal documents or onboarding requirement. Follow
 [`dashboard/legal/initial-rollout.md`](../../dashboard/legal/initial-rollout.md):
 apply migrations 0008–0011, deploy the matching Worker/SPA, verify production
