@@ -5,8 +5,8 @@ import { insertLimitRequest } from "../worker/db";
 import worker from "../worker/index";
 import { resolveApiKeyMetadata, syncKeyToKv } from "../worker/key-cache";
 import { isDashboardAdmin } from "../worker/limit-reviews";
-import type { DashboardEnv, EpicSessionUser } from "../worker/types";
 import { quotaForProject } from "../worker/project-quota";
+import type { DashboardEnv, EpicSessionUser } from "../worker/types";
 import { sqliteD1 } from "./fixtures/sqlite";
 
 const adminId = "ac7b3a70e3ce4652b49c38e648001d9e";
@@ -35,6 +35,11 @@ async function setup() {
   sqlite.exec(
     readFileSync("migrations/0004_limit_request_reviews.sql", "utf8"),
   );
+  sqlite.exec(readFileSync("migrations/0003_console_sessions.sql", "utf8"));
+  sqlite.exec(
+    readFileSync("migrations/0006_project_creation_policy.sql", "utf8"),
+  );
+  sqlite.exec(readFileSync("migrations/0007_project_recovery.sql", "utf8"));
   sqlite.exec(
     "INSERT INTO projects(id,owner_epic_id,name,slug) VALUES('project','owner','Project','project'),('other-project','other','Other','other');",
   );

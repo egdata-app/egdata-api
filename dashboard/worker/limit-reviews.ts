@@ -1,5 +1,7 @@
 import { Hono } from "hono";
 import { z } from "zod";
+import { projectAudit } from "./admin-audit.js";
+import { adminManagementRoutes } from "./admin-routes.js";
 import { requireDashboardUser } from "./epic-auth.js";
 import { invalidateLocalKeyCache } from "./key-cache.js";
 import type {
@@ -28,7 +30,7 @@ const selection = `SELECT lr.id, lr.owner_epic_id AS ownerEpicId, lr.project_id 
   lr.use_case AS useCase, lr.website_url AS websiteUrl, lr.status,
   lr.email_delivery_status AS emailDeliveryStatus, lr.created_at AS createdAt,
   lr.reviewed_by AS reviewedBy, lr.reviewed_at AS reviewedAt, lr.review_note AS reviewNote
-  FROM limit_requests lr JOIN projects p ON p.id=lr.project_id
+  FROM limit_requests lr JOIN projects p ON p.id=lr.project_id AND p.deleted_at IS NULL
   JOIN users u ON u.epic_account_id=lr.owner_epic_id`;
 
 export const limitReviewRoutes = new Hono<{
@@ -53,6 +55,8 @@ const listSchema = z.object({
   status: z.enum(["pending", "approved", "declined"]).default("pending"),
   offset: z.coerce.number().int().min(0).max(1_000_000).default(0),
 });
+
+limitReviewRoutes.route("/", adminManagementRoutes);
 
 limitReviewRoutes.get("/limit-requests", async (c) => {
   const parsed = listSchema.safeParse(c.req.query());
@@ -127,8 +131,20 @@ limitReviewRoutes.post("/limit-requests/:requestId/review", async (c) => {
     // D1 batches are transactions. Every write checks the still-pending request,
     // so a competing review cannot change limits after another decision wins.
     statements.push(
+      projectAudit(
+        c.env.DB,
+        {
+          actor: reviewer,
+          action: "project.limits_changed",
+          reason: note || `Approved limit request ${id}`,
+          now,
+          after: { tier, customRpm: request.requestedRpm, requestId: id },
+        },
+        "id=? AND deleted_at IS NULL AND EXISTS (SELECT 1 FROM limit_requests WHERE id=? AND status='pending')",
+        [request.projectId, id],
+      ),
       c.env.DB.prepare(`UPDATE projects SET tier=?, custom_rpm=?, updated_at=?
-        WHERE id=? AND EXISTS (SELECT 1 FROM limit_requests WHERE id=? AND status='pending')`).bind(
+        WHERE id=? AND deleted_at IS NULL AND EXISTS (SELECT 1 FROM limit_requests WHERE id=? AND status='pending')`).bind(
         tier,
         request.requestedRpm,
         now,
@@ -137,6 +153,7 @@ limitReviewRoutes.post("/limit-requests/:requestId/review", async (c) => {
       ),
       c.env.DB.prepare(`UPDATE api_keys SET tier=?, custom_rpm=?, updated_at=?
         WHERE project_id=? AND revoked_at IS NULL
+        AND project_id IN (SELECT id FROM projects WHERE deleted_at IS NULL)
         AND EXISTS (SELECT 1 FROM limit_requests WHERE id=? AND status='pending')`).bind(
         tier,
         request.requestedRpm,
@@ -148,7 +165,13 @@ limitReviewRoutes.post("/limit-requests/:requestId/review", async (c) => {
   }
   statements.push(
     c.env.DB.prepare(`UPDATE limit_requests SET status=?, reviewed_by=?, reviewed_at=?, review_note=?
-    WHERE id=? AND status='pending'`).bind(decision, reviewer, now, note, id),
+    WHERE id=? AND status='pending' AND project_id IN (SELECT id FROM projects WHERE deleted_at IS NULL)`).bind(
+      decision,
+      reviewer,
+      now,
+      note,
+      id,
+    ),
   );
   const result = await c.env.DB.batch(statements);
   if (result[result.length - 1].meta.changes !== 1) {

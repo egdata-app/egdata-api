@@ -1,3 +1,4 @@
+import type { AdminUsage } from "./admin-types.js";
 import { type ApiTelemetryEvent, getLocalTelemetry } from "./analytics.js";
 import type {
   AnalyticsDashboardSummary,
@@ -176,6 +177,46 @@ function groups<T>(items: T[], key: (item: T) => string) {
     map.set(k, group);
   }
   return map;
+}
+
+/** Call only after verifying the database admin role. One query per list page. */
+export async function getAdminUsage(
+  env: DashboardEnv,
+  dimension: "users" | "projects",
+  ids: string[],
+): Promise<AdminUsage> {
+  const params = { hours: 24, ownerEpicId: null };
+  const window = windowFor(params);
+  const byId: AdminUsage["byId"] = Object.fromEntries(
+    ids.map((id) => [id, metrics()]),
+  );
+  if (!ids.length) return { byId, source: source(env), ...window };
+  try {
+    if (remote(env)) {
+      const column = dimension === "users" ? "index1" : "blob2";
+      const rows = await sql(
+        env,
+        `SELECT ${column} AS id, ${metricSql}
+        FROM egdata_api_usage ${where({ ...params, end: window.end })}
+        AND ${column} IN (${ids.map(literal).join(",")}) GROUP BY ${column} FORMAT JSON`,
+      );
+      for (const row of rows) {
+        if (typeof row.id === "string" && ids.includes(row.id))
+          byId[row.id] = metrics(row);
+      }
+    } else {
+      const grouped = groups(
+        eventsFor({ ...params, end: window.end }),
+        (event) =>
+          dimension === "users" ? event.ownerEpicId : event.projectId,
+      );
+      for (const id of ids) byId[id] = aggregate(grouped.get(id) ?? []);
+    }
+    return { byId, source: source(env), ...window };
+  } catch (error) {
+    console.error("Admin usage unavailable", { error });
+    return { byId: {}, source: "unavailable", ...window };
+  }
 }
 function eventDimensions(e: Event, dimension: UsageDimension): string[] {
   switch (dimension) {

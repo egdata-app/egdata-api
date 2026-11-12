@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
-import { describe, expect, it, vi, afterEach } from "vitest";
-import { sqliteD1 } from "./fixtures/sqlite";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { type ChangeRecord, canonicalJson } from "../worker/change-validation";
+import { sha256Hex } from "../worker/crypto";
 import {
   DAY_MS,
   importMergedRecord,
@@ -13,8 +14,7 @@ import {
   qualifiesUsage,
   type UsageEvent,
 } from "../worker/endpoint-alerts";
-import { canonicalJson, type ChangeRecord } from "../worker/change-validation";
-import { sha256Hex } from "../worker/crypto";
+import { sqliteD1 } from "./fixtures/sqlite";
 
 const mergedAt = Date.parse("2026-11-11T12:00:00Z");
 
@@ -22,6 +22,11 @@ function setup() {
   const ctx = sqliteD1();
   ctx.sqlite.exec(readFileSync("migrations/0001_initial.sql", "utf8"));
   ctx.sqlite.exec(readFileSync("migrations/0002_endpoint_alerts.sql", "utf8"));
+  ctx.sqlite.exec(readFileSync("migrations/0003_console_sessions.sql", "utf8"));
+  ctx.sqlite.exec(
+    readFileSync("migrations/0006_project_creation_policy.sql", "utf8"),
+  );
+  ctx.sqlite.exec(readFileSync("migrations/0007_project_recovery.sql", "utf8"));
   return ctx;
 }
 

@@ -13,9 +13,9 @@ vi.mock("../worker/epic-auth", () => ({
 }));
 
 import { alertRoutes, handleChangeIngestion } from "../worker/alert-routes";
-import { importMergedRecord, ingestUsage } from "../worker/endpoint-alerts";
+import { type ChangeRecord, canonicalJson } from "../worker/change-validation";
 import { sha256Hex } from "../worker/crypto";
-import { canonicalJson, type ChangeRecord } from "../worker/change-validation";
+import { importMergedRecord, ingestUsage } from "../worker/endpoint-alerts";
 import type { DashboardEnv } from "../worker/types";
 
 const mergedAt = Date.parse("2026-11-01T12:00:00Z");
@@ -44,6 +44,11 @@ function setup() {
   const { db, sqlite } = sqliteD1();
   sqlite.exec(readFileSync("migrations/0001_initial.sql", "utf8"));
   sqlite.exec(readFileSync("migrations/0002_endpoint_alerts.sql", "utf8"));
+  sqlite.exec(readFileSync("migrations/0003_console_sessions.sql", "utf8"));
+  sqlite.exec(
+    readFileSync("migrations/0006_project_creation_policy.sql", "utf8"),
+  );
+  sqlite.exec(readFileSync("migrations/0007_project_recovery.sql", "utf8"));
   sqlite.exec(
     "INSERT INTO users(epic_account_id,display_name) VALUES('user_a','A'),('user_b','B'); INSERT INTO projects(id,owner_epic_id,name,slug) VALUES('project_a','user_a','A','a'),('project_b','user_b','B','b');",
   );

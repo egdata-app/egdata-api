@@ -11,11 +11,13 @@ import {
   Bell,
   BookOpen,
   FolderPlus,
+  Folders,
   KeyRound,
   LogOut,
   Plus,
   ShieldCheck,
   Sparkles,
+  Users,
 } from "lucide-react";
 import { useState } from "react";
 import { EgdataLogo, EpicGamesIcon } from "../components/icons/BrandIcons";
@@ -46,6 +48,7 @@ function DashboardShell() {
   const {
     loading,
     authenticated,
+    isAdmin,
     user,
     projects,
     selectedProject,
@@ -133,6 +136,12 @@ function DashboardShell() {
       label: `Alerts${unreadAlerts ? ` (${unreadAlerts})` : ""}`,
       icon: Bell,
     },
+    ...(isAdmin
+      ? ([
+          { to: "/admin/users", label: "Users", icon: Users },
+          { to: "/admin/projects", label: "Projects", icon: Folders },
+        ] as const)
+      : []),
   ] as const;
 
   return (
@@ -246,6 +255,7 @@ function DashboardShell() {
               <Link
                 key={item.to}
                 to={item.to}
+                search={item.to === "/admin/projects" ? { owner: "" } : {}}
                 className={`relative flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium transition-colors whitespace-nowrap outline-0 focus-visible:text-epic-accent ${
                   active
                     ? "text-epic-text"
@@ -294,7 +304,13 @@ function DashboardShell() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
-        <Outlet key={selectedProject?.id ?? "none"} />
+        <Outlet
+          key={
+            currentPath.startsWith("/admin/")
+              ? "admin"
+              : (selectedProject?.id ?? "none")
+          }
+        />
       </main>
 
       {/* Footer */}

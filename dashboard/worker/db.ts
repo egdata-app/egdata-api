@@ -1,3 +1,4 @@
+import { keyAudit } from "./admin-audit.js";
 import {
   ProjectCreationError,
   projectCreationError,
@@ -60,7 +61,7 @@ const API_KEY_WITH_PROJECT_QUOTA = `
          p.tier, p.custom_rpm, k.active, k.scopes_json, k.allowed_ips_json,
          k.allowed_origins_json, k.allowed_paths_json, k.allowed_methods_json,
          k.expires_at, k.last_used_at, k.revoked_at, k.created_at, k.updated_at
-  FROM api_keys k JOIN projects p ON p.id = k.project_id`;
+  FROM api_keys k JOIN projects p ON p.id = k.project_id AND p.deleted_at IS NULL`;
 
 export function mapApiKeyRow(row: RawApiKeyRow): DashboardApiKey {
   return {
@@ -173,7 +174,7 @@ export async function listUserProjects(
   const { results } = await db
     .prepare(
       `SELECT id, owner_epic_id, name, slug, description, website_url, tier, custom_rpm, created_at, updated_at
-       FROM projects WHERE owner_epic_id = ? ORDER BY created_at ASC`,
+       FROM projects WHERE owner_epic_id = ? AND deleted_at IS NULL ORDER BY created_at ASC`,
     )
     .bind(ownerEpicId)
     .all<{
@@ -268,7 +269,7 @@ export async function updateProject(
   await db
     .prepare(
       `UPDATE projects SET name = ?, description = ?, website_url = ?, updated_at = ?
-       WHERE id = ? AND owner_epic_id = ?`,
+       WHERE id = ? AND owner_epic_id = ? AND deleted_at IS NULL`,
     )
     .bind(
       input.name,
@@ -358,7 +359,7 @@ export async function insertApiKey(
         scopes_json, allowed_ips_json, allowed_origins_json, allowed_paths_json, allowed_methods_json,
         expires_at, created_at, updated_at, custom_rpm
       ) SELECT ?, p.id, p.owner_epic_id, ?, ?, ?, p.tier, 1, ?, ?, ?, ?, ?, ?, ?, ?, p.custom_rpm
-        FROM projects p WHERE p.id=? AND p.owner_epic_id=?`,
+        FROM projects p WHERE p.id=? AND p.owner_epic_id=? AND p.deleted_at IS NULL`,
     )
     .bind(
       input.id,
@@ -441,7 +442,8 @@ export async function updateApiKeyPermissions(
         allowed_methods_json = ?,
         expires_at = ?,
         updated_at = ?
-       WHERE id = ? AND owner_epic_id = ?`,
+       WHERE id = ? AND owner_epic_id = ? AND revoked_at IS NULL
+         AND project_id IN (SELECT id FROM projects WHERE deleted_at IS NULL)`,
     )
     .bind(
       nextName,
@@ -474,15 +476,28 @@ export async function revokeAndDeleteApiKey(
   keyId: string,
 ): Promise<{ keyHash: string } | null> {
   const existing = await findRawKeyByIdAndOwner(db, keyId, ownerEpicId);
-  if (!existing) return null;
+  if (!existing || existing.revoked_at) return null;
 
   const now = new Date().toISOString();
-  await db
-    .prepare(
-      `UPDATE api_keys SET active = 0, revoked_at = ?, updated_at = ? WHERE id = ? AND owner_epic_id = ?`,
-    )
-    .bind(now, now, keyId, ownerEpicId)
-    .run();
+  await db.batch([
+    keyAudit(
+      db,
+      {
+        actor: ownerEpicId,
+        action: "key.revoked",
+        reason: "Revoked by project owner",
+        now,
+        after: { active: false, revokedAt: now },
+      },
+      "id=? AND owner_epic_id=? AND revoked_at IS NULL",
+      [keyId, ownerEpicId],
+    ),
+    db
+      .prepare(
+        `UPDATE api_keys SET active=0,revoked_at=?,updated_at=? WHERE id=? AND owner_epic_id=? AND revoked_at IS NULL`,
+      )
+      .bind(now, now, keyId, ownerEpicId),
+  ]);
 
   return { keyHash: existing.key_hash };
 }
@@ -570,7 +585,7 @@ export async function listUserLimitRequests(
       `SELECT lr.*, p.name as project_name
        FROM limit_requests lr
        LEFT JOIN projects p ON p.id = lr.project_id
-       WHERE lr.owner_epic_id = ?
+       WHERE lr.owner_epic_id = ? AND p.deleted_at IS NULL
        ORDER BY lr.created_at DESC
        LIMIT 25`,
     )
