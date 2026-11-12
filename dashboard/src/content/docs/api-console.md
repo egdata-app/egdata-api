@@ -1,0 +1,32 @@
+---
+title: API console sessions
+description: Try v1 operations with short-lived, project-scoped console access.
+---
+
+In the developer dashboard, select your project and open **API Reference**.
+Choose **Start 10-minute session**, select an operation, and send your request.
+The session expires automatically; starting another session requires a new click.
+You can end it at any time. You can also paste an existing API key instead.
+
+Console sessions work only through the dashboard's same-origin `/proxy/v1`
+gateway while signed in with the login that created them. A copied console
+credential alone cannot authenticate an external application or the public API
+hostname. Use a regular API key for your applications.
+
+Console requests count toward the selected project's usage and endpoint alerts.
+Select **API console** in the Usage page's key filter to see these requests.
+All sessions for the same project share a console quota at the project's tier,
+including per-operation limits. Starting a fresh session never resets these
+limits. An approved custom project RPM overrides the tier's global quota on the
+next console request, without renewing the session. The console quota is separate
+from each ordinary API key's quota.
+
+Credentials remain in page memory and clear on project change, logout, or leaving
+the explorer. Logout also revokes sessions for that login. Copies of request
+examples contain a placeholder for a regular API key, never the console secret.
+Requests still use the deployed contract, and responses retain their normal
+format, permissions, errors, and quota headers.
+
+Static registered paths take precedence over parameter paths when identifying
+an operation for permissions, quotas and usage. For example, `/v1/offers/genres`
+is attributed to `listOfferGenres`, rather than an offer-detail request.

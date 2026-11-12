@@ -1,0 +1,64 @@
+---
+title: Request essentials
+description: Choose a country and locale, page through results, and handle errors.
+---
+
+## Country and region
+
+Country-aware endpoints accept a two-letter `country` query parameter, such as `US`, `GB`, or `ES`. The API maps the country to an Epic pricing region. Where a country is omitted, many storefront routes use the `EGDATA_COUNTRY` cookie or default to `US`; pass `country` explicitly for predictable server-to-server requests. Unsupported countries can return `404`.
+
+## Locale
+
+Offer endpoints accept `locale`; an omitted or blank value defaults to `en-US`. Locale syntax is validated and an invalid value returns `400`. Localization uses exact locale matches: `es-MX` does not fall back to `es-ES`. When the requested translation is missing for an offer, its text remains in canonical `en-US` and the offer includes `localeStatus: "fallback"`. Only public offer text and content fields are localized. Prices, availability, assets, builds, and other operational data remain canonical.
+
+```json
+{
+  "title": "Example Game",
+  "locale": "es-MX",
+  "localeStatus": "fallback",
+  "canonicalLocale": "en-US"
+}
+```
+
+## Pagination
+
+Pagination is route-specific. Search and profile connections use 1-based `page` values. Search `limit` defaults to 10 and is capped at 100; free-game history caps `limit` at 25; changelog lists cap it at 50. Seller offer lists and item build lists are unbounded by default, and profile responses include all achievement entries. Some endpoints use `offset` or another cursor. Check the endpoint's reference for its parameter names and maximum. Follow `hasNextPage`, `totalPages`, or equivalent metadata when the endpoint returns it.
+
+## Rate limits
+
+Anonymous traffic is limited per client IP. Expensive routes (search, GraphQL, offer preview images, profiles, sellers) have a tighter quota than ordinary reads, and bulk catalog/launcher routes are tighter still. The offer list (`GET /offers`) is limited to 5 requests per minute per client IP. Quotas are keyed by client, not by request URL, so changing or adding query parameters does not reset them. Limits are per minute; a throttled request returns `429` with a `Retry-After` header:
+
+```json
+{
+  "error": {
+    "code": "RATE_LIMITED",
+    "message": "This endpoint is temporarily rate limited. Please retry shortly.",
+    "retryAfter": 42
+  }
+}
+```
+
+Back off for at least `retryAfter` seconds. Bulk consumers should batch requests, send a stable `User-Agent`, and contact the maintainers for a higher quota instead of rotating IPs or user agents.
+
+## Errors
+
+Check `response.ok` or the status code before treating a response as data. Many errors have a JSON `message` or `error` field; its shape can vary by route.
+
+For example, an offer may return canonical English text when the exact requested locale is unavailable:
+
+```js
+const response = await fetch(
+  "https://api.egdata.app/offers/offer-id?country=GB&locale=es-MX",
+);
+```
+
+```js
+const response = await fetch(url);
+if (!response.ok) {
+  const detail = await response.json().catch(() => null);
+  throw new Error(`Request failed (${response.status}): ${detail?.message ?? ""}`);
+}
+const data = await response.json();
+```
+
+Common statuses are `400` for invalid input, `404` for missing or unavailable data, `429` for rate limiting, and `5xx` for a server or upstream failure. Treat nullable fields as optional and ignore response fields your client does not use.

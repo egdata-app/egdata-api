@@ -16,7 +16,7 @@ import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AlertsRouteImport } from './routes/alerts'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DocsIndexRouteImport } from './routes/docs.index'
-import { Route as DocsOperationIdRouteImport } from './routes/docs.$operationId'
+import { Route as DocsSlugRouteImport } from './routes/docs.$slug'
 
 const LimitsRoute = LimitsRouteImport.update({
   id: '/limits',
@@ -53,9 +53,9 @@ const DocsIndexRoute = DocsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DocsRoute,
 } as any)
-const DocsOperationIdRoute = DocsOperationIdRouteImport.update({
-  id: '/$operationId',
-  path: '/$operationId',
+const DocsSlugRoute = DocsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
   getParentRoute: () => DocsRoute,
 } as any)
 
@@ -66,7 +66,7 @@ export interface FileRoutesByFullPath {
   '/docs': typeof DocsRouteWithChildren
   '/keys': typeof KeysRoute
   '/limits': typeof LimitsRoute
-  '/docs/$operationId': typeof DocsOperationIdRoute
+  '/docs/$slug': typeof DocsSlugRoute
   '/docs/': typeof DocsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -75,7 +75,7 @@ export interface FileRoutesByTo {
   '/analytics': typeof AnalyticsRoute
   '/keys': typeof KeysRoute
   '/limits': typeof LimitsRoute
-  '/docs/$operationId': typeof DocsOperationIdRoute
+  '/docs/$slug': typeof DocsSlugRoute
   '/docs': typeof DocsIndexRoute
 }
 export interface FileRoutesById {
@@ -86,7 +86,7 @@ export interface FileRoutesById {
   '/docs': typeof DocsRouteWithChildren
   '/keys': typeof KeysRoute
   '/limits': typeof LimitsRoute
-  '/docs/$operationId': typeof DocsOperationIdRoute
+  '/docs/$slug': typeof DocsSlugRoute
   '/docs/': typeof DocsIndexRoute
 }
 export interface FileRouteTypes {
@@ -98,7 +98,7 @@ export interface FileRouteTypes {
     | '/docs'
     | '/keys'
     | '/limits'
-    | '/docs/$operationId'
+    | '/docs/$slug'
     | '/docs/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -107,7 +107,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/keys'
     | '/limits'
-    | '/docs/$operationId'
+    | '/docs/$slug'
     | '/docs'
   id:
     | '__root__'
@@ -117,7 +117,7 @@ export interface FileRouteTypes {
     | '/docs'
     | '/keys'
     | '/limits'
-    | '/docs/$operationId'
+    | '/docs/$slug'
     | '/docs/'
   fileRoutesById: FileRoutesById
 }
@@ -181,23 +181,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocsIndexRouteImport
       parentRoute: typeof DocsRoute
     }
-    '/docs/$operationId': {
-      id: '/docs/$operationId'
-      path: '/$operationId'
-      fullPath: '/docs/$operationId'
-      preLoaderRoute: typeof DocsOperationIdRouteImport
+    '/docs/$slug': {
+      id: '/docs/$slug'
+      path: '/$slug'
+      fullPath: '/docs/$slug'
+      preLoaderRoute: typeof DocsSlugRouteImport
       parentRoute: typeof DocsRoute
     }
   }
 }
 
 interface DocsRouteChildren {
-  DocsOperationIdRoute: typeof DocsOperationIdRoute
+  DocsSlugRoute: typeof DocsSlugRoute
   DocsIndexRoute: typeof DocsIndexRoute
 }
 
 const DocsRouteChildren: DocsRouteChildren = {
-  DocsOperationIdRoute: DocsOperationIdRoute,
+  DocsSlugRoute: DocsSlugRoute,
   DocsIndexRoute: DocsIndexRoute,
 }
 

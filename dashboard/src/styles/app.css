@@ -89,3 +89,162 @@ body::before {
     visibility: hidden;
   }
 }
+
+/* Rendered documentation (copied from apps/docs) */
+.docs-markdown {
+  color: var(--color-epic-text-muted);
+  font-size: 0.875rem;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.docs-markdown > * + * {
+  margin-top: 1rem;
+}
+
+.docs-markdown h1,
+.docs-markdown h2,
+.docs-markdown h3,
+.docs-markdown h4 {
+  color: var(--color-epic-text);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  scroll-margin-top: 7rem;
+}
+
+.docs-markdown h1 {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+}
+
+.docs-markdown h2 {
+  font-size: 1.2rem;
+  margin-top: 2.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-epic-border);
+}
+
+.docs-markdown h3 {
+  font-size: 1rem;
+  margin-top: 1.75rem;
+}
+
+.docs-markdown h4 {
+  font-size: 0.9375rem;
+  margin-top: 1.5rem;
+}
+
+.docs-markdown p {
+  margin: 0;
+}
+
+.docs-markdown a {
+  color: var(--color-epic-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.docs-markdown a:hover {
+  color: var(--color-epic-accent-hover);
+}
+
+.docs-markdown strong {
+  color: var(--color-epic-text);
+  font-weight: 600;
+}
+
+.docs-markdown ul,
+.docs-markdown ol {
+  padding-left: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.docs-markdown ul {
+  list-style: disc;
+}
+
+.docs-markdown ol {
+  list-style: decimal;
+}
+
+.docs-markdown li > ul,
+.docs-markdown li > ol {
+  margin-top: 0.35rem;
+}
+
+.docs-markdown code {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-epic-text);
+  background: var(--color-epic-elevated);
+  border: 1px solid var(--color-epic-border);
+  border-radius: 0.3rem;
+  padding: 0.1rem 0.35rem;
+}
+
+.docs-markdown pre {
+  background: #131318;
+  border: 1px solid var(--color-epic-border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  overflow-x: auto;
+  line-height: 1.6;
+}
+
+.docs-markdown pre code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-size: 0.8125rem;
+  color: #d9d9e3;
+  white-space: pre;
+}
+
+.docs-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+  font-size: 0.8125rem;
+}
+
+.docs-markdown th,
+.docs-markdown td {
+  border: 1px solid var(--color-epic-border);
+  padding: 0.5rem 0.7rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.docs-markdown th {
+  background: var(--color-epic-elevated);
+  color: var(--color-epic-text);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.docs-markdown tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.docs-markdown blockquote {
+  border-left: 3px solid var(--color-epic-accent);
+  background: var(--color-epic-accent-muted);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 0.65rem 1rem;
+  color: var(--color-epic-text);
+}
+
+.docs-markdown hr {
+  border: 0;
+  border-top: 1px solid var(--color-epic-border);
+  margin: 2rem 0;
+}
+
+.docs-markdown img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-epic-border);
+}

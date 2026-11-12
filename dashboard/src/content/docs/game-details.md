@@ -1,0 +1,75 @@
+---
+title: Game details
+description: Load an offer, discover its items, and follow catalog relationships.
+---
+
+Search returns offer IDs. Load the complete offer with `GET /offers/{id}` and load the store items connected to it with `GET /offers/{id}/items`.
+
+List endpoints such as `GET /offers`, `GET /offers/top-sellers`, and `GET /sellers/{id}` return full offer documents, including tags, items, custom attributes, and the complete key image set. Detail endpoints return the same complete offer. `GET /items` also returns full item documents.
+
+```js
+const base = "https://api.egdata.app";
+const offerId = "offer-id";
+const [offerResponse, itemsResponse] = await Promise.all([
+  fetch(`${base}/offers/${encodeURIComponent(offerId)}?locale=en-US`),
+  fetch(`${base}/offers/${encodeURIComponent(offerId)}/items`),
+]);
+const offer = await offerResponse.json();
+const items = await itemsResponse.json();
+```
+
+An offer response includes its catalog identity and metadata. Item results identify related catalog items; load one with `GET /items/{id}`. Items may link to multiple offers, and offers can reference direct items, subitems, or linked offers, so use the returned IDs to follow relationships instead of assuming one offer maps to one item.
+
+```json
+{
+  "id": "offer-id",
+  "title": "Example Game",
+  "namespace": "example-namespace",
+  "items": [{ "id": "item-id" }]
+}
+```
+
+Offer and item IDs are opaque strings. Offers may also have catalog item IDs, namespace IDs, and Epic product identifiers; keep the identifier type with the value when storing or sharing it. Add `locale` to offer requests to localize public offer text. The [API reference](/docs/api-reference) lists related routes for assets, bundles, builds, mappings, and suggestions.
+
+## Technical requirements
+
+Use `GET /offers/{id}/requirements` to retrieve the offer's Windows and macOS technical requirements. The endpoint resolves each platform independently and returns `null` for a platform without a requirements record. DLCs inherit requirements only when their source confirms that they have no requirements of their own and an explicit, valid base-game relationship exists. Partial DLC requirements are returned as recorded without filling missing tiers from the parent.
+
+```js
+const response = await fetch(
+  `https://api.egdata.app/offers/${encodeURIComponent(offerId)}/requirements`,
+);
+const { windows, macos } = await response.json();
+```
+
+Each non-null platform result includes its processing state, inheritance and parent metadata, observation time, and minimum and recommended requirement tiers. A 404 means the offer does not exist or neither platform has a requirements record.
+
+## Offer preview images
+
+Use `GET /offers/{id}/og.webp` for a 1200 × 630 WebP database summary, or `GET /offers/{id}/og` for the same layout as PNG. Both routes are public and accept `country` for regional pricing (for example, `?country=US`). Without it, the `EGDATA_COUNTRY` cookie is used, then `US`. The optional `v` query parameter can vary the URL for cache busting; it does not select a historical snapshot.
+
+```text
+https://api.egdata.app/offers/af4c34934afe4db0870b8a1d82dceb94/og.webp?country=US
+```
+
+The card shows the title, offer type, publisher, release date, current regional price, last catalog modification date (UTC), and latest download size. Size uses the newest associated build, preferring assets for the offer's direct items over related subitems, and falls back to its matching asset when the build has no size. Without builds, the most recently updated associated asset is used. Size is decimal GB (1 GB = 1,000,000,000 bytes), with the platform shown when known; it is not installed size or a sum of DLC sizes. Missing dates or sizes show `Not available`, and missing or country-restricted pricing shows `Unavailable`.
+
+Responses use `image/webp` or `image/png`. Without `v`, the response sends `Cache-Control: public, max-age=86400, stale-while-revalidate=604800` and `CDN-Cache-Control: public, max-age=2592000, stale-while-revalidate=604800`. With `v`, both become long-lived (`max-age=31536000, immutable` for browsers) so a content-hashed URL can be cached indefinitely. `Vary` is `Accept-Encoding` when `country` is supplied, otherwise `Cookie, Accept-Encoding`. Unknown offer IDs and unrecognized country codes return a JSON error with status 404. Artwork is omitted if its source cannot be fetched.
+
+`robots.txt` allows offer preview image URLs, including `/og.webp` and query parameters, while retaining `Disallow: /` for ordinary API data routes.
+
+## Sandbox preview images
+
+Use `GET /sandboxes/{sandboxId}/og.webp` for a 1200 × 630 WebP sandbox summary, or `GET /sandboxes/{sandboxId}/og` for PNG. The card uses the same visual style as offer previews, with the base game's title and artwork, three totals for offers, items, and assets, and the sandbox's last update date (UTC).
+
+```text
+https://api.egdata.app/sandboxes/e7f4ac33ff3d4ce4b243075f0b5dba84/og.webp
+```
+
+Counts include historical/test catalog offers. Assets follow the sandbox statistics convention: stored asset records plus each release-info platform without a stored artifact. For identity, the earliest-created released, non-code-redemption base game is preferred, followed by a preorder base game and an executable item. A sandbox without either still renders its own display name and counts. Artwork is optional; missing dates show `Not available`. The date uses the sandbox's `updated`, then `lastModifiedDate`, then `updatedAt`.
+
+Both routes are public and country-independent. They accept the optional `v` URL cache buster and return `image/webp` or `image/png` with `Cache-Control: public, max-age=86400, stale-while-revalidate=604800` (or `max-age=31536000, immutable` when `v` is present) and `CDN-Cache-Control: public, max-age=2592000, stale-while-revalidate=604800`. `Vary: Accept-Encoding`. Unknown sandbox IDs return JSON with status 404. `robots.txt` allows both image paths, including query strings.
+
+## Price history
+
+`GET /offers/{id}/price-history` returns newest-first observations. Use `since` to bound the window and `limit` (default 500, maximum 2000) to bound each region's history. Without a region parameter the response is grouped by region, and the same limit applies per request.

@@ -184,6 +184,10 @@ function ExplorerSession({ operationId }: { operationId?: string }) {
     (e) => e.apiVersion === "v1" && e.operationId === operationId,
   );
 
+  const contractLoaded = Boolean(document || snapshot);
+  const unknownOperation =
+    Boolean(operationId) && contractLoaded && !current && !historical;
+
   const all: Operation[] = useMemo(
     () => [
       ...deployed,
@@ -439,8 +443,8 @@ function ExplorerSession({ operationId }: { operationId?: string }) {
                       return (
                         <Link
                           key={op.operationId}
-                          to="/docs/$operationId"
-                          params={{ operationId: op.operationId }}
+                          to="/docs/$slug"
+                          params={{ slug: op.operationId }}
                           onClick={() => setMobileNavOpen(false)}
                           className={`group flex items-start gap-2 px-2.5 py-1.5 rounded-md transition-colors ${
                             active
@@ -500,15 +504,14 @@ function ExplorerSession({ operationId }: { operationId?: string }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <a
+          <Link
             className={buttonStyles({ variant: "secondary", size: "sm" })}
-            href="https://docs.egdata.app/docs/v1-problems"
-            target="_blank"
-            rel="noreferrer"
+            to="/docs/$slug"
+            params={{ slug: "v1-problems" }}
           >
             Auth, Quotas & Problem Details
             <ArrowUpRight className="w-3.5 h-3.5" />
-          </a>
+          </Link>
 
           {/* Mobile endpoint drawer toggle */}
           <button
@@ -570,19 +573,29 @@ function ExplorerSession({ operationId }: { operationId?: string }) {
           </span>
           <ChevronRight className="w-3.5 h-3.5 transition-transform group-open:rotate-90" />
         </summary>
-        <p className="px-4 pb-3 pt-1 text-epic-text-muted leading-relaxed border-t border-epic-border/60">
-          Errors use{" "}
-          <code className="font-mono text-epic-text bg-epic-elevated px-1.5 py-0.5 rounded">
-            application/problem+json
-          </code>{" "}
-          with <code>type</code>, <code>title</code>, <code>status</code>,{" "}
-          <code>detail</code>, <code>code</code>, <code>requestId</code>,
-          optional <code>instance</code> and field errors. Use <code>code</code>{" "}
-          for handling and <code>requestId</code> for support. Quota denials
-          return 429 and <code>Retry-After</code>; an uncertain quota decision
-          returns 503. Response errors from admitted requests still count as
-          attempted endpoint use.
-        </p>
+        <div className="px-4 pb-3 pt-1 border-t border-epic-border/60 space-y-2">
+          <p className="text-epic-text-muted leading-relaxed">
+            Errors use{" "}
+            <code className="font-mono text-epic-text bg-epic-elevated px-1.5 py-0.5 rounded">
+              application/problem+json
+            </code>{" "}
+            with <code>type</code>, <code>title</code>, <code>status</code>,{" "}
+            <code>detail</code>, <code>code</code>, <code>requestId</code>,
+            optional <code>instance</code> and field errors. Use{" "}
+            <code>code</code> for handling and <code>requestId</code> for
+            support. Quota denials return 429 and <code>Retry-After</code>; an
+            uncertain quota decision returns 503. Response errors from admitted
+            requests still count as attempted endpoint use.
+          </p>
+          <Link
+            to="/docs/$slug"
+            params={{ slug: "problems" }}
+            className="inline-flex items-center gap-1 text-epic-accent hover:underline"
+          >
+            Browse every problem code
+            <ChevronRight className="w-3 h-3" />
+          </Link>
+        </div>
       </details>
 
       {error && (
@@ -616,6 +629,8 @@ function ExplorerSession({ operationId }: { operationId?: string }) {
               groups={allGroups}
               onSelectResource={selectResourceFromOverview}
             />
+          ) : unknownOperation ? (
+            <UnknownOperation slug={operationId} />
           ) : (
             <EndpointDetailView
               operationId={operationId}
@@ -631,6 +646,39 @@ function ExplorerSession({ operationId }: { operationId?: string }) {
             />
           )}
         </section>
+      </div>
+    </div>
+  );
+}
+
+function UnknownOperation({ slug }: { slug: string }) {
+  return (
+    <div className="mx-auto max-w-2xl space-y-4 rounded-xl border border-epic-border bg-epic-surface p-8 text-center">
+      <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-epic-warning/30 bg-epic-warning/10">
+        <AlertTriangle className="h-5 w-5 text-epic-warning" />
+      </div>
+      <h2 className="text-xl font-semibold text-white">Operation not found</h2>
+      <p className="text-sm text-epic-text-muted">
+        No operation in the deployed contract or merged history matches{" "}
+        <code className="rounded bg-epic-elevated px-1.5 py-0.5 font-mono text-epic-text">
+          {slug}
+        </code>
+        .
+      </p>
+      <div className="flex flex-wrap justify-center gap-2">
+        <Link
+          to="/docs"
+          className={buttonStyles({ variant: "secondary", size: "sm" })}
+        >
+          API reference
+        </Link>
+        <Link
+          to="/docs/$slug"
+          params={{ slug: "problems" }}
+          className={buttonStyles({ variant: "secondary", size: "sm" })}
+        >
+          Problem codes
+        </Link>
       </div>
     </div>
   );
@@ -660,6 +708,50 @@ function ResourceOverviewGrid({
         </p>
       </div>
 
+      <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-3.5">
+        {[
+          {
+            slug: "get-started",
+            title: "Get started",
+            description:
+              "Make your first request and choose the right base URL.",
+          },
+          {
+            slug: "versioned-api",
+            title: "Versioned v1 API",
+            description:
+              "Keys, quotas, cursor pagination, and the error contract.",
+          },
+          {
+            slug: "problems",
+            title: "Problem codes",
+            description: "Every stable error code with recovery steps.",
+          },
+          {
+            slug: "field-issues",
+            title: "Field issues",
+            description: "Decode the errors array in a problem response.",
+          },
+        ].map((item) => (
+          <Link
+            key={item.slug}
+            to="/docs/$slug"
+            params={{ slug: item.slug }}
+            className="group rounded-xl border border-epic-border bg-epic-surface p-4 transition hover:border-epic-border-hover hover:bg-epic-elevated/70"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold text-epic-text group-hover:text-epic-accent">
+                {item.title}
+              </h3>
+              <ChevronRight className="w-3.5 h-3.5 shrink-0 text-epic-text-muted" />
+            </div>
+            <p className="mt-1 text-xs text-epic-text-muted">
+              {item.description}
+            </p>
+          </Link>
+        ))}
+      </div>
+
       {groups.length > 0 && (
         <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3.5">
           {groups.map((group) => {
@@ -668,8 +760,8 @@ function ResourceOverviewGrid({
             return (
               <Link
                 key={group.name}
-                to="/docs/$operationId"
-                params={{ operationId: firstOp.operationId }}
+                to="/docs/$slug"
+                params={{ slug: firstOp.operationId }}
                 onClick={() => onSelectResource(group.name)}
                 className="group rounded-xl border border-epic-border bg-epic-surface hover:bg-epic-elevated/70 hover:border-epic-border-hover p-4 transition flex flex-col justify-between gap-3"
               >

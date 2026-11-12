@@ -5,13 +5,30 @@
   "compatibility_date": "2026-05-17",
   "compatibility_flags": ["nodejs_compat"],
   "upload_source_maps": true,
-  "placement": { "mode": "off" },
+  "placement": { "mode": "targeted", "region": "gcp:europe-west1" },
   "workers_dev": false,
   "preview_urls": false,
-  "routes": [{ "pattern": "devs.egdata.app", "custom_domain": true }, {  "pattern": "api.egdata.app", "custom_domain": true  }],
+  // Keep both live custom domains here so deployments preserve the API binding.
+  "routes": [
+    { "pattern": "devs.egdata.app", "custom_domain": true },
+    { "pattern": "api.egdata.app", "custom_domain": true }
+  ],
   "observability": {
     "enabled": true,
-    "head_sampling_rate": 1
+    "head_sampling_rate": 1,
+    "redact_query_string": false,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true
+    },
+    "traces": {
+      "enabled": false,
+      "persist": true,
+      "head_sampling_rate": 1
+    },
+    "issues": { "enabled": true }
   },
   "assets": {
     "binding": "ASSETS",

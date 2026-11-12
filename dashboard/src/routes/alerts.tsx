@@ -375,8 +375,8 @@ function ProjectInbox({
                 <Link
                   key={id}
                   className="inline-flex items-center gap-1.5 font-mono text-xs px-2.5 py-1 rounded-md bg-epic-elevated hover:bg-epic-hover text-epic-accent border border-epic-border hover:border-epic-border-hover transition-colors"
-                  to="/docs/$operationId"
-                  params={{ operationId: id }}
+                  to="/docs/$slug"
+                  params={{ slug: id }}
                 >
                   <BookOpen className="w-3 h-3" />
                   {id}
