@@ -140,6 +140,34 @@ async function setup() {
 }
 
 describe("project console credentials", () => {
+  it("reports the next onboarding step for an already-issued console session", async () => {
+    const s = await setup();
+    const { token } = await s.start();
+    s.sqlite.exec(`
+      INSERT INTO legal_documents VALUES('terms','1.0','edition-1','hash','Terms',1);
+      INSERT INTO legal_documents VALUES('privacy','1.0','','hash','Privacy',1);
+      INSERT INTO legal_rollout VALUES(1,'revision-1','1.0','1.0');
+    `);
+    const unverified = await s.run(token);
+    expect(unverified.status).toBe(403);
+    expect(await unverified.json()).toMatchObject({
+      code: "EMAIL_VERIFICATION_REQUIRED",
+    });
+    s.sqlite.exec(`
+      INSERT INTO developer_profiles(owner_id,contact_email,verified_at)
+      VALUES('alice','alice@example.com',1);
+    `);
+    const verified = await s.run(token);
+    expect(verified.status).toBe(403);
+    expect(await verified.json()).toMatchObject({ code: "AGREEMENT_REQUIRED" });
+    expect(s.admit).not.toHaveBeenCalled();
+    expect(s.upstream).not.toHaveBeenCalled();
+    s.sqlite.exec(`
+      INSERT INTO legal_acceptances(owner_id,version,edition,sha256,accepted_at,requirement_revision)
+      VALUES('alice','1.0','edition-1','hash',1,'revision-1');
+    `);
+    expect((await s.run(token)).status).toBe(200);
+  });
   it("uses the project's approved custom limit without renewing the console session", async () => {
     const s = await setup();
     const session = await s.start();

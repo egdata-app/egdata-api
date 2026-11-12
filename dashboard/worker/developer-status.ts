@@ -97,15 +97,15 @@ export async function developerStatus(
 export function onboardingError(status: DeveloperStatus) {
   return {
     error: {
-      code: status.acceptedAt
-        ? "EMAIL_VERIFICATION_REQUIRED"
-        : "AGREEMENT_REQUIRED",
+      code: status.verifiedAt
+        ? "AGREEMENT_REQUIRED"
+        : "EMAIL_VERIFICATION_REQUIRED",
       message:
         "Complete developer onboarding to use the dashboard. Existing API keys keep working.",
       reviewUrl: "https://devs.egdata.app/agreements",
       requirementRevision: status.revision,
       requiredDocuments:
-        !status.acceptedAt && status.terms
+        status.verifiedAt && !status.acceptedAt && status.terms
           ? [
               {
                 kind: "terms",

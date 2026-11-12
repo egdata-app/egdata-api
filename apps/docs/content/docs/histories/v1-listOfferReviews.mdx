@@ -16,6 +16,17 @@ Record: [developer-onboarding-account-closure](https://github.com/egdata-app/egd
 
 Verification: dashboard/tests/privacy-operations.test.ts; dashboard/tests/developer-mail-events.test.ts; dashboard/tests/analytics.test.ts; dashboard/tests/legacy-analytics.test.ts; dashboard/legal/operations.md; dashboard/tests/developer-account.test.ts; dashboard/tests/legal-publication.test.ts; openapi/egdata.dashboard.openapi.json; src/openapi/project-quota.ts; src/openapi/v1.ts; apps/docs/content/docs/api-console.mdx; pnpm dashboard:test; pnpm dashboard:build; pnpm docs:check.
 
+## 2026-11-12 — Report email verification before terms acceptance in dashboard and console onboarding
+
+Record: [developer-onboarding-error-order](https://github.com/egdata-app/egdata-api/blob/main/changes/records/developer-onboarding-error-order.json).
+
+- **v1 GET /v1/offers/&#123;id&#125;/reviews** (listOfferReviews; fixed; compatible)
+  - Before: During an active rollout, signed-in dashboard console requests with unverified email and no terms acceptance returned 403 AGREEMENT_REQUIRED. Dashboard gates also advertised terms before verification.
+  - After: Dashboard console requests return 403 EMAIL_VERIFICATION_REQUIRED until email is verified, then 403 AGREEMENT_REQUIRED until the current terms edition is accepted. Dashboard gates list required terms only after verification. Public API-key access, anonymous access, eligibility, quotas and successful responses are unchanged.
+  - Client action: Console clients should handle EMAIL_VERIFICATION_REQUIRED by verifying the notification email first, then handle AGREEMENT_REQUIRED by accepting the current terms. Existing application API-key integrations require no change.
+
+Verification: dashboard/tests/developer-account.test.ts; dashboard/tests/console-sessions.test.ts; openapi/egdata.dashboard.openapi.json; src/openapi/v1.ts; apps/docs/content/docs/api-console.mdx; pnpm docs:check; pnpm release:check --base origin/main.
+
 ## 2026-11-12 — Enforce shared 100,000 requests/month allowance across free account projects
 
 Record: [free-account-monthly-quota](https://github.com/egdata-app/egdata-api/blob/main/changes/records/free-account-monthly-quota.json).
