@@ -137,6 +137,36 @@ async function setup(active = true) {
 }
 
 describe("initial developer onboarding", () => {
+  it("reports verification before agreement acceptance at the dashboard gate", async () => {
+    const s = await setup();
+    const unverified = await s.call("/projects");
+    expect(unverified.status).toBe(403);
+    expect(await unverified.json()).toMatchObject({
+      error: {
+        code: "EMAIL_VERIFICATION_REQUIRED",
+        requirementRevision: "revision-1",
+        requiredDocuments: [],
+      },
+    });
+    expect((await s.verify()).response.status).toBe(200);
+    const verified = await s.call("/projects");
+    expect(verified.status).toBe(403);
+    expect(await verified.json()).toMatchObject({
+      error: {
+        code: "AGREEMENT_REQUIRED",
+        requiredDocuments: [
+          {
+            kind: "terms",
+            version: "1.0",
+            action: "accept",
+            url: `${origin}/terms/1.0`,
+          },
+        ],
+      },
+    });
+    expect((await s.accept()).status).toBe(200);
+    expect((await s.call("/projects")).status).toBe(200);
+  });
   it("allows export during onboarding and guards privacy/admin routes with live roles and origin checks", async () => {
     const { call, sqlite, verify, accept } = await setup();
     expect(
@@ -525,7 +555,7 @@ describe("initial developer onboarding", () => {
       s.ctx,
     );
     expect(response.status).toBe(403);
-    expect(await response.text()).toContain("AGREEMENT_REQUIRED");
+    expect(await response.text()).toContain("EMAIL_VERIFICATION_REQUIRED");
     expect((await s.call("/account")).status).toBe(200);
     expect((await s.call("/auth/logout", "POST")).status).toBe(200);
     expect((await s.call("/account")).status).toBe(401);

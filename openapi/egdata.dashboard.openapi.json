@@ -8,6 +8,194 @@
   "servers": [{ "url": "https://devs.egdata.app" }],
   "security": [{ "dashboardSession": [] }],
   "paths": {
+    "/_dashboard/api/account": {
+      "get": {
+        "operationId": "getDeveloperAccountStatus",
+        "summary": "Read the signed-in developer's onboarding status",
+        "description": "Available before email verification or terms acceptance. Returns contact and pending email, verification and acceptance timestamps, and the active rollout's exact legal documents. Without a published rollout, enabled=false, eligible=true, and revision, terms, privacy and acceptedAt are null. Cache-Control: no-store. No parameters.",
+        "responses": {
+          "200": { "$ref": "#/components/responses/DeveloperAccountStatus" },
+          "401": { "$ref": "#/components/responses/AccountUnauthorized" },
+          "403": { "$ref": "#/components/responses/AccountForbidden" },
+          "429": { "$ref": "#/components/responses/AccountRateLimited" },
+          "500": { "$ref": "#/components/responses/AccountStorageError" }
+        }
+      },
+      "delete": {
+        "operationId": "closeDeveloperAccount",
+        "summary": "Close the signed-in developer account and revoke its credentials",
+        "description": "Available during onboarding. Requires a same-origin Origin header and a login issued less than ten minutes ago. Deletes active account, project and credential records, invalidates old sessions and warm API-key caches, and clears the dashboard session cookie. Already-admitted requests may finish. A closure record prevents re-registration until its 30-day cleanup; legal evidence and other stores follow the Privacy Notice. Maximum body 4096 bytes. Cache-Control: no-store.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["confirmation"],
+                "properties": {
+                  "confirmation": { "type": "string", "enum": ["DELETE"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Account closed and session cookie cleared; retained records follow the Privacy Notice.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["ok", "message"],
+                  "properties": {
+                    "ok": { "type": "boolean", "enum": [true] },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "CONFIRMATION_REQUIRED: confirmation must equal DELETE.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccountError" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/AccountUnauthorized" },
+          "403": {
+            "description": "REAUTHENTICATION_REQUIRED: sign in again (login must be less than ten minutes old), or FORBIDDEN: dashboard host or mutation Origin rejected. Onboarding completion is not required.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccountError" }
+              }
+            }
+          },
+          "413": { "$ref": "#/components/responses/AccountBodyTooLarge" },
+          "429": { "$ref": "#/components/responses/AccountRateLimited" },
+          "500": { "$ref": "#/components/responses/AccountStorageError" }
+        }
+      }
+    },
+    "/_dashboard/api/account/email": {
+      "post": {
+        "operationId": "requestDeveloperEmailVerification",
+        "summary": "Send a verification code to a pending notification address",
+        "description": "Available during onboarding with a same-origin Origin header. Trims the email; Epic @accounts.epicgames.com placeholder addresses are rejected case-insensitively. At most one send per minute and five per UTC day. Codes expire after 30 minutes and each new send replaces the previous code. A pending replacement does not change the verified contact address until confirmed. Maximum body 4096 bytes. Cache-Control: no-store.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 254
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification email submitted; provider acceptance is not proof of delivery.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["ok", "pendingEmail"],
+                  "properties": {
+                    "ok": { "type": "boolean", "enum": [true] },
+                    "pendingEmail": { "type": "string", "format": "email" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_ERROR: invalid email, more than 254 characters after trimming, or Epic sign-in placeholder address.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccountError" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/AccountUnauthorized" },
+          "403": { "$ref": "#/components/responses/AccountForbidden" },
+          "413": { "$ref": "#/components/responses/AccountBodyTooLarge" },
+          "429": {
+            "description": "RATE_LIMITED: dashboard throttle, resend within one minute, or five sends already attempted this UTC day. Retry-After is 60 seconds; the daily cap still applies.",
+            "headers": {
+              "Retry-After": { "schema": { "type": "string", "enum": ["60"] } }
+            },
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccountError" }
+              }
+            }
+          },
+          "500": { "$ref": "#/components/responses/AccountStorageError" },
+          "503": {
+            "description": "EMAIL_DELIVERY_FAILED: verification dispatch or delivery tracking failed. The code is invalidated; request a new email later.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccountError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/_dashboard/api/account/email/verify": {
+      "post": {
+        "operationId": "verifyDeveloperEmail",
+        "summary": "Consume a verification code for the signed-in account",
+        "description": "Available during onboarding with a same-origin Origin header. Atomically consumes an unexpired code bound to this account, promotes pendingEmail to contactEmail and sets verifiedAt. A changed previous contact address receives a queued notification. Merely opening the email link does not verify an address. Maximum body 4096 bytes. Cache-Control: no-store.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token"],
+                "properties": {
+                  "token": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/DeveloperAccountStatus" },
+          "400": {
+            "description": "INVALID_VERIFICATION: token must be 64 lowercase hexadecimal characters.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccountError" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/AccountUnauthorized" },
+          "403": { "$ref": "#/components/responses/AccountForbidden" },
+          "409": {
+            "description": "INVALID_VERIFICATION: code does not match this account, expired, was replaced, or has already been consumed.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccountError" }
+              }
+            }
+          },
+          "413": { "$ref": "#/components/responses/AccountBodyTooLarge" },
+          "429": { "$ref": "#/components/responses/AccountRateLimited" },
+          "500": { "$ref": "#/components/responses/AccountStorageError" }
+        }
+      }
+    },
     "/_dashboard/api/account/export": {
       "get": {
         "operationId": "exportDeveloperAccountData",
@@ -530,14 +718,24 @@
         },
         "responses": {
           "200": {
-            "description": "Updated developer account status; receipt email queued durably. Provider acceptance is not proof of inbox delivery."
+            "description": "Updated developer account status; receipt email queued durably. Provider acceptance is not proof of inbox delivery.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DeveloperStatus" }
+              }
+            }
           },
           "400": {
             "description": "Invalid input or explicit acceptance missing."
           },
           "401": { "description": "Dashboard session required." },
           "403": {
-            "description": "Email verification required or request origin rejected."
+            "description": "EMAIL_VERIFICATION_REQUIRED: verify your notification email before accepting terms. FORBIDDEN: dashboard host or mutation Origin rejected.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccountError" }
+              }
+            }
           },
           "409": {
             "description": "The displayed requirement, terms version or hash no longer matches."
@@ -570,6 +768,53 @@
       }
     },
     "responses": {
+      "DeveloperAccountStatus": {
+        "description": "Current developer account status. Timestamps are Unix milliseconds. Cache-Control: no-store.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/DeveloperStatus" }
+          }
+        }
+      },
+      "AccountUnauthorized": {
+        "description": "UNAUTHORIZED: missing, expired, revoked or closed-account dashboard session.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/AccountError" }
+          }
+        }
+      },
+      "AccountForbidden": {
+        "description": "FORBIDDEN: request is not on the configured dashboard host, or a mutation lacks a matching Origin header. Account routes remain available before onboarding is complete.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/AccountError" }
+          }
+        }
+      },
+      "AccountBodyTooLarge": {
+        "description": "BODY_TOO_LARGE: request body exceeds 4096 bytes.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/AccountError" }
+          }
+        }
+      },
+      "AccountRateLimited": {
+        "description": "RATE_LIMITED: dashboard rate limit exceeded.",
+        "headers": {
+          "Retry-After": { "schema": { "type": "string", "enum": ["60"] } }
+        },
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/AccountError" }
+          }
+        }
+      },
+      "AccountStorageError": {
+        "description": "Session or account storage could not be read or written, or the published legal rollout is invalid. The account router returns the default internal-server-error response, not the API-key gateway's ACCOUNT_STATUS_UNAVAILABLE error.",
+        "content": { "text/plain": { "schema": { "type": "string" } } }
+      },
       "Invalid": {
         "description": "VALIDATION_ERROR: invalid fields, pagination or filters."
       },
@@ -605,6 +850,75 @@
       }
     },
     "schemas": {
+      "AccountError": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["code", "message"],
+            "properties": {
+              "code": { "type": "string" },
+              "message": { "type": "string" }
+            }
+          }
+        }
+      },
+      "DeveloperStatus": {
+        "type": "object",
+        "required": [
+          "enabled",
+          "eligible",
+          "revision",
+          "contactEmail",
+          "pendingEmail",
+          "verifiedAt",
+          "terms",
+          "privacy",
+          "acceptedAt",
+          "existingKeysContinue"
+        ],
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether a legal rollout is published."
+          },
+          "eligible": {
+            "type": "boolean",
+            "description": "True when onboarding is disabled, or email is verified and the active terms edition has been accepted."
+          },
+          "revision": { "type": "string", "nullable": true },
+          "contactEmail": { "type": "string", "nullable": true },
+          "pendingEmail": { "type": "string", "nullable": true },
+          "verifiedAt": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "description": "Email verification time in Unix milliseconds."
+          },
+          "terms": {
+            "type": "object",
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/LegalDocument" }]
+          },
+          "privacy": {
+            "type": "object",
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/LegalDocument" }]
+          },
+          "acceptedAt": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "description": "Earliest retained active acceptance for the current terms edition, in Unix milliseconds."
+          },
+          "existingKeysContinue": {
+            "type": "boolean",
+            "enum": [true],
+            "description": "Existing application API keys keep working during initial onboarding."
+          }
+        }
+      },
       "CaseReference": {
         "type": "string",
         "minLength": 1,

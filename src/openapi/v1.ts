@@ -238,7 +238,7 @@ function operationObject(
       operation.description,
       ...(operation.auth === "key"
         ? [
-            "Account closure rejects all account keys, including warm credential caches, with 401 INVALID_API_KEY before quota or cache access. Failure to verify credential/account status returns uncacheable 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30. Initial email/terms onboarding gates the dashboard and existing/new console sessions (403 AGREEMENT_REQUIRED or EMAIL_VERIFICATION_REQUIRED), but existing API keys keep working even after a dashboard visit. Privacy notices do not require acceptance.",
+            "Account closure rejects all account keys, including warm credential caches, with 401 INVALID_API_KEY before quota or cache access. Failure to verify credential/account status returns uncacheable 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30. Initial email/terms onboarding gates the dashboard and existing/new console sessions: 403 EMAIL_VERIFICATION_REQUIRED until email is verified, then 403 AGREEMENT_REQUIRED until the current terms edition is accepted. Existing API keys keep working even after a dashboard visit. Privacy notices do not require acceptance.",
           ]
         : []),
     ]
