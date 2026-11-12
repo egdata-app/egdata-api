@@ -179,7 +179,7 @@ through the bounded metadata cache. Credentials are never stored in that cache.
 
 ## Versioned v1 gateway
 
-The versioned API is exposed at `https://api.egdata.app/v1` and is also available for testing at `https://devs.egdata.app/proxy/v1`. It requires an API key for every data operation. Placement targets `gcp:europe-west1`, matching the live Worker and the API origin's region.
+The versioned API is exposed at `https://api.egdata.app/v1` and is also available for testing at `https://devs.egdata.app/proxy/v1`. It requires an API key for every data operation. Placement targets the `gcp:europe-west1` GCP region, matching the API origin's region.
 
 - The Worker authenticates the key, maps the operation to an existing permission scope, evaluates IP/Origin/method/path restrictions against `/v1/...`, and calls the `ApiKeyRateLimiter` Durable Object once. Only after admission does it forward trusted key identity (`x-egdata-key-id`, tier, project, request ID, Worker token) to the origin. Caller-supplied internal headers and cookies are stripped.
 - `ApiKeyRateLimiter` is a SQLite-backed Durable Object declared in `wrangler.jsonc` with an additive migration (`new_sqlite_classes`). Objects are named `v1:<RATE_LIMIT_ENVIRONMENT>:<internal key id>`; the raw API key is never used as an object name or stored in the object. Keep `RATE_LIMIT_ENVIRONMENT` stable per deployment and never rename the class or delete the migration; either change resets the counters. Rollback should remove v1 exposure (route or origin mount) rather than deleting the Durable Object namespace.

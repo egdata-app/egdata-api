@@ -8,8 +8,8 @@ import {
   Activity,
   ArrowUpRight,
   BarChart3,
-  BookOpen,
   Bell,
+  BookOpen,
   FolderPlus,
   KeyRound,
   LogOut,
@@ -25,9 +25,9 @@ import { Dialog, Heading, Modal } from "../components/ui/Modal";
 import { Select, SelectItem } from "../components/ui/Select";
 import { Form, TextField } from "../components/ui/TextField";
 import { AppToastRegion, notify } from "../components/ui/Toast";
+import { useUnreadAlerts } from "../lib/alerts";
 import { dashboardClient } from "../lib/api";
 import { DashboardAuthProvider, useDashboardAuth } from "../lib/auth-context";
-import { useUnreadAlerts } from "../lib/alerts";
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -305,14 +305,9 @@ function DashboardShell() {
             <span>egdata Developer Portal</span>
           </div>
           <div className="flex items-center gap-4">
-            <a
-              href="https://docs.egdata.app"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-epic-text transition-colors"
-            >
+            <Link to="/docs" className="hover:text-epic-text transition-colors">
               API Docs
-            </a>
+            </Link>
             <a
               href="https://github.com/egdata-app"
               target="_blank"

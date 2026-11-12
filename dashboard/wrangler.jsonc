@@ -16,6 +16,7 @@
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1,
+    "redact_query_string": false,
     "logs": {
       "enabled": true,
       "head_sampling_rate": 1,
@@ -26,7 +27,8 @@
       "enabled": false,
       "persist": true,
       "head_sampling_rate": 1
-    }
+    },
+    "issues": { "enabled": true }
   },
   "assets": {
     "binding": "ASSETS",
