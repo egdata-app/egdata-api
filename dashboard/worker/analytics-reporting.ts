@@ -132,7 +132,7 @@ function aggregate(events: Event[]): UsageMetrics {
     latencies[Math.min(requests - 1, Math.floor(q * requests))] ?? 0;
   const cacheHits = events.filter(
     (e) =>
-      ["HIT", "STALE", "UPDATING"].includes(e.cacheStatus) ||
+      ["HIT", "STALE", "UPDATING", "REVALIDATED"].includes(e.cacheStatus) ||
       e.statusCode === 304,
   ).length;
   const errors = events.filter((e) => e.statusCode >= 400).length;
