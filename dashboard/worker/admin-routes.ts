@@ -36,7 +36,8 @@ const userLimitsSchema = z
 const projectLimitsSchema = z
   .object({
     tier: z.enum(["free", "pro", "enterprise"]),
-    customRpm: z.number().int().min(1).max(1_000_000).nullable(),
+    // Match projects.custom_rpm in migration 0004_limit_request_reviews.sql.
+    customRpm: z.number().int().min(150).max(500_000).nullable(),
     reason: reasonSchema,
   })
   .strict();

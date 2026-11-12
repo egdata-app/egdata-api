@@ -322,6 +322,52 @@ describe("administrator user and project management", () => {
     }
   });
 
+  it.each([
+    150,
+    500_000,
+    null,
+  ])("persists the database RPM boundaries and tier default (%s)", async (customRpm) => {
+    const { call, sqlite } = setup();
+    const response = await call("/projects/project/limits", "PATCH", {
+      tier: "pro",
+      customRpm,
+    });
+    expect(response.status).toBe(200);
+    expect(
+      sqlite
+        .prepare("SELECT custom_rpm FROM projects WHERE id='project'")
+        .get(),
+    ).toEqual({ custom_rpm: customRpm });
+    expect(
+      sqlite.prepare("SELECT custom_rpm FROM api_keys WHERE id='key'").get(),
+    ).toEqual({ custom_rpm: customRpm });
+  });
+
+  it.each([
+    1, 100, 149, 500_001, 600_000, 1_000_000,
+  ])("rejects unsupported RPM %s before any mutation", async (customRpm) => {
+    const { call, db, sqlite, env } = setup();
+    const batch = vi.spyOn(db, "batch");
+    const response = await call("/projects/project/limits", "PATCH", {
+      tier: "pro",
+      customRpm,
+    });
+    expect(response.status).toBe(400);
+    expect(await response.json()).toMatchObject({
+      error: { code: "VALIDATION_ERROR" },
+    });
+    expect(batch).not.toHaveBeenCalled();
+    expect(env.API_KEYS_KV.delete).not.toHaveBeenCalled();
+    expect(
+      sqlite
+        .prepare("SELECT tier,custom_rpm FROM projects WHERE id='project'")
+        .get(),
+    ).toEqual({ tier: "free", custom_rpm: null });
+    expect(
+      sqlite.prepare("SELECT COUNT(*) AS count FROM admin_audit_log").get(),
+    ).toEqual({ count: 0 });
+  });
+
   it("rolls back quota changes if a key update fails", async () => {
     const { call, sqlite, env } = setup();
     sqlite.exec(

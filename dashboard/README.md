@@ -88,7 +88,7 @@ retaining management controls. Unattributed traffic is not assigned to users.
 
 - Users: change the maximum project count (1–100), or view that user's projects.
   Lowering the cap retains existing projects; the creation cooldown still applies.
-- Projects: edit the tier and optional exact RPM override (1–1,000,000; blank
+- Projects: edit the tier and optional exact RPM override (150–500,000; blank
   restores the tier default), inspect/revoke keys, or soft-delete a project.
   RPM is shared across its keys and console sessions; 24-hour usage is not the
   live minute-window balance. Cached credentials may take up to five minutes to

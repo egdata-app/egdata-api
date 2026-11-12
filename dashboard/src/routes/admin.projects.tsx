@@ -381,7 +381,16 @@ function Projects({ owner }: { owner: string }) {
               type="number"
               value={rpm}
               onChange={setRpm}
-              description="1–1,000,000. Leave blank to use the selected tier's default."
+              description="150–500,000. Leave blank to use the selected tier's default."
+              validate={(value) => {
+                if (value.trim() === "") return null;
+                const limit = Number(value);
+                return Number.isInteger(limit) &&
+                  limit >= 150 &&
+                  limit <= 500_000
+                  ? null
+                  : "Enter a whole number between 150 and 500,000.";
+              }}
             />
             <p className="text-xs text-epic-text-muted">
               Shared by all project keys and console sessions.{" "}
