@@ -988,6 +988,15 @@ export async function changeSubscriptionPlan(
   return { entitlement, scheduledForPeriodEnd: false };
 }
 
+function isStaleSubscriptionEvent(
+  subRow: SubscriptionRow | null | undefined,
+  eventCreated: number,
+): boolean {
+  return Boolean(
+    subRow && eventCreated > 0 && eventCreated < subRow.last_event_created,
+  );
+}
+
 async function applyStripeSubscriptionSnapshot(
   env: DashboardEnv,
   stripeSub: StripeSubscription,
@@ -1031,7 +1040,7 @@ async function applyStripeSubscriptionSnapshot(
   }
 
   // Guard out-of-order events if Stripe event timestamp is older than already applied state
-  if (existing && eventCreated > 0 && eventCreated < existing.last_event_created) {
+  if (existing && isStaleSubscriptionEvent(existing, eventCreated)) {
     if (env.STRIPE_SECRET_KEY?.trim()) {
       const authoritative = await retrieveStripeSubscription(env, stripeSub.id);
       if (authoritative.id === stripeSub.id && authoritative !== stripeSub) {
@@ -1297,6 +1306,7 @@ export async function handleStripeWebhook(
 
       case "invoice.paid":
       case "invoice.payment_succeeded": {
+        const eventCreated = Number(event.created) || 0;
         const subId =
           typeof obj.subscription === "string" ? obj.subscription : null;
         const invoiceId = typeof obj.id === "string" ? obj.id : null;
@@ -1306,13 +1316,16 @@ export async function handleStripeWebhook(
           )
             .bind(environment, subId)
             .first<SubscriptionRow>();
+          if (isStaleSubscriptionEvent(subRow, eventCreated)) {
+            break;
+          }
           if (env.STRIPE_SECRET_KEY?.trim()) {
             const liveSub = await retrieveStripeSubscription(env, subId);
             await applyStripeSubscriptionSnapshot(
               env,
               liveSub,
               environment,
-              Number(event.created) || 0,
+              eventCreated,
               {
                 overrideGraceUntilMs: null,
                 lastInvoiceId: invoiceId,
@@ -1328,32 +1341,44 @@ export async function handleStripeWebhook(
               typeof obj.period_end === "number"
                 ? obj.period_end * 1000
                 : subRow.current_period_end;
-            await env.DB.prepare(
+            const updateResult = await env.DB.prepare(
               `UPDATE billing_subscriptions
                   SET status = 'active', grace_until = NULL, last_invoice_id = COALESCE(?, last_invoice_id),
+                      last_event_created = MAX(last_event_created, ?),
                       current_period_start = ?, current_period_end = ?,
                       updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
-                WHERE id = ?`,
+                WHERE id = ? AND (? = 0 OR last_event_created <= ?)`,
             )
-              .bind(invoiceId, periodStartMs, periodEndMs, subRow.id)
+              .bind(
+                invoiceId,
+                eventCreated,
+                periodStartMs,
+                periodEndMs,
+                subRow.id,
+                eventCreated,
+                eventCreated,
+              )
               .run();
-            await upsertSubscriptionEntitlementGrant(env, {
-              projectId: subRow.project_id,
-              ownerEpicId: subRow.owner_epic_id,
-              subscriptionId: subRow.id,
-              planVersionId: subRow.plan_version_id as PlanVersionId,
-              status: "active",
-              periodStartMs,
-              periodEndMs,
-              graceUntilMs: null,
-              reason: "Invoice paid",
-            });
+            if ((updateResult.meta?.changes ?? 1) > 0) {
+              await upsertSubscriptionEntitlementGrant(env, {
+                projectId: subRow.project_id,
+                ownerEpicId: subRow.owner_epic_id,
+                subscriptionId: subRow.id,
+                planVersionId: subRow.plan_version_id as PlanVersionId,
+                status: "active",
+                periodStartMs,
+                periodEndMs,
+                graceUntilMs: null,
+                reason: "Invoice paid",
+              });
+            }
           }
         }
         break;
       }
 
       case "invoice.payment_failed": {
+        const eventCreated = Number(event.created) || 0;
         const subId =
           typeof obj.subscription === "string" ? obj.subscription : null;
         const invoiceId = typeof obj.id === "string" ? obj.id : null;
@@ -1363,36 +1388,45 @@ export async function handleStripeWebhook(
           )
             .bind(environment, subId)
             .first<SubscriptionRow>();
-          if (subRow) {
+          if (subRow && !isStaleSubscriptionEvent(subRow, eventCreated)) {
             const graceUntilMs =
               subRow.grace_until ??
               Date.now() + BILLING_POLICY_DEFAULTS.gracePeriodDays * DAY_MS;
-            await env.DB.prepare(
+            const updateResult = await env.DB.prepare(
               `UPDATE billing_subscriptions
                   SET status = 'past_due', grace_until = ?, last_invoice_id = COALESCE(?, last_invoice_id),
                       last_event_created = MAX(last_event_created, ?),
                       updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
-                WHERE id = ?`,
+                WHERE id = ? AND (? = 0 OR last_event_created <= ?)`,
             )
-              .bind(graceUntilMs, invoiceId, Number(event.created) || 0, subRow.id)
+              .bind(
+                graceUntilMs,
+                invoiceId,
+                eventCreated,
+                subRow.id,
+                eventCreated,
+                eventCreated,
+              )
               .run();
-            await upsertSubscriptionEntitlementGrant(env, {
-              projectId: subRow.project_id,
-              ownerEpicId: subRow.owner_epic_id,
-              subscriptionId: subRow.id,
-              planVersionId: subRow.plan_version_id as PlanVersionId,
-              status: "past_due",
-              periodStartMs: subRow.current_period_start,
-              periodEndMs: subRow.current_period_end,
-              graceUntilMs,
-              reason: `Payment failed; grace active until ${new Date(graceUntilMs).toISOString()}`,
-            });
-            await queueBillingNotification(
-              env,
-              subRow.owner_epic_id,
-              "Action required: payment failed for your egdata subscription",
-              `Your latest subscription payment failed. Paid capacity remains available during the ${BILLING_POLICY_DEFAULTS.gracePeriodDays}-day grace period until ${new Date(graceUntilMs).toUTCString()}. Please update your payment method in the Billing Portal.`,
-            );
+            if ((updateResult.meta?.changes ?? 1) > 0) {
+              await upsertSubscriptionEntitlementGrant(env, {
+                projectId: subRow.project_id,
+                ownerEpicId: subRow.owner_epic_id,
+                subscriptionId: subRow.id,
+                planVersionId: subRow.plan_version_id as PlanVersionId,
+                status: "past_due",
+                periodStartMs: subRow.current_period_start,
+                periodEndMs: subRow.current_period_end,
+                graceUntilMs,
+                reason: `Payment failed; grace active until ${new Date(graceUntilMs).toISOString()}`,
+              });
+              await queueBillingNotification(
+                env,
+                subRow.owner_epic_id,
+                "Action required: payment failed for your egdata subscription",
+                `Your latest subscription payment failed. Paid capacity remains available during the ${BILLING_POLICY_DEFAULTS.gracePeriodDays}-day grace period until ${new Date(graceUntilMs).toUTCString()}. Please update your payment method in the Billing Portal.`,
+              );
+            }
           }
         }
         break;

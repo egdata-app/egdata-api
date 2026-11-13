@@ -926,4 +926,196 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
     });
     expect(okCheckout.status).toBe(200);
   });
+
+  it("ignores stale invoice.payment_failed and invoice.paid events older than last_event_created", async () => {
+    const h = await createBillingHarness();
+    const baseSec = Math.floor(Date.now() / 1000);
+
+    const coRes = await h.dashFetch("/_dashboard/api/billing/checkout", {
+      method: "POST",
+      body: {
+        projectId: "prj_1",
+        planId: "pro",
+        termsVersion: "1.0",
+        withdrawalAcknowledged: true,
+      },
+    });
+    const { subscriptionId } = (await coRes.json()) as {
+      subscriptionId: string;
+    };
+
+    await h.sendWebhook({
+      id: "evt_order_completed",
+      type: "checkout.session.completed",
+      livemode: false,
+      created: baseSec + 100,
+      data: {
+        object: {
+          id: "cs_test_001",
+          subscription: "sub_stripe_001",
+          metadata: {
+            ownerEpicId: "owner_1",
+            projectId: "prj_1",
+            localSubscriptionId: subscriptionId,
+            planVersionId: "pro-v1",
+            environment: "test",
+          },
+        },
+      },
+    });
+
+    // Newer invoice.paid succeeds at baseSec + 200
+    h.setLiveSub({
+      status: "active",
+      latest_invoice: "in_new_paid",
+    });
+    await h.sendWebhook({
+      id: "evt_new_paid",
+      type: "invoice.paid",
+      livemode: false,
+      created: baseSec + 200,
+      data: {
+        object: {
+          id: "in_new_paid",
+          subscription: "sub_stripe_001",
+        },
+      },
+    });
+
+    // Delayed invoice.payment_failed from baseSec + 150 must NOT mark subscription past_due
+    const staleFailRes = await h.sendWebhook({
+      id: "evt_stale_fail",
+      type: "invoice.payment_failed",
+      livemode: false,
+      created: baseSec + 150,
+      data: {
+        object: {
+          id: "in_old_failed",
+          subscription: "sub_stripe_001",
+        },
+      },
+    });
+    expect(staleFailRes.status).toBe(200);
+
+    const subAfterStaleFail = h.sqlite
+      .prepare(
+        "SELECT status, grace_until, last_invoice_id, last_event_created FROM billing_subscriptions WHERE id = ?",
+      )
+      .get(subscriptionId) as {
+      status: string;
+      grace_until: number | null;
+      last_invoice_id: string | null;
+      last_event_created: number;
+    };
+    expect(subAfterStaleFail).toMatchObject({
+      status: "active",
+      grace_until: null,
+      last_invoice_id: "in_new_paid",
+      last_event_created: baseSec + 200,
+    });
+
+    const entAfterStaleFail = await resolveEffectiveProjectEntitlement(h.env, {
+      projectId: "prj_1",
+      ownerEpicId: "owner_1",
+      tier: "pro",
+      customRpm: null,
+    });
+    expect(entAfterStaleFail.status).toBe("active");
+    expect(entAfterStaleFail.tier).toBe("pro");
+
+    // Advance past grace window: reconciliation must NOT revoke paid capacity
+    vi.advanceTimersByTime(
+      (BILLING_POLICY_DEFAULTS.gracePeriodDays + 1) * 86_400_000,
+    );
+    const rec = await reconcileBillingState(h.env);
+    expect(rec.expiredGraceCount).toBe(0);
+
+    // A genuinely newer invoice.payment_failed at baseSec + 300 enters grace period
+    const freshFailRes = await h.sendWebhook({
+      id: "evt_fresh_fail",
+      type: "invoice.payment_failed",
+      livemode: false,
+      created: baseSec + 300,
+      data: {
+        object: {
+          id: "in_fresh_fail",
+          subscription: "sub_stripe_001",
+        },
+      },
+    });
+    expect(freshFailRes.status).toBe(200);
+
+    // Delayed older invoice.paid (with Stripe key and in fallback without Stripe key) must NOT clobber newer past_due
+    h.setLiveSub({ status: "active", latest_invoice: "in_stale_paid" });
+    await h.sendWebhook({
+      id: "evt_stale_paid_with_key",
+      type: "invoice.paid",
+      livemode: false,
+      created: baseSec + 250,
+      data: {
+        object: {
+          id: "in_stale_paid_1",
+          subscription: "sub_stripe_001",
+        },
+      },
+    });
+    h.env.STRIPE_SECRET_KEY = undefined;
+    await h.sendWebhook({
+      id: "evt_stale_paid_no_key",
+      type: "invoice.paid",
+      livemode: false,
+      created: baseSec + 260,
+      data: {
+        object: {
+          id: "in_stale_paid_2",
+          subscription: "sub_stripe_001",
+        },
+      },
+    });
+
+    const subAfterStalePaid = h.sqlite
+      .prepare(
+        "SELECT status, grace_until, last_invoice_id, last_event_created FROM billing_subscriptions WHERE id = ?",
+      )
+      .get(subscriptionId) as {
+      status: string;
+      grace_until: number | null;
+      last_invoice_id: string | null;
+      last_event_created: number;
+    };
+    expect(subAfterStalePaid.status).toBe("past_due");
+    expect(subAfterStalePaid.grace_until).not.toBeNull();
+    expect(subAfterStalePaid.last_invoice_id).toBe("in_fresh_fail");
+    expect(subAfterStalePaid.last_event_created).toBe(baseSec + 300);
+
+    // Newer invoice.paid in fallback mode (without STRIPE_SECRET_KEY) succeeds and advances last_event_created
+    await h.sendWebhook({
+      id: "evt_newer_paid_no_key",
+      type: "invoice.paid",
+      livemode: false,
+      created: baseSec + 400,
+      data: {
+        object: {
+          id: "in_recovered_paid",
+          subscription: "sub_stripe_001",
+        },
+      },
+    });
+    const subRecovered = h.sqlite
+      .prepare(
+        "SELECT status, grace_until, last_invoice_id, last_event_created FROM billing_subscriptions WHERE id = ?",
+      )
+      .get(subscriptionId) as {
+      status: string;
+      grace_until: number | null;
+      last_invoice_id: string | null;
+      last_event_created: number;
+    };
+    expect(subRecovered).toMatchObject({
+      status: "active",
+      grace_until: null,
+      last_invoice_id: "in_recovered_paid",
+      last_event_created: baseSec + 400,
+    });
+  });
 });
