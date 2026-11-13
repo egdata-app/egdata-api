@@ -7,6 +7,8 @@
  * while internal Cache API entries carry explicit edge TTLs.
  */
 
+import { bytesToHex } from "./crypto.js";
+
 const CACHE_KEY_ORIGIN = "https://edge-cache.egdata.internal";
 const CACHE_VERSION = "v1";
 
@@ -33,11 +35,19 @@ const V1_TTL_RULES: V1TtlRule[] = [
     ttlSeconds: HOUR,
   },
   {
+    test: /^\/v1\/offers\/[^/]+\/(?:hltb|igdb|requirements|age-rating)$/,
+    ttlSeconds: HOUR,
+  },
+  {
     test: /^\/v1\/(?:tags|search\/(?:tags|offer-types|developers|publishers)|offers\/genres|sellers)$/,
     ttlSeconds: 15 * MINUTE,
   },
   {
-    test: /^\/v1\/(?:offers\/(?:top-sellers|top-wishlisted|featured-discounts)|featured|free-games(?:\/(?:history|mobile|sellers))?)$/,
+    test: /^\/v1\/(?:offers\/[^/]+\/(?:achievements|builds|franchises|features|genres|technologies|mappings|media|related|suggestions)|sandboxes\/[^/]+\/(?:achievements|builds)|items\/[^/]+\/builds)$/,
+    ttlSeconds: 15 * MINUTE,
+  },
+  {
+    test: /^\/v1\/(?:offers(?:\/(?:top-sellers|top-wishlisted|featured-discounts))?|featured|free-games(?:\/(?:history|mobile|sellers))?|search(?:\/natural-language)?)$/,
     ttlSeconds: 5 * MINUTE,
   },
 ];
@@ -90,13 +100,47 @@ export function canonicalSearchParams(search: string): string {
   return serialized ? `?${serialized}` : "";
 }
 
+function canonicalizeJsonValue(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(canonicalizeJsonValue);
+  }
+  if (value !== null && typeof value === "object") {
+    const out: Record<string, unknown> = Object.create(null);
+    for (const key of Object.keys(value as Record<string, unknown>).sort()) {
+      out[key] = canonicalizeJsonValue((value as Record<string, unknown>)[key]);
+    }
+    return out;
+  }
+  return value;
+}
+
+async function hashPostBody(bodyBytes: ArrayBuffer): Promise<string> {
+  let payload: BufferSource = bodyBytes;
+  try {
+    const text = new TextDecoder().decode(bodyBytes);
+    const parsed = JSON.parse(text);
+    const canonical = JSON.stringify(canonicalizeJsonValue(parsed));
+    payload = new TextEncoder().encode(canonical);
+  } catch {
+    // Non-JSON body: hash raw bytes as-is.
+  }
+  const digest = await crypto.subtle.digest("SHA-256", payload);
+  return bytesToHex(new Uint8Array(digest));
+}
+
 function buildCacheLookupRequest(
   namespace: "v1" | "legacy",
   pathname: string,
   search: string,
   clientRequest: Request,
+  postBodyHash?: string,
 ): { putRequest: Request; matchRequest: Request } {
-  const url = `${CACHE_KEY_ORIGIN}/${CACHE_VERSION}/${namespace}${pathname}${canonicalSearchParams(search)}`;
+  const canonicalQuery = canonicalSearchParams(search);
+  const pathPrefix = postBodyHash ? "/post" : "";
+  const bodySuffix = postBodyHash
+    ? `${canonicalQuery ? "&" : "?"}__body=${postBodyHash}`
+    : "";
+  const url = `${CACHE_KEY_ORIGIN}/${CACHE_VERSION}/${namespace}${pathPrefix}${pathname}${canonicalQuery}${bodySuffix}`;
   const putRequest = new Request(url, { method: "GET" });
 
   const conditionalHeaders = new Headers();
@@ -122,11 +166,19 @@ export function v1EdgeCacheTtlSeconds(pathname: string): number {
   return DEFAULT_V1_TTL_SECONDS;
 }
 
+const V1_CACHEABLE_POST_PATHS = new Set([
+  "/v1/search",
+  "/v1/search/natural-language",
+]);
+
 export function isV1RequestCacheable(
   method: string,
   pathname: string,
 ): boolean {
   const upper = method.toUpperCase();
+  if (upper === "POST") {
+    return V1_CACHEABLE_POST_PATHS.has(pathname);
+  }
   if (upper !== "GET" && upper !== "HEAD") return false;
   if (pathname.endsWith("/catalog/hydrate")) return false;
   return true;
@@ -134,6 +186,14 @@ export function isV1RequestCacheable(
 
 function hasRangeCondition(request: Request): boolean {
   return request.headers.has("range") || request.headers.has("if-range");
+}
+
+function isJsonContentType(contentType: string | null): boolean {
+  if (!contentType) return false;
+  const mediaType = contentType.split(";")[0]?.trim().toLowerCase();
+  return (
+    mediaType === "application/json" || Boolean(mediaType?.endsWith("+json"))
+  );
 }
 
 function parseSharedMaxAgeSeconds(headerValue: string | null): number | null {
@@ -244,8 +304,14 @@ export async function fetchV1WithEdgeCache(options: {
 }): Promise<EdgeCacheFetchResult> {
   const { request, ctx, pathname, search, fetchUpstream } = options;
   const method = request.method.toUpperCase();
+  const isPostJsonEligible =
+    method !== "POST" || isJsonContentType(request.headers.get("content-type"));
 
-  if (!isV1RequestCacheable(method, pathname) || hasRangeCondition(request)) {
+  if (
+    !isPostJsonEligible ||
+    !isV1RequestCacheable(method, pathname) ||
+    hasRangeCondition(request)
+  ) {
     const response = await fetchUpstream(request);
     const cfStatus = response.headers.get("cf-cache-status");
     return {
@@ -255,12 +321,21 @@ export async function fetchV1WithEdgeCache(options: {
     };
   }
 
+  const isCacheablePost = method === "POST";
+  let postBodyBytes: ArrayBuffer | undefined;
+  let postBodyHash: string | undefined;
+  if (isCacheablePost) {
+    postBodyBytes = await request.arrayBuffer();
+    postBodyHash = await hashPostBody(postBodyBytes);
+  }
+
   const cache = getDefaultCache();
   const { putRequest, matchRequest } = buildCacheLookupRequest(
     "v1",
     pathname,
     search,
     request,
+    postBodyHash,
   );
 
   if (cache) {
@@ -270,7 +345,7 @@ export async function fetchV1WithEdgeCache(options: {
         if (cached.status === 304) {
           return {
             response: new Response(null, {
-              status: 304,
+              status: method === "GET" || method === "HEAD" ? 304 : 412,
               headers: cached.headers,
             }),
             cacheStatus: "REVALIDATED",
@@ -296,10 +371,19 @@ export async function fetchV1WithEdgeCache(options: {
   // When Cache API is active and we missed, fetch full GET representation without
   // conditional headers on GET so we can populate the shared edge cache for subsequent
   // callers, then evaluate client If-None-Match locally before returning.
-  const canPopulateCache = Boolean(cache && method === "GET");
-  let upstreamRequest = request;
+  const canPopulateCache = Boolean(
+    cache && (method === "GET" || isCacheablePost),
+  );
+  let upstreamRequest = isCacheablePost
+    ? new Request(request.url, {
+        method: request.method,
+        headers: request.headers,
+        body: postBodyBytes,
+      })
+    : request;
   if (
     canPopulateCache &&
+    !isCacheablePost &&
     (request.headers.has("if-none-match") ||
       request.headers.has("if-modified-since"))
   ) {
@@ -320,11 +404,13 @@ export async function fetchV1WithEdgeCache(options: {
 
   const upstreamCacheControl = upstream.headers.get("cache-control") ?? "";
   const originForbidsStore = /\bno-store\b/i.test(upstreamCacheControl);
+  const cacheableStatus =
+    upstream.status === 200 || (isCacheablePost && upstream.status === 303);
 
   if (
     canPopulateCache &&
     cache &&
-    upstream.status === 200 &&
+    cacheableStatus &&
     !originForbidsStore &&
     !upstream.headers.has("set-cookie") &&
     !upstream.headers.has("x-egdata-mitigation")
@@ -335,7 +421,7 @@ export async function fetchV1WithEdgeCache(options: {
     storedHeaders.set("Cache-Control", `public, max-age=${ttl}`);
 
     const cacheableResponse = new Response(toCache.body, {
-      status: 200,
+      status: upstream.status,
       statusText: toCache.statusText,
       headers: storedHeaders,
     });
@@ -353,7 +439,7 @@ export async function fetchV1WithEdgeCache(options: {
       await upstream.body?.cancel().catch(() => {});
       return {
         response: new Response(null, {
-          status: 304,
+          status: method === "GET" || method === "HEAD" ? 304 : 412,
           headers: upstream.headers,
         }),
         cacheStatus: "REVALIDATED",
@@ -416,7 +502,7 @@ export async function fetchLegacyWithEdgeCache(options: {
         if (cached.status === 304) {
           return {
             response: new Response(null, {
-              status: 304,
+              status: method === "GET" || method === "HEAD" ? 304 : 412,
               headers: cached.headers,
             }),
             cacheStatus: "REVALIDATED",
@@ -485,7 +571,7 @@ export async function fetchLegacyWithEdgeCache(options: {
       await upstream.body?.cancel().catch(() => {});
       return {
         response: new Response(null, {
-          status: 304,
+          status: method === "GET" || method === "HEAD" ? 304 : 412,
           headers: upstream.headers,
         }),
         cacheStatus: "REVALIDATED",

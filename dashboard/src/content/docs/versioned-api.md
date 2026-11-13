@@ -61,12 +61,12 @@ account usage. Custom requests use the enterprise tier with the approved RPM
 override. Legacy gateway requests use the same approved project RPM and account
 monthly counter.
 
-Expensive v1 operations also have shared per-project limits, evaluated in the same object and the same request:
+Expensive v1 operations also have shared per-project limits (enforced identically on equivalent legacy `/proxy` paths), evaluated in the same object and the same request. Base limits at the Free tier (`120 RPM`) scale proportionally with the project's effective RPM (`effectiveRpm / 120`, capped at the project's effective RPM):
 
-| Policy | Limit |
+| Policy | Free-tier base limit (`120 RPM`) |
 | --- | ---: |
 | `offers-list` (`GET /v1/offers`) | 5/minute |
-| `search` (`GET /v1/search`) | 300/minute |
+| `search` (`GET /v1/search`) | 120/minute (300 base, capped at effective RPM) |
 | `heavy` (images, profiles, seller detail, collection, promotion detail, natural language, query counts) | 60/minute |
 | `bulk` (launcher record resolution) | 10/minute |
 

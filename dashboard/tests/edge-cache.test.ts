@@ -246,9 +246,259 @@ describe("Worker-level post-auth edge caching", () => {
     expect(v1EdgeCacheTtlSeconds("/v1/countries")).toBe(86_400);
     expect(v1EdgeCacheTtlSeconds("/v1/sitemap.xml")).toBe(3_600);
     expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/og.webp")).toBe(3_600);
+    expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/hltb")).toBe(3_600);
+    expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/igdb")).toBe(3_600);
+    expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/requirements")).toBe(3_600);
     expect(v1EdgeCacheTtlSeconds("/v1/tags")).toBe(900);
+    expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/achievements")).toBe(900);
+    expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/builds")).toBe(900);
     expect(v1EdgeCacheTtlSeconds("/v1/offers/top-sellers")).toBe(300);
+    expect(v1EdgeCacheTtlSeconds("/v1/offers")).toBe(300);
+    expect(v1EdgeCacheTtlSeconds("/v1/search")).toBe(300);
+    expect(v1EdgeCacheTtlSeconds("/v1/search/natural-language")).toBe(300);
     expect(v1EdgeCacheTtlSeconds("/v1/offers/abc")).toBe(60);
+  });
+
+  it("edge-caches POST /v1/search (303) and POST /v1/search/natural-language (200) by canonical body hash", async () => {
+    const { caches, defaultCache } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+
+    const upstream = vi.fn(async (url: string, init?: RequestInit) => {
+      const bodyText = init?.body ? await new Response(init.body).text() : "";
+      if (url.endsWith("/v1/search")) {
+        return new Response(null, {
+          status: 303,
+          headers: {
+            Location: `https://devs.egdata.app/proxy/v1/search?q=${encodeURIComponent(bodyText)}`,
+          },
+        });
+      }
+      return new Response(
+        JSON.stringify({ data: [{ query: bodyText }], meta: {} }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
+    vi.stubGlobal("fetch", upstream);
+
+    const { env, keyA, keyB } = await createTestHarness();
+    const ctx = createExecutionContext();
+
+    // 1. POST /v1/search -> MISS, stores 303
+    const s1 = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyA.rawKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: "alan", offerType: "BASE_GAME" }),
+      }),
+      env,
+      ctx,
+      "/v1/search",
+    );
+    await ctx.flush();
+    expect(s1.status).toBe(303);
+    expect(defaultCache.put).toHaveBeenCalledTimes(1);
+
+    // 2. Identical JSON with reordered keys -> HIT
+    const s2 = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyB.rawKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ offerType: "BASE_GAME", title: "alan" }),
+      }),
+      env,
+      ctx,
+      "/v1/search",
+    );
+    expect(s2.status).toBe(303);
+    expect(upstream).toHaveBeenCalledTimes(1);
+
+    // 3. POST /v1/search/natural-language -> MISS then HIT
+    const nl1 = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyA.rawKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: "cozy farming game", topK: 5 }),
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    await ctx.flush();
+    expect(nl1.status).toBe(200);
+    expect(upstream).toHaveBeenCalledTimes(2);
+
+    const nl2 = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyB.rawKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ topK: 5, query: "cozy farming game" }),
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    expect(nl2.status).toBe(200);
+    expect(upstream).toHaveBeenCalledTimes(2);
+
+    const statuses = getLocalTelemetry()
+      .slice(-4)
+      .map((e) => e.cacheStatus);
+    expect(statuses).toEqual(["MISS", "HIT", "MISS", "HIT"]);
+  });
+
+  it("bypasses POST cache for non-JSON Content-Type and returns 412 for conditional POST If-None-Match", async () => {
+    const { caches, defaultCache } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+
+    const upstream = vi.fn(async (_url: string, init?: RequestInit) => {
+      const headers = new Headers(init?.headers);
+      if (headers.get("content-type") !== "application/json") {
+        return new Response(
+          JSON.stringify({ code: "UNSUPPORTED_MEDIA_TYPE" }),
+          {
+            status: 415,
+            headers: { "Content-Type": "application/problem+json" },
+          },
+        );
+      }
+      return new Response(JSON.stringify({ data: [{ ok: true }], meta: {} }), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          ETag: '"nl-etag-1"',
+        },
+      });
+    });
+    vi.stubGlobal("fetch", upstream);
+
+    const { env, keyA, keyB } = await createTestHarness();
+    const ctx = createExecutionContext();
+    const body = JSON.stringify({ query: "cozy farming game", topK: 5 });
+
+    // 1. Conditional POST on cache miss with matching If-None-Match -> warms cache, returns 412 (not 304)
+    const conditionalMiss = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyA.rawKey,
+          "Content-Type": "application/json",
+          "If-None-Match": '"nl-etag-1"',
+        },
+        body,
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    await ctx.flush();
+    expect(conditionalMiss.status).toBe(412);
+    expect(defaultCache.put).toHaveBeenCalledTimes(1);
+
+    // 2. Conditional POST on cache hit with matching If-None-Match -> returns 412 (not 304)
+    const conditionalHit = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyB.rawKey,
+          "Content-Type": "application/json",
+          "If-None-Match": '"nl-etag-1"',
+        },
+        body,
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    expect(conditionalHit.status).toBe(412);
+    expect(upstream).toHaveBeenCalledTimes(1);
+
+    // 3. Non-JSON Content-Type with identical body bytes -> bypasses cache and hits origin (415)
+    const nonJson = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyB.rawKey,
+          "Content-Type": "text/plain",
+        },
+        body,
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    expect(nonJson.status).toBe(415);
+    expect(upstream).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not collide POST cache keys when a JSON body includes __proto__", async () => {
+    const { caches } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+
+    const upstream = vi.fn(async (_url: string, init?: RequestInit) => {
+      const bodyText = init?.body ? await new Response(init.body).text() : "";
+      if (bodyText.includes('"__proto__"')) {
+        return new Response(JSON.stringify({ code: "BAD_REQUEST" }), {
+          status: 400,
+          headers: { "Content-Type": "application/problem+json" },
+        });
+      }
+      return new Response(JSON.stringify({ data: [{ ok: true }], meta: {} }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    });
+    vi.stubGlobal("fetch", upstream);
+
+    const { env, keyA, keyB } = await createTestHarness();
+    const ctx = createExecutionContext();
+
+    const valid = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyA.rawKey,
+          "Content-Type": "application/json",
+        },
+        body: '{"query":"cozy"}',
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    await ctx.flush();
+    expect(valid.status).toBe(200);
+    expect(upstream).toHaveBeenCalledTimes(1);
+
+    const withProto = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyB.rawKey,
+          "Content-Type": "application/json",
+        },
+        body: '{"query":"cozy","__proto__":{"x":1}}',
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    expect(withProto.status).toBe(400);
+    expect(upstream).toHaveBeenCalledTimes(2);
   });
 
   it("caches v1 GET responses across keys after auth & quota admission while keeping per-request headers private", async () => {

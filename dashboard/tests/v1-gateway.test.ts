@@ -388,6 +388,30 @@ describe("v1 Worker gateway", () => {
     vi.unstubAllGlobals();
   });
 
+  it("scales expensive-operation limits proportionally by tier and customRpm", async () => {
+    for (const [overrides, expectedOffersLimit, expectedGlobal] of [
+      [{ tier: "pro" as const }, 50, 1_200],
+      [{ tier: "enterprise" as const }, 250, 6_000],
+      [{ tier: "pro" as const, customRpm: 2_400 }, 100, 2_400],
+    ] as const) {
+      const { env, rawKey, admitCalls } = await setup(overrides);
+      vi.stubGlobal("fetch", mockUpstream());
+      await handleV1ApiProxy(
+        new Request("https://devs.egdata.app/proxy/v1/offers", {
+          headers: { "X-API-Key": rawKey },
+        }),
+        env,
+        ctx,
+        "/v1/offers",
+      );
+      expect(admitCalls[0].policies).toEqual([
+        { name: "global", limit: expectedGlobal, window: "minute" },
+        { name: "offers-list", limit: expectedOffersLimit },
+      ]);
+      vi.unstubAllGlobals();
+    }
+  });
+
   it("uses customRpm when it is valid", async () => {
     const { env, rawKey, admitCalls } = await setup({ customRpm: 450 });
     vi.stubGlobal("fetch", mockUpstream());
