@@ -92,7 +92,8 @@ for (const path of ["/", "/table"] as const) {
           ? await queryUsageTable(c.env, params)
           : await queryDashboardAnalytics(c.env, params),
       );
-    } catch {
+    } catch (error) {
+      console.error("Dashboard analytics unavailable", { path, error });
       return c.json(
         {
           error: {
