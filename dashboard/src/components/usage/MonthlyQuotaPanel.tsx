@@ -170,79 +170,10 @@ function renderPaidProjectSection({
           </div>
         )}
 
-      {dailyUsage && (
-        <div className="rounded-lg border border-epic-border bg-epic-bg/40 p-4 space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-semibold text-white">
-                Initial 14-Day Daily Cap
-              </span>
-              <Tag tone={dailyPercent >= 80 ? "warning" : "accent"}>
-                {dailyUsage.allowance.toLocaleString()} req / UTC day
-              </Tag>
-            </div>
-            <span className="text-[11px] text-epic-text-muted">
-              {dailyUntilLabel
-                ? `Unpaced monthly quota unlocks ${dailyUntilLabel} UTC`
-                : "Resets daily at 00:00 UTC"}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3">
-              <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
-                Used Today (UTC)
-              </div>
-              <div className="text-lg font-bold text-white tabular-nums mt-0.5">
-                {dailyUsage.used.toLocaleString()}
-              </div>
-            </div>
-            <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3">
-              <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
-                Remaining Today
-              </div>
-              <div className="text-lg font-bold text-white tabular-nums mt-0.5">
-                {dailyUsage.remaining.toLocaleString()}
-              </div>
-            </div>
-            <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3">
-              <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
-                Daily Limit
-              </div>
-              <div className="text-lg font-bold text-white tabular-nums mt-0.5">
-                {dailyUsage.allowance.toLocaleString()}
-              </div>
-            </div>
-            <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3">
-              <div className="text-[11px] uppercase tracking-wider text-epic-text-muted flex items-center gap-1">
-                <CalendarClock className="w-3 h-3" />
-                Next Daily Reset
-              </div>
-              <div className="text-sm font-mono font-semibold text-white mt-1">
-                {dailyUsage.resetAtIso.slice(0, 10)} 00:00Z
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <div className="h-2 rounded-full bg-epic-bg overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all ${dailyBarColor}`}
-                style={{ width: `${dailyPercent}%` }}
-              />
-            </div>
-            <div className="flex flex-wrap justify-between gap-2 text-[11px] text-epic-text-muted">
-              <span>{dailyPercent.toFixed(1)}% of today&apos;s daily cap used</span>
-              <span>Resets every UTC midnight (00:00 UTC)</span>
-            </div>
-          </div>
-        </div>
-      )}
-
       {periodUsage && (
-        <div className="space-y-3">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3">
+        <div className="border-t border-epic-border/70 pt-4 space-y-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div>
               <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
                 Period Used
               </div>
@@ -250,7 +181,7 @@ function renderPaidProjectSection({
                 {periodUsage.used.toLocaleString()}
               </div>
             </div>
-            <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3">
+            <div>
               <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
                 Remaining
               </div>
@@ -258,7 +189,7 @@ function renderPaidProjectSection({
                 {periodUsage.remaining.toLocaleString()}
               </div>
             </div>
-            <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3">
+            <div>
               <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
                 Period Allowance
               </div>
@@ -266,7 +197,7 @@ function renderPaidProjectSection({
                 {periodUsage.allowance.toLocaleString()}
               </div>
             </div>
-            <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3">
+            <div>
               <div className="text-[11px] uppercase tracking-wider text-epic-text-muted flex items-center gap-1">
                 <CalendarClock className="w-3 h-3" />
                 Billing Period Reset
@@ -276,7 +207,7 @@ function renderPaidProjectSection({
               </div>
             </div>
           </div>
-          <div className="h-2 rounded-full bg-epic-bg overflow-hidden">
+          <div className="h-1.5 rounded-full bg-epic-bg overflow-hidden">
             <div
               className={`h-full rounded-full transition-all ${
                 periodUsage.status === "exhausted"
@@ -289,19 +220,102 @@ function renderPaidProjectSection({
               style={{ width: `${periodPercent}%` }}
             />
           </div>
-          {projectBilling?.entitlement.expensivePeriodBudgets && (
-            <div className="flex flex-wrap gap-3 text-[11px] text-epic-text-muted">
+        </div>
+      )}
+
+      {dailyUsage && (
+        <div className="border-t border-epic-border/70 pt-4 space-y-2.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold text-white">
+                Initial 14-Day Daily Cap
+              </span>
+              <span className="text-[11px] font-mono text-epic-accent">
+                {dailyUsage.allowance.toLocaleString()} req / UTC day
+              </span>
+            </div>
+            <span className="text-[11px] text-epic-text-muted">
+              {dailyUntilLabel
+                ? `Unlocks full monthly quota ${dailyUntilLabel} UTC`
+                : "Resets daily at 00:00 UTC"}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
+                Used Today (UTC)
+              </div>
+              <div className="text-lg font-bold text-white tabular-nums mt-0.5">
+                {dailyUsage.used.toLocaleString()}
+              </div>
+            </div>
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
+                Remaining Today
+              </div>
+              <div className="text-lg font-bold text-white tabular-nums mt-0.5">
+                {dailyUsage.remaining.toLocaleString()}
+              </div>
+            </div>
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
+                Daily Limit
+              </div>
+              <div className="text-lg font-bold text-white tabular-nums mt-0.5">
+                {dailyUsage.allowance.toLocaleString()}
+              </div>
+            </div>
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-epic-text-muted flex items-center gap-1">
+                <CalendarClock className="w-3 h-3" />
+                Next Daily Reset
+              </div>
+              <div className="text-sm font-mono font-semibold text-white mt-1">
+                {dailyUsage.resetAtIso.slice(0, 10)} 00:00Z
+              </div>
+            </div>
+          </div>
+
+          <div className="h-1.5 rounded-full bg-epic-bg overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all ${dailyBarColor}`}
+              style={{ width: `${dailyPercent}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {(projectBilling?.entitlement.expensivePeriodBudgets ||
+        projectBilling?.entitlement.expensiveMinuteLimits) && (
+        <div className="border-t border-epic-border/70 pt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-[11px] text-epic-text-muted font-mono">
+          {projectBilling.entitlement.expensiveMinuteLimits && (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span className="font-sans uppercase tracking-wider text-[10px]">
+                Minute caps:
+              </span>
+              {Object.entries(
+                projectBilling.entitlement.expensiveMinuteLimits,
+              ).map(([key, limit]) => (
+                <span key={key}>
+                  {key}: {limit.toLocaleString()}/min
+                </span>
+              ))}
+            </div>
+          )}
+          {projectBilling.entitlement.expensivePeriodBudgets && periodUsage && (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span className="font-sans uppercase tracking-wider text-[10px]">
+                Period budgets:
+              </span>
               {Object.entries(
                 projectBilling.entitlement.expensivePeriodBudgets,
               ).map(([key, cap]) => {
                 const usedCount =
                   periodUsage.policyCounts?.[`${key}-period`] ?? 0;
                 return (
-                  <span
-                    key={key}
-                    className="rounded border border-epic-border bg-epic-bg/50 px-2 py-0.5 font-mono"
-                  >
-                    {key}: {usedCount.toLocaleString()} / {cap.toLocaleString()}
+                  <span key={key}>
+                    {key}: {usedCount.toLocaleString()}/{cap.toLocaleString()}
                   </span>
                 );
               })}
@@ -395,7 +409,7 @@ export function MonthlyQuotaPanel({
     return () => document.removeEventListener("visibilitychange", onVisible);
   }, [refresh]);
 
-  if (!hasFreeProject && selectedIsPaid && !monthly?.used) {
+  if (selectedIsPaid && selectedProject && !hasFreeProject) {
     return renderPaidProjectSection({
       selectedProject,
       projectBilling,
