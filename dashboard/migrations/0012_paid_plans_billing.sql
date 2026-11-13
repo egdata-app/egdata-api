@@ -298,7 +298,8 @@ CREATE INDEX IF NOT EXISTS idx_entitlement_grants_active
   ON entitlement_grants(project_id, revision DESC, created_at DESC)
   WHERE revoked_at IS NULL;
 
--- Backfill existing manual/grandfathered projects explicitly so they are never treated as Stripe subscriptions.
+-- Backfill existing paid/manual projects explicitly so they are never treated as Stripe subscriptions.
+-- Free projects with custom_rpm stay on the free-v1 calendar-month plan via evaluatePlanEntitlement.
 INSERT OR IGNORE INTO entitlement_grants (
   id, project_id, owner_epic_id, source, plan_id, plan_version_id, tier,
   rpm_limit, period_allowance, expensive_limits_json, effective_from, effective_until,
@@ -308,13 +309,13 @@ SELECT
   'grant_legacy_' || id,
   id,
   owner_epic_id,
-  CASE WHEN tier IN ('pro', 'enterprise') THEN 'manual' ELSE 'grandfathered' END,
+  'manual',
   CASE WHEN tier = 'enterprise' THEN 'enterprise' ELSE tier END,
   'manual-custom',
   tier,
   COALESCE(
     custom_rpm,
-    CASE WHEN tier = 'enterprise' THEN 6000 WHEN tier = 'pro' THEN 1200 ELSE 120 END
+    CASE WHEN tier = 'enterprise' THEN 6000 ELSE 1200 END
   ),
   NULL,
   '{}',
@@ -323,9 +324,9 @@ SELECT
   1,
   NULL,
   'migration_0012',
-  'Existing non-free or custom grant preserved from pre-billing model'
+  'Existing non-free grant preserved from pre-billing model'
 FROM projects
-WHERE tier IN ('pro', 'enterprise') OR custom_rpm IS NOT NULL;
+WHERE tier IN ('pro', 'enterprise');
 
 -- Durable idempotent webhook inbox.
 CREATE TABLE IF NOT EXISTS stripe_event_inbox (

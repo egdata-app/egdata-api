@@ -418,8 +418,16 @@ export async function resolveEffectiveProjectEntitlement(
     grantSource: grant.source as GrantSource,
     revision: grant.revision,
     rpmLimit: grant.rpm_limit,
-    periodAllowance: grant.period_allowance,
-    periodType: grant.period_allowance ? "billing_period" : "unlimited",
+    periodAllowance:
+      grant.tier === "free"
+        ? (grant.period_allowance ?? FREE_MONTHLY_ALLOWANCE)
+        : grant.period_allowance,
+    periodType:
+      grant.tier === "free"
+        ? "calendar_month"
+        : grant.period_allowance
+          ? "billing_period"
+          : "unlimited",
     periodStart: grant.effective_from,
     periodEnd: grant.effective_until,
     initialDailyLimit: manualDailyLimit,

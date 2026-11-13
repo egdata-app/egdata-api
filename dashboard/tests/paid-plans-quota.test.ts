@@ -240,8 +240,8 @@ async function createPaidPlansHarness(options?: {
 }
 
 describe("0012 migration & Phase B paid-plans foundations", () => {
-  it("applies 0001..0012 with foreign keys ON, backfills grandfathered grants, and supports scale tier", () => {
-    const { sqlite } = sqliteD1();
+  it("applies 0001..0012 with foreign keys ON, backfills grandfathered grants, and supports scale tier", async () => {
+    const { db, sqlite } = sqliteD1();
     sqlite.exec("PRAGMA foreign_keys = ON");
     const files = readdirSync("migrations")
       .filter((file) => file.endsWith(".sql"))
@@ -255,6 +255,7 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
           INSERT INTO projects(id, owner_epic_id, name, slug, tier, custom_rpm)
           VALUES
             ('p_free', 'owner_1', 'Free', 'free', 'free', NULL),
+            ('p_free_custom', 'owner_1', 'Free Custom RPM', 'free-custom', 'free', 300),
             ('p_pro', 'owner_1', 'Legacy Pro', 'legacy-pro', 'pro', 1200),
             ('p_ent', 'owner_1', 'Legacy Ent', 'legacy-ent', 'enterprise', 8000);
           INSERT INTO limit_requests(id, owner_epic_id, project_id, contact_email, requested_tier, requested_rpm, expected_monthly_requests, use_case)
@@ -279,7 +280,7 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
       { version_id: "scale-v1", rpm_limit: 600, period_allowance: 1_000_000, price_eur_cents: 1_900 },
     ]);
 
-    // Existing manual/grandfathered rows backfilled into entitlement_grants
+    // Existing paid manual rows backfilled into entitlement_grants; free custom_rpm stays on free-v1
     const grants = sqlite
       .prepare(
         "SELECT project_id, source, tier, rpm_limit FROM entitlement_grants ORDER BY project_id ASC",
@@ -289,6 +290,28 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
       { project_id: "p_ent", source: "manual", tier: "enterprise", rpm_limit: 8000 },
       { project_id: "p_pro", source: "manual", tier: "pro", rpm_limit: 1200 },
     ]);
+
+    const freeCustomEnt = await resolveEffectiveProjectEntitlement(
+      {
+        DB: db,
+        COMMERCIAL_PLAN_LIMITS_ENABLED: "true",
+      } as unknown as DashboardEnv,
+      {
+        projectId: "p_free_custom",
+        ownerEpicId: "owner_1",
+        tier: "free",
+        customRpm: 300,
+      },
+    );
+    expect(freeCustomEnt).toMatchObject({
+      tier: "free",
+      planId: "free",
+      planVersionId: "free-v1",
+      rpmLimit: 300,
+      periodAllowance: 100_000,
+      periodType: "calendar_month",
+      entitlements: [...PLAN_VERSIONS["free-v1"].entitlements],
+    });
 
     // CHECK constraints accept 'scale' on projects, api_keys, and limit_requests
     sqlite.exec(`
