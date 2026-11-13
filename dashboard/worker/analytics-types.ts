@@ -75,6 +75,7 @@ export interface AnalyticsDashboardSummary {
   totals: UsageMetrics;
   previous: UsageMetrics | null;
   timeseries: Array<UsageMetrics & { bucket: string }>;
+  quotaTimeseries?: Array<{ bucket: string; requests: number }>;
   endpoints: UsageRow[];
   projects: UsageRow[];
   keys: UsageRow[];

@@ -40,13 +40,18 @@ const series = {
 export function buildUsageChartPoints(
   data: Pick<
     AnalyticsDashboardSummary,
-    "start" | "end" | "bucketMinutes" | "timeseries"
+    "start" | "end" | "bucketMinutes" | "timeseries" | "quotaTimeseries"
   >,
   cumulative = false,
 ) {
   const buckets = new Map(
     data.timeseries.map((p) => [Date.parse(p.bucket), p]),
   );
+  const quotaBuckets = data.quotaTimeseries
+    ? new Map(
+        data.quotaTimeseries.map((p) => [Date.parse(p.bucket), p.requests]),
+      )
+    : null;
   const bucketMs = data.bucketMinutes * 60_000;
   const times: number[] = [];
   for (
@@ -58,11 +63,15 @@ export function buildUsageChartPoints(
   }
   let cumulativeRequests = 0;
   let cumulativeCacheHits = 0;
+  let cumulativeQuotaRequests = 0;
   return times.map((time) => {
     const p = buckets.get(time);
     if (cumulative) {
       cumulativeRequests += p?.requests ?? 0;
       cumulativeCacheHits += p?.cacheHits ?? 0;
+      if (quotaBuckets) {
+        cumulativeQuotaRequests += quotaBuckets.get(time) ?? 0;
+      }
     }
     return {
       time,
@@ -70,6 +79,8 @@ export function buildUsageChartPoints(
       // latency lines from joining across unobserved periods.
       requests: cumulative ? cumulativeRequests : (p?.requests ?? null),
       cacheHits: cumulative ? cumulativeCacheHits : (p?.cacheHits ?? null),
+      quotaRequests:
+        cumulative && quotaBuckets ? cumulativeQuotaRequests : null,
       rateLimited: p?.rateLimited ?? null,
       otherErrors: p ? Math.max(0, p.errors - p.rateLimited) : null,
       avgLatencyMs: p?.requests ? p.avgLatencyMs : null,
@@ -96,9 +107,19 @@ export function UsageChart({
 }) {
   const [hidden, setHidden] = useState<string[]>([]);
   const chartId = useId();
-  const definitions = series[kind];
   const isCumulative = cumulative && kind === "traffic";
-  const hasLimit = kind === "traffic" && typeof limit === "number" && limit > 0;
+  const hasQuotaSeries = isCumulative && Array.isArray(data.quotaTimeseries);
+  const definitions = hasQuotaSeries
+    ? [
+        ...series.traffic,
+        {
+          key: "quotaRequests",
+          name: "Free quota usage",
+          color: colors.warning,
+        },
+      ]
+    : series[kind];
+  const hasLimit = hasQuotaSeries && typeof limit === "number" && limit > 0;
   const title =
     kind === "traffic"
       ? isCumulative
@@ -273,7 +294,8 @@ export function UsageChart({
               )}
               {definitions.map((s) =>
                 kind === "latency" ||
-                (kind === "traffic" && s.key === "cacheHits") ? (
+                (kind === "traffic" &&
+                  (s.key === "cacheHits" || s.key === "quotaRequests")) ? (
                   <Line
                     key={s.key}
                     dataKey={s.key}
@@ -307,9 +329,11 @@ export function UsageChart({
       )}
       <p className="text-[11px] text-epic-text-muted mt-3">
         {kind === "traffic"
-          ? isCumulative
-            ? "Cumulative totals for the ongoing month. Cached responses are included in total requests."
-            : "Cached responses are included in total requests."
+          ? hasQuotaSeries
+            ? "Cumulative totals for the ongoing month. Free quota usage counts admitted free-project requests against the monthly limit."
+            : isCumulative
+              ? "Cumulative totals for the ongoing month. Cached responses are included in total requests."
+              : "Cached responses are included in total requests."
           : kind === "errors"
             ? "429s are separated from other errors to avoid double counting."
             : "Intervals without requests have no processing-time value."}{" "}

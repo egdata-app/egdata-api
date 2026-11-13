@@ -329,12 +329,23 @@ adminManagementRoutes.get("/users/:userId/analytics", async (c) => {
     parsed.data === "month"
       ? (end.getTime() - monthStart) / 3600_000
       : Number(parsed.data);
+  const freeProjects =
+    parsed.data === "month"
+      ? await c.env.DB.prepare(
+          "SELECT id FROM projects WHERE owner_epic_id=? AND tier='free'",
+        )
+          .bind(ownerEpicId)
+          .all<{ id: string }>()
+      : null;
   try {
     return c.json(
       await queryDashboardAnalytics(c.env, {
         ownerEpicId,
         hours,
         end: end.toISOString(),
+        ...(freeProjects
+          ? { quotaProjectIds: freeProjects.results.map((p) => p.id) }
+          : {}),
       }),
     );
   } catch (error) {

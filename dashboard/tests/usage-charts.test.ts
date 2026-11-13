@@ -45,5 +45,26 @@ describe("buildUsageChartPoints", () => {
     const points = buildUsageChartPoints(baseData, true);
     expect(points.map((p) => p.requests)).toEqual([0, 120, 120, 200]);
     expect(points.map((p) => p.cacheHits)).toEqual([0, 40, 40, 100]);
+    expect(points.map((p) => p.quotaRequests)).toEqual([
+      null,
+      null,
+      null,
+      null,
+    ]);
+  });
+
+  it("accumulates admitted free-project quotaRequests separately when quotaTimeseries is provided", () => {
+    const points = buildUsageChartPoints(
+      {
+        ...baseData,
+        quotaTimeseries: [
+          { bucket: "2026-11-02T00:00:00.000Z", requests: 90 },
+          { bucket: "2026-11-04T00:00:00.000Z", requests: 30 },
+        ],
+      },
+      true,
+    );
+    expect(points.map((p) => p.requests)).toEqual([0, 120, 120, 200]);
+    expect(points.map((p) => p.quotaRequests)).toEqual([0, 90, 90, 120]);
   });
 });
