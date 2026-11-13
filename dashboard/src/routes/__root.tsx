@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { ProfileNavigation } from "../components/AccountPage";
+import { AffiliationDisclaimerModal } from "../components/AffiliationDisclaimerModal";
 import { AccountMenu } from "../components/DeveloperAccount";
 import { EgdataLogo, EpicGamesIcon } from "../components/icons/BrandIcons";
 import { Button } from "../components/ui/Button";
@@ -42,6 +43,7 @@ function RootLayout() {
   return (
     <DashboardAuthProvider>
       <DashboardShell />
+      <AffiliationDisclaimerModal />
       <AppToastRegion />
     </DashboardAuthProvider>
   );
