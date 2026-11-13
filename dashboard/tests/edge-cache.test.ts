@@ -445,6 +445,62 @@ describe("Worker-level post-auth edge caching", () => {
     expect(upstream).toHaveBeenCalledTimes(2);
   });
 
+  it("does not collide POST cache keys when a JSON body includes __proto__", async () => {
+    const { caches } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+
+    const upstream = vi.fn(async (_url: string, init?: RequestInit) => {
+      const bodyText = init?.body ? await new Response(init.body).text() : "";
+      if (bodyText.includes('"__proto__"')) {
+        return new Response(JSON.stringify({ code: "BAD_REQUEST" }), {
+          status: 400,
+          headers: { "Content-Type": "application/problem+json" },
+        });
+      }
+      return new Response(JSON.stringify({ data: [{ ok: true }], meta: {} }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    });
+    vi.stubGlobal("fetch", upstream);
+
+    const { env, keyA, keyB } = await createTestHarness();
+    const ctx = createExecutionContext();
+
+    const valid = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyA.rawKey,
+          "Content-Type": "application/json",
+        },
+        body: '{"query":"cozy"}',
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    await ctx.flush();
+    expect(valid.status).toBe(200);
+    expect(upstream).toHaveBeenCalledTimes(1);
+
+    const withProto = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyB.rawKey,
+          "Content-Type": "application/json",
+        },
+        body: '{"query":"cozy","__proto__":{"x":1}}',
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    expect(withProto.status).toBe(400);
+    expect(upstream).toHaveBeenCalledTimes(2);
+  });
+
   it("caches v1 GET responses across keys after auth & quota admission while keeping per-request headers private", async () => {
     const { caches, defaultCache } = createMockCacheStorage();
     vi.stubGlobal("caches", caches);
