@@ -3377,6 +3377,58 @@
   "records": [
     {
       "record": {
+        "id": "anonymous-catalog-edge-cache",
+        "recordedDate": "2026-11-13",
+        "title": "Cache anonymous country, tag and genre reads at the edge",
+        "endpoints": [
+          {
+            "apiVersion": "legacy",
+            "operationId": "listCountries",
+            "method": "GET",
+            "path": "/countries",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Anonymous country reads always forwarded upstream, despite an existing 24-hour CDN freshness policy.",
+            "after": "After the existing anonymous-access decision, eligible GET/HEAD requests use the Worker cache with the origin's 24-hour CDN TTL. Hits avoid the origin and its per-request checks. Query strings and Origin variants remain distinct, browser/CDN freshness and CORS headers are preserved, and cookies, user authorization, session tokens and ranges bypass caching. Only shareable successful responses are stored; API-key access checks and response schemas are unchanged. Requires Worker deployment.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "legacyGet_tags_803dea8c",
+            "method": "GET",
+            "path": "/tags",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Anonymous tag reads always forwarded upstream, despite an existing one-hour CDN freshness policy.",
+            "after": "After the existing anonymous-access decision, eligible GET/HEAD requests use the Worker cache with the origin's one-hour CDN TTL. Hits avoid the origin and its per-request checks. The group filter and all other query parameters remain in the cache key, with separate Origin variants preserving CORS. Browser/CDN freshness headers are preserved; cookies, user authorization, session tokens, ranges and non-shareable responses bypass caching. API-key access checks and response schemas are unchanged. Requires Worker deployment.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "listOfferGenres",
+            "method": "GET",
+            "path": "/offers/genres",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Anonymous genre reads always forwarded upstream, repeating genre and localized recent-game queries despite an existing one-hour CDN freshness policy.",
+            "after": "After the existing anonymous-access decision, eligible GET/HEAD requests use the Worker cache with the origin's one-hour CDN TTL. Hits avoid the origin and its per-request checks. Locale and all other query parameters remain in the cache key, with separate Origin variants preserving CORS. Browser/CDN freshness headers are preserved; cookies, user authorization, session tokens, ranges and non-shareable responses bypass caching. API-key access checks and response schemas are unchanged. Requires Worker deployment.",
+            "clientAction": "None"
+          }
+        ],
+        "verification": [
+          "dashboard/tests/edge-cache.test.ts",
+          "dashboard/tests/origin-proxy.test.ts",
+          "dashboard/tests/analytics.test.ts",
+          "pnpm dashboard:typecheck",
+          "pnpm docs:check",
+          "pnpm release:check --base origin/main"
+        ]
+      },
+      "contentHash": "12527b9891243efbea31fd096355b090ccd95992cb7a2a1a4ab4fd7220a0a163",
+      "source": "changes/records/anonymous-catalog-edge-cache.json"
+    },
+    {
+      "record": {
         "id": "fix-container-startup",
         "recordedDate": "2026-11-13",
         "title": "Fix container startup after Aikido removal",

@@ -203,6 +203,266 @@ afterEach(() => {
 });
 
 describe("Worker-level post-auth edge caching", () => {
+  it.each([
+    ["/countries", 86400, 3600],
+    ["/tags?group=genre", 3600, 300],
+    ["/offers/genres?locale=es-ES", 3600, 300],
+  ])("caches anonymous %s using origin TTLs and preserves public headers", async (path, ttl, browserTtl) => {
+    const { caches, defaultCache, store } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+    const headers = {
+      "Cache-Control": `public, max-age=${browserTtl}, s-maxage=${ttl}`,
+      "CDN-Cache-Control": `public, max-age=${ttl}`,
+      "Access-Control-Allow-Origin": "https://egdata.app",
+      "Access-Control-Allow-Credentials": "true",
+      "Access-Control-Expose-Headers": "ETag, X-Route-Template",
+      Vary: "Accept-Encoding, Origin",
+      ETag: '"public-v1"',
+      "CF-Cache-Status": "DYNAMIC",
+    };
+    const upstream = vi.fn(async () => Response.json({ path }, { headers }));
+    vi.stubGlobal("fetch", upstream);
+    const { env } = await createTestHarness();
+    env.REQUIRE_API_KEY = "false";
+    const ctx = createExecutionContext();
+    const call = (method = "GET", extra: Record<string, string> = {}) =>
+      handleEdgeApiProxy(
+        new Request(`https://api.egdata.app${path}`, {
+          method,
+          headers: { Origin: "https://egdata.app", ...extra },
+        }),
+        env,
+        ctx,
+      );
+
+    const first = await call();
+    await ctx.flush();
+    const second = await call();
+    expect(await second.json()).toEqual(await first.json());
+    for (const name of Object.keys(headers)) {
+      expect(second.headers.get(name)).toBe(first.headers.get(name));
+    }
+    expect(second.headers.has("x-egdata-cache-public-headers")).toBe(false);
+    expect(upstream).toHaveBeenCalledTimes(1);
+    expect(defaultCache.put).toHaveBeenCalledTimes(1);
+    expect([...store.values()][0].response.headers.get("cache-control")).toBe(
+      `public, max-age=${ttl}`,
+    );
+    expect(
+      getLocalTelemetry()
+        .slice(-2)
+        .map((e) => [e.projectId, e.cacheStatus]),
+    ).toEqual([
+      ["__legacy_unattributed__", "MISS"],
+      ["__legacy_unattributed__", "HIT"],
+    ]);
+
+    const head = await call("HEAD");
+    expect(await head.text()).toBe("");
+    expect(head.status).toBe(200);
+    const conditional = await call("GET", { "If-None-Match": '"public-v1"' });
+    expect(conditional.status).toBe(304);
+    expect(conditional.headers.get("cdn-cache-control")).toBe(
+      headers["CDN-Cache-Control"],
+    );
+    expect(upstream).toHaveBeenCalledTimes(1);
+
+    for (const entry of store.values()) entry.expiresAt = Date.now() - 1;
+    await call();
+    expect(upstream).toHaveBeenCalledTimes(2);
+    await ctx.flush();
+  });
+
+  it("keeps anonymous query and Origin variants separate, including denied CORS origins", async () => {
+    const { caches } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+    const upstream = vi.fn(async (url: string, init: RequestInit) => {
+      const origin = new Headers(init.headers).get("origin");
+      return Response.json(
+        { query: new URL(url).search },
+        {
+          headers: {
+            "Cache-Control": "public, max-age=300",
+            Vary: "Origin",
+            ...(origin === "https://egdata.app"
+              ? { "Access-Control-Allow-Origin": origin }
+              : {}),
+          },
+        },
+      );
+    });
+    vi.stubGlobal("fetch", upstream);
+    const { env } = await createTestHarness();
+    env.REQUIRE_API_KEY = "false";
+    const ctx = createExecutionContext();
+    for (const path of [
+      "/tags?group=genre",
+      "/tags?group=platform",
+      "/offers/genres?locale=en-US",
+      "/offers/genres?locale=es-ES",
+    ]) {
+      for (const origin of [
+        "https://egdata.app",
+        "https://untrusted.example",
+        "",
+      ]) {
+        for (let i = 0; i < 2; i++) {
+          const response = await handleEdgeApiProxy(
+            new Request(`https://api.egdata.app${path}`, {
+              headers: origin ? { Origin: origin } : {},
+            }),
+            env,
+            ctx,
+          );
+          await ctx.flush();
+          expect(await response.json()).toEqual({
+            query: new URL(`https://api.egdata.app${path}`).search,
+          });
+          expect(response.headers.get("access-control-allow-origin")).toBe(
+            origin === "https://egdata.app" ? origin : null,
+          );
+        }
+      }
+    }
+    expect(upstream).toHaveBeenCalledTimes(12);
+  });
+
+  it("preserves access checks and bypasses credentials, ranges, other routes and unsafe responses", async () => {
+    const { caches, defaultCache } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+    const upstream = vi.fn(async () =>
+      Response.json(
+        {},
+        {
+          headers: {
+            "Cache-Control": "public, max-age=3600",
+          },
+        },
+      ),
+    );
+    vi.stubGlobal("fetch", upstream);
+    const { env } = await createTestHarness();
+    const ctx = createExecutionContext();
+    const call = (path = "/countries", init: RequestInit = {}) =>
+      handleEdgeApiProxy(
+        new Request(`https://api.egdata.app${path}`, init),
+        env,
+        ctx,
+      );
+
+    // First-party exception still works when keys are required.
+    await call("/countries", { headers: { Origin: "https://egdata.app" } });
+    await ctx.flush();
+    expect(defaultCache.put).toHaveBeenCalledTimes(1);
+    expect((await call()).status).toBe(401);
+    expect(
+      (await call("/countries", { headers: { "X-API-Key": "egk_invalid" } }))
+        .status,
+    ).toBe(401);
+    expect(defaultCache.match).toHaveBeenCalledTimes(1);
+    env.REQUIRE_API_KEY = "false";
+    await call();
+    await ctx.flush();
+    defaultCache.match.mockClear();
+    defaultCache.put.mockClear();
+
+    const privateRequestHeaders: Record<string, string>[] = [
+      { Cookie: "session=private" },
+      { Authorization: "Bearer user-jwt" },
+      { "X-Egdata-Session": "private" },
+      { Range: "bytes=0-1" },
+      { "If-Range": '"etag"' },
+    ];
+    for (const headers of privateRequestHeaders) {
+      await call("/countries", { headers });
+    }
+    for (const method of ["OPTIONS", "POST"])
+      await call("/countries", { method });
+    await call("/free-games");
+    expect(defaultCache.match).not.toHaveBeenCalled();
+    expect(defaultCache.put).not.toHaveBeenCalled();
+
+    for (const [index, response] of [
+      new Response("error", { status: 500 }),
+      new Response("private", {
+        headers: { "Cache-Control": "private, no-store" },
+      }),
+      new Response("cookie", {
+        headers: {
+          "Cache-Control": "public, max-age=300",
+          "Set-Cookie": "session=x",
+        },
+      }),
+      new Response("mitigation", {
+        headers: {
+          "Cache-Control": "public, max-age=300",
+          "X-Egdata-Mitigation": "challenge",
+        },
+      }),
+      new Response("vary", {
+        headers: {
+          "Cache-Control": "public, max-age=300",
+          Vary: "Accept-Language",
+        },
+      }),
+    ].entries()) {
+      upstream.mockImplementationOnce(async () => response);
+      await call(`/tags?case=${index}`);
+      await ctx.flush();
+    }
+    expect(defaultCache.put).not.toHaveBeenCalled();
+  });
+
+  it("isolates anonymous entries from key-authenticated responses and falls back on cache errors", async () => {
+    const { caches, defaultCache } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+    const upstream = vi.fn(async () =>
+      Response.json(
+        {},
+        {
+          headers: {
+            "Cache-Control": "public, max-age=300",
+            Vary: "Origin",
+          },
+        },
+      ),
+    );
+    vi.stubGlobal("fetch", upstream);
+    const { env, keyA } = await createTestHarness();
+    env.REQUIRE_API_KEY = "false";
+    const ctx = createExecutionContext();
+    const call = (headers: Record<string, string> = {}) =>
+      handleEdgeApiProxy(
+        new Request("https://api.egdata.app/tags", {
+          headers: { Origin: "https://untrusted.example", ...headers },
+        }),
+        env,
+        ctx,
+      );
+    const authenticated = await call({ "X-API-Key": keyA.rawKey });
+    await ctx.flush();
+    expect(authenticated.headers.get("access-control-allow-origin")).toBe(
+      "https://untrusted.example",
+    );
+    const anonymous = await call();
+    await ctx.flush();
+    expect(upstream).toHaveBeenCalledTimes(2);
+    expect(anonymous.headers.has("access-control-allow-origin")).toBe(false);
+    expect((await call()).headers.has("access-control-allow-origin")).toBe(
+      false,
+    );
+    expect(upstream).toHaveBeenCalledTimes(2);
+
+    defaultCache.match.mockRejectedValueOnce(new Error("cache unavailable"));
+    defaultCache.put.mockRejectedValueOnce(new Error("storage unavailable"));
+    expect((await call()).status).toBe(200);
+    await ctx.flush();
+    expect(upstream).toHaveBeenCalledTimes(3);
+    vi.stubGlobal("caches", undefined);
+    expect((await call()).status).toBe(200);
+    expect(upstream).toHaveBeenCalledTimes(4);
+  });
+
   it("canonicalizes distinct query keys without reordering repeated values", () => {
     expect(canonicalSearchParams("?locale=en-US&country=US")).toBe(
       canonicalSearchParams("?country=US&locale=en-US"),

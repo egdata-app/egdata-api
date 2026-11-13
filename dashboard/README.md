@@ -41,6 +41,19 @@ reserved telemetry identity that is visible only in admin global scope. A suppli
 key on a bypassed route is not verified and does not establish attribution.
 Collection starts with deployment; previously unrecorded hits cannot be backfilled.
 
+Anonymous GET/HEAD requests to `/countries`, `/tags`, and `/offers/genres` use
+the Worker Cache API after the existing anonymous-access decision. Successful
+public responses use their origin CDN TTL (currently 24 hours for countries and
+one hour for tags/genres). Cache keys retain all query parameters, including tag
+`group` and genres `locale`, and partition by request Origin to preserve the
+origin's CORS allowlist. Anonymous entries are isolated from authenticated entries;
+cache hits restore the original browser/CDN cache headers and CORS headers.
+Cookies, user JWTs, session tokens, ranges, non-GET/HEAD requests, error responses,
+mitigations, Set-Cookie, and non-shareable response policies bypass storage or
+lookup as appropriate. Unsupported Vary dimensions also prevent storage.
+Worker hits/misses are recorded under Unattributed legacy traffic, even when the
+origin's CF-Cache-Status was DYNAMIC.
+
 Private session-authenticated reporting endpoints (outside the public API
 OpenAPI/operation registry):
 
