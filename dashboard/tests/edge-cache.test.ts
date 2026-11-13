@@ -1,4 +1,6 @@
+import { Hono } from "hono";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { edgeCacheHeaders } from "../../src/middlewares/edge-cache.js";
 import { getLocalTelemetry } from "../worker/analytics";
 import { generateApiKeySecret, sha256Hex } from "../worker/crypto";
 import {
@@ -203,10 +205,67 @@ afterEach(() => {
 });
 
 describe("Worker-level post-auth edge caching", () => {
+  it("uses the new origin freshness policies and excludes cookie-varying homepage responses", async () => {
+    const { caches, defaultCache } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+    const origin = new Hono();
+    origin.use("*", edgeCacheHeaders);
+    origin.get("/autocomplete", (c) => c.json({ elements: [], total: 0 }));
+    origin.get("/stats/homepage", (c) => c.json({ offers: 1 }));
+    const upstream = vi.fn(async (url: string, init: RequestInit) =>
+      origin.request(url, init),
+    );
+    vi.stubGlobal("fetch", upstream);
+    const { env } = await createTestHarness();
+    env.REQUIRE_API_KEY = "false";
+    const ctx = createExecutionContext();
+    for (const [path, ttl] of [
+      ["/autocomplete?query=game", 60],
+      ["/stats/homepage?country=US", 300],
+    ] as const) {
+      for (let i = 0; i < 2; i++) {
+        const response = await handleEdgeApiProxy(
+          new Request(`https://api.egdata.app${path}`),
+          env,
+          ctx,
+        );
+        await ctx.flush();
+        expect(response.headers.get("cache-control")).toBe(
+          `public, max-age=60, s-maxage=${ttl}`,
+        );
+        expect(response.headers.get("cdn-cache-control")).toBe(
+          `public, max-age=${ttl}`,
+        );
+      }
+    }
+    expect(upstream).toHaveBeenCalledTimes(2);
+    expect(defaultCache.put).toHaveBeenCalledTimes(2);
+    for (let i = 0; i < 2; i++) {
+      const response = await handleEdgeApiProxy(
+        new Request("https://api.egdata.app/stats/homepage"),
+        env,
+        ctx,
+      );
+      await ctx.flush();
+      expect(response.headers.get("vary")).toContain("Cookie");
+    }
+    expect(upstream).toHaveBeenCalledTimes(4);
+    expect(defaultCache.put).toHaveBeenCalledTimes(2);
+  });
+
   it.each([
     ["/countries", 86400, 3600],
     ["/tags?group=genre", 3600, 300],
     ["/offers/genres?locale=es-ES", 3600, 300],
+    ["/offers/abc/tops", 300, 60],
+    ["/offers/abc/assets", 300, 60],
+    ["/offers/abc/price?country=ES", 300, 60],
+    ["/offers/top-sellers?locale=es-ES&page=1&limit=10", 3600, 300],
+    ["/free-games?country=ES&locale=es-ES&expand=true", 300, 60],
+    ["/free-games/stats?country=ES", 86400, 3600],
+    ["/search/v2/search?country=US&query=game&page=1", 300, 60],
+    ["/stats/homepage?country=US", 300, 60],
+    ["/autocomplete?query=game&locale=en-US&limit=5", 60, 60],
   ])("caches anonymous %s using origin TTLs and preserves public headers", async (path, ttl, browserTtl) => {
     const { caches, defaultCache, store } = createMockCacheStorage();
     vi.stubGlobal("caches", caches);
@@ -295,12 +354,31 @@ describe("Worker-level post-auth edge caching", () => {
     const { env } = await createTestHarness();
     env.REQUIRE_API_KEY = "false";
     const ctx = createExecutionContext();
-    for (const path of [
+    const paths = [
       "/tags?group=genre",
       "/tags?group=platform",
       "/offers/genres?locale=en-US",
       "/offers/genres?locale=es-ES",
-    ]) {
+      "/offers/abc/tops",
+      "/offers/def/tops",
+      "/offers/abc/assets",
+      "/offers/def/assets",
+      "/offers/abc/price?country=US",
+      "/offers/abc/price?country=ES",
+      "/offers/top-sellers?locale=en-US&page=1&limit=5",
+      "/offers/top-sellers?locale=es-ES&page=2&limit=10&expand=true",
+      "/free-games?country=US&locale=en-US",
+      "/free-games?country=ES&locale=es-ES&expand=true",
+      "/free-games/stats?country=US",
+      "/free-games/stats?country=ES",
+      "/search/v2/search?query=game&country=US&page=1",
+      "/search/v2/search?query=other&country=ES&page=2&sortBy=title",
+      "/stats/homepage?country=US",
+      "/stats/homepage?country=ES",
+      "/autocomplete?query=game&locale=en-US&limit=5",
+      "/autocomplete?query=other&locale=es-ES&limit=10",
+    ];
+    for (const path of paths) {
       for (const origin of [
         "https://egdata.app",
         "https://untrusted.example",
@@ -324,7 +402,7 @@ describe("Worker-level post-auth edge caching", () => {
         }
       }
     }
-    expect(upstream).toHaveBeenCalledTimes(12);
+    expect(upstream).toHaveBeenCalledTimes(paths.length * 3);
   });
 
   it("preserves access checks and bypasses credentials, ranges, other routes and unsafe responses", async () => {
@@ -378,7 +456,17 @@ describe("Worker-level post-auth edge caching", () => {
     }
     for (const method of ["OPTIONS", "POST"])
       await call("/countries", { method });
-    await call("/free-games");
+    for (const path of [
+      "/offers/abc/reviews",
+      "/offers/abc/ownership",
+      "/offers/abc/price/fairness",
+      "/offers/abc/tops/extra",
+      "/offers/abc/nested/assets",
+      "/free-games/history",
+      "/search/natural-language",
+      "/graphql",
+    ])
+      await call(path);
     expect(defaultCache.match).not.toHaveBeenCalled();
     expect(defaultCache.put).not.toHaveBeenCalled();
 
@@ -410,6 +498,58 @@ describe("Worker-level post-auth edge caching", () => {
       await call(`/tags?case=${index}`);
       await ctx.flush();
     }
+    expect(defaultCache.put).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "/offers/abc/tops",
+    "/offers/abc/assets",
+    "/offers/abc/price?country=US",
+    "/offers/top-sellers",
+    "/free-games?country=US",
+    "/free-games/stats?country=US",
+    "/search/v2/search?query=game",
+    "/stats/homepage?country=US",
+    "/autocomplete?query=game",
+  ])("bypasses warm anonymous %s entries for credentials, ranges and writes", async (path) => {
+    const { caches, defaultCache } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+    const upstream = vi.fn(async () =>
+      Response.json(
+        {},
+        {
+          headers: { "Cache-Control": "public, max-age=300" },
+        },
+      ),
+    );
+    vi.stubGlobal("fetch", upstream);
+    const { env } = await createTestHarness();
+    env.REQUIRE_API_KEY = "false";
+    const ctx = createExecutionContext();
+    const call = (init: RequestInit = {}) =>
+      handleEdgeApiProxy(
+        new Request(`https://api.egdata.app${path}`, init),
+        env,
+        ctx,
+      );
+    await call();
+    await ctx.flush();
+    expect(defaultCache.put).toHaveBeenCalledOnce();
+    defaultCache.match.mockClear();
+    defaultCache.put.mockClear();
+    const cases: RequestInit[] = [
+      { headers: { Cookie: "EGDATA_COUNTRY=ES" } },
+      { headers: { Authorization: "Bearer user-jwt" } },
+      { headers: { "X-Egdata-Session": "session" } },
+      { headers: { Range: "bytes=0-1" } },
+      { headers: { "If-Range": '"etag"' } },
+      { method: "POST" },
+      { method: "OPTIONS" },
+    ];
+    for (const init of cases) await call(init);
+    await ctx.flush();
+    expect(upstream).toHaveBeenCalledTimes(cases.length + 1);
+    expect(defaultCache.match).not.toHaveBeenCalled();
     expect(defaultCache.put).not.toHaveBeenCalled();
   });
 

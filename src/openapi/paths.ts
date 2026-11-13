@@ -11,6 +11,41 @@ import {
 import type { EgdataPaths } from "./types.js";
 
 const pagination = [parameterRef("page"), parameterRef("limit")];
+const publicCachedJsonResponse = (
+  schema: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject,
+  edgeTtl: number,
+  cookieCountry = false,
+): Record<number, OpenAPIV3.ResponseObject> => ({
+  200: {
+    description: "Successful response.",
+    headers: {
+      "Cache-Control": {
+        description:
+          "Consistent browser and shared freshness on fresh and Redis-cached responses.",
+        schema: {
+          type: "string",
+          example: `public, max-age=60, s-maxage=${edgeTtl}`,
+        },
+      },
+      "CDN-Cache-Control": {
+        description: "Shared-cache freshness for eligible public responses.",
+        schema: { type: "string", example: `public, max-age=${edgeTtl}` },
+      },
+      Vary: {
+        description: cookieCountry
+          ? "Includes Cookie when country is omitted, preventing Worker shared caching of cookie-selected countries. Supply country explicitly for edge caching."
+          : "Varies by content encoding and the request Origin used for CORS.",
+        schema: {
+          type: "string",
+          example: cookieCountry
+            ? "Accept-Encoding, Cookie, Origin"
+            : "Accept-Encoding, Origin",
+        },
+      },
+    },
+    content: { "application/json": jsonContent(schema) },
+  },
+});
 const localizedPagination = [
   parameterRef("locale"),
   parameterRef("expand"),
@@ -600,23 +635,28 @@ export const paths: EgdataPaths = {
       operationId: "autocompleteOffers",
       tags: ["Catalog"],
       summary: "Autocomplete offer titles",
+      description:
+        "Eligible anonymous GET/HEAD requests may be served by the gateway edge cache for 60 seconds, keyed by the full query string and Origin. Query, limit and locale variants remain distinct. Cookies, user authorization and session tokens bypass the Worker cache. Successful responses advertise 60-second browser and CDN freshness on both fresh and Redis-cached results.",
       parameters: [
         stringQuery("query", "Search text to autocomplete.", "civilization"),
         parameterRef("limit"),
         parameterRef("locale"),
       ],
-      response: {
-        type: "object",
-        required: ["elements", "total"],
-        additionalProperties: false,
-        properties: {
-          elements: {
-            type: "array",
-            items: ref("Offer"),
+      response: publicCachedJsonResponse(
+        {
+          type: "object",
+          required: ["elements", "total"],
+          additionalProperties: false,
+          properties: {
+            elements: {
+              type: "array",
+              items: ref("Offer"),
+            },
+            total: { type: "integer" },
           },
-          total: { type: "integer" },
         },
-      },
+        60,
+      ),
     }),
   },
   "/sales": {
@@ -2105,7 +2145,18 @@ export const paths: EgdataPaths = {
       operationId: "getHomepageStats",
       tags: ["Stats"],
       summary: "Get statistics used on the egdata.app homepage",
-      response: ref("StatsResponse"),
+      description:
+        "Country defaults to the EGDATA_COUNTRY cookie, then US; unknown countries return 404. Successful responses advertise 60-second browser and five-minute CDN freshness on both fresh and Redis-cached results. Eligible anonymous GET/HEAD requests with an explicit country may use the gateway edge cache. When country is omitted, Vary includes Cookie and the Worker cache is bypassed. Cookies, user authorization and session tokens also bypass Worker caching.",
+      parameters: [
+        parameterRef("country"),
+        {
+          name: "EGDATA_COUNTRY",
+          in: "cookie",
+          schema: { type: "string" },
+          description: "Fallback country when country is omitted.",
+        },
+      ],
+      response: publicCachedJsonResponse(ref("StatsResponse"), 300, true),
     }),
   },
   "/stats/releases/monthly": {

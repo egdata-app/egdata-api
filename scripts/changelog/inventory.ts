@@ -66,6 +66,50 @@ export function resolveLocal(
   ].find((f) => files.has(f));
 }
 
+const NON_SHARED_INDEX_TARGETS = new Set([
+  "src/catalog/resolver.ts",
+  "src/graphql/index.ts",
+  "src/graphql/loaders.ts",
+  "src/graphql/persisted-queries.ts",
+  "src/middlewares/apollo.ts",
+  "src/openapi/index.ts",
+  "src/routes/auth.ts",
+]);
+
+function isTypeOnlyImport(node: ts.ImportDeclaration): boolean {
+  const clause = node.importClause;
+  if (!clause) return false;
+  if (clause.isTypeOnly) return true;
+  if (clause.name) return false;
+  if (clause.namedBindings && ts.isNamedImports(clause.namedBindings)) {
+    return (
+      clause.namedBindings.elements.length > 0 &&
+      clause.namedBindings.elements.every((e) => e.isTypeOnly)
+    );
+  }
+  return false;
+}
+
+function isTypeOnlyExport(node: ts.ExportDeclaration): boolean {
+  if (node.isTypeOnly) return true;
+  if (node.exportClause && ts.isNamedExports(node.exportClause)) {
+    return (
+      node.exportClause.elements.length > 0 &&
+      node.exportClause.elements.every((e) => e.isTypeOnly)
+    );
+  }
+  return false;
+}
+
+function isTypePosition(node: ts.Node): boolean {
+  let curr: ts.Node | undefined = node.parent;
+  while (curr) {
+    if (ts.isTypeNode(curr) || ts.isImportClause(curr)) return true;
+    curr = curr.parent;
+  }
+  return false;
+}
+
 export function dependencies(files: Snapshot): Map<string, Set<string>> {
   const graph = new Map<string, Set<string>>();
   for (const [file, content] of files) {
@@ -77,11 +121,43 @@ export function dependencies(files: Snapshot): Map<string, Set<string>> {
       ts.ScriptTarget.Latest,
       true,
     );
+    const bindingTargets = new Map<string, string>();
+    const mountedRouteArgs = new Set<ts.Identifier>();
+    const nonMountedUsedBindings = new Set<string>();
+
     function visit(node: ts.Node) {
       if (
-        (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+        ts.isImportDeclaration(node) &&
         node.moduleSpecifier &&
         ts.isStringLiteral(node.moduleSpecifier)
+      ) {
+        if (!isTypeOnlyImport(node)) {
+          const target = resolveLocal(files, file, node.moduleSpecifier.text);
+          if (target) {
+            const clause = node.importClause;
+            if (!clause) {
+              deps.add(target);
+            } else {
+              if (clause.name) bindingTargets.set(clause.name.text, target);
+              if (clause.namedBindings) {
+                if (ts.isNamespaceImport(clause.namedBindings)) {
+                  bindingTargets.set(clause.namedBindings.name.text, target);
+                } else if (ts.isNamedImports(clause.namedBindings)) {
+                  for (const e of clause.namedBindings.elements) {
+                    if (!e.isTypeOnly) bindingTargets.set(e.name.text, target);
+                  }
+                }
+              }
+            }
+          }
+        }
+        return;
+      }
+      if (
+        ts.isExportDeclaration(node) &&
+        node.moduleSpecifier &&
+        ts.isStringLiteral(node.moduleSpecifier) &&
+        !isTypeOnlyExport(node)
       ) {
         const target = resolveLocal(files, file, node.moduleSpecifier.text);
         if (target) deps.add(target);
@@ -97,9 +173,72 @@ export function dependencies(files: Snapshot): Map<string, Set<string>> {
           if (target) deps.add(target);
         }
       }
+      if (
+        ts.isCallExpression(node) &&
+        ts.isPropertyAccessExpression(node.expression) &&
+        node.expression.name.text === "route" &&
+        node.arguments.length >= 2 &&
+        ts.isIdentifier(node.arguments[1])
+      ) {
+        mountedRouteArgs.add(node.arguments[1]);
+      }
       ts.forEachChild(node, visit);
     }
     visit(tree);
+
+    function collectUsages(node: ts.Node) {
+      if (ts.isImportDeclaration(node)) return;
+      if (
+        ts.isIdentifier(node) &&
+        !mountedRouteArgs.has(node) &&
+        !isTypePosition(node)
+      ) {
+        const parent = node.parent;
+        const isPropertyKey =
+          (ts.isPropertyAccessExpression(parent) && parent.name === node) ||
+          (ts.isPropertyAssignment(parent) && parent.name === node);
+        if (!isPropertyKey && bindingTargets.has(node.text)) {
+          nonMountedUsedBindings.add(node.text);
+        }
+      }
+      ts.forEachChild(node, collectUsages);
+    }
+    collectUsages(tree);
+
+    const mountedBindingNames = new Set(
+      [...mountedRouteArgs].map((id) => id.text),
+    );
+    const bindingsByTarget = new Map<string, string[]>();
+    for (const [binding, target] of bindingTargets) {
+      const list = bindingsByTarget.get(target) ?? [];
+      list.push(binding);
+      bindingsByTarget.set(target, list);
+    }
+
+    for (const [target, bindings] of bindingsByTarget) {
+      const mountedOnly =
+        bindings.length > 0 &&
+        bindings.every(
+          (b) => mountedBindingNames.has(b) && !nonMountedUsedBindings.has(b),
+        );
+      if (mountedOnly) continue;
+      if (file === "src/index.ts" && NON_SHARED_INDEX_TARGETS.has(target)) {
+        continue;
+      }
+      if (
+        (file === "src/v1/router.ts" || file === "src/openapi/v1.ts") &&
+        target === "src/v1/operations/index.ts"
+      ) {
+        continue;
+      }
+      if (
+        file === "dashboard/worker/proxy.ts" &&
+        target === "dashboard/worker/v1.ts"
+      ) {
+        continue;
+      }
+      deps.add(target);
+    }
     graph.set(file, deps);
   }
   return graph;
@@ -119,101 +258,152 @@ export function closure(
   return seen;
 }
 
+/** Returns true when a TypeScript file's emitted JS (without comments or types) changed. */
+export function hasRuntimeTsChange(
+  file: string,
+  before: string | undefined,
+  after: string | undefined,
+): boolean {
+  if (before === undefined || after === undefined) return before !== after;
+  const compilerOptions: ts.CompilerOptions = {
+    module: ts.ModuleKind.ESNext,
+    target: ts.ScriptTarget.ESNext,
+    jsx: ts.JsxEmit.Preserve,
+    removeComments: true,
+  };
+  const emit = (source: string) =>
+    ts.transpileModule(source, { fileName: file, compilerOptions }).outputText;
+  return emit(before) !== emit(after);
+}
+
 /** Static discovery avoids executing the API, opening DB connections, or importing handlers. */
 export function routeInventory(files: Snapshot): Endpoint[] {
   const found = new Map<string, Endpoint>();
-  const seen = new Set<string>();
   const registered = JSON.parse(
     files.get("changes/endpoints.json") ?? "[]",
   ) as Endpoint[];
 
-  function collect(file: string, prefix: string) {
-    const key = `${file}|${prefix}`;
-    if (seen.has(key) || !files.has(file)) return;
-    seen.add(key);
-    const tree = ts.createSourceFile(
-      file,
-      files.get(file)!,
-      ts.ScriptTarget.Latest,
-      true,
-    );
+  function scanRoutes(
+    startFile: string,
+    startPrefix: string,
+    routerNames: string[],
+    allowV1: boolean,
+    onRoute: (method: string, path: string, file: string, sources?: string[]) => void,
+  ) {
+    const localSeen = new Set<string>();
+    function walk(file: string, prefix: string) {
+      const key = `${file}|${prefix}`;
+      if (localSeen.has(key) || !files.has(file)) return;
+      localSeen.add(key);
+      const tree = ts.createSourceFile(
+        file,
+        files.get(file)!,
+        ts.ScriptTarget.Latest,
+        true,
+      );
 
-    const imports = new Map<string, string>();
-    for (const node of tree.statements) {
-      if (
-        ts.isImportDeclaration(node) &&
-        ts.isStringLiteral(node.moduleSpecifier)
-      ) {
-        const target = resolveLocal(files, file, node.moduleSpecifier.text);
-        if (target && node.importClause?.name) {
-          imports.set(node.importClause.name.text, target);
-        }
-        const bindings = node.importClause?.namedBindings;
-        if (target && bindings && ts.isNamedImports(bindings)) {
-          for (const e of bindings.elements) imports.set(e.name.text, target);
+      const imports = new Map<string, string>();
+      for (const node of tree.statements) {
+        if (
+          ts.isImportDeclaration(node) &&
+          node.moduleSpecifier &&
+          ts.isStringLiteral(node.moduleSpecifier)
+        ) {
+          const target = resolveLocal(files, file, node.moduleSpecifier.text);
+          if (target && node.importClause?.name) {
+            imports.set(node.importClause.name.text, target);
+          }
+          const bindings = node.importClause?.namedBindings;
+          if (target && bindings && ts.isNamedImports(bindings)) {
+            for (const e of bindings.elements) imports.set(e.name.text, target);
+          }
         }
       }
-    }
 
-    function add(method: string, path: string) {
-      if (path.startsWith("/v1/")) return;
-      const id =
-        registered.find(
-          (e) =>
-            e.apiVersion === "legacy" &&
-            e.method === method &&
-            e.path === path &&
-            e.status === "active",
-        )?.operationId ??
-        `legacy${method[0]}${method.slice(1).toLowerCase()}${path.replace(/[^A-Za-z0-9]+/g, "_") || "Root"}_${hash(`${method} ${path}`).slice(0, 8)}`;
-      found.set(`${method} ${path}`, {
-        apiVersion: "legacy",
-        operationId: id,
-        method,
-        path,
-        sources: [file],
-        status: "active",
-      });
-    }
-
-    function visit(node: ts.Node) {
-      if (
-        ts.isCallExpression(node) &&
-        ts.isPropertyAccessExpression(node.expression)
-      ) {
+      function visit(node: ts.Node) {
         if (
-          !["app", "router"].includes(node.expression.expression.getText(tree))
+          ts.isCallExpression(node) &&
+          ts.isPropertyAccessExpression(node.expression)
         ) {
-          ts.forEachChild(node, visit);
-          return;
-        }
-        const name = node.expression.name.text;
-        const path = node.arguments[0];
-        if (path && ts.isStringLiteral(path)) {
-          if (methods.has(name)) {
-            add(name.toUpperCase(), normalize(`${prefix}/${path.text}`));
+          if (
+            !routerNames.includes(node.expression.expression.getText(tree))
+          ) {
+            ts.forEachChild(node, visit);
+            return;
           }
-          if (name === "route") {
-            const mounted = node.arguments[1];
-            if (mounted && ts.isIdentifier(mounted)) {
-              const target = imports.get(mounted.text);
-              if (target && !target.startsWith("src/v1/")) {
-                collect(target, normalize(`${prefix}/${path.text}`));
+          const name = node.expression.name.text;
+          const path = node.arguments[0];
+          if (path && ts.isStringLiteral(path)) {
+            if (methods.has(name)) {
+              const fullPath = normalize(`${prefix}/${path.text}`);
+              if (allowV1 || !fullPath.startsWith("/v1/")) {
+                onRoute(name.toUpperCase(), fullPath, file);
+              }
+            }
+            if (name === "route") {
+              const mounted = node.arguments[1];
+              if (mounted && ts.isIdentifier(mounted)) {
+                const target = imports.get(mounted.text);
+                if (target && (allowV1 || !target.startsWith("src/v1/"))) {
+                  walk(target, normalize(`${prefix}/${path.text}`));
+                }
+              }
+            }
+            if (name === "use" && path.text === "/graphql") {
+              const graphqlSources = files.has("src/graphql/index.ts")
+                ? [
+                    "src/graphql/index.ts",
+                    ...(files.has("src/graphql/loaders.ts")
+                      ? ["src/graphql/loaders.ts"]
+                      : []),
+                    ...(files.has("src/middlewares/apollo.ts")
+                      ? ["src/middlewares/apollo.ts"]
+                      : []),
+                  ]
+                : [file];
+              for (const method of ["GET", "POST"]) {
+                onRoute(method, "/graphql", file, graphqlSources);
               }
             }
           }
-          if (name === "use" && path.text === "/graphql") {
-            for (const method of ["GET", "POST"]) add(method, "/graphql");
-          }
         }
+        ts.forEachChild(node, visit);
       }
-      ts.forEachChild(node, visit);
+
+      visit(tree);
     }
 
-    visit(tree);
+    walk(startFile, startPrefix);
   }
 
-  collect("src/index.ts", "");
+  scanRoutes("src/index.ts", "", ["app", "router"], false, (method, path, file, customSources) => {
+    const id =
+      registered.find(
+        (e) =>
+          e.apiVersion === "legacy" &&
+          e.method === method &&
+          e.path === path &&
+          e.status === "active",
+      )?.operationId ??
+      `legacy${method[0]}${method.slice(1).toLowerCase()}${path.replace(/[^A-Za-z0-9]+/g, "_") || "Root"}_${hash(`${method} ${path}`).slice(0, 8)}`;
+    found.set(`${method} ${path}`, {
+      apiVersion: "legacy",
+      operationId: id,
+      method,
+      path,
+      sources: customSources ?? [file],
+      status: "active",
+    });
+  });
+
+  const v1HandlerFiles = new Map<string, string>();
+  scanRoutes("src/v1/router.ts", "/v1", ["app", "router", "v1"], true, (method, path, file) => {
+    v1HandlerFiles.set(`${method} ${path === "/v1/" ? "/v1" : path}`, file);
+  });
+
+  const discoveredSources = new Map(
+    [...found].map(([k, v]) => [k, v.sources]),
+  );
 
   // Existing classifications distinguish public/non-JSON operations from internal/account routes.
   const classificationSource = files.get("src/openapi/route-inventory.ts");
@@ -292,8 +482,19 @@ export function routeInventory(files: Snapshot): Endpoint[] {
         : rawItem;
       for (const [method, operation] of Object.entries(item)) {
         if (!methods.has(method) || !operation.operationId) continue;
-        const old = found.get(`${method.toUpperCase()} ${path}`);
-        const sources = old?.sources ?? [];
+        const routeKey = `${method.toUpperCase()} ${path}`;
+        const old = found.get(routeKey);
+        const sources = [...(old?.sources ?? [])];
+        if (version === "legacy" && !sources.length) {
+          if (
+            path === "/auth/challenge" &&
+            files.has("src/services/anti-abuse-runtime.ts")
+          ) {
+            sources.push("src/services/anti-abuse-runtime.ts");
+          } else {
+            sources.push(...(discoveredSources.get(routeKey) ?? []));
+          }
+        }
         if (version === "v1") {
           for (const [file, source] of files) {
             if (
@@ -303,10 +504,14 @@ export function routeInventory(files: Snapshot): Endpoint[] {
               sources.push(file);
             }
           }
-          // Adapters import legacy handlers transitively; retain the exact registry module too.
-          sources.push("src/v1/router.ts");
+          const handlerFile = v1HandlerFiles.get(routeKey);
+          if (handlerFile && !sources.includes(handlerFile)) {
+            sources.push(handlerFile);
+          } else if (!handlerFile && files.has("src/v1/router.ts")) {
+            sources.push("src/v1/router.ts");
+          }
         }
-        found.set(`${method.toUpperCase()} ${path}`, {
+        found.set(routeKey, {
           apiVersion: version,
           operationId: operation.operationId,
           method: method.toUpperCase(),
