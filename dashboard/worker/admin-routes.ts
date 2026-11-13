@@ -10,10 +10,13 @@ import type {
   AdminUserLimitRequest,
   AdminUserPrivacyRequest,
 } from "./admin-types.js";
-import { getAdminUsage } from "./analytics-reporting.js";
+import {
+  getAdminUsage,
+  queryDashboardAnalytics,
+} from "./analytics-reporting.js";
 import { mapApiKeyRow } from "./db.js";
 import { invalidateLocalKeyCache } from "./key-cache.js";
-import { quotaForProject } from "./project-quota.js";
+import { quotaForProject, readAccountMonthlyQuota } from "./project-quota.js";
 import { PROJECT_RECOVERY_DAYS } from "./project-retention.js";
 import type { DashboardEnv, EpicSessionUser } from "./types.js";
 
@@ -49,6 +52,18 @@ const invalid = {
   error: { code: "VALIDATION_ERROR", message: "Invalid fields or pagination." },
 };
 const missing = { error: { code: "NOT_FOUND", message: "Record not found." } };
+
+async function adminMonthlyQuota(
+  env: DashboardEnv,
+  ownerId: string,
+): Promise<AdminUserDetail["monthlyQuota"]> {
+  try {
+    return await readAccountMonthlyQuota(env, ownerId);
+  } catch {
+    console.error("Admin monthly quota unavailable", { ownerId });
+    return null;
+  }
+}
 
 // Never publish a metadata snapshot that could race a revocation or limit edit.
 async function invalidateKeys(env: DashboardEnv, keys: { key_hash: string }[]) {
@@ -260,7 +275,16 @@ adminManagementRoutes.get("/users/:userId", async (c) => {
         purgeAfter: closure?.purgeAfter ?? null,
       };
 
+  const [monthlyQuota, usage] = await Promise.all([
+    !user.closedAt &&
+    projects.some((project) => !project.deletedAt && project.tier === "free")
+      ? adminMonthlyQuota(c.env, userId)
+      : null,
+    getAdminUsage(c.env, "users", [userId]),
+  ]);
+
   const detail: AdminUserDetail = {
+    monthlyQuota,
     user,
     onboarding: {
       rolloutEnabled,
@@ -279,10 +303,55 @@ adminManagementRoutes.get("/users/:userId", async (c) => {
     projects,
     limitRequests: limitRequestsResult.results,
     privacyRequests: privacyRequestsResult.results,
-    usage: await getAdminUsage(c.env, "users", [userId]),
+    usage,
   };
 
   return c.json(detail);
+});
+
+adminManagementRoutes.get("/users/:userId/analytics", async (c) => {
+  const parsed = z
+    .enum(["month", "6", "24", "168", "720"])
+    .default("month")
+    .safeParse(c.req.query("range"));
+  if (!parsed.success) return c.json(invalid, 400);
+  const ownerEpicId = c.req.param("userId");
+  const user = await c.env.DB.prepare(
+    "SELECT epic_account_id FROM users WHERE epic_account_id=?",
+  )
+    .bind(ownerEpicId)
+    .first();
+  if (!user) return c.json(missing, 404);
+
+  const end = new Date(Math.floor(Date.now() / 1000) * 1000);
+  const monthStart = Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), 1);
+  const hours =
+    parsed.data === "month"
+      ? (end.getTime() - monthStart) / 3600_000
+      : Number(parsed.data);
+  try {
+    return c.json(
+      await queryDashboardAnalytics(c.env, {
+        ownerEpicId,
+        hours,
+        end: end.toISOString(),
+      }),
+    );
+  } catch (error) {
+    console.error("Admin user analytics unavailable", {
+      ownerId: ownerEpicId,
+      error,
+    });
+    return c.json(
+      {
+        error: {
+          code: "ANALYTICS_UNAVAILABLE",
+          message: "User analytics are temporarily unavailable. Please retry.",
+        },
+      },
+      503,
+    );
+  }
 });
 
 adminManagementRoutes.patch("/users/:userId/limits", async (c) => {

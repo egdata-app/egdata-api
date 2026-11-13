@@ -3,6 +3,7 @@ import type {
   AdminPage,
   AdminProject,
   AdminUser,
+  AdminUserAnalyticsRange,
   AdminUserDetail,
 } from "../../worker/admin-types";
 import type { AnalyticsDashboardSummary } from "../../worker/analytics";
@@ -159,6 +160,16 @@ export const dashboardClient = {
     apiFetch<AdminUserDetail>(`/admin/users/${encodeURIComponent(id)}`, {
       signal,
     }),
+
+  getAdminUserAnalytics: (
+    id: string,
+    range: AdminUserAnalyticsRange,
+    signal?: AbortSignal,
+  ) =>
+    apiFetch<AnalyticsDashboardSummary>(
+      `/admin/users/${encodeURIComponent(id)}/analytics?${new URLSearchParams({ range })}`,
+      { signal },
+    ),
 
   updateAdminProjectLimits: (
     id: string,
