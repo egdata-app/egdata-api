@@ -5,6 +5,17 @@ description: History for GET /autocomplete
 
 `GET /autocomplete` — active. Recorded dates are not deployment dates.
 
+## 2026-11-13 — Expand anonymous edge caching and normalize discovery response freshness
+
+Record: [expanded-anonymous-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/expanded-anonymous-edge-cache.json).
+
+- **legacy GET /autocomplete** (autocompleteOffers; changed; compatible)
+  - Before: Autocomplete used Redis without explicit HTTP freshness, and anonymous requests always forwarded upstream.
+  - After: Successful fresh and Redis-cached responses consistently advertise 60-second browser and CDN freshness. Eligible anonymous GET/HEAD requests use the isolated public Worker cache with query, locale, limit and all other query parameters retained, partitioned by Origin. Credential/range exclusions and non-shareable response exclusions remain in place. Hits avoid origin processing and its per-request checks. Request validation, response schemas, CORS and gateway access requirements are preserved. Requires origin and Worker deployment.
+  - Client action: None
+
+Verification: dashboard/tests/edge-cache.test.ts; dashboard/tests/legacy-analytics.test.ts; dashboard/tests/origin-proxy.test.ts; tests/middleware-edge-cache.test.ts; tests/search-route.test.ts; tests/anti-abuse.test.ts; pnpm dashboard:typecheck; pnpm docs:check; pnpm release:check --base origin/main.
+
 ## 2026-11-13 — Fix container startup after Aikido removal
 
 Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.

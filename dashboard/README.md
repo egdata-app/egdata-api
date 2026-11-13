@@ -54,6 +54,17 @@ lookup as appropriate. Unsupported Vary dimensions also prevent storage.
 Worker hits/misses are recorded under Unattributed legacy traffic, even when the
 origin's CF-Cache-Status was DYNAMIC.
 
+The follow-up allowlist also includes `/offers/:id/tops`, `/offers/:id/assets`,
+`/offers/:id/price`, `/offers/top-sellers`, `/free-games`, `/free-games/stats`,
+GET `/search/v2/search`, `/stats/homepage`, and `/autocomplete`. Offer subresource
+patterns match exactly one ID segment and one listed suffix. All country,
+locale, expansion, pagination, search and autocomplete query parameters remain
+in cache keys. Existing origin TTLs are used. Homepage stats and autocomplete
+receive consistent origin browser/CDN headers (60s/300s and 60s/60s respectively);
+deploy the origin to enable those policies. Homepage responses without an
+explicit country vary on Cookie and are not stored. POST search redirects and
+preflight requests retain their upstream behavior.
+
 Private session-authenticated reporting endpoints (outside the public API
 OpenAPI/operation registry):
 

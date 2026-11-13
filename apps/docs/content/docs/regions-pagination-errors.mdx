@@ -35,8 +35,34 @@ genres include localized recent-game previews. CORS behavior is preserved.
 Requests with cookies, user authorization, session tokens or ranges bypass this
 cache. Errors and non-shareable responses are not stored. Cache hits avoid origin
 processing, including origin rate-limit and anti-abuse checks; gateway access
-requirements are still evaluated. Other anonymous routes retain their existing
-forwarding behavior.
+requirements are still evaluated.
+
+The follow-up cache expansion adds these public GET/HEAD endpoints:
+
+| Endpoint | CDN freshness | Query variants to retain |
+| --- | --- | --- |
+| `/offers/{id}/tops` | 5 minutes | Offer ID |
+| `/offers/{id}/assets` | 5 minutes | Offer ID |
+| `/offers/{id}/price` | 5 minutes | Offer ID, country |
+| `/offers/top-sellers` | 1 hour | Locale, page, limit, expansion |
+| `/free-games` | 5 minutes | Country, locale, expansion |
+| `/free-games/stats` | 24 hours | Country |
+| GET `/search/v2/search` | 5 minutes | All search parameters |
+| `/stats/homepage` | 5 minutes | Country (explicitly supplied) |
+| `/autocomplete` | 1 minute | Query, locale, limit |
+
+All query parameters remain in cache keys; none are discarded. The credential,
+cookie and range exclusions above also apply to these endpoints. Search POST
+redirects and OPTIONS requests continue to forward upstream.
+
+After origin deployment, successful homepage statistics and autocomplete
+responses use consistent cache headers on fresh and Redis-cached results:
+browser freshness is 60 seconds, with CDN freshness of five minutes and one
+minute respectively. Supply `country` explicitly for homepage statistics:
+without it the origin can use `EGDATA_COUNTRY`, so `Vary: Cookie` prevents Worker
+shared caching. Other anonymous routes retain their existing forwarding behavior.
+The expanded gateway cache requires Worker deployment; the new headers require
+origin deployment as well.
 
 ## Rate limits
 

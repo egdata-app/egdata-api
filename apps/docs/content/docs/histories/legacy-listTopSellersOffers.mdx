@@ -5,6 +5,17 @@ description: History for GET /offers/top-sellers
 
 `GET /offers/top-sellers` — active. Recorded dates are not deployment dates.
 
+## 2026-11-13 — Expand anonymous edge caching and normalize discovery response freshness
+
+Record: [expanded-anonymous-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/expanded-anonymous-edge-cache.json).
+
+- **legacy GET /offers/top-sellers** (listTopSellersOffers; changed; compatible)
+  - Before: Anonymous top-seller requests always forwarded upstream despite the one-hour CDN policy.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker cache with the existing one-hour CDN TTL. Full query keys preserve locale, page, limit and expansion, and entries are partitioned by Origin. Hits avoid origin processing and its per-request checks. Gateway access checks, credential/range exclusions, CORS, freshness headers and response schemas are preserved. Requires Worker deployment.
+  - Client action: None
+
+Verification: dashboard/tests/edge-cache.test.ts; dashboard/tests/legacy-analytics.test.ts; dashboard/tests/origin-proxy.test.ts; tests/middleware-edge-cache.test.ts; tests/search-route.test.ts; tests/anti-abuse.test.ts; pnpm dashboard:typecheck; pnpm docs:check; pnpm release:check --base origin/main.
+
 ## 2026-11-13 — Fix container startup after Aikido removal
 
 Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.

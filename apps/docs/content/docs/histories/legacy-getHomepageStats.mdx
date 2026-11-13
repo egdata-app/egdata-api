@@ -5,6 +5,17 @@ description: History for GET /stats/homepage
 
 `GET /stats/homepage` — active. Recorded dates are not deployment dates.
 
+## 2026-11-13 — Expand anonymous edge caching and normalize discovery response freshness
+
+Record: [expanded-anonymous-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/expanded-anonymous-edge-cache.json).
+
+- **legacy GET /stats/homepage** (getHomepageStats; changed; compatible)
+  - Before: Anonymous homepage statistics always forwarded upstream. Redis hits advertised a one-hour browser TTL while freshly computed responses had no explicit cache freshness.
+  - After: Successful fresh and Redis-cached responses consistently advertise 60-second browser freshness and five-minute shared freshness. Responses without an explicit country now vary on Cookie, preserving EGDATA_COUNTRY selection and excluding those responses from Worker storage. Eligible anonymous GET/HEAD requests with an explicit country use the isolated public Worker cache. Full queries and Origin variants remain distinct; credentials, cookies and ranges bypass caching. Hits avoid origin processing and its per-request checks. Body schemas and country resolution are unchanged; existing country inputs and new cache headers are documented in OpenAPI. Requires origin and Worker deployment.
+  - Client action: None
+
+Verification: dashboard/tests/edge-cache.test.ts; dashboard/tests/legacy-analytics.test.ts; dashboard/tests/origin-proxy.test.ts; tests/middleware-edge-cache.test.ts; tests/search-route.test.ts; tests/anti-abuse.test.ts; pnpm dashboard:typecheck; pnpm docs:check; pnpm release:check --base origin/main.
+
 ## 2026-11-13 — Fix container startup after Aikido removal
 
 Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.
