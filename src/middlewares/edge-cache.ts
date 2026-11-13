@@ -12,6 +12,16 @@ const DAY = 24 * HOUR;
 
 const rules: CacheRule[] = [
   {
+    test: /^\/autocomplete$/,
+    browser: `public, max-age=${MINUTE}, s-maxage=${MINUTE}`,
+    cdn: `public, max-age=${MINUTE}`,
+  },
+  {
+    test: /^\/stats\/homepage$/,
+    browser: `public, max-age=${MINUTE}, s-maxage=${5 * MINUTE}`,
+    cdn: `public, max-age=${5 * MINUTE}`,
+  },
+  {
     test: /^\/(?:countries|regions)$/,
     browser: `public, max-age=${HOUR}, s-maxage=${DAY}, stale-while-revalidate=${DAY}`,
     cdn: `public, max-age=${DAY}, stale-while-revalidate=${7 * DAY}`,
@@ -104,7 +114,9 @@ const isSkipped = (c: Context) => {
 };
 
 const hasPrivateCacheControl = (value: string | null) =>
-  Boolean(value && /(?:^|,)\s*(?:private|no-store|no-cache)\s*(?:,|$)/i.test(value));
+  Boolean(
+    value && /(?:^|,)\s*(?:private|no-store|no-cache)\s*(?:,|$)/i.test(value),
+  );
 
 /**
  * Adds explicit shared-cache headers to public GET endpoints.
@@ -123,6 +135,18 @@ export const edgeCacheHeaders = async (c: Context, next: Next) => {
       c.res.headers.set("Vary", "Accept-Encoding");
     } else if (!/\baccept-encoding\b/i.test(vary)) {
       c.res.headers.set("Vary", `${vary}, Accept-Encoding`);
+    }
+    // The newly shared homepage response can fall back to EGDATA_COUNTRY.
+    // Require an explicit country for shared caching rather than mixing cookie
+    // variants. The Worker bypasses responses that vary on Cookie.
+    if (
+      c.req.path === "/stats/homepage" &&
+      c.req.query("country") === undefined
+    ) {
+      const current = c.res.headers.get("Vary");
+      if (!/\bcookie\b/i.test(current ?? "")) {
+        c.res.headers.set("Vary", `${current}, Cookie`);
+      }
     }
   }
 

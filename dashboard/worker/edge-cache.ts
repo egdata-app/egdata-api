@@ -1,8 +1,9 @@
 /**
- * Post-authentication, post-quota Worker edge cache using Cloudflare's Cache API.
+ * Worker edge cache using Cloudflare's Cache API.
  *
- * Caching runs strictly AFTER API key authentication, permission evaluation, and
- * quota admission so cached responses never bypass access control or rate limits.
+ * Key-authenticated caching runs AFTER authentication, permission evaluation,
+ * and quota admission. Allowlisted public routes can use an isolated anonymous
+ * cache after the gateway admits anonymous access.
  * Responses returned to clients keep private/unshared cache headers where required
  * while internal Cache API entries carry explicit edge TTLs.
  */
@@ -129,7 +130,7 @@ async function hashPostBody(bodyBytes: ArrayBuffer): Promise<string> {
 }
 
 function buildCacheLookupRequest(
-  namespace: "v1" | "legacy",
+  namespace: "v1" | "legacy" | "legacy-public",
   pathname: string,
   search: string,
   clientRequest: Request,
@@ -290,6 +291,40 @@ export type EdgeCacheFetchResult = {
   response: Response;
   cacheStatus: string;
 };
+
+// Anonymous entries retain the origin's client-facing freshness and CORS policy.
+// Their keys are partitioned by Origin and isolated from post-auth cache entries.
+const PUBLIC_HEADERS_METADATA = "x-egdata-cache-public-headers";
+const PUBLIC_RESPONSE_HEADERS = [
+  "cache-control",
+  "cdn-cache-control",
+  "cloudflare-cdn-cache-control",
+  "vary",
+  "access-control-allow-origin",
+  "access-control-allow-credentials",
+  "access-control-expose-headers",
+] as const;
+
+function restorePublicResponse(cached: Response): Response {
+  const headers = new Headers(cached.headers);
+  const values = JSON.parse(headers.get(PUBLIC_HEADERS_METADATA) ?? "null");
+  if (
+    !Array.isArray(values) ||
+    values.length !== PUBLIC_RESPONSE_HEADERS.length
+  ) {
+    throw new Error("Invalid public cache metadata");
+  }
+  PUBLIC_RESPONSE_HEADERS.forEach((name, index) => {
+    if (values[index] === null) headers.delete(name);
+    else headers.set(name, values[index]);
+  });
+  headers.delete(PUBLIC_HEADERS_METADATA);
+  return new Response(cached.body, {
+    status: cached.status,
+    statusText: cached.statusText,
+    headers,
+  });
+}
 
 /**
  * Reads from or populates Cloudflare's Cache API (`caches.default`) for v1 GET/HEAD
@@ -463,6 +498,8 @@ export async function fetchV1WithEdgeCache(options: {
 /**
  * Reads from or populates Cloudflare's Cache API (`caches.default`) for legacy
  * unversioned GET/HEAD operations after API key authentication and rate limiting.
+ * Explicitly allowlisted anonymous public routes may opt into a separate cache
+ * after the gateway's existing anonymous-access decision.
  */
 export async function fetchLegacyWithEdgeCache(options: {
   request: Request;
@@ -470,8 +507,16 @@ export async function fetchLegacyWithEdgeCache(options: {
   pathname: string;
   search: string;
   fetchUpstream: (upstreamRequest: Request) => Promise<Response>;
+  anonymousPublic?: boolean;
 }): Promise<EdgeCacheFetchResult> {
-  const { request, ctx, pathname, search, fetchUpstream } = options;
+  const {
+    request,
+    ctx,
+    pathname,
+    search,
+    fetchUpstream,
+    anonymousPublic = false,
+  } = options;
   const method = request.method.toUpperCase();
 
   if (
@@ -489,15 +534,19 @@ export async function fetchLegacyWithEdgeCache(options: {
 
   const cache = getDefaultCache();
   const { putRequest, matchRequest } = buildCacheLookupRequest(
-    "legacy",
-    pathname,
+    anonymousPublic ? "legacy-public" : "legacy",
+    anonymousPublic
+      ? `/${encodeURIComponent(request.headers.get("origin") ?? "")}${pathname}`
+      : pathname,
     search,
     request,
   );
 
   if (cache) {
     try {
-      const cached = await cache.match(matchRequest);
+      const match = await cache.match(matchRequest);
+      const cached =
+        match && anonymousPublic ? restorePublicResponse(match) : match;
       if (cached) {
         if (cached.status === 304) {
           return {
@@ -548,10 +597,25 @@ export async function fetchLegacyWithEdgeCache(options: {
   }
 
   const ttl = legacyResponseEdgeTtlSeconds(upstream);
-  if (canPopulateCache && cache && ttl !== null) {
+  const supportedVary =
+    !anonymousPublic ||
+    (upstream.headers.get("vary") ?? "")
+      .split(",")
+      .every((name) =>
+        ["", "origin", "accept-encoding"].includes(name.trim().toLowerCase()),
+      );
+  if (canPopulateCache && cache && ttl !== null && supportedVary) {
     const toCache = upstream.clone();
     const storedHeaders = stripHopHeadersForStorage(toCache.headers);
     storedHeaders.set("Cache-Control", `public, max-age=${ttl}`);
+    if (anonymousPublic) {
+      storedHeaders.set(
+        PUBLIC_HEADERS_METADATA,
+        JSON.stringify(
+          PUBLIC_RESPONSE_HEADERS.map((name) => upstream.headers.get(name)),
+        ),
+      );
+    }
 
     const cacheableResponse = new Response(toCache.body, {
       status: 200,
