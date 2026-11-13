@@ -53,7 +53,7 @@ function edgeErrorJson(
     headers["Access-Control-Allow-Origin"] = originHeader;
     headers["Access-Control-Allow-Credentials"] = "true";
     headers["Access-Control-Expose-Headers"] =
-      "Retry-After, RateLimit, RateLimit-Policy, X-Egdata-Key-Tier";
+      "Retry-After, RateLimit, RateLimit-Policy, X-RateLimit-Policy, X-Egdata-Key-Tier";
     headers.Vary = "Origin";
   }
   return new Response(

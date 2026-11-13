@@ -361,6 +361,90 @@ describe("Worker-level post-auth edge caching", () => {
     expect(statuses).toEqual(["MISS", "HIT", "MISS", "HIT"]);
   });
 
+  it("bypasses POST cache for non-JSON Content-Type and returns 412 for conditional POST If-None-Match", async () => {
+    const { caches, defaultCache } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+
+    const upstream = vi.fn(async (_url: string, init?: RequestInit) => {
+      const headers = new Headers(init?.headers);
+      if (headers.get("content-type") !== "application/json") {
+        return new Response(
+          JSON.stringify({ code: "UNSUPPORTED_MEDIA_TYPE" }),
+          {
+            status: 415,
+            headers: { "Content-Type": "application/problem+json" },
+          },
+        );
+      }
+      return new Response(JSON.stringify({ data: [{ ok: true }], meta: {} }), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          ETag: '"nl-etag-1"',
+        },
+      });
+    });
+    vi.stubGlobal("fetch", upstream);
+
+    const { env, keyA, keyB } = await createTestHarness();
+    const ctx = createExecutionContext();
+    const body = JSON.stringify({ query: "cozy farming game", topK: 5 });
+
+    // 1. Conditional POST on cache miss with matching If-None-Match -> warms cache, returns 412 (not 304)
+    const conditionalMiss = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyA.rawKey,
+          "Content-Type": "application/json",
+          "If-None-Match": '"nl-etag-1"',
+        },
+        body,
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    await ctx.flush();
+    expect(conditionalMiss.status).toBe(412);
+    expect(defaultCache.put).toHaveBeenCalledTimes(1);
+
+    // 2. Conditional POST on cache hit with matching If-None-Match -> returns 412 (not 304)
+    const conditionalHit = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyB.rawKey,
+          "Content-Type": "application/json",
+          "If-None-Match": '"nl-etag-1"',
+        },
+        body,
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    expect(conditionalHit.status).toBe(412);
+    expect(upstream).toHaveBeenCalledTimes(1);
+
+    // 3. Non-JSON Content-Type with identical body bytes -> bypasses cache and hits origin (415)
+    const nonJson = await handleV1ApiProxy(
+      new Request("https://api.egdata.app/v1/search/natural-language", {
+        method: "POST",
+        headers: {
+          "X-API-Key": keyB.rawKey,
+          "Content-Type": "text/plain",
+        },
+        body,
+      }),
+      env,
+      ctx,
+      "/v1/search/natural-language",
+    );
+    expect(nonJson.status).toBe(415);
+    expect(upstream).toHaveBeenCalledTimes(2);
+  });
+
   it("caches v1 GET responses across keys after auth & quota admission while keeping per-request headers private", async () => {
     const { caches, defaultCache } = createMockCacheStorage();
     vi.stubGlobal("caches", caches);

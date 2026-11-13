@@ -376,8 +376,12 @@ describe("administrator user and project management", () => {
       customRpm: 500,
     });
     expect(response.status).toBe(400);
-    expect(await response.json()).toMatchObject({
-      error: { code: "VALIDATION_ERROR" },
+    expect(await response.json()).toEqual({
+      error: {
+        code: "VALIDATION_ERROR",
+        message:
+          "Custom RPM overrides require pro or enterprise tier; free tier projects remain subject to the 100,000/month cap.",
+      },
     });
     expect(batch).not.toHaveBeenCalled();
     expect(env.API_KEYS_KV.delete).not.toHaveBeenCalled();

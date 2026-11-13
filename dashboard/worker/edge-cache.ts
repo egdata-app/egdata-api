@@ -188,6 +188,14 @@ function hasRangeCondition(request: Request): boolean {
   return request.headers.has("range") || request.headers.has("if-range");
 }
 
+function isJsonContentType(contentType: string | null): boolean {
+  if (!contentType) return false;
+  const mediaType = contentType.split(";")[0]?.trim().toLowerCase();
+  return (
+    mediaType === "application/json" || Boolean(mediaType?.endsWith("+json"))
+  );
+}
+
 function parseSharedMaxAgeSeconds(headerValue: string | null): number | null {
   if (!headerValue) return null;
   if (
@@ -296,8 +304,14 @@ export async function fetchV1WithEdgeCache(options: {
 }): Promise<EdgeCacheFetchResult> {
   const { request, ctx, pathname, search, fetchUpstream } = options;
   const method = request.method.toUpperCase();
+  const isPostJsonEligible =
+    method !== "POST" || isJsonContentType(request.headers.get("content-type"));
 
-  if (!isV1RequestCacheable(method, pathname) || hasRangeCondition(request)) {
+  if (
+    !isPostJsonEligible ||
+    !isV1RequestCacheable(method, pathname) ||
+    hasRangeCondition(request)
+  ) {
     const response = await fetchUpstream(request);
     const cfStatus = response.headers.get("cf-cache-status");
     return {
@@ -331,7 +345,7 @@ export async function fetchV1WithEdgeCache(options: {
         if (cached.status === 304) {
           return {
             response: new Response(null, {
-              status: 304,
+              status: method === "GET" || method === "HEAD" ? 304 : 412,
               headers: cached.headers,
             }),
             cacheStatus: "REVALIDATED",
@@ -425,7 +439,7 @@ export async function fetchV1WithEdgeCache(options: {
       await upstream.body?.cancel().catch(() => {});
       return {
         response: new Response(null, {
-          status: 304,
+          status: method === "GET" || method === "HEAD" ? 304 : 412,
           headers: upstream.headers,
         }),
         cacheStatus: "REVALIDATED",
@@ -488,7 +502,7 @@ export async function fetchLegacyWithEdgeCache(options: {
         if (cached.status === 304) {
           return {
             response: new Response(null, {
-              status: 304,
+              status: method === "GET" || method === "HEAD" ? 304 : 412,
               headers: cached.headers,
             }),
             cacheStatus: "REVALIDATED",
@@ -557,7 +571,7 @@ export async function fetchLegacyWithEdgeCache(options: {
       await upstream.body?.cancel().catch(() => {});
       return {
         response: new Response(null, {
-          status: 304,
+          status: method === "GET" || method === "HEAD" ? 304 : 412,
           headers: upstream.headers,
         }),
         cacheStatus: "REVALIDATED",

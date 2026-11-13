@@ -123,7 +123,15 @@ Zen.addHonoMiddleware(app);
 // Compress text responses at the origin. Cloudflare compresses browser traffic,
 // but the origin -> edge hop is what GCP bills; without this every JSON/XML
 // response crosses that hop uncompressed.
+// Register observeResponse outside compression so it counts encoded body bytes,
+// while skipping /v1 to keep v1 routes untouched by anonymous anti-abuse logic.
 const antiAbuse = createAntiAbuseRuntime();
+app.use("/*", async (c, next) => {
+  if (c.req.path === "/v1" || c.req.path.startsWith("/v1/")) {
+    return next();
+  }
+  return antiAbuse.observeResponse(c, next);
+});
 app.use("/*", compress({ threshold: 512 }));
 
 export { app };
@@ -144,7 +152,6 @@ app.use("/*", apiCors());
 // anonymous limits and browser challenges must not consume or block v1.
 app.route("/v1", v1Router);
 
-app.use("/*", antiAbuse.observeResponse);
 app.use("/*", antiAbuse.middleware);
 app.post("/auth/challenge", antiAbuse.challenge);
 

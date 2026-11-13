@@ -159,7 +159,18 @@ adminManagementRoutes.patch("/projects/:projectId/limits", async (c) => {
   const parsed = projectLimitsSchema.safeParse(
     await c.req.json().catch(() => null),
   );
-  if (!parsed.success) return c.json(invalid, 400);
+  if (!parsed.success) {
+    const customMessage = parsed.error.issues.find(
+      (issue) => issue.code === "custom",
+    )?.message;
+    if (customMessage) {
+      return c.json(
+        { error: { code: "VALIDATION_ERROR", message: customMessage } },
+        400,
+      );
+    }
+    return c.json(invalid, 400);
+  }
   const id = c.req.param("projectId");
   const { tier, customRpm } = parsed.data;
   const now = new Date().toISOString();

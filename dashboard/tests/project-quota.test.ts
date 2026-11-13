@@ -127,9 +127,21 @@ describe("shared project quota gateways", () => {
     for (let index = 0; index < 5; index++) {
       expect((await s.run(rawKey, "/offers")).status).toBe(200);
     }
-    const denied = await s.run(rawKey, "/offers");
+    const denied = await handleEdgeApiProxy(
+      new Request("https://devs.egdata.app/offers", {
+        headers: {
+          "x-api-key": rawKey,
+          Origin: "https://example.com",
+        },
+      }),
+      s.env,
+      s.ctx,
+    );
     expect(denied.status).toBe(429);
     expect(denied.headers.get("X-RateLimit-Policy")).toBe("offers-list");
+    expect(denied.headers.get("Access-Control-Expose-Headers")).toContain(
+      "X-RateLimit-Policy",
+    );
     // Shares the same offers-list bucket with /v1/offers
     const v1Denied = await s.run(rawKey, "/v1/offers");
     expect(v1Denied.status).toBe(429);
