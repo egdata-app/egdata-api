@@ -11,6 +11,7 @@ import {
 import {
   admitProjectRequest,
   creditAdmittedRequestUsage,
+  DAILY_POLICY_NAME,
   MONTHLY_POLICY_NAME,
   PERIOD_POLICY_NAME,
   rateLimitHeaders,
@@ -455,6 +456,7 @@ export async function handleV1ApiProxy(
 
   if (!admission.allowed) {
     const monthlyExhausted = admission.exhaustedPolicy === MONTHLY_POLICY_NAME;
+    const dailyExhausted = admission.exhaustedPolicy === DAILY_POLICY_NAME;
     const periodExhausted = admission.exhaustedPolicy === PERIOD_POLICY_NAME;
     const periodBudgetExhausted = Boolean(
       admission.exhaustedPolicy &&
@@ -475,7 +477,7 @@ export async function handleV1ApiProxy(
         cacheStatus: "EDGE_BLOCK",
         limitOutcome: monthlyExhausted
           ? "monthly_quota_exceeded"
-          : periodExhausted
+          : periodExhausted || dailyExhausted
             ? "period_quota_exceeded"
             : periodBudgetExhausted
               ? "expensive_budget_exceeded"
@@ -491,20 +493,22 @@ export async function handleV1ApiProxy(
       status: 429,
       code: monthlyExhausted
         ? "MONTHLY_QUOTA_EXCEEDED"
-        : periodExhausted
+        : periodExhausted || dailyExhausted
           ? "PERIOD_QUOTA_EXCEEDED"
           : periodBudgetExhausted
             ? "EXPENSIVE_BUDGET_EXCEEDED"
             : "RATE_LIMITED",
       detail: monthlyExhausted
         ? `The free account monthly quota of ${exhausted?.limit.toLocaleString() ?? "100,000"} requests is exhausted across all free projects, API keys, and console sessions until the first day of the next calendar month at 00:00 UTC.`
-        : periodExhausted
-          ? `The ${entitlement.planId} billing-period allowance of ${exhausted?.limit.toLocaleString() ?? ""} requests is exhausted until ${resetIso}.`
-          : periodBudgetExhausted && exhausted
-            ? `The ${exhausted.name} budget of ${exhausted.limit.toLocaleString()} requests for this period is exhausted until ${resetIso}.`
-            : exhausted
-              ? `The ${exhausted.name} quota of ${exhausted.limit} requests per 60 seconds for this project is exhausted.`
-              : "The project quota for this operation is exhausted.",
+        : dailyExhausted && exhausted
+          ? `The ${entitlement.planId} initial 14-day daily allowance of ${exhausted.limit.toLocaleString()} requests is exhausted until ${resetIso}. Full monthly pacing unlocks after your 14-day statutory withdrawal window.`
+          : periodExhausted
+            ? `The ${entitlement.planId} billing-period allowance of ${exhausted?.limit.toLocaleString() ?? ""} requests is exhausted until ${resetIso}.`
+            : periodBudgetExhausted && exhausted
+              ? `The ${exhausted.name} budget of ${exhausted.limit.toLocaleString()} requests for this period is exhausted until ${resetIso}.`
+              : exhausted
+                ? `The ${exhausted.name} quota of ${exhausted.limit} requests per 60 seconds for this project is exhausted.`
+                : "The project quota for this operation is exhausted.",
       headers: {
         ...corsFor(request),
         ...quotaHeaders,

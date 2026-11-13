@@ -60,6 +60,7 @@ export interface PublicBillingPlan {
   periodType: "calendar_month" | "billing_period";
   rpmLimit: number;
   periodAllowance: number;
+  initialDailyLimit: number | null;
   expensiveMinuteLimits: Record<"offers-list" | "search" | "heavy" | "bulk", number>;
   expensivePeriodBudgets: Record<"nl-search" | "bulk" | "image", number>;
   supportLevel: string;
@@ -73,6 +74,7 @@ export interface BillingPlansResponse {
   defaultVatRatePercent: number;
   gracePeriodDays: number;
   withdrawalWindowDays: number;
+  initialPeriodDailyLimitDays: number;
   termsVersion: string;
   plans: PublicBillingPlan[];
 }
@@ -96,6 +98,8 @@ export interface ProjectBillingSummaryResponse {
     periodType: "calendar_month" | "billing_period" | "unlimited";
     periodStart: number | null;
     periodEnd: number | null;
+    initialDailyLimit?: number | null;
+    initialDailyLimitUntil?: number | null;
     expensiveMinuteLimits: Record<string, number>;
     expensivePeriodBudgets: Record<string, number> | null;
     status: "active" | "grace" | "canceled_active" | "expired" | "revoked";
@@ -125,6 +129,17 @@ export interface ProjectBillingSummaryResponse {
     status: "ok" | "warning" | "critical" | "exhausted";
     policyCounts?: Record<string, number>;
   } | null;
+  dailyUsage: {
+    dayStart: number;
+    resetAt: number;
+    resetAtIso: string;
+    used: number;
+    remaining: number;
+    allowance: number;
+  } | null;
+  withdrawalEligible: boolean;
+  withdrawalExpiresAt: string | null;
+  selfServeCheckoutBlocked: boolean;
   grants: Array<Record<string, unknown>>;
   receipts: Array<{
     id: string;

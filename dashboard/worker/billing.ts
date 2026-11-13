@@ -10,6 +10,7 @@ import {
 import {
   readAccountMonthlyQuota,
   readProjectBillingQuota,
+  readProjectDailyQuota,
   resolveEffectiveProjectEntitlement,
   syncProjectEntitlementToLimiter,
 } from "./project-quota.js";
@@ -293,6 +294,8 @@ export function getPublicBillingPlans() {
     defaultVatRatePercent: BILLING_POLICY_DEFAULTS.defaultVatRatePercent,
     gracePeriodDays: BILLING_POLICY_DEFAULTS.gracePeriodDays,
     withdrawalWindowDays: BILLING_POLICY_DEFAULTS.withdrawalWindowDays,
+    initialPeriodDailyLimitDays:
+      BILLING_POLICY_DEFAULTS.initialPeriodDailyLimitDays,
     termsVersion: "2026-11-13",
     plans: COMMERCIAL_PUBLIC_PLANS.map((plan) => ({
       versionId: plan.versionId,
@@ -306,6 +309,7 @@ export function getPublicBillingPlans() {
       periodType: plan.periodType,
       rpmLimit: plan.rpmLimit,
       periodAllowance: plan.periodAllowance,
+      initialDailyLimit: plan.initialDailyLimit,
       expensiveMinuteLimits: plan.expensiveMinuteLimits,
       expensivePeriodBudgets: plan.expensivePeriodBudgets,
       supportLevel: plan.supportLevel,
@@ -590,6 +594,24 @@ export async function initiateSubscriptionCheckout(
       "MANUAL_GRANT_ACTIVE",
       "This project already has an explicit manual or custom capacity grant. Contact support before switching it to a self-service subscription.",
       409,
+    );
+  }
+
+  const priorWithdrawal = await env.DB.prepare(
+    `SELECT id FROM withdrawal_requests
+      WHERE owner_epic_id = ?
+        AND request_kind = 'statutory_withdrawal'
+        AND status IN ('refunded_full', 'refunded_partial')
+      LIMIT 1`,
+  )
+    .bind(params.ownerEpicId)
+    .first<{ id: string }>();
+
+  if (priorWithdrawal) {
+    throw new BillingError(
+      "WITHDRAWAL_LIMIT_REACHED",
+      "Self-service paid checkout is unavailable after a previous statutory withdrawal refund on this account. Use Request Manual / Custom Limits for custom invoicing.",
+      403,
     );
   }
 
@@ -952,6 +974,27 @@ async function upsertSubscriptionEntitlementGrant(
     .run();
 
   if (!isSuspended) {
+    const checkoutReceipt = await env.DB.prepare(
+      `SELECT withdrawal_expires_at FROM purchase_receipts
+        WHERE subscription_id = ? AND action_type = 'checkout'
+        ORDER BY accepted_at ASC LIMIT 1`,
+    )
+      .bind(params.subscriptionId)
+      .first<{ withdrawal_expires_at: number }>();
+
+    const fallbackWindowEnd =
+      params.periodStartMs +
+      BILLING_POLICY_DEFAULTS.initialPeriodDailyLimitDays * DAY_MS;
+    const rawDailyUntil =
+      checkoutReceipt?.withdrawal_expires_at ?? fallbackWindowEnd;
+    const initialDailyLimit =
+      spec.initialDailyLimit &&
+      rawDailyUntil > params.periodStartMs &&
+      rawDailyUntil > nowMs
+        ? spec.initialDailyLimit
+        : null;
+    const initialDailyLimitUntil = initialDailyLimit ? rawDailyUntil : null;
+
     await env.DB.prepare(
       `INSERT INTO entitlement_grants (
          id, project_id, owner_epic_id, source, plan_id, plan_version_id,
@@ -972,6 +1015,8 @@ async function upsertSubscriptionEntitlementGrant(
           minute: spec.expensiveMinuteLimits,
           period: spec.expensivePeriodBudgets,
           entitlements: spec.entitlements,
+          initialDailyLimit,
+          initialDailyLimitUntil,
         }),
         Math.min(nowMs, params.periodStartMs),
         params.periodEndMs,
@@ -1881,13 +1926,90 @@ export async function requestSubscriptionWithdrawal(
     .first<{ withdrawal_expires_at: number; price_eur_cents: number }>();
 
   const nowMs = Date.now();
-  const withinStatutoryWindow = receipt
-    ? nowMs <= receipt.withdrawal_expires_at
-    : true;
-  const requestKind = withinStatutoryWindow
-    ? "statutory_withdrawal"
-    : "goodwill_refund";
+  const withdrawalExpiresAt =
+    receipt?.withdrawal_expires_at ??
+    sub.current_period_start +
+      BILLING_POLICY_DEFAULTS.withdrawalWindowDays * DAY_MS;
+
+  if (nowMs > withdrawalExpiresAt) {
+    throw new BillingError(
+      "WITHDRAWAL_WINDOW_EXPIRED",
+      "The 14-day statutory withdrawal window has expired for this subscription. Use Cancel at period end to stop future renewals.",
+      409,
+    );
+  }
+
+  const requestKind = "statutory_withdrawal";
   const withdrawalId = `wdr_${crypto.randomUUID().replace(/-/g, "")}`;
+
+  let paymentIntentId: string | null = null;
+  let chargeId: string | null = null;
+  let invoiceAmountPaid: number | null = null;
+  if (sub.last_invoice_id) {
+    const inv = await retrieveStripeInvoice(env, sub.last_invoice_id);
+    paymentIntentId =
+      typeof inv.payment_intent === "string"
+        ? inv.payment_intent
+        : inv.payment_intent?.id ?? null;
+    chargeId = inv.charge ?? null;
+    invoiceAmountPaid =
+      typeof inv.amount_paid === "number" ? inv.amount_paid : null;
+  } else {
+    const live = await retrieveStripeSubscription(
+      env,
+      sub.stripe_subscription_id,
+    );
+    const latest = live.latest_invoice;
+    if (latest && typeof latest === "object") {
+      paymentIntentId =
+        typeof latest.payment_intent === "string"
+          ? latest.payment_intent
+          : latest.payment_intent?.id ?? null;
+      chargeId = latest.charge ?? null;
+    } else if (typeof latest === "string") {
+      const inv = await retrieveStripeInvoice(env, latest);
+      paymentIntentId =
+        typeof inv.payment_intent === "string"
+          ? inv.payment_intent
+          : inv.payment_intent?.id ?? null;
+      chargeId = inv.charge ?? null;
+      invoiceAmountPaid =
+        typeof inv.amount_paid === "number" ? inv.amount_paid : null;
+    }
+  }
+
+  if (!paymentIntentId && !chargeId) {
+    throw new BillingError(
+      "NO_REFUNDABLE_CHARGE",
+      "No settled Stripe payment was found to refund yet.",
+      409,
+    );
+  }
+
+  // Time-based pro rata temporis deduction (EU Directive 2011/83/EU Art. 14(3) + CJEU C-641/19).
+  const baseCents =
+    invoiceAmountPaid !== null && invoiceAmountPaid > 0
+      ? invoiceAmountPaid
+      : receipt?.price_eur_cents ?? 0;
+  const totalPeriodMs = Math.max(
+    1,
+    sub.current_period_end - sub.current_period_start,
+  );
+  const elapsedMs = Math.max(
+    0,
+    Math.min(totalPeriodMs, nowMs - sub.current_period_start),
+  );
+  const remainingMs = Math.max(0, totalPeriodMs - elapsedMs);
+  const proratedRefundCents =
+    baseCents > 0
+      ? Math.max(
+          1,
+          Math.min(
+            baseCents,
+            Math.round((baseCents * remainingMs) / totalPeriodMs),
+          ),
+        )
+      : undefined;
 
   await env.DB.prepare(
     `INSERT INTO withdrawal_requests (
@@ -1901,57 +2023,19 @@ export async function requestSubscriptionWithdrawal(
       params.projectId,
       sub.id,
       requestKind,
-      receipt?.price_eur_cents ?? null,
+      proratedRefundCents ?? receipt?.price_eur_cents ?? null,
       params.reason?.trim() || "",
       idem,
     )
     .run();
 
   try {
-    let paymentIntentId: string | null = null;
-    let chargeId: string | null = null;
-    if (sub.last_invoice_id) {
-      const inv = await retrieveStripeInvoice(env, sub.last_invoice_id);
-      paymentIntentId =
-        typeof inv.payment_intent === "string"
-          ? inv.payment_intent
-          : inv.payment_intent?.id ?? null;
-      chargeId = inv.charge ?? null;
-    } else {
-      const live = await retrieveStripeSubscription(
-        env,
-        sub.stripe_subscription_id,
-      );
-      const latest = live.latest_invoice;
-      if (latest && typeof latest === "object") {
-        paymentIntentId =
-          typeof latest.payment_intent === "string"
-            ? latest.payment_intent
-            : latest.payment_intent?.id ?? null;
-        chargeId = latest.charge ?? null;
-      } else if (typeof latest === "string") {
-        const inv = await retrieveStripeInvoice(env, latest);
-        paymentIntentId =
-          typeof inv.payment_intent === "string"
-            ? inv.payment_intent
-            : inv.payment_intent?.id ?? null;
-        chargeId = inv.charge ?? null;
-      }
-    }
-
-    if (!paymentIntentId && !chargeId) {
-      throw new BillingError(
-        "NO_REFUNDABLE_CHARGE",
-        "No settled Stripe payment was found to refund yet.",
-        409,
-      );
-    }
-
     const refund = await createStripeRefund(
       env,
       {
         paymentIntentId,
         chargeId,
+        amountCents: proratedRefundCents,
         reason: "requested_by_customer",
         metadata: {
           withdrawalId,
@@ -1970,7 +2054,7 @@ export async function requestSubscriptionWithdrawal(
     );
 
     const isFull =
-      !receipt?.price_eur_cents || refund.amount >= receipt.price_eur_cents;
+      baseCents > 0 ? refund.amount >= baseCents : true;
     const reqStatus = isFull ? "refunded_full" : "refunded_partial";
 
     await env.DB.prepare(
@@ -2224,6 +2308,42 @@ export async function getProjectBillingSummary(
     usage = await readAccountMonthlyQuota(env, ownerEpicId);
   }
 
+  let dailyUsage: unknown = null;
+  if (entitlement.initialDailyLimit && entitlement.initialDailyLimit > 0) {
+    dailyUsage = await readProjectDailyQuota(
+      env,
+      ownerEpicId,
+      project.id,
+      entitlement.initialDailyLimit,
+    );
+  }
+
+  const nowMs = Date.now();
+  const latestCheckoutReceipt = receipts.results.find(
+    (r) => typeof r.withdrawal_expires_at === "number",
+  ) as { withdrawal_expires_at?: number } | undefined;
+  const effectiveWithdrawalExpiresAt =
+    sub &&
+    ["active", "trialing", "past_due"].includes(sub.status)
+      ? (latestCheckoutReceipt?.withdrawal_expires_at ??
+        sub.current_period_start +
+          BILLING_POLICY_DEFAULTS.withdrawalWindowDays * DAY_MS)
+      : null;
+  const withdrawalEligible = Boolean(
+    effectiveWithdrawalExpiresAt !== null &&
+      nowMs <= effectiveWithdrawalExpiresAt,
+  );
+
+  const priorAccountWithdrawal = await env.DB.prepare(
+    `SELECT id FROM withdrawal_requests
+      WHERE owner_epic_id = ?
+        AND request_kind = 'statutory_withdrawal'
+        AND status IN ('refunded_full', 'refunded_partial')
+      LIMIT 1`,
+  )
+    .bind(ownerEpicId)
+    .first<{ id: string }>();
+
   return {
     project: {
       id: project.id,
@@ -2250,6 +2370,13 @@ export async function getProjectBillingSummary(
         }
       : null,
     usage,
+    dailyUsage,
+    withdrawalEligible,
+    withdrawalExpiresAt:
+      effectiveWithdrawalExpiresAt !== null
+        ? new Date(effectiveWithdrawalExpiresAt).toISOString()
+        : null,
+    selfServeCheckoutBlocked: Boolean(priorAccountWithdrawal),
     grants: grants.results,
     receipts: receipts.results,
     withdrawals: withdrawals.results,

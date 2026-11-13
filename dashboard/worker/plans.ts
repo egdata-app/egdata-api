@@ -20,6 +20,8 @@ export const BILLING_POLICY_DEFAULTS = {
   gracePeriodDays: 3,
   /** Statutory EU/Spain consumer withdrawal period from checkout completion. */
   withdrawalWindowDays: 14,
+  /** Initial subscription days where paid self-serve tiers enforce a daily pacing limit. */
+  initialPeriodDailyLimitDays: 14,
   /** Short-window automatic goodwill review threshold. */
   goodwillRefundWindowDays: 7,
   /** Usage warning percentages shown in dashboard notices. */
@@ -46,6 +48,8 @@ export interface PlanVersionSpec {
   periodType: "calendar_month" | "billing_period";
   rpmLimit: number;
   periodAllowance: number;
+  /** Daily request cap enforced during the initial 14-day withdrawal period (null when none). */
+  initialDailyLimit: number | null;
   expensiveMinuteLimits: Record<V1ExpensivePolicy, number>;
   expensivePeriodBudgets: Record<ExpensivePeriodBudgetKey, number>;
   entitlements: readonly string[];
@@ -67,6 +71,7 @@ export const PLAN_VERSIONS: Record<"free-v1" | "pro-v1" | "scale-v1", PlanVersio
     periodType: "calendar_month",
     rpmLimit: 60,
     periodAllowance: 100_000,
+    initialDailyLimit: null,
     expensiveMinuteLimits: {
       "offers-list": 5,
       search: 60,
@@ -102,6 +107,7 @@ export const PLAN_VERSIONS: Record<"free-v1" | "pro-v1" | "scale-v1", PlanVersio
     periodType: "billing_period",
     rpmLimit: 200,
     periodAllowance: 300_000,
+    initialDailyLimit: 12_000,
     expensiveMinuteLimits: {
       "offers-list": 20,
       search: 200,
@@ -138,6 +144,7 @@ export const PLAN_VERSIONS: Record<"free-v1" | "pro-v1" | "scale-v1", PlanVersio
     periodType: "billing_period",
     rpmLimit: 600,
     periodAllowance: 1_000_000,
+    initialDailyLimit: 35_000,
     expensiveMinuteLimits: {
       "offers-list": 60,
       search: 600,
@@ -178,6 +185,8 @@ export interface EffectiveProjectEntitlement {
   periodType: "calendar_month" | "billing_period" | "unlimited";
   periodStart: number | null;
   periodEnd: number | null;
+  initialDailyLimit?: number | null;
+  initialDailyLimitUntil?: number | null;
   expensiveMinuteLimits: Record<V1ExpensivePolicy, number>;
   expensivePeriodBudgets: Record<ExpensivePeriodBudgetKey, number> | null;
   entitlements: string[];
@@ -273,6 +282,8 @@ export function fallbackProjectEntitlement(options: {
       periodType: "billing_period",
       periodStart: null,
       periodEnd: null,
+      initialDailyLimit: null,
+      initialDailyLimitUntil: null,
       expensiveMinuteLimits: { ...spec.expensiveMinuteLimits },
       expensivePeriodBudgets: { ...spec.expensivePeriodBudgets },
       entitlements: [...spec.entitlements],
@@ -362,6 +373,8 @@ export function fallbackProjectEntitlement(options: {
       periodType: "billing_period",
       periodStart: null,
       periodEnd: null,
+      initialDailyLimit: null,
+      initialDailyLimitUntil: null,
       expensiveMinuteLimits: { ...spec.expensiveMinuteLimits },
       expensivePeriodBudgets: { ...spec.expensivePeriodBudgets },
       entitlements: [...spec.entitlements],
@@ -395,6 +408,8 @@ export function fallbackProjectEntitlement(options: {
     periodType: "calendar_month",
     periodStart: null,
     periodEnd: null,
+    initialDailyLimit: null,
+    initialDailyLimitUntil: null,
     expensiveMinuteLimits: commercial
       ? { ...freeSpec.expensiveMinuteLimits }
       : legacyExpensiveLimitsForProject("free", rpmLimit),

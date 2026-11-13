@@ -437,6 +437,17 @@ function RateLimitsPage() {
                         </strong>{" "}
                         global requests/minute
                       </li>
+                      {plan.initialDailyLimit !== null && (
+                        <li>
+                          • Initial {plansData.initialPeriodDailyLimitDays}-day
+                          daily cap:{" "}
+                          <strong className="text-epic-text">
+                            {plan.initialDailyLimit.toLocaleString()}
+                          </strong>{" "}
+                          requests/UTC day (unpaced quota from Day{" "}
+                          {plansData.initialPeriodDailyLimitDays + 1})
+                        </li>
+                      )}
                       <li>
                         • Budgets: NL Search{" "}
                         {plan.expensivePeriodBudgets["nl-search"].toLocaleString()}
@@ -453,6 +464,9 @@ function RateLimitsPage() {
                     <Button
                       variant="primary"
                       size="sm"
+                      isDisabled={Boolean(
+                        billingSummary?.selfServeCheckoutBlocked,
+                      )}
                       isPending={billingBusy}
                       onPress={() =>
                         void handleCheckout(plan.planId as "pro" | "scale")
@@ -495,10 +509,27 @@ function RateLimitsPage() {
             })}
           </div>
 
+          {billingSummary?.selfServeCheckoutBlocked &&
+            (!billingSummary.subscription ||
+              !["active", "trialing", "past_due"].includes(
+                billingSummary.subscription.status,
+              )) && (
+              <div className="rounded-xl border border-epic-warning/40 bg-epic-warning/10 p-3.5 text-xs text-epic-text">
+                Self-serve paid checkout is unavailable on this account because
+                a previous {plansData.withdrawalWindowDays}-day statutory
+                withdrawal refund was already issued. Use the{" "}
+                <strong className="text-white">
+                  Request Manual / Custom Limits
+                </strong>{" "}
+                form below to request manual onboarding.
+              </div>
+            )}
+
           {(!billingSummary?.subscription ||
             !["active", "trialing", "past_due"].includes(
               billingSummary.subscription.status,
-            )) && (
+            )) &&
+            !billingSummary?.selfServeCheckoutBlocked && (
             <label className="flex items-start gap-2.5 rounded-xl border border-epic-border bg-epic-bg/60 p-3.5 text-xs text-epic-text-muted cursor-pointer">
               <input
                 type="checkbox"
@@ -508,13 +539,20 @@ function RateLimitsPage() {
               />
               <span>
                 I understand subscriptions renew monthly in EUR (VAT included for
-                consumers), use hard request caps, can be canceled any time via
-                the Billing Portal, and carry a{" "}
+                consumers), use hard request caps with an initial{" "}
+                <strong className="text-epic-text">
+                  {plansData.initialPeriodDailyLimitDays}-day daily pacing cap
+                </strong>
+                , and can be canceled any time via the Billing Portal. I
+                expressly request immediate API access during the{" "}
                 <strong className="text-epic-text">
                   {plansData.withdrawalWindowDays}-day statutory withdrawal
                   period
                 </strong>{" "}
-                from checkout completion.
+                and acknowledge that withdrawing early issues a time-based{" "}
+                <strong className="text-epic-text">pro-rata refund</strong>{" "}
+                deducting elapsed subscription time and disables future
+                self-serve checkouts on this account.
               </span>
             </label>
           )}
@@ -569,6 +607,9 @@ function RateLimitsPage() {
                     {billingSummary.subscription.pendingPlanVersionId
                       ? ` · Scheduled change: ${billingSummary.subscription.pendingPlanVersionId}`
                       : ""}
+                    {billingSummary.dailyUsage
+                      ? ` · Initial ${plansData.initialPeriodDailyLimitDays}-day daily usage: ${billingSummary.dailyUsage.used.toLocaleString()} / ${billingSummary.dailyUsage.allowance.toLocaleString()} today`
+                      : ""}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -590,14 +631,14 @@ function RateLimitsPage() {
 
               {["active", "trialing", "past_due"].includes(
                 billingSummary.subscription.status,
-              ) && (
+              ) && billingSummary.withdrawalEligible ? (
                 <div className="pt-3 border-t border-epic-border flex flex-wrap items-end gap-3">
                   <div className="flex-1 min-w-56">
                     <TextField
-                      label="14-Day Withdrawal / Refund Request (optional reason)"
+                      label="14-Day Statutory Withdrawal / Pro-Rata Refund (optional reason)"
                       value={withdrawalReason}
                       onChange={setWithdrawalReason}
-                      placeholder="Request full cancellation & refund within statutory withdrawal window"
+                      placeholder="Request immediate cancellation & time-based pro-rata refund"
                     />
                   </div>
                   <Button
@@ -607,9 +648,22 @@ function RateLimitsPage() {
                     onPress={() => void handleWithdrawal()}
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    Request Withdrawal / Refund
+                    Request Withdrawal / Pro-Rata Refund
                   </Button>
                 </div>
+              ) : (
+                <p className="pt-3 border-t border-epic-border text-xs text-epic-text-muted">
+                  The {plansData.withdrawalWindowDays}-day statutory withdrawal
+                  window has ended
+                  {billingSummary.withdrawalExpiresAt
+                    ? ` (closed ${billingSummary.withdrawalExpiresAt.slice(0, 10)})`
+                    : ""}
+                  . Use{" "}
+                  <strong className="text-epic-text">
+                    Cancel at period end
+                  </strong>{" "}
+                  above to stop future renewals.
+                </p>
               )}
             </div>
           )}

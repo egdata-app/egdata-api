@@ -11,6 +11,8 @@ import {
 } from "./plans.js";
 import {
   type AdmissionResult,
+  DAILY_POLICY_NAME,
+  type DailyQuotaSummary,
   FREE_MONTHLY_ALLOWANCE,
   MONTHLY_POLICY_NAME,
   type MonthlyQuotaSummary,
@@ -28,7 +30,12 @@ import type {
 
 const QUOTA_TIMEOUT_MS = 3_000;
 
-export { FREE_MONTHLY_ALLOWANCE, MONTHLY_POLICY_NAME, PERIOD_POLICY_NAME };
+export {
+  DAILY_POLICY_NAME,
+  FREE_MONTHLY_ALLOWANCE,
+  MONTHLY_POLICY_NAME,
+  PERIOD_POLICY_NAME,
+};
 
 export const tierQuotas: Record<string, number> = {
   free: 120,
@@ -261,11 +268,15 @@ export async function resolveEffectiveProjectEntitlement(
       ? [...spec.entitlements]
       : [...PLAN_VERSIONS["pro-v1"].entitlements];
 
+    let initialDailyLimit = spec?.initialDailyLimit ?? null;
+    let initialDailyLimitUntil: number | null = null;
     try {
       const parsed = JSON.parse(grant.expensive_limits_json) as {
         minute?: Record<string, number>;
         period?: Record<string, number>;
         entitlements?: string[];
+        initialDailyLimit?: number | null;
+        initialDailyLimitUntil?: number | null;
       };
       if (parsed.minute) {
         expensiveMinuteLimits = {
@@ -285,9 +296,26 @@ export async function resolveEffectiveProjectEntitlement(
       if (Array.isArray(parsed.entitlements)) {
         entitlements = parsed.entitlements;
       }
+      if (typeof parsed.initialDailyLimit === "number" && parsed.initialDailyLimit > 0) {
+        initialDailyLimit = parsed.initialDailyLimit;
+      } else if (parsed.initialDailyLimit === null) {
+        initialDailyLimit = null;
+      }
+      if (
+        typeof parsed.initialDailyLimitUntil === "number" &&
+        Number.isFinite(parsed.initialDailyLimitUntil)
+      ) {
+        initialDailyLimitUntil = parsed.initialDailyLimitUntil;
+      }
     } catch {
       // use spec defaults
     }
+
+    const dailyCapActive =
+      initialDailyLimit !== null &&
+      initialDailyLimit > 0 &&
+      initialDailyLimitUntil !== null &&
+      nowMs < initialDailyLimitUntil;
 
     const effectiveStatus: EffectiveProjectEntitlement["status"] =
       subStatus === "past_due"
@@ -309,6 +337,8 @@ export async function resolveEffectiveProjectEntitlement(
       periodType: "billing_period",
       periodStart: subscription.current_period_start,
       periodEnd: subscription.current_period_end,
+      initialDailyLimit: dailyCapActive ? initialDailyLimit : null,
+      initialDailyLimitUntil: dailyCapActive ? initialDailyLimitUntil : null,
       expensiveMinuteLimits,
       expensivePeriodBudgets,
       entitlements,
@@ -373,6 +403,8 @@ export async function resolveEffectiveProjectEntitlement(
     periodType: grant.period_allowance ? "billing_period" : "unlimited",
     periodStart: grant.effective_from,
     periodEnd: grant.effective_until,
+    initialDailyLimit: null,
+    initialDailyLimitUntil: null,
     expensiveMinuteLimits: parsedMinute,
     expensivePeriodBudgets: parsedPeriod,
     entitlements: parsedEntitlements,
@@ -453,6 +485,19 @@ export async function admitProjectRequest(
   }
 
   if (
+    entitlement?.initialDailyLimit &&
+    entitlement.initialDailyLimit > 0 &&
+    typeof entitlement.initialDailyLimitUntil === "number" &&
+    now < entitlement.initialDailyLimitUntil
+  ) {
+    periodPolicies.push({
+      name: DAILY_POLICY_NAME,
+      limit: entitlement.initialDailyLimit,
+      window: "day",
+    });
+  }
+
+  if (
     options?.periodBudget &&
     entitlement?.expensivePeriodBudgets &&
     activePeriodStart !== null &&
@@ -514,6 +559,7 @@ export async function admitProjectRequest(
           Number.isInteger(entry.limit) &&
           entry.limit >= 1 &&
           (actualWindow === "minute" ||
+            actualWindow === "day" ||
             actualWindow === "month" ||
             actualWindow === "period") &&
           Number.isInteger(entry.remaining) &&
@@ -569,6 +615,28 @@ export async function creditAdmittedRequestUsage(
     amount: 1,
     reason: params.reason,
   });
+}
+
+export async function readProjectDailyQuota(
+  env: DashboardEnv,
+  ownerEpicId: string,
+  projectId: string,
+  allowance: number,
+): Promise<(DailyQuotaSummary & { resetAtIso: string }) | null> {
+  if (!env.API_KEY_RATE_LIMITER || !ownerEpicId || !projectId) {
+    return null;
+  }
+  const objectId = env.API_KEY_RATE_LIMITER.idFromName(
+    accountLimiterObjectName(env, ownerEpicId),
+  );
+  const stub = env.API_KEY_RATE_LIMITER.get(objectId);
+  if (typeof stub.readProjectDailyQuota !== "function") return null;
+
+  const summary = await stub.readProjectDailyQuota(projectId, allowance);
+  return {
+    ...summary,
+    resetAtIso: new Date(summary.resetAt).toISOString(),
+  };
 }
 
 export async function readProjectBillingQuota(
@@ -684,7 +752,11 @@ export function rateLimitHeaders(
       .map((policy) => {
         const windowSeconds =
           policy.windowSeconds ??
-          (policy.window === "month" ? utcMonthBounds(now).windowSeconds : 60);
+          (policy.window === "month"
+            ? utcMonthBounds(now).windowSeconds
+            : policy.window === "day"
+              ? 86_400
+              : 60);
         return `${policy.name};q=${policy.limit};w=${windowSeconds}`;
       })
       .join(", "),

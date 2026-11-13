@@ -465,13 +465,29 @@ function ProfileBillingPage() {
                     </p>
                   </div>
 
-                  {summary.usage && (
-                    <div className="text-right text-xs">
-                      <div className="text-epic-text-muted">Period usage</div>
-                      <div className="font-mono text-sm text-white tabular-nums">
-                        {summary.usage.used.toLocaleString()} /{" "}
-                        {summary.usage.allowance.toLocaleString()}
-                      </div>
+                  {(summary.usage || summary.dailyUsage) && (
+                    <div className="flex flex-wrap gap-6 text-right text-xs">
+                      {summary.dailyUsage && (
+                        <div>
+                          <div className="text-epic-text-muted">
+                            Daily usage (initial{" "}
+                            {plansData?.initialPeriodDailyLimitDays ?? 14}d cap)
+                          </div>
+                          <div className="font-mono text-sm text-white tabular-nums">
+                            {summary.dailyUsage.used.toLocaleString()} /{" "}
+                            {summary.dailyUsage.allowance.toLocaleString()}
+                          </div>
+                        </div>
+                      )}
+                      {summary.usage && (
+                        <div>
+                          <div className="text-epic-text-muted">Period usage</div>
+                          <div className="font-mono text-sm text-white tabular-nums">
+                            {summary.usage.used.toLocaleString()} /{" "}
+                            {summary.usage.allowance.toLocaleString()}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -560,28 +576,50 @@ function ProfileBillingPage() {
 
                 {!isLiveSub && !isManualGrant && plansData && (
                   <div className="space-y-3 pt-1">
-                    <label className="flex items-start gap-2.5 rounded-xl border border-epic-border bg-epic-bg/60 p-3.5 text-xs text-epic-text-muted cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={Boolean(ackByProject[summary.project.id])}
-                        onChange={(e) =>
-                          setAckByProject((prev) => ({
-                            ...prev,
-                            [summary.project.id]: e.target.checked,
-                          }))
-                        }
-                        className="mt-0.5 rounded border-epic-border"
-                      />
-                      <span>
-                        I confirm monthly recurring billing in EUR (VAT included
-                        for consumers), hard caps, and the{" "}
-                        <strong className="text-epic-text">
-                          {plansData.withdrawalWindowDays}-day statutory
-                          withdrawal right
-                        </strong>
-                        .
-                      </span>
-                    </label>
+                    {summary.selfServeCheckoutBlocked ? (
+                      <div className="rounded-xl border border-epic-warning/40 bg-epic-warning/10 p-3.5 text-xs text-epic-text">
+                        Self-serve paid checkout is unavailable on this account
+                        because a previous {plansData.withdrawalWindowDays}-day
+                        statutory withdrawal refund was already issued. Use{" "}
+                        <Link
+                          to="/limits"
+                          className="underline text-epic-accent font-medium"
+                        >
+                          Request Manual / Custom Limits
+                        </Link>{" "}
+                        to request manual onboarding.
+                      </div>
+                    ) : (
+                      <label className="flex items-start gap-2.5 rounded-xl border border-epic-border bg-epic-bg/60 p-3.5 text-xs text-epic-text-muted cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={Boolean(ackByProject[summary.project.id])}
+                          onChange={(e) =>
+                            setAckByProject((prev) => ({
+                              ...prev,
+                              [summary.project.id]: e.target.checked,
+                            }))
+                          }
+                          className="mt-0.5 rounded border-epic-border"
+                        />
+                        <span>
+                          I confirm monthly recurring billing in EUR (VAT
+                          included for consumers), hard request caps with an
+                          initial {plansData.initialPeriodDailyLimitDays}-day
+                          daily pacing limit, and expressly request immediate
+                          API access during the{" "}
+                          <strong className="text-epic-text">
+                            {plansData.withdrawalWindowDays}-day statutory
+                            withdrawal right
+                          </strong>{" "}
+                          with time-based{" "}
+                          <strong className="text-epic-text">
+                            pro-rata deduction
+                          </strong>{" "}
+                          if withdrawn early (once per account).
+                        </span>
+                      </label>
+                    )}
                     <div className="flex flex-wrap gap-2.5">
                       {plansData.plans
                         .filter((p) => p.selfServePurchasable)
@@ -592,7 +630,9 @@ function ProfileBillingPage() {
                               plan.planId === "scale" ? "secondary" : "primary"
                             }
                             size="sm"
-                            isDisabled={!canChange}
+                            isDisabled={
+                              !canChange || summary.selfServeCheckoutBlocked
+                            }
                             isPending={
                               busyKey ===
                               `checkout:${summary.project.id}:${plan.planId}`
@@ -605,7 +645,11 @@ function ProfileBillingPage() {
                             }
                           >
                             Subscribe to {plan.displayName} (EUR{" "}
-                            {(plan.priceEurCents / 100).toFixed(0)}/mo)
+                            {(plan.priceEurCents / 100).toFixed(0)}/mo
+                            {plan.initialDailyLimit
+                              ? ` · ${plan.initialDailyLimit.toLocaleString()}/day first ${plansData.initialPeriodDailyLimitDays}d`
+                              : ""}
+                            )
                           </Button>
                         ))}
                     </div>
@@ -662,25 +706,40 @@ function ProfileBillingPage() {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2.5">
-                      {withdrawalReceipt && (
+                      {summary.withdrawalEligible ? (
+                        <>
+                          {(summary.withdrawalExpiresAt ||
+                            withdrawalReceipt) && (
+                            <span className="text-xs text-epic-text-muted">
+                              14-day withdrawal open until{" "}
+                              {formatDate(
+                                summary.withdrawalExpiresAt ??
+                                  withdrawalReceipt?.withdrawal_expires_at ??
+                                  0,
+                              )}
+                            </span>
+                          )}
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onPress={() => {
+                              setWithdrawReason("");
+                              setWithdrawTarget(summary);
+                            }}
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                            14-day Withdrawal / Pro-Rata Refund
+                          </Button>
+                        </>
+                      ) : (
                         <span className="text-xs text-epic-text-muted">
-                          14-day withdrawal open until{" "}
-                          {formatDate(withdrawalReceipt.withdrawal_expires_at)}
+                          14-day withdrawal window ended
+                          {summary.withdrawalExpiresAt
+                            ? ` (${formatDate(summary.withdrawalExpiresAt)})`
+                            : ""}
+                          . Use Cancel subscription to stop renewals.
                         </span>
                       )}
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onPress={() => {
-                          setWithdrawReason("");
-                          setWithdrawTarget(summary);
-                        }}
-                      >
-                        <RotateCcw className="w-3.5 h-3.5" />
-                        {withdrawalReceipt
-                          ? "14-day Withdrawal / Refund"
-                          : "Request Cancellation & Refund"}
-                      </Button>
                     </div>
                   </div>
                 )}
@@ -807,8 +866,10 @@ function ProfileBillingPage() {
             </Heading>
             <p className="text-sm text-epic-text-muted leading-relaxed">
               Submitting a withdrawal cancels the subscription immediately and
-              issues a refund via Stripe if you are within the 14-day statutory
-              withdrawal window. Paid capacity reverts to Free right away.
+              issues a time-based pro-rata refund via Stripe for remaining
+              unused time within the 14-day statutory withdrawal window. Paid
+              capacity reverts to Free right away, and self-serve paid checkouts
+              are disabled for this account afterward.
             </p>
             <TextField
               label="Reason (optional)"

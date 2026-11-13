@@ -2,13 +2,17 @@ import { readdirSync, readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   getProjectBillingSummary,
+  getPublicBillingPlans,
   reconcileBillingState,
 } from "../worker/billing";
 import { sha256Hex, signHmacToken } from "../worker/crypto";
 import worker from "../worker/index";
 import { BILLING_POLICY_DEFAULTS, PLAN_VERSIONS } from "../worker/plans";
 import {
+  admitProjectRequest,
+  creditAdmittedRequestUsage,
   readProjectBillingQuota,
+  readProjectDailyQuota,
   resolveEffectiveProjectEntitlement,
 } from "../worker/project-quota";
 import { signStripeWebhookPayload } from "../worker/stripe";
@@ -156,6 +160,15 @@ async function createBillingHarness(options?: {
             meta[k.slice(9, -1)] = v;
           }
         }
+        const linePrice = form.get("line_items[0][price]");
+        if (linePrice) {
+          liveStripeSub = {
+            ...liveStripeSub,
+            items: {
+              data: [{ id: "si_001", price: { id: linePrice } }],
+            },
+          };
+        }
         liveStripeSub.metadata = {
           ...(liveStripeSub.metadata as Record<string, string>),
           ...meta,
@@ -251,19 +264,32 @@ async function createBillingHarness(options?: {
         }
       }
       if (url.pathname.startsWith("/v1/invoices/")) {
+        const subItems = (
+          liveStripeSub.items as { data?: Array<{ price?: { id?: string } }> }
+        )?.data;
+        const activePrice = subItems?.[0]?.price?.id;
         return Response.json({
           id: "in_initial_001",
           charge: "ch_initial_001",
           payment_intent: "pi_initial_001",
-          amount_paid: 900,
+          amount_paid: activePrice === SCALE_PRICE ? 1900 : 900,
           currency: "eur",
         });
       }
       if (url.pathname === "/v1/refunds" && req.method === "POST") {
+        const subItems = (
+          liveStripeSub.items as { data?: Array<{ price?: { id?: string } }> }
+        )?.data;
+        const activePrice = subItems?.[0]?.price?.id;
+        const defaultAmount = activePrice === SCALE_PRICE ? 1900 : 900;
+        const requestedAmount = Number(form.get("amount"));
         return Response.json({
           id: `re_${refundSeq++}`,
           status: "succeeded",
-          amount: 900,
+          amount:
+            Number.isFinite(requestedAmount) && requestedAmount > 0
+              ? requestedAmount
+              : defaultAmount,
         });
       }
       return Response.json({ error: { message: "Unhandled Stripe mock route" } }, { status: 404 });
@@ -1308,5 +1334,383 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
       .prepare("SELECT status FROM billing_subscriptions WHERE id = ?")
       .get(thirdJson.subscriptionId) as { status: string };
     expect(activeRow.status).toBe("active");
+  });
+
+  it("enforces initial 14-day daily cap, preserves expiry on Pro->Scale upgrade, credits 5xx usage, and lifts on Day 15 & renewal", async () => {
+    const h = await createBillingHarness();
+
+    const publicPlans = getPublicBillingPlans();
+    expect(publicPlans.initialPeriodDailyLimitDays).toBe(14);
+    expect(
+      publicPlans.plans.find((p) => p.planId === "pro")?.initialDailyLimit,
+    ).toBe(12_000);
+    expect(
+      publicPlans.plans.find((p) => p.planId === "scale")?.initialDailyLimit,
+    ).toBe(35_000);
+
+    // Complete initial Pro checkout at 2026-11-12T12:00:00Z
+    const checkout = await h.dashFetch("/_dashboard/api/billing/checkout", {
+      method: "POST",
+      body: {
+        projectId: "prj_1",
+        planId: "pro",
+        termsVersion: "1.0",
+        withdrawalAcknowledged: true,
+      },
+    });
+    expect(checkout.status).toBe(200);
+    const { subscriptionId } = (await checkout.json()) as {
+      subscriptionId: string;
+    };
+
+    await h.sendWebhook({
+      id: "evt_daily_cap_init",
+      type: "checkout.session.completed",
+      livemode: false,
+      created: Math.floor(Date.now() / 1000),
+      data: {
+        object: {
+          id: "cs_test_001",
+          customer: "cus_stripe_001",
+          subscription: "sub_stripe_001",
+          payment_status: "paid",
+          amount_total: 900,
+          currency: "eur",
+          metadata: {
+            ownerEpicId: "owner_1",
+            projectId: "prj_1",
+            localSubscriptionId: subscriptionId,
+            planVersionId: "pro-v1",
+            environment: "test",
+          },
+        },
+      },
+    });
+
+    const day1Ent = await resolveEffectiveProjectEntitlement(h.env, {
+      projectId: "prj_1",
+      ownerEpicId: "owner_1",
+      tier: "free",
+      customRpm: null,
+    });
+    expect(day1Ent.initialDailyLimit).toBe(12_000);
+    expect(day1Ent.initialDailyLimitUntil).toBeGreaterThan(Date.now());
+    const originalUntil = day1Ent.initialDailyLimitUntil;
+
+    const summaryDay1 = await getProjectBillingSummary(h.env, "prj_1", "owner_1");
+    expect(summaryDay1.withdrawalEligible).toBe(true);
+    expect(summaryDay1.selfServeCheckoutBlocked).toBe(false);
+    expect(summaryDay1.dailyUsage).toMatchObject({
+      used: 0,
+      remaining: 12_000,
+      allowance: 12_000,
+    });
+
+    // Admit two requests and credit one back (e.g. 5xx)
+    const keyMeta = {
+      keyId: "key_daily_test",
+      projectId: "prj_1",
+      ownerEpicId: "owner_1",
+      name: "Daily Test Key",
+      tier: "pro" as const,
+      customRpm: null,
+      active: true,
+      scopes: ["catalog:read" as const],
+      allowedIps: [],
+      allowedOrigins: [],
+      allowedPaths: [],
+      allowedMethods: ["GET", "HEAD", "POST"] as Array<"GET" | "HEAD" | "POST">,
+      expiresAt: null,
+      entitlementRevision: day1Ent.revision,
+    };
+    const admit1 = await admitProjectRequest(h.env, keyMeta, [], undefined, {
+      entitlement: day1Ent,
+    });
+    const admit2 = await admitProjectRequest(h.env, keyMeta, [], undefined, {
+      entitlement: day1Ent,
+    });
+    expect(admit1.allowed).toBe(true);
+    expect(admit2.allowed).toBe(true);
+    expect((await readProjectDailyQuota(h.env, "owner_1", "prj_1", 12_000))?.used).toBe(2);
+
+    await creditAdmittedRequestUsage(h.env, {
+      adjustmentId: "req_credit_5xx_1",
+      ownerEpicId: "owner_1",
+      projectId: "prj_1",
+      entitlement: day1Ent,
+      reason: "5xx_upstream_error",
+    });
+    expect((await readProjectDailyQuota(h.env, "owner_1", "prj_1", 12_000))?.used).toBe(1);
+
+    // Day 2: Upgrade Pro -> Scale; daily cap moves to 35,000 while expiry stays pinned
+    vi.setSystemTime(new Date("2026-11-13T12:00:00Z"));
+    const upgradeRes = await h.dashFetch(
+      "/_dashboard/api/billing/subscription/change",
+      {
+        method: "POST",
+        body: { projectId: "prj_1", targetPlanId: "scale" },
+      },
+    );
+    expect(upgradeRes.status).toBe(200);
+
+    const day2Ent = await resolveEffectiveProjectEntitlement(h.env, {
+      projectId: "prj_1",
+      ownerEpicId: "owner_1",
+      tier: "free",
+      customRpm: null,
+    });
+    expect(day2Ent.planId).toBe("scale");
+    expect(day2Ent.initialDailyLimit).toBe(35_000);
+    expect(day2Ent.initialDailyLimitUntil).toBe(originalUntil);
+
+    // Day 15 (past 14-day window): initial daily cap lifts automatically
+    vi.setSystemTime(new Date("2026-11-26T12:00:01Z"));
+    const day15Ent = await resolveEffectiveProjectEntitlement(h.env, {
+      projectId: "prj_1",
+      ownerEpicId: "owner_1",
+      tier: "free",
+      customRpm: null,
+    });
+    expect(day15Ent.initialDailyLimit).toBeNull();
+    expect(day15Ent.initialDailyLimitUntil).toBeNull();
+
+    const summaryDay15 = await getProjectBillingSummary(h.env, "prj_1", "owner_1");
+    expect(summaryDay15.dailyUsage).toBeNull();
+    expect(summaryDay15.withdrawalEligible).toBe(false);
+
+    // Month 2 renewal preserves unpaced monthly allowance with no initial daily limit
+    const month2StartSec = Math.floor(Date.UTC(2026, 11, 12, 12, 0, 0) / 1000);
+    const month2EndSec = Math.floor(Date.UTC(2027, 0, 12, 12, 0, 0) / 1000);
+    h.setLiveSub({
+      current_period_start: month2StartSec,
+      current_period_end: month2EndSec,
+      latest_invoice: "in_month_2",
+      items: { data: [{ id: "si_001", price: { id: SCALE_PRICE } }] },
+    });
+    await h.sendWebhook({
+      id: "evt_month2_renewal",
+      type: "invoice.paid",
+      livemode: false,
+      created: month2StartSec,
+      data: {
+        object: {
+          id: "in_month_2",
+          subscription: "sub_stripe_001",
+          billing_reason: "subscription_cycle",
+        },
+      },
+    });
+    vi.setSystemTime(month2StartSec * 1000 + 60_000);
+    const month2Ent = await resolveEffectiveProjectEntitlement(h.env, {
+      projectId: "prj_1",
+      ownerEpicId: "owner_1",
+      tier: "free",
+      customRpm: null,
+    });
+    expect(month2Ent.initialDailyLimit).toBeNull();
+    expect(month2Ent.initialDailyLimitUntil).toBeNull();
+  });
+
+  it("prorates statutory withdrawals inside Days 1-14 based on remaining billing period time", async () => {
+    const h = await createBillingHarness();
+
+    const checkout = await h.dashFetch("/_dashboard/api/billing/checkout", {
+      method: "POST",
+      body: {
+        projectId: "prj_1",
+        planId: "scale",
+        termsVersion: "1.0",
+        withdrawalAcknowledged: true,
+      },
+    });
+    expect(checkout.status).toBe(200);
+    const { subscriptionId } = (await checkout.json()) as {
+      subscriptionId: string;
+    };
+
+    await h.sendWebhook({
+      id: "evt_scale_prorate_init",
+      type: "checkout.session.completed",
+      livemode: false,
+      created: Math.floor(Date.now() / 1000),
+      data: {
+        object: {
+          id: "cs_test_001",
+          customer: "cus_stripe_001",
+          subscription: "sub_stripe_001",
+          payment_status: "paid",
+          amount_total: 1900,
+          currency: "eur",
+          metadata: {
+            ownerEpicId: "owner_1",
+            projectId: "prj_1",
+            localSubscriptionId: subscriptionId,
+            planVersionId: "scale-v1",
+            environment: "test",
+          },
+        },
+      },
+    });
+
+    // Period is Nov 12 -> Dec 12 (30 days = 2,592,000,000 ms). Withdraw at Day 6 -> 24/30 * 1900 = 1520 cents.
+    vi.setSystemTime(new Date("2026-11-18T12:00:00Z"));
+    const withdrawRes = await h.dashFetch("/_dashboard/api/billing/withdrawals", {
+      method: "POST",
+      body: { projectId: "prj_1", reason: "Testing time-based proration" },
+    });
+    expect(withdrawRes.status).toBe(200);
+    const withdrawJson = (await withdrawRes.json()) as {
+      status: string;
+      stripeRefundId: string;
+    };
+    expect(withdrawJson.status).toBe("refunded_partial");
+
+    const refundCall = h.stripeCalls.find(
+      (c) => c.path === "/v1/refunds" && c.method === "POST",
+    );
+    expect(refundCall).toBeDefined();
+    expect(new URLSearchParams(refundCall?.body).get("amount")).toBe("1520");
+
+    const dbRow = h.sqlite
+      .prepare(
+        "SELECT requested_amount_cents, refunded_amount_cents, status FROM withdrawal_requests LIMIT 1",
+      )
+      .get() as {
+      requested_amount_cents: number;
+      refunded_amount_cents: number;
+      status: string;
+    };
+    expect(dbRow).toEqual({
+      requested_amount_cents: 1520,
+      refunded_amount_cents: 1520,
+      status: "refunded_partial",
+    });
+  });
+
+  it("rejects automatic refund requests once the 14-day statutory withdrawal window expires", async () => {
+    const h = await createBillingHarness();
+
+    const checkout = await h.dashFetch("/_dashboard/api/billing/checkout", {
+      method: "POST",
+      body: {
+        projectId: "prj_1",
+        planId: "pro",
+        termsVersion: "1.0",
+        withdrawalAcknowledged: true,
+      },
+    });
+    expect(checkout.status).toBe(200);
+    const { subscriptionId } = (await checkout.json()) as {
+      subscriptionId: string;
+    };
+
+    await h.sendWebhook({
+      id: "evt_expire_init",
+      type: "checkout.session.completed",
+      livemode: false,
+      created: Math.floor(Date.now() / 1000),
+      data: {
+        object: {
+          id: "cs_test_001",
+          customer: "cus_stripe_001",
+          subscription: "sub_stripe_001",
+          payment_status: "paid",
+          amount_total: 900,
+          currency: "eur",
+          metadata: {
+            ownerEpicId: "owner_1",
+            projectId: "prj_1",
+            localSubscriptionId: subscriptionId,
+            planVersionId: "pro-v1",
+            environment: "test",
+          },
+        },
+      },
+    });
+
+    // Advance 14 days + 1 second
+    vi.setSystemTime(new Date("2026-11-26T12:00:01Z"));
+    const expiredRes = await h.dashFetch("/_dashboard/api/billing/withdrawals", {
+      method: "POST",
+      body: { projectId: "prj_1", reason: "Too late" },
+    });
+    expect(expiredRes.status).toBe(409);
+    expect(await expiredRes.json()).toMatchObject({
+      error: { code: "WITHDRAWAL_WINDOW_EXPIRED" },
+    });
+    expect(
+      h.stripeCalls.some((c) => c.path === "/v1/refunds" && c.method === "POST"),
+    ).toBe(false);
+  });
+
+  it("blocks future self-serve paid checkouts across the account once a statutory withdrawal refund is issued", async () => {
+    const h = await createBillingHarness();
+    h.sqlite.exec(`
+      UPDATE users SET last_project_created_at = 0 WHERE epic_account_id = 'owner_1';
+      INSERT INTO projects(id, owner_epic_id, name, slug, tier)
+      VALUES ('prj_2', 'owner_1', 'Second App', 'second-app', 'free');
+    `);
+
+    const checkout = await h.dashFetch("/_dashboard/api/billing/checkout", {
+      method: "POST",
+      body: {
+        projectId: "prj_1",
+        planId: "pro",
+        termsVersion: "1.0",
+        withdrawalAcknowledged: true,
+      },
+    });
+    expect(checkout.status).toBe(200);
+    const { subscriptionId } = (await checkout.json()) as {
+      subscriptionId: string;
+    };
+
+    await h.sendWebhook({
+      id: "evt_onestrike_init",
+      type: "checkout.session.completed",
+      livemode: false,
+      created: Math.floor(Date.now() / 1000),
+      data: {
+        object: {
+          id: "cs_test_001",
+          customer: "cus_stripe_001",
+          subscription: "sub_stripe_001",
+          payment_status: "paid",
+          amount_total: 900,
+          currency: "eur",
+          metadata: {
+            ownerEpicId: "owner_1",
+            projectId: "prj_1",
+            localSubscriptionId: subscriptionId,
+            planVersionId: "pro-v1",
+            environment: "test",
+          },
+        },
+      },
+    });
+
+    vi.setSystemTime(new Date("2026-11-15T12:00:00Z"));
+    const withdrawRes = await h.dashFetch("/_dashboard/api/billing/withdrawals", {
+      method: "POST",
+      body: { projectId: "prj_1", reason: "Testing one-strike guard" },
+    });
+    expect(withdrawRes.status).toBe(200);
+
+    const prj2Summary = await getProjectBillingSummary(h.env, "prj_2", "owner_1");
+    expect(prj2Summary.selfServeCheckoutBlocked).toBe(true);
+
+    const blockedCheckout = await h.dashFetch("/_dashboard/api/billing/checkout", {
+      method: "POST",
+      body: {
+        projectId: "prj_2",
+        planId: "scale",
+        termsVersion: "1.0",
+        withdrawalAcknowledged: true,
+      },
+    });
+    expect(blockedCheckout.status).toBe(403);
+    expect(await blockedCheckout.json()).toMatchObject({
+      error: { code: "WITHDRAWAL_LIMIT_REACHED" },
+    });
   });
 });

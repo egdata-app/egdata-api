@@ -12,6 +12,7 @@ import {
 import {
   admitProjectRequest,
   creditAdmittedRequestUsage,
+  DAILY_POLICY_NAME,
   MONTHLY_POLICY_NAME,
   PERIOD_POLICY_NAME,
   rateLimitHeaders,
@@ -409,6 +410,7 @@ export async function handleEdgeApiProxy(
 
   if (!admission.allowed) {
     const monthlyExhausted = admission.exhaustedPolicy === MONTHLY_POLICY_NAME;
+    const dailyExhausted = admission.exhaustedPolicy === DAILY_POLICY_NAME;
     const periodExhausted = admission.exhaustedPolicy === PERIOD_POLICY_NAME;
     const periodBudgetExhausted = Boolean(
       admission.exhaustedPolicy &&
@@ -431,7 +433,7 @@ export async function handleEdgeApiProxy(
       cacheStatus: "EDGE_BLOCK",
       limitOutcome: monthlyExhausted
         ? "monthly_quota_exceeded"
-        : periodExhausted
+        : periodExhausted || dailyExhausted
           ? "period_quota_exceeded"
           : periodBudgetExhausted
             ? "expensive_budget_exceeded"
@@ -447,18 +449,20 @@ export async function handleEdgeApiProxy(
       429,
       monthlyExhausted
         ? "MONTHLY_QUOTA_EXCEEDED"
-        : periodExhausted
+        : periodExhausted || dailyExhausted
           ? "PERIOD_QUOTA_EXCEEDED"
           : periodBudgetExhausted
             ? "EXPENSIVE_BUDGET_EXCEEDED"
             : "RATE_LIMITED",
       monthlyExhausted
         ? "Free account monthly quota of 100,000 requests is exhausted across all free projects, API keys, and console sessions until the next calendar month at 00:00 UTC. Request higher limits in the egdata Developer Portal."
-        : periodExhausted
-          ? `The ${entitlement.planId} billing-period allowance is exhausted until ${resetIso}. Manage your subscription in the egdata Developer Portal.`
-          : periodBudgetExhausted && exhausted
-            ? `The ${exhausted.name} budget of ${exhausted.limit.toLocaleString()} requests for this period is exhausted until ${resetIso}.`
-            : `Project rate limit exceeded for ${entitlement.tier} tier. All API keys share this allowance. Request higher limits in the egdata Developer Portal.`,
+        : dailyExhausted && exhausted
+          ? `The ${entitlement.planId} initial 14-day daily allowance of ${exhausted.limit.toLocaleString()} requests is exhausted until ${resetIso}. Full monthly pacing unlocks after your 14-day withdrawal window, or request custom limits in the egdata Developer Portal.`
+          : periodExhausted
+            ? `The ${entitlement.planId} billing-period allowance is exhausted until ${resetIso}. Manage your subscription in the egdata Developer Portal.`
+            : periodBudgetExhausted && exhausted
+              ? `The ${exhausted.name} budget of ${exhausted.limit.toLocaleString()} requests for this period is exhausted until ${resetIso}.`
+              : `Project rate limit exceeded for ${entitlement.tier} tier. All API keys share this allowance. Request higher limits in the egdata Developer Portal.`,
       originHeader,
       {
         ...quotaHeaders,

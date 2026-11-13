@@ -6,6 +6,9 @@ import {
 import {
   type AdmissionResult,
   applyUsageCredit,
+  DAILY_POLICY_NAME,
+  type DailyQuotaState,
+  type DailyQuotaSummary,
   decideAdmission,
   FREE_MONTHLY_ALLOWANCE,
   MONTHLY_POLICY_NAME,
@@ -16,8 +19,10 @@ import {
   type PeriodQuotaSummary,
   type QuotaPolicy,
   type QuotaState,
+  summarizeDailyQuota,
   summarizeMonthlyQuota,
   summarizePeriodQuota,
+  utcDayBounds,
   utcMonthBounds,
   validatePolicies,
 } from "./rate-limiter-core.js";
@@ -49,6 +54,11 @@ type MonthlyRow = {
   used_count: number;
 };
 
+type DailyRow = {
+  day_start: number;
+  used_count: number;
+};
+
 type PeriodRow = {
   period_start: number;
   period_end: number;
@@ -69,6 +79,8 @@ type EntitlementRow = {
   period_type: string;
   period_start: number | null;
   period_end: number | null;
+  initial_daily_limit: number | null;
+  initial_daily_limit_until: number | null;
   expensive_minute_json: string;
   expensive_period_json: string | null;
   entitlements_json: string;
@@ -117,6 +129,14 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       )
     `);
     ctx.storage.sql.exec(`
+      CREATE TABLE IF NOT EXISTS project_daily_state (
+        project_id TEXT PRIMARY KEY,
+        day_start INTEGER NOT NULL,
+        used_count INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      )
+    `);
+    ctx.storage.sql.exec(`
       CREATE TABLE IF NOT EXISTS account_monthly_state (
         account_id TEXT PRIMARY KEY,
         month_start INTEGER NOT NULL,
@@ -157,6 +177,19 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
         updated_at INTEGER NOT NULL
       )
     `);
+    const entitlementCols = ctx.storage.sql
+      .exec<{ name: string }>(`PRAGMA table_info(project_entitlements)`)
+      .toArray();
+    if (!entitlementCols.some((c) => c.name === "initial_daily_limit")) {
+      ctx.storage.sql.exec(
+        `ALTER TABLE project_entitlements ADD COLUMN initial_daily_limit INTEGER`,
+      );
+    }
+    if (!entitlementCols.some((c) => c.name === "initial_daily_limit_until")) {
+      ctx.storage.sql.exec(
+        `ALTER TABLE project_entitlements ADD COLUMN initial_daily_limit_until INTEGER`,
+      );
+    }
     ctx.storage.sql.exec(`
       CREATE TABLE IF NOT EXISTS usage_adjustments (
         adjustment_id TEXT PRIMARY KEY,
@@ -219,6 +252,43 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       state.windowStart,
       state.globalCount,
       JSON.stringify(state.policyCounts),
+      now,
+    );
+  }
+
+  private readDailyState(projectId: string): DailyQuotaState | null {
+    const row = this.ctx.storage.sql
+      .exec<DailyRow>(
+        `SELECT day_start, used_count
+           FROM project_daily_state
+          WHERE project_id = ?`,
+        projectId,
+      )
+      .toArray()[0];
+
+    if (!row) return null;
+    return {
+      dayStart: row.day_start,
+      used: row.used_count,
+    };
+  }
+
+  private writeDailyState(
+    projectId: string,
+    state: DailyQuotaState,
+    now: number,
+  ): void {
+    this.ctx.storage.sql.exec(
+      `INSERT INTO project_daily_state
+         (project_id, day_start, used_count, updated_at)
+       VALUES (?, ?, ?, ?)
+       ON CONFLICT(project_id) DO UPDATE SET
+         day_start = excluded.day_start,
+         used_count = excluded.used_count,
+         updated_at = excluded.updated_at`,
+      projectId,
+      state.dayStart,
+      state.used,
       now,
     );
   }
@@ -311,6 +381,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       .exec<EntitlementRow>(
         `SELECT project_id, revision, plan_id, plan_version_id, tier, grant_source,
                 status, rpm_limit, period_allowance, period_type, period_start, period_end,
+                initial_daily_limit, initial_daily_limit_until,
                 expensive_minute_json, expensive_period_json, entitlements_json,
                 grace_until, cancel_at_period_end, subscription_id, updated_at
            FROM project_entitlements
@@ -375,6 +446,8 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       periodType: row.period_type as EffectiveProjectEntitlement["periodType"],
       periodStart: row.period_start,
       periodEnd: row.period_end,
+      initialDailyLimit: row.initial_daily_limit,
+      initialDailyLimitUntil: row.initial_daily_limit_until,
       expensiveMinuteLimits,
       expensivePeriodBudgets,
       entitlements,
@@ -403,36 +476,71 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     const freeSpec = PLAN_VERSIONS["free-v1"];
     const effectiveRpm = paidSuspended ? freeSpec.rpmLimit : stored.rpmLimit;
 
-    const next: QuotaPolicy[] = requestPolicies.map((policy) => {
+    const hasActiveDailyCap =
+      !paidSuspended &&
+      typeof stored.initialDailyLimit === "number" &&
+      stored.initialDailyLimit > 0 &&
+      typeof stored.initialDailyLimitUntil === "number" &&
+      now < stored.initialDailyLimitUntil;
+
+    const next: QuotaPolicy[] = [];
+    for (const policy of requestPolicies) {
       const win = policy.window ?? "minute";
+      if (win === "day") {
+        if (!hasActiveDailyCap) {
+          continue;
+        }
+        next.push({
+          ...policy,
+          limit: Math.min(policy.limit, stored.initialDailyLimit!),
+        });
+        continue;
+      }
       if (policy.name === "global") {
-        return { ...policy, limit: Math.min(policy.limit, effectiveRpm) };
+        next.push({ ...policy, limit: Math.min(policy.limit, effectiveRpm) });
+        continue;
       }
       if (win === "minute") {
         const table = paidSuspended
           ? freeSpec.expensiveMinuteLimits
           : stored.expensiveMinuteLimits;
         const cap = table[policy.name as keyof typeof table];
-        return cap ? { ...policy, limit: Math.min(policy.limit, cap) } : policy;
+        next.push(
+          cap ? { ...policy, limit: Math.min(policy.limit, cap) } : policy,
+        );
+        continue;
       }
       if (win === "period" && policy.name === PERIOD_POLICY_NAME) {
         if (paidSuspended) {
           // Paid grace/subscription expired in DO before cache caught up: enforce free monthly cap instead.
-          return {
+          next.push({
             name: MONTHLY_POLICY_NAME,
             limit: FREE_MONTHLY_ALLOWANCE,
             window: "month",
-          };
+          });
+        } else {
+          next.push({
+            ...policy,
+            limit: stored.periodAllowance ?? policy.limit,
+            periodStart: stored.periodStart ?? policy.periodStart,
+            periodEnd: stored.periodEnd ?? policy.periodEnd,
+          });
         }
-        return {
-          ...policy,
-          limit: stored.periodAllowance ?? policy.limit,
-          periodStart: stored.periodStart ?? policy.periodStart,
-          periodEnd: stored.periodEnd ?? policy.periodEnd,
-        };
+        continue;
       }
-      return policy;
-    });
+      next.push(policy);
+    }
+
+    if (
+      hasActiveDailyCap &&
+      !next.some((policy) => (policy.window ?? "minute") === "day")
+    ) {
+      next.push({
+        name: DAILY_POLICY_NAME,
+        limit: stored.initialDailyLimit!,
+        window: "day",
+      });
+    }
 
     if (
       paidSuspended &&
@@ -452,6 +560,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     counterId: string,
     nextState: QuotaState,
     accountId: string | undefined,
+    nextDailyState: DailyQuotaState | null,
     nextMonthlyState: MonthlyQuotaState | null,
     nextPeriodState: PeriodQuotaState | null,
     now: number,
@@ -465,6 +574,9 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
   ): void {
     const applyWrites = () => {
       this.writeState(counterId, nextState, now);
+      if (nextDailyState) {
+        this.writeDailyState(counterId, nextDailyState, now);
+      }
       if (accountId && nextMonthlyState) {
         this.writeMonthlyState(accountId, nextMonthlyState, now);
       }
@@ -477,7 +589,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     };
     if (
       typeof this.ctx.storage.transactionSync === "function" &&
-      ((accountId && nextMonthlyState) || nextPeriodState || usageEvent)
+      (nextDailyState || (accountId && nextMonthlyState) || nextPeriodState || usageEvent)
     ) {
       this.ctx.storage.transactionSync(applyWrites);
     } else {
@@ -503,9 +615,10 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       `INSERT INTO project_entitlements (
          project_id, revision, plan_id, plan_version_id, tier, grant_source,
          status, rpm_limit, period_allowance, period_type, period_start, period_end,
+         initial_daily_limit, initial_daily_limit_until,
          expensive_minute_json, expensive_period_json, entitlements_json,
          grace_until, cancel_at_period_end, subscription_id, updated_at
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(project_id) DO UPDATE SET
          revision = excluded.revision,
          plan_id = excluded.plan_id,
@@ -518,6 +631,8 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
          period_type = excluded.period_type,
          period_start = excluded.period_start,
          period_end = excluded.period_end,
+         initial_daily_limit = excluded.initial_daily_limit,
+         initial_daily_limit_until = excluded.initial_daily_limit_until,
          expensive_minute_json = excluded.expensive_minute_json,
          expensive_period_json = excluded.expensive_period_json,
          entitlements_json = excluded.entitlements_json,
@@ -537,6 +652,8 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       entitlement.periodType,
       entitlement.periodStart,
       entitlement.periodEnd,
+      entitlement.initialDailyLimit ?? null,
+      entitlement.initialDailyLimitUntil ?? null,
       JSON.stringify(entitlement.expensiveMinuteLimits),
       entitlement.expensivePeriodBudgets
         ? JSON.stringify(entitlement.expensivePeriodBudgets)
@@ -591,6 +708,9 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     );
     validatePolicies(effectivePolicies);
 
+    const hasDailyPolicy = effectivePolicies.some(
+      (policy) => (policy.window ?? "minute") === "day",
+    );
     const hasMonthlyPolicy = effectivePolicies.some(
       (policy) => (policy.window ?? "minute") === "month",
     );
@@ -615,6 +735,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     }
 
     const state = this.readState(counterId);
+    const dailyState = hasDailyPolicy ? this.readDailyState(counterId) : null;
     const monthlyState =
       hasMonthlyPolicy && request.ownerEpicId
         ? this.readMonthlyState(request.ownerEpicId)
@@ -625,6 +746,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       now,
       policies: effectivePolicies,
       state,
+      dailyState,
       monthlyState,
       periodState,
     });
@@ -638,6 +760,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       counterId,
       decision.nextState,
       request.ownerEpicId,
+      decision.nextDailyState,
       decision.nextMonthlyState,
       decision.nextPeriodState,
       now,
@@ -675,6 +798,17 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     const now = Date.now();
     const state = this.readMonthlyState(ownerEpicId);
     return summarizeMonthlyQuota(now, state, allowance);
+  }
+
+  async readProjectDailyQuota(
+    projectId: string,
+    allowance: number,
+  ): Promise<DailyQuotaSummary> {
+    if (typeof projectId !== "string" || !projectId) {
+      throw new Error("Invalid project identity");
+    }
+    const state = this.readDailyState(projectId);
+    return summarizeDailyQuota(Date.now(), state, allowance);
   }
 
   /** Read-only project billing period quota & expensive budget usage for dashboard reporting. */
@@ -778,6 +912,18 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
               periodEnd: period.periodEnd,
               used: remainingUsed,
               policyCounts: period.policyCounts,
+            },
+            now,
+          );
+        }
+        const daily = this.readDailyState(params.projectId);
+        const dayBounds = utcDayBounds(now);
+        if (daily && daily.dayStart === dayBounds.dayStart) {
+          this.writeDailyState(
+            params.projectId,
+            {
+              dayStart: daily.dayStart,
+              used: applyUsageCredit(daily.used, amount),
             },
             now,
           );

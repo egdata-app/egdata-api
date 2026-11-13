@@ -132,6 +132,53 @@ describe("exact per-key quota decision", () => {
       }),
     ).toThrow();
   });
+
+  it("enforces UTC-aligned daily quota policies and resets on the next UTC day", () => {
+    const day1 = Date.parse("2026-11-12T23:59:10.000Z");
+    const day1Policy = { name: "daily", limit: 2, window: "day" as const };
+    const d1 = decideAdmission({
+      now: day1,
+      policies: [globalPolicy, day1Policy],
+      state: null,
+      dailyState: null,
+    });
+    expect(d1.result.allowed).toBe(true);
+    expect(d1.nextDailyState).toEqual({
+      dayStart: Date.parse("2026-11-12T00:00:00.000Z"),
+      used: 1,
+    });
+
+    const d2 = decideAdmission({
+      now: day1 + 1000,
+      policies: [globalPolicy, day1Policy],
+      state: d1.nextState,
+      dailyState: d1.nextDailyState,
+    });
+    expect(d2.result.allowed).toBe(true);
+    expect(d2.nextDailyState?.used).toBe(2);
+
+    const d3 = decideAdmission({
+      now: day1 + 2000,
+      policies: [globalPolicy, day1Policy],
+      state: d2.nextState,
+      dailyState: d2.nextDailyState,
+    });
+    expect(d3.result.allowed).toBe(false);
+    expect(d3.result.exhaustedPolicy).toBe("daily");
+
+    const day2 = Date.parse("2026-11-13T00:00:05.000Z");
+    const d4 = decideAdmission({
+      now: day2,
+      policies: [globalPolicy, day1Policy],
+      state: d2.nextState,
+      dailyState: d2.nextDailyState,
+    });
+    expect(d4.result.allowed).toBe(true);
+    expect(d4.nextDailyState).toEqual({
+      dayStart: Date.parse("2026-11-13T00:00:00.000Z"),
+      used: 1,
+    });
+  });
 });
 
 type Row = {
@@ -147,8 +194,19 @@ class FakeSql {
 
   exec(query: string, ...bindings: unknown[]) {
     const normalized = query.replace(/\s+/g, " ").trim().toUpperCase();
-    if (normalized.startsWith("CREATE TABLE")) {
+    if (
+      normalized.startsWith("CREATE TABLE") ||
+      normalized.startsWith("ALTER TABLE")
+    ) {
       return { toArray: () => [] };
+    }
+    if (normalized.startsWith("PRAGMA TABLE_INFO(PROJECT_ENTITLEMENTS)")) {
+      return {
+        toArray: () => [
+          { name: "initial_daily_limit" },
+          { name: "initial_daily_limit_until" },
+        ],
+      };
     }
     if (normalized.startsWith("SELECT")) {
       const row = this.rows.get(String(bindings[0]));
