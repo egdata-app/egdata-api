@@ -406,7 +406,9 @@ function RateLimitsPage() {
                   </div>
                   <div className="text-[11px] text-epic-text-muted">
                     {billingSummary.entitlement.grantSource === "subscription"
-                      ? `Initial ${plansData?.initialPeriodDailyLimitDays ?? 14}-day pacing period completed.`
+                      ? billingSummary.withdrawalEligible
+                        ? "Subscribed prior to daily pacing rollout (no daily cap on this grant)."
+                        : `Initial ${plansData?.initialPeriodDailyLimitDays ?? 14}-day pacing period completed.`
                       : "Full monthly/minute ceilings apply immediately."}
                   </div>
                 </>
