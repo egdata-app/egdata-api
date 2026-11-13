@@ -1713,4 +1713,93 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
       error: { code: "WITHDRAWAL_LIMIT_REACHED" },
     });
   });
+
+  it("admin period usage adjustment without windowStart resolves active period and appears in billing and admin user profiles", async () => {
+    const h = await createBillingHarness();
+    const periodStart = Date.UTC(2026, 10, 10, 0, 0, 0);
+    const periodEnd = Date.UTC(2026, 11, 10, 0, 0, 0);
+    h.sqlite.exec(`
+      UPDATE projects SET tier = 'pro' WHERE id = 'prj_1';
+      INSERT INTO billing_customers(owner_epic_id, environment, stripe_customer_id)
+      VALUES ('owner_1', 'test', 'cus_bonus_1');
+      INSERT INTO billing_subscriptions(
+        id, owner_epic_id, project_id, stripe_customer_id, stripe_subscription_id,
+        plan_version_id, status, current_period_start, current_period_end
+      ) VALUES (
+        'sub_bonus_api', 'owner_1', 'prj_1', 'cus_bonus_1', 'sub_stripe_bonus',
+        'pro-v1', 'active', ${periodStart}, ${periodEnd}
+      );
+      INSERT INTO entitlement_grants(
+        id, project_id, owner_epic_id, source, plan_id, plan_version_id, tier,
+        rpm_limit, period_allowance, expensive_limits_json, effective_from, effective_until,
+        revision, subscription_id, granted_by, reason
+      ) VALUES (
+        'grant_bonus_api', 'prj_1', 'owner_1', 'subscription', 'pro', 'pro-v1', 'pro',
+        200, 300000, '${JSON.stringify({
+          minute: PLAN_VERSIONS["pro-v1"].expensiveMinuteLimits,
+          period: PLAN_VERSIONS["pro-v1"].expensivePeriodBudgets,
+          entitlements: PLAN_VERSIONS["pro-v1"].entitlements,
+        })}', ${periodStart}, ${periodEnd}, 500, 'sub_bonus_api', 'stripe_webhook', 'Pro active'
+      );
+    `);
+
+    for (const [adjustmentId, amount, reason] of [
+      ["adj_ui_10k", 10_000, "Initial goodwill credit"],
+      ["adj_ui_1m", 1_000_000, "Load test allowance"],
+    ] as const) {
+      const adjRes = await h.dashFetch(
+        "/_dashboard/api/admin/projects/prj_1/usage-adjustments",
+        {
+          method: "POST",
+          user: "admin_1",
+          body: { adjustmentId, scope: "period", amount, reason },
+        },
+      );
+      expect(adjRes.status).toBe(200);
+    }
+
+    const row = h.sqlite
+      .prepare(
+        "SELECT window_start, amount FROM usage_adjustments WHERE adjustment_id = 'adj_ui_1m'",
+      )
+      .get() as { window_start: number; amount: number };
+    expect(row).toEqual({ window_start: periodStart, amount: 1_000_000 });
+
+    const adminUserRes = await h.dashFetch(
+      "/_dashboard/api/admin/users/owner_1",
+      { user: "admin_1" },
+    );
+    expect(adminUserRes.status).toBe(200);
+    const adminUserJson = (await adminUserRes.json()) as {
+      projectQuotas: Record<
+        string,
+        {
+          periodUsage: {
+            used: number;
+            allowance: number;
+            remaining: number;
+            bonus?: number;
+          } | null;
+        }
+      >;
+    };
+    expect(adminUserJson.projectQuotas.prj_1?.periodUsage).toMatchObject({
+      used: 0,
+      allowance: 1_310_000,
+      remaining: 1_310_000,
+      bonus: 1_010_000,
+    });
+
+    const billingSummary = await getProjectBillingSummary(
+      h.env,
+      "prj_1",
+      "owner_1",
+    );
+    expect(billingSummary.usage).toMatchObject({
+      used: 0,
+      allowance: 1_310_000,
+      remaining: 1_310_000,
+      bonus: 1_010_000,
+    });
+  });
 });

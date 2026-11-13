@@ -584,4 +584,57 @@ export const dashboardClient = {
       receipts: BillingPurchaseReceipt[];
       withdrawals: BillingWithdrawalRecord[];
     }>("/billing/receipts", { signal }),
+
+  getDevState: (projectId?: string, signal?: AbortSignal) =>
+    apiFetch<DevStateSnapshot>(
+      `/dev/state${projectId ? `?projectId=${encodeURIComponent(projectId)}` : ""}`,
+      { signal },
+    ),
+
+  updateDevState: (payload: {
+    isAdmin?: boolean;
+    projectLimit?: number;
+    onboardingVerified?: boolean;
+    clearWithdrawalBlock?: boolean;
+    project?: {
+      id: string;
+      tier: "free" | "pro" | "scale" | "enterprise";
+      customRpm: number | null;
+      dailyCapMode: "tier" | "none" | "custom";
+      dailyCapCustom?: number | null;
+    };
+  }) =>
+    apiFetch<{ ok: boolean }>("/dev/state", {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    }),
+
+  seedLocalDb: () =>
+    apiFetch<{ ok: boolean; adminGranted: boolean; seededUsers: number }>(
+      "/dev/seed",
+      { method: "POST" },
+    ),
 };
+
+export interface DevStateSnapshot {
+  isAdmin: boolean;
+  projectLimit: number;
+  onboardingVerified: boolean;
+  selfServeCheckoutBlocked: boolean;
+  seededUserCount: number;
+  project: {
+    id: string;
+    name: string;
+    tier: "free" | "pro" | "scale" | "enterprise";
+    customRpm: number | null;
+    entitlement: {
+      planVersionId: string;
+      grantSource: string;
+      rpmLimit: number;
+      periodAllowance: number | null;
+      initialDailyLimit?: number | null;
+      initialDailyLimitUntil?: number | null;
+      status: string;
+    } | null;
+  } | null;
+}

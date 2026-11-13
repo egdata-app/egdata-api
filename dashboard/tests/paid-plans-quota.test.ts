@@ -728,4 +728,129 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
     expect(utcMonthBounds(Date.now()).monthStart).toBe(Date.UTC(2026, 11, 1));
     expect((await readAccountMonthlyQuota(h.env, "owner_pro")).used).toBe(0);
   });
+
+  it("operator bonus credits increase period and monthly allowances even when used is zero", async () => {
+    const h = await createPaidPlansHarness({ commercialLimitsEnabled: true });
+
+    const periodStart = Date.UTC(2026, 10, 10, 0, 0, 0);
+    const periodEnd = Date.UTC(2026, 11, 10, 0, 0, 0);
+    const { rawKey, meta } = await h.issueKey({
+      projectId: "prj_sub",
+      ownerEpicId: "owner_pro",
+      tier: "pro",
+    });
+
+    h.sqlite.exec(`
+      UPDATE projects SET tier = 'pro' WHERE id = 'prj_sub';
+      INSERT INTO billing_customers(owner_epic_id, environment, stripe_customer_id)
+      VALUES ('owner_pro', 'test', 'cus_bonus_pro');
+      INSERT INTO billing_subscriptions(
+        id, owner_epic_id, project_id, stripe_customer_id, stripe_subscription_id,
+        plan_version_id, status, current_period_start, current_period_end
+      ) VALUES (
+        'sub_bonus_1', 'owner_pro', 'prj_sub', 'cus_bonus_pro', 'sub_stripe_bonus_1',
+        'pro-v1', 'active', ${periodStart}, ${periodEnd}
+      );
+      INSERT INTO entitlement_grants(
+        id, project_id, owner_epic_id, source, plan_id, plan_version_id, tier,
+        rpm_limit, period_allowance, expensive_limits_json, effective_from, effective_until,
+        revision, subscription_id, granted_by, reason
+      ) VALUES (
+        'grant_bonus_1', 'prj_sub', 'owner_pro', 'subscription', 'pro', 'pro-v1', 'pro',
+        200, 300000, '${JSON.stringify({
+          minute: PLAN_VERSIONS["pro-v1"].expensiveMinuteLimits,
+          period: PLAN_VERSIONS["pro-v1"].expensivePeriodBudgets,
+          entitlements: PLAN_VERSIONS["pro-v1"].entitlements,
+        })}', ${periodStart}, ${periodEnd}, 100, 'sub_bonus_1', 'stripe_webhook', 'Pro sub'
+      );
+    `);
+
+    const ent = await resolveEffectiveProjectEntitlement(h.env, meta);
+    await syncProjectEntitlementToLimiter(h.env, ent);
+
+    // Before any API traffic, credit 10,000 + 1,000,000 bonus requests via DO creditUsage
+    const stub = h.namespace.get("account:test:owner_pro") as unknown as {
+      creditUsage: (params: Record<string, unknown>) => Promise<{
+        applied: boolean;
+        remainingUsed: number;
+        bonus?: number;
+      }>;
+    };
+    const r1 = await stub.creditUsage({
+      adjustmentId: "adj_bonus_1",
+      ownerEpicId: "owner_pro",
+      projectId: "prj_sub",
+      scope: "period",
+      windowStart: periodStart,
+      periodEnd,
+      amount: 10_000,
+      reason: "Test 10k",
+      mode: "bonus",
+    });
+    expect(r1).toEqual({ applied: true, remainingUsed: 0, bonus: 10_000 });
+
+    const r2 = await stub.creditUsage({
+      adjustmentId: "adj_bonus_2",
+      ownerEpicId: "owner_pro",
+      projectId: "prj_sub",
+      scope: "period",
+      windowStart: periodStart,
+      periodEnd,
+      amount: 1_000_000,
+      reason: "Test 1M",
+      mode: "bonus",
+    });
+    expect(r2).toEqual({ applied: true, remainingUsed: 0, bonus: 1_010_000 });
+
+    // Replay is idempotent
+    const r2Replay = await stub.creditUsage({
+      adjustmentId: "adj_bonus_2",
+      ownerEpicId: "owner_pro",
+      projectId: "prj_sub",
+      scope: "period",
+      windowStart: periodStart,
+      periodEnd,
+      amount: 1_000_000,
+      reason: "Test 1M",
+      mode: "bonus",
+    });
+    expect(r2Replay.applied).toBe(false);
+    expect(r2Replay.bonus).toBe(1_010_000);
+
+    const periodQuota = await readProjectBillingQuota(
+      h.env,
+      "owner_pro",
+      "prj_sub",
+      300_000,
+      periodStart,
+      periodEnd,
+    );
+    expect(periodQuota).toMatchObject({
+      used: 0,
+      allowance: 1_310_000,
+      remaining: 1_310_000,
+      bonus: 1_010_000,
+    });
+
+    // Live gateway request enforces elevated 1,310,000 period limit
+    const res = await h.callGateway("/v1/countries", { "x-api-key": rawKey });
+    expect(res.status).toBe(200);
+    expect(res.headers.get("RateLimit")).toContain("period;q=1310000;r=1309999");
+
+    // Monthly bonus on free-tier quota also expands allowance before any usage
+    const monthStart = utcMonthBounds(Date.now()).monthStart;
+    await stub.creditUsage({
+      adjustmentId: "adj_month_bonus_1",
+      ownerEpicId: "owner_pro",
+      scope: "month",
+      windowStart: monthStart,
+      amount: 50_000,
+      reason: "Free tier boost",
+      mode: "bonus",
+    });
+    const monthly = await readAccountMonthlyQuota(h.env, "owner_pro");
+    expect(monthly.used).toBe(0);
+    expect(monthly.allowance).toBe(150_000);
+    expect(monthly.remaining).toBe(150_000);
+  });
 });

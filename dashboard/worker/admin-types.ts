@@ -194,6 +194,64 @@ export interface AdminUsageAdjustment {
   createdAt: string;
 }
 
+export interface AdminEntitlementGrant {
+  id: string;
+  projectId: string;
+  projectName: string | null;
+  source: string;
+  planId: string;
+  planVersionId: string;
+  tier: string;
+  rpmLimit: number;
+  periodAllowance: number | null;
+  initialDailyLimit: number | null;
+  initialDailyLimitUntil: number | null;
+  expensiveMinuteLimits: Record<string, number> | null;
+  expensivePeriodBudgets: Record<string, number> | null;
+  effectiveFrom: number;
+  effectiveUntil: number | null;
+  revision: number;
+  subscriptionId: string | null;
+  grantedBy: string | null;
+  reason: string;
+  revokedAt: number | null;
+  revokedBy: string | null;
+  createdAt: string;
+}
+
+export interface AdminProjectQuotaDetail {
+  projectId: string;
+  planId: string;
+  planVersionId: string;
+  grantSource: string;
+  rpmLimit: number;
+  periodAllowance: number | null;
+  periodType: "calendar_month" | "billing_period" | "unlimited";
+  periodStart: number | null;
+  periodEnd: number | null;
+  status: string;
+  reason: string | null;
+  initialDailyLimit: number | null;
+  initialDailyLimitUntil: number | null;
+  expensiveMinuteLimits: Record<string, number>;
+  expensivePeriodBudgets: Record<string, number> | null;
+  periodUsage: {
+    used: number;
+    allowance: number;
+    remaining: number;
+    bonus?: number;
+    policyCounts: Record<string, number>;
+    status: "ok" | "warning" | "critical" | "exhausted";
+  } | null;
+  dailyUsage: {
+    dayStart: number;
+    used: number;
+    allowance: number;
+    remaining: number;
+    resetAtIso: string;
+  } | null;
+}
+
 export interface AdminUserBilling {
   customer: AdminBillingCustomer | null;
   subscriptions: AdminBillingSubscription[];
@@ -201,6 +259,8 @@ export interface AdminUserBilling {
   withdrawals: AdminWithdrawalRequest[];
   actions: AdminBillingAction[];
   usageAdjustments: AdminUsageAdjustment[];
+  grants: AdminEntitlementGrant[];
+  selfServeCheckoutBlocked: boolean;
 }
 
 export interface AdminUserDetail {
@@ -216,6 +276,7 @@ export interface AdminUserDetail {
   onboarding: AdminUserOnboarding;
   agreements: AdminUserAgreement[];
   projects: AdminProject[];
+  projectQuotas: Record<string, AdminProjectQuotaDetail>;
   limitRequests: AdminUserLimitRequest[];
   privacyRequests: AdminUserPrivacyRequest[];
   billing: AdminUserBilling;

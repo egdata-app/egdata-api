@@ -362,11 +362,16 @@ export async function resolveEffectiveProjectEntitlement(
     parsedEntitlements.push("tier:enterprise");
   }
 
+  let manualDailyLimit: number | null = null;
+  let manualDailyUntil: number | null = null;
+
   try {
     const parsed = JSON.parse(grant.expensive_limits_json) as {
       minute?: Record<string, number>;
       period?: Record<string, number>;
       entitlements?: string[];
+      initialDailyLimit?: number | null;
+      initialDailyLimitUntil?: number | null;
     };
     if (parsed.minute) {
       parsedMinute = {
@@ -386,6 +391,20 @@ export async function resolveEffectiveProjectEntitlement(
     if (Array.isArray(parsed.entitlements)) {
       parsedEntitlements = parsed.entitlements;
     }
+    if (
+      typeof parsed.initialDailyLimit === "number" &&
+      parsed.initialDailyLimit > 0
+    ) {
+      const until =
+        typeof parsed.initialDailyLimitUntil === "number" &&
+        Number.isFinite(parsed.initialDailyLimitUntil)
+          ? parsed.initialDailyLimitUntil
+          : null;
+      if (until === null || until > nowMs) {
+        manualDailyLimit = parsed.initialDailyLimit;
+        manualDailyUntil = until;
+      }
+    }
   } catch {
     // ignore malformed json
   }
@@ -403,8 +422,8 @@ export async function resolveEffectiveProjectEntitlement(
     periodType: grant.period_allowance ? "billing_period" : "unlimited",
     periodStart: grant.effective_from,
     periodEnd: grant.effective_until,
-    initialDailyLimit: null,
-    initialDailyLimitUntil: null,
+    initialDailyLimit: manualDailyLimit,
+    initialDailyLimitUntil: manualDailyUntil,
     expensiveMinuteLimits: parsedMinute,
     expensivePeriodBudgets: parsedPeriod,
     entitlements: parsedEntitlements,

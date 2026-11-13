@@ -28,6 +28,7 @@ import {
   updateProject,
   upsertEpicUserAndDefaultProject,
 } from "./db.js";
+import { devRoutes, isLocalDevToolsAvailable } from "./dev-routes.js";
 import {
   developerAccount,
   publicLegalDocument,
@@ -144,9 +145,7 @@ dashboardApi.post("/auth/logout", async (c) => {
 
 dashboardApi.get("/auth/session", async (c) => {
   const user = await readDashboardSession(c);
-  const isLocal =
-    ["localhost", "127.0.0.1"].includes(new URL(c.req.url).hostname) &&
-    c.env.ENABLE_DEV_AUTH === "true";
+  const devAuthAvailable = isLocalDevToolsAvailable(c.env, c.req.url);
   const hasEpicCredentials = Boolean(
     c.env.EPIC_CLIENT_ID && c.env.EPIC_CLIENT_SECRET,
   );
@@ -158,7 +157,7 @@ dashboardApi.get("/auth/session", async (c) => {
       user: null,
       projects: [],
       oauthConfigured: hasEpicCredentials,
-      devAuthAvailable: !hasEpicCredentials && isLocal,
+      devAuthAvailable,
     });
   }
 
@@ -175,7 +174,7 @@ dashboardApi.get("/auth/session", async (c) => {
     projects: account.eligible ? projects : [],
     account,
     oauthConfigured: hasEpicCredentials,
-    devAuthAvailable: !hasEpicCredentials && isLocal,
+    devAuthAvailable,
   });
 });
 
@@ -699,6 +698,7 @@ dashboardApi.route("/account", developerAccount);
 dashboardApi.route("/console-sessions", consoleSessionRoutes);
 dashboardApi.route("/billing", billingRoutes);
 dashboardApi.route("/projects", projectBillingRoutes);
+dashboardApi.route("/dev", devRoutes);
 
 rootApp.route("/_dashboard/api", dashboardApi);
 

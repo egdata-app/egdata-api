@@ -1219,6 +1219,8 @@ describe("administrator user and project management", () => {
 
   it("includes billing customer, subscriptions, purchase receipts, withdrawals, actions, and usage adjustments in user detail", async () => {
     const { sqlite, call } = setup();
+    const periodStart = Date.now() - 86_400_000;
+    const periodEnd = Date.now() + 29 * 86_400_000;
     sqlite.exec(`
       INSERT INTO billing_customers(owner_epic_id, stripe_customer_id, environment, email)
         VALUES('owner', 'cus_admin_test', 'test', 'owner@example.com');
@@ -1230,7 +1232,7 @@ describe("administrator user and project management", () => {
       ) VALUES (
         'bsub_1', 'owner', 'project', 'cus_admin_test', 'sub_stripe_1',
         'price_scale', 'scale-v1', 'pro-v1', 'active', 'test',
-        1700000000000, 1702592000000, 1, 'in_1',
+        ${periodStart}, ${periodEnd}, 1, 'in_1',
         'none', 'partial', 450, 0
       );
       INSERT INTO purchase_receipts(
@@ -1240,7 +1242,7 @@ describe("administrator user and project management", () => {
       ) VALUES (
         'rcpt_buy_1', 'owner', 'project', 'bsub_1', 'cs_test_1',
         'scale-v1', 1900, 'eur', 1, '1.0',
-        1, 1701209600000, 'checkout', 1700000000000
+        1, ${periodStart + 14 * 86_400_000}, 'checkout', ${periodStart}
       );
       INSERT INTO withdrawal_requests(
         id, owner_epic_id, project_id, subscription_id, request_kind, status,
@@ -1258,7 +1260,16 @@ describe("administrator user and project management", () => {
       INSERT INTO usage_adjustments(
         adjustment_id, project_id, owner_epic_id, scope, window_start, amount, reason, actor_id
       ) VALUES (
-        'adj_1', 'project', 'owner', 'period', 1700000000000, 25000, 'Onboarding credit', 'admin'
+        'adj_1', 'project', 'owner', 'period', ${periodStart}, 25000, 'Onboarding credit', 'admin'
+      );
+      INSERT INTO entitlement_grants(
+        id, project_id, owner_epic_id, source, plan_id, plan_version_id, tier,
+        rpm_limit, period_allowance, expensive_limits_json, effective_from,
+        effective_until, revision, subscription_id, granted_by, reason
+      ) VALUES (
+        'grant_sub_1', 'project', 'owner', 'subscription', 'scale', 'scale-v1', 'scale',
+        600, 1000000, '{"minute":{"offers-list":60,"search":600,"heavy":180,"bulk":40},"period":{"nl-search":10000,"bulk":40000,"image":50000},"initialDailyLimit":35000,"initialDailyLimitUntil":9999999999999}',
+        ${periodStart}, ${periodEnd}, 2, 'bsub_1', 'stripe_webhook', 'Subscription activated'
       );
     `);
 
@@ -1295,6 +1306,7 @@ describe("administrator user and project management", () => {
       status: "refunded_partial",
       refundedAmountCents: 450,
     });
+    expect(detail.billing.selfServeCheckoutBlocked).toBe(false);
     expect(detail.billing.actions).toHaveLength(1);
     expect(detail.billing.actions[0]).toMatchObject({
       action: "checkout_completed",
@@ -1305,5 +1317,38 @@ describe("administrator user and project management", () => {
       adjustmentId: "adj_1",
       amount: 25000,
     });
+    expect(detail.billing.grants).toHaveLength(1);
+    expect(detail.billing.grants[0]).toMatchObject({
+      id: "grant_sub_1",
+      source: "subscription",
+      planVersionId: "scale-v1",
+      rpmLimit: 600,
+      periodAllowance: 1000000,
+      initialDailyLimit: 35000,
+      grantedBy: "stripe_webhook",
+      reason: "Subscription activated",
+    });
+    expect(detail.projectQuotas.project).toMatchObject({
+      planVersionId: "scale-v1",
+      grantSource: "subscription",
+      rpmLimit: 600,
+      periodAllowance: 1000000,
+      initialDailyLimit: 35000,
+    });
+
+    sqlite.exec(`
+      INSERT INTO withdrawal_requests(
+        id, owner_epic_id, project_id, subscription_id, request_kind, status,
+        requested_amount_cents, refunded_amount_cents, stripe_refund_id, reason,
+        resolution_note, idempotency_key
+      ) VALUES (
+        'wdr_stat_1', 'owner', 'project', 'bsub_1', 'statutory_withdrawal', 'refunded_partial',
+        1200, 1200, 're_stat_1', '14-day withdrawal', 'Pro-rata refund', 'idem_wdr_stat_1'
+      );
+    `);
+    const blockedRes = await call("/users/owner");
+    expect(blockedRes.status).toBe(200);
+    const blockedDetail = (await blockedRes.json()) as AdminUserDetail;
+    expect(blockedDetail.billing.selfServeCheckoutBlocked).toBe(true);
   });
 });

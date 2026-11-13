@@ -52,6 +52,7 @@ type StateRow = {
 type MonthlyRow = {
   month_start: number;
   used_count: number;
+  bonus_count: number;
 };
 
 type DailyRow = {
@@ -64,6 +65,7 @@ type PeriodRow = {
   period_end: number;
   used_count: number;
   policies_json: string;
+  bonus_count: number;
 };
 
 type EntitlementRow = {
@@ -141,9 +143,18 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
         account_id TEXT PRIMARY KEY,
         month_start INTEGER NOT NULL,
         used_count INTEGER NOT NULL,
+        bonus_count INTEGER NOT NULL DEFAULT 0,
         updated_at INTEGER NOT NULL
       )
     `);
+    const monthlyCols = ctx.storage.sql
+      .exec<{ name: string }>(`PRAGMA table_info(account_monthly_state)`)
+      .toArray();
+    if (!monthlyCols.some((c) => c.name === "bonus_count")) {
+      ctx.storage.sql.exec(
+        `ALTER TABLE account_monthly_state ADD COLUMN bonus_count INTEGER NOT NULL DEFAULT 0`,
+      );
+    }
     ctx.storage.sql.exec(`
       CREATE TABLE IF NOT EXISTS project_period_state (
         project_id TEXT PRIMARY KEY,
@@ -151,9 +162,18 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
         period_end INTEGER NOT NULL,
         used_count INTEGER NOT NULL,
         policies_json TEXT NOT NULL,
+        bonus_count INTEGER NOT NULL DEFAULT 0,
         updated_at INTEGER NOT NULL
       )
     `);
+    const periodCols = ctx.storage.sql
+      .exec<{ name: string }>(`PRAGMA table_info(project_period_state)`)
+      .toArray();
+    if (!periodCols.some((c) => c.name === "bonus_count")) {
+      ctx.storage.sql.exec(
+        `ALTER TABLE project_period_state ADD COLUMN bonus_count INTEGER NOT NULL DEFAULT 0`,
+      );
+    }
     ctx.storage.sql.exec(`
       CREATE TABLE IF NOT EXISTS project_entitlements (
         project_id TEXT PRIMARY KEY,
@@ -296,7 +316,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
   private readMonthlyState(accountId: string): MonthlyQuotaState | null {
     const row = this.ctx.storage.sql
       .exec<MonthlyRow>(
-        `SELECT month_start, used_count
+        `SELECT month_start, used_count, bonus_count
            FROM account_monthly_state
           WHERE account_id = ?`,
         accountId,
@@ -307,6 +327,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     return {
       monthStart: row.month_start,
       used: row.used_count,
+      bonus: Math.max(0, row.bonus_count ?? 0),
     };
   }
 
@@ -317,15 +338,17 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
   ): void {
     this.ctx.storage.sql.exec(
       `INSERT INTO account_monthly_state
-         (account_id, month_start, used_count, updated_at)
-       VALUES (?, ?, ?, ?)
+         (account_id, month_start, used_count, bonus_count, updated_at)
+       VALUES (?, ?, ?, ?, ?)
        ON CONFLICT(account_id) DO UPDATE SET
          month_start = excluded.month_start,
          used_count = excluded.used_count,
+         bonus_count = excluded.bonus_count,
          updated_at = excluded.updated_at`,
       accountId,
       state.monthStart,
       state.used,
+      Math.max(0, state.bonus ?? 0),
       now,
     );
   }
@@ -333,7 +356,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
   private readPeriodState(projectId: string): PeriodQuotaState | null {
     const row = this.ctx.storage.sql
       .exec<PeriodRow>(
-        `SELECT period_start, period_end, used_count, policies_json
+        `SELECT period_start, period_end, used_count, policies_json, bonus_count
            FROM project_period_state
           WHERE project_id = ?`,
         projectId,
@@ -346,6 +369,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       periodEnd: row.period_end,
       used: row.used_count,
       policyCounts: parsePositiveIntMap(row.policies_json),
+      bonus: Math.max(0, row.bonus_count ?? 0),
     };
   }
 
@@ -356,19 +380,21 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
   ): void {
     this.ctx.storage.sql.exec(
       `INSERT INTO project_period_state
-         (project_id, period_start, period_end, used_count, policies_json, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?)
+         (project_id, period_start, period_end, used_count, policies_json, bonus_count, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(project_id) DO UPDATE SET
          period_start = excluded.period_start,
          period_end = excluded.period_end,
          used_count = excluded.used_count,
          policies_json = excluded.policies_json,
+         bonus_count = excluded.bonus_count,
          updated_at = excluded.updated_at`,
       projectId,
       state.periodStart,
       state.periodEnd,
       state.used,
       JSON.stringify(state.policyCounts),
+      Math.max(0, state.bonus ?? 0),
       now,
     );
   }
@@ -839,8 +865,10 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
   }
 
   /**
-   * Idempotent usage credit for service-side failures or support adjustments.
-   * Replaying the same adjustmentId does not double-credit, and counters never go below zero.
+   * Idempotent usage credit for service-side failures ("refund") or operator
+   * quota grants ("bonus"). Replaying the same adjustmentId does not
+   * double-credit; refund mode never drops counters below zero, while bonus mode
+   * adds extra capacity on top of the active month/period allowance even when used is 0.
    */
   async creditUsage(params: {
     adjustmentId: string;
@@ -851,12 +879,14 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     periodEnd?: number;
     amount?: number;
     reason: string;
-  }): Promise<{ applied: boolean; remainingUsed: number }> {
+    mode?: "refund" | "bonus";
+  }): Promise<{ applied: boolean; remainingUsed: number; bonus?: number }> {
     const amount = Number.isInteger(params.amount) ? (params.amount ?? 1) : 1;
     if (!params.adjustmentId || !params.ownerEpicId || amount < 1) {
       throw new Error("Invalid usage adjustment parameters");
     }
 
+    const mode = params.mode === "bonus" ? "bonus" : "refund";
     const now = Date.now();
     const monthBounds = utcMonthBounds(now);
     const windowStart =
@@ -865,6 +895,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
 
     let applied = false;
     let remainingUsed = 0;
+    let appliedBonus: number | undefined;
 
     const apply = () => {
       const existing = this.ctx.storage.sql
@@ -876,57 +907,128 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
 
       if (params.scope === "month") {
         const monthly = this.readMonthlyState(params.ownerEpicId);
-        const sameMonth = monthly && monthly.monthStart === windowStart;
+        const sameMonth = monthly !== null && monthly.monthStart === windowStart;
         const currentUsed = sameMonth ? monthly.used : 0;
+        const currentBonus = sameMonth ? (monthly.bonus ?? 0) : 0;
         if (existing) {
           remainingUsed = currentUsed;
+          if (currentBonus > 0) appliedBonus = currentBonus;
           return;
         }
-        remainingUsed = sameMonth ? applyUsageCredit(currentUsed, amount) : 0;
-        if (sameMonth) {
+        if (mode === "bonus") {
+          remainingUsed = currentUsed;
+          const nextBonus = currentBonus + amount;
+          appliedBonus = nextBonus;
           this.writeMonthlyState(
             params.ownerEpicId,
-            { monthStart: monthly.monthStart, used: remainingUsed },
+            { monthStart: windowStart, used: currentUsed, bonus: nextBonus },
             now,
           );
+        } else {
+          remainingUsed = sameMonth ? applyUsageCredit(currentUsed, amount) : 0;
+          if (currentBonus > 0) appliedBonus = currentBonus;
+          if (sameMonth) {
+            this.writeMonthlyState(
+              params.ownerEpicId,
+              {
+                monthStart: monthly.monthStart,
+                used: remainingUsed,
+                bonus: currentBonus,
+              },
+              now,
+            );
+          }
         }
       } else {
         if (!params.projectId) {
           throw new Error("projectId is required for period usage credit");
         }
         const period = this.readPeriodState(params.projectId);
-        const samePeriod =
-          period !== null &&
-          (windowStart === 0 || period.periodStart === windowStart);
-        const currentUsed = samePeriod ? period.used : 0;
-        if (existing) {
-          remainingUsed = currentUsed;
-          return;
-        }
-        remainingUsed = samePeriod ? applyUsageCredit(currentUsed, amount) : 0;
-        if (samePeriod) {
-          this.writePeriodState(
+        if (mode === "bonus") {
+          const stored = this.readStoredEntitlement(
             params.projectId,
-            {
-              periodStart: period.periodStart,
-              periodEnd: period.periodEnd,
-              used: remainingUsed,
-              policyCounts: period.policyCounts,
-            },
-            now,
+            params.ownerEpicId,
           );
-        }
-        const daily = this.readDailyState(params.projectId);
-        const dayBounds = utcDayBounds(now);
-        if (daily && daily.dayStart === dayBounds.dayStart) {
-          this.writeDailyState(
-            params.projectId,
-            {
-              dayStart: daily.dayStart,
-              used: applyUsageCredit(daily.used, amount),
-            },
-            now,
-          );
+          const targetStart =
+            windowStart > 0
+              ? windowStart
+              : (period?.periodStart ?? stored?.periodStart ?? 0);
+          const targetEnd =
+            params.periodEnd ??
+            (period && period.periodStart === targetStart
+              ? period.periodEnd
+              : undefined) ??
+            (stored && stored.periodStart === targetStart
+              ? (stored.periodEnd ?? undefined)
+              : undefined) ??
+            0;
+          const hasPeriodWindow = targetStart > 0 && targetEnd > targetStart;
+          const samePeriod =
+            hasPeriodWindow &&
+            period !== null &&
+            period.periodStart === targetStart &&
+            period.periodEnd === targetEnd;
+          const currentUsed = samePeriod ? period.used : 0;
+          const currentBonus = samePeriod ? (period.bonus ?? 0) : 0;
+          if (existing) {
+            remainingUsed = currentUsed;
+            if (currentBonus > 0) appliedBonus = currentBonus;
+            return;
+          }
+          if (hasPeriodWindow) {
+            remainingUsed = currentUsed;
+            const nextBonus = currentBonus + amount;
+            appliedBonus = nextBonus;
+            this.writePeriodState(
+              params.projectId,
+              {
+                periodStart: targetStart,
+                periodEnd: targetEnd,
+                used: currentUsed,
+                policyCounts: samePeriod ? { ...period.policyCounts } : {},
+                bonus: nextBonus,
+              },
+              now,
+            );
+          }
+        } else {
+          const samePeriod =
+            period !== null &&
+            (windowStart === 0 || period.periodStart === windowStart);
+          const currentUsed = samePeriod ? period.used : 0;
+          const currentBonus = samePeriod ? (period.bonus ?? 0) : 0;
+          if (existing) {
+            remainingUsed = currentUsed;
+            if (currentBonus > 0) appliedBonus = currentBonus;
+            return;
+          }
+          remainingUsed = samePeriod ? applyUsageCredit(currentUsed, amount) : 0;
+          if (currentBonus > 0) appliedBonus = currentBonus;
+          if (samePeriod) {
+            this.writePeriodState(
+              params.projectId,
+              {
+                periodStart: period.periodStart,
+                periodEnd: period.periodEnd,
+                used: remainingUsed,
+                policyCounts: period.policyCounts,
+                bonus: currentBonus,
+              },
+              now,
+            );
+          }
+          const daily = this.readDailyState(params.projectId);
+          const dayBounds = utcDayBounds(now);
+          if (daily && daily.dayStart === dayBounds.dayStart) {
+            this.writeDailyState(
+              params.projectId,
+              {
+                dayStart: daily.dayStart,
+                used: applyUsageCredit(daily.used, amount),
+              },
+              now,
+            );
+          }
         }
       }
 
@@ -953,7 +1055,11 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       apply();
     }
 
-    return { applied, remainingUsed };
+    return {
+      applied,
+      remainingUsed,
+      ...(appliedBonus !== undefined ? { bonus: appliedBonus } : {}),
+    };
   }
 
   async alarm() {

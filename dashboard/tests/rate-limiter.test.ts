@@ -208,6 +208,14 @@ class FakeSql {
         ],
       };
     }
+    if (
+      normalized.startsWith("PRAGMA TABLE_INFO(ACCOUNT_MONTHLY_STATE)") ||
+      normalized.startsWith("PRAGMA TABLE_INFO(PROJECT_PERIOD_STATE)")
+    ) {
+      return {
+        toArray: () => [{ name: "bonus_count" }],
+      };
+    }
     if (normalized.startsWith("SELECT")) {
       const row = this.rows.get(String(bindings[0]));
       return { toArray: () => (row ? [{ ...row }] : []) };

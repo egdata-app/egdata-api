@@ -1,6 +1,6 @@
 {
   "baseCommit": "b67ec7efcd7e06c435c9088693460cf158351556",
-  "diffHash": "bac601b1d665bfcda5fe1f8fa7b8a469b68c4d2631a32f0657509510320fcb20",
+  "diffHash": "65e0b68d5e93fe378a105cb30b2b4948500513b6c5c4f5766d924f308b7372a0",
   "operations": [
     {
       "endpoint": "legacy:autocompleteOffers",
@@ -2558,6 +2558,11 @@
     {
       "file": "dashboard/worker/billing.ts",
       "reason": "Internal Stripe billing control-plane logic (checkout/portal session creation, webhook inbox processing, subscription/entitlement grant synchronization, reconciliation, and 14-day withdrawal refunds); does not expose or alter public catalog API endpoints directly.",
+      "endpoints": []
+    },
+    {
+      "file": "dashboard/worker/dev-routes.ts",
+      "reason": "Localhost-only development panel endpoints gated by loopback hostname check; affects local dashboard testing only, not public API endpoints.",
       "endpoints": []
     },
     {

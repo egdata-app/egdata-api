@@ -22,6 +22,7 @@ import {
 import { useState } from "react";
 import { ProfileNavigation } from "../components/AccountPage";
 import { AffiliationDisclaimerModal } from "../components/AffiliationDisclaimerModal";
+import { DevControlsTrigger } from "../components/DevControlsModal";
 import { AccountMenu } from "../components/DeveloperAccount";
 import { EgdataLogo, EpicGamesIcon } from "../components/icons/BrandIcons";
 import { Button } from "../components/ui/Button";
@@ -266,6 +267,7 @@ function DashboardShell() {
             </a>
 
             <div className="flex items-center gap-2.5 pl-3 border-l border-epic-border">
+              <DevControlsTrigger />
               <AccountMenu />
             </div>
           </div>

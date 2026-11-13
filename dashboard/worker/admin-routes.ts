@@ -6,7 +6,9 @@ import type {
   AdminBillingAction,
   AdminBillingCustomer,
   AdminBillingSubscription,
+  AdminEntitlementGrant,
   AdminProject,
+  AdminProjectQuotaDetail,
   AdminPurchaseReceipt,
   AdminUsageAdjustment,
   AdminUser,
@@ -33,9 +35,13 @@ import {
   accountLimiterObjectName,
   quotaForProject,
   readAccountMonthlyQuota,
+  readProjectBillingQuota,
+  readProjectDailyQuota,
+  resolveEffectiveProjectEntitlement,
 } from "./project-quota.js";
 import { PROJECT_RECOVERY_DAYS } from "./project-retention.js";
-import type { DashboardEnv, EpicSessionUser } from "./types.js";
+import { utcMonthBounds } from "./rate-limiter-core.js";
+import type { ApiKeyTier, DashboardEnv, EpicSessionUser } from "./types.js";
 
 // Mounted inside limitReviewRoutes, after its session and DB admin-role guards.
 export const adminManagementRoutes = new Hono<{
@@ -128,6 +134,44 @@ adminManagementRoutes.get("/users", async (c) => {
   });
 });
 
+function parseGrantLimits(jsonStr: string): Pick<
+  AdminEntitlementGrant,
+  | "initialDailyLimit"
+  | "initialDailyLimitUntil"
+  | "expensiveMinuteLimits"
+  | "expensivePeriodBudgets"
+> {
+  try {
+    const parsed = JSON.parse(jsonStr) as {
+      minute?: Record<string, number>;
+      period?: Record<string, number>;
+      initialDailyLimit?: number | null;
+      initialDailyLimitUntil?: number | null;
+    };
+    return {
+      initialDailyLimit:
+        typeof parsed.initialDailyLimit === "number" &&
+        parsed.initialDailyLimit > 0
+          ? parsed.initialDailyLimit
+          : null,
+      initialDailyLimitUntil:
+        typeof parsed.initialDailyLimitUntil === "number" &&
+        Number.isFinite(parsed.initialDailyLimitUntil)
+          ? parsed.initialDailyLimitUntil
+          : null,
+      expensiveMinuteLimits: parsed.minute ?? null,
+      expensivePeriodBudgets: parsed.period ?? null,
+    };
+  } catch {
+    return {
+      initialDailyLimit: null,
+      initialDailyLimitUntil: null,
+      expensiveMinuteLimits: null,
+      expensivePeriodBudgets: null,
+    };
+  }
+}
+
 async function loadAdminUserBilling(
   db: D1Database,
   userId: string,
@@ -139,6 +183,8 @@ async function loadAdminUserBilling(
     withdrawals: [],
     actions: [],
     usageAdjustments: [],
+    grants: [],
+    selfServeCheckoutBlocked: false,
   };
   try {
     const [
@@ -148,6 +194,7 @@ async function loadAdminUserBilling(
       withdrawalsResult,
       actionsResult,
       adjustmentsResult,
+      grantsResult,
     ] = await Promise.all([
       db
         .prepare(
@@ -269,8 +316,36 @@ async function loadAdminUserBilling(
         )
         .bind(userId)
         .all<AdminUsageAdjustment>(),
+      db
+        .prepare(
+          `SELECT g.id, g.project_id AS projectId, p.name AS projectName,
+                  g.source, g.plan_id AS planId, g.plan_version_id AS planVersionId,
+                  g.tier, g.rpm_limit AS rpmLimit, g.period_allowance AS periodAllowance,
+                  g.expensive_limits_json AS expensiveLimitsJson,
+                  g.effective_from AS effectiveFrom, g.effective_until AS effectiveUntil,
+                  g.revision, g.subscription_id AS subscriptionId,
+                  g.granted_by AS grantedBy, g.reason,
+                  g.revoked_at AS revokedAt, g.revoked_by AS revokedBy,
+                  g.created_at AS createdAt
+             FROM entitlement_grants g
+             LEFT JOIN projects p ON p.id = g.project_id
+            WHERE g.owner_epic_id = ?
+            ORDER BY (g.revoked_at IS NULL) DESC, g.revision DESC, g.created_at DESC
+            LIMIT 50`,
+        )
+        .bind(userId)
+        .all<
+          Omit<
+            AdminEntitlementGrant,
+            | "initialDailyLimit"
+            | "initialDailyLimitUntil"
+            | "expensiveMinuteLimits"
+            | "expensivePeriodBudgets"
+          > & { expensiveLimitsJson: string }
+        >(),
     ]);
 
+    const withdrawals = withdrawalsResult.results;
     return {
       customer: customer ?? null,
       subscriptions: subsResult.results.map((row) => ({
@@ -283,7 +358,7 @@ async function loadAdminUserBilling(
         vatIncluded: row.vatIncluded === 1,
         withdrawalAcknowledged: row.withdrawalAcknowledged === 1,
       })),
-      withdrawals: withdrawalsResult.results,
+      withdrawals,
       actions: actionsResult.results.map(({ detailsJson, ...row }) => {
         let details: Record<string, unknown> = {};
         try {
@@ -294,6 +369,15 @@ async function loadAdminUserBilling(
         return { ...row, details };
       }),
       usageAdjustments: adjustmentsResult.results,
+      grants: grantsResult.results.map(({ expensiveLimitsJson, ...row }) => ({
+        ...row,
+        ...parseGrantLimits(expensiveLimitsJson),
+      })),
+      selfServeCheckoutBlocked: withdrawals.some(
+        (w) =>
+          w.requestKind === "statutory_withdrawal" &&
+          (w.status === "refunded_full" || w.status === "refunded_partial"),
+      ),
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -302,6 +386,80 @@ async function loadAdminUserBilling(
     }
     throw err;
   }
+}
+
+async function loadAdminProjectQuotas(
+  env: DashboardEnv,
+  ownerEpicId: string,
+  projects: AdminProject[],
+): Promise<Record<string, AdminProjectQuotaDetail>> {
+  const activeProjects = projects.filter((p) => !p.deletedAt);
+  if (activeProjects.length === 0) return {};
+
+  const entries = await Promise.all(
+    activeProjects.map(async (project) => {
+      try {
+        const entitlement = await resolveEffectiveProjectEntitlement(env, {
+          projectId: project.id,
+          ownerEpicId,
+          tier: project.tier,
+          customRpm: project.customRpm,
+        });
+        const [periodUsage, dailyUsage] = await Promise.all([
+          entitlement.periodType === "billing_period" &&
+          entitlement.periodAllowance !== null &&
+          entitlement.periodStart !== null &&
+          entitlement.periodEnd !== null
+            ? readProjectBillingQuota(
+                env,
+                ownerEpicId,
+                project.id,
+                entitlement.periodAllowance,
+                entitlement.periodStart,
+                entitlement.periodEnd,
+              ).catch(() => null)
+            : Promise.resolve(null),
+          entitlement.initialDailyLimit
+            ? readProjectDailyQuota(
+                env,
+                ownerEpicId,
+                project.id,
+                entitlement.initialDailyLimit,
+              ).catch(() => null)
+            : Promise.resolve(null),
+        ]);
+        const quota: AdminProjectQuotaDetail = {
+          projectId: project.id,
+          planId: entitlement.planId,
+          planVersionId: entitlement.planVersionId,
+          grantSource: entitlement.grantSource,
+          rpmLimit: entitlement.rpmLimit,
+          periodAllowance: entitlement.periodAllowance,
+          periodType: entitlement.periodType,
+          periodStart: entitlement.periodStart,
+          periodEnd: entitlement.periodEnd,
+          status: entitlement.status,
+          reason: entitlement.reason,
+          initialDailyLimit: entitlement.initialDailyLimit ?? null,
+          initialDailyLimitUntil: entitlement.initialDailyLimitUntil ?? null,
+          expensiveMinuteLimits: entitlement.expensiveMinuteLimits,
+          expensivePeriodBudgets: entitlement.expensivePeriodBudgets,
+          periodUsage,
+          dailyUsage,
+        };
+        return [project.id, quota] as const;
+      } catch {
+        return null;
+      }
+    }),
+  );
+
+  return Object.fromEntries(
+    entries.filter(
+      (entry): entry is readonly [string, AdminProjectQuotaDetail] =>
+        entry !== null,
+    ),
+  );
 }
 
 adminManagementRoutes.get("/users/:userId", async (c) => {
@@ -471,14 +629,23 @@ adminManagementRoutes.get("/users/:userId", async (c) => {
         purgeAfter: closure?.purgeAfter ?? null,
       };
 
-  const [monthlyQuota, usage, billing] = await Promise.all([
+  const [monthlyQuota, usage, billing, projectQuotas] = await Promise.all([
     !user.closedAt &&
     projects.some((project) => !project.deletedAt && project.tier === "free")
       ? adminMonthlyQuota(c.env, userId)
       : null,
     getAdminUsage(c.env, "users", [userId]),
     loadAdminUserBilling(c.env.DB, userId),
+    !user.closedAt
+      ? loadAdminProjectQuotas(c.env, userId, projects)
+      : Promise.resolve<Record<string, AdminProjectQuotaDetail>>({}),
   ]);
+
+  const enrichedProjects = projects.map((project) => ({
+    ...project,
+    effectiveRpm:
+      projectQuotas[project.id]?.rpmLimit ?? project.effectiveRpm,
+  }));
 
   const detail: AdminUserDetail = {
     monthlyQuota,
@@ -497,7 +664,8 @@ adminManagementRoutes.get("/users/:userId", async (c) => {
       acceptedAt,
     },
     agreements,
-    projects,
+    projects: enrichedProjects,
+    projectQuotas,
     limitRequests: limitRequestsResult.results,
     privacyRequests: privacyRequestsResult.results,
     billing,
@@ -991,10 +1159,15 @@ adminManagementRoutes.post("/projects/:projectId/usage-adjustments", async (c) =
   if (!parsed.success) return c.json(invalid, 400);
   const projectId = c.req.param("projectId");
   const project = await c.env.DB.prepare(
-    "SELECT id, owner_epic_id FROM projects WHERE id=? LIMIT 1",
+    "SELECT id, owner_epic_id, tier, custom_rpm FROM projects WHERE id=? LIMIT 1",
   )
     .bind(projectId)
-    .first<{ id: string; owner_epic_id: string }>();
+    .first<{
+      id: string;
+      owner_epic_id: string;
+      tier: string;
+      custom_rpm: number | null;
+    }>();
   if (!project) return c.json(missing, 404);
   if (!c.env.API_KEY_RATE_LIMITER) {
     return c.json(
@@ -1002,6 +1175,24 @@ adminManagementRoutes.post("/projects/:projectId/usage-adjustments", async (c) =
       503,
     );
   }
+  const entitlement = await resolveEffectiveProjectEntitlement(c.env, {
+    projectId: project.id,
+    ownerEpicId: project.owner_epic_id,
+    tier: project.tier as ApiKeyTier,
+    customRpm: project.custom_rpm,
+  });
+  const resolvedWindowStart =
+    parsed.data.windowStart ??
+    (parsed.data.scope === "month"
+      ? utcMonthBounds(Date.now()).monthStart
+      : (entitlement.periodStart ?? undefined));
+  const resolvedPeriodEnd =
+    parsed.data.scope === "period" &&
+    entitlement.periodEnd !== null &&
+    (resolvedWindowStart === undefined ||
+      resolvedWindowStart === entitlement.periodStart)
+      ? entitlement.periodEnd
+      : undefined;
   const objectId = c.env.API_KEY_RATE_LIMITER.idFromName(
     accountLimiterObjectName(c.env, project.owner_epic_id),
   );
@@ -1011,9 +1202,11 @@ adminManagementRoutes.post("/projects/:projectId/usage-adjustments", async (c) =
     ownerEpicId: project.owner_epic_id,
     projectId: project.id,
     scope: parsed.data.scope,
-    windowStart: parsed.data.windowStart,
+    windowStart: resolvedWindowStart,
+    periodEnd: resolvedPeriodEnd,
     amount: parsed.data.amount,
     reason: parsed.data.reason,
+    mode: "bonus",
   });
   await c.env.DB.prepare(
     `INSERT OR IGNORE INTO usage_adjustments (
@@ -1025,7 +1218,7 @@ adminManagementRoutes.post("/projects/:projectId/usage-adjustments", async (c) =
       project.id,
       project.owner_epic_id,
       parsed.data.scope,
-      parsed.data.windowStart ?? 0,
+      resolvedWindowStart ?? 0,
       parsed.data.amount,
       parsed.data.reason,
       c.get("user").epicAccountId,
