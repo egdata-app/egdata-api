@@ -47,7 +47,11 @@ const projectLimitsSchema = z
     customRpm: z.number().int().min(150).max(500_000).nullable(),
     reason: reasonSchema,
   })
-  .strict();
+  .strict()
+  .refine((data) => !(data.tier === "free" && data.customRpm !== null), {
+    message:
+      "Custom RPM overrides require pro or enterprise tier; free tier projects remain subject to the 100,000/month cap.",
+  });
 const invalid = {
   error: { code: "VALIDATION_ERROR", message: "Invalid fields or pagination." },
 };
@@ -420,7 +424,18 @@ adminManagementRoutes.patch("/projects/:projectId/limits", async (c) => {
   const parsed = projectLimitsSchema.safeParse(
     await c.req.json().catch(() => null),
   );
-  if (!parsed.success) return c.json(invalid, 400);
+  if (!parsed.success) {
+    const customMessage = parsed.error.issues.find(
+      (issue) => issue.code === "custom",
+    )?.message;
+    if (customMessage) {
+      return c.json(
+        { error: { code: "VALIDATION_ERROR", message: customMessage } },
+        400,
+      );
+    }
+    return c.json(invalid, 400);
+  }
   const id = c.req.param("projectId");
   const { tier, customRpm } = parsed.data;
   const now = new Date().toISOString();

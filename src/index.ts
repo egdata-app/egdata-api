@@ -8,7 +8,6 @@ import { config } from "dotenv";
 import { Hono } from "hono";
 import { compress } from "hono/compress";
 import { getCookie } from "hono/cookie";
-import { apiCors } from "./middlewares/cors.js";
 import { inspectRoutes } from "hono/dev";
 import { ensureCatalogHydrationIndexes } from "./catalog/resolver.js";
 import { discord } from "./clients/discord.js";
@@ -20,6 +19,7 @@ import { server as graphqlServer } from "./graphql/index.js";
 import { createLoaders } from "./graphql/loaders.js";
 import { disconnectPersistedQueryStore } from "./graphql/persisted-queries.js";
 import { honoMiddleware } from "./middlewares/apollo.js";
+import { apiCors } from "./middlewares/cors.js";
 import { edgeCacheHeaders } from "./middlewares/edge-cache.js";
 import { originAuth } from "./middlewares/origin-auth.js";
 import {
@@ -69,7 +69,6 @@ import SellersRoute from "./routes/sellers.js";
 import StatsRoute from "./routes/stats.js";
 import UsersRoute from "./routes/users.js";
 import UsersServiceRoute from "./routes/users-service.js";
-import { v1Router } from "./v1/router.js";
 import { createAntiAbuseRuntime } from "./services/anti-abuse-runtime.js";
 import { attributesToObject } from "./utils/attributes-to-object.js";
 import { resolveChangelogContextSafely } from "./utils/changelog-context.js";
@@ -89,6 +88,7 @@ import {
   OFFER_SITEMAP_PAGE_LIMIT,
 } from "./utils/offer-sitemap.js";
 import { orderOffersObject } from "./utils/order-offers-object.js";
+import { v1Router } from "./v1/router.js";
 import { API_VERSION } from "./version.js";
 
 config();
@@ -108,8 +108,15 @@ app.use("/*", originAuth());
 // Compress text responses at the origin. Cloudflare compresses browser traffic,
 // but the origin -> edge hop is what GCP bills; without this every JSON/XML
 // response crosses that hop uncompressed.
+// Register observeResponse outside compression so it counts encoded body bytes,
+// while skipping /v1 to keep v1 routes untouched by anonymous anti-abuse logic.
 const antiAbuse = createAntiAbuseRuntime();
-app.use("/*", antiAbuse.observeResponse);
+app.use("/*", async (c, next) => {
+  if (c.req.path === "/v1" || c.req.path.startsWith("/v1/")) {
+    return next();
+  }
+  return antiAbuse.observeResponse(c, next);
+});
 app.use("/*", compress({ threshold: 512 }));
 
 export { app };

@@ -14,6 +14,10 @@ import type { AdmissionResult } from "./rate-limiter-core.js";
 import type { CachedKeyMetadata, DashboardEnv } from "./types.js";
 import { forwardToUpstream } from "./upstream.js";
 import { handleV1ApiProxy } from "./v1.js";
+import {
+  expensivePolicyLimitForProject,
+  resolveLegacyExpensivePolicy,
+} from "./v1-routes.js";
 
 const PUBLIC_UNAUTHENTICATED_PATHS = new Set([
   "/health",
@@ -49,7 +53,7 @@ function edgeErrorJson(
     headers["Access-Control-Allow-Origin"] = originHeader;
     headers["Access-Control-Allow-Credentials"] = "true";
     headers["Access-Control-Expose-Headers"] =
-      "Retry-After, RateLimit, RateLimit-Policy, X-Egdata-Key-Tier";
+      "Retry-After, RateLimit, RateLimit-Policy, X-RateLimit-Policy, X-Egdata-Key-Tier";
     headers.Vary = "Origin";
   }
   return new Response(
@@ -269,9 +273,21 @@ export async function handleEdgeApiProxy(
   }
 
   // 5. Share one global project allowance with v1 and the API console.
+  const expensivePolicy = resolveLegacyExpensivePolicy(
+    upstreamPath,
+    request.method,
+  );
+  const additionalPolicies = expensivePolicy
+    ? [
+        {
+          name: expensivePolicy,
+          limit: expensivePolicyLimitForProject(expensivePolicy, keyMeta),
+        },
+      ]
+    : [];
   let admission: AdmissionResult;
   try {
-    admission = await admitProjectRequest(env, keyMeta);
+    admission = await admitProjectRequest(env, keyMeta, additionalPolicies);
   } catch {
     recordApiTelemetry(env, {
       ownerEpicId: keyMeta.ownerEpicId,
@@ -328,6 +344,9 @@ export async function handleEdgeApiProxy(
       {
         ...quotaHeaders,
         "Retry-After": String(admission.retryAfter),
+        ...(admission.exhaustedPolicy
+          ? { "X-RateLimit-Policy": admission.exhaustedPolicy }
+          : {}),
         "X-Egdata-Key-Tier": keyMeta.tier,
       },
     );

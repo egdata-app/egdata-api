@@ -379,6 +379,25 @@ describe("administrator user and project management", () => {
     ).toEqual({ count: 0 });
   });
 
+  it("rejects setting customRpm on a free tier project before any mutation", async () => {
+    const { call, db, env } = setup();
+    const batch = vi.spyOn(db, "batch");
+    const response = await call("/projects/project/limits", "PATCH", {
+      tier: "free",
+      customRpm: 500,
+    });
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({
+      error: {
+        code: "VALIDATION_ERROR",
+        message:
+          "Custom RPM overrides require pro or enterprise tier; free tier projects remain subject to the 100,000/month cap.",
+      },
+    });
+    expect(batch).not.toHaveBeenCalled();
+    expect(env.API_KEYS_KV.delete).not.toHaveBeenCalled();
+  });
+
   it("rolls back quota changes if a key update fails", async () => {
     const { call, sqlite, env } = setup();
     sqlite.exec(
