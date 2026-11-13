@@ -46,6 +46,105 @@ export class BillingError extends Error {
   }
 }
 
+function isLocalOrigin(origin: string): boolean {
+  try {
+    const parsed = new URL(origin);
+    return (
+      (parsed.protocol === "http:" || parsed.protocol === "https:") &&
+      (parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1")
+    );
+  } catch {
+    return false;
+  }
+}
+
+function getAllowedBillingOrigins(
+  env: DashboardEnv,
+  requestOrigin?: string,
+): { configuredOrigin: string; localOrigin: string | null } {
+  const rawConfigured = (
+    env.DASHBOARD_ORIGIN || "https://devs.egdata.app"
+  ).replace(/\/$/, "");
+  let configuredOrigin: string;
+  try {
+    configuredOrigin = new URL(rawConfigured).origin;
+  } catch {
+    configuredOrigin = "https://devs.egdata.app";
+  }
+
+  let localOrigin: string | null = null;
+  if (requestOrigin && isLocalOrigin(requestOrigin)) {
+    try {
+      localOrigin = new URL(requestOrigin).origin;
+    } catch {
+      localOrigin = null;
+    }
+  }
+
+  return { configuredOrigin, localOrigin };
+}
+
+function resolveBillingDashboardOrigin(
+  env: DashboardEnv,
+  requestOrigin?: string,
+): string {
+  const { configuredOrigin, localOrigin } = getAllowedBillingOrigins(
+    env,
+    requestOrigin,
+  );
+  return localOrigin || configuredOrigin;
+}
+
+/**
+ * Validates that a client-supplied Stripe redirect URL belongs to the configured
+ * dashboard origin (or the active localhost dev origin) without embedded credentials.
+ */
+export function assertSafeBillingRedirectUrl(
+  rawUrl: string,
+  env: DashboardEnv,
+  requestOrigin?: string,
+): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(rawUrl);
+  } catch {
+    throw new BillingError(
+      "VALIDATION_ERROR",
+      "Redirect URL must be a valid dashboard URL.",
+      400,
+    );
+  }
+
+  if (
+    (parsed.protocol !== "http:" && parsed.protocol !== "https:") ||
+    parsed.username ||
+    parsed.password
+  ) {
+    throw new BillingError(
+      "VALIDATION_ERROR",
+      "Redirect URL must use http(s) without embedded credentials.",
+      400,
+    );
+  }
+
+  const { configuredOrigin, localOrigin } = getAllowedBillingOrigins(
+    env,
+    requestOrigin,
+  );
+  if (
+    parsed.origin !== configuredOrigin &&
+    (localOrigin === null || parsed.origin !== localOrigin)
+  ) {
+    throw new BillingError(
+      "VALIDATION_ERROR",
+      "Redirect URL must match the configured dashboard origin.",
+      400,
+    );
+  }
+
+  return parsed.toString();
+}
+
 function nextRevision(current: number | null | undefined): number {
   const base = Number.isFinite(current) ? Math.floor(Number(current)) : 0;
   return Math.max(Date.now(), base + 1);
@@ -291,8 +390,26 @@ export async function initiateSubscriptionCheckout(
     idempotencyKey?: string;
     successUrl?: string;
     cancelUrl?: string;
+    requestOrigin?: string;
   },
 ) {
+  const validatedSuccessUrl =
+    params.successUrl !== undefined
+      ? assertSafeBillingRedirectUrl(
+          params.successUrl,
+          env,
+          params.requestOrigin,
+        )
+      : undefined;
+  const validatedCancelUrl =
+    params.cancelUrl !== undefined
+      ? assertSafeBillingRedirectUrl(
+          params.cancelUrl,
+          env,
+          params.requestOrigin,
+        )
+      : undefined;
+
   if (!params.withdrawalAcknowledged || !params.termsVersion?.trim()) {
     throw new BillingError(
       "TERMS_AND_WITHDRAWAL_REQUIRED",
@@ -398,14 +515,15 @@ export async function initiateSubscriptionCheckout(
 
   const localSubscriptionId = `bsub_${crypto.randomUUID().replace(/-/g, "")}`;
   const nowMs = Date.now();
-  const dashboardOrigin = (
-    env.DASHBOARD_ORIGIN || "https://devs.egdata.app"
-  ).replace(/\/$/, "");
+  const dashboardOrigin = resolveBillingDashboardOrigin(
+    env,
+    params.requestOrigin,
+  );
   const successUrl =
-    params.successUrl ||
+    validatedSuccessUrl ??
     `${dashboardOrigin}/limits?project=${encodeURIComponent(project.id)}&checkout=success`;
   const cancelUrl =
-    params.cancelUrl ||
+    validatedCancelUrl ??
     `${dashboardOrigin}/limits?project=${encodeURIComponent(project.id)}&checkout=canceled`;
 
   try {
@@ -531,17 +649,26 @@ export async function createCustomerBillingPortalSession(
     ownerEpicId: string;
     ownerDisplayName?: string;
     returnUrl?: string;
+    requestOrigin?: string;
   },
 ) {
+  const dashboardOrigin = resolveBillingDashboardOrigin(
+    env,
+    params.requestOrigin,
+  );
+  const returnUrl =
+    params.returnUrl !== undefined
+      ? assertSafeBillingRedirectUrl(
+          params.returnUrl,
+          env,
+          params.requestOrigin,
+        )
+      : `${dashboardOrigin}/limits`;
   const { stripeCustomerId } = await getOrCreateStripeCustomer(
     env,
     params.ownerEpicId,
     params.ownerDisplayName,
   );
-  const dashboardOrigin = (
-    env.DASHBOARD_ORIGIN || "https://devs.egdata.app"
-  ).replace(/\/$/, "");
-  const returnUrl = params.returnUrl || `${dashboardOrigin}/limits`;
   const session = await createStripePortalSession(env, {
     customerId: stripeCustomerId,
     returnUrl,

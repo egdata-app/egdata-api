@@ -3,12 +3,19 @@ import { z } from "zod";
 import { keyAudit, projectAudit, userAudit } from "./admin-audit.js";
 import type {
   AdminAuditEntry,
+  AdminBillingAction,
+  AdminBillingCustomer,
+  AdminBillingSubscription,
   AdminProject,
+  AdminPurchaseReceipt,
+  AdminUsageAdjustment,
   AdminUser,
   AdminUserAgreement,
+  AdminUserBilling,
   AdminUserDetail,
   AdminUserLimitRequest,
   AdminUserPrivacyRequest,
+  AdminWithdrawalRequest,
 } from "./admin-types.js";
 import {
   getAdminUsage,
@@ -120,6 +127,182 @@ adminManagementRoutes.get("/users", async (c) => {
     ),
   });
 });
+
+async function loadAdminUserBilling(
+  db: D1Database,
+  userId: string,
+): Promise<AdminUserBilling> {
+  const empty: AdminUserBilling = {
+    customer: null,
+    subscriptions: [],
+    receipts: [],
+    withdrawals: [],
+    actions: [],
+    usageAdjustments: [],
+  };
+  try {
+    const [
+      customer,
+      subsResult,
+      receiptsResult,
+      withdrawalsResult,
+      actionsResult,
+      adjustmentsResult,
+    ] = await Promise.all([
+      db
+        .prepare(
+          `SELECT stripe_customer_id AS stripeCustomerId, environment, email, created_at AS createdAt
+             FROM billing_customers
+            WHERE owner_epic_id = ?
+            LIMIT 1`,
+        )
+        .bind(userId)
+        .first<AdminBillingCustomer>(),
+      db
+        .prepare(
+          `SELECT s.id, s.project_id AS projectId, p.name AS projectName,
+                  s.stripe_customer_id AS stripeCustomerId,
+                  s.stripe_subscription_id AS stripeSubscriptionId,
+                  s.stripe_price_id AS stripePriceId,
+                  s.plan_version_id AS planVersionId,
+                  s.pending_plan_version_id AS pendingPlanVersionId,
+                  s.status, s.environment,
+                  s.current_period_start AS currentPeriodStart,
+                  s.current_period_end AS currentPeriodEnd,
+                  s.cancel_at_period_end AS cancelAtPeriodEnd,
+                  s.canceled_at AS canceledAt,
+                  s.grace_until AS graceUntil,
+                  s.last_invoice_id AS lastInvoiceId,
+                  s.dispute_status AS disputeStatus,
+                  s.refund_status AS refundStatus,
+                  s.refunded_eur_cents AS refundedEurCents,
+                  s.needs_reconcile AS needsReconcile,
+                  s.reconcile_error AS reconcileError,
+                  s.created_at AS createdAt,
+                  s.updated_at AS updatedAt
+             FROM billing_subscriptions s
+             LEFT JOIN projects p ON p.id = s.project_id
+            WHERE s.owner_epic_id = ?
+            ORDER BY s.created_at DESC LIMIT 50`,
+        )
+        .bind(userId)
+        .all<
+          Omit<
+            AdminBillingSubscription,
+            "cancelAtPeriodEnd" | "needsReconcile"
+          > & {
+            cancelAtPeriodEnd: number;
+            needsReconcile: number;
+          }
+        >(),
+      db
+        .prepare(
+          `SELECT r.id, r.project_id AS projectId, p.name AS projectName,
+                  r.subscription_id AS subscriptionId,
+                  r.stripe_checkout_session_id AS stripeCheckoutSessionId,
+                  r.plan_version_id AS planVersionId,
+                  r.price_eur_cents AS priceEurCents,
+                  r.currency,
+                  r.vat_included AS vatIncluded,
+                  r.terms_version AS termsVersion,
+                  r.withdrawal_acknowledged AS withdrawalAcknowledged,
+                  r.withdrawal_expires_at AS withdrawalExpiresAt,
+                  r.action_type AS actionType,
+                  r.accepted_at AS acceptedAt,
+                  r.created_at AS createdAt
+             FROM purchase_receipts r
+             LEFT JOIN projects p ON p.id = r.project_id
+            WHERE r.owner_epic_id = ?
+            ORDER BY r.accepted_at DESC LIMIT 50`,
+        )
+        .bind(userId)
+        .all<
+          Omit<
+            AdminPurchaseReceipt,
+            "vatIncluded" | "withdrawalAcknowledged"
+          > & {
+            vatIncluded: number;
+            withdrawalAcknowledged: number;
+          }
+        >(),
+      db
+        .prepare(
+          `SELECT w.id, w.project_id AS projectId, p.name AS projectName,
+                  w.subscription_id AS subscriptionId,
+                  w.request_kind AS requestKind,
+                  w.status,
+                  w.requested_amount_cents AS requestedAmountCents,
+                  w.refunded_amount_cents AS refundedAmountCents,
+                  w.stripe_refund_id AS stripeRefundId,
+                  w.reason,
+                  w.resolution_note AS resolutionNote,
+                  w.created_at AS createdAt,
+                  w.updated_at AS updatedAt
+             FROM withdrawal_requests w
+             LEFT JOIN projects p ON p.id = w.project_id
+            WHERE w.owner_epic_id = ?
+            ORDER BY w.created_at DESC LIMIT 50`,
+        )
+        .bind(userId)
+        .all<AdminWithdrawalRequest>(),
+      db
+        .prepare(
+          `SELECT id, project_id AS projectId, subscription_id AS subscriptionId,
+                  actor_id AS actorId, action, status,
+                  details_json AS detailsJson, created_at AS createdAt
+             FROM billing_actions
+            WHERE owner_epic_id = ?
+            ORDER BY created_at DESC LIMIT 50`,
+        )
+        .bind(userId)
+        .all<
+          Omit<AdminBillingAction, "details"> & { detailsJson: string }
+        >(),
+      db
+        .prepare(
+          `SELECT adjustment_id AS adjustmentId, project_id AS projectId,
+                  scope, window_start AS windowStart, amount, reason,
+                  actor_id AS actorId, created_at AS createdAt
+             FROM usage_adjustments
+            WHERE owner_epic_id = ?
+            ORDER BY created_at DESC LIMIT 50`,
+        )
+        .bind(userId)
+        .all<AdminUsageAdjustment>(),
+    ]);
+
+    return {
+      customer: customer ?? null,
+      subscriptions: subsResult.results.map((row) => ({
+        ...row,
+        cancelAtPeriodEnd: row.cancelAtPeriodEnd === 1,
+        needsReconcile: row.needsReconcile === 1,
+      })),
+      receipts: receiptsResult.results.map((row) => ({
+        ...row,
+        vatIncluded: row.vatIncluded === 1,
+        withdrawalAcknowledged: row.withdrawalAcknowledged === 1,
+      })),
+      withdrawals: withdrawalsResult.results,
+      actions: actionsResult.results.map(({ detailsJson, ...row }) => {
+        let details: Record<string, unknown> = {};
+        try {
+          details = JSON.parse(detailsJson) as Record<string, unknown>;
+        } catch {
+          details = {};
+        }
+        return { ...row, details };
+      }),
+      usageAdjustments: adjustmentsResult.results,
+    };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg.includes("no such table")) {
+      return empty;
+    }
+    throw err;
+  }
+}
 
 adminManagementRoutes.get("/users/:userId", async (c) => {
   const userId = c.req.param("userId");
@@ -288,12 +471,13 @@ adminManagementRoutes.get("/users/:userId", async (c) => {
         purgeAfter: closure?.purgeAfter ?? null,
       };
 
-  const [monthlyQuota, usage] = await Promise.all([
+  const [monthlyQuota, usage, billing] = await Promise.all([
     !user.closedAt &&
     projects.some((project) => !project.deletedAt && project.tier === "free")
       ? adminMonthlyQuota(c.env, userId)
       : null,
     getAdminUsage(c.env, "users", [userId]),
+    loadAdminUserBilling(c.env.DB, userId),
   ]);
 
   const detail: AdminUserDetail = {
@@ -316,6 +500,7 @@ adminManagementRoutes.get("/users/:userId", async (c) => {
     projects,
     limitRequests: limitRequestsResult.results,
     privacyRequests: privacyRequestsResult.results,
+    billing,
     usage,
   };
 

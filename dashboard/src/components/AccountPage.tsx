@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { FileText, ReceiptText, UserRound } from "lucide-react";
+import { CreditCard, FileText, ReceiptText, UserRound } from "lucide-react";
 import type { ReactNode } from "react";
 
 export function AccountPage({ children }: { children: ReactNode }) {
@@ -16,6 +16,7 @@ export function ProfileNavigation() {
       {(
         [
           { label: "Profile", to: "/profile", icon: UserRound },
+          { label: "Billing", to: "/profile/billing", icon: CreditCard },
           { label: "Agreements", to: "/profile/agreements", icon: FileText },
           { label: "Receipts", to: "/profile/receipts", icon: ReceiptText },
         ] as const

@@ -123,6 +123,7 @@ billingRoutes.post("/checkout", requireDashboardUser, async (c) => {
       ownerEpicId: user.epicAccountId,
       ownerDisplayName: user.displayName,
       ...parsed.data,
+      requestOrigin: new URL(c.req.url).origin,
     });
     return c.json(result, 200);
   } catch (err) {
@@ -147,6 +148,7 @@ billingRoutes.post("/portal", requireSessionOnly, async (c) => {
       ownerEpicId: user.epicAccountId,
       ownerDisplayName: user.displayName,
       returnUrl: parsed.data.returnUrl,
+      requestOrigin: new URL(c.req.url).origin,
     });
     return c.json(portal, 200);
   } catch (err) {
@@ -215,23 +217,27 @@ billingRoutes.post("/withdrawals", requireSessionOnly, async (c) => {
 billingRoutes.get("/receipts", requireSessionOnly, async (c) => {
   const user = c.get("user");
   const receipts = await c.env.DB.prepare(
-    `SELECT id, project_id, subscription_id, plan_version_id, price_eur_cents,
-            currency, vat_included, terms_version, withdrawal_acknowledged,
-            withdrawal_expires_at, action_type, accepted_at, created_at
-       FROM purchase_receipts
-      WHERE owner_epic_id = ?
-      ORDER BY accepted_at DESC LIMIT 50`,
+    `SELECT r.id, r.project_id, p.name AS project_name, r.subscription_id,
+            r.stripe_checkout_session_id, r.plan_version_id, r.price_eur_cents,
+            r.currency, r.vat_included, r.terms_version, r.withdrawal_acknowledged,
+            r.withdrawal_expires_at, r.action_type, r.accepted_at, r.created_at
+       FROM purchase_receipts r
+       LEFT JOIN projects p ON p.id = r.project_id
+      WHERE r.owner_epic_id = ?
+      ORDER BY r.accepted_at DESC LIMIT 50`,
   )
     .bind(user.epicAccountId)
     .all();
 
   const withdrawals = await c.env.DB.prepare(
-    `SELECT id, project_id, subscription_id, request_kind, status,
-            requested_amount_cents, refunded_amount_cents, stripe_refund_id,
-            reason, resolution_note, created_at
-       FROM withdrawal_requests
-      WHERE owner_epic_id = ?
-      ORDER BY created_at DESC LIMIT 50`,
+    `SELECT w.id, w.project_id, p.name AS project_name, w.subscription_id,
+            w.request_kind, w.status, w.requested_amount_cents,
+            w.refunded_amount_cents, w.stripe_refund_id, w.reason,
+            w.resolution_note, w.created_at
+       FROM withdrawal_requests w
+       LEFT JOIN projects p ON p.id = w.project_id
+      WHERE w.owner_epic_id = ?
+      ORDER BY w.created_at DESC LIMIT 50`,
   )
     .bind(user.epicAccountId)
     .all();

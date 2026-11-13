@@ -147,6 +147,39 @@ export interface ProjectBillingSummaryResponse {
   }>;
 }
 
+export interface BillingPurchaseReceipt {
+  id: string;
+  project_id: string;
+  project_name: string | null;
+  subscription_id: string | null;
+  stripe_checkout_session_id: string | null;
+  plan_version_id: string;
+  price_eur_cents: number;
+  currency: string;
+  vat_included: number;
+  terms_version: string;
+  withdrawal_acknowledged: number;
+  withdrawal_expires_at: number;
+  action_type: string;
+  accepted_at: number;
+  created_at: string;
+}
+
+export interface BillingWithdrawalRecord {
+  id: string;
+  project_id: string;
+  project_name: string | null;
+  subscription_id: string;
+  request_kind: string;
+  status: string;
+  requested_amount_cents: number | null;
+  refunded_amount_cents: number;
+  stripe_refund_id: string | null;
+  reason: string;
+  resolution_note: string;
+  created_at: string;
+}
+
 export interface SessionResponse {
   authenticated: boolean;
   isAdmin: boolean;
@@ -306,6 +339,30 @@ export const dashboardClient = {
     apiFetch<{ ok: boolean }>(
       `/admin/projects/${encodeURIComponent(id)}/restore`,
       { method: "POST", body: JSON.stringify({ reason }) },
+    ),
+
+  reconcileAdminBilling: () =>
+    apiFetch<{
+      ok: boolean;
+      expiredGraceCount: number;
+      reconciledCount: number;
+    }>("/admin/billing/reconcile", { method: "POST" }),
+
+  creditAdminProjectUsage: (
+    projectId: string,
+    payload: {
+      adjustmentId: string;
+      scope: "period" | "month";
+      amount: number;
+      reason: string;
+    },
+  ) =>
+    apiFetch<{ ok: boolean }>(
+      `/admin/projects/${encodeURIComponent(projectId)}/usage-adjustments`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
     ),
 
   getAdminAudit: (
@@ -498,9 +555,9 @@ export const dashboardClient = {
       body: JSON.stringify(payload),
     }),
 
-  getBillingReceipts: () =>
+  getBillingReceipts: (signal?: AbortSignal) =>
     apiFetch<{
-      receipts: Array<Record<string, unknown>>;
-      withdrawals: Array<Record<string, unknown>>;
-    }>("/billing/receipts"),
+      receipts: BillingPurchaseReceipt[];
+      withdrawals: BillingWithdrawalRecord[];
+    }>("/billing/receipts", { signal }),
 };

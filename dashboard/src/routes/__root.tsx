@@ -243,7 +243,8 @@ function DashboardShell() {
             {selectedProject && (
               <Tag
                 tone={
-                  selectedProject.tier === "enterprise"
+                  selectedProject.tier === "enterprise" ||
+                  selectedProject.tier === "scale"
                     ? "accent"
                     : selectedProject.tier === "pro"
                       ? "success"

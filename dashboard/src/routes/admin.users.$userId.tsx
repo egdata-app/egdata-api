@@ -4,6 +4,8 @@ import {
   ArrowUpRight,
   CheckCircle2,
   Clock3,
+  Coins,
+  CreditCard,
   FileCheck2,
   Mail,
   RefreshCw,
@@ -24,6 +26,7 @@ import { AdminUserAnalytics } from "../components/AdminUserAnalytics";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Controls";
 import { Dialog, Heading, Modal } from "../components/ui/Modal";
+import { Select, SelectItem } from "../components/ui/Select";
 import {
   Cell,
   Column,
@@ -44,6 +47,21 @@ function formatEpoch(value: number | null) {
   return value ? new Date(value).toLocaleString() : "Never";
 }
 
+function formatEur(cents: number, currency = "eur") {
+  return `${currency.toUpperCase()} ${(cents / 100).toFixed(2)}`;
+}
+
+function subscriptionBadgeTone(
+  status: string,
+): "success" | "warning" | "danger" | "neutral" {
+  if (status === "active") return "success";
+  if (status === "trialing" || status === "past_due" || status === "incomplete" || status === "checkout_pending") {
+    return "warning";
+  }
+  if (status === "canceled" || status === "unpaid") return "danger";
+  return "neutral";
+}
+
 function AdminUserDetailPage() {
   const { userId } = Route.useParams();
   const [detail, setDetail] = useState<AdminUserDetail | null>(null);
@@ -55,6 +73,13 @@ function AdminUserDetailPage() {
   const [limit, setLimit] = useState("");
   const [reason, setReason] = useState("");
   const [saving, setSaving] = useState(false);
+  const [reconciling, setReconciling] = useState(false);
+
+  const [creditProjectId, setCreditProjectId] = useState<string | null>(null);
+  const [creditScope, setCreditScope] = useState<"period" | "month">("period");
+  const [creditAmount, setCreditAmount] = useState("10000");
+  const [creditReason, setCreditReason] = useState("");
+  const [creditSaving, setCreditSaving] = useState(false);
 
   const reload = useCallback(() => setVersion((v) => v + 1), []);
 
@@ -100,6 +125,57 @@ function AdminUserDetailPage() {
       });
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleReconcileBilling() {
+    setReconciling(true);
+    try {
+      const res = await dashboardClient.reconcileAdminBilling();
+      reload();
+      notify({
+        title: "Billing reconciliation finished",
+        description: `Expired grace: ${res.expiredGraceCount}, reconciled: ${res.reconciledCount}.`,
+        tone: "success",
+      });
+    } catch (err) {
+      notify({
+        title: "Billing reconciliation failed",
+        description: err instanceof Error ? err.message : "Unexpected error",
+        tone: "danger",
+      });
+    } finally {
+      setReconciling(false);
+    }
+  }
+
+  async function saveCredit(event: React.FormEvent) {
+    event.preventDefault();
+    if (!creditProjectId) return;
+    setCreditSaving(true);
+    try {
+      await dashboardClient.creditAdminProjectUsage(creditProjectId, {
+        adjustmentId: `adj_${crypto.randomUUID().replace(/-/g, "").slice(0, 20)}`,
+        scope: creditScope,
+        amount: Number(creditAmount),
+        reason: creditReason.trim(),
+      });
+      setCreditProjectId(null);
+      setCreditReason("");
+      reload();
+      notify({
+        title: "Usage credit applied",
+        description: `Credited ${Number(creditAmount).toLocaleString()} requests (${creditScope}).`,
+        tone: "success",
+      });
+    } catch (err) {
+      notify({
+        title: "Could not apply usage credit",
+        description: err instanceof Error ? err.message : "Unexpected error",
+        tone: "danger",
+      });
+    } finally {
+      setCreditSaving(false);
     }
   }
 
@@ -511,6 +587,7 @@ function AdminUserDetailPage() {
                 <Column>API keys</Column>
                 <Column>Last active</Column>
                 <Column>Status</Column>
+                <Column>Actions</Column>
               </TableHeader>
               <TableBody
                 items={detail.projects}
@@ -560,10 +637,408 @@ function AdminUserDetailPage() {
                         <Badge tone="success">Active</Badge>
                       )}
                     </Cell>
+                    <Cell>
+                      {!project.deletedAt && (
+                        <Button
+                          variant="quiet"
+                          size="sm"
+                          onPress={() => {
+                            setCreditProjectId(project.id);
+                            setCreditScope(
+                              project.tier === "free" ? "month" : "period",
+                            );
+                            setCreditAmount("10000");
+                            setCreditReason("");
+                          }}
+                        >
+                          <Coins aria-hidden="true" className="w-3.5 h-3.5" />
+                          Credit usage
+                        </Button>
+                      )}
+                    </Cell>
                   </Row>
                 )}
               </TableBody>
             </Table>
+          </section>
+
+          <section
+            aria-label="Billing, subscriptions, and payments"
+            className="rounded-xl border border-epic-border bg-epic-surface overflow-hidden"
+          >
+            <div className="p-5 border-b border-epic-border flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                  <CreditCard
+                    aria-hidden="true"
+                    className="w-4 h-4 text-epic-accent"
+                  />
+                  Billing, Subscriptions &amp; Payments
+                </h2>
+                <p className="text-xs text-epic-text-muted mt-0.5">
+                  Stripe customer profile, project subscriptions, EUR purchase
+                  receipts, withdrawals/refunds, and usage credits.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {detail.billing.customer ? (
+                  <Badge
+                    tone={
+                      detail.billing.customer.environment === "live"
+                        ? "success"
+                        : "warning"
+                    }
+                  >
+                    Stripe {detail.billing.customer.environment} ·{" "}
+                    {detail.billing.customer.stripeCustomerId}
+                  </Badge>
+                ) : (
+                  <Badge tone="neutral">No Stripe customer</Badge>
+                )}
+                {detail.billing.subscriptions.length > 0 && (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    isPending={reconciling}
+                    onPress={() => void handleReconcileBilling()}
+                  >
+                    <RefreshCw
+                      aria-hidden="true"
+                      className={`w-3.5 h-3.5 ${reconciling ? "motion-safe:animate-spin" : ""}`}
+                    />
+                    Reconcile billing
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {detail.billing.customer && (
+              <div className="px-5 py-3 border-b border-epic-border bg-epic-bg/30 flex flex-wrap gap-x-6 gap-y-1 text-xs text-epic-text-muted">
+                <span>
+                  Customer ID:{" "}
+                  <code className="font-mono text-white select-all">
+                    {detail.billing.customer.stripeCustomerId}
+                  </code>
+                </span>
+                <span>
+                  Billing email:{" "}
+                  <span className="text-white">
+                    {detail.billing.customer.email ?? "Not recorded"}
+                  </span>
+                </span>
+                <span>
+                  Created: {adminDate(detail.billing.customer.createdAt)}
+                </span>
+              </div>
+            )}
+
+            <div className="divide-y divide-epic-border">
+              <div>
+                <div className="px-5 py-3 border-b border-epic-border flex items-center justify-between text-xs font-medium text-epic-text-muted uppercase tracking-wider">
+                  <span>Subscriptions</span>
+                  <span>{detail.billing.subscriptions.length} total</span>
+                </div>
+                <Table
+                  aria-label="User subscriptions"
+                  className="border-0 rounded-none"
+                >
+                  <TableHeader>
+                    <Column isRowHeader>Project</Column>
+                    <Column>Plan</Column>
+                    <Column>Status</Column>
+                    <Column>Billing period</Column>
+                    <Column>Stripe &amp; refunds</Column>
+                  </TableHeader>
+                  <TableBody
+                    items={detail.billing.subscriptions}
+                    renderEmptyState={() => (
+                      <p className="p-5 text-sm text-epic-text-muted text-center">
+                        No subscriptions recorded for this user.
+                      </p>
+                    )}
+                  >
+                    {(sub) => (
+                      <Row id={sub.id} textValue={sub.projectName ?? sub.projectId}>
+                        <Cell>
+                          <div>
+                            <div className="font-medium text-white">
+                              {sub.projectName ?? "Deleted / unknown project"}
+                            </div>
+                            <div className="font-mono text-[11px] text-epic-text-muted">
+                              {sub.projectId}
+                            </div>
+                          </div>
+                        </Cell>
+                        <Cell>
+                          <div className="space-y-1">
+                            <span className="font-mono text-xs text-white">
+                              {sub.planVersionId}
+                            </span>
+                            {sub.pendingPlanVersionId && (
+                              <div>
+                                <Badge tone="warning">
+                                  Pending: {sub.pendingPlanVersionId}
+                                </Badge>
+                              </div>
+                            )}
+                          </div>
+                        </Cell>
+                        <Cell>
+                          <div className="flex flex-wrap gap-1.5">
+                            <Badge tone={subscriptionBadgeTone(sub.status)}>
+                              {sub.status}
+                            </Badge>
+                            {sub.cancelAtPeriodEnd && (
+                              <Badge tone="warning">Cancels at period end</Badge>
+                            )}
+                            {sub.needsReconcile && (
+                              <Badge tone="danger">Needs reconcile</Badge>
+                            )}
+                            {sub.disputeStatus !== "none" && (
+                              <Badge tone="danger">
+                                Dispute: {sub.disputeStatus}
+                              </Badge>
+                            )}
+                            {sub.refundStatus !== "none" && (
+                              <Badge tone="neutral">
+                                Refund: {sub.refundStatus}
+                              </Badge>
+                            )}
+                          </div>
+                          {sub.reconcileError && (
+                            <p className="text-[11px] text-epic-danger mt-1">
+                              {sub.reconcileError}
+                            </p>
+                          )}
+                        </Cell>
+                        <Cell>
+                          <div className="text-xs text-white space-y-0.5">
+                            <div>
+                              {formatEpoch(sub.currentPeriodStart)} →{" "}
+                              {formatEpoch(sub.currentPeriodEnd)}
+                            </div>
+                            {sub.graceUntil && (
+                              <div className="text-epic-warning">
+                                Grace until {formatEpoch(sub.graceUntil)}
+                              </div>
+                            )}
+                            {sub.canceledAt && (
+                              <div className="text-epic-text-muted">
+                                Canceled {formatEpoch(sub.canceledAt)}
+                              </div>
+                            )}
+                          </div>
+                        </Cell>
+                        <Cell>
+                          <div className="font-mono text-[11px] text-epic-text-muted space-y-0.5">
+                            <div className="select-all">
+                              {sub.stripeSubscriptionId ?? "No Stripe sub ID"}
+                            </div>
+                            {sub.lastInvoiceId && (
+                              <div>Invoice: {sub.lastInvoiceId}</div>
+                            )}
+                            {sub.refundedEurCents > 0 && (
+                              <div className="text-white">
+                                Refunded: {formatEur(sub.refundedEurCents)}
+                              </div>
+                            )}
+                          </div>
+                        </Cell>
+                      </Row>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+
+              <div>
+                <div className="px-5 py-3 border-b border-epic-border flex items-center justify-between text-xs font-medium text-epic-text-muted uppercase tracking-wider">
+                  <span>Payments &amp; Purchase Receipts</span>
+                  <span>{detail.billing.receipts.length} total</span>
+                </div>
+                <Table
+                  aria-label="User purchase receipts"
+                  className="border-0 rounded-none"
+                >
+                  <TableHeader>
+                    <Column isRowHeader>Receipt</Column>
+                    <Column>Project</Column>
+                    <Column>Plan</Column>
+                    <Column>Amount</Column>
+                    <Column>Withdrawal window</Column>
+                    <Column>Recorded</Column>
+                  </TableHeader>
+                  <TableBody
+                    items={detail.billing.receipts}
+                    renderEmptyState={() => (
+                      <p className="p-5 text-sm text-epic-text-muted text-center">
+                        No purchase receipts recorded for this user.
+                      </p>
+                    )}
+                  >
+                    {(rcpt) => (
+                      <Row id={rcpt.id} textValue={rcpt.id}>
+                        <Cell>
+                          <div className="font-mono text-xs text-white select-all">
+                            {rcpt.id}
+                          </div>
+                          {rcpt.stripeCheckoutSessionId && (
+                            <div className="font-mono text-[11px] text-epic-text-muted">
+                              {rcpt.stripeCheckoutSessionId}
+                            </div>
+                          )}
+                        </Cell>
+                        <Cell>
+                          <div className="text-xs text-white">
+                            {rcpt.projectName ?? rcpt.projectId}
+                          </div>
+                          <div className="font-mono text-[11px] text-epic-text-muted">
+                            {rcpt.projectId}
+                          </div>
+                        </Cell>
+                        <Cell>
+                          <div className="font-mono text-xs text-white">
+                            {rcpt.planVersionId}
+                          </div>
+                          <div className="text-[11px] text-epic-text-muted">
+                            {rcpt.actionType} · Terms {rcpt.termsVersion}
+                          </div>
+                        </Cell>
+                        <Cell>
+                          <span className="font-mono text-xs text-white">
+                            {formatEur(rcpt.priceEurCents, rcpt.currency)}
+                          </span>
+                          <div className="text-[11px] text-epic-text-muted">
+                            {rcpt.vatIncluded ? "VAT incl." : "Excl. VAT"}
+                          </div>
+                        </Cell>
+                        <Cell>
+                          <span className="text-xs text-epic-text-muted">
+                            Until {formatEpoch(rcpt.withdrawalExpiresAt)}
+                          </span>
+                        </Cell>
+                        <Cell>
+                          <span className="text-xs text-white">
+                            {formatEpoch(rcpt.acceptedAt)}
+                          </span>
+                        </Cell>
+                      </Row>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {(detail.billing.withdrawals.length > 0 ||
+                detail.billing.usageAdjustments.length > 0 ||
+                detail.billing.actions.length > 0) && (
+                <div className="p-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {detail.billing.withdrawals.length > 0 && (
+                    <div className="rounded-lg border border-epic-border bg-epic-bg/40 overflow-hidden">
+                      <div className="px-4 py-2.5 border-b border-epic-border text-xs font-medium text-epic-text-muted uppercase tracking-wider">
+                        Withdrawals &amp; Refunds (
+                        {detail.billing.withdrawals.length})
+                      </div>
+                      <div className="divide-y divide-epic-border">
+                        {detail.billing.withdrawals.map((w) => (
+                          <div key={w.id} className="p-3.5 text-xs space-y-1">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="font-mono text-white">
+                                {w.requestKind} ·{" "}
+                                {formatEur(
+                                  w.refundedAmountCents ||
+                                    w.requestedAmountCents ||
+                                    0,
+                                )}
+                              </span>
+                              <Badge
+                                tone={
+                                  w.status.startsWith("refunded")
+                                    ? "success"
+                                    : w.status === "failed" ||
+                                        w.status === "denied"
+                                      ? "danger"
+                                      : "warning"
+                                }
+                              >
+                                {w.status}
+                              </Badge>
+                            </div>
+                            <p className="text-epic-text-muted">
+                              {w.projectName ?? w.projectId} ·{" "}
+                              {adminDate(w.createdAt)}
+                              {w.stripeRefundId ? ` · ${w.stripeRefundId}` : ""}
+                            </p>
+                            {w.reason && (
+                              <p className="text-epic-text">{w.reason}</p>
+                            )}
+                            {w.resolutionNote && (
+                              <p className="text-epic-text-muted">
+                                {w.resolutionNote}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {(detail.billing.usageAdjustments.length > 0 ||
+                    detail.billing.actions.length > 0) && (
+                    <div className="rounded-lg border border-epic-border bg-epic-bg/40 overflow-hidden">
+                      <div className="px-4 py-2.5 border-b border-epic-border text-xs font-medium text-epic-text-muted uppercase tracking-wider">
+                        Recent Billing Events &amp; Credits
+                      </div>
+                      <div className="divide-y divide-epic-border max-h-72 overflow-y-auto">
+                        {detail.billing.usageAdjustments.map((adj) => (
+                          <div
+                            key={adj.adjustmentId}
+                            className="p-3.5 text-xs space-y-1"
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="font-mono text-epic-success">
+                                +{adj.amount.toLocaleString()} req credit (
+                                {adj.scope})
+                              </span>
+                              <span className="text-epic-text-muted">
+                                {adminDate(adj.createdAt)}
+                              </span>
+                            </div>
+                            <p className="text-epic-text">{adj.reason}</p>
+                            <p className="font-mono text-[11px] text-epic-text-muted">
+                              {adj.projectId ?? "Account"} · by{" "}
+                              {adj.actorId ?? "system"}
+                            </p>
+                          </div>
+                        ))}
+                        {detail.billing.actions.map((act) => (
+                          <div key={act.id} className="p-3.5 text-xs space-y-1">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="font-mono text-white">
+                                {act.action}
+                              </span>
+                              <Badge
+                                tone={
+                                  act.status === "ok"
+                                    ? "success"
+                                    : act.status === "failed"
+                                      ? "danger"
+                                      : "neutral"
+                                }
+                              >
+                                {act.status}
+                              </Badge>
+                            </div>
+                            <p className="text-epic-text-muted">
+                              {act.projectId ?? "Account"} ·{" "}
+                              {adminDate(act.createdAt)}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </section>
 
           {(detail.limitRequests.length > 0 ||
@@ -704,6 +1179,66 @@ function AdminUserDetailPage() {
               </Button>
               <Button type="submit" isPending={saving}>
                 Save limit
+              </Button>
+            </div>
+          </Form>
+        </Dialog>
+      </Modal>
+
+      <Modal
+        isOpen={creditProjectId !== null}
+        onOpenChange={(open) => {
+          if (!open && !creditSaving) setCreditProjectId(null);
+        }}
+        size="md"
+      >
+        <Dialog>
+          <Form onSubmit={saveCredit}>
+            <Heading slot="title" className="text-lg font-semibold">
+              Credit project quota
+            </Heading>
+            <Select
+              label="Quota scope"
+              selectedKey={creditScope}
+              onSelectionChange={(k) => {
+                if (k === "period" || k === "month") setCreditScope(k);
+              }}
+              items={[
+                { id: "period", label: "Current billing period (paid plan)" },
+                { id: "month", label: "Current UTC month (free quota)" },
+              ]}
+            >
+              {(item) => (
+                <SelectItem id={item.id} textValue={item.label}>
+                  {item.label}
+                </SelectItem>
+              )}
+            </Select>
+            <TextField
+              label="Requests to credit (1–1,000,000)"
+              type="number"
+              isRequired
+              value={creditAmount}
+              onChange={setCreditAmount}
+            />
+            <TextField
+              label="Reason"
+              isRequired
+              minLength={3}
+              maxLength={2000}
+              value={creditReason}
+              onChange={setCreditReason}
+            />
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="secondary"
+                isDisabled={creditSaving}
+                onPress={() => setCreditProjectId(null)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" isPending={creditSaving}>
+                Apply credit
               </Button>
             </div>
           </Form>

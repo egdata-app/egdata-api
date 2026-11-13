@@ -286,15 +286,17 @@ async function createBillingHarness(options?: {
       body?: unknown;
       user?: "owner_1" | "admin_1";
       origin?: string;
+      baseUrl?: string;
     },
   ) {
     const cookie = await cookieFor(opts?.user ?? "owner_1");
+    const baseUrl = opts?.baseUrl ?? DASHBOARD_ORIGIN;
     return worker.fetch(
-      new Request(`${DASHBOARD_ORIGIN}${path}`, {
+      new Request(`${baseUrl}${path}`, {
         method: opts?.method ?? "GET",
         headers: {
           Cookie: cookie,
-          Origin: opts?.origin ?? DASHBOARD_ORIGIN,
+          Origin: opts?.origin ?? baseUrl,
           ...(opts?.body !== undefined
             ? { "Content-Type": "application/json" }
             : {}),
@@ -681,6 +683,28 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
     });
     expect(postWithdrawEnt.tier).toBe("free");
 
+    // Account billing receipts endpoint returns purchase receipt & withdrawal with project names
+    const receiptsRes = await h.dashFetch("/_dashboard/api/billing/receipts");
+    expect(receiptsRes.status).toBe(200);
+    const receiptsJson = (await receiptsRes.json()) as {
+      receipts: Array<Record<string, unknown>>;
+      withdrawals: Array<Record<string, unknown>>;
+    };
+    expect(receiptsJson.receipts).toHaveLength(1);
+    expect(receiptsJson.receipts[0]).toMatchObject({
+      project_id: "prj_1",
+      project_name: "Primary App",
+      stripe_checkout_session_id: "cs_test_001",
+      price_eur_cents: 900,
+    });
+    expect(receiptsJson.withdrawals).toHaveLength(1);
+    expect(receiptsJson.withdrawals[0]).toMatchObject({
+      project_id: "prj_1",
+      project_name: "Primary App",
+      status: "refunded_full",
+      stripe_refund_id: "re_1",
+    });
+
     // Admin usage adjustment & reconciliation endpoints work end-to-end
     const adjRes = await h.dashFetch(
       "/_dashboard/api/admin/projects/prj_1/usage-adjustments",
@@ -806,5 +830,100 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
         )
         .get(),
     ).toEqual({ status: "canceled", dispute_status: "lost" });
+  });
+
+  it("rejects untrusted Stripe redirect URLs while permitting configured dashboard and local dev origins", async () => {
+    const h = await createBillingHarness();
+
+    const badCheckoutUrls = [
+      {
+        successUrl: "https://evil.example/phish",
+        cancelUrl: `${DASHBOARD_ORIGIN}/limits`,
+      },
+      {
+        successUrl: `${DASHBOARD_ORIGIN}/limits`,
+        cancelUrl: "https://devs.egdata.app.evil.example/limits",
+      },
+      {
+        successUrl: "https://user:pass@devs.egdata.app/limits",
+      },
+      {
+        successUrl: "http://localhost:4002/limits",
+      },
+    ];
+
+    for (const bad of badCheckoutUrls) {
+      const res = await h.dashFetch("/_dashboard/api/billing/checkout", {
+        method: "POST",
+        body: {
+          projectId: "prj_1",
+          planId: "pro",
+          termsVersion: "1.0",
+          withdrawalAcknowledged: true,
+          ...bad,
+        },
+      });
+      expect(res.status).toBe(400);
+      expect(((await res.json()) as { error: { code: string } }).error.code).toBe(
+        "VALIDATION_ERROR",
+      );
+    }
+
+    const badPortalUrls = [
+      "https://evil.example/return",
+      "https://devs.egdata.app.evil.example/limits",
+      "https://user:pass@devs.egdata.app/limits",
+      "http://localhost:4002/limits",
+    ];
+    for (const returnUrl of badPortalUrls) {
+      const res = await h.dashFetch("/_dashboard/api/billing/portal", {
+        method: "POST",
+        body: { returnUrl },
+      });
+      expect(res.status).toBe(400);
+      expect(((await res.json()) as { error: { code: string } }).error.code).toBe(
+        "VALIDATION_ERROR",
+      );
+    }
+
+    // None of the rejected requests should have touched Stripe
+    expect(h.stripeCalls).toHaveLength(0);
+
+    // Same-origin returnUrl and localhost dev origin are permitted
+    const okPortal = await h.dashFetch("/_dashboard/api/billing/portal", {
+      method: "POST",
+      body: { returnUrl: `${DASHBOARD_ORIGIN}/limits?project=prj_1` },
+    });
+    expect(okPortal.status).toBe(200);
+
+    const localPortal = await h.dashFetch("/_dashboard/api/billing/portal", {
+      method: "POST",
+      baseUrl: "http://localhost:4002",
+      body: { returnUrl: "http://localhost:4002/limits" },
+    });
+    expect(localPortal.status).toBe(200);
+
+    const localCrossPortPortal = await h.dashFetch(
+      "/_dashboard/api/billing/portal",
+      {
+        method: "POST",
+        baseUrl: "http://localhost:4002",
+        body: { returnUrl: "http://localhost:9999/limits" },
+      },
+    );
+    expect(localCrossPortPortal.status).toBe(400);
+
+    const okCheckout = await h.dashFetch("/_dashboard/api/billing/checkout", {
+      method: "POST",
+      body: {
+        projectId: "prj_1",
+        planId: "pro",
+        termsVersion: "1.0",
+        withdrawalAcknowledged: true,
+        successUrl: `${DASHBOARD_ORIGIN}/limits?project=prj_1&checkout=success`,
+        cancelUrl: `${DASHBOARD_ORIGIN}/limits?project=prj_1&checkout=canceled`,
+      },
+    });
+    expect(okCheckout.status).toBe(200);
   });
 });

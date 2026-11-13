@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
+  CreditCard,
+  ExternalLink,
   FileText,
   ShieldCheck,
   Trash2,
@@ -10,13 +12,33 @@ import { useState } from "react";
 import { DeleteAccount, EmailProfile } from "../components/DeveloperAccount";
 import { Button, buttonStyles } from "../components/ui/Button";
 import { Dialog, Heading, Modal } from "../components/ui/Modal";
+import { notify } from "../components/ui/Toast";
+import { dashboardClient } from "../lib/api";
 import { useDashboardAuth } from "../lib/auth-context";
 
 export const Route = createFileRoute("/profile/")({ component: ProfilePage });
 
 function ProfilePage() {
-  const { user, account } = useDashboardAuth();
+  const { user, account, projects } = useDashboardAuth();
   const [deleting, setDeleting] = useState(false);
+  const [openingPortal, setOpeningPortal] = useState(false);
+
+  async function openPortal() {
+    setOpeningPortal(true);
+    try {
+      const portal = await dashboardClient.createBillingPortal(
+        window.location.href,
+      );
+      window.location.assign(portal.url);
+    } catch (err) {
+      notify({
+        title: "Could not open Billing Portal",
+        description: err instanceof Error ? err.message : "Try again shortly.",
+        tone: "danger",
+      });
+      setOpeningPortal(false);
+    }
+  }
   return (
     <>
       <div className="mb-8 space-y-3">
@@ -58,6 +80,48 @@ function ProfilePage() {
             className="rounded-2xl border border-epic-border bg-epic-surface p-6 sm:p-8"
           >
             <EmailProfile />
+          </section>
+          <section className="rounded-2xl border border-epic-border bg-epic-surface p-6 sm:p-8 space-y-4">
+            <h2 className="flex items-center gap-2 font-semibold text-lg">
+              <CreditCard
+                className="h-5 w-5 text-epic-accent"
+                aria-hidden="true"
+              />{" "}
+              Billing &amp; subscriptions
+            </h2>
+            <p className="text-sm leading-relaxed text-epic-text-muted">
+              Upgrade or downgrade plans, cancel renewals, submit 14-day
+              withdrawal requests, and download your purchase receipts or Stripe
+              invoices across{" "}
+              <strong className="text-epic-text">
+                {projects.length}{" "}
+                {projects.length === 1 ? "project" : "projects"}
+              </strong>
+              .
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                to="/profile/billing"
+                className={buttonStyles({ variant: "secondary" })}
+              >
+                Manage subscriptions
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              <Link
+                to="/profile/receipts"
+                className={buttonStyles({ variant: "secondary" })}
+              >
+                Purchase receipts
+              </Link>
+              <Button
+                variant="quiet"
+                isPending={openingPortal}
+                onPress={() => void openPortal()}
+              >
+                Stripe Billing Portal &amp; Invoices
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+              </Button>
+            </div>
           </section>
           <section className="rounded-2xl border border-epic-border bg-epic-surface p-6 sm:p-8 space-y-4">
             <h2 className="flex items-center gap-2 font-semibold text-lg">
