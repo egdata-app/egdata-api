@@ -876,4 +876,39 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
     expect(monthly.allowance).toBe(150_000);
     expect(monthly.remaining).toBe(150_000);
   });
+
+  it("returns 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After on D1 entitlement outage across legacy and v1", async () => {
+    const h = await createPaidPlansHarness({ commercialLimitsEnabled: true });
+    const { rawKey } = await h.issueKey({
+      projectId: "prj_sub",
+      ownerEpicId: "owner_pro",
+      tier: "pro",
+    });
+
+    // Warm key metadata in KV so request reaches entitlement resolution instead of key lookup
+    const warmRes = await h.callGateway("/v1/countries", { "x-api-key": rawKey });
+    expect(warmRes.status).toBe(200);
+    const upstreamBeforeOutage = h.upstream.mock.calls.length;
+
+    const dbSpy = vi.spyOn(h.env.DB, "prepare").mockImplementation(() => {
+      throw new Error("D1_ERROR: database temporarily unavailable");
+    });
+
+    const v1Outage = await h.callGateway("/v1/countries", { "x-api-key": rawKey });
+    expect(v1Outage.status).toBe(503);
+    expect(v1Outage.headers.get("Retry-After")).toBe("30");
+    expect(await v1Outage.json()).toMatchObject({
+      code: "ACCOUNT_STATUS_UNAVAILABLE",
+    });
+
+    const legacyOutage = await h.callGateway("/offers", { "x-api-key": rawKey });
+    expect(legacyOutage.status).toBe(503);
+    expect(legacyOutage.headers.get("Retry-After")).toBe("30");
+    expect(await legacyOutage.json()).toMatchObject({
+      error: { code: "ACCOUNT_STATUS_UNAVAILABLE" },
+    });
+
+    expect(h.upstream.mock.calls.length).toBe(upstreamBeforeOutage);
+    dbSpy.mockRestore();
+  });
 });

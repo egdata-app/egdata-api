@@ -154,9 +154,16 @@ export async function resolveEffectiveProjectEntitlement(
         )
           .bind(meta.projectId)
           .first<ProjectRowForEntitlement>();
-      } catch {
+      } catch (innerErr) {
+        const innerMsg =
+          innerErr instanceof Error ? innerErr.message : String(innerErr);
+        if (!innerMsg.includes("no such table")) {
+          throw innerErr;
+        }
         projectRow = null;
       }
+    } else if (!msg.includes("no such table")) {
+      throw err;
     }
   }
 

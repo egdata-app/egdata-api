@@ -360,7 +360,35 @@ export async function handleV1ApiProxy(
     });
   }
 
-  const entitlement = await resolveEffectiveProjectEntitlement(env, meta);
+  let entitlement: Awaited<
+    ReturnType<typeof resolveEffectiveProjectEntitlement>
+  >;
+  try {
+    entitlement = await resolveEffectiveProjectEntitlement(env, meta);
+  } catch {
+    recordApiTelemetry(
+      env,
+      baseTelemetry(request, meta, {
+        routeTemplate: route.path,
+        statusCode: 503,
+        cacheStatus: "EDGE_BLOCK",
+        limitOutcome: "account_status_unavailable",
+        startedAt,
+        country,
+        clientIp,
+        userAgent,
+      }),
+    );
+    const response = v1Problem(request, {
+      requestId,
+      status: 503,
+      code: "ACCOUNT_STATUS_UNAVAILABLE",
+      detail:
+        "Plan entitlement status could not be verified. Please retry shortly.",
+      headers: { ...corsFor(request), "Retry-After": "30" },
+    });
+    return request.method === "HEAD" ? new Response(null, response) : response;
+  }
   const entitlementCheck = evaluatePlanEntitlement(entitlement, {
     pathname,
     method: request.method,

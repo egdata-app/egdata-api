@@ -319,7 +319,36 @@ export async function handleEdgeApiProxy(
   }
 
   // 5. Evaluate server-owned plan entitlements before cache access or quota admission.
-  const entitlement = await resolveEffectiveProjectEntitlement(env, keyMeta);
+  let entitlement: Awaited<
+    ReturnType<typeof resolveEffectiveProjectEntitlement>
+  >;
+  try {
+    entitlement = await resolveEffectiveProjectEntitlement(env, keyMeta);
+  } catch {
+    recordApiTelemetry(env, {
+      ownerEpicId: keyMeta.ownerEpicId,
+      keyId: keyMeta.keyId,
+      projectId: keyMeta.projectId,
+      routeTemplate: normalizeRouteTemplate(upstreamPath, null),
+      method: request.method,
+      statusCode: 503,
+      cacheStatus: "EDGE_BLOCK",
+      limitOutcome: "account_status_unavailable",
+      origin: originHeader ?? "(direct)",
+      clientIp: clientIp ?? "unknown",
+      userAgent,
+      country,
+      latencyMs: performance.now() - startMs,
+    });
+    const response = edgeErrorJson(
+      503,
+      "ACCOUNT_STATUS_UNAVAILABLE",
+      "Plan entitlement status could not be verified. Please retry shortly.",
+      originHeader,
+      { "Retry-After": "30" },
+    );
+    return request.method === "HEAD" ? new Response(null, response) : response;
+  }
   const entitlementCheck = evaluatePlanEntitlement(entitlement, {
     pathname: upstreamPath,
     method: request.method,
