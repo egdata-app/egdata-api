@@ -23,11 +23,14 @@ export function getStripeEnvironment(
 ): StripeEnvironment {
   const secret = env.STRIPE_SECRET_KEY?.trim() ?? "";
   const explicitMode = env.STRIPE_MODE?.trim().toLowerCase();
-  const keyInferred: StripeEnvironment | null = secret.startsWith("sk_test_")
-    ? "test"
-    : secret.startsWith("sk_live_") || secret.startsWith("rk_live_")
-      ? "live"
-      : null;
+  const keyInferred: StripeEnvironment | null =
+    secret.startsWith("sk_test_") ||
+    secret.startsWith("rk_test_") ||
+    secret.startsWith("rkcs_test_")
+      ? "test"
+      : secret.startsWith("sk_live_") || secret.startsWith("rk_live_")
+        ? "live"
+        : null;
 
   if (explicitMode && explicitMode !== "test" && explicitMode !== "live") {
     throw new Error("Invalid STRIPE_MODE configuration");
@@ -369,6 +372,28 @@ export async function createStripeCheckoutSession(
       },
     },
     idempotencyKey,
+  );
+}
+
+export async function retrieveStripeCheckoutSession(
+  env: Pick<DashboardEnv, "STRIPE_SECRET_KEY" | "STRIPE_MODE">,
+  sessionId: string,
+): Promise<StripeCheckoutSession> {
+  return stripeRequest<StripeCheckoutSession>(
+    env,
+    "GET",
+    `/checkout/sessions/${encodeURIComponent(sessionId)}`,
+  );
+}
+
+export async function expireStripeCheckoutSession(
+  env: Pick<DashboardEnv, "STRIPE_SECRET_KEY" | "STRIPE_MODE">,
+  sessionId: string,
+): Promise<StripeCheckoutSession> {
+  return stripeRequest<StripeCheckoutSession>(
+    env,
+    "POST",
+    `/checkout/sessions/${encodeURIComponent(sessionId)}/expire`,
   );
 }
 

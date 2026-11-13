@@ -19,11 +19,15 @@ import {
   createStripeCustomer,
   createStripePortalSession,
   createStripeRefund,
+  expireStripeCheckoutSession,
   getStripeEnvironment,
   resolveAllowlistedStripePriceId,
   resolvePlanVersionFromStripePrice,
+  retrieveStripeCheckoutSession,
   retrieveStripeInvoice,
   retrieveStripeSubscription,
+  StripeApiError,
+  type StripeCheckoutSession,
   type StripeEnvironment,
   type StripeSubscription,
   updateStripeSubscriptionPlan,
@@ -378,6 +382,137 @@ type SubscriptionRow = {
   updated_at: string;
 };
 
+type PendingCheckoutResolution =
+  | { outcome: "resumable"; session: StripeCheckoutSession }
+  | { outcome: "already_completed" }
+  | { outcome: "expired" };
+
+async function reconcileCompletedCheckoutSession(
+  env: DashboardEnv,
+  session: StripeCheckoutSession,
+  environment: StripeEnvironment,
+  reason: string,
+): Promise<void> {
+  const subId =
+    typeof session.subscription === "string" ? session.subscription : null;
+  if (!subId) return;
+  const liveSub = await retrieveStripeSubscription(env, subId);
+  const mergedSub: StripeSubscription = {
+    ...liveSub,
+    metadata: {
+      ...(session.metadata ?? {}),
+      ...(liveSub.metadata ?? {}),
+    },
+  };
+  await applyStripeSubscriptionSnapshot(
+    env,
+    mergedSub,
+    environment,
+    Math.floor(Date.now() / 1000),
+    { reason },
+  );
+}
+
+async function reconcileOrExpirePendingCheckout(
+  env: DashboardEnv,
+  pending: Pick<
+    SubscriptionRow,
+    "id" | "plan_version_id" | "stripe_checkout_session_id"
+  >,
+  environment: StripeEnvironment,
+  options: {
+    requestedPlanVersionId?: PlanVersionId;
+    forceExpire: boolean;
+  },
+): Promise<PendingCheckoutResolution> {
+  let session: StripeCheckoutSession | null = null;
+  const hasStripeKey = Boolean(env.STRIPE_SECRET_KEY?.trim());
+  if (pending.stripe_checkout_session_id && hasStripeKey) {
+    try {
+      session = await retrieveStripeCheckoutSession(
+        env,
+        pending.stripe_checkout_session_id,
+      );
+    } catch (err) {
+      if (!(err instanceof StripeApiError && err.status === 404)) {
+        throw err;
+      }
+    }
+  }
+
+  if (session?.status === "complete") {
+    await reconcileCompletedCheckoutSession(
+      env,
+      session,
+      environment,
+      "Checkout session reconciled",
+    );
+    return { outcome: "already_completed" };
+  }
+
+  const isOpen =
+    session !== null &&
+    session.status !== "expired" &&
+    session.status !== "complete";
+
+  if (
+    !options.forceExpire &&
+    isOpen &&
+    session?.url &&
+    options.requestedPlanVersionId &&
+    pending.plan_version_id === options.requestedPlanVersionId
+  ) {
+    return { outcome: "resumable", session };
+  }
+
+  if (isOpen && pending.stripe_checkout_session_id && hasStripeKey) {
+    try {
+      await expireStripeCheckoutSession(
+        env,
+        pending.stripe_checkout_session_id,
+      );
+    } catch (err) {
+      if (
+        !(
+          err instanceof StripeApiError &&
+          (err.status === 400 || err.status === 404)
+        )
+      ) {
+        throw err;
+      }
+      // If expire returned 400 because the session completed concurrently, reconcile instead of expiring locally.
+      try {
+        const rechecked = await retrieveStripeCheckoutSession(
+          env,
+          pending.stripe_checkout_session_id,
+        );
+        if (rechecked.status === "complete") {
+          await reconcileCompletedCheckoutSession(
+            env,
+            rechecked,
+            environment,
+            "Checkout session reconciled",
+          );
+          return { outcome: "already_completed" };
+        }
+      } catch {
+        // Ignore recheck failure after 400/404 expire and fall through to expire pending row.
+      }
+    }
+  }
+
+  await env.DB.prepare(
+    `UPDATE billing_subscriptions
+        SET status = 'incomplete_expired',
+            updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
+      WHERE id = ? AND status = 'checkout_pending'`,
+  )
+    .bind(pending.id)
+    .run();
+
+  return { outcome: "expired" };
+}
+
 export async function initiateSubscriptionCheckout(
   env: DashboardEnv,
   params: {
@@ -493,24 +628,52 @@ export async function initiateSubscriptionCheckout(
     .first<SubscriptionRow>();
 
   if (existingLive) {
-    if (
-      existingLive.status === "checkout_pending" &&
-      existingLive.stripe_checkout_session_id &&
-      existingLive.plan_version_id === spec.versionId
-    ) {
-      return {
+    if (existingLive.status === "checkout_pending") {
+      const pendingResult = await reconcileOrExpirePendingCheckout(
+        env,
+        existingLive,
+        environment,
+        {
+          requestedPlanVersionId: spec.versionId,
+          forceExpire: false,
+        },
+      );
+      if (pendingResult.outcome === "resumable") {
+        return {
+          subscriptionId: existingLive.id,
+          checkoutSessionId: pendingResult.session.id,
+          checkoutUrl: pendingResult.session.url,
+          alreadyPending: true,
+          planVersionId: spec.versionId,
+        };
+      }
+      if (pendingResult.outcome === "already_completed") {
+        throw new BillingError(
+          "SUBSCRIPTION_ALREADY_ACTIVE",
+          "Your checkout payment is already complete. Refresh billing status to view your active subscription.",
+          409,
+        );
+      }
+      await recordBillingAction(env.DB, {
+        ownerEpicId: params.ownerEpicId,
+        projectId: project.id,
         subscriptionId: existingLive.id,
-        checkoutSessionId: existingLive.stripe_checkout_session_id,
-        checkoutUrl: null,
-        alreadyPending: true,
-        planVersionId: spec.versionId,
-      };
+        actorId: params.ownerEpicId,
+        action: "checkout_replaced",
+        status: "ok",
+        details: {
+          previousPlanVersionId: existingLive.plan_version_id,
+          nextPlanVersionId: spec.versionId,
+          previousSessionId: existingLive.stripe_checkout_session_id,
+        },
+      });
+    } else {
+      throw new BillingError(
+        "SUBSCRIPTION_ALREADY_ACTIVE",
+        "This project already has an active subscription or pending checkout. Use the Billing Portal or Plan Change controls instead.",
+        409,
+      );
     }
-    throw new BillingError(
-      "SUBSCRIPTION_ALREADY_ACTIVE",
-      "This project already has an active subscription or pending checkout. Use the Billing Portal or Plan Change controls instead.",
-      409,
-    );
   }
 
   const localSubscriptionId = `bsub_${crypto.randomUUID().replace(/-/g, "")}`;
@@ -641,6 +804,69 @@ export async function initiateSubscriptionCheckout(
       .catch(() => {});
     throw err;
   }
+}
+
+export async function cancelPendingBillingCheckout(
+  env: DashboardEnv,
+  params: {
+    ownerEpicId: string;
+    projectId: string;
+  },
+): Promise<{ canceled: boolean; alreadyCompleted?: boolean }> {
+  const project = await env.DB.prepare(
+    `SELECT id, owner_epic_id FROM projects WHERE id = ? LIMIT 1`,
+  )
+    .bind(params.projectId)
+    .first<{ id: string; owner_epic_id: string }>();
+
+  if (!project || project.owner_epic_id !== params.ownerEpicId) {
+    throw new BillingError("NOT_FOUND", "Project not found.", 404);
+  }
+
+  const pending = await env.DB.prepare(
+    `SELECT id, plan_version_id, stripe_checkout_session_id
+       FROM billing_subscriptions
+      WHERE project_id = ? AND owner_epic_id = ? AND status = 'checkout_pending'
+      LIMIT 1`,
+  )
+    .bind(project.id, params.ownerEpicId)
+    .first<
+      Pick<
+        SubscriptionRow,
+        "id" | "plan_version_id" | "stripe_checkout_session_id"
+      >
+    >();
+
+  if (!pending) {
+    return { canceled: false };
+  }
+
+  const environment = getStripeEnvironment(env);
+  const result = await reconcileOrExpirePendingCheckout(
+    env,
+    pending,
+    environment,
+    { forceExpire: true },
+  );
+
+  if (result.outcome === "already_completed") {
+    return { canceled: false, alreadyCompleted: true };
+  }
+
+  await recordBillingAction(env.DB, {
+    ownerEpicId: params.ownerEpicId,
+    projectId: project.id,
+    subscriptionId: pending.id,
+    actorId: params.ownerEpicId,
+    action: "checkout_canceled",
+    status: "ok",
+    details: {
+      planVersionId: pending.plan_version_id,
+      sessionId: pending.stripe_checkout_session_id,
+    },
+  });
+
+  return { canceled: true };
 }
 
 export async function createCustomerBillingPortalSession(
@@ -1275,6 +1501,21 @@ export async function handleStripeWebhook(
               "Your paid plan subscription is now active. Check your project quota and billing details in the egdata Developer Portal.",
             );
           }
+        }
+        break;
+      }
+
+      case "checkout.session.expired": {
+        const sessionId = typeof obj.id === "string" ? obj.id : null;
+        if (sessionId) {
+          await env.DB.prepare(
+            `UPDATE billing_subscriptions
+                SET status = 'incomplete_expired',
+                    updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
+              WHERE environment = ? AND stripe_checkout_session_id = ? AND status = 'checkout_pending'`,
+          )
+            .bind(environment, sessionId)
+            .run();
         }
         break;
       }

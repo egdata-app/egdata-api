@@ -242,6 +242,31 @@ function ProfileBillingPage() {
     }
   }
 
+  async function handleCancelPendingCheckout(projectId: string) {
+    setBusyKey(`cancel_pending:${projectId}`);
+    try {
+      const res = await dashboardClient.cancelPendingBillingCheckout(projectId);
+      await loadAll();
+      notify({
+        title: res.alreadyCompleted
+          ? "Subscription already completed"
+          : "Pending checkout canceled",
+        description: res.alreadyCompleted
+          ? "Your payment completed and subscription status has been refreshed."
+          : "You can start a fresh checkout whenever you're ready.",
+        tone: res.alreadyCompleted ? "success" : "info",
+      });
+    } catch (err) {
+      notify({
+        title: "Could not cancel pending checkout",
+        description: err instanceof Error ? err.message : "Try again shortly.",
+        tone: "danger",
+      });
+    } finally {
+      setBusyKey(null);
+    }
+  }
+
   async function handleWithdrawalSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (!withdrawTarget) return;
@@ -366,7 +391,11 @@ function ProfileBillingPage() {
       ) : (
         <div className="space-y-4">
           {summaries.map((summary) => {
-            const sub = summary.subscription;
+            const sub =
+              summary.subscription &&
+              summary.subscription.status !== "incomplete_expired"
+                ? summary.subscription
+                : null;
             const ent = summary.entitlement;
             const isLiveSub = Boolean(
               sub && ["active", "trialing", "past_due"].includes(sub.status),
@@ -447,7 +476,32 @@ function ProfileBillingPage() {
                   )}
                 </div>
 
-                {sub && (
+                {sub && sub.status === "checkout_pending" && (
+                  <div className="rounded-xl border border-epic-border bg-epic-bg/40 p-4 text-xs flex flex-wrap items-center justify-between gap-3">
+                    <span className="text-epic-text-muted">
+                      Pending Stripe Checkout for{" "}
+                      <strong className="font-mono text-white">
+                        {sub.planVersionId}
+                      </strong>{" "}
+                      (payment not completed yet). Click Subscribe below to resume
+                      or switch plans.
+                    </span>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      isPending={
+                        busyKey === `cancel_pending:${summary.project.id}`
+                      }
+                      onPress={() =>
+                        void handleCancelPendingCheckout(summary.project.id)
+                      }
+                    >
+                      Cancel pending checkout
+                    </Button>
+                  </div>
+                )}
+
+                {sub && sub.status !== "checkout_pending" && (
                   <div className="rounded-xl border border-epic-border bg-epic-bg/40 p-4 text-xs space-y-1.5">
                     <div className="flex flex-wrap gap-x-6 gap-y-1 text-epic-text-muted">
                       <span>

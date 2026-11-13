@@ -126,6 +126,8 @@ async function createBillingHarness(options?: {
   };
   let failNextStripeDelete = false;
   let refundSeq = 1;
+  let checkoutSeq = 1;
+  const checkoutSessions = new Map<string, Record<string, unknown>>();
 
   vi.stubGlobal(
     "fetch",
@@ -158,10 +160,48 @@ async function createBillingHarness(options?: {
           ...(liveStripeSub.metadata as Record<string, string>),
           ...meta,
         };
-        return Response.json({
-          id: "cs_test_001",
-          url: "https://checkout.stripe.com/c/pay/cs_test_001",
-        });
+        const sessionId = `cs_test_${String(checkoutSeq++).padStart(3, "0")}`;
+        const createdSession = {
+          id: sessionId,
+          url: `https://checkout.stripe.com/c/pay/${sessionId}`,
+          status: "open",
+          customer: "cus_stripe_001",
+          subscription: null,
+          metadata: meta,
+        };
+        checkoutSessions.set(sessionId, createdSession);
+        return Response.json(createdSession);
+      }
+      if (url.pathname.startsWith("/v1/checkout/sessions/")) {
+        const suffix = url.pathname.slice("/v1/checkout/sessions/".length);
+        if (suffix.endsWith("/expire") && req.method === "POST") {
+          const sessionId = suffix.slice(0, -"/expire".length);
+          const existing = checkoutSessions.get(sessionId);
+          if (!existing) {
+            return Response.json(
+              { error: { message: "No such checkout session", code: "resource_missing" } },
+              { status: 404 },
+            );
+          }
+          if (existing.status !== "open") {
+            return Response.json(
+              { error: { message: "Session cannot be expired", code: "checkout_session_not_open" } },
+              { status: 400 },
+            );
+          }
+          existing.status = "expired";
+          return Response.json(existing);
+        }
+        if (req.method === "GET") {
+          const existing = checkoutSessions.get(suffix);
+          if (!existing) {
+            return Response.json(
+              { error: { message: "No such checkout session", code: "resource_missing" } },
+              { status: 404 },
+            );
+          }
+          return Response.json(existing);
+        }
       }
       if (
         url.pathname === "/v1/billing_portal/sessions" &&
@@ -340,6 +380,12 @@ async function createBillingHarness(options?: {
     getLiveSub: () => liveStripeSub,
     setFailNextStripeDelete: (val: boolean) => {
       failNextStripeDelete = val;
+    },
+    setCheckoutSessionState: (id: string, patch: Record<string, unknown>) => {
+      const current = checkoutSessions.get(id);
+      if (current) {
+        checkoutSessions.set(id, { ...current, ...patch });
+      }
     },
     dashFetch,
     sendWebhook,
@@ -1117,5 +1163,150 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
       last_invoice_id: "in_recovered_paid",
       last_event_created: baseSec + 400,
     });
+  });
+
+  it("resumes, switches, cancels, and reconciles abandoned checkout_pending sessions without wedging", async () => {
+    const h = await createBillingHarness();
+
+    // 1. User clicks Subscribe to Pro then hits browser Back
+    const first = await h.dashFetch("/_dashboard/api/billing/checkout", {
+      method: "POST",
+      body: {
+        projectId: "prj_1",
+        planId: "pro",
+        termsVersion: "1.0",
+        withdrawalAcknowledged: true,
+      },
+    });
+    expect(first.status).toBe(200);
+    const firstJson = (await first.json()) as {
+      subscriptionId: string;
+      checkoutSessionId: string;
+      checkoutUrl: string | null;
+      alreadyPending: boolean;
+    };
+    expect(firstJson.checkoutSessionId).toBe("cs_test_001");
+    expect(firstJson.checkoutUrl).toBe(
+      "https://checkout.stripe.com/c/pay/cs_test_001",
+    );
+    expect(firstJson.alreadyPending).toBe(false);
+
+    // 2. Retrying Subscribe to Pro returns the live open checkoutUrl instead of null
+    const retrySame = await h.dashFetch("/_dashboard/api/billing/checkout", {
+      method: "POST",
+      body: {
+        projectId: "prj_1",
+        planId: "pro",
+        termsVersion: "1.0",
+        withdrawalAcknowledged: true,
+      },
+    });
+    expect(retrySame.status).toBe(200);
+    expect(await retrySame.json()).toMatchObject({
+      subscriptionId: firstJson.subscriptionId,
+      checkoutSessionId: "cs_test_001",
+      checkoutUrl: "https://checkout.stripe.com/c/pay/cs_test_001",
+      alreadyPending: true,
+      planVersionId: "pro-v1",
+    });
+
+    // 3. Switching to Scale while Pro checkout is pending expires Pro session and creates a new Scale checkout
+    const switchScale = await h.dashFetch("/_dashboard/api/billing/checkout", {
+      method: "POST",
+      body: {
+        projectId: "prj_1",
+        planId: "scale",
+        termsVersion: "1.0",
+        withdrawalAcknowledged: true,
+      },
+    });
+    expect(switchScale.status).toBe(200);
+    const scaleJson = (await switchScale.json()) as {
+      subscriptionId: string;
+      checkoutSessionId: string;
+      checkoutUrl: string | null;
+      alreadyPending: boolean;
+      planVersionId: string;
+    };
+    expect(scaleJson.checkoutSessionId).toBe("cs_test_002");
+    expect(scaleJson.checkoutUrl).toBe(
+      "https://checkout.stripe.com/c/pay/cs_test_002",
+    );
+    expect(scaleJson.alreadyPending).toBe(false);
+    expect(scaleJson.planVersionId).toBe("scale-v1");
+
+    const oldRow = h.sqlite
+      .prepare("SELECT status FROM billing_subscriptions WHERE id = ?")
+      .get(firstJson.subscriptionId) as { status: string };
+    expect(oldRow.status).toBe("incomplete_expired");
+    expect(
+      h.stripeCalls.some(
+        (c) =>
+          c.method === "POST" &&
+          c.path === "/v1/checkout/sessions/cs_test_001/expire",
+      ),
+    ).toBe(true);
+
+    // 4. Explicit cancel (?checkout=canceled or Cancel button) clears pending state back to Free
+    const cancelRes = await h.dashFetch(
+      "/_dashboard/api/billing/checkout/cancel",
+      {
+        method: "POST",
+        body: { projectId: "prj_1" },
+      },
+    );
+    expect(cancelRes.status).toBe(200);
+    expect(await cancelRes.json()).toMatchObject({ canceled: true });
+
+    const scaleRow = h.sqlite
+      .prepare("SELECT status FROM billing_subscriptions WHERE id = ?")
+      .get(scaleJson.subscriptionId) as { status: string };
+    expect(scaleRow.status).toBe("incomplete_expired");
+
+    // 5. Reconcile completed session cleanly if payment succeeded before retry and webhook hadn't arrived yet
+    const third = await h.dashFetch("/_dashboard/api/billing/checkout", {
+      method: "POST",
+      body: {
+        projectId: "prj_1",
+        planId: "pro",
+        termsVersion: "1.0",
+        withdrawalAcknowledged: true,
+      },
+    });
+    expect(third.status).toBe(200);
+    const thirdJson = (await third.json()) as {
+      subscriptionId: string;
+      checkoutSessionId: string;
+    };
+    h.setCheckoutSessionState(thirdJson.checkoutSessionId, {
+      status: "complete",
+      subscription: "sub_stripe_001",
+      metadata: {
+        ownerEpicId: "owner_1",
+        projectId: "prj_1",
+        localSubscriptionId: thirdJson.subscriptionId,
+        planVersionId: "pro-v1",
+        environment: "test",
+      },
+    });
+
+    const retryAfterPaid = await h.dashFetch(
+      "/_dashboard/api/billing/checkout",
+      {
+        method: "POST",
+        body: {
+          projectId: "prj_1",
+          planId: "pro",
+          termsVersion: "1.0",
+          withdrawalAcknowledged: true,
+        },
+      },
+    );
+    expect(retryAfterPaid.status).toBe(409);
+
+    const activeRow = h.sqlite
+      .prepare("SELECT status FROM billing_subscriptions WHERE id = ?")
+      .get(thirdJson.subscriptionId) as { status: string };
+    expect(activeRow.status).toBe("active");
   });
 });

@@ -2,6 +2,7 @@ import { type Context, Hono, type Next } from "hono";
 import { z } from "zod";
 import {
   BillingError,
+  cancelPendingBillingCheckout,
   changeSubscriptionPlan,
   createCustomerBillingPortalSession,
   getProjectBillingSummary,
@@ -80,6 +81,10 @@ const checkoutSchema = z.object({
   cancelUrl: z.string().url().optional(),
 });
 
+const cancelCheckoutSchema = z.object({
+  projectId: z.string().trim().min(1).max(120),
+});
+
 const portalSchema = z.object({
   returnUrl: z.string().url().optional(),
 });
@@ -124,6 +129,33 @@ billingRoutes.post("/checkout", requireDashboardUser, async (c) => {
       ownerDisplayName: user.displayName,
       ...parsed.data,
       requestOrigin: new URL(c.req.url).origin,
+    });
+    return c.json(result, 200);
+  } catch (err) {
+    return handleBillingError(c, err);
+  }
+});
+
+billingRoutes.post("/checkout/cancel", requireSessionOnly, async (c) => {
+  const parsed = cancelCheckoutSchema.safeParse(
+    await c.req.json().catch(() => null),
+  );
+  if (!parsed.success) {
+    return c.json(
+      {
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Invalid projectId parameter.",
+        },
+      },
+      400,
+    );
+  }
+  const user = c.get("user");
+  try {
+    const result = await cancelPendingBillingCheckout(c.env, {
+      ownerEpicId: user.epicAccountId,
+      projectId: parsed.data.projectId,
     });
     return c.json(result, 200);
   } catch (err) {

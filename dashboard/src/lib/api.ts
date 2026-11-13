@@ -521,6 +521,15 @@ export const dashboardClient = {
       body: JSON.stringify(payload),
     }),
 
+  cancelPendingBillingCheckout: (projectId: string) =>
+    apiFetch<{ canceled: boolean; alreadyCompleted?: boolean }>(
+      "/billing/checkout/cancel",
+      {
+        method: "POST",
+        body: JSON.stringify({ projectId }),
+      },
+    ),
+
   createBillingPortal: (returnUrl?: string) =>
     apiFetch<{ url: string; sessionId: string }>("/billing/portal", {
       method: "POST",

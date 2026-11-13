@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LimitRequestReviews } from "../components/LimitRequestReviews";
 import { Button } from "../components/ui/Button";
 import { Tag } from "../components/ui/Controls";
@@ -69,6 +69,7 @@ function RateLimitsPage() {
     const status = new URLSearchParams(window.location.search).get("checkout");
     return status === "success" || status === "canceled" ? status : null;
   });
+  const canceledSyncStartedRef = useRef(false);
 
   const loadBilling = useCallback(async () => {
     try {
@@ -101,9 +102,57 @@ function RateLimitsPage() {
   }, []);
 
   useEffect(() => {
-    void Promise.all([loadHistory(), loadBilling()]);
+    const urlProjectId =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("project")
+        : null;
+    const targetProjectId = urlProjectId || selectedProject?.id;
+
+    if (
+      checkoutBanner === "canceled" &&
+      targetProjectId &&
+      !canceledSyncStartedRef.current
+    ) {
+      canceledSyncStartedRef.current = true;
+      void dashboardClient
+        .cancelPendingBillingCheckout(targetProjectId)
+        .catch(() => {})
+        .finally(() => {
+          void Promise.all([loadHistory(), loadBilling()]);
+        });
+    } else {
+      void Promise.all([loadHistory(), loadBilling()]);
+    }
     setWebsiteUrl(selectedProject?.websiteUrl ?? "");
-  }, [loadHistory, loadBilling, selectedProject]);
+  }, [checkoutBanner, loadHistory, loadBilling, selectedProject]);
+
+  async function handleCancelPendingCheckout() {
+    if (!selectedProject) return;
+    setBillingBusy(true);
+    try {
+      const res = await dashboardClient.cancelPendingBillingCheckout(
+        selectedProject.id,
+      );
+      await loadBilling();
+      notify({
+        title: res.alreadyCompleted
+          ? "Subscription already completed"
+          : "Pending checkout canceled",
+        description: res.alreadyCompleted
+          ? "Your payment completed and subscription status has been refreshed."
+          : "You can start a fresh checkout for Pro or Scale whenever you're ready.",
+        tone: res.alreadyCompleted ? "success" : "info",
+      });
+    } catch (err) {
+      notify({
+        title: "Could not cancel pending checkout",
+        description: err instanceof Error ? err.message : "Try again shortly.",
+        tone: "danger",
+      });
+    } finally {
+      setBillingBusy(false);
+    }
+  }
 
   async function handleCheckout(planId: "pro" | "scale") {
     if (!selectedProject || !plansData) return;
@@ -470,7 +519,36 @@ function RateLimitsPage() {
             </label>
           )}
 
-          {billingSummary?.subscription && (
+          {billingSummary?.subscription?.status === "checkout_pending" && (
+            <div className="rounded-xl border border-epic-border bg-epic-surface p-5 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-semibold text-white">
+                  Pending Stripe Checkout
+                </h3>
+                <p className="text-xs text-epic-text-muted mt-0.5">
+                  A checkout attempt for{" "}
+                  <strong className="font-mono text-epic-text">
+                    {billingSummary.subscription.planVersionId}
+                  </strong>{" "}
+                  has not been paid yet. Click Subscribe above to resume or switch
+                  plans, or cancel the pending checkout.
+                </p>
+              </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                isPending={billingBusy}
+                onPress={() => void handleCancelPendingCheckout()}
+              >
+                Cancel pending checkout
+              </Button>
+            </div>
+          )}
+
+          {billingSummary?.subscription &&
+            ["active", "trialing", "past_due"].includes(
+              billingSummary.subscription.status,
+            ) && (
             <div className="rounded-xl border border-epic-border bg-epic-surface p-5 space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
