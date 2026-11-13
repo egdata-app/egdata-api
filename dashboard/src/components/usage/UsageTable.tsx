@@ -31,9 +31,9 @@ const tabs: { id: UsageDimension; label: string }[] = [
   { id: "endpoints", label: "Endpoints" },
   { id: "projects", label: "Applications" },
   { id: "keys", label: "API keys" },
-  { id: "origins", label: "Browser origins" },
-  { id: "ips", label: "IP addresses" },
-  { id: "userAgents", label: "User agents" },
+  { id: "origins", label: "Origin presence" },
+  { id: "ips", label: "Countries" },
+  { id: "userAgents", label: "Client categories" },
 ];
 const sortable: { id: UsageSort; label: string }[] = [
   { id: "requests", label: "Requests" },

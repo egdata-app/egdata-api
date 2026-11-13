@@ -1,6 +1,5 @@
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import Zen from "@aikidosec/firewall";
 import { type ServerType, serve } from "@hono/node-server";
 import { swaggerUI } from "@hono/swagger-ui";
 import chalk from "chalk";
@@ -71,7 +70,6 @@ import StatsRoute from "./routes/stats.js";
 import UsersRoute from "./routes/users.js";
 import UsersServiceRoute from "./routes/users-service.js";
 import { createAntiAbuseRuntime } from "./services/anti-abuse-runtime.js";
-import { getAikidoAnonymousIdentity } from "./utils/aikido-rate-limit-group.js";
 import { attributesToObject } from "./utils/attributes-to-object.js";
 import { resolveChangelogContextSafely } from "./utils/changelog-context.js";
 import { countries, regions } from "./utils/countries.js";
@@ -106,19 +104,6 @@ const openApiDocument = buildOpenApiDocument();
 
 // Protect the dedicated hostname; global enforcement is an explicit later cutover.
 app.use("/*", originAuth());
-
-app.use("/*", async (c, next) => {
-  const anonymousIdentity = getAikidoAnonymousIdentity(c.req.raw.headers);
-
-  if (anonymousIdentity) {
-    Zen.setUser(anonymousIdentity);
-    Zen.setRateLimitGroup({ id: anonymousIdentity.id });
-  }
-
-  await next();
-});
-
-Zen.addHonoMiddleware(app);
 
 // Compress text responses at the origin. Cloudflare compresses browser traffic,
 // but the origin -> edge hop is what GCP bills; without this every JSON/XML

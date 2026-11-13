@@ -13,6 +13,161 @@ gateway while signed in with the login that created them. A copied console
 credential alone cannot authenticate an external application or the public API
 hostname. Use a regular API key for your applications.
 
+## Developer onboarding and account menu
+
+Once the initial legal documents are published, the dashboard requires a verified
+notification email before explicit acceptance of the Developer Terms. Email editing
+is available on **Profile** (`/profile`); your display name remains managed by Epic.
+A replacement address becomes active only after verification. The Privacy Notice
+is informational and has no acceptance checkbox. The account popover contains
+**Profile** and **Log out**. Profile, Agreements, and Receipts share the dashboard
+header with account navigation in place of dashboard navigation.
+
+Review agreements at `/profile/agreements` and receipts at `/profile/receipts`.
+Each new receipt includes a stable receipt ID, Epic account ID, UTC acceptance time,
+and the exact Developer Terms and Privacy Notice versions and document hashes
+recorded for that event. Terms are **accepted**; the Privacy Notice is **provided for
+information**, not consent. Later profile or document changes do not rewrite receipts.
+Older acceptances without a recorded privacy version say **not recorded**.
+Use **Print / Save as PDF** to print only the receipt and both full documents,
+including document sections collapsed on screen. Receipt emails link to this
+signed-in view. Old `/agreements` and `/receipts` links redirect to their Profile
+pages. The original session-authenticated JSON export at
+`/_dashboard/api/account/receipt` remains available; it returns only the signed-in
+account's records and uses `Cache-Control: no-store`.
+
+Existing application API keys continue working during this initial onboarding,
+even if you open the dashboard without completing it. Dashboard features and both
+new and already-issued console sessions are gated. Dashboard and console calls return
+`403 EMAIL_VERIFICATION_REQUIRED` until email is verified, then
+`403 AGREEMENT_REQUIRED` until the current terms edition is accepted. Dashboard
+errors include required terms only after email verification. Complete onboarding
+at `https://devs.egdata.app/profile/agreements` before restarting the console. Any future
+mandatory terms deadline for API keys needs a separately announced rollout.
+
+Profile also offers deletion while onboarding; logout remains in the account menu. Deletion needs
+typed confirmation and a login from the last ten minutes. It deletes active account,
+project and credential records and rejects old sessions and cached API keys. Keys
+from closed accounts return `401 INVALID_API_KEY`; requests admitted before closure
+may finish. Re-registration waits for the 30-day closure-record cleanup and requires
+fresh onboarding. Limited evidence and other stores follow the Privacy Notice;
+contact `contact@egdata.app` for privacy requests.
+
+### Account status, email verification, and closure API
+
+These first-party endpoints require the `egdata_dash_session` cookie on the
+configured dashboard host. They remain available during onboarding, use
+`Cache-Control: no-store`, and have no pagination or query parameters. Mutations
+require a matching `Origin` header and accept JSON bodies up to 4096 bytes.
+
+| Method and path | Request and successful response |
+| --- | --- |
+| `GET /_dashboard/api/account` | No body. Returns `enabled`, `eligible`, `revision`, `contactEmail`, `pendingEmail`, `verifiedAt`, `terms`, `privacy`, `acceptedAt`, and `existingKeysContinue`. |
+| `POST /_dashboard/api/account/email` | `{email}` sends a verification code; returns `{ok: true, pendingEmail}`. The address is trimmed, must be valid and at most 254 characters, and cannot be an Epic `@accounts.epicgames.com` placeholder. |
+| `POST /_dashboard/api/account/email/verify` | `{token}` consumes a 64-character lowercase hexadecimal code for this account; returns updated account status. |
+| `DELETE /_dashboard/api/account` | `{confirmation: "DELETE"}` plus a login less than ten minutes old; returns `{ok: true, message}` and clears the session cookie. |
+
+Status timestamps are Unix milliseconds or null. `terms` and `privacy` contain
+the exact published documents (`kind`, `version`, `edition`, `sha256`, `body`,
+`published_at`). Before publication, `enabled` is false, `eligible` is true,
+and `revision`, both documents, and `acceptedAt` are null. During a rollout,
+eligibility requires both verified email and acceptance of the current terms
+edition. `existingKeysContinue` is true for this initial onboarding rollout.
+
+Verification codes expire in 30 minutes, can be consumed only once, and are
+replaced on resend. Sends are limited to one per minute and five per UTC day.
+A pending replacement leaves the current verified address active until confirmation;
+the old address receives a queued change notification afterward.
+
+Common errors are `401 UNAUTHORIZED` for a missing, expired, revoked, or closed-account
+session; `403 FORBIDDEN` for a rejected host or mutation origin; `413 BODY_TOO_LARGE`;
+and `429 RATE_LIMITED` with `Retry-After: 60`. The daily email cap still applies
+after that delay. Email requests can return `400 VALIDATION_ERROR` or
+`503 EMAIL_DELIVERY_FAILED` (request a new code later). Verification returns
+`400 INVALID_VERIFICATION` for malformed codes or `409 INVALID_VERIFICATION` for
+nonmatching, expired, replaced, or consumed codes. Closure returns
+`400 CONFIRMATION_REQUIRED` or `403 REAUTHENTICATION_REQUIRED` when its prerequisites
+are missing. Account-route storage failures currently return HTTP 500 with a plain-text
+internal-server-error response.
+
+After verification, `POST /_dashboard/api/account/agreements` accepts
+`{revision, version, sha256, accepted: true}` for the displayed terms and returns
+updated account status. It returns `403 EMAIL_VERIFICATION_REQUIRED` before
+verification and `409 AGREEMENT_CHANGED` when the displayed requirement no longer
+matches. See `openapi/egdata.dashboard.openapi.json` for request and response schemas.
+
+### Account export and usage privacy
+
+**Export account data** on Profile downloads `egdata-account.ndjson` from
+`GET /_dashboard/api/account/export`. Your session is required, but email verification
+and terms acceptance are not. Lines contain `section` and, for data rows, `record`.
+Sections cover account/contact, projects, key settings (without credentials), limit
+requests, acceptance references, endpoint usage and alert reads. Initial metadata
+describes scope; final `{"section":"complete"}` confirms completion. Discard an
+interrupted download and retry. This uncacheable, live paged export is not a complete
+cross-store snapshot. Contact `contact@egdata.app` for rights requests involving
+analytics, security, support or backups. Verification secrets are excluded.
+
+Routine analytics omits raw IPs, stores only Origin presence and country, and
+categorizes clients as browser, application, bot, other or unknown. Usage tabs are
+**Origin presence**, **Countries**, and **Client categories**. The authenticated
+`GET /_dashboard/api/analytics/table` retains dimension IDs `origins`, `ips`, and
+`userAgents` with these coarse meanings. Historical values are reduced before
+grouping/search/pagination; historical user agents appear as `legacy (redacted)`.
+This does not erase underlying historical records or describe separate security
+processing. Owners see their own usage; all-project reporting requires an admin role.
+
+### Operator privacy and email endpoints
+
+These first-party routes require a session, completed onboarding when active, and
+a live database admin role. Mutations require a same-origin `Origin` header.
+They use `Cache-Control: no-store`:
+
+| Method and path under `/_dashboard/api/admin` | Purpose |
+| --- | --- |
+| `GET /privacy-requests?offset=0` | Up to 50 cases, open first, then response deadline/ID; `hasMore` indicates another page. |
+| `POST /privacy-requests` | `{ownerId, caseReference, kind, receivedAt}`; nullable owner supports non-account requests. Records one-calendar-month deadline. |
+| `POST /privacy-requests/:id/extend` | `{reason, notifiedAt}`; one justified, already-notified extension before the original deadline, to three calendar months from receipt. |
+| `GET /privacy-requests/:id/actions` | First 500 actions in completion-time/ID order; unknown cases return an empty list. |
+| `POST /privacy-requests/:id/actions` | `{store, action, evidenceReference}` records completed work for an unresolved case. |
+| `POST /privacy-requests/:id/resolve` | `{resolution}` records resolution and starts resolved-case retention. |
+| `GET /notifications?offset=0` | Up to 50 newest-first notifications and `hasMore`, recipient/subject and transport metadata; no body/code. |
+
+Kinds: `access`, `erasure`, `rectification`, `restriction`, `objection`, `portability`.
+Actions: `export`, `erase`, `rectify`, `restrict`, `notify-recipient`,
+`restore-suppression`, `review-hold`. Timestamps are Unix milliseconds.
+References/store names are trimmed, 1–300 characters; reasons/resolutions are
+10–2000 characters; owner IDs are at most 128 characters. Case bodies accept only
+listed fields, up to 8192 bytes. Offsets range from 0 to 100000. The ledger records
+evidence; it does not execute cross-store work or send rights replies.
+Errors: 400 invalid input, 401 absent session, 403 role/origin/onboarding failure,
+409 missing/resolved case or invalid extension state, 413 oversized case body,
+429 throttling, or 503 unavailable onboarding status.
+
+Queued notification dispatch is not delivery; `delivered` means recipient-server
+acceptance, not reading. Other states are `deferred`, `bounced`, `failed`, `rejected`,
+`complained`; absent transport metadata is null. Verification codes require Profile
+resend. Production lifecycle subscription activation must be verified before relying
+on event states. See `openapi/egdata.dashboard.openapi.json` for the full contract.
+
+After deployment, daily cleanup makes admin audits eligible after 24 calendar
+months, resolved limit requests/privacy cases after 12 months, and alert associations
+after 90 days from the related change's merge time. Pending cases remain. Bounded
+500-row batches can take repeated runs to drain a backlog; notification records
+expire after 30 days. Deployment and historical-store handling remain separate.
+
+When the gateway cannot verify credential/account status, authenticated API-key
+requests return uncacheable `503 ACCOUNT_STATUS_UNAVAILABLE` and `Retry-After: 30`
+before quota or upstream access. Legacy uses its `{ error: { code, message } }`
+envelope; v1 uses Problem Details. Retry after the indicated delay. Do not repeatedly
+retry a terms-related 403 or use acceptance to restore revoked credentials.
+
+Current public documents are at `https://devs.egdata.app/terms` and
+`https://devs.egdata.app/privacy`, exact versions at `/terms/:version` and
+`/privacy/:version`, and the version/hash index at `/legal/history` on that host.
+Until explicit publication, current document URLs return 404 and no onboarding
+requirement is active. Deployment and publication are separate operations.
+
 Console requests count toward the selected project's usage and endpoint alerts.
 Select **API console** in the Usage page's key filter to see these requests.
 All sessions and ordinary API keys for the same project share one global 60-second

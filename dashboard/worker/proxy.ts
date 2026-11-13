@@ -11,7 +11,7 @@ import {
   rateLimitHeaders,
 } from "./project-quota.js";
 import type { AdmissionResult } from "./rate-limiter-core.js";
-import type { DashboardEnv } from "./types.js";
+import type { CachedKeyMetadata, DashboardEnv } from "./types.js";
 import { forwardToUpstream } from "./upstream.js";
 import { handleV1ApiProxy } from "./v1.js";
 import {
@@ -213,7 +213,19 @@ export async function handleEdgeApiProxy(
   }
 
   const keyHash = await sha256Hex(rawApiKey);
-  const keyMeta = await resolveApiKeyMetadata(env, ctx, keyHash);
+  let keyMeta: CachedKeyMetadata | null;
+  try {
+    keyMeta = await resolveApiKeyMetadata(env, ctx, keyHash);
+  } catch {
+    const response = edgeErrorJson(
+      503,
+      "ACCOUNT_STATUS_UNAVAILABLE",
+      "Credential and account status could not be verified. Please retry shortly.",
+      originHeader,
+      { "Retry-After": "30" },
+    );
+    return request.method === "HEAD" ? new Response(null, response) : response;
+  }
 
   if (!keyMeta) {
     return recordUnattributed(

@@ -12,10 +12,11 @@ import type { DashboardEnv } from "./types.js";
  * blob5:  statusCode ("200", "304", "401", "403", "429", "500")
  * blob6:  cacheStatus ("HIT", "MISS", "STALE", "REVALIDATED", "BYPASS", "DYNAMIC", "EDGE_BLOCK")
  * blob7:  limitOutcome ("ok", "rate_limited", "monthly_quota_exceeded", "ip_denied", "origin_denied", "path_denied", "scope_denied", "method_denied")
- * blob8:  origin (Origin request header or "(direct)")
- * blob9:  clientIp (masked or raw client IP for user diagnostics)
- * blob10: userAgent (truncated to 160 chars)
+ * blob8:  origin presence only ("(present)" or "(direct)")
+ * blob9:  reserved; always empty (never an IP or fingerprint)
+ * blob10: coarse client category, never a raw user agent
  * blob11: country (CF country code e.g. "US", "ES")
+ * blob12: privacy schema marker ("privacy-v1")
  *
  * double1: requestCount (1)
  * double2: latencyMs
@@ -48,10 +49,28 @@ interface BufferedEvent extends ApiTelemetryEvent {
 }
 const localEventsBuffer: BufferedEvent[] = [];
 
+export function clientCategory(userAgent: string): string {
+  if (!userAgent) return "unknown";
+  if (/bot|crawler|spider/i.test(userAgent)) return "bot";
+  if (/curl|wget|python|node|httpclient|axios|undici|sdk/i.test(userAgent))
+    return "application";
+  if (/mozilla|chrome|safari|firefox|edge/i.test(userAgent)) return "browser";
+  return "other";
+}
+
 export function recordApiTelemetry(
   env: DashboardEnv,
   event: ApiTelemetryEvent,
 ): void {
+  // Minimize before either storage sink. Do not substitute stable hashes for IPs.
+  event = {
+    ...event,
+    origin:
+      event.origin && event.origin !== "(direct)" ? "(present)" : "(direct)",
+    clientIp: "",
+    userAgent: clientCategory(event.userAgent),
+    country: /^[A-Z]{2}$/.test(event.country) ? event.country : "XX",
+  };
   const isCacheHit =
     event.cacheStatus === "HIT" ||
     event.cacheStatus === "STALE" ||
@@ -80,9 +99,10 @@ export function recordApiTelemetry(
         event.cacheStatus.slice(0, 32),
         event.limitOutcome.slice(0, 32),
         (event.origin || "(direct)").slice(0, 180),
-        (event.clientIp || "unknown").slice(0, 64),
-        (event.userAgent || "(none)").slice(0, 160),
+        "",
+        event.userAgent,
         (event.country || "XX").slice(0, 8),
+        "privacy-v1",
       ],
       doubles: [
         1,

@@ -5,11 +5,18 @@ import type {
   AdminAuditEntry,
   AdminProject,
   AdminUser,
+  AdminUserAgreement,
+  AdminUserDetail,
+  AdminUserLimitRequest,
+  AdminUserPrivacyRequest,
 } from "./admin-types.js";
-import { getAdminUsage } from "./analytics-reporting.js";
+import {
+  getAdminUsage,
+  queryDashboardAnalytics,
+} from "./analytics-reporting.js";
 import { mapApiKeyRow } from "./db.js";
 import { invalidateLocalKeyCache } from "./key-cache.js";
-import { quotaForProject } from "./project-quota.js";
+import { quotaForProject, readAccountMonthlyQuota } from "./project-quota.js";
 import { PROJECT_RECOVERY_DAYS } from "./project-retention.js";
 import type { DashboardEnv, EpicSessionUser } from "./types.js";
 
@@ -49,6 +56,18 @@ const invalid = {
   error: { code: "VALIDATION_ERROR", message: "Invalid fields or pagination." },
 };
 const missing = { error: { code: "NOT_FOUND", message: "Record not found." } };
+
+async function adminMonthlyQuota(
+  env: DashboardEnv,
+  ownerId: string,
+): Promise<AdminUserDetail["monthlyQuota"]> {
+  try {
+    return await readAccountMonthlyQuota(env, ownerId);
+  } catch {
+    console.error("Admin monthly quota unavailable", { ownerId });
+    return null;
+  }
+}
 
 // Never publish a metadata snapshot that could race a revocation or limit edit.
 async function invalidateKeys(env: DashboardEnv, keys: { key_hash: string }[]) {
@@ -91,6 +110,252 @@ adminManagementRoutes.get("/users", async (c) => {
       rows.map((row) => row.id),
     ),
   });
+});
+
+adminManagementRoutes.get("/users/:userId", async (c) => {
+  const userId = c.req.param("userId");
+  const [
+    userRow,
+    closure,
+    profile,
+    rollout,
+    agreementsResult,
+    projectsResult,
+    limitRequestsResult,
+    privacyRequestsResult,
+  ] = await Promise.all([
+    c.env.DB.prepare(
+      `SELECT
+        u.epic_account_id AS id, u.display_name AS displayName, u.email,
+        u.preferred_language AS preferredLanguage,
+        u.created_at AS createdAt, u.updated_at AS updatedAt,
+        u.project_limit AS projectLimit,
+        u.last_project_created_at AS lastProjectCreatedAt,
+        (SELECT COUNT(*) FROM projects p WHERE p.owner_epic_id=u.epic_account_id AND p.deleted_at IS NULL) AS projectCount,
+        (SELECT COUNT(*) FROM projects p WHERE p.owner_epic_id=u.epic_account_id AND p.deleted_at IS NOT NULL) AS deletedProjectCount,
+        (SELECT COUNT(*) FROM api_keys k WHERE k.owner_epic_id=u.epic_account_id AND k.revoked_at IS NULL) AS keyCount,
+        (SELECT COUNT(*) FROM api_keys k WHERE k.owner_epic_id=u.epic_account_id AND k.revoked_at IS NULL
+          AND k.active=1 AND (k.expires_at IS NULL OR julianday(k.expires_at)>julianday('now'))) AS activeKeyCount,
+        (SELECT MAX(last_used_at) FROM api_keys k WHERE k.owner_epic_id=u.epic_account_id) AS lastUsedAt,
+        EXISTS(SELECT 1 FROM user_roles r WHERE r.user_id=u.epic_account_id AND r.role='admin') AS isAdmin
+      FROM users u WHERE u.epic_account_id=?`,
+    )
+      .bind(userId)
+      .first<AdminUserDetail["user"]>(),
+    c.env.DB.prepare(
+      "SELECT closed_at AS closedAt, purge_after AS purgeAfter FROM account_closures WHERE owner_id=?",
+    )
+      .bind(userId)
+      .first<{ closedAt: number; purgeAfter: number }>(),
+    c.env.DB.prepare(
+      "SELECT contact_email, pending_email, verified_at FROM developer_profiles WHERE owner_id=?",
+    )
+      .bind(userId)
+      .first<{
+        contact_email: string | null;
+        pending_email: string | null;
+        verified_at: number | null;
+      }>(),
+    c.env.DB.prepare(
+      "SELECT revision, terms_version, privacy_version FROM legal_rollout WHERE id=1",
+    ).first<{
+      revision: string;
+      terms_version: string;
+      privacy_version: string;
+    }>(),
+    c.env.DB.prepare(
+      `SELECT receipt_id AS receiptId, version, edition, sha256,
+        accepted_at AS acceptedAt, requirement_revision AS requirementRevision,
+        privacy_version AS privacyVersion, privacy_sha256 AS privacySha256,
+        retain_until AS retainUntil
+      FROM legal_acceptances WHERE owner_id=?
+      ORDER BY accepted_at DESC, version ASC`,
+    )
+      .bind(userId)
+      .all<AdminUserAgreement>(),
+    c.env.DB.prepare(
+      `SELECT p.id, p.owner_epic_id AS ownerEpicId,
+        p.name, p.slug, p.description, p.website_url AS websiteUrl, p.tier,
+        p.custom_rpm AS customRpm, p.created_at AS createdAt, p.updated_at AS updatedAt,
+        p.deleted_at AS deletedAt, p.deleted_by AS deletedBy, p.deletion_reason AS deletionReason, p.purge_after AS purgeAfter,
+        COALESCE(u.display_name, '') AS ownerDisplayName,
+        (SELECT COUNT(*) FROM api_keys k WHERE k.project_id=p.id AND k.revoked_at IS NULL) AS keyCount,
+        (SELECT COUNT(*) FROM api_keys k WHERE k.project_id=p.id AND k.revoked_at IS NULL
+          AND k.active=1 AND (k.expires_at IS NULL OR julianday(k.expires_at)>julianday('now'))) AS activeKeyCount,
+        (SELECT MAX(last_used_at) FROM api_keys k WHERE k.project_id=p.id) AS lastUsedAt
+      FROM projects p LEFT JOIN users u ON u.epic_account_id=p.owner_epic_id
+      WHERE p.owner_epic_id=?
+      ORDER BY p.deleted_at IS NOT NULL ASC, p.created_at DESC, p.id ASC`,
+    )
+      .bind(userId)
+      .all<AdminProject>(),
+    c.env.DB.prepare(
+      `SELECT id, project_id AS projectId, requested_tier AS requestedTier,
+        requested_rpm AS requestedRpm, expected_monthly_requests AS expectedMonthlyRequests,
+        status, created_at AS createdAt, reviewed_at AS reviewedAt,
+        reviewed_by AS reviewedBy, review_note AS reviewNote
+      FROM limit_requests WHERE owner_epic_id=?
+      ORDER BY created_at DESC LIMIT 25`,
+    )
+      .bind(userId)
+      .all<AdminUserLimitRequest>(),
+    c.env.DB.prepare(
+      `SELECT id, case_reference AS caseReference, kind, received_at AS receivedAt,
+        due_at AS dueAt, extended_due_at AS extendedDueAt,
+        resolved_at AS resolvedAt, resolution
+      FROM privacy_requests WHERE owner_id=?
+      ORDER BY received_at DESC LIMIT 25`,
+    )
+      .bind(userId)
+      .all<AdminUserPrivacyRequest>(),
+  ]);
+
+  const agreements = agreementsResult.results;
+  if (!userRow && !closure && agreements.length === 0) {
+    return c.json(missing, 404);
+  }
+
+  let requiredTermsEdition: string | null = null;
+  if (rollout) {
+    const termsDoc = await c.env.DB.prepare(
+      "SELECT edition FROM legal_documents WHERE kind='terms' AND version=?",
+    )
+      .bind(rollout.terms_version)
+      .first<{ edition: string }>();
+    requiredTermsEdition = termsDoc?.edition ?? null;
+  }
+
+  const currentAcceptances = requiredTermsEdition
+    ? agreements
+        .filter(
+          (item) =>
+            item.retainUntil === null && item.edition === requiredTermsEdition,
+        )
+        .sort((a, b) => a.acceptedAt - b.acceptedAt)
+    : [];
+  const acceptedAt = currentAcceptances[0]?.acceptedAt ?? null;
+  const acceptedCurrent = acceptedAt !== null;
+  const verifiedAt = profile?.verified_at ?? null;
+  const rolloutEnabled = Boolean(rollout);
+  const eligible = closure
+    ? false
+    : rolloutEnabled
+      ? Boolean(acceptedCurrent && verifiedAt)
+      : true;
+
+  const projects = projectsResult.results.map((row) => ({
+    ...row,
+    effectiveRpm: quotaForProject(row),
+  }));
+
+  const user: AdminUserDetail["user"] = userRow
+    ? {
+        ...userRow,
+        closedAt: closure?.closedAt ?? null,
+        purgeAfter: closure?.purgeAfter ?? null,
+      }
+    : {
+        id: userId,
+        displayName: "Closed account",
+        email: null,
+        preferredLanguage: null,
+        createdAt: closure
+          ? new Date(closure.closedAt).toISOString()
+          : new Date(
+              agreements[agreements.length - 1].acceptedAt,
+            ).toISOString(),
+        updatedAt: closure
+          ? new Date(closure.closedAt).toISOString()
+          : new Date(agreements[0].acceptedAt).toISOString(),
+        projectLimit: 0,
+        lastProjectCreatedAt: null,
+        projectCount: 0,
+        deletedProjectCount: 0,
+        keyCount: 0,
+        activeKeyCount: 0,
+        lastUsedAt: null,
+        isAdmin: 0,
+        closedAt: closure?.closedAt ?? null,
+        purgeAfter: closure?.purgeAfter ?? null,
+      };
+
+  const [monthlyQuota, usage] = await Promise.all([
+    !user.closedAt &&
+    projects.some((project) => !project.deletedAt && project.tier === "free")
+      ? adminMonthlyQuota(c.env, userId)
+      : null,
+    getAdminUsage(c.env, "users", [userId]),
+  ]);
+
+  const detail: AdminUserDetail = {
+    monthlyQuota,
+    user,
+    onboarding: {
+      rolloutEnabled,
+      eligible,
+      revision: rollout?.revision ?? null,
+      requiredTermsVersion: rollout?.terms_version ?? null,
+      requiredTermsEdition,
+      requiredPrivacyVersion: rollout?.privacy_version ?? null,
+      contactEmail: profile?.contact_email ?? null,
+      pendingEmail: profile?.pending_email ?? null,
+      verifiedAt,
+      acceptedCurrent,
+      acceptedAt,
+    },
+    agreements,
+    projects,
+    limitRequests: limitRequestsResult.results,
+    privacyRequests: privacyRequestsResult.results,
+    usage,
+  };
+
+  return c.json(detail);
+});
+
+adminManagementRoutes.get("/users/:userId/analytics", async (c) => {
+  const parsed = z
+    .enum(["month", "6", "24", "168", "720"])
+    .default("month")
+    .safeParse(c.req.query("range"));
+  if (!parsed.success) return c.json(invalid, 400);
+  const ownerEpicId = c.req.param("userId");
+  const user = await c.env.DB.prepare(
+    "SELECT epic_account_id FROM users WHERE epic_account_id=?",
+  )
+    .bind(ownerEpicId)
+    .first();
+  if (!user) return c.json(missing, 404);
+
+  const end = new Date(Math.floor(Date.now() / 1000) * 1000);
+  const monthStart = Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), 1);
+  const hours =
+    parsed.data === "month"
+      ? (end.getTime() - monthStart) / 3600_000
+      : Number(parsed.data);
+  try {
+    return c.json(
+      await queryDashboardAnalytics(c.env, {
+        ownerEpicId,
+        hours,
+        end: end.toISOString(),
+      }),
+    );
+  } catch (error) {
+    console.error("Admin user analytics unavailable", {
+      ownerId: ownerEpicId,
+      error,
+    });
+    return c.json(
+      {
+        error: {
+          code: "ANALYTICS_UNAVAILABLE",
+          message: "User analytics are temporarily unavailable. Please retry.",
+        },
+      },
+      503,
+    );
+  }
 });
 
 adminManagementRoutes.patch("/users/:userId/limits", async (c) => {

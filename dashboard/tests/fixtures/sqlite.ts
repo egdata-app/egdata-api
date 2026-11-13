@@ -14,9 +14,12 @@ export function sqliteD1() {
           values = args;
           return statement;
         },
-        async run() {
+        execute() {
           const result = sqlite.prepare(query).run(...values);
           return { success: true, meta: { changes: Number(result.changes) } };
+        },
+        async run() {
+          return statement.execute();
         },
         async all() {
           return {
@@ -31,11 +34,12 @@ export function sqliteD1() {
       };
       return statement;
     },
-    async batch(statements: Array<{ run: () => Promise<unknown> }>) {
+    async batch(statements: Array<{ execute: () => unknown }>) {
       sqlite.exec("BEGIN");
       try {
         const result = [];
-        for (const stmt of statements) result.push(await stmt.run());
+        // D1 batches are serialized transactions; never yield inside one in this fixture.
+        for (const stmt of statements) result.push(stmt.execute());
         sqlite.exec("COMMIT");
         return result;
       } catch (e) {

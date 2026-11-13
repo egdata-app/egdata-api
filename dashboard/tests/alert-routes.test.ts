@@ -49,6 +49,7 @@ function setup() {
     readFileSync("migrations/0006_project_creation_policy.sql", "utf8"),
   );
   sqlite.exec(readFileSync("migrations/0007_project_recovery.sql", "utf8"));
+  sqlite.exec(readFileSync("migrations/0008_developer_accounts.sql", "utf8"));
   sqlite.exec(
     "INSERT INTO users(epic_account_id,display_name) VALUES('user_a','A'),('user_b','B'); INSERT INTO projects(id,owner_epic_id,name,slug) VALUES('project_a','user_a','A','a'),('project_b','user_b','B','b');",
   );

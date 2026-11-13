@@ -234,7 +234,16 @@ function operationObject(
   return {
     operationId: operation.operationId,
     summary: operation.summary,
-    ...(operation.description ? { description: operation.description } : {}),
+    description: [
+      operation.description,
+      ...(operation.auth === "key"
+        ? [
+            "Account closure rejects all account keys, including warm credential caches, with 401 INVALID_API_KEY before quota or cache access. Failure to verify credential/account status returns uncacheable 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30. Initial email/terms onboarding gates the dashboard and existing/new console sessions: 403 EMAIL_VERIFICATION_REQUIRED until email is verified, then 403 AGREEMENT_REQUIRED until the current terms edition is accepted. Existing API keys keep working even after a dashboard visit. Privacy notices do not require acceptance.",
+          ]
+        : []),
+    ]
+      .filter(Boolean)
+      .join("\n\n"),
     tags: operation.tags,
     ...(operation.auth === "key"
       ? { security: [{ ApiKeyAuth: [] }, { BearerAuth: [] }] }
@@ -300,6 +309,7 @@ export function buildV1OpenApiDocument(): OpenAPIV3.Document {
       version: "1.0.0",
       description: [
         "Version 1 of the egdata public read-only REST API.",
+        "The updated origin removes Aikido runtime instrumentation, telemetry and Aikido-specific blocking. Existing authentication, origin access controls and gateway quotas still apply. Custom legacy anti-abuse challenges do not apply to v1; deployment is separate from contract publication.",
         "Successful JSON responses use `{ data, meta }`. Paginated collections use opaque forward cursors with `meta.pagination`. Errors use RFC 9457 Problem Details (`application/problem+json`) with a stable `code` and `requestId`.",
         "Applications authenticate data operations with an API key through the Cloudflare Worker gateway. `/v1/health`, `/v1/open-api.json`, and CORS preflights are unauthenticated.",
         "Each project shares one exact quota across all its API keys, console sessions, and authenticated legacy/v1 gateway requests. UTC-aligned 60-second allowances are free 120, pro 1200, and enterprise 6000, unless overridden by the approved project custom RPM. Free accounts also share one 100,000-request calendar-month allowance across all free projects, API keys, and console sessions, resetting on the first day of each UTC month at 00:00 UTC; paid projects (pro, enterprise) are exempt from the free monthly allowance, while a custom RPM increase on a free project does not remove the monthly cap. Expensive v1 operation policies are shared per project. Key creation, rotation, deletion, or project recreation never resets counters. Minute or operation exhaustion returns 429 RATE_LIMITED and free monthly exhaustion returns 429 MONTHLY_QUOTA_EXCEEDED, each with RateLimit, RateLimit-Policy, X-RateLimit-Policy, and Retry-After; unavailable admission returns 503 QUOTA_UNAVAILABLE. Accounts include one project by default, with additional projects approved manually and a 24-hour account-level creation cooldown. Existing projects and keys remain usable.",

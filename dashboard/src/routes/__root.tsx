@@ -1,6 +1,7 @@
 import {
   createRootRoute,
   Link,
+  Navigate,
   Outlet,
   useRouterState,
 } from "@tanstack/react-router";
@@ -13,13 +14,14 @@ import {
   FolderPlus,
   Folders,
   KeyRound,
-  LogOut,
   Plus,
   ShieldCheck,
   Sparkles,
   Users,
 } from "lucide-react";
 import { useState } from "react";
+import { ProfileNavigation } from "../components/AccountPage";
+import { AccountMenu } from "../components/DeveloperAccount";
 import { EgdataLogo, EpicGamesIcon } from "../components/icons/BrandIcons";
 import { Button } from "../components/ui/Button";
 import { Tag } from "../components/ui/Controls";
@@ -30,6 +32,7 @@ import { AppToastRegion, notify } from "../components/ui/Toast";
 import { useUnreadAlerts } from "../lib/alerts";
 import { dashboardClient } from "../lib/api";
 import { DashboardAuthProvider, useDashboardAuth } from "../lib/auth-context";
+import { readVerificationToken } from "../lib/email-verification";
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -55,17 +58,22 @@ function DashboardShell() {
     setSelectedProjectId,
     devAuthAvailable,
     refreshSession,
-    logout,
+    account,
+    sessionError,
   } = useDashboardAuth();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+  const isProfile =
+    currentPath === "/profile" || currentPath.startsWith("/profile/");
   const [newProjectOpen, setNewProjectOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
   const [projectDesc, setProjectDesc] = useState("");
   const [projectWebsite, setProjectWebsite] = useState("");
   const [creatingProject, setCreatingProject] = useState(false);
   const unreadAlerts = useUnreadAlerts(
-    authenticated ? selectedProject?.id : undefined,
+    authenticated && account?.eligible !== false
+      ? selectedProject?.id
+      : undefined,
   );
 
   if (loading) {
@@ -78,6 +86,29 @@ function DashboardShell() {
       </div>
     );
   }
+
+  if (sessionError)
+    return (
+      <main className="max-w-lg mx-auto p-8 space-y-4">
+        <h1 className="text-xl font-semibold">
+          We could not load your account
+        </h1>
+        <p className="text-epic-text-muted">
+          Your integrations have not been paused. Please retry to check
+          dashboard access.
+        </p>
+        <Button
+          onPress={() => {
+            void refreshSession();
+          }}
+        >
+          Retry
+        </Button>
+        <a href="mailto:contact@egdata.app" className="block text-epic-accent">
+          Contact support
+        </a>
+      </main>
+    );
 
   if (!authenticated || !user) {
     if (currentPath === "/docs" || currentPath.startsWith("/docs/")) {
@@ -92,6 +123,20 @@ function DashboardShell() {
     }
     return <UnauthenticatedLanding devAuthAvailable={devAuthAvailable} />;
   }
+
+  if (
+    readVerificationToken() &&
+    account?.eligible &&
+    currentPath !== "/profile" &&
+    currentPath !== "/profile/"
+  )
+    return <Navigate to="/profile" />;
+
+  if (currentPath === "/agreements")
+    return <Navigate to="/profile/agreements" replace />;
+  if (currentPath === "/receipts") return <Outlet />;
+  if (account?.eligible === false && !isProfile)
+    return <Navigate to="/profile/agreements" replace />;
 
   async function handleCreateProject(e: React.FormEvent) {
     e.preventDefault();
@@ -147,7 +192,7 @@ function DashboardShell() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Header */}
-      <header className="sticky top-0 z-30 bg-epic-bg/85 backdrop-blur-xl border-b border-epic-border">
+      <header className="sticky top-0 z-30 bg-epic-bg/85 backdrop-blur-xl border-b border-epic-border print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-5">
             <Link to="/" className="flex items-center gap-2.5 group outline-0">
@@ -162,32 +207,34 @@ function DashboardShell() {
               </div>
             </Link>
 
-            <div className="hidden md:flex items-center gap-2 pl-4 border-l border-epic-border">
-              <Select
-                aria-label="Active Project"
-                selectedKey={selectedProject?.id}
-                onSelectionChange={(key) => {
-                  if (key) setSelectedProjectId(String(key));
-                }}
-                items={projects}
-                className="w-56"
-              >
-                {(item) => (
-                  <SelectItem id={item.id} textValue={item.name}>
-                    {item.name}
-                  </SelectItem>
-                )}
-              </Select>
-              <Button
-                variant="secondary"
-                size="sm"
-                aria-label="Create new project"
-                onPress={() => setNewProjectOpen(true)}
-              >
-                <Plus className="w-3.5 h-3.5" />
-                New
-              </Button>
-            </div>
+            {!isProfile && (
+              <div className="hidden md:flex items-center gap-2 pl-4 border-l border-epic-border">
+                <Select
+                  aria-label="Active Project"
+                  selectedKey={selectedProject?.id}
+                  onSelectionChange={(key) => {
+                    if (key) setSelectedProjectId(String(key));
+                  }}
+                  items={projects}
+                  className="w-56"
+                >
+                  {(item) => (
+                    <SelectItem id={item.id} textValue={item.name}>
+                      {item.name}
+                    </SelectItem>
+                  )}
+                </Select>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  aria-label="Create new project"
+                  onPress={() => setNewProjectOpen(true)}
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  New
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
@@ -216,105 +263,91 @@ function DashboardShell() {
             </a>
 
             <div className="flex items-center gap-2.5 pl-3 border-l border-epic-border">
-              <img
-                src={user.avatarUrl}
-                alt={user.displayName}
-                className="w-7 h-7 rounded-full border border-epic-border object-cover bg-epic-elevated"
-              />
-              <span className="hidden sm:inline text-sm font-medium text-epic-text max-w-32 truncate">
-                {user.displayName}
-              </span>
-              <Button
-                variant="icon"
-                aria-label="Sign out"
-                onPress={() => {
-                  void logout().catch(() =>
-                    notify({
-                      title: "Sign out failed",
-                      description: "Please try signing out again.",
-                      tone: "danger",
-                    }),
-                  );
-                }}
-              >
-                <LogOut className="w-4 h-4" />
-              </Button>
+              <AccountMenu />
             </div>
           </div>
         </div>
 
         {/* Navigation Bar */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto [scrollbar-width:none]">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const active =
-              item.to === "/"
-                ? currentPath === "/"
-                : currentPath.startsWith(item.to);
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                search={item.to === "/admin/projects" ? { owner: "" } : {}}
-                className={`relative flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium transition-colors whitespace-nowrap outline-0 focus-visible:text-epic-accent ${
-                  active
-                    ? "text-epic-text"
-                    : "text-epic-text-muted hover:text-epic-text"
-                }`}
-              >
-                <Icon
-                  className={`w-4 h-4 ${active ? "text-epic-accent" : ""}`}
-                />
-                {item.label}
-                {active && (
-                  <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-epic-accent rounded-t-full" />
-                )}
-              </Link>
-            );
-          })}
-        </div>
+        {isProfile ? (
+          <ProfileNavigation />
+        ) : (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto [scrollbar-width:none]">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active =
+                item.to === "/"
+                  ? currentPath === "/"
+                  : currentPath.startsWith(item.to);
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  search={item.to === "/admin/projects" ? { owner: "" } : {}}
+                  className={`relative flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium transition-colors whitespace-nowrap outline-0 focus-visible:text-epic-accent ${
+                    active
+                      ? "text-epic-text"
+                      : "text-epic-text-muted hover:text-epic-text"
+                  }`}
+                >
+                  <Icon
+                    className={`w-4 h-4 ${active ? "text-epic-accent" : ""}`}
+                  />
+                  {item.label}
+                  {active && (
+                    <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-epic-accent rounded-t-full" />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </header>
 
       {/* Mobile Project Switcher */}
-      <div className="md:hidden px-4 pt-4 flex items-center gap-2">
-        <Select
-          aria-label="Active Project"
-          selectedKey={selectedProject?.id}
-          onSelectionChange={(key) => {
-            if (key) setSelectedProjectId(String(key));
-          }}
-          items={projects}
-          className="flex-1"
-        >
-          {(item) => (
-            <SelectItem id={item.id} textValue={item.name}>
-              {item.name}
-            </SelectItem>
-          )}
-        </Select>
-        <Button
-          variant="secondary"
-          size="md"
-          aria-label="Create new project"
-          onPress={() => setNewProjectOpen(true)}
-        >
-          <FolderPlus className="w-4 h-4" />
-        </Button>
-      </div>
+      {!isProfile && (
+        <div className="md:hidden px-4 pt-4 flex items-center gap-2">
+          <Select
+            aria-label="Active Project"
+            selectedKey={selectedProject?.id}
+            onSelectionChange={(key) => {
+              if (key) setSelectedProjectId(String(key));
+            }}
+            items={projects}
+            className="flex-1"
+          >
+            {(item) => (
+              <SelectItem id={item.id} textValue={item.name}>
+                {item.name}
+              </SelectItem>
+            )}
+          </Select>
+          <Button
+            variant="secondary"
+            size="md"
+            aria-label="Create new project"
+            onPress={() => setNewProjectOpen(true)}
+          >
+            <FolderPlus className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 print:p-0 print:max-w-none">
         <Outlet
           key={
-            currentPath.startsWith("/admin/")
-              ? "admin"
-              : (selectedProject?.id ?? "none")
+            isProfile
+              ? "profile"
+              : currentPath.startsWith("/admin/")
+                ? "admin"
+                : (selectedProject?.id ?? "none")
           }
         />
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-epic-border/70 py-5 mt-12">
+      <footer className="border-t border-epic-border/70 py-5 mt-12 print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-epic-text-muted">
           <div className="flex items-center gap-2">
             <EgdataLogo className="w-4 h-4 opacity-75" />
@@ -469,13 +502,21 @@ function UnauthenticatedLanding({
 
           {authError && (
             <div className="p-3 rounded-lg bg-epic-danger/15 border border-epic-danger/30 text-xs text-epic-danger">
-              We couldn’t sign you in. Please try again.
+              {authError === "account_closed"
+                ? "This account was closed. Re-registration is available after the 30-day closure period. Contact contact@egdata.app for help."
+                : "We couldn’t sign you in. Please try again."}
             </div>
           )}
 
           <div className="space-y-3">
+            {readVerificationToken() && (
+              <output className="block text-sm text-epic-text-muted">
+                Sign in with the Epic account that requested this email change,
+                then confirm the verification code.
+              </output>
+            )}
             <a
-              href="/_dashboard/api/auth/epic/login"
+              href={`/_dashboard/api/auth/epic/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`}
               className="w-full h-11 rounded-lg bg-epic-accent hover:bg-epic-accent-hover text-epic-accent-fg font-semibold text-sm flex items-center justify-center gap-2.5 transition shadow-xs"
             >
               <EpicGamesIcon className="w-5 h-5" />
@@ -512,6 +553,14 @@ function UnauthenticatedLanding({
 
       <div className="max-w-5xl mx-auto w-full text-center text-xs text-epic-text-muted">
         egdata is not affiliated with Epic Games, Inc.
+        <div className="mt-3 flex justify-center gap-4">
+          <a href="/terms" className="underline">
+            Developer Terms
+          </a>
+          <a href="/privacy" className="underline">
+            Privacy Notice
+          </a>
+        </div>
       </div>
     </div>
   );

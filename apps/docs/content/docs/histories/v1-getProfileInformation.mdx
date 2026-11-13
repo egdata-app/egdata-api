@@ -5,6 +5,39 @@ description: History for GET /v1/profiles/{id}/information
 
 `GET /v1/profiles/{id}/information` — active. Recorded dates are not deployment dates.
 
+## 2026-11-13 — Fix container startup after Aikido removal
+
+Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.
+
+- **v1 GET /v1/profiles/&#123;id&#125;/information** (getProfileInformation; fixed; compatible)
+  - Before: After removal of the Aikido dependency, both Docker image startup commands still preloaded @aikidosec/firewall/instrument. Containers exited with MODULE_NOT_FOUND before listening, causing origin-backed requests to fail with gateway errors.
+  - After: Both Docker images start Node directly with source maps and dist/index.js, restoring origin availability without the removed preload. Existing route contracts, authentication, origin access controls, gateway quotas and custom anti-abuse behavior are preserved. Responses handled entirely at the gateway are unaffected.
+  - Client action: Retry requests that failed during the outage. No request format or authentication changes are required.
+
+Verification: Dockerfile; Dockerfile-Google; package.json; pnpm release:check --base 8ef79d0; Live GET https://api.egdata.app/health returned 200 with healthy Redis and MongoDB after correcting the service startup arguments.; Live GET https://api.egdata.app/countries returned 200 after correcting the service startup arguments..
+
+## 2026-11-12 — Add verified-email onboarding, immutable receipts, privacy operations, and authoritative account closure
+
+Record: [developer-onboarding-account-closure](https://github.com/egdata-app/egdata-api/blob/main/changes/records/developer-onboarding-account-closure.json).
+
+- **v1 GET /v1/profiles/&#123;id&#125;/information** (getProfileInformation; security; breaking)
+  - Before: The portal had no self-service account closure or verified-email/terms onboarding. Cached key identity could be used without a fresh account-closure lookup, and active console sessions did not check onboarding.
+  - After: Initial publication gates dashboard and console access on verified email followed by explicit terms acceptance. Existing external API keys keep working even after an incomplete dashboard visit. Account closure deletes active credentials and rejects warm/delayed key caches through a primary lookup before quota/cache/upstream access (401 INVALID_API_KEY). Credential/account lookup failure returns uncacheable 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30; HEAD has no body. Public and configured anonymous bypasses retain their prior behavior. Already-admitted requests may finish; acceptance does not restore revoked keys or reset quotas.
+  - Client action: Existing API-key integrations need no onboarding change for this initial rollout. Dashboard/console users must verify a notification email and accept published terms; closure permanently ends their credentials. Retry ACCOUNT_STATUS_UNAVAILABLE after Retry-After; do not automatically retry agreement-related 403 responses.
+
+Verification: dashboard/tests/privacy-operations.test.ts; dashboard/tests/developer-mail-events.test.ts; dashboard/tests/analytics.test.ts; dashboard/tests/legacy-analytics.test.ts; dashboard/legal/operations.md; dashboard/tests/developer-account.test.ts; dashboard/tests/legal-publication.test.ts; openapi/egdata.dashboard.openapi.json; src/openapi/project-quota.ts; src/openapi/v1.ts; apps/docs/content/docs/api-console.mdx; pnpm dashboard:test; pnpm dashboard:build; pnpm docs:check.
+
+## 2026-11-12 — Report email verification before terms acceptance in dashboard and console onboarding
+
+Record: [developer-onboarding-error-order](https://github.com/egdata-app/egdata-api/blob/main/changes/records/developer-onboarding-error-order.json).
+
+- **v1 GET /v1/profiles/&#123;id&#125;/information** (getProfileInformation; fixed; compatible)
+  - Before: During an active rollout, signed-in dashboard console requests with unverified email and no terms acceptance returned 403 AGREEMENT_REQUIRED. Dashboard gates also advertised terms before verification.
+  - After: Dashboard console requests return 403 EMAIL_VERIFICATION_REQUIRED until email is verified, then 403 AGREEMENT_REQUIRED until the current terms edition is accepted. Dashboard gates list required terms only after verification. Public API-key access, anonymous access, eligibility, quotas and successful responses are unchanged.
+  - Client action: Console clients should handle EMAIL_VERIFICATION_REQUIRED by verifying the notification email first, then handle AGREEMENT_REQUIRED by accepting the current terms. Existing application API-key integrations require no change.
+
+Verification: dashboard/tests/developer-account.test.ts; dashboard/tests/console-sessions.test.ts; openapi/egdata.dashboard.openapi.json; src/openapi/v1.ts; apps/docs/content/docs/api-console.mdx; pnpm docs:check; pnpm release:check --base origin/main.
+
 ## 2026-11-12 — Enforce shared 100,000 requests/month allowance across free account projects
 
 Record: [free-account-monthly-quota](https://github.com/egdata-app/egdata-api/blob/main/changes/records/free-account-monthly-quota.json).
@@ -26,6 +59,17 @@ Record: [project-shared-quotas](https://github.com/egdata-app/egdata-api/blob/ma
   - Client action: Keep existing keys; coordinate request budgets across the project's keys, console and API versions. Respect Retry-After and request a project limit increase if necessary. Contact the egdata team for additional projects; creating or rotating keys no longer adds capacity. See docs/project-quota-rollout.md for migration and existing-grant review.
 
 Verification: dashboard/tests/project-quota.test.ts: shared legacy/v1 and console quotas, key rotation, project isolation, expensive policies, UTC reset and fail-closed admission; dashboard/tests/project-policy.test.ts: concurrent creation, login races, deletion cooldown, existing projects and grants, operator allowances and HTTP policy errors; dashboard/tests/usage-outbox.test.ts: shared project counters retain distinct admitted per-key usage events; dashboard/tests/edge-cache.test.ts: quota admission remains before authenticated cache hits and revalidation; src/openapi/project-quota.ts and src/openapi/v1.ts; pnpm openapi:generate; pnpm docs:check.
+
+## 2026-11-12 — Remove Aikido origin runtime blocking and telemetry
+
+Record: [remove-aikido-runtime](https://github.com/egdata-app/egdata-api/blob/main/changes/records/remove-aikido-runtime.json).
+
+- **v1 GET /v1/profiles/&#123;id&#125;/information** (getProfileInformation; security; compatible)
+  - Before: Requests reaching the Node origin passed globally installed Aikido runtime instrumentation and middleware, which could send request/security telemetry and impose Aikido-specific blocking or rate-limit grouping before the route handler.
+  - After: The updated origin no longer loads the Aikido SDK, sends its runtime telemetry, creates its IP/UA-derived user identity, or applies its blocking/grouping. Existing authentication, origin access controls, gateway quotas, legacy rate limits and custom legacy anti-abuse remain. Gateway-local responses that never reach the origin retain their prior behavior. v1 remains outside custom legacy challenges. Historical provider data is not erased by this code change; origin deployment is required.
+  - Client action: None. Continue honoring existing authentication, quotas and Retry-After responses. This record does not confirm production deployment.
+
+Verification: src/index.ts; src/middlewares/rate-limit.ts; package.json; scripts/dev.mjs; tests/middleware-rate-limit.test.ts; tests/anti-abuse.test.ts; tests/v1-router.test.ts; src/openapi/index.ts; src/openapi/v1.ts; apps/docs/content/docs/regions-pagination-errors.mdx; pnpm test; pnpm build; pnpm docs:check.
 
 ## 2026-11-12 — Expose API gateway hostname and harden Worker edge caching
 

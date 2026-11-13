@@ -33,8 +33,6 @@ const appRunner = spawn(
   [
     "--env-file=.env",
     "--enable-source-maps",
-    "-r",
-    "@aikidosec/firewall/instrument",
     "--watch-path=./dist",
     "dist/index.js",
   ],

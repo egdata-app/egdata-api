@@ -1,4 +1,5 @@
 import { findRawKeyByHash, toCachedKeyMetadata } from "./db.js";
+import { accountClosed } from "./developer-status.js";
 import type { CachedKeyMetadata, DashboardEnv } from "./types.js";
 
 const KV_KEY_PREFIX = "apikey:";
@@ -59,6 +60,16 @@ export async function removeKeyFromKv(
 }
 
 export async function resolveApiKeyMetadata(
+  env: DashboardEnv,
+  ctx: ExecutionContext,
+  keyHash: string,
+): Promise<CachedKeyMetadata | null> {
+  const meta = await resolveCachedMetadata(env, ctx, keyHash);
+  if (meta && (await accountClosed(env.DB, meta.ownerEpicId))) return null;
+  return meta;
+}
+
+async function resolveCachedMetadata(
   env: DashboardEnv,
   ctx: ExecutionContext,
   keyHash: string,

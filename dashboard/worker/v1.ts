@@ -267,13 +267,26 @@ export async function handleV1ApiProxy(
     });
   }
 
-  const meta =
-    consoleIdentity ??
-    (await resolveApiKeyMetadata(
-      env,
-      ctx,
-      await sha256Hex(credentials.rawKey!),
-    ));
+  let meta: CachedKeyMetadata | null;
+  try {
+    meta =
+      consoleIdentity ??
+      (await resolveApiKeyMetadata(
+        env,
+        ctx,
+        await sha256Hex(credentials.rawKey!),
+      ));
+  } catch {
+    const response = v1Problem(request, {
+      requestId,
+      status: 503,
+      code: "ACCOUNT_STATUS_UNAVAILABLE",
+      detail:
+        "Credential and account status could not be verified. Please retry shortly.",
+      headers: { ...corsFor(request), "Retry-After": "30" },
+    });
+    return request.method === "HEAD" ? new Response(null, response) : response;
+  }
   if (!meta) {
     return v1Problem(request, {
       requestId,

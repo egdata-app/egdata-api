@@ -1,6 +1,7 @@
 import { type Context, Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import { bytesToHex, sha256Hex } from "./crypto.js";
+import { developerStatus, onboardingError } from "./developer-status.js";
 import {
   type AuthHonoEnv,
   readDashboardSession,
@@ -128,6 +129,21 @@ consoleProxy.all("/*", async (c) => {
       "CONSOLE_SIGN_IN_REQUIRED",
       "Sign in to use the API console.",
     );
+  try {
+    const status = await developerStatus(c.env, user.epicAccountId);
+    if (!status.eligible)
+      return fail(
+        403,
+        onboardingError(status).error.code,
+        "Complete onboarding in the developer portal. Existing API keys keep working.",
+      );
+  } catch {
+    return fail(
+      503,
+      "LEGAL_STATUS_UNAVAILABLE",
+      "Account status is temporarily unavailable.",
+    );
+  }
   const hash = await sessionHash(c);
   const row =
     await c.env.DB.prepare(`SELECT p.id, p.tier, p.custom_rpm, s.expires_at FROM console_sessions s

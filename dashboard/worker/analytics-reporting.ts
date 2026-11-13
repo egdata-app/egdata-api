@@ -21,9 +21,10 @@ const dimensions = {
   endpoints: ["blob3", "blob4"],
   projects: ["blob2"],
   keys: ["blob1", "blob2"],
-  origins: ["blob8"],
-  ips: ["blob9", "blob11"],
-  userAgents: ["blob10"],
+  // Also redact historical rows in SQL, before grouping/search/pagination.
+  origins: ["if(blob8 = '(direct)' OR blob8 = '', '(direct)', '(present)')"],
+  ips: ["blob11", "'Country only'"],
+  userAgents: ["if(blob12 = 'privacy-v1', blob10, 'legacy (redacted)')"],
 } satisfies Record<UsageDimension, string[]>;
 const unattributedLabel = "Unattributed legacy traffic";
 const unattributedDetail = "No verified API key or project";
@@ -235,7 +236,7 @@ function eventDimensions(e: Event, dimension: UsageDimension): string[] {
     case "origins":
       return [e.origin || "(direct)"];
     case "ips":
-      return [e.clientIp || "unknown", e.country || "XX"];
+      return [e.country || "XX", "Country only"];
     case "userAgents":
       return [e.userAgent || "(none)"];
   }

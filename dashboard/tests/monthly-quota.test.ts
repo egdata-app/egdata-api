@@ -59,6 +59,7 @@ async function createQuotaHarness() {
   for (const file of [
     "0006_project_creation_policy.sql",
     "0007_project_recovery.sql",
+    "0008_developer_accounts.sql",
   ]) {
     sqlite.exec(readFileSync(`migrations/${file}`, "utf8"));
   }

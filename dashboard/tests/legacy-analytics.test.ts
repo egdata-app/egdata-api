@@ -79,10 +79,11 @@ describe("legacy gateway telemetry", () => {
       "200",
       "HIT",
       "ok",
-      origin || "(direct)",
-      "192.0.2.4",
-      "Legacy client",
+      origin ? "(present)" : "(direct)",
+      "",
+      "other",
       "XX",
+      "privacy-v1",
     ]);
     expect(point.doubles).toEqual([1, expect.any(Number), 0, 1, 0]);
     expect(env.API_KEYS_KV.get).not.toHaveBeenCalled();

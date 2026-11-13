@@ -40,6 +40,7 @@ async function setup() {
     readFileSync("migrations/0006_project_creation_policy.sql", "utf8"),
   );
   sqlite.exec(readFileSync("migrations/0007_project_recovery.sql", "utf8"));
+  sqlite.exec(readFileSync("migrations/0008_developer_accounts.sql", "utf8"));
   sqlite.exec(
     "INSERT INTO projects(id,owner_epic_id,name,slug) VALUES('project','owner','Project','project'),('other-project','other','Other','other');",
   );
