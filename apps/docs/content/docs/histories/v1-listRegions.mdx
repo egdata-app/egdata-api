@@ -5,6 +5,17 @@ description: History for GET /v1/regions
 
 `GET /v1/regions` — active. Recorded dates are not deployment dates.
 
+## 2026-11-13 — Fix container startup after Aikido removal
+
+Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.
+
+- **v1 GET /v1/regions** (listRegions; fixed; compatible)
+  - Before: After removal of the Aikido dependency, both Docker image startup commands still preloaded @aikidosec/firewall/instrument. Containers exited with MODULE_NOT_FOUND before listening, causing origin-backed requests to fail with gateway errors.
+  - After: Both Docker images start Node directly with source maps and dist/index.js, restoring origin availability without the removed preload. Existing route contracts, authentication, origin access controls, gateway quotas and custom anti-abuse behavior are preserved. Responses handled entirely at the gateway are unaffected.
+  - Client action: Retry requests that failed during the outage. No request format or authentication changes are required.
+
+Verification: Dockerfile; Dockerfile-Google; package.json; pnpm release:check --base 8ef79d0; Live GET https://api.egdata.app/health returned 200 with healthy Redis and MongoDB after correcting the service startup arguments.; Live GET https://api.egdata.app/countries returned 200 after correcting the service startup arguments..
+
 ## 2026-11-12 — Add verified-email onboarding, immutable receipts, privacy operations, and authoritative account closure
 
 Record: [developer-onboarding-account-closure](https://github.com/egdata-app/egdata-api/blob/main/changes/records/developer-onboarding-account-closure.json).

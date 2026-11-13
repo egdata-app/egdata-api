@@ -1,0 +1,2912 @@
+{
+  "baseCommit": "8ef79d088897b3df01977b0ada724ac0da09adaa",
+  "diffHash": "917ec8690ed68138b079bd7cd53eb24ff9ad4bc4cd3aeee134cf3d0d6d5d4914",
+  "operations": [
+    {
+      "endpoint": "legacy:autocompleteOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:checkOffersExist",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:compareBuilds",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:countSavedSearchResults",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:createAbuseChallenge",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getBuild",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getBuildFileTree",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getBuildHistory",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getBuildInstallOptions",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getChangelistEntry",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getFreeGames",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getFreeGamesStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getHealth",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getHomepageStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getItem",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getItemAssets",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getItemBuilds",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getItemChangelog",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getItemOffer",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getItemsBulk",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getMonthlyCreationStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getMonthlyReleaseStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOffer",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferAgeRating",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferBundle",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferChangelogStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferCollectionPosition",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferEvent",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferFeatures",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferHowLongToBeat",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferIgdb",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferMappings",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferMedia",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferOgPng",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferOgWebp",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferOverview",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferPolls",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferPrepurchaseAlternative",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferPrice",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferPriceFairness",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferPriceHistory",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferPriceStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferRatings",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferRegionalPrices",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferRegularAlternative",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferRequirements",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferReviewsSummary",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOfferTopPositions",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getOffersForItemsBulk",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getRegionForCountry",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getSandbox",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getSandboxBaseGame",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getSandboxOgPng",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getSandboxOgWebp",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getSandboxStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getSavedSearchQuery",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getSellerCoverOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getSellerStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getYearlyCreationStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:getYearlyReleaseStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:hydrateCatalogGraph",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet__c767025d",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_assets_id__fe67ede6",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_base_game_namespace__43947330",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_changelog_038722cc",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_collections_slug__c9e20bbf",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_collections_slug_week__e7c64eb1",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_collections_slug_week_og_abb2fde5",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_doc_f5f543a0",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_franchises_slug__468d5cca",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_free_games_og_656b6e88",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_game_awards_5a8ac742",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_game_awards_og_aa6a5f28",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_graphql_220e6fb1",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_items_from_offer_id__f652bc56",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_items_sitemap_xml_57b8dd19",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_items_sitemap_xml_e6f8185b",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_multisearch_229582ca",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_multisearch_items_6adf1480",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_multisearch_offers_f0c29182",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_multisearch_sellers_c239406a",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_offer_by_slug_slug__5aadfed6",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_open_api_json_d5453718",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_ping_f7c2b7c6",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id__f0000a67",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_achievements_e2c38dc7",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_achievements_sandboxId__3f40ec52",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_games_35bd6af2",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_information_1a333c76",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_random_game_bdccf825",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_rare_achievements_0a3d8b68",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_rare_achievements_sandboxId__c761732b",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_id_refresh_status_ee9656f7",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_leaderboard_7a07d3bc",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_profiles_sitemap_xml_0e16a159",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_promotions_83dd267d",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_promotions_id__ca5d27b1",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_promotions_id_cover_2c62e571",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_promotions_sitemap_xml_3578dc8e",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_push_vapid_public_key_472be0da",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_robots_txt_deae90bd",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_sandboxes_sitemap_xml_5773ff84",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_search_82dab022",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_sitemap_xml_efe3322f",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_tags_803dea8c",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyGet_ui_64976efd",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyOptions_ping_9143aa8e",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyPost_graphql_fac042a8",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:legacyPost_ping_4242a078",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listActiveSales",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listBuildFiles",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listBuildItems",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listBuilds",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listBundlesContainingOffer",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listChangelist",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listCountries",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listFeaturedDiscounts",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listFeaturedGames",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listFreeGamesHistory",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listFreeGamesSellers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listItems",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listLatestAchievementOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listLatestGames",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listLatestReleasedOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listMobileFreeGames",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferAchievements",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferAssets",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferBuilds",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferChangelog",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferCollectionOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferDetailGenres",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferEvents",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferFranchises",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferGenres",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferGiveaways",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferItems",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferReviews",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferSuggestions",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOfferTechnologies",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listRegions",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listRelatedOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSaleOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSandboxAchievements",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSandboxAssets",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSandboxBuilds",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSandboxChangelog",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSandboxItems",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSandboxOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSandboxes",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSearchDevelopers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSearchOfferTypes",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSearchPublishers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSearchTags",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSellerOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listSellers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listTopSellersOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listTopWishlistedOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:listUpcomingOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:resolveLauncherRecords",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:resolveOfferSlugs",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:searchChangelog",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:searchFreeGames",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:searchOffersLegacy",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:searchOffersV2",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:searchOffersV2Get",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "legacy:searchOffersWithNaturalLanguage",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:autocomplete",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:checkOfferExistence",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:checkOfferSlugs",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:compareBuilds",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getAsset",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getBaseGame",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getBuild",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getBuildHistory",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getBuildInstallOptions",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getBuildTree",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getChangelogEntry",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getCollection",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getCollectionWeek",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getCollectionWeekOg",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getFeaturedGames",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getFranchise",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getFreeGamesOg",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getFreeGamesStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getGameAwards",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getGameAwardsOg",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getHealth",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getHomepageStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getItem",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemAssets",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemBuilds",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemChangelog",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemOffer",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemsBulk",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemsSitemap",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getItemsSitemapAlias",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getLatestGames",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getMonthlyCreationStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getMonthlyReleaseStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOffer",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferAchievements",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferAgeRating",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferAssets",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferBuilds",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferBundle",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferBySlug",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferChangelogStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferCollection",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferCollectionEntry",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferEvent",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferFeatures",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferFranchises",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferGenres",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferGiveaways",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferHasPrepurchase",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferHasRegular",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferHltb",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferIgdb",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferItems",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferMappings",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferMedia",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferOg",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferOgWebp",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferOverview",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferPolls",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferPrice",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferPriceFairness",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferPriceStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferRatings",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferRegionalPrice",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferRequirements",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferReviewsSummary",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferSuggestions",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferTechnologies",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOfferTops",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getOffersForItemsBulk",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getProfile",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getProfileAchievements",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getProfileInformation",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getProfileRandomGame",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getProfileRareAchievements",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getProfilesSitemap",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getPromotionCover",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getPromotionsSitemap",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getRegion",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getRelatedOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getRobots",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandbox",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandboxBaseGame",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandboxChangelog",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandboxOg",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandboxOgWebp",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandboxStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getSandboxesSitemap",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getSearchQuery",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getSearchQueryCount",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getSellerCoverOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getSellerStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getSitemap",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getV1OpenApi",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getYearlyCreationStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:getYearlyReleaseStats",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:hydrateCatalog",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listActiveSales",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listBuildFiles",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listBuildItems",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listBuilds",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listBundlesContainingOffer",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listChangelist",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listChangelog",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listCountries",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listFeaturedDiscounts",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listFreeGameSellers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listFreeGames",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listFreeGamesHistory",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listItems",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listItemsFromOffer",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listLatestAchievements",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listLatestReleased",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listMobileFreeGames",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listOfferChangelog",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listOfferEvents",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listOfferGenres",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listOfferPriceHistory",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listOfferReviews",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listProfileAchievements",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listProfileGames",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listProfileLeaderboard",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listProfileRareAchievements",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listPromotionOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listPromotions",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listRegions",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listSales",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listSandboxAchievements",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listSandboxAssets",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listSandboxBuilds",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listSandboxItems",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listSandboxOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listSandboxes",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listSearchDevelopers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listSearchOfferTypes",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listSearchPublishers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listSearchTags",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listSellerOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listSellers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listTags",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listTopSellers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listTopWishlisted",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:listUpcomingOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:multisearchItems",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:multisearchOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:multisearchSellers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:naturalLanguageSearch",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:resolveLauncherRecords",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:searchChangelog",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:searchFreeGames",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:searchOffers",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    },
+    {
+      "endpoint": "v1:searchOffersRedirect",
+      "impact": "public",
+      "reason": "The shared container entrypoint crashed before any origin route could run because its Aikido preload referenced a removed dependency. Removing that preload restores this operation's availability; handler contracts, auth, validation, quotas and response schemas are unchanged.",
+      "records": [
+        "fix-container-startup"
+      ]
+    }
+  ],
+  "unknownFiles": [
+    {
+      "file": "Dockerfile-Google",
+      "reason": "Production Google Cloud container build definition. Its CMD has the same stale Aikido preload as Dockerfile; removing it restores startup for all enumerated origin operations without changing their handlers or contracts.",
+      "endpoints": [
+        "legacy:autocompleteOffers",
+        "legacy:checkOffersExist",
+        "legacy:compareBuilds",
+        "legacy:countSavedSearchResults",
+        "legacy:createAbuseChallenge",
+        "legacy:getBuild",
+        "legacy:getBuildFileTree",
+        "legacy:getBuildHistory",
+        "legacy:getBuildInstallOptions",
+        "legacy:getChangelistEntry",
+        "legacy:getFreeGames",
+        "legacy:getFreeGamesStats",
+        "legacy:getHealth",
+        "legacy:getHomepageStats",
+        "legacy:getItem",
+        "legacy:getItemAssets",
+        "legacy:getItemBuilds",
+        "legacy:getItemChangelog",
+        "legacy:getItemOffer",
+        "legacy:getItemsBulk",
+        "legacy:getMonthlyCreationStats",
+        "legacy:getMonthlyReleaseStats",
+        "legacy:getOffer",
+        "legacy:getOfferAgeRating",
+        "legacy:getOfferBundle",
+        "legacy:getOfferChangelogStats",
+        "legacy:getOfferCollectionPosition",
+        "legacy:getOfferEvent",
+        "legacy:getOfferFeatures",
+        "legacy:getOfferHowLongToBeat",
+        "legacy:getOfferIgdb",
+        "legacy:getOfferMappings",
+        "legacy:getOfferMedia",
+        "legacy:getOfferOgPng",
+        "legacy:getOfferOgWebp",
+        "legacy:getOfferOverview",
+        "legacy:getOfferPolls",
+        "legacy:getOfferPrepurchaseAlternative",
+        "legacy:getOfferPrice",
+        "legacy:getOfferPriceFairness",
+        "legacy:getOfferPriceHistory",
+        "legacy:getOfferPriceStats",
+        "legacy:getOfferRatings",
+        "legacy:getOfferRegionalPrices",
+        "legacy:getOfferRegularAlternative",
+        "legacy:getOfferRequirements",
+        "legacy:getOfferReviewsSummary",
+        "legacy:getOfferTopPositions",
+        "legacy:getOffersForItemsBulk",
+        "legacy:getRegionForCountry",
+        "legacy:getSandbox",
+        "legacy:getSandboxBaseGame",
+        "legacy:getSandboxOgPng",
+        "legacy:getSandboxOgWebp",
+        "legacy:getSandboxStats",
+        "legacy:getSavedSearchQuery",
+        "legacy:getSellerCoverOffers",
+        "legacy:getSellerStats",
+        "legacy:getStats",
+        "legacy:getYearlyCreationStats",
+        "legacy:getYearlyReleaseStats",
+        "legacy:hydrateCatalogGraph",
+        "legacy:legacyGet__c767025d",
+        "legacy:legacyGet_assets_id__fe67ede6",
+        "legacy:legacyGet_base_game_namespace__43947330",
+        "legacy:legacyGet_changelog_038722cc",
+        "legacy:legacyGet_collections_slug__c9e20bbf",
+        "legacy:legacyGet_collections_slug_week__e7c64eb1",
+        "legacy:legacyGet_collections_slug_week_og_abb2fde5",
+        "legacy:legacyGet_doc_f5f543a0",
+        "legacy:legacyGet_franchises_slug__468d5cca",
+        "legacy:legacyGet_free_games_og_656b6e88",
+        "legacy:legacyGet_game_awards_5a8ac742",
+        "legacy:legacyGet_game_awards_og_aa6a5f28",
+        "legacy:legacyGet_graphql_220e6fb1",
+        "legacy:legacyGet_items_from_offer_id__f652bc56",
+        "legacy:legacyGet_items_sitemap_xml_57b8dd19",
+        "legacy:legacyGet_items_sitemap_xml_e6f8185b",
+        "legacy:legacyGet_multisearch_229582ca",
+        "legacy:legacyGet_multisearch_items_6adf1480",
+        "legacy:legacyGet_multisearch_offers_f0c29182",
+        "legacy:legacyGet_multisearch_sellers_c239406a",
+        "legacy:legacyGet_offer_by_slug_slug__5aadfed6",
+        "legacy:legacyGet_open_api_json_d5453718",
+        "legacy:legacyGet_ping_f7c2b7c6",
+        "legacy:legacyGet_profiles_id__f0000a67",
+        "legacy:legacyGet_profiles_id_achievements_e2c38dc7",
+        "legacy:legacyGet_profiles_id_achievements_sandboxId__3f40ec52",
+        "legacy:legacyGet_profiles_id_games_35bd6af2",
+        "legacy:legacyGet_profiles_id_information_1a333c76",
+        "legacy:legacyGet_profiles_id_random_game_bdccf825",
+        "legacy:legacyGet_profiles_id_rare_achievements_0a3d8b68",
+        "legacy:legacyGet_profiles_id_rare_achievements_sandboxId__c761732b",
+        "legacy:legacyGet_profiles_id_refresh_status_ee9656f7",
+        "legacy:legacyGet_profiles_leaderboard_7a07d3bc",
+        "legacy:legacyGet_profiles_sitemap_xml_0e16a159",
+        "legacy:legacyGet_promotions_83dd267d",
+        "legacy:legacyGet_promotions_id__ca5d27b1",
+        "legacy:legacyGet_promotions_id_cover_2c62e571",
+        "legacy:legacyGet_promotions_sitemap_xml_3578dc8e",
+        "legacy:legacyGet_push_vapid_public_key_472be0da",
+        "legacy:legacyGet_robots_txt_deae90bd",
+        "legacy:legacyGet_sandboxes_sitemap_xml_5773ff84",
+        "legacy:legacyGet_search_82dab022",
+        "legacy:legacyGet_sitemap_xml_efe3322f",
+        "legacy:legacyGet_tags_803dea8c",
+        "legacy:legacyGet_ui_64976efd",
+        "legacy:legacyOptions_ping_9143aa8e",
+        "legacy:legacyPost_graphql_fac042a8",
+        "legacy:legacyPost_ping_4242a078",
+        "legacy:listActiveSales",
+        "legacy:listBuildFiles",
+        "legacy:listBuildItems",
+        "legacy:listBuilds",
+        "legacy:listBundlesContainingOffer",
+        "legacy:listChangelist",
+        "legacy:listCountries",
+        "legacy:listFeaturedDiscounts",
+        "legacy:listFeaturedGames",
+        "legacy:listFreeGamesHistory",
+        "legacy:listFreeGamesSellers",
+        "legacy:listItems",
+        "legacy:listLatestAchievementOffers",
+        "legacy:listLatestGames",
+        "legacy:listLatestReleasedOffers",
+        "legacy:listMobileFreeGames",
+        "legacy:listOfferAchievements",
+        "legacy:listOfferAssets",
+        "legacy:listOfferBuilds",
+        "legacy:listOfferChangelog",
+        "legacy:listOfferCollectionOffers",
+        "legacy:listOfferDetailGenres",
+        "legacy:listOfferEvents",
+        "legacy:listOfferFranchises",
+        "legacy:listOfferGenres",
+        "legacy:listOfferGiveaways",
+        "legacy:listOfferItems",
+        "legacy:listOfferReviews",
+        "legacy:listOfferSuggestions",
+        "legacy:listOfferTechnologies",
+        "legacy:listOffers",
+        "legacy:listRegions",
+        "legacy:listRelatedOffers",
+        "legacy:listSaleOffers",
+        "legacy:listSandboxAchievements",
+        "legacy:listSandboxAssets",
+        "legacy:listSandboxBuilds",
+        "legacy:listSandboxChangelog",
+        "legacy:listSandboxItems",
+        "legacy:listSandboxOffers",
+        "legacy:listSandboxes",
+        "legacy:listSearchDevelopers",
+        "legacy:listSearchOfferTypes",
+        "legacy:listSearchPublishers",
+        "legacy:listSearchTags",
+        "legacy:listSellerOffers",
+        "legacy:listSellers",
+        "legacy:listTopSellersOffers",
+        "legacy:listTopWishlistedOffers",
+        "legacy:listUpcomingOffers",
+        "legacy:resolveLauncherRecords",
+        "legacy:resolveOfferSlugs",
+        "legacy:searchChangelog",
+        "legacy:searchFreeGames",
+        "legacy:searchOffersLegacy",
+        "legacy:searchOffersV2",
+        "legacy:searchOffersV2Get",
+        "legacy:searchOffersWithNaturalLanguage",
+        "v1:autocomplete",
+        "v1:checkOfferExistence",
+        "v1:checkOfferSlugs",
+        "v1:compareBuilds",
+        "v1:getAsset",
+        "v1:getBaseGame",
+        "v1:getBuild",
+        "v1:getBuildHistory",
+        "v1:getBuildInstallOptions",
+        "v1:getBuildTree",
+        "v1:getChangelogEntry",
+        "v1:getCollection",
+        "v1:getCollectionWeek",
+        "v1:getCollectionWeekOg",
+        "v1:getFeaturedGames",
+        "v1:getFranchise",
+        "v1:getFreeGamesOg",
+        "v1:getFreeGamesStats",
+        "v1:getGameAwards",
+        "v1:getGameAwardsOg",
+        "v1:getHealth",
+        "v1:getHomepageStats",
+        "v1:getItem",
+        "v1:getItemAssets",
+        "v1:getItemBuilds",
+        "v1:getItemChangelog",
+        "v1:getItemOffer",
+        "v1:getItemsBulk",
+        "v1:getItemsSitemap",
+        "v1:getItemsSitemapAlias",
+        "v1:getLatestGames",
+        "v1:getMonthlyCreationStats",
+        "v1:getMonthlyReleaseStats",
+        "v1:getOffer",
+        "v1:getOfferAchievements",
+        "v1:getOfferAgeRating",
+        "v1:getOfferAssets",
+        "v1:getOfferBuilds",
+        "v1:getOfferBundle",
+        "v1:getOfferBySlug",
+        "v1:getOfferChangelogStats",
+        "v1:getOfferCollection",
+        "v1:getOfferCollectionEntry",
+        "v1:getOfferEvent",
+        "v1:getOfferFeatures",
+        "v1:getOfferFranchises",
+        "v1:getOfferGenres",
+        "v1:getOfferGiveaways",
+        "v1:getOfferHasPrepurchase",
+        "v1:getOfferHasRegular",
+        "v1:getOfferHltb",
+        "v1:getOfferIgdb",
+        "v1:getOfferItems",
+        "v1:getOfferMappings",
+        "v1:getOfferMedia",
+        "v1:getOfferOg",
+        "v1:getOfferOgWebp",
+        "v1:getOfferOverview",
+        "v1:getOfferPolls",
+        "v1:getOfferPrice",
+        "v1:getOfferPriceFairness",
+        "v1:getOfferPriceStats",
+        "v1:getOfferRatings",
+        "v1:getOfferRegionalPrice",
+        "v1:getOfferRequirements",
+        "v1:getOfferReviewsSummary",
+        "v1:getOfferSuggestions",
+        "v1:getOfferTechnologies",
+        "v1:getOfferTops",
+        "v1:getOffersForItemsBulk",
+        "v1:getProfile",
+        "v1:getProfileAchievements",
+        "v1:getProfileInformation",
+        "v1:getProfileRandomGame",
+        "v1:getProfileRareAchievements",
+        "v1:getProfilesSitemap",
+        "v1:getPromotionCover",
+        "v1:getPromotionsSitemap",
+        "v1:getRegion",
+        "v1:getRelatedOffers",
+        "v1:getRobots",
+        "v1:getSandbox",
+        "v1:getSandboxBaseGame",
+        "v1:getSandboxChangelog",
+        "v1:getSandboxOg",
+        "v1:getSandboxOgWebp",
+        "v1:getSandboxStats",
+        "v1:getSandboxesSitemap",
+        "v1:getSearchQuery",
+        "v1:getSearchQueryCount",
+        "v1:getSellerCoverOffers",
+        "v1:getSellerStats",
+        "v1:getSitemap",
+        "v1:getStats",
+        "v1:getV1OpenApi",
+        "v1:getYearlyCreationStats",
+        "v1:getYearlyReleaseStats",
+        "v1:hydrateCatalog",
+        "v1:listActiveSales",
+        "v1:listBuildFiles",
+        "v1:listBuildItems",
+        "v1:listBuilds",
+        "v1:listBundlesContainingOffer",
+        "v1:listChangelist",
+        "v1:listChangelog",
+        "v1:listCountries",
+        "v1:listFeaturedDiscounts",
+        "v1:listFreeGameSellers",
+        "v1:listFreeGames",
+        "v1:listFreeGamesHistory",
+        "v1:listItems",
+        "v1:listItemsFromOffer",
+        "v1:listLatestAchievements",
+        "v1:listLatestReleased",
+        "v1:listMobileFreeGames",
+        "v1:listOfferChangelog",
+        "v1:listOfferEvents",
+        "v1:listOfferGenres",
+        "v1:listOfferPriceHistory",
+        "v1:listOfferReviews",
+        "v1:listOffers",
+        "v1:listProfileAchievements",
+        "v1:listProfileGames",
+        "v1:listProfileLeaderboard",
+        "v1:listProfileRareAchievements",
+        "v1:listPromotionOffers",
+        "v1:listPromotions",
+        "v1:listRegions",
+        "v1:listSales",
+        "v1:listSandboxAchievements",
+        "v1:listSandboxAssets",
+        "v1:listSandboxBuilds",
+        "v1:listSandboxItems",
+        "v1:listSandboxOffers",
+        "v1:listSandboxes",
+        "v1:listSearchDevelopers",
+        "v1:listSearchOfferTypes",
+        "v1:listSearchPublishers",
+        "v1:listSearchTags",
+        "v1:listSellerOffers",
+        "v1:listSellers",
+        "v1:listTags",
+        "v1:listTopSellers",
+        "v1:listTopWishlisted",
+        "v1:listUpcomingOffers",
+        "v1:multisearchItems",
+        "v1:multisearchOffers",
+        "v1:multisearchSellers",
+        "v1:naturalLanguageSearch",
+        "v1:resolveLauncherRecords",
+        "v1:searchChangelog",
+        "v1:searchFreeGames",
+        "v1:searchOffers",
+        "v1:searchOffersRedirect"
+      ]
+    }
+  ]
+}
