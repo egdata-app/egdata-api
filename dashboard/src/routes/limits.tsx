@@ -64,6 +64,7 @@ function RateLimitsPage() {
   const [withdrawalAcknowledged, setWithdrawalAcknowledged] = useState(false);
   const [billingBusy, setBillingBusy] = useState(false);
   const [withdrawalReason, setWithdrawalReason] = useState("");
+  const [quotaRefreshKey, setQuotaRefreshKey] = useState(0);
   const [checkoutBanner] = useState(() => {
     if (typeof window === "undefined") return null;
     const status = new URLSearchParams(window.location.search).get("checkout");
@@ -221,6 +222,7 @@ function RateLimitsPage() {
         targetPlanId,
       });
       await Promise.all([refreshSession(), loadBilling()]);
+      setQuotaRefreshKey((value) => value + 1);
       notify({
         title: res.scheduledForPeriodEnd
           ? "Plan change scheduled for period end"
@@ -251,6 +253,7 @@ function RateLimitsPage() {
       });
       setWithdrawalReason("");
       await Promise.all([refreshSession(), loadBilling()]);
+      setQuotaRefreshKey((value) => value + 1);
       notify({
         title: "Refund and cancellation processed",
         description: `${res.requestKind === "statutory_withdrawal" ? "14-day withdrawal" : "Refund"} completed (${res.status}).`,
@@ -334,12 +337,108 @@ function RateLimitsPage() {
         </div>
       )}
 
-      <MonthlyQuotaPanel showLimitLink={false} />
+      <MonthlyQuotaPanel showLimitLink={false} refreshKey={quotaRefreshKey} />
+
+      {billingSummary && (
+        <section
+          aria-label="Active project rate limits"
+          className="rounded-xl border border-epic-border bg-epic-surface p-5 space-y-3"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="text-sm font-semibold text-white">
+                Current Rate &amp; Daily Limits ({billingSummary.project.name})
+              </h2>
+              <p className="text-xs text-epic-text-muted">
+                Effective limits enforced on API requests right now for this
+                project.
+              </p>
+            </div>
+            <Tag tone="neutral">{billingSummary.entitlement.planVersionId}</Tag>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-3">
+            <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3.5 space-y-1">
+              <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
+                Per-Minute Ceiling
+              </div>
+              <div className="text-base font-bold text-white tabular-nums">
+                {billingSummary.entitlement.rpmLimit.toLocaleString()} req/min
+              </div>
+              <div className="text-[11px] text-epic-text-muted">
+                {Object.entries(
+                  billingSummary.entitlement.expensiveMinuteLimits,
+                )
+                  .map(([name, limit]) => `${name}: ${limit}/min`)
+                  .join(" · ")}
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3.5 space-y-1">
+              <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
+                Daily Limit (First{" "}
+                {plansData?.initialPeriodDailyLimitDays ?? 14} Days)
+              </div>
+              {billingSummary.dailyUsage ? (
+                <>
+                  <div className="text-base font-bold text-white tabular-nums">
+                    {billingSummary.dailyUsage.used.toLocaleString()} /{" "}
+                    {billingSummary.dailyUsage.allowance.toLocaleString()} req
+                    today
+                  </div>
+                  <div className="text-[11px] text-epic-text-muted">
+                    {billingSummary.dailyUsage.remaining.toLocaleString()}{" "}
+                    remaining today · Resets{" "}
+                    {billingSummary.dailyUsage.resetAtIso.slice(0, 10)} 00:00Z
+                    {billingSummary.entitlement.initialDailyLimitUntil
+                      ? ` · Unlocks full quota ${new Date(
+                          billingSummary.entitlement.initialDailyLimitUntil,
+                        )
+                          .toISOString()
+                          .slice(0, 10)}`
+                      : ""}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="text-base font-bold text-white">
+                    No daily cap
+                  </div>
+                  <div className="text-[11px] text-epic-text-muted">
+                    {billingSummary.entitlement.grantSource === "subscription"
+                      ? `Initial ${plansData?.initialPeriodDailyLimitDays ?? 14}-day pacing period completed.`
+                      : "Full monthly/minute ceilings apply immediately."}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3.5 space-y-1">
+              <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
+                Period Allowance
+              </div>
+              <div className="text-base font-bold text-white tabular-nums">
+                {billingSummary.entitlement.periodAllowance
+                  ? `${billingSummary.entitlement.periodAllowance.toLocaleString()} req`
+                  : "Unlimited"}
+              </div>
+              <div className="text-[11px] text-epic-text-muted">
+                {billingSummary.entitlement.periodType === "billing_period"
+                  ? "Per monthly billing period (dedicated)"
+                  : billingSummary.entitlement.periodType === "calendar_month"
+                    ? "Per UTC calendar month (shared across free projects)"
+                    : "Custom / manual capacity grant"}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {isAdmin && (
         <LimitRequestReviews
           onReviewed={async () => {
             await Promise.all([refreshSession(), loadHistory(), loadBilling()]);
+            setQuotaRefreshKey((value) => value + 1);
           }}
         />
       )}
