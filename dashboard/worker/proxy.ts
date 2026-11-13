@@ -31,7 +31,20 @@ const ANONYMOUS_EDGE_CACHE_PATHS = new Set([
   "/countries",
   "/tags",
   "/offers/genres",
+  "/offers/top-sellers",
+  "/free-games",
+  "/free-games/stats",
+  "/search/v2/search",
+  "/stats/homepage",
+  "/autocomplete",
 ]);
+
+function isAnonymousEdgeCachePath(pathname: string): boolean {
+  return (
+    ANONYMOUS_EDGE_CACHE_PATHS.has(pathname) ||
+    /^\/offers\/[^/]+\/(?:tops|assets|price)$/.test(pathname)
+  );
+}
 
 function normalizeRouteTemplate(
   pathname: string,
@@ -206,7 +219,7 @@ export async function handleEdgeApiProxy(
   if (!rawApiKey) {
     // Allow configured first-party web origins (e.g. https://egdata.app) if configured
     if (!requireKey || isAllowedFirstPartyOrigin(originHeader, env)) {
-      if (ANONYMOUS_EDGE_CACHE_PATHS.has(upstreamPath)) {
+      if (isAnonymousEdgeCachePath(upstreamPath)) {
         const { response, cacheStatus } = await fetchLegacyWithEdgeCache({
           request,
           ctx,

@@ -3429,6 +3429,127 @@
     },
     {
       "record": {
+        "id": "expanded-anonymous-edge-cache",
+        "recordedDate": "2026-11-13",
+        "title": "Expand anonymous edge caching and normalize discovery response freshness",
+        "endpoints": [
+          {
+            "apiVersion": "legacy",
+            "operationId": "getOfferTopPositions",
+            "method": "GET",
+            "path": "/offers/{id}/tops",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Anonymous offer-position requests always forwarded upstream despite the five-minute CDN policy.",
+            "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker cache with the existing five-minute CDN TTL. Entries retain the offer ID, full query and Origin; hits avoid origin processing, including origin rate limits and anti-abuse checks. Gateway access checks, credential/range exclusions, CORS, client freshness headers and response schemas are preserved. Requires Worker deployment.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "listOfferAssets",
+            "method": "GET",
+            "path": "/offers/{id}/assets",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Anonymous offer-asset requests always forwarded upstream despite the five-minute CDN policy.",
+            "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker cache with the existing five-minute CDN TTL. Entries retain the offer ID, full query and Origin; hits avoid origin processing, including origin rate limits and anti-abuse checks. Gateway access checks, credential/range exclusions, CORS, client freshness headers and response schemas are preserved. Requires Worker deployment.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "getOfferPrice",
+            "method": "GET",
+            "path": "/offers/{id}/price",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Anonymous price requests always reached the origin, including its offer eligibility lookup before Redis, despite the five-minute CDN policy.",
+            "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker cache with the existing five-minute CDN TTL. Offer ID, country and all query parameters remain in the key, partitioned by Origin. Requests carrying cookies, user authorization, session tokens or ranges bypass the cache; only shareable successful responses are stored. Hits avoid origin processing and its per-request checks. Response schemas, country validation and gateway access requirements are preserved. Requires Worker deployment.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "listTopSellersOffers",
+            "method": "GET",
+            "path": "/offers/top-sellers",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Anonymous top-seller requests always forwarded upstream despite the one-hour CDN policy.",
+            "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker cache with the existing one-hour CDN TTL. Full query keys preserve locale, page, limit and expansion, and entries are partitioned by Origin. Hits avoid origin processing and its per-request checks. Gateway access checks, credential/range exclusions, CORS, freshness headers and response schemas are preserved. Requires Worker deployment.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "getFreeGames",
+            "method": "GET",
+            "path": "/free-games",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Anonymous free-game requests always forwarded upstream despite the five-minute CDN policy.",
+            "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker cache with the existing five-minute CDN TTL. Full query keys preserve country, locale and expansion; entries are partitioned by Origin. Cookie-selected countries, user authorization, session tokens and ranges bypass caching. Only shareable successful responses are stored. Hits avoid origin processing and its per-request checks. Response schemas, CORS and gateway access requirements are preserved. Requires Worker deployment.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "getFreeGamesStats",
+            "method": "GET",
+            "path": "/free-games/stats",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Anonymous free-game statistics always forwarded upstream despite the 24-hour CDN policy.",
+            "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker cache with the existing 24-hour CDN TTL. Country and all query parameters remain in the key, partitioned by Origin; cookie/session/authorization/range exclusions remain in place. Hits avoid origin processing and its per-request checks. Response schemas, CORS, client freshness headers and gateway access requirements are preserved. Requires Worker deployment.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "searchOffersV2Get",
+            "method": "GET",
+            "path": "/search/v2/search",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Anonymous GET searches always forwarded upstream despite the five-minute CDN policy.",
+            "after": "Eligible anonymous GET/HEAD searches use the isolated public Worker cache with the existing five-minute CDN TTL. All search, country, locale, pagination, sort and expansion query parameters remain in the key, partitioned by Origin; repeated query-value ordering is preserved. Credential/range exclusions and non-shareable response exclusions remain in place. Hits avoid origin processing and its per-request checks. Request validation, response schemas and gateway access requirements are preserved. POST redirects are unchanged. Requires Worker deployment.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "getHomepageStats",
+            "method": "GET",
+            "path": "/stats/homepage",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Anonymous homepage statistics always forwarded upstream. Redis hits advertised a one-hour browser TTL while freshly computed responses had no explicit cache freshness.",
+            "after": "Successful fresh and Redis-cached responses consistently advertise 60-second browser freshness and five-minute shared freshness. Responses without an explicit country now vary on Cookie, preserving EGDATA_COUNTRY selection and excluding those responses from Worker storage. Eligible anonymous GET/HEAD requests with an explicit country use the isolated public Worker cache. Full queries and Origin variants remain distinct; credentials, cookies and ranges bypass caching. Hits avoid origin processing and its per-request checks. Body schemas and country resolution are unchanged; existing country inputs and new cache headers are documented in OpenAPI. Requires origin and Worker deployment.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "autocompleteOffers",
+            "method": "GET",
+            "path": "/autocomplete",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Autocomplete used Redis without explicit HTTP freshness, and anonymous requests always forwarded upstream.",
+            "after": "Successful fresh and Redis-cached responses consistently advertise 60-second browser and CDN freshness. Eligible anonymous GET/HEAD requests use the isolated public Worker cache with query, locale, limit and all other query parameters retained, partitioned by Origin. Credential/range exclusions and non-shareable response exclusions remain in place. Hits avoid origin processing and its per-request checks. Request validation, response schemas, CORS and gateway access requirements are preserved. Requires origin and Worker deployment.",
+            "clientAction": "None"
+          }
+        ],
+        "verification": [
+          "dashboard/tests/edge-cache.test.ts",
+          "dashboard/tests/legacy-analytics.test.ts",
+          "dashboard/tests/origin-proxy.test.ts",
+          "tests/middleware-edge-cache.test.ts",
+          "tests/search-route.test.ts",
+          "tests/anti-abuse.test.ts",
+          "pnpm dashboard:typecheck",
+          "pnpm docs:check",
+          "pnpm release:check --base origin/main"
+        ]
+      },
+      "contentHash": "d86999a54c24a73777c7403e4440225c89ff020bfcdd4ef2d49feb3f7b03df0d",
+      "source": "changes/records/expanded-anonymous-edge-cache.json"
+    },
+    {
+      "record": {
         "id": "fix-container-startup",
         "recordedDate": "2026-11-13",
         "title": "Fix container startup after Aikido removal",

@@ -5,6 +5,17 @@ description: History for GET /search/v2/search
 
 `GET /search/v2/search` — active. Recorded dates are not deployment dates.
 
+## 2026-11-13 — Expand anonymous edge caching and normalize discovery response freshness
+
+Record: [expanded-anonymous-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/expanded-anonymous-edge-cache.json).
+
+- **legacy GET /search/v2/search** (searchOffersV2Get; changed; compatible)
+  - Before: Anonymous GET searches always forwarded upstream despite the five-minute CDN policy.
+  - After: Eligible anonymous GET/HEAD searches use the isolated public Worker cache with the existing five-minute CDN TTL. All search, country, locale, pagination, sort and expansion query parameters remain in the key, partitioned by Origin; repeated query-value ordering is preserved. Credential/range exclusions and non-shareable response exclusions remain in place. Hits avoid origin processing and its per-request checks. Request validation, response schemas and gateway access requirements are preserved. POST redirects are unchanged. Requires Worker deployment.
+  - Client action: None
+
+Verification: dashboard/tests/edge-cache.test.ts; dashboard/tests/legacy-analytics.test.ts; dashboard/tests/origin-proxy.test.ts; tests/middleware-edge-cache.test.ts; tests/search-route.test.ts; tests/anti-abuse.test.ts; pnpm dashboard:typecheck; pnpm docs:check; pnpm release:check --base origin/main.
+
 ## 2026-11-13 — Fix container startup after Aikido removal
 
 Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.

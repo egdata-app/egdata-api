@@ -3106,6 +3106,7 @@
           "Catalog"
         ],
         "summary": "Autocomplete offer titles",
+        "description": "Eligible anonymous GET/HEAD requests may be served by the gateway edge cache for 60 seconds, keyed by the full query string and Origin. Query, limit and locale variants remain distinct. Cookies, user authorization and session tokens bypass the Worker cache. Successful responses advertise 60-second browser and CDN freshness on both fresh and Redis-cached results.\n\nWhen ANTI_ABUSE_MODE=enforce and pagination query parameters are present, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and HTTP 204 No Content with X-Egdata-Mitigation: tarpit regardless of session. Historical token scores do not prevent recovery after current risk clears. Normal responses retain existing cache policies and ETags; challenges, bodyless tarpits and canary lists are private/no-store. Baseline rate limits remain active and can return 429. Cloudflare cache hits bypass origin scoring and require separate edge controls. Existing account authentication requirements still apply. In observe mode an operator can apply the same policy to exact trusted fingerprints on offer-detail or catalog-search routes for an expiring trial of at most 15 minutes. Catalog search and sandbox-offer pagination contribute traversal evidence, grouped by normalized filters; ordinary isolated queries remain low-risk.\n\nWhen accessed through the Worker gateway with an API key, this operation consumes the project's shared UTC-aligned 60-second quota across all keys, console sessions, and legacy/v1 gateway requests (free: 120/min; pro: 1200/min; enterprise: 6000/min, overridden by approved project RPM), and free projects also consume the account's shared 100,000-request calendar-month allowance (resetting on the 1st of each month at 00:00 UTC). Paid tiers (pro, enterprise) are exempt from the free monthly cap. Cache hits count. Project minute exhaustion returns 429 RATE_LIMITED; free monthly exhaustion returns 429 MONTHLY_QUOTA_EXCEEDED with Retry-After until reset; unavailable admission returns 503 QUOTA_UNAVAILABLE with Retry-After: 1. Gateway errors use { error: { code, message } }. Public unauthenticated bypasses retain their existing behavior. Account closure rejects all account keys, including warm credential caches, with 401 INVALID_API_KEY before quota or response-cache access. Failure to verify credential/account status returns 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30. Initial dashboard email/terms onboarding does not pause existing API keys, even after a dashboard visit.",
         "parameters": [
           {
             "name": "query",
@@ -3128,6 +3129,29 @@
         "responses": {
           "200": {
             "description": "Successful response.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Consistent browser and shared freshness on fresh and Redis-cached responses.",
+                "schema": {
+                  "type": "string",
+                  "example": "public, max-age=60, s-maxage=60"
+                }
+              },
+              "CDN-Cache-Control": {
+                "description": "Shared-cache freshness for eligible public responses.",
+                "schema": {
+                  "type": "string",
+                  "example": "public, max-age=60"
+                }
+              },
+              "Vary": {
+                "description": "Varies by content encoding and the request Origin used for CORS.",
+                "schema": {
+                  "type": "string",
+                  "example": "Accept-Encoding, Origin"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -3286,7 +3310,6 @@
             }
           }
         },
-        "description": "When ANTI_ABUSE_MODE=enforce and pagination query parameters are present, clients with current risk <= 0.5 can request data without a PoW session. Only suspicious clients (0.5 < risk <= 0.8) require a valid session less than 30 seconds old; missing, invalid, or expired sessions return SESSION_CHALLENGE_REQUIRED with HTTP 200. Clients can solve PoW on demand and retry once. Scores above 0.8 receive a 3–5 second delay and HTTP 204 No Content with X-Egdata-Mitigation: tarpit regardless of session. Historical token scores do not prevent recovery after current risk clears. Normal responses retain existing cache policies and ETags; challenges, bodyless tarpits and canary lists are private/no-store. Baseline rate limits remain active and can return 429. Cloudflare cache hits bypass origin scoring and require separate edge controls. Existing account authentication requirements still apply. In observe mode an operator can apply the same policy to exact trusted fingerprints on offer-detail or catalog-search routes for an expiring trial of at most 15 minutes. Catalog search and sandbox-offer pagination contribute traversal evidence, grouped by normalized filters; ordinary isolated queries remain low-risk.\n\nWhen accessed through the Worker gateway with an API key, this operation consumes the project's shared UTC-aligned 60-second quota across all keys, console sessions, and legacy/v1 gateway requests (free: 120/min; pro: 1200/min; enterprise: 6000/min, overridden by approved project RPM), and free projects also consume the account's shared 100,000-request calendar-month allowance (resetting on the 1st of each month at 00:00 UTC). Paid tiers (pro, enterprise) are exempt from the free monthly cap. Cache hits count. Project minute exhaustion returns 429 RATE_LIMITED; free monthly exhaustion returns 429 MONTHLY_QUOTA_EXCEEDED with Retry-After until reset; unavailable admission returns 503 QUOTA_UNAVAILABLE with Retry-After: 1. Gateway errors use { error: { code, message } }. Public unauthenticated bypasses retain their existing behavior. Account closure rejects all account keys, including warm credential caches, with 401 INVALID_API_KEY before quota or response-cache access. Failure to verify credential/account status returns 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30. Initial dashboard email/terms onboarding does not pause existing API keys, even after a dashboard visit.",
         "security": [
           {},
           {
@@ -20943,10 +20966,47 @@
           "Stats"
         ],
         "summary": "Get statistics used on the egdata.app homepage",
+        "description": "Country defaults to the EGDATA_COUNTRY cookie, then US; unknown countries return 404. Successful responses advertise 60-second browser and five-minute CDN freshness on both fresh and Redis-cached results. Eligible anonymous GET/HEAD requests with an explicit country may use the gateway edge cache. When country is omitted, Vary includes Cookie and the Worker cache is bypassed. Cookies, user authorization and session tokens also bypass Worker caching.\n\nWhen accessed through the Worker gateway with an API key, this operation consumes the project's shared UTC-aligned 60-second quota across all keys, console sessions, and legacy/v1 gateway requests (free: 120/min; pro: 1200/min; enterprise: 6000/min, overridden by approved project RPM), and free projects also consume the account's shared 100,000-request calendar-month allowance (resetting on the 1st of each month at 00:00 UTC). Paid tiers (pro, enterprise) are exempt from the free monthly cap. Cache hits count. Project minute exhaustion returns 429 RATE_LIMITED; free monthly exhaustion returns 429 MONTHLY_QUOTA_EXCEEDED with Retry-After until reset; unavailable admission returns 503 QUOTA_UNAVAILABLE with Retry-After: 1. Gateway errors use { error: { code, message } }. Public unauthenticated bypasses retain their existing behavior. Account closure rejects all account keys, including warm credential caches, with 401 INVALID_API_KEY before quota or response-cache access. Failure to verify credential/account status returns 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30. Initial dashboard email/terms onboarding does not pause existing API keys, even after a dashboard visit.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/country"
+          },
+          {
+            "name": "EGDATA_COUNTRY",
+            "in": "cookie",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Fallback country when country is omitted."
+          }
+        ],
         "x-egdata-visibility": "public",
         "responses": {
           "200": {
             "description": "Successful response.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Consistent browser and shared freshness on fresh and Redis-cached responses.",
+                "schema": {
+                  "type": "string",
+                  "example": "public, max-age=60, s-maxage=300"
+                }
+              },
+              "CDN-Cache-Control": {
+                "description": "Shared-cache freshness for eligible public responses.",
+                "schema": {
+                  "type": "string",
+                  "example": "public, max-age=300"
+                }
+              },
+              "Vary": {
+                "description": "Includes Cookie when country is omitted, preventing Worker shared caching of cookie-selected countries. Supply country explicitly for edge caching.",
+                "schema": {
+                  "type": "string",
+                  "example": "Accept-Encoding, Cookie, Origin"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -21044,8 +21104,7 @@
               }
             }
           }
-        },
-        "description": "When accessed through the Worker gateway with an API key, this operation consumes the project's shared UTC-aligned 60-second quota across all keys, console sessions, and legacy/v1 gateway requests (free: 120/min; pro: 1200/min; enterprise: 6000/min, overridden by approved project RPM), and free projects also consume the account's shared 100,000-request calendar-month allowance (resetting on the 1st of each month at 00:00 UTC). Paid tiers (pro, enterprise) are exempt from the free monthly cap. Cache hits count. Project minute exhaustion returns 429 RATE_LIMITED; free monthly exhaustion returns 429 MONTHLY_QUOTA_EXCEEDED with Retry-After until reset; unavailable admission returns 503 QUOTA_UNAVAILABLE with Retry-After: 1. Gateway errors use { error: { code, message } }. Public unauthenticated bypasses retain their existing behavior. Account closure rejects all account keys, including warm credential caches, with 401 INVALID_API_KEY before quota or response-cache access. Failure to verify credential/account status returns 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30. Initial dashboard email/terms onboarding does not pause existing API keys, even after a dashboard visit."
+        }
       }
     },
     "/stats/releases/monthly": {

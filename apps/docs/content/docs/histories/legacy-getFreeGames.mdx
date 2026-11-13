@@ -5,6 +5,17 @@ description: History for GET /free-games
 
 `GET /free-games` — active. Recorded dates are not deployment dates.
 
+## 2026-11-13 — Expand anonymous edge caching and normalize discovery response freshness
+
+Record: [expanded-anonymous-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/expanded-anonymous-edge-cache.json).
+
+- **legacy GET /free-games** (getFreeGames; changed; compatible)
+  - Before: Anonymous free-game requests always forwarded upstream despite the five-minute CDN policy.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker cache with the existing five-minute CDN TTL. Full query keys preserve country, locale and expansion; entries are partitioned by Origin. Cookie-selected countries, user authorization, session tokens and ranges bypass caching. Only shareable successful responses are stored. Hits avoid origin processing and its per-request checks. Response schemas, CORS and gateway access requirements are preserved. Requires Worker deployment.
+  - Client action: None
+
+Verification: dashboard/tests/edge-cache.test.ts; dashboard/tests/legacy-analytics.test.ts; dashboard/tests/origin-proxy.test.ts; tests/middleware-edge-cache.test.ts; tests/search-route.test.ts; tests/anti-abuse.test.ts; pnpm dashboard:typecheck; pnpm docs:check; pnpm release:check --base origin/main.
+
 ## 2026-11-13 — Fix container startup after Aikido removal
 
 Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.
