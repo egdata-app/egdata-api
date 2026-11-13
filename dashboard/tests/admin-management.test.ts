@@ -1047,6 +1047,57 @@ describe("administrator user and project management", () => {
     expect((await call("/users/missing/analytics")).status).toBe(404);
   });
 
+  it("scopes quotaTimeseries in monthly user analytics to admitted free-project requests", async () => {
+    const { env, call, sqlite } = setup();
+    sqlite.exec(`
+      INSERT INTO users(epic_account_id,display_name,project_limit) VALUES('quota-owner','Quota owner',2);
+      INSERT INTO projects(id,owner_epic_id,name,slug,tier) VALUES('free-proj','quota-owner','Free','free','free');
+      UPDATE users SET last_project_created_at = 0 WHERE epic_account_id = 'quota-owner';
+      INSERT INTO projects(id,owner_epic_id,name,slug,tier) VALUES('paid-proj','quota-owner','Paid','paid','pro');
+    `);
+    vi.useFakeTimers({ toFake: ["Date"] });
+    const baseEvent = {
+      ownerEpicId: "quota-owner",
+      keyId: "key",
+      routeTemplate: "/v1/offers",
+      method: "GET",
+      statusCode: 200,
+      cacheStatus: "MISS",
+      limitOutcome: "ok",
+      origin: "(direct)",
+      clientIp: "198.51.100.1",
+      userAgent: "curl/8.0",
+      country: "ES",
+      latencyMs: 12,
+    };
+    vi.setSystemTime(new Date("2026-11-05T10:00:00Z"));
+    // Admitted free-project request -> counted in quotaTimeseries
+    recordApiTelemetry(env, { ...baseEvent, projectId: "free-proj" });
+    // Blocked / rate-limited free-project request -> excluded from quotaTimeseries
+    recordApiTelemetry(env, {
+      ...baseEvent,
+      projectId: "free-proj",
+      statusCode: 429,
+      limitOutcome: "monthly_quota_exceeded",
+    });
+    // Admitted paid-project request -> excluded from quotaTimeseries
+    recordApiTelemetry(env, { ...baseEvent, projectId: "paid-proj" });
+    vi.setSystemTime(new Date("2026-11-13T12:00:00Z"));
+
+    const monthRes = await call("/users/quota-owner/analytics?range=month");
+    expect(monthRes.status).toBe(200);
+    const monthData = (await monthRes.json()) as AnalyticsDashboardSummary;
+    expect(monthData.totals.requests).toBe(3);
+    expect(monthData.quotaTimeseries).toEqual([
+      { bucket: "2026-11-05T00:00:00.000Z", requests: 1 },
+    ]);
+
+    const rollingRes = await call("/users/quota-owner/analytics?range=24");
+    expect(rollingRes.status).toBe(200);
+    const rollingData = (await rollingRes.json()) as AnalyticsDashboardSummary;
+    expect(rollingData.quotaTimeseries).toBeUndefined();
+  });
+
   it("enforces owner filtering in remote analytics queries and reports service failures", async () => {
     const { env, call } = setup();
     env.CF_ACCOUNT_ID = "account";

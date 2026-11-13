@@ -415,7 +415,7 @@ export async function queryUsageTable(
 
 export async function queryDashboardAnalytics(
   env: DashboardEnv,
-  params: UsageFilters & AnalyticsAccess,
+  params: UsageFilters & AnalyticsAccess & { quotaProjectIds?: string[] },
 ): Promise<AnalyticsDashboardSummary> {
   const p = { ...params, end: windowFor(params).end };
   const { start, end } = windowFor(p);
@@ -424,15 +424,24 @@ export async function queryDashboardAnalytics(
   const bucketMs = bucketMinutes * 60_000;
   let totals: UsageMetrics, previous: UsageMetrics | null;
   let timeseries: AnalyticsDashboardSummary["timeseries"];
+  let quotaTimeseries: AnalyticsDashboardSummary["quotaTimeseries"];
   let cacheBreakdown: AnalyticsDashboardSummary["cacheBreakdown"];
   let limitOutcomes: AnalyticsDashboardSummary["limitOutcomes"];
   let statusCodes: AnalyticsDashboardSummary["statusCodes"];
+  const quotaProjectIds = params.quotaProjectIds;
   const breakdown = async (col: string) =>
     sql(
       env,
       `SELECT ${col} AS label, SUM(_sample_interval * double1) AS requests FROM egdata_api_usage ${where(p)} GROUP BY ${col} ORDER BY requests DESC FORMAT JSON`,
     );
   if (remote(env)) {
+    const quotaQuery =
+      quotaProjectIds && quotaProjectIds.length > 0
+        ? sql(
+            env,
+            `SELECT toStartOfInterval(timestamp, INTERVAL '${bucketMinutes}' MINUTE) AS bucket, SUM(_sample_interval * double1) AS requests FROM egdata_api_usage ${where(p)} AND blob7 = 'ok' AND blob2 IN (${quotaProjectIds.map(literal).join(", ")}) GROUP BY bucket ORDER BY bucket ASC FORMAT JSON`,
+          )
+        : Promise.resolve(quotaProjectIds ? [] : undefined);
     const results = await Promise.all([
       sql(
         env,
@@ -449,6 +458,7 @@ export async function queryDashboardAnalytics(
       breakdown("blob6"),
       breakdown("blob7"),
       breakdown("blob5"),
+      quotaQuery,
     ]);
     totals = metrics(results[0][0]);
     previous = metrics(results[1][0]);
@@ -470,6 +480,14 @@ export async function queryDashboardAnalytics(
       status: String(r.label),
       requests: Number(r.requests),
     }));
+    if (results[6]) {
+      quotaTimeseries = results[6].map((row) => ({
+        bucket: new Date(
+          `${String(row.bucket).replace(" ", "T").replace(/Z$/, "")}Z`,
+        ).toISOString(),
+        requests: Number(row.requests),
+      }));
+    }
     const populated = new Map(timeseries.map((point) => [point.bucket, point]));
     timeseries = [];
     for (
@@ -510,6 +528,20 @@ export async function queryDashboardAnalytics(
       status: r.label,
       requests: r.requests,
     }));
+    if (quotaProjectIds) {
+      const allowedProjects = new Set(quotaProjectIds);
+      const quotaEvents = events.filter(
+        (e) => e.limitOutcome === "ok" && allowedProjects.has(e.projectId),
+      );
+      quotaTimeseries = Array.from(
+        groups(quotaEvents, (e) =>
+          new Date(
+            Math.floor(Date.parse(e.timestamp) / bucketMs) * bucketMs,
+          ).toISOString(),
+        ),
+        ([bucket, grouped]) => ({ bucket, requests: grouped.length }),
+      ).sort((a, b) => a.bucket.localeCompare(b.bucket));
+    }
   }
   const [endpoints, projects, keys] = await Promise.all([
     queryUsageTable(env, {
@@ -536,6 +568,7 @@ export async function queryDashboardAnalytics(
     totals,
     previous,
     timeseries,
+    ...(quotaTimeseries !== undefined ? { quotaTimeseries } : {}),
     cacheBreakdown,
     limitOutcomes,
     statusCodes,

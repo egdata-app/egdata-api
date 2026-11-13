@@ -305,6 +305,7 @@ function AdminUserDetailPage() {
             <AdminUserAnalytics
               key={detail.user.id}
               userId={detail.user.id}
+              monthlyLimit={detail.monthlyQuota?.allowance ?? null}
               refreshKey={version}
             />
           )}

@@ -12,9 +12,11 @@ import {
 
 export function AdminUserAnalytics({
   userId,
+  monthlyLimit = null,
   refreshKey,
 }: {
   userId: string;
+  monthlyLimit?: number | null;
   refreshKey: number;
 }) {
   const [range, setRange] = useState<AdminUserAnalyticsRange>("month");
@@ -108,7 +110,12 @@ export function AdminUserAnalytics({
               color="text-epic-warning"
             />
           </div>
-          <UsageChart data={data} />
+          <UsageChart
+            data={data}
+            cumulative={range === "month"}
+            limit={range === "month" ? monthlyLimit : null}
+            limitLabel="Monthly limit"
+          />
           <p className="text-xs text-epic-text-muted">
             Activity includes blocked requests and paid projects. Monthly quota
             usage counts admitted free-project requests, including cached
