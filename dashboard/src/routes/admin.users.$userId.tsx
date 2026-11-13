@@ -13,12 +13,14 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import type { AdminUserDetail } from "../../worker/admin-types";
 import { AdminAudit } from "../components/AdminAudit";
+import { AdminMonthlyUsage } from "../components/AdminMonthlyUsage";
 import {
   AdminUsageNote,
   adminDate,
   usageNumber,
 } from "../components/AdminShared";
 import { AdminKeyCount, AdminLastUsed } from "../components/AdminTable";
+import { AdminUserAnalytics } from "../components/AdminUserAnalytics";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Controls";
 import { Dialog, Heading, Modal } from "../components/ui/Modal";
@@ -279,7 +281,33 @@ function AdminUserDetailPage() {
                 </dd>
               </div>
             </dl>
+            {!detail.user.closedAt &&
+              detail.projects.some(
+                (project) => !project.deletedAt && project.tier === "free",
+              ) && (
+                <div className="border-t border-epic-border pt-4 space-y-2">
+                  <h2 className="text-sm font-semibold text-white">
+                    Monthly free usage
+                  </h2>
+                  <p className="text-xs text-epic-text-muted">
+                    Shared across this user's free projects, API keys, and
+                    console sessions.
+                  </p>
+                  <AdminMonthlyUsage
+                    monthly={detail.monthlyQuota}
+                    userName={detail.user.displayName}
+                  />
+                </div>
+              )}
           </header>
+
+          {!detail.user.closedAt && (
+            <AdminUserAnalytics
+              key={detail.user.id}
+              userId={detail.user.id}
+              refreshKey={version}
+            />
+          )}
 
           <section
             aria-label="Agreements and onboarding"

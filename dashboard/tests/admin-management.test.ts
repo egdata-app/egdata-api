@@ -7,6 +7,7 @@ import type {
   AdminUserDetail,
 } from "../worker/admin-types";
 import { recordApiTelemetry } from "../worker/analytics";
+import type { AnalyticsDashboardSummary } from "../worker/analytics-types";
 import { signHmacToken } from "../worker/crypto";
 import {
   createProject,
@@ -19,8 +20,10 @@ import {
 import { projectOwned } from "../worker/endpoint-alerts";
 import worker from "../worker/index";
 import { resolveApiKeyMetadata, syncKeyToKv } from "../worker/key-cache";
+import { accountLimiterObjectName } from "../worker/project-quota";
 import { purgeDeletedProjects } from "../worker/project-retention";
 import type { DashboardEnv } from "../worker/types";
+import { quotaNamespace } from "./fixtures/quota";
 import { sqliteD1 } from "./fixtures/sqlite";
 
 const origin = "https://devs.egdata.app";
@@ -60,6 +63,7 @@ function setup() {
   const cache = new Map<string, unknown>();
   const env = {
     DB: db,
+    API_KEY_RATE_LIMITER: quotaNamespace(),
     DASHBOARD_SESSION_SECRET: secret,
     API_KEYS_KV: {
       get: vi.fn(async (id: string) => cache.get(id) ?? null),
@@ -125,6 +129,7 @@ describe("administrator user and project management", () => {
   const routes: [string, string, unknown?][] = [
     ["/users", "GET"],
     ["/users/owner", "GET"],
+    ["/users/owner/analytics", "GET"],
     ["/projects", "GET"],
     ["/projects/project/keys", "GET"],
     ["/users/owner/limits", "PATCH", { projectLimit: 3 }],
@@ -898,6 +903,153 @@ describe("administrator user and project management", () => {
     ).json()) as AdminPage<AdminProject>;
     expect(failed.rows).toHaveLength(2);
     expect(failed.usage).toMatchObject({ source: "unavailable", byId: {} });
+  });
+
+  it("reads the inspected user's monthly quota for active free projects, including mixed-tier accounts", async () => {
+    const { env, call, sqlite } = setup();
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-11-13T12:00:00Z"));
+    const namespace = env.API_KEY_RATE_LIMITER;
+    const limiter = namespace.get(
+      namespace.idFromName(accountLimiterObjectName(env, "owner")),
+    );
+    await limiter.admit({
+      keyId: "key",
+      projectId: "project",
+      ownerEpicId: "owner",
+      policies: [
+        { name: "global", limit: 120, window: "minute" },
+        { name: "monthly", limit: 100_000, window: "month" },
+      ],
+    });
+    const detail = (await (
+      await call("/users/owner")
+    ).json()) as AdminUserDetail;
+    expect(detail.monthlyQuota).toMatchObject({
+      used: 1,
+      allowance: 100_000,
+      remaining: 99_999,
+      resetAt: "2026-12-01T00:00:00.000Z",
+      status: "ok",
+    });
+    const other = (await (
+      await call("/users/other")
+    ).json()) as AdminUserDetail;
+    expect(other.monthlyQuota?.used).toBe(0);
+
+    sqlite.exec("UPDATE projects SET tier='pro' WHERE id='project'");
+    expect(
+      ((await (await call("/users/owner")).json()) as AdminUserDetail)
+        .monthlyQuota,
+    ).toBeNull();
+    sqlite.exec(
+      "UPDATE users SET project_limit=2, last_project_created_at=0 WHERE epic_account_id='owner'; INSERT INTO projects(id,owner_epic_id,name,slug) VALUES('free-project','owner','Free','free')",
+    );
+    expect(
+      ((await (await call("/users/owner")).json()) as AdminUserDetail)
+        .monthlyQuota?.used,
+    ).toBe(1);
+    sqlite.exec(
+      "UPDATE projects SET deleted_at='2026-11-13' WHERE id='free-project'",
+    );
+    expect(
+      ((await (await call("/users/owner")).json()) as AdminUserDetail)
+        .monthlyQuota,
+    ).toBeNull();
+  });
+
+  it("keeps user details available when the monthly quota service fails", async () => {
+    const { env, call } = setup();
+    vi.spyOn(env.API_KEY_RATE_LIMITER, "get").mockImplementation(() => {
+      throw new Error("unavailable");
+    });
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const response = await call("/users/owner");
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      user: { id: "owner" },
+      monthlyQuota: null,
+    });
+  });
+
+  it("scopes analytics to the inspected owner across projects and uses the UTC calendar month", async () => {
+    const { env, call, sqlite } = setup();
+    sqlite.exec(
+      "INSERT INTO users(epic_account_id,display_name) VALUES('analytics-owner','Analytics owner')",
+    );
+    vi.useFakeTimers({ toFake: ["Date"] });
+    const event = {
+      ownerEpicId: "analytics-owner",
+      keyId: "key",
+      projectId: "one",
+      routeTemplate: "/v1/offers",
+      method: "GET",
+      statusCode: 200,
+      cacheStatus: "HIT",
+      limitOutcome: "ok",
+      origin: "",
+      clientIp: "",
+      userAgent: "",
+      country: "US",
+      latencyMs: 10,
+    };
+    vi.setSystemTime(new Date("2026-10-31T23:59:59Z"));
+    recordApiTelemetry(env, event);
+    vi.setSystemTime(new Date("2026-11-01T00:00:00Z"));
+    recordApiTelemetry(env, event);
+    recordApiTelemetry(env, {
+      ...event,
+      projectId: "two",
+      cacheStatus: "MISS",
+    });
+    recordApiTelemetry(env, { ...event, ownerEpicId: "other" });
+    vi.setSystemTime(new Date("2026-11-13T12:00:00Z"));
+    const response = await call(
+      "/users/analytics-owner/analytics?ownerEpicId=other",
+    );
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+    const data = (await response.json()) as AnalyticsDashboardSummary;
+    expect(data.start).toBe("2026-11-01T00:00:00.000Z");
+    expect(data.totals).toMatchObject({
+      requests: 2,
+      cacheHits: 1,
+      cacheHitRate: 50,
+    });
+    expect(data.timeseries).toHaveLength(1);
+    expect(data.timeseries[0]).toMatchObject({ requests: 2, cacheHits: 1 });
+    const recent = (await (
+      await call("/users/analytics-owner/analytics?range=24")
+    ).json()) as AnalyticsDashboardSummary;
+    expect(recent.totals.requests).toBe(0);
+    expect((await call("/users/owner/analytics?range=invalid")).status).toBe(
+      400,
+    );
+    expect((await call("/users/missing/analytics")).status).toBe(404);
+  });
+
+  it("enforces owner filtering in remote analytics queries and reports service failures", async () => {
+    const { env, call } = setup();
+    env.CF_ACCOUNT_ID = "account";
+    env.CF_ANALYTICS_API_TOKEN = "token";
+    const fetchMock = vi
+      .fn()
+      .mockImplementation(async () => Response.json({ data: [] }));
+    vi.stubGlobal("fetch", fetchMock);
+    expect((await call("/users/owner/analytics?range=24")).status).toBe(200);
+    expect(fetchMock).toHaveBeenCalled();
+    for (const [, init] of fetchMock.mock.calls) {
+      expect(init.body).toContain("index1 = 'owner'");
+    }
+    fetchMock.mockImplementation(
+      async () => new Response("Unavailable", { status: 503 }),
+    );
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const response = await call("/users/owner/analytics");
+    expect(response.status).toBe(503);
+    expect(await response.json()).toMatchObject({
+      error: { code: "ANALYTICS_UNAVAILABLE" },
+    });
   });
 
   it("inspects a user with agreement acceptances, email verification, projects, and requests", async () => {
