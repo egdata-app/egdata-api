@@ -46,7 +46,9 @@
       "operationId": "createAbuseChallenge",
       "method": "POST",
       "path": "/auth/challenge",
-      "sources": [],
+      "sources": [
+        "src/services/anti-abuse-runtime.ts"
+      ],
       "status": "active"
     },
     {
@@ -745,7 +747,9 @@
       "method": "GET",
       "path": "/graphql",
       "sources": [
-        "src/index.ts"
+        "src/graphql/index.ts",
+        "src/graphql/loaders.ts",
+        "src/middlewares/apollo.ts"
       ],
       "status": "active"
     },
@@ -1085,7 +1089,9 @@
       "method": "POST",
       "path": "/graphql",
       "sources": [
-        "src/index.ts"
+        "src/graphql/index.ts",
+        "src/graphql/loaders.ts",
+        "src/middlewares/apollo.ts"
       ],
       "status": "active"
     },
@@ -1686,7 +1692,7 @@
       "path": "/v1/autocomplete",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -1697,7 +1703,7 @@
       "path": "/v1/offers/exists",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offers.ts"
       ],
       "status": "active"
     },
@@ -1708,7 +1714,7 @@
       "path": "/v1/offers/slugs",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offers.ts"
       ],
       "status": "active"
     },
@@ -1719,7 +1725,7 @@
       "path": "/v1/builds/{targetId}/compare/{baseId}",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/builds.ts"
       ],
       "status": "active"
     },
@@ -1730,7 +1736,7 @@
       "path": "/v1/assets/{id}",
       "sources": [
         "src/v1/operations/assets.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/assets.ts"
       ],
       "status": "active"
     },
@@ -1741,7 +1747,7 @@
       "path": "/v1/base-game/{namespace}",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -1752,7 +1758,7 @@
       "path": "/v1/builds/{id}",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/builds.ts"
       ],
       "status": "active"
     },
@@ -1763,7 +1769,7 @@
       "path": "/v1/builds/{id}/history",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/builds.ts"
       ],
       "status": "active"
     },
@@ -1774,7 +1780,7 @@
       "path": "/v1/builds/{id}/install-options",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/builds.ts"
       ],
       "status": "active"
     },
@@ -1785,7 +1791,7 @@
       "path": "/v1/builds/{id}/tree",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/builds.ts"
       ],
       "status": "active"
     },
@@ -1796,7 +1802,7 @@
       "path": "/v1/changelist/{id}",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -1807,7 +1813,7 @@
       "path": "/v1/collections/{slug}",
       "sources": [
         "src/v1/operations/collections.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/collections.ts"
       ],
       "status": "active"
     },
@@ -1818,7 +1824,7 @@
       "path": "/v1/collections/{slug}/{week}",
       "sources": [
         "src/v1/operations/collections.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/collections.ts"
       ],
       "status": "active"
     },
@@ -1829,7 +1835,7 @@
       "path": "/v1/collections/{slug}/{week}/og",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/og.ts"
       ],
       "status": "active"
     },
@@ -1840,7 +1846,7 @@
       "path": "/v1/featured",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -1851,7 +1857,7 @@
       "path": "/v1/franchises/{slug}",
       "sources": [
         "src/v1/operations/franchises.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/franchises.ts"
       ],
       "status": "active"
     },
@@ -1862,7 +1868,7 @@
       "path": "/v1/free-games/og",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/og.ts"
       ],
       "status": "active"
     },
@@ -1873,7 +1879,7 @@
       "path": "/v1/free-games/stats",
       "sources": [
         "src/v1/operations/free-games.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/free-games.ts"
       ],
       "status": "active"
     },
@@ -1884,7 +1890,7 @@
       "path": "/v1/game-awards",
       "sources": [
         "src/v1/operations/game-awards.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/game-awards.ts"
       ],
       "status": "active"
     },
@@ -1895,7 +1901,7 @@
       "path": "/v1/game-awards/og",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/og.ts"
       ],
       "status": "active"
     },
@@ -1906,7 +1912,7 @@
       "path": "/v1/health",
       "sources": [
         "src/v1/operations/system.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/system.ts"
       ],
       "status": "active"
     },
@@ -1917,7 +1923,7 @@
       "path": "/v1/stats/homepage",
       "sources": [
         "src/v1/operations/stats.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/stats.ts"
       ],
       "status": "active"
     },
@@ -1928,7 +1934,7 @@
       "path": "/v1/items/{id}",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/items.ts"
       ],
       "status": "active"
     },
@@ -1939,7 +1945,7 @@
       "path": "/v1/items/{id}/assets",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/items.ts"
       ],
       "status": "active"
     },
@@ -1950,7 +1956,7 @@
       "path": "/v1/items/{id}/builds",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/items.ts"
       ],
       "status": "active"
     },
@@ -1961,7 +1967,7 @@
       "path": "/v1/items/{id}/changelog",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/items.ts"
       ],
       "status": "active"
     },
@@ -1972,7 +1978,7 @@
       "path": "/v1/items/{id}/offer",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/items.ts"
       ],
       "status": "active"
     },
@@ -1983,7 +1989,7 @@
       "path": "/v1/items/bulk",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/items.ts"
       ],
       "status": "active"
     },
@@ -1994,7 +2000,7 @@
       "path": "/v1/items-sitemap.xml",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/native.ts"
       ],
       "status": "active"
     },
@@ -2005,7 +2011,7 @@
       "path": "/v1/items/sitemap.xml",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/native.ts"
       ],
       "status": "active"
     },
@@ -2016,7 +2022,7 @@
       "path": "/v1/latest-games",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -2027,7 +2033,7 @@
       "path": "/v1/stats/creations/monthly",
       "sources": [
         "src/v1/operations/stats.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/stats.ts"
       ],
       "status": "active"
     },
@@ -2038,7 +2044,7 @@
       "path": "/v1/stats/releases/monthly",
       "sources": [
         "src/v1/operations/stats.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/stats.ts"
       ],
       "status": "active"
     },
@@ -2049,7 +2055,7 @@
       "path": "/v1/offers/{id}",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offers.ts"
       ],
       "status": "active"
     },
@@ -2060,7 +2066,7 @@
       "path": "/v1/offers/{id}/achievements",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2071,7 +2077,7 @@
       "path": "/v1/offers/{id}/age-rating",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2082,7 +2088,7 @@
       "path": "/v1/offers/{id}/assets",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2093,7 +2099,7 @@
       "path": "/v1/offers/{id}/builds",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2104,7 +2110,7 @@
       "path": "/v1/offers/{id}/bundle",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2115,7 +2121,7 @@
       "path": "/v1/offer-by-slug/{slug}",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -2126,7 +2132,7 @@
       "path": "/v1/offers/{id}/changelog/stats",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2137,7 +2143,7 @@
       "path": "/v1/offers/{id}/collection",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2148,7 +2154,7 @@
       "path": "/v1/offers/{id}/collections/{collection}",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2159,7 +2165,7 @@
       "path": "/v1/offers/events/{id}",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offers.ts"
       ],
       "status": "active"
     },
@@ -2170,7 +2176,7 @@
       "path": "/v1/offers/{id}/features",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2181,7 +2187,7 @@
       "path": "/v1/offers/{id}/franchises",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2192,7 +2198,7 @@
       "path": "/v1/offers/{id}/genres",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2203,7 +2209,7 @@
       "path": "/v1/offers/{id}/giveaways",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2214,7 +2220,7 @@
       "path": "/v1/offers/{id}/has-prepurchase",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2225,7 +2231,7 @@
       "path": "/v1/offers/{id}/has-regular",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2236,7 +2242,7 @@
       "path": "/v1/offers/{id}/hltb",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2247,7 +2253,7 @@
       "path": "/v1/offers/{id}/igdb",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2258,7 +2264,7 @@
       "path": "/v1/offers/{id}/items",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2269,7 +2275,7 @@
       "path": "/v1/offers/{id}/mappings",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2280,7 +2286,7 @@
       "path": "/v1/offers/{id}/media",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2291,7 +2297,7 @@
       "path": "/v1/offers/{id}/og",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/og.ts"
       ],
       "status": "active"
     },
@@ -2302,7 +2308,7 @@
       "path": "/v1/offers/{id}/og.webp",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/og.ts"
       ],
       "status": "active"
     },
@@ -2313,7 +2319,7 @@
       "path": "/v1/offers/{id}/overview",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2324,7 +2330,7 @@
       "path": "/v1/offers/{id}/polls",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2335,7 +2341,7 @@
       "path": "/v1/offers/{id}/price",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2346,7 +2352,7 @@
       "path": "/v1/offers/{id}/price/fairness",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2357,7 +2363,7 @@
       "path": "/v1/offers/{id}/price-stats",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2368,7 +2374,7 @@
       "path": "/v1/offers/{id}/ratings",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2379,7 +2385,7 @@
       "path": "/v1/offers/{id}/regional-price",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2390,7 +2396,7 @@
       "path": "/v1/offers/{id}/requirements",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2401,7 +2407,7 @@
       "path": "/v1/offers/{id}/reviews-summary",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2412,7 +2418,7 @@
       "path": "/v1/items/bulk/offers",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/items.ts"
       ],
       "status": "active"
     },
@@ -2423,7 +2429,7 @@
       "path": "/v1/offers/{id}/suggestions",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2434,7 +2440,7 @@
       "path": "/v1/offers/{id}/technologies",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2445,7 +2451,7 @@
       "path": "/v1/offers/{id}/tops",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2456,7 +2462,7 @@
       "path": "/v1/profiles/{id}",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/profiles.ts"
       ],
       "status": "active"
     },
@@ -2467,7 +2473,7 @@
       "path": "/v1/profiles/{id}/achievements/{sandboxId}",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/profiles.ts"
       ],
       "status": "active"
     },
@@ -2478,7 +2484,7 @@
       "path": "/v1/profiles/{id}/information",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/profiles.ts"
       ],
       "status": "active"
     },
@@ -2489,7 +2495,7 @@
       "path": "/v1/profiles/{id}/random-game",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/profiles.ts"
       ],
       "status": "active"
     },
@@ -2500,7 +2506,7 @@
       "path": "/v1/profiles/{id}/rare-achievements/{sandboxId}",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/profiles.ts"
       ],
       "status": "active"
     },
@@ -2511,7 +2517,7 @@
       "path": "/v1/profiles/sitemap.xml",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/native.ts"
       ],
       "status": "active"
     },
@@ -2522,7 +2528,7 @@
       "path": "/v1/promotions/{id}/cover",
       "sources": [
         "src/v1/operations/promotions.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/promotions.ts"
       ],
       "status": "active"
     },
@@ -2533,7 +2539,7 @@
       "path": "/v1/promotions-sitemap.xml",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/native.ts"
       ],
       "status": "active"
     },
@@ -2544,7 +2550,7 @@
       "path": "/v1/region",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -2555,7 +2561,7 @@
       "path": "/v1/offers/{id}/related",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2566,7 +2572,7 @@
       "path": "/v1/robots.txt",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/native.ts"
       ],
       "status": "active"
     },
@@ -2577,7 +2583,7 @@
       "path": "/v1/sandboxes/{sandboxId}",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sandboxes.ts"
       ],
       "status": "active"
     },
@@ -2588,7 +2594,7 @@
       "path": "/v1/sandboxes/{sandboxId}/base-game",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sandboxes.ts"
       ],
       "status": "active"
     },
@@ -2599,7 +2605,7 @@
       "path": "/v1/sandboxes/{sandboxId}/changelog",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sandboxes.ts"
       ],
       "status": "active"
     },
@@ -2610,7 +2616,7 @@
       "path": "/v1/sandboxes/sitemap.xml",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/native.ts"
       ],
       "status": "active"
     },
@@ -2621,7 +2627,7 @@
       "path": "/v1/sandboxes/{sandboxId}/og",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/og.ts"
       ],
       "status": "active"
     },
@@ -2632,7 +2638,7 @@
       "path": "/v1/sandboxes/{sandboxId}/og.webp",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/og.ts"
       ],
       "status": "active"
     },
@@ -2643,7 +2649,7 @@
       "path": "/v1/sandboxes/{sandboxId}/stats",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sandboxes.ts"
       ],
       "status": "active"
     },
@@ -2654,7 +2660,7 @@
       "path": "/v1/search/{id}",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/search.ts"
       ],
       "status": "active"
     },
@@ -2665,7 +2671,7 @@
       "path": "/v1/search/{id}/count",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/search.ts"
       ],
       "status": "active"
     },
@@ -2676,7 +2682,7 @@
       "path": "/v1/sellers/{id}/cover",
       "sources": [
         "src/v1/operations/sellers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sellers.ts"
       ],
       "status": "active"
     },
@@ -2687,7 +2693,7 @@
       "path": "/v1/sellers/{id}/stats",
       "sources": [
         "src/v1/operations/sellers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sellers.ts"
       ],
       "status": "active"
     },
@@ -2698,7 +2704,7 @@
       "path": "/v1/sitemap.xml",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/native.ts"
       ],
       "status": "active"
     },
@@ -2709,7 +2715,7 @@
       "path": "/v1/stats",
       "sources": [
         "src/v1/operations/stats.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/stats.ts"
       ],
       "status": "active"
     },
@@ -2720,7 +2726,7 @@
       "path": "/v1/open-api.json",
       "sources": [
         "src/v1/operations/system.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/system.ts"
       ],
       "status": "active"
     },
@@ -2731,7 +2737,7 @@
       "path": "/v1/stats/creations/yearly",
       "sources": [
         "src/v1/operations/stats.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/stats.ts"
       ],
       "status": "active"
     },
@@ -2742,7 +2748,7 @@
       "path": "/v1/stats/releases/yearly",
       "sources": [
         "src/v1/operations/stats.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/stats.ts"
       ],
       "status": "active"
     },
@@ -2753,7 +2759,7 @@
       "path": "/v1/catalog/hydrate",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog-hydrate.ts"
       ],
       "status": "active"
     },
@@ -2764,7 +2770,7 @@
       "path": "/v1/active-sales",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -2775,7 +2781,7 @@
       "path": "/v1/builds/{id}/files",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/builds.ts"
       ],
       "status": "active"
     },
@@ -2786,7 +2792,7 @@
       "path": "/v1/builds/{id}/items",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/builds.ts"
       ],
       "status": "active"
     },
@@ -2797,7 +2803,7 @@
       "path": "/v1/builds",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/builds.ts"
       ],
       "status": "active"
     },
@@ -2808,7 +2814,7 @@
       "path": "/v1/offers/{id}/in-bundle",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2819,7 +2825,7 @@
       "path": "/v1/changelist",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -2830,7 +2836,7 @@
       "path": "/v1/changelog",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -2841,7 +2847,7 @@
       "path": "/v1/countries",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -2852,7 +2858,7 @@
       "path": "/v1/offers/featured-discounts",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offers.ts"
       ],
       "status": "active"
     },
@@ -2863,7 +2869,7 @@
       "path": "/v1/free-games",
       "sources": [
         "src/v1/operations/free-games.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/free-games.ts"
       ],
       "status": "active"
     },
@@ -2874,7 +2880,7 @@
       "path": "/v1/free-games/sellers",
       "sources": [
         "src/v1/operations/free-games.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/free-games.ts"
       ],
       "status": "active"
     },
@@ -2885,7 +2891,7 @@
       "path": "/v1/free-games/history",
       "sources": [
         "src/v1/operations/free-games.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/free-games.ts"
       ],
       "status": "active"
     },
@@ -2896,7 +2902,7 @@
       "path": "/v1/items",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/items.ts"
       ],
       "status": "active"
     },
@@ -2907,7 +2913,7 @@
       "path": "/v1/items-from-offer/{id}",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -2918,7 +2924,7 @@
       "path": "/v1/offers/latest-achievements",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offers.ts"
       ],
       "status": "active"
     },
@@ -2929,7 +2935,7 @@
       "path": "/v1/offers/latest-released",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offers.ts"
       ],
       "status": "active"
     },
@@ -2940,7 +2946,7 @@
       "path": "/v1/free-games/mobile",
       "sources": [
         "src/v1/operations/free-games.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/free-games.ts"
       ],
       "status": "active"
     },
@@ -2951,7 +2957,7 @@
       "path": "/v1/offers/{id}/changelog",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2962,7 +2968,7 @@
       "path": "/v1/offers/events",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offers.ts"
       ],
       "status": "active"
     },
@@ -2973,7 +2979,7 @@
       "path": "/v1/offers/genres",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offers.ts"
       ],
       "status": "active"
     },
@@ -2984,7 +2990,7 @@
       "path": "/v1/offers/{id}/price-history",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -2995,7 +3001,7 @@
       "path": "/v1/offers/{id}/reviews",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offer-details.ts"
       ],
       "status": "active"
     },
@@ -3006,7 +3012,7 @@
       "path": "/v1/offers",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offers.ts"
       ],
       "status": "active"
     },
@@ -3017,7 +3023,7 @@
       "path": "/v1/profiles/{id}/achievements",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/profiles.ts"
       ],
       "status": "active"
     },
@@ -3028,7 +3034,7 @@
       "path": "/v1/profiles/{id}/games",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/profiles.ts"
       ],
       "status": "active"
     },
@@ -3039,7 +3045,7 @@
       "path": "/v1/profiles/leaderboard",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/profiles.ts"
       ],
       "status": "active"
     },
@@ -3050,7 +3056,7 @@
       "path": "/v1/profiles/{id}/rare-achievements",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/profiles.ts"
       ],
       "status": "active"
     },
@@ -3061,7 +3067,7 @@
       "path": "/v1/promotions/{id}",
       "sources": [
         "src/v1/operations/promotions.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/promotions.ts"
       ],
       "status": "active"
     },
@@ -3072,7 +3078,7 @@
       "path": "/v1/promotions",
       "sources": [
         "src/v1/operations/promotions.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/promotions.ts"
       ],
       "status": "active"
     },
@@ -3083,7 +3089,7 @@
       "path": "/v1/regions",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -3094,7 +3100,7 @@
       "path": "/v1/sales",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -3105,7 +3111,7 @@
       "path": "/v1/sandboxes/{sandboxId}/achievements",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sandboxes.ts"
       ],
       "status": "active"
     },
@@ -3116,7 +3122,7 @@
       "path": "/v1/sandboxes/{sandboxId}/assets",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sandboxes.ts"
       ],
       "status": "active"
     },
@@ -3127,7 +3133,7 @@
       "path": "/v1/sandboxes/{sandboxId}/builds",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sandboxes.ts"
       ],
       "status": "active"
     },
@@ -3138,7 +3144,7 @@
       "path": "/v1/sandboxes",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sandboxes.ts"
       ],
       "status": "active"
     },
@@ -3149,7 +3155,7 @@
       "path": "/v1/sandboxes/{sandboxId}/items",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sandboxes.ts"
       ],
       "status": "active"
     },
@@ -3160,7 +3166,7 @@
       "path": "/v1/sandboxes/{sandboxId}/offers",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sandboxes.ts"
       ],
       "status": "active"
     },
@@ -3171,7 +3177,7 @@
       "path": "/v1/search/developers",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/search.ts"
       ],
       "status": "active"
     },
@@ -3182,7 +3188,7 @@
       "path": "/v1/search/offer-types",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/search.ts"
       ],
       "status": "active"
     },
@@ -3193,7 +3199,7 @@
       "path": "/v1/search/publishers",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/search.ts"
       ],
       "status": "active"
     },
@@ -3204,7 +3210,7 @@
       "path": "/v1/search/tags",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/search.ts"
       ],
       "status": "active"
     },
@@ -3215,7 +3221,7 @@
       "path": "/v1/sellers/{id}",
       "sources": [
         "src/v1/operations/sellers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sellers.ts"
       ],
       "status": "active"
     },
@@ -3226,7 +3232,7 @@
       "path": "/v1/sellers",
       "sources": [
         "src/v1/operations/sellers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/sellers.ts"
       ],
       "status": "active"
     },
@@ -3237,7 +3243,7 @@
       "path": "/v1/tags",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/catalog.ts"
       ],
       "status": "active"
     },
@@ -3248,7 +3254,7 @@
       "path": "/v1/offers/top-sellers",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offers.ts"
       ],
       "status": "active"
     },
@@ -3259,7 +3265,7 @@
       "path": "/v1/offers/top-wishlisted",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offers.ts"
       ],
       "status": "active"
     },
@@ -3270,7 +3276,7 @@
       "path": "/v1/offers/upcoming",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/offers.ts"
       ],
       "status": "active"
     },
@@ -3281,7 +3287,7 @@
       "path": "/v1/multisearch/items",
       "sources": [
         "src/v1/operations/multisearch.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/multisearch.ts"
       ],
       "status": "active"
     },
@@ -3292,7 +3298,7 @@
       "path": "/v1/multisearch/offers",
       "sources": [
         "src/v1/operations/multisearch.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/multisearch.ts"
       ],
       "status": "active"
     },
@@ -3303,7 +3309,7 @@
       "path": "/v1/multisearch/sellers",
       "sources": [
         "src/v1/operations/multisearch.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/multisearch.ts"
       ],
       "status": "active"
     },
@@ -3314,7 +3320,7 @@
       "path": "/v1/search/natural-language",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/search.ts"
       ],
       "status": "active"
     },
@@ -3325,7 +3331,7 @@
       "path": "/v1/builds/resolve-launcher-records",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/builds.ts"
       ],
       "status": "active"
     },
@@ -3336,7 +3342,7 @@
       "path": "/v1/search/changelog",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/search.ts"
       ],
       "status": "active"
     },
@@ -3347,7 +3353,7 @@
       "path": "/v1/free-games/search",
       "sources": [
         "src/v1/operations/free-games.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/free-games.ts"
       ],
       "status": "active"
     },
@@ -3358,7 +3364,7 @@
       "path": "/v1/search",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/search.ts"
       ],
       "status": "active"
     },
@@ -3369,7 +3375,7 @@
       "path": "/v1/search",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/router.ts"
+        "src/v1/routes/search.ts"
       ],
       "status": "active"
     }

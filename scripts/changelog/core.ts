@@ -8,6 +8,7 @@ import {
   endpointKey,
   graphqlContract,
   hash,
+  hasRuntimeTsChange,
   routeInventory,
   type Endpoint,
   type Snapshot,
@@ -110,6 +111,23 @@ const relevant = (p: string) =>
     p,
   );
 
+function hasRuntimePackageJsonChange(before: string, after: string): boolean {
+  try {
+    const pick = (raw: string) => {
+      const parsed = JSON.parse(raw) as Record<string, unknown>;
+      return canonical({
+        dependencies: parsed.dependencies ?? {},
+        optionalDependencies: parsed.optionalDependencies ?? {},
+        overrides: parsed.overrides ?? {},
+        pnpm: parsed.pnpm ?? {},
+      });
+    };
+    return pick(before) !== pick(after);
+  } catch {
+    return true;
+  }
+}
+
 export function impact(base: Snapshot, head: Snapshot) {
   const changed = [...new Set([...base.keys(), ...head.keys()])]
     .filter((p) => relevant(p) && base.get(p) !== head.get(p))
@@ -126,13 +144,47 @@ export function impact(base: Snapshot, head: Snapshot) {
       if (!all.has(endpointKey(e))) all.set(endpointKey(e), e);
     }
   }
+  const mappings = JSON.parse(
+    head.get("changes/impact-map.json") ?? "{}",
+  ) as Record<string, string[]>;
+  const nonPublicMatches = (file: string) =>
+    Object.entries(mappings).some(
+      ([root, versions]) =>
+        versions.length === 0 &&
+        (root.endsWith("/") ? file.startsWith(root) : file === root),
+    );
   const candidates = new Set<string>();
   const known = new Set<string>();
-  for (const files of [base, head]) {
-    const graph = dependencies(files);
+  const runtimeChanged: string[] = [];
+  for (const file of changed) {
+    if (nonPublicMatches(file)) {
+      known.add(file);
+      continue;
+    }
+    if (
+      /\.[cm]?tsx?$/.test(file) &&
+      file !== "src/graphql/typedefs.ts" &&
+      !hasRuntimeTsChange(file, base.get(file), head.get(file))
+    ) {
+      known.add(file);
+      continue;
+    }
+    if (
+      file === "package.json" &&
+      base.has(file) &&
+      head.has(file) &&
+      !hasRuntimePackageJsonChange(base.get(file)!, head.get(file)!)
+    ) {
+      known.add(file);
+      continue;
+    }
+    runtimeChanged.push(file);
+  }
+  const graphs = [dependencies(base), dependencies(head)];
+  for (const graph of graphs) {
     for (const e of all.values()) {
       const deps = closure(graph, e.sources);
-      for (const file of changed) {
+      for (const file of runtimeChanged) {
         if (deps.has(file)) {
           candidates.add(endpointKey(e));
           known.add(file);
@@ -140,14 +192,22 @@ export function impact(base: Snapshot, head: Snapshot) {
       }
     }
   }
-  const mappings = JSON.parse(
-    head.get("changes/impact-map.json") ?? "{}",
-  ) as Record<string, string[]>;
-  for (const files of [base, head]) {
-    const graph = dependencies(files);
-    for (const [root, versions] of Object.entries(mappings)) {
+  for (const [root, versions] of Object.entries(mappings)) {
+    if (versions.length === 0) continue;
+    if (root.endsWith("/")) {
+      for (const file of runtimeChanged) {
+        if (file.startsWith(root)) {
+          known.add(file);
+          for (const e of all.values()) {
+            if (versions.includes(e.apiVersion)) candidates.add(endpointKey(e));
+          }
+        }
+      }
+      continue;
+    }
+    for (const graph of graphs) {
       const deps = closure(graph, [root]);
-      for (const file of changed.filter((p) => deps.has(p))) {
+      for (const file of runtimeChanged.filter((p) => deps.has(p))) {
         known.add(file);
         for (const e of all.values()) {
           if (versions.includes(e.apiVersion)) candidates.add(endpointKey(e));
@@ -340,7 +400,10 @@ export function checkChanges(
       } else assessments.push(a);
     }
   }
-  if (result.changed.length && !assessments.length) {
+  if (
+    (result.candidates.length || result.unknown.length) &&
+    !assessments.length
+  ) {
     errors.push("API changes require a current validated impact assessment");
   }
 

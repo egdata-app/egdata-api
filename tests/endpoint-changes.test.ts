@@ -293,4 +293,107 @@ describe("strict operation coverage", () => {
     head.set("changes/records/test-change.json", JSON.stringify(r));
     expect(() => checkChanges(base, head, baseCommit)).toThrow();
   });
+
+  it("isolates mounted sub-routers and attributes v1 routes per handler module", () => {
+    const base = fixture();
+    base.set(
+      "src/index.ts",
+      [
+        'import Offers from "./routes/offers.js";',
+        'import v1Router from "./v1/router.js";',
+        'app.get("/health", () => new Response("ok"));',
+        'app.route("/offers", Offers);',
+        'app.route("/v1", v1Router);',
+      ].join("\n"),
+    );
+    base.set(
+      "src/v1/router.ts",
+      [
+        'import assetsRoutes from "./routes/assets.js";',
+        'import buildsRoutes from "./routes/builds.js";',
+        'v1.route("/", assetsRoutes);',
+        'v1.route("/", buildsRoutes);',
+      ].join("\n"),
+    );
+    base.set(
+      "src/v1/routes/assets.ts",
+      'app.get("/assets/:id", handler);',
+    );
+    base.set(
+      "src/v1/routes/builds.ts",
+      'app.get("/builds/:id", handler);',
+    );
+    base.set(
+      "openapi/egdata.v1.openapi.json",
+      JSON.stringify({
+        openapi: "3.0.3",
+        paths: {
+          "/v1/assets/{id}": { get: { operationId: "getAsset" } },
+          "/v1/builds/{id}": { get: { operationId: "getBuild" } },
+        },
+      }),
+    );
+    registry(base);
+
+    const head = new Map(base);
+    head.set(
+      "src/v1/routes/assets.ts",
+      'app.get("/assets/:id", handler); const v = 2;',
+    );
+    const result = impact(base, head);
+    expect(result.candidates).toEqual(["v1:getAsset"]);
+    expect(result.unknown).toEqual([]);
+  });
+
+  it("ignores type-only, comment-only, non-dependency package.json, and non-public impact-map changes", () => {
+    const base = fixture();
+    base.set(
+      "changes/impact-map.json",
+      JSON.stringify({
+        "dashboard/worker/proxy.ts": ["legacy"],
+        "dashboard/worker/analytics-reporting.ts": [],
+        "src/trigger/": [],
+      }),
+    );
+    base.set(
+      "dashboard/worker/proxy.ts",
+      'import { record } from "./analytics.js"; import type { Summary } from "./types.js"; export const run = (s: Summary) => record(s);',
+    );
+    base.set(
+      "dashboard/worker/analytics.ts",
+      'export const record = (x: unknown) => x; export { query } from "./analytics-reporting.js";',
+    );
+    base.set(
+      "dashboard/worker/analytics-reporting.ts",
+      "export const query = () => 1;",
+    );
+    base.set("dashboard/worker/types.ts", "export interface Summary { a: number }");
+    base.set("src/trigger/job.ts", "export const runJob = () => 1;");
+    base.set(
+      "package.json",
+      JSON.stringify({ dependencies: { hono: "1.0.0" }, devDependencies: { vitest: "1.0.0" } }),
+    );
+    registry(base);
+
+    const head = new Map(base);
+    head.set(
+      "dashboard/worker/analytics-reporting.ts",
+      "export const query = () => 2;",
+    );
+    head.set(
+      "dashboard/worker/types.ts",
+      "// updated docs\nexport interface Summary { a: number; b?: string }",
+    );
+    head.set("src/trigger/job.ts", "export const runJob = () => 2;");
+    head.set("src/utils/nested.ts", "// comment only\nexport const schema = 1;");
+    head.set(
+      "package.json",
+      JSON.stringify({ dependencies: { hono: "1.0.0" }, devDependencies: { vitest: "2.0.0" } }),
+    );
+
+    const result = impact(base, head);
+    expect(result.candidates).toEqual([]);
+    expect(result.unknown).toEqual([]);
+    expect(checkChanges(base, head, baseCommit).errors).toEqual([]);
+  });
 });
