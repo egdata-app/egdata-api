@@ -144,4 +144,41 @@ describe("origin authentication", () => {
       ).status,
     ).toBe(403);
   });
+
+  it("marks trustedGatewayAuthenticated only when origin token and gateway identity header are both valid", async () => {
+    const app = new Hono<{ Variables: { trustedGatewayAuthenticated?: boolean } }>();
+    app.use("/*", originAuth({ token, required: false }));
+    app.get("/check", (c) =>
+      c.json({
+        trusted: c.get("trustedGatewayAuthenticated"),
+        gatewayAuth: c.req.header("x-egdata-authenticated") ?? null,
+        tier: c.req.header("x-egdata-key-tier") ?? null,
+      }),
+    );
+
+    const forged = await app.request("https://api.egdata.app/check", {
+      headers: {
+        "X-Egdata-Authenticated": "1",
+        "X-Egdata-Key-Tier": "scale",
+      },
+    });
+    expect(await forged.json()).toEqual({
+      trusted: false,
+      gatewayAuth: null,
+      tier: null,
+    });
+
+    const trusted = await app.request("https://api.egdata.app/check", {
+      headers: {
+        "X-Egdata-Origin-Token": token,
+        "X-Egdata-Authenticated": "1",
+        "X-Egdata-Key-Tier": "scale",
+      },
+    });
+    expect(await trusted.json()).toEqual({
+      trusted: true,
+      gatewayAuth: "1",
+      tier: "scale",
+    });
+  });
 });

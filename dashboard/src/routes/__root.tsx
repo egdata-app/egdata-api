@@ -534,19 +534,21 @@ function UnauthenticatedLanding({
 
           <div className="pt-4 border-t border-epic-border space-y-2 text-xs text-epic-text-muted">
             <div className="flex items-center justify-between">
-              <span>Free limit per project</span>
-              <span className="font-mono text-epic-text">120 requests/min</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Free allowance per account</span>
+              <span>Free tier</span>
               <span className="font-mono text-epic-text">
-                100,000 requests/month
+                100,000 req/month · 60 req/min
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span>Pro limit per project</span>
+              <span>Pro (€9/mo VAT incl.)</span>
               <span className="font-mono text-epic-accent">
-                1,200 requests/min
+                300,000 req/period · 200 req/min
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Scale (€19/mo VAT incl.)</span>
+              <span className="font-mono text-epic-accent">
+                1,000,000 req/period · 600 req/min
               </span>
             </div>
           </div>

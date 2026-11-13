@@ -415,7 +415,7 @@ describe("free account 100,000/month quota enforcement", () => {
     ).toBe(200);
   });
 
-  it("counts cache hits and upstream 5xx responses while excluding auth failures, permission denials, quota rejections, and public bypasses", async () => {
+  it("counts cache hits and restores monthly units on upstream 5xx while excluding auth failures, permission denials, quota rejections, and public bypasses", async () => {
     const h = await createQuotaHarness();
     const restrictedKey = await h.issueKey({ scopes: ["offers:read"] });
 
@@ -437,7 +437,8 @@ describe("free account 100,000/month quota enforcement", () => {
         })
       ).status,
     ).toBe(403);
-    // 4. Public bypasses -> 200 / 204 (excluded)
+    // 4. Spoofed Origin rejected (401); trusted first-party bypass & public routes -> 200 / 204 (excluded)
+    h.env.FIRST_PARTY_SERVICE_TOKEN = "trusted-first-party-secret";
     expect((await h.callGateway("/health")).status).toBe(200);
     expect((await h.callGateway("/v1/health")).status).toBe(200);
     expect(
@@ -445,6 +446,18 @@ describe("free account 100,000/month quota enforcement", () => {
         await h.callGateway(
           "/free-games",
           { Origin: "https://egdata.app" },
+          "GET",
+        )
+      ).status,
+    ).toBe(401);
+    expect(
+      (
+        await h.callGateway(
+          "/free-games",
+          {
+            Origin: "https://egdata.app",
+            "X-Egdata-First-Party-Token": "trusted-first-party-secret",
+          },
           "GET",
         )
       ).status,
@@ -492,19 +505,17 @@ describe("free account 100,000/month quota enforcement", () => {
     ).toBe(200);
     expect(h.upstream).toHaveBeenCalledTimes(upstreamBeforeHit);
 
-    // Third call returns upstream 500 -> still counted
+    // Third call returns upstream 500 -> minute window remains consumed, monthly/period unit is credited back idempotently
     h.upstream.mockResolvedValueOnce(
       new Response("Internal Server Error", { status: 500 }),
     );
-    expect(
-      (
-        await h.callGateway("/v1/offers/some-offer", {
-          "x-api-key": validKey.rawKey,
-        })
-      ).status,
-    ).toBe(500);
+    const failedRes = await h.callGateway("/v1/offers/some-offer", {
+      "x-api-key": validKey.rawKey,
+    });
+    expect(failedRes.status).toBe(500);
+    expect(failedRes.headers.get("RateLimit")).toContain("r=117");
 
-    expect((await readAccountMonthlyQuota(h.env, "owner_free")).used).toBe(3);
+    expect((await readAccountMonthlyQuota(h.env, "owner_free")).used).toBe(2);
   });
 
   it("preserves account usage across key rotation/deletion, project deletion/recreation, custom RPM overrides, and tier transitions, while exempting paid projects", async () => {

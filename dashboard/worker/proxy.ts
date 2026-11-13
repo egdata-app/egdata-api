@@ -1,14 +1,21 @@
 import { recordApiTelemetry } from "./analytics.js";
 import { UNATTRIBUTED_LEGACY_ID } from "./analytics-types.js";
-import { sha256Hex } from "./crypto.js";
+import { sha256Hex, timingSafeStringEqual } from "./crypto.js";
 import { touchApiKeyLastUsed } from "./db.js";
 import { fetchLegacyWithEdgeCache } from "./edge-cache.js";
 import { resolveApiKeyMetadata } from "./key-cache.js";
-import { evaluateKeyPermissions, originMatchesPattern } from "./permissions.js";
+import { evaluateKeyPermissions } from "./permissions.js";
+import {
+  evaluatePlanEntitlement,
+  isCommercialLimitsEnabled,
+} from "./plans.js";
 import {
   admitProjectRequest,
+  creditAdmittedRequestUsage,
   MONTHLY_POLICY_NAME,
+  PERIOD_POLICY_NAME,
   rateLimitHeaders,
+  resolveEffectiveProjectEntitlement,
 } from "./project-quota.js";
 import type { AdmissionResult } from "./rate-limiter-core.js";
 import type { CachedKeyMetadata, DashboardEnv } from "./types.js";
@@ -16,6 +23,7 @@ import { forwardToUpstream } from "./upstream.js";
 import { handleV1ApiProxy } from "./v1.js";
 import {
   expensivePolicyLimitForProject,
+  resolveExpensivePeriodPolicyName,
   resolveLegacyExpensivePolicy,
 } from "./v1-routes.js";
 
@@ -98,18 +106,16 @@ function extractClientApiKey(request: Request): string | null {
   return null;
 }
 
-function isAllowedFirstPartyOrigin(
-  origin: string | null,
+async function isTrustedFirstPartyRequest(
+  request: Request,
   env: DashboardEnv,
-): boolean {
-  if (!origin) return false;
-  const rawList = env.ALLOW_FIRST_PARTY_ORIGINS || "";
-  if (!rawList) return false;
-  const patterns = rawList
-    .split(",")
-    .map((p) => p.trim())
-    .filter(Boolean);
-  return patterns.some((pattern) => originMatchesPattern(origin, pattern));
+): Promise<boolean> {
+  const expected = env.FIRST_PARTY_SERVICE_TOKEN?.trim();
+  if (!expected) return false;
+  const supplied =
+    request.headers.get("x-egdata-first-party-token")?.trim() ?? "";
+  if (!supplied) return false;
+  return timingSafeStringEqual(supplied, expected);
 }
 
 const lastUsedTouchDebounce = new Map<string, number>();
@@ -217,8 +223,8 @@ export async function handleEdgeApiProxy(
   const requireKey = String(env.REQUIRE_API_KEY) !== "false";
 
   if (!rawApiKey) {
-    // Allow configured first-party web origins (e.g. https://egdata.app) if configured
-    if (!requireKey || isAllowedFirstPartyOrigin(originHeader, env)) {
+    const trustedFirstParty = await isTrustedFirstPartyRequest(request, env);
+    if (!requireKey || trustedFirstParty) {
       if (isAnonymousEdgeCachePath(upstreamPath)) {
         const { response, cacheStatus } = await fetchLegacyWithEdgeCache({
           request,
@@ -311,7 +317,40 @@ export async function handleEdgeApiProxy(
     );
   }
 
-  // 5. Share one global project allowance with v1 and the API console.
+  // 5. Evaluate server-owned plan entitlements before cache access or quota admission.
+  const entitlement = await resolveEffectiveProjectEntitlement(env, keyMeta);
+  const entitlementCheck = evaluatePlanEntitlement(entitlement, {
+    pathname: upstreamPath,
+    method: request.method,
+  });
+  if (!entitlementCheck.allowed) {
+    recordApiTelemetry(env, {
+      ownerEpicId: keyMeta.ownerEpicId,
+      keyId: keyMeta.keyId,
+      projectId: keyMeta.projectId,
+      routeTemplate: normalizeRouteTemplate(upstreamPath, null),
+      method: request.method,
+      statusCode: 403,
+      cacheStatus: "EDGE_BLOCK",
+      limitOutcome: "entitlement_denied",
+      origin: originHeader ?? "(direct)",
+      clientIp: clientIp ?? "unknown",
+      userAgent,
+      country,
+      latencyMs: performance.now() - startMs,
+    });
+    return edgeErrorJson(
+      403,
+      "PLAN_ENTITLEMENT_REQUIRED",
+      entitlementCheck.message ||
+        "Current subscription plan does not include access to this capability.",
+      originHeader,
+      { "X-Egdata-Key-Tier": entitlement.tier },
+    );
+  }
+
+  // 6. Share one global project allowance with v1 and the API console.
+  const commercial = isCommercialLimitsEnabled(env);
   const expensivePolicy = resolveLegacyExpensivePolicy(
     upstreamPath,
     request.method,
@@ -320,13 +359,28 @@ export async function handleEdgeApiProxy(
     ? [
         {
           name: expensivePolicy,
-          limit: expensivePolicyLimitForProject(expensivePolicy, keyMeta),
+          limit: expensivePolicyLimitForProject(
+            expensivePolicy,
+            keyMeta,
+            entitlement,
+            commercial,
+          ),
         },
       ]
     : [];
+  const periodBudget = resolveExpensivePeriodPolicyName(
+    upstreamPath,
+    request.method,
+  );
   let admission: AdmissionResult;
   try {
-    admission = await admitProjectRequest(env, keyMeta, additionalPolicies);
+    admission = await admitProjectRequest(
+      env,
+      keyMeta,
+      additionalPolicies,
+      undefined,
+      { entitlement, periodBudget },
+    );
   } catch {
     recordApiTelemetry(env, {
       ownerEpicId: keyMeta.ownerEpicId,
@@ -355,6 +409,18 @@ export async function handleEdgeApiProxy(
 
   if (!admission.allowed) {
     const monthlyExhausted = admission.exhaustedPolicy === MONTHLY_POLICY_NAME;
+    const periodExhausted = admission.exhaustedPolicy === PERIOD_POLICY_NAME;
+    const periodBudgetExhausted = Boolean(
+      admission.exhaustedPolicy &&
+        admission.exhaustedPolicy.endsWith("-period") &&
+        !periodExhausted,
+    );
+    const exhausted = admission.policies.find(
+      (entry) => entry.name === admission.exhaustedPolicy,
+    );
+    const resetIso = exhausted
+      ? new Date(exhausted.resetAt).toISOString()
+      : new Date(admission.resetAt).toISOString();
     recordApiTelemetry(env, {
       ownerEpicId: keyMeta.ownerEpicId,
       keyId: keyMeta.keyId,
@@ -365,7 +431,11 @@ export async function handleEdgeApiProxy(
       cacheStatus: "EDGE_BLOCK",
       limitOutcome: monthlyExhausted
         ? "monthly_quota_exceeded"
-        : "rate_limited",
+        : periodExhausted
+          ? "period_quota_exceeded"
+          : periodBudgetExhausted
+            ? "expensive_budget_exceeded"
+            : "rate_limited",
       origin: originHeader ?? "(direct)",
       clientIp: clientIp ?? "unknown",
       userAgent,
@@ -375,10 +445,20 @@ export async function handleEdgeApiProxy(
 
     return edgeErrorJson(
       429,
-      monthlyExhausted ? "MONTHLY_QUOTA_EXCEEDED" : "RATE_LIMITED",
+      monthlyExhausted
+        ? "MONTHLY_QUOTA_EXCEEDED"
+        : periodExhausted
+          ? "PERIOD_QUOTA_EXCEEDED"
+          : periodBudgetExhausted
+            ? "EXPENSIVE_BUDGET_EXCEEDED"
+            : "RATE_LIMITED",
       monthlyExhausted
         ? "Free account monthly quota of 100,000 requests is exhausted across all free projects, API keys, and console sessions until the next calendar month at 00:00 UTC. Request higher limits in the egdata Developer Portal."
-        : `Project rate limit exceeded for ${keyMeta.tier} tier. All API keys share this allowance. Request higher limits in the egdata Developer Portal.`,
+        : periodExhausted
+          ? `The ${entitlement.planId} billing-period allowance is exhausted until ${resetIso}. Manage your subscription in the egdata Developer Portal.`
+          : periodBudgetExhausted && exhausted
+            ? `The ${exhausted.name} budget of ${exhausted.limit.toLocaleString()} requests for this period is exhausted until ${resetIso}.`
+            : `Project rate limit exceeded for ${entitlement.tier} tier. All API keys share this allowance. Request higher limits in the egdata Developer Portal.`,
       originHeader,
       {
         ...quotaHeaders,
@@ -386,21 +466,25 @@ export async function handleEdgeApiProxy(
         ...(admission.exhaustedPolicy
           ? { "X-RateLimit-Policy": admission.exhaustedPolicy }
           : {}),
-        "X-Egdata-Key-Tier": keyMeta.tier,
+        "X-Egdata-Key-Tier": entitlement.tier,
       },
     );
   }
 
-  // 6. Debounced async last_used_at update in D1 (at most once every 5 minutes per isolate per key)
+  // 7. Debounced async last_used_at update in D1 (at most once every 5 minutes per isolate per key)
   const lastTouch = lastUsedTouchDebounce.get(keyMeta.keyId) ?? 0;
   if (Date.now() - lastTouch > 5 * 60 * 1000) {
     lastUsedTouchDebounce.set(keyMeta.keyId, Date.now());
     ctx.waitUntil(touchApiKeyLastUsed(env.DB, keyMeta.keyId).catch(() => {}));
   }
 
-  // 7. Serve from Worker edge cache or forward to the dedicated origin after permission/rate-limit checks.
-  const { response: upstreamResponse, cacheStatus } =
-    await fetchLegacyWithEdgeCache({
+  // 8. Serve from Worker edge cache or forward to the dedicated origin after permission/entitlement/rate-limit checks.
+  const requestCreditId =
+    request.headers.get("cf-ray") || crypto.randomUUID();
+  let upstreamResponse: Response;
+  let cacheStatus: string;
+  try {
+    const cachedResult = await fetchLegacyWithEdgeCache({
       request,
       ctx,
       pathname: upstreamPath,
@@ -412,8 +496,48 @@ export async function handleEdgeApiProxy(
           upstreamPath,
           reqUrl.search,
           cfProps,
+          {
+            headers: {
+              "x-egdata-authenticated": "1",
+              "x-egdata-key-id": keyMeta.keyId,
+              "x-egdata-key-tier": entitlement.tier,
+              "x-egdata-key-project": keyMeta.projectId,
+            },
+          },
         ),
     });
+    upstreamResponse = cachedResult.response;
+    cacheStatus = cachedResult.cacheStatus;
+  } catch {
+    ctx.waitUntil(
+      creditAdmittedRequestUsage(env, {
+        adjustmentId: `svc502:${requestCreditId}`,
+        ownerEpicId: keyMeta.ownerEpicId,
+        projectId: keyMeta.projectId,
+        entitlement,
+        reason: "origin_unavailable",
+      }).catch(() => {}),
+    );
+    return edgeErrorJson(
+      502,
+      "ORIGIN_UNAVAILABLE",
+      "The API origin is unavailable.",
+      originHeader,
+      quotaHeaders,
+    );
+  }
+
+  if (upstreamResponse.status >= 500) {
+    ctx.waitUntil(
+      creditAdmittedRequestUsage(env, {
+        adjustmentId: `svc5xx:${requestCreditId}`,
+        ownerEpicId: keyMeta.ownerEpicId,
+        projectId: keyMeta.projectId,
+        entitlement,
+        reason: `upstream_status_${upstreamResponse.status}`,
+      }).catch(() => {}),
+    );
+  }
 
   const routeTemplate = normalizeRouteTemplate(
     upstreamPath,
@@ -442,7 +566,7 @@ export async function handleEdgeApiProxy(
   for (const [name, value] of Object.entries(quotaHeaders)) {
     outHeaders.set(name, value);
   }
-  outHeaders.set("X-Egdata-Key-Tier", keyMeta.tier);
+  outHeaders.set("X-Egdata-Key-Tier", entitlement.tier);
   if (originHeader) {
     outHeaders.set("Access-Control-Allow-Origin", originHeader);
     outHeaders.set("Access-Control-Allow-Credentials", "true");

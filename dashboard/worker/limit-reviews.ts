@@ -191,6 +191,47 @@ limitReviewRoutes.post("/limit-requests/:requestId/review", async (c) => {
   }
 
   if (decision === "approved") {
+    const tier =
+      request.requestedTier === "custom" ? "enterprise" : request.requestedTier;
+    try {
+      const nowMs = Date.now();
+      await c.env.DB.prepare(
+        `UPDATE entitlement_grants SET revoked_at=?, revoked_by=?, updated_at=?
+         WHERE project_id=? AND source IN ('manual', 'grandfathered') AND revoked_at IS NULL`,
+      )
+        .bind(nowMs, reviewer, now, request.projectId)
+        .run();
+      const revRow = await c.env.DB.prepare(
+        `SELECT MAX(revision) AS max_rev FROM entitlement_grants WHERE project_id=?`,
+      )
+        .bind(request.projectId)
+        .first<{ max_rev: number | null }>();
+      await c.env.DB.prepare(
+        `INSERT INTO entitlement_grants (
+           id, project_id, owner_epic_id, source, plan_id, plan_version_id,
+           tier, rpm_limit, period_allowance, expensive_limits_json,
+           effective_from, effective_until, revision, granted_by, reason
+         ) VALUES (?, ?, ?, 'manual', ?, 'manual-custom', ?, ?, NULL, '{}', ?, NULL, ?, ?, ?)`,
+      )
+        .bind(
+          `grant_req_${crypto.randomUUID().replace(/-/g, "")}`,
+          request.projectId,
+          request.ownerEpicId,
+          tier === "enterprise" ? "enterprise" : tier,
+          tier,
+          request.requestedRpm,
+          nowMs,
+          Math.max(nowMs, (revRow?.max_rev ?? 0) + 1),
+          reviewer,
+          note || `Approved limit request ${id}`,
+        )
+        .run();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (!msg.includes("no such table")) {
+        console.error("Limit review manual grant sync error", msg);
+      }
+    }
     // Invalidate instead of publishing a metadata snapshot that could race a
     // key revocation or permission edit. Existing cache deadlines bound staleness.
     try {

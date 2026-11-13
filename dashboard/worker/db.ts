@@ -520,7 +520,7 @@ export async function insertLimitRequest(
     ownerEpicId: string;
     projectId: string;
     contactEmail: string;
-    requestedTier: "pro" | "enterprise" | "custom";
+    requestedTier: "pro" | "scale" | "enterprise" | "custom";
     requestedRpm: number;
     expectedMonthlyRequests: number;
     useCase: string;
@@ -597,7 +597,7 @@ export async function listUserLimitRequests(
       project_id: string;
       project_name: string | null;
       contact_email: string;
-      requested_tier: "pro" | "enterprise" | "custom";
+      requested_tier: "pro" | "scale" | "enterprise" | "custom";
       requested_rpm: number;
       expected_monthly_requests: number;
       use_case: string;

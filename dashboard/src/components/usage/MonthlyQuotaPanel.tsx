@@ -1,7 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle, CalendarClock, Sparkles } from "lucide-react";
+import { AlertTriangle, CalendarClock, CreditCard, Sparkles } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { type AccountMonthlyQuotaStatus, dashboardClient } from "../../lib/api";
+import {
+  type AccountMonthlyQuotaStatus,
+  dashboardClient,
+  type ProjectBillingSummaryResponse,
+} from "../../lib/api";
 import { useDashboardAuth } from "../../lib/auth-context";
 import { Button, buttonStyles } from "../ui/Button";
 import { Tag } from "../ui/Controls";
@@ -62,6 +66,8 @@ export function MonthlyQuotaPanel({
   const [monthly, setMonthly] = useState<AccountMonthlyQuotaStatus | null>(
     null,
   );
+  const [projectBilling, setProjectBilling] =
+    useState<ProjectBillingSummaryResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [revision, setRevision] = useState(0);
@@ -71,24 +77,37 @@ export function MonthlyQuotaPanel({
   const selectedIsPaid =
     selectedProject !== null && selectedProject.tier !== "free";
 
-  const load = useCallback(async (signal?: AbortSignal) => {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await dashboardClient.getMonthlyQuota(signal);
-      if (!signal?.aborted) setMonthly(res.monthly);
-    } catch (err) {
-      if (!signal?.aborted) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Monthly quota usage is temporarily unavailable.",
-        );
+  const load = useCallback(
+    async (signal?: AbortSignal) => {
+      setLoading(true);
+      setError("");
+      try {
+        const [monthlyRes, billingRes] = await Promise.all([
+          dashboardClient.getMonthlyQuota(signal),
+          selectedProject
+            ? dashboardClient
+                .getProjectBilling(selectedProject.id, signal)
+                .catch(() => null)
+            : Promise.resolve(null),
+        ]);
+        if (!signal?.aborted) {
+          setMonthly(monthlyRes.monthly);
+          setProjectBilling(billingRes);
+        }
+      } catch (err) {
+        if (!signal?.aborted) {
+          setError(
+            err instanceof Error
+              ? err.message
+              : "Monthly quota usage is temporarily unavailable.",
+          );
+        }
+      } finally {
+        if (!signal?.aborted) setLoading(false);
       }
-    } finally {
-      if (!signal?.aborted) setLoading(false);
-    }
-  }, []);
+    },
+    [selectedProject],
+  );
 
   // Both local and page refresh controls cancel any older in-flight read.
   // biome-ignore lint/correctness/useExhaustiveDependencies: revision and refreshKey trigger quota refreshes.
@@ -119,21 +138,143 @@ export function MonthlyQuotaPanel({
   }, [refresh]);
 
   if (!hasFreeProject && selectedIsPaid && !monthly?.used) {
+    const periodUsage =
+      projectBilling?.entitlement.periodType === "billing_period"
+        ? projectBilling.usage
+        : null;
+    const periodPercent =
+      periodUsage && periodUsage.allowance > 0
+        ? Math.min(100, (periodUsage.used / periodUsage.allowance) * 100)
+        : 0;
+    const periodResetIso =
+      periodUsage?.resetAt !== undefined
+        ? new Date(periodUsage.resetAt).toISOString().slice(0, 10)
+        : null;
     return (
-      <section className="rounded-xl border border-epic-border bg-epic-surface p-5 flex flex-wrap items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-white">
-              Monthly Free Allowance
-            </h2>
-            <Tag tone="success">Exempt · Paid tier</Tag>
+      <section className="rounded-xl border border-epic-border bg-epic-surface p-5 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-sm font-semibold text-white">
+                Project Allowance &amp; Entitlement
+              </h2>
+              <Tag tone="success">
+                {selectedProject?.tier.toUpperCase()} ·{" "}
+                {projectBilling?.entitlement.grantSource === "subscription"
+                  ? "Paid Subscription"
+                  : projectBilling?.entitlement.grantSource === "manual" ||
+                      projectBilling?.entitlement.grantSource === "grandfathered"
+                    ? "Manual / Grandfathered Grant"
+                    : "Paid Tier"}
+              </Tag>
+            </div>
+            <p className="text-xs text-epic-text-muted">
+              This project is exempt from the 100,000-request shared free
+              calendar-month cap.
+            </p>
           </div>
-          <p className="text-xs text-epic-text-muted">
-            Paid projects ({selectedProject?.tier}) are exempt from the
-            100,000-request monthly free-account cap and retain their project
-            tier limits.
-          </p>
+          {showLimitLink && (
+            <Link
+              to="/limits"
+              className={buttonStyles({ variant: "secondary", size: "sm" })}
+            >
+              <CreditCard className="w-3.5 h-3.5 text-epic-accent" />
+              Manage Plan &amp; Billing
+            </Link>
+          )}
         </div>
+
+        {projectBilling?.entitlement.status === "grace" &&
+          projectBilling.subscription?.graceUntil && (
+            <div
+              role="alert"
+              className="rounded-lg border border-epic-warning/40 bg-epic-warning/10 p-3 text-xs text-epic-warning flex flex-wrap items-center justify-between gap-3"
+            >
+              <span>
+                Subscription payment failed. Paid capacity remains active during
+                the grace period until{" "}
+                {new Date(projectBilling.subscription.graceUntil).toUTCString()}.
+              </span>
+              <Link
+                to="/limits"
+                className={buttonStyles({ variant: "primary", size: "sm" })}
+              >
+                Update payment method
+              </Link>
+            </div>
+          )}
+
+        {periodUsage && (
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3">
+                <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
+                  Period Used
+                </div>
+                <div className="text-lg font-bold text-white tabular-nums mt-0.5">
+                  {periodUsage.used.toLocaleString()}
+                </div>
+              </div>
+              <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3">
+                <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
+                  Remaining
+                </div>
+                <div className="text-lg font-bold text-white tabular-nums mt-0.5">
+                  {periodUsage.remaining.toLocaleString()}
+                </div>
+              </div>
+              <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3">
+                <div className="text-[11px] uppercase tracking-wider text-epic-text-muted">
+                  Period Allowance
+                </div>
+                <div className="text-lg font-bold text-white tabular-nums mt-0.5">
+                  {periodUsage.allowance.toLocaleString()}
+                </div>
+              </div>
+              <div className="rounded-lg border border-epic-border bg-epic-bg/60 p-3">
+                <div className="text-[11px] uppercase tracking-wider text-epic-text-muted flex items-center gap-1">
+                  <CalendarClock className="w-3 h-3" />
+                  Billing Period Reset
+                </div>
+                <div className="text-sm font-mono font-semibold text-white mt-1">
+                  {periodResetIso ?? "Reconciled period"}
+                </div>
+              </div>
+            </div>
+            <div className="h-2 rounded-full bg-epic-bg overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${
+                  periodUsage.status === "exhausted"
+                    ? "bg-epic-danger"
+                    : periodUsage.status === "critical" ||
+                        periodUsage.status === "warning"
+                      ? "bg-epic-warning"
+                      : "bg-epic-accent"
+                }`}
+                style={{ width: `${periodPercent}%` }}
+              />
+            </div>
+            {projectBilling?.entitlement.expensivePeriodBudgets && (
+              <div className="flex flex-wrap gap-3 text-[11px] text-epic-text-muted">
+                {Object.entries(
+                  projectBilling.entitlement.expensivePeriodBudgets,
+                ).map(([key, cap]) => {
+                  const usedCount =
+                    periodUsage.policyCounts?.[`${key}-period`] ?? 0;
+                  return (
+                    <span
+                      key={key}
+                      className="rounded border border-epic-border bg-epic-bg/50 px-2 py-0.5 font-mono"
+                    >
+                      {key}: {usedCount.toLocaleString()} /{" "}
+                      {cap.toLocaleString()}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </section>
     );
   }

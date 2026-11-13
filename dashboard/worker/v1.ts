@@ -5,9 +5,16 @@ import { fetchV1WithEdgeCache } from "./edge-cache.js";
 import { resolveApiKeyMetadata } from "./key-cache.js";
 import { evaluateKeyPermissions } from "./permissions.js";
 import {
+  evaluatePlanEntitlement,
+  isCommercialLimitsEnabled,
+} from "./plans.js";
+import {
   admitProjectRequest,
+  creditAdmittedRequestUsage,
   MONTHLY_POLICY_NAME,
+  PERIOD_POLICY_NAME,
   rateLimitHeaders,
+  resolveEffectiveProjectEntitlement,
 } from "./project-quota.js";
 import type { AdmissionResult } from "./rate-limiter-core.js";
 import type { CachedKeyMetadata, DashboardEnv } from "./types.js";
@@ -22,6 +29,7 @@ import {
   expensivePolicyLimitForProject,
   isKnownV1Path,
   PUBLIC_V1_PATHS,
+  resolveExpensivePeriodPolicyName,
   resolveV1Route,
 } from "./v1-routes.js";
 
@@ -351,14 +359,60 @@ export async function handleV1ApiProxy(
     });
   }
 
+  const entitlement = await resolveEffectiveProjectEntitlement(env, meta);
+  const entitlementCheck = evaluatePlanEntitlement(entitlement, {
+    pathname,
+    method: request.method,
+    operationId: route.operationId,
+  });
+
+  if (!entitlementCheck.allowed) {
+    recordApiTelemetry(
+      env,
+      baseTelemetry(request, meta, {
+        routeTemplate: route.path,
+        statusCode: 403,
+        cacheStatus: "EDGE_BLOCK",
+        limitOutcome: "entitlement_denied",
+        startedAt,
+        country,
+        clientIp,
+        userAgent,
+      }),
+    );
+    return v1Problem(request, {
+      requestId,
+      status: 403,
+      code: "PLAN_ENTITLEMENT_REQUIRED",
+      detail:
+        entitlementCheck.message ??
+        "Current subscription plan does not include access to this capability.",
+      headers: {
+        ...corsFor(request),
+        "X-Egdata-Key-Tier": entitlement.tier,
+      },
+    });
+  }
+
+  const commercial = isCommercialLimitsEnabled(env);
   const policies = route.expensive
     ? [
         {
           name: route.expensive,
-          limit: expensivePolicyLimitForProject(route.expensive, meta),
+          limit: expensivePolicyLimitForProject(
+            route.expensive,
+            meta,
+            entitlement,
+            commercial,
+          ),
         },
       ]
     : [];
+  const periodBudget = resolveExpensivePeriodPolicyName(
+    pathname,
+    request.method,
+    route.operationId,
+  );
 
   let admission: AdmissionResult;
   try {
@@ -367,6 +421,7 @@ export async function handleV1ApiProxy(
       meta,
       policies,
       route.operationId,
+      { entitlement, periodBudget },
     );
   } catch {
     recordApiTelemetry(
@@ -400,9 +455,18 @@ export async function handleV1ApiProxy(
 
   if (!admission.allowed) {
     const monthlyExhausted = admission.exhaustedPolicy === MONTHLY_POLICY_NAME;
+    const periodExhausted = admission.exhaustedPolicy === PERIOD_POLICY_NAME;
+    const periodBudgetExhausted = Boolean(
+      admission.exhaustedPolicy &&
+        admission.exhaustedPolicy.endsWith("-period") &&
+        !periodExhausted,
+    );
     const exhausted = admission.policies.find(
       (entry) => entry.name === admission.exhaustedPolicy,
     );
+    const resetIso = exhausted
+      ? new Date(exhausted.resetAt).toISOString()
+      : new Date(admission.resetAt).toISOString();
     recordApiTelemetry(
       env,
       baseTelemetry(request, meta, {
@@ -411,7 +475,11 @@ export async function handleV1ApiProxy(
         cacheStatus: "EDGE_BLOCK",
         limitOutcome: monthlyExhausted
           ? "monthly_quota_exceeded"
-          : "rate_limited",
+          : periodExhausted
+            ? "period_quota_exceeded"
+            : periodBudgetExhausted
+              ? "expensive_budget_exceeded"
+              : "rate_limited",
         startedAt,
         country,
         clientIp,
@@ -421,12 +489,22 @@ export async function handleV1ApiProxy(
     return v1Problem(request, {
       requestId,
       status: 429,
-      code: monthlyExhausted ? "MONTHLY_QUOTA_EXCEEDED" : "RATE_LIMITED",
+      code: monthlyExhausted
+        ? "MONTHLY_QUOTA_EXCEEDED"
+        : periodExhausted
+          ? "PERIOD_QUOTA_EXCEEDED"
+          : periodBudgetExhausted
+            ? "EXPENSIVE_BUDGET_EXCEEDED"
+            : "RATE_LIMITED",
       detail: monthlyExhausted
         ? `The free account monthly quota of ${exhausted?.limit.toLocaleString() ?? "100,000"} requests is exhausted across all free projects, API keys, and console sessions until the first day of the next calendar month at 00:00 UTC.`
-        : exhausted
-          ? `The ${exhausted.name} quota of ${exhausted.limit} requests per 60 seconds for this project is exhausted.`
-          : "The project quota for this operation is exhausted.",
+        : periodExhausted
+          ? `The ${entitlement.planId} billing-period allowance of ${exhausted?.limit.toLocaleString() ?? ""} requests is exhausted until ${resetIso}.`
+          : periodBudgetExhausted && exhausted
+            ? `The ${exhausted.name} budget of ${exhausted.limit.toLocaleString()} requests for this period is exhausted until ${resetIso}.`
+            : exhausted
+              ? `The ${exhausted.name} quota of ${exhausted.limit} requests per 60 seconds for this project is exhausted.`
+              : "The project quota for this operation is exhausted.",
       headers: {
         ...corsFor(request),
         ...quotaHeaders,
@@ -434,7 +512,7 @@ export async function handleV1ApiProxy(
         ...(admission.exhaustedPolicy
           ? { "X-RateLimit-Policy": admission.exhaustedPolicy }
           : {}),
-        "X-Egdata-Key-Tier": meta.tier,
+        "X-Egdata-Key-Tier": entitlement.tier,
       },
     });
   }
@@ -466,7 +544,7 @@ export async function handleV1ApiProxy(
               ...baseHeaders,
               "x-egdata-worker-token": env.ORIGIN_AUTH_TOKEN ?? "",
               "x-egdata-key-id": meta.keyId,
-              "x-egdata-key-tier": meta.tier,
+              "x-egdata-key-tier": entitlement.tier,
               "x-egdata-key-project": meta.projectId,
               "x-egdata-authenticated": "1",
             },
@@ -476,6 +554,15 @@ export async function handleV1ApiProxy(
     upstreamResponse = cachedResult.response;
     cacheStatus = cachedResult.cacheStatus;
   } catch {
+    ctx.waitUntil(
+      creditAdmittedRequestUsage(env, {
+        adjustmentId: `svc502:${requestId}`,
+        ownerEpicId: meta.ownerEpicId,
+        projectId: meta.projectId,
+        entitlement,
+        reason: "origin_unavailable",
+      }).catch(() => {}),
+    );
     return v1Problem(request, {
       requestId,
       status: 502,
@@ -483,6 +570,18 @@ export async function handleV1ApiProxy(
       detail: "The API origin is unavailable.",
       headers: { ...corsFor(request), ...quotaHeaders },
     });
+  }
+
+  if (upstreamResponse.status >= 500) {
+    ctx.waitUntil(
+      creditAdmittedRequestUsage(env, {
+        adjustmentId: `svc5xx:${requestId}`,
+        ownerEpicId: meta.ownerEpicId,
+        projectId: meta.projectId,
+        entitlement,
+        reason: `upstream_status_${upstreamResponse.status}`,
+      }).catch(() => {}),
+    );
   }
 
   const routeTemplate = route.path;
@@ -517,7 +616,7 @@ export async function handleV1ApiProxy(
     outHeaders.set(name, value);
   }
   outHeaders.set("X-Request-Id", requestId);
-  outHeaders.set("X-Egdata-Key-Tier", meta.tier);
+  outHeaders.set("X-Egdata-Key-Tier", entitlement.tier);
   outHeaders.set(
     "Cache-Control",
     upstreamResponse.status === 303 || pathname.endsWith("/catalog/hydrate")

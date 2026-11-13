@@ -7,6 +7,7 @@ const INTERNAL_HEADERS = [
   "x-egdata-key-project",
   "x-egdata-worker-token",
   "x-egdata-authenticated",
+  "x-egdata-first-party-token",
   "x-egdata-request-id",
   "x-egdata-origin-token",
   "x-request-id",

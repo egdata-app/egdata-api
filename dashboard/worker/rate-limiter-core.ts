@@ -1,14 +1,17 @@
 export const QUOTA_WINDOW_MS = 60_000;
-export const MAX_POLICIES = 5;
+export const MAX_POLICIES = 8;
 export const FREE_MONTHLY_ALLOWANCE = 100_000;
 export const MONTHLY_POLICY_NAME = "monthly";
+export const PERIOD_POLICY_NAME = "period";
 
-export type QuotaWindow = "minute" | "month";
+export type QuotaWindow = "minute" | "month" | "period";
 
 export type QuotaPolicy = {
   name: string;
   limit: number;
   window?: QuotaWindow;
+  periodStart?: number;
+  periodEnd?: number;
 };
 
 export type QuotaPolicyResult = {
@@ -40,6 +43,21 @@ export type MonthlyQuotaSummary = {
   remaining: number;
 };
 
+export type PeriodQuotaState = {
+  periodStart: number;
+  periodEnd: number;
+  used: number;
+  policyCounts: Record<string, number>;
+};
+
+export type PeriodQuotaSummary = {
+  periodStart: number;
+  resetAt: number;
+  used: number;
+  allowance: number;
+  remaining: number;
+};
+
 export type AdmissionResult = {
   allowed: boolean;
   windowStart: number;
@@ -53,6 +71,7 @@ export type AdmissionDecision = {
   result: AdmissionResult;
   nextState: QuotaState;
   nextMonthlyState: MonthlyQuotaState | null;
+  nextPeriodState: PeriodQuotaState | null;
 };
 
 const POLICY_NAME = /^[a-z0-9](?:[a-z0-9-]{0,30}[a-z0-9])?$/;
@@ -66,6 +85,7 @@ export function validatePolicies(policies: readonly QuotaPolicy[]): void {
   }
   const names = new Set<string>();
   let monthlyCount = 0;
+  let periodBounds: { periodStart: number; periodEnd: number } | null = null;
   for (const policy of policies) {
     if (!policy || !POLICY_NAME.test(policy.name)) {
       throw new Error("Invalid quota policy name");
@@ -75,7 +95,7 @@ export function validatePolicies(policies: readonly QuotaPolicy[]): void {
     }
     names.add(policy.name);
     const window = policy.window ?? "minute";
-    if (window !== "minute" && window !== "month") {
+    if (window !== "minute" && window !== "month" && window !== "period") {
       throw new Error("Invalid quota policy window");
     }
     if (window === "month") {
@@ -86,7 +106,35 @@ export function validatePolicies(policies: readonly QuotaPolicy[]): void {
     } else if (policy.name === MONTHLY_POLICY_NAME) {
       throw new Error("Policy named monthly must use the month window");
     }
-    const maxLimit = window === "month" ? 1_000_000_000 : 1_000_000;
+    if (window === "period") {
+      if (
+        !Number.isInteger(policy.periodStart) ||
+        !Number.isInteger(policy.periodEnd) ||
+        (policy.periodStart ?? -1) < 0 ||
+        (policy.periodEnd ?? 0) <= (policy.periodStart ?? 0)
+      ) {
+        throw new Error(
+          "Billing-period quota policy requires valid integer periodStart and periodEnd",
+        );
+      }
+      if (!periodBounds) {
+        periodBounds = {
+          periodStart: policy.periodStart!,
+          periodEnd: policy.periodEnd!,
+        };
+      } else if (
+        periodBounds.periodStart !== policy.periodStart ||
+        periodBounds.periodEnd !== policy.periodEnd
+      ) {
+        throw new Error(
+          "All billing-period policies in one admission must share period bounds",
+        );
+      }
+    } else if (policy.name === PERIOD_POLICY_NAME) {
+      throw new Error("Policy named period must use the period window");
+    }
+    const maxLimit =
+      window === "month" || window === "period" ? 1_000_000_000 : 1_000_000;
     if (
       !Number.isInteger(policy.limit) ||
       policy.limit < 1 ||
@@ -148,6 +196,33 @@ export function summarizeMonthlyQuota(
   };
 }
 
+export function summarizePeriodQuota(
+  state: PeriodQuotaState | null,
+  allowance: number,
+  periodStart: number,
+  periodEnd: number,
+): PeriodQuotaSummary {
+  const samePeriod =
+    state !== null &&
+    state.periodStart === periodStart &&
+    state.periodEnd === periodEnd;
+  const used = samePeriod ? state.used : 0;
+  return {
+    periodStart,
+    resetAt: periodEnd,
+    used,
+    allowance,
+    remaining: Math.max(0, allowance - used),
+  };
+}
+
+export function applyUsageCredit(used: number, creditAmount: number): number {
+  const safeCredit = Number.isFinite(creditAmount)
+    ? Math.max(0, Math.floor(creditAmount))
+    : 0;
+  return Math.max(0, Math.max(0, Math.floor(used)) - safeCredit);
+}
+
 /**
  * Pure admission decision used by the Durable Object. A denied request never
  * produces a new state, so exhausted counters are read without being rewritten.
@@ -157,6 +232,7 @@ export function decideAdmission(options: {
   policies: readonly QuotaPolicy[];
   state: QuotaState | null;
   monthlyState?: MonthlyQuotaState | null;
+  periodState?: PeriodQuotaState | null;
   windowMs?: number;
 }): AdmissionDecision {
   const windowMs = options.windowMs ?? QUOTA_WINDOW_MS;
@@ -184,29 +260,70 @@ export function decideAdmission(options: {
       : { monthStart: monthBounds.monthStart, used: 0 }
     : null;
 
+  const periodPolicies = policies.filter(
+    (policy) => (policy.window ?? "minute") === "period",
+  );
+  const periodPolicy = periodPolicies.find(
+    (policy) => policy.name === PERIOD_POLICY_NAME,
+  );
+  const firstPeriodPolicy = periodPolicies[0];
+  const periodStart = firstPeriodPolicy?.periodStart ?? 0;
+  const periodEnd = firstPeriodPolicy?.periodEnd ?? 0;
+  const periodWindowSeconds = firstPeriodPolicy
+    ? Math.max(1, Math.round((periodEnd - periodStart) / 1000))
+    : 0;
+  const periodState: PeriodQuotaState | null = firstPeriodPolicy
+    ? options.periodState &&
+      options.periodState.periodStart === periodStart &&
+      options.periodState.periodEnd === periodEnd
+      ? options.periodState
+      : { periodStart, periodEnd, used: 0, policyCounts: {} }
+    : null;
+
   const used = (policy: QuotaPolicy) => {
-    if ((policy.window ?? "minute") === "month") {
+    const policyWindow = policy.window ?? "minute";
+    if (policyWindow === "month") {
       return monthlyState?.used ?? 0;
+    }
+    if (policyWindow === "period") {
+      return policy.name === PERIOD_POLICY_NAME
+        ? (periodState?.used ?? 0)
+        : (periodState?.policyCounts[policy.name] ?? 0);
     }
     return policy.name === "global"
       ? state.globalCount
       : (state.policyCounts[policy.name] ?? 0);
   };
 
-  const resetFor = (policy: QuotaPolicy) =>
-    (policy.window ?? "minute") === "month"
-      ? monthBounds.resetAt
-      : minuteResetAt;
+  const resetFor = (policy: QuotaPolicy) => {
+    const policyWindow = policy.window ?? "minute";
+    if (policyWindow === "month") return monthBounds.resetAt;
+    if (policyWindow === "period") return periodEnd;
+    return minuteResetAt;
+  };
 
-  const windowSecondsFor = (policy: QuotaPolicy) =>
-    (policy.window ?? "minute") === "month"
-      ? monthBounds.windowSeconds
-      : minuteWindowSeconds;
+  const windowSecondsFor = (policy: QuotaPolicy) => {
+    const policyWindow = policy.window ?? "minute";
+    if (policyWindow === "month") return monthBounds.windowSeconds;
+    if (policyWindow === "period") return periodWindowSeconds;
+    return minuteWindowSeconds;
+  };
+
+  const windowStartFor = (policy: QuotaPolicy) => {
+    const policyWindow = policy.window ?? "minute";
+    if (policyWindow === "month") return monthBounds.monthStart;
+    if (policyWindow === "period") return periodStart;
+    return windowStart;
+  };
 
   const exhausted =
     (monthlyPolicy && used(monthlyPolicy) >= monthlyPolicy.limit
       ? monthlyPolicy
-      : undefined) ?? policies.find((policy) => used(policy) >= policy.limit);
+      : undefined) ??
+    (periodPolicy && used(periodPolicy) >= periodPolicy.limit
+      ? periodPolicy
+      : undefined) ??
+    policies.find((policy) => used(policy) >= policy.limit);
 
   if (exhausted) {
     const resetAt = resetFor(exhausted);
@@ -214,10 +331,7 @@ export function decideAdmission(options: {
     return {
       result: {
         allowed: false,
-        windowStart:
-          (exhausted.window ?? "minute") === "month"
-            ? monthBounds.monthStart
-            : windowStart,
+        windowStart: windowStartFor(exhausted),
         resetAt,
         retryAfter,
         exhaustedPolicy: exhausted.name,
@@ -233,15 +347,25 @@ export function decideAdmission(options: {
       },
       nextState: state,
       nextMonthlyState: monthlyState,
+      nextPeriodState: periodState,
     };
   }
 
-  const policyCounts: Record<string, number> = {};
+  // Preserve unrelated minute policy counters within the active UTC minute window.
+  const policyCounts: Record<string, number> = { ...state.policyCounts };
+  const periodPolicyCounts: Record<string, number> = periodState
+    ? { ...periodState.policyCounts }
+    : {};
   const results: QuotaPolicyResult[] = policies.map((policy) => {
     const policyWindow = policy.window ?? "minute";
     const nextUsed = used(policy) + 1;
     if (policyWindow === "minute" && policy.name !== "global") {
       policyCounts[policy.name] = nextUsed;
+    } else if (
+      policyWindow === "period" &&
+      policy.name !== PERIOD_POLICY_NAME
+    ) {
+      periodPolicyCounts[policy.name] = nextUsed;
     }
     return {
       name: policy.name,
@@ -274,6 +398,14 @@ export function decideAdmission(options: {
       ? {
           monthStart: monthBounds.monthStart,
           used: monthlyState.used + 1,
+        }
+      : null,
+    nextPeriodState: periodState
+      ? {
+          periodStart: periodState.periodStart,
+          periodEnd: periodState.periodEnd,
+          used: periodPolicy ? periodState.used + 1 : periodState.used,
+          policyCounts: periodPolicyCounts,
         }
       : null,
   };

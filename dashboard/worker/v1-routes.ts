@@ -1,4 +1,11 @@
-import { quotaForProject, tierQuotas } from "./project-quota.js";
+import {
+  type EffectiveProjectEntitlement,
+  type ExpensivePeriodBudgetKey,
+  legacyExpensiveLimitsForProject,
+  PLAN_VERSIONS,
+  resolveExpensivePeriodBudgetKey,
+} from "./plans.js";
+import { quotaForProject } from "./project-quota.js";
 import type { ApiScope } from "./types.js";
 import { generatedV1Routes } from "./v1-routes.generated.js";
 
@@ -116,17 +123,46 @@ export const expensivePolicyLimits: Record<V1ExpensivePolicy, number> = {
 };
 
 /**
- * Scales expensive operation limits proportionally to the project's effective
- * RPM (`effectiveRpm / freeTierRpm`), clamped to `[1, effectiveRpm]`.
+ * Returns the explicit minute ceiling for an expensive policy family.
+ * Commercial tiers and subscriptions use explicit published/configured tables
+ * instead of proportional tier-RPM scaling; manual/grandfathered non-commercial
+ * grants retain their explicit grant ceiling.
  */
 export function expensivePolicyLimitForProject(
   policy: V1ExpensivePolicy,
   project: { tier: string; customRpm: number | null },
+  entitlement?: EffectiveProjectEntitlement | null,
+  commercialLimitsEnabled = false,
 ): number {
-  const base = expensivePolicyLimits[policy];
-  const effectiveRpm = quotaForProject(project);
-  const scaled = Math.floor((base * effectiveRpm) / tierQuotas.free);
-  return Math.min(effectiveRpm, Math.max(1, scaled));
+  if (entitlement) {
+    return entitlement.expensiveMinuteLimits[policy];
+  }
+  if (project.tier === "scale") {
+    return PLAN_VERSIONS["scale-v1"].expensiveMinuteLimits[policy];
+  }
+  if (commercialLimitsEnabled) {
+    if (project.tier === "pro") {
+      return PLAN_VERSIONS["pro-v1"].expensiveMinuteLimits[policy];
+    }
+    if (project.tier === "free") {
+      return PLAN_VERSIONS["free-v1"].expensiveMinuteLimits[policy];
+    }
+  }
+  const effectiveRpm = quotaForProject(project, undefined, commercialLimitsEnabled);
+  return legacyExpensiveLimitsForProject(
+    (project.tier as "free" | "pro" | "scale" | "enterprise") ?? "free",
+    effectiveRpm,
+  )[policy];
+}
+
+export function resolveExpensivePeriodPolicyName(
+  pathname: string,
+  method: string,
+  operationId?: string,
+): { key: ExpensivePeriodBudgetKey; policyName: string } | null {
+  const key = resolveExpensivePeriodBudgetKey(pathname, method, operationId);
+  if (!key) return null;
+  return { key, policyName: `${key}-period` };
 }
 
 /**

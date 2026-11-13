@@ -391,7 +391,7 @@ describe("administrator user and project management", () => {
       error: {
         code: "VALIDATION_ERROR",
         message:
-          "Custom RPM overrides require pro or enterprise tier; free tier projects remain subject to the 100,000/month cap.",
+          "Custom RPM overrides require pro, scale, or enterprise tier; free tier projects remain subject to the 100,000/month cap.",
       },
     });
     expect(batch).not.toHaveBeenCalled();

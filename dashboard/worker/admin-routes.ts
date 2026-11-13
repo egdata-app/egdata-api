@@ -14,9 +14,19 @@ import {
   getAdminUsage,
   queryDashboardAnalytics,
 } from "./analytics-reporting.js";
+import {
+  cancelSubscriptionsForProjectDeletion,
+  invalidateAndSyncProject,
+  reconcileBillingState,
+} from "./billing.js";
 import { mapApiKeyRow } from "./db.js";
 import { invalidateLocalKeyCache } from "./key-cache.js";
-import { quotaForProject, readAccountMonthlyQuota } from "./project-quota.js";
+import { getPlanVersion, PLAN_VERSIONS } from "./plans.js";
+import {
+  accountLimiterObjectName,
+  quotaForProject,
+  readAccountMonthlyQuota,
+} from "./project-quota.js";
 import { PROJECT_RECOVERY_DAYS } from "./project-retention.js";
 import type { DashboardEnv, EpicSessionUser } from "./types.js";
 
@@ -42,15 +52,14 @@ const userLimitsSchema = z
   .strict();
 const projectLimitsSchema = z
   .object({
-    tier: z.enum(["free", "pro", "enterprise"]),
-    // Match projects.custom_rpm in migration 0004_limit_request_reviews.sql.
+    tier: z.enum(["free", "pro", "scale", "enterprise"]),
     customRpm: z.number().int().min(150).max(500_000).nullable(),
     reason: reasonSchema,
   })
   .strict()
   .refine((data) => !(data.tier === "free" && data.customRpm !== null), {
     message:
-      "Custom RPM overrides require pro or enterprise tier; free tier projects remain subject to the 100,000/month cap.",
+      "Custom RPM overrides require pro, scale, or enterprise tier; free tier projects remain subject to the 100,000/month cap.",
   });
 const invalid = {
   error: { code: "VALIDATION_ERROR", message: "Invalid fields or pagination." },
@@ -471,6 +480,77 @@ adminManagementRoutes.patch("/projects/:projectId/limits", async (c) => {
     ).bind(tier, customRpm, now, id),
   ]);
   if (!result[1].meta.changes) return c.json(missing, 404);
+  const projectOwner = await c.env.DB.prepare(
+    "SELECT owner_epic_id FROM projects WHERE id=?",
+  )
+    .bind(id)
+    .first<{ owner_epic_id: string }>();
+  if (projectOwner) {
+    try {
+      const nowMs = Date.now();
+      await c.env.DB.prepare(
+        `UPDATE entitlement_grants SET revoked_at=?, revoked_by=?, updated_at=?
+         WHERE project_id=? AND source IN ('manual', 'grandfathered') AND revoked_at IS NULL`,
+      )
+        .bind(nowMs, c.get("user").epicAccountId, now, id)
+        .run();
+      if (tier !== "free" || customRpm !== null) {
+        const revRow = await c.env.DB.prepare(
+          `SELECT MAX(revision) AS max_rev FROM entitlement_grants WHERE project_id=?`,
+        )
+          .bind(id)
+          .first<{ max_rev: number | null }>();
+        const revision = Math.max(nowMs, (revRow?.max_rev ?? 0) + 1);
+        const rpmLimit =
+          customRpm ??
+          quotaForProject({ tier, customRpm: null }, undefined, false);
+        const spec = getPlanVersion(tier);
+        await c.env.DB.prepare(
+          `INSERT INTO entitlement_grants (
+             id, project_id, owner_epic_id, source, plan_id, plan_version_id,
+             tier, rpm_limit, period_allowance, expensive_limits_json,
+             effective_from, effective_until, revision, granted_by, reason
+           ) VALUES (?, ?, ?, 'manual', ?, ?, ?, ?, NULL, ?, ?, NULL, ?, ?, ?)`,
+        )
+          .bind(
+            `grant_man_${crypto.randomUUID().replace(/-/g, "")}`,
+            id,
+            projectOwner.owner_epic_id,
+            tier === "enterprise" ? "enterprise" : tier,
+            spec ? spec.versionId : "manual-custom",
+            tier,
+            rpmLimit,
+            JSON.stringify({
+              minute: spec
+                ? spec.expensiveMinuteLimits
+                : undefined,
+              entitlements:
+                tier === "enterprise"
+                  ? [...PLAN_VERSIONS["scale-v1"].entitlements, "tier:enterprise"]
+                  : spec
+                    ? [...spec.entitlements]
+                    : [...PLAN_VERSIONS["pro-v1"].entitlements],
+            }),
+            nowMs,
+            revision,
+            c.get("user").epicAccountId,
+            parsed.data.reason,
+          )
+          .run();
+      }
+      await invalidateAndSyncProject(
+        c.env,
+        id,
+        projectOwner.owner_epic_id,
+        tier,
+      ).catch(() => {});
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (!msg.includes("no such table")) {
+        console.error("Manual grant sync error", msg);
+      }
+    }
+  }
   const { results: keys } = await c.env.DB.prepare(
     "SELECT key_hash FROM api_keys WHERE project_id=?",
   )
@@ -589,6 +669,14 @@ adminManagementRoutes.delete("/projects/:projectId", async (c) => {
     ).bind(now, actor, reason, purgeAfter, now, id),
   ]);
   if (!result[result.length - 1].meta.changes) return c.json(missing, 404);
+  try {
+    await cancelSubscriptionsForProjectDeletion(c.env, id, actor, reason);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (!msg.includes("no such table")) {
+      console.error("Project delete subscription cancel notice", msg);
+    }
+  }
   await invalidateKeys(c.env, keys);
   return c.json({ ok: true, quotaPropagationSeconds: 300 });
 });
@@ -629,7 +717,136 @@ adminManagementRoutes.post("/projects/:projectId/restore", async (c) => {
       },
       409,
     );
+  // Restoring a project never reactivates an expired/canceled paid subscription silently.
+  try {
+    const restoredProject = await c.env.DB.prepare(
+      "SELECT owner_epic_id, tier FROM projects WHERE id=?",
+    )
+      .bind(id)
+      .first<{ owner_epic_id: string; tier: "free" | "pro" | "scale" | "enterprise" }>();
+    if (restoredProject) {
+      const manualGrant = await c.env.DB.prepare(
+        `SELECT id FROM entitlement_grants
+          WHERE project_id=? AND source IN ('manual','grandfathered') AND revoked_at IS NULL
+          LIMIT 1`,
+      )
+        .bind(id)
+        .first<{ id: string }>();
+      if (!manualGrant && restoredProject.tier !== "free") {
+        await c.env.DB.prepare(
+          "UPDATE projects SET tier='free', custom_rpm=NULL, updated_at=? WHERE id=?",
+        )
+          .bind(now, id)
+          .run();
+      }
+      await invalidateAndSyncProject(
+        c.env,
+        id,
+        restoredProject.owner_epic_id,
+        "free",
+      ).catch(() => {});
+    }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (!msg.includes("no such table")) {
+      console.error("Project restore entitlement sync error", msg);
+    }
+  }
   return c.json({ ok: true });
+});
+
+adminManagementRoutes.get("/billing/reconcile", async (c) => {
+  const subs = await c.env.DB.prepare(
+    `SELECT id, owner_epic_id AS ownerEpicId, project_id AS projectId,
+            plan_version_id AS planVersionId, status, dispute_status AS disputeStatus,
+            refund_status AS refundStatus, needs_reconcile AS needsReconcile,
+            reconcile_error AS reconcileError, updated_at AS updatedAt
+       FROM billing_subscriptions
+      WHERE needs_reconcile = 1 OR dispute_status != 'none' OR status = 'past_due'
+      ORDER BY updated_at DESC LIMIT 50`,
+  ).all();
+  const withdrawals = await c.env.DB.prepare(
+    `SELECT id, owner_epic_id AS ownerEpicId, project_id AS projectId,
+            request_kind AS requestKind, status, requested_amount_cents AS requestedAmountCents,
+            refunded_amount_cents AS refundedAmountCents, resolution_note AS resolutionNote,
+            created_at AS createdAt
+       FROM withdrawal_requests
+      ORDER BY created_at DESC LIMIT 50`,
+  ).all();
+  const inboxFailures = await c.env.DB.prepare(
+    `SELECT environment, event_id AS eventId, event_type AS eventType,
+            status, attempts, last_error AS lastError, received_at AS receivedAt
+       FROM stripe_event_inbox
+      WHERE status = 'failed'
+      ORDER BY received_at DESC LIMIT 50`,
+  ).all();
+  return c.json({
+    subscriptions: subs.results,
+    withdrawals: withdrawals.results,
+    inboxFailures: inboxFailures.results,
+  });
+});
+
+adminManagementRoutes.post("/billing/reconcile", async (c) => {
+  const result = await reconcileBillingState(c.env);
+  return c.json({ ok: true, ...result });
+});
+
+adminManagementRoutes.post("/projects/:projectId/usage-adjustments", async (c) => {
+  const body = await c.req.json().catch(() => null);
+  const parsed = z
+    .object({
+      adjustmentId: z.string().trim().min(4).max(128),
+      scope: z.enum(["period", "month"]),
+      windowStart: z.number().int().min(0).optional(),
+      amount: z.number().int().min(1).max(1_000_000),
+      reason: reasonSchema,
+    })
+    .safeParse(body);
+  if (!parsed.success) return c.json(invalid, 400);
+  const projectId = c.req.param("projectId");
+  const project = await c.env.DB.prepare(
+    "SELECT id, owner_epic_id FROM projects WHERE id=? LIMIT 1",
+  )
+    .bind(projectId)
+    .first<{ id: string; owner_epic_id: string }>();
+  if (!project) return c.json(missing, 404);
+  if (!c.env.API_KEY_RATE_LIMITER) {
+    return c.json(
+      { error: { code: "QUOTA_UNAVAILABLE", message: "Quota service unavailable." } },
+      503,
+    );
+  }
+  const objectId = c.env.API_KEY_RATE_LIMITER.idFromName(
+    accountLimiterObjectName(c.env, project.owner_epic_id),
+  );
+  const stub = c.env.API_KEY_RATE_LIMITER.get(objectId);
+  const creditResult = await stub.creditUsage({
+    adjustmentId: parsed.data.adjustmentId,
+    ownerEpicId: project.owner_epic_id,
+    projectId: project.id,
+    scope: parsed.data.scope,
+    windowStart: parsed.data.windowStart,
+    amount: parsed.data.amount,
+    reason: parsed.data.reason,
+  });
+  await c.env.DB.prepare(
+    `INSERT OR IGNORE INTO usage_adjustments (
+       adjustment_id, project_id, owner_epic_id, scope, window_start, amount, reason, actor_id
+     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+  )
+    .bind(
+      parsed.data.adjustmentId,
+      project.id,
+      project.owner_epic_id,
+      parsed.data.scope,
+      parsed.data.windowStart ?? 0,
+      parsed.data.amount,
+      parsed.data.reason,
+      c.get("user").epicAccountId,
+    )
+    .run();
+  return c.json({ ok: true, ...creditResult });
 });
 
 adminManagementRoutes.get("/audit", async (c) => {

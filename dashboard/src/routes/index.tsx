@@ -73,9 +73,11 @@ function ProjectOverview() {
     selectedProject?.customRpm ??
     (selectedProject?.tier === "enterprise"
       ? 6000
-      : selectedProject?.tier === "pro"
-        ? 1200
-        : 120);
+      : selectedProject?.tier === "scale"
+        ? 600
+        : selectedProject?.tier === "pro"
+          ? 200
+          : 60);
 
   const sampleCurl = `curl -H "X-API-Key: egk_live_YOUR_API_KEY" \\
   "https://api.egdata.app/offers/top-sellers?country=US"`;
