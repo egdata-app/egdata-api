@@ -23,7 +23,7 @@ const dimensions = {
   keys: ["blob1", "blob2"],
   // Also redact historical rows in SQL, before grouping/search/pagination.
   origins: ["if(blob8 = '(direct)' OR blob8 = '', '(direct)', '(present)')"],
-  ips: ["blob11", "'Country only'"],
+  ips: ["blob11"],
   userAgents: ["if(blob12 = 'privacy-v1', blob10, 'legacy (redacted)')"],
 } satisfies Record<UsageDimension, string[]>;
 const unattributedLabel = "Unattributed legacy traffic";
@@ -370,19 +370,18 @@ export async function queryUsageTable(
       const textMatch = `position(lowerUTF8(${literal(p.search)}) IN lowerUTF8(${cols[0]})) > 0`;
       filter = ` AND (${textMatch}${ids.length ? ` OR ${cols[0]} IN (${ids.map(literal).join(",")})` : ""})`;
     }
-    // Analytics Engine resolves ORDER BY against the projected columns. Once
-    // blobN is aliased to dN, the original name is unavailable to the sorter.
+    // Analytics Engine resolves GROUP BY and ORDER BY cleanly against the projected
+    // dN aliases, avoiding expression re-evaluation or constant-grouping errors.
+    const aliases = cols.map((_, i) => `d${i}`);
     const result = await sql(
       env,
-      `SELECT ${cols.map((col, i) => `${col} AS d${i}`).join(", ")}, ${metricSql} FROM egdata_api_usage ${where(p)}${filter} GROUP BY ${cols.join(", ")} ORDER BY ${sort} ${direction.toUpperCase()}, ${cols.map((_, i) => `d${i} ASC`).join(", ")} LIMIT ${limit + 1} OFFSET ${offset} FORMAT JSON`,
+      `SELECT ${cols.map((col, i) => `${col} AS d${i}`).join(", ")}, ${metricSql} FROM egdata_api_usage ${where(p)}${filter} GROUP BY ${aliases.join(", ")} ORDER BY ${sort} ${direction.toUpperCase()}, ${aliases.map((alias) => `${alias} ASC`).join(", ")} LIMIT ${limit + 1} OFFSET ${offset} FORMAT JSON`,
     );
-    rows = result.map((r) =>
-      usageRow(
-        cols.map((_, i) => String(r[`d${i}`] ?? "")),
-        dimension,
-        metrics(r),
-      ),
-    );
+    rows = result.map((r) => {
+      const values = cols.map((_, i) => String(r[`d${i}`] ?? ""));
+      if (dimension === "ips") values.push("Country only");
+      return usageRow(values, dimension, metrics(r));
+    });
   } else {
     rows = Array.from(
       groups(eventsFor(p), (e) =>
