@@ -24,6 +24,20 @@ Offer endpoints accept `locale`; an omitted or blank value defaults to `en-US`. 
 
 Pagination is route-specific. Search and profile connections use 1-based `page` values. Search `limit` defaults to 10 and is capped at 100; free-game history caps `limit` at 25; changelog lists cap it at 50. Seller offer lists and item build lists are unbounded by default, and profile responses include all achievement entries. Some endpoints use `offset` or another cursor. Check the endpoint's reference for its parameter names and maximum. Follow `hasNextPage`, `totalPages`, or equivalent metadata when the endpoint returns it.
 
+## Public catalog caching
+
+After deployment of the anonymous catalog cache, eligible anonymous GET/HEAD
+requests to `/countries`, `/tags`, and `/offers/genres` can be served by the
+gateway's edge cache. Current CDN freshness is 24 hours for countries and one hour
+for tags and genres. Browser cache headers retain their existing values.
+`/tags?group=...` and `/offers/genres?locale=...` remain distinct variants;
+genres include localized recent-game previews. CORS behavior is preserved.
+Requests with cookies, user authorization, session tokens or ranges bypass this
+cache. Errors and non-shareable responses are not stored. Cache hits avoid origin
+processing, including origin rate-limit and anti-abuse checks; gateway access
+requirements are still evaluated. Other anonymous routes retain their existing
+forwarding behavior.
+
 ## Rate limits
 
 Anonymous traffic is limited per client IP. Expensive routes (search, GraphQL, offer preview images, profiles, sellers) have a tighter quota than ordinary reads, and bulk catalog/launcher routes are tighter still. The offer list (`GET /offers`) is limited to 5 requests per minute per client IP. Quotas are keyed by client, not by request URL, so changing or adding query parameters does not reset them. Limits are per minute; a throttled request returns `429` with a `Retry-After` header:

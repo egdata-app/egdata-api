@@ -27,6 +27,12 @@ const PUBLIC_UNAUTHENTICATED_PATHS = new Set([
   "/ui",
 ]);
 
+const ANONYMOUS_EDGE_CACHE_PATHS = new Set([
+  "/countries",
+  "/tags",
+  "/offers/genres",
+]);
+
 function normalizeRouteTemplate(
   pathname: string,
   responseHeaderTemplate: string | null,
@@ -138,6 +144,7 @@ export async function handleEdgeApiProxy(
   const recordUnattributed = (
     response: Response,
     limitOutcome = "ok",
+    edgeCacheStatus?: string,
   ): Response => {
     recordApiTelemetry(env, {
       ownerEpicId: UNATTRIBUTED_LEGACY_ID,
@@ -154,7 +161,8 @@ export async function handleEdgeApiProxy(
           ? "EDGE_BLOCK"
           : response.status === 304
             ? "REVALIDATED"
-            : response.headers.get("cf-cache-status") ||
+            : edgeCacheStatus ||
+              response.headers.get("cf-cache-status") ||
               response.headers.get("x-cache") ||
               "DYNAMIC",
       limitOutcome,
@@ -198,6 +206,24 @@ export async function handleEdgeApiProxy(
   if (!rawApiKey) {
     // Allow configured first-party web origins (e.g. https://egdata.app) if configured
     if (!requireKey || isAllowedFirstPartyOrigin(originHeader, env)) {
+      if (ANONYMOUS_EDGE_CACHE_PATHS.has(upstreamPath)) {
+        const { response, cacheStatus } = await fetchLegacyWithEdgeCache({
+          request,
+          ctx,
+          pathname: upstreamPath,
+          search: reqUrl.search,
+          anonymousPublic: true,
+          fetchUpstream: (upstreamRequest) =>
+            forwardToUpstream(
+              upstreamRequest,
+              env,
+              upstreamPath,
+              reqUrl.search,
+              cfProps,
+            ),
+        });
+        return recordUnattributed(response, "ok", cacheStatus);
+      }
       return forwardUnattributed();
     }
 
