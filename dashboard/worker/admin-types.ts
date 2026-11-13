@@ -1,5 +1,7 @@
 import type { UsageMetrics, UsageTableResult } from "./analytics-types.js";
-import type { DashboardProject } from "./types.js";
+import type { AccountMonthlyQuotaStatus, DashboardProject } from "./types.js";
+
+export type AdminUserAnalyticsRange = "month" | "6" | "24" | "168" | "720";
 
 export interface AdminUser {
   id: string;
@@ -104,6 +106,7 @@ export interface AdminUserPrivacyRequest {
 }
 
 export interface AdminUserDetail {
+  monthlyQuota: AccountMonthlyQuotaStatus | null;
   user: AdminUser & {
     preferredLanguage: string | null;
     updatedAt: string;
