@@ -911,4 +911,31 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
     expect(h.upstream.mock.calls.length).toBe(upstreamBeforeOutage);
     dbSpy.mockRestore();
   });
+
+  it("enforces scale period allowance and expensive period budgets even without an active grant row", async () => {
+    const h = await createPaidPlansHarness({ commercialLimitsEnabled: true });
+    h.sqlite.exec(`UPDATE projects SET tier = 'scale' WHERE id = 'prj_sub'`);
+    const { rawKey, meta } = await h.issueKey({
+      projectId: "prj_sub",
+      ownerEpicId: "owner_pro",
+      tier: "scale",
+    });
+
+    const fallbackEnt = await resolveEffectiveProjectEntitlement(h.env, meta);
+    const bounds = utcMonthBounds(Date.now());
+    expect(fallbackEnt.periodType).toBe("billing_period");
+    expect(fallbackEnt.periodAllowance).toBe(1_000_000);
+    expect(fallbackEnt.periodStart).toBe(bounds.monthStart);
+    expect(fallbackEnt.periodEnd).toBe(bounds.resetAt);
+
+    const res = await h.callGateway(
+      "/v1/search/natural-language",
+      { "x-api-key": rawKey, "Content-Type": "application/json" },
+      "POST",
+      JSON.stringify({ query: "platformer" }),
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get("RateLimit")).toContain("period;q=1000000;r=999999");
+    expect(res.headers.get("RateLimit")).toContain("nl-search-period;q=10000;r=9999");
+  });
 });

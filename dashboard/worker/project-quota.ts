@@ -135,6 +135,7 @@ export async function resolveEffectiveProjectEntitlement(
       customRpm: meta.customRpm,
       commercialLimitsEnabled: commercial,
       grantSource: meta.grantSource,
+      nowMs,
     });
   }
 
@@ -180,6 +181,7 @@ export async function resolveEffectiveProjectEntitlement(
       customRpm: null,
       commercialLimitsEnabled: true,
       grantSource: "free",
+      nowMs,
     });
     return {
       ...fallback,
@@ -232,6 +234,7 @@ export async function resolveEffectiveProjectEntitlement(
       customRpm: effectiveCustomRpm,
       commercialLimitsEnabled: commercial,
       grantSource: meta.grantSource,
+      nowMs,
     });
   }
 
@@ -258,6 +261,7 @@ export async function resolveEffectiveProjectEntitlement(
           commercialLimitsEnabled: true,
           grantSource: "free",
           revision: grant.revision,
+          nowMs,
         }),
         status: "expired",
         subscriptionId: subscription.id,
@@ -493,13 +497,20 @@ export async function admitProjectRequest(
   if (
     entitlement &&
     entitlement.periodType === "billing_period" &&
-    entitlement.periodAllowance &&
-    entitlement.periodStart !== null &&
-    entitlement.periodEnd !== null &&
-    entitlement.periodEnd > entitlement.periodStart
+    entitlement.periodAllowance
   ) {
-    activePeriodStart = entitlement.periodStart;
-    activePeriodEnd = entitlement.periodEnd;
+    const fallbackBounds = utcMonthBounds(now);
+    if (
+      entitlement.periodStart !== null &&
+      entitlement.periodEnd !== null &&
+      entitlement.periodEnd > entitlement.periodStart
+    ) {
+      activePeriodStart = entitlement.periodStart;
+      activePeriodEnd = entitlement.periodEnd;
+    } else {
+      activePeriodStart = fallbackBounds.monthStart;
+      activePeriodEnd = fallbackBounds.resetAt;
+    }
     periodPolicies.push({
       name: PERIOD_POLICY_NAME,
       limit: entitlement.periodAllowance,

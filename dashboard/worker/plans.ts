@@ -255,6 +255,19 @@ export function legacyExpensiveLimitsForProject(
   };
 }
 
+function utcMonthPeriodBounds(nowMs: number): {
+  periodStart: number;
+  periodEnd: number;
+} {
+  const date = new Date(nowMs);
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
+  return {
+    periodStart: Date.UTC(year, month, 1, 0, 0, 0, 0),
+    periodEnd: Date.UTC(year, month + 1, 1, 0, 0, 0, 0),
+  };
+}
+
 export function fallbackProjectEntitlement(options: {
   projectId: string;
   ownerEpicId: string;
@@ -263,9 +276,11 @@ export function fallbackProjectEntitlement(options: {
   commercialLimitsEnabled?: boolean;
   grantSource?: GrantSource;
   revision?: number;
+  nowMs?: number;
 }): EffectiveProjectEntitlement {
   const commercial = Boolean(options.commercialLimitsEnabled);
   const { tier, customRpm } = options;
+  const fallbackBounds = utcMonthPeriodBounds(options.nowMs ?? Date.now());
 
   if (tier === "scale") {
     const spec = PLAN_VERSIONS["scale-v1"];
@@ -280,8 +295,8 @@ export function fallbackProjectEntitlement(options: {
       rpmLimit: customRpm && customRpm > 0 ? customRpm : spec.rpmLimit,
       periodAllowance: spec.periodAllowance,
       periodType: "billing_period",
-      periodStart: null,
-      periodEnd: null,
+      periodStart: fallbackBounds.periodStart,
+      periodEnd: fallbackBounds.periodEnd,
       initialDailyLimit: null,
       initialDailyLimitUntil: null,
       expensiveMinuteLimits: { ...spec.expensiveMinuteLimits },
@@ -371,8 +386,8 @@ export function fallbackProjectEntitlement(options: {
       rpmLimit: customRpm && customRpm > 0 ? customRpm : spec.rpmLimit,
       periodAllowance: spec.periodAllowance,
       periodType: "billing_period",
-      periodStart: null,
-      periodEnd: null,
+      periodStart: fallbackBounds.periodStart,
+      periodEnd: fallbackBounds.periodEnd,
       initialDailyLimit: null,
       initialDailyLimitUntil: null,
       expensiveMinuteLimits: { ...spec.expensiveMinuteLimits },
