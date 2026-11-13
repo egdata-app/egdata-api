@@ -345,9 +345,8 @@ export async function getOrCreateStripeCustomer(
   await env.DB.prepare(
     `INSERT INTO billing_customers (owner_epic_id, stripe_customer_id, environment, email)
      VALUES (?, ?, ?, ?)
-     ON CONFLICT(owner_epic_id) DO UPDATE SET
+     ON CONFLICT(owner_epic_id, environment) DO UPDATE SET
        stripe_customer_id = excluded.stripe_customer_id,
-       environment = excluded.environment,
        email = COALESCE(excluded.email, billing_customers.email),
        updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')`,
   )

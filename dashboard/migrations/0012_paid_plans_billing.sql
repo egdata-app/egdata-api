@@ -207,12 +207,13 @@ INSERT OR IGNORE INTO plan_versions (
 
 -- One Stripe customer per developer account per Stripe environment.
 CREATE TABLE IF NOT EXISTS billing_customers (
-  owner_epic_id TEXT PRIMARY KEY,
+  owner_epic_id TEXT NOT NULL,
   stripe_customer_id TEXT NOT NULL,
   environment TEXT NOT NULL DEFAULT 'live' CHECK (environment IN ('test', 'live')),
   email TEXT,
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
   updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+  PRIMARY KEY (owner_epic_id, environment),
   UNIQUE (environment, stripe_customer_id)
 );
 

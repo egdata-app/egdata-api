@@ -41,6 +41,7 @@ import {
 } from "./project-quota.js";
 import { PROJECT_RECOVERY_DAYS } from "./project-retention.js";
 import { utcMonthBounds } from "./rate-limiter-core.js";
+import { getStripeEnvironment } from "./stripe.js";
 import type { ApiKeyTier, DashboardEnv, EpicSessionUser } from "./types.js";
 
 // Mounted inside limitReviewRoutes, after its session and DB admin-role guards.
@@ -175,6 +176,7 @@ function parseGrantLimits(jsonStr: string): Pick<
 async function loadAdminUserBilling(
   db: D1Database,
   userId: string,
+  preferredEnvironment: "test" | "live" = "live",
 ): Promise<AdminUserBilling> {
   const empty: AdminUserBilling = {
     customer: null,
@@ -201,9 +203,10 @@ async function loadAdminUserBilling(
           `SELECT stripe_customer_id AS stripeCustomerId, environment, email, created_at AS createdAt
              FROM billing_customers
             WHERE owner_epic_id = ?
+            ORDER BY (environment = ?) DESC, updated_at DESC
             LIMIT 1`,
         )
-        .bind(userId)
+        .bind(userId, preferredEnvironment)
         .first<AdminBillingCustomer>(),
       db
         .prepare(
@@ -629,13 +632,20 @@ adminManagementRoutes.get("/users/:userId", async (c) => {
         purgeAfter: closure?.purgeAfter ?? null,
       };
 
+  let preferredEnv: "test" | "live" = "live";
+  try {
+    preferredEnv = getStripeEnvironment(c.env);
+  } catch {
+    preferredEnv = "live";
+  }
+
   const [monthlyQuota, usage, billing, projectQuotas] = await Promise.all([
     !user.closedAt &&
     projects.some((project) => !project.deletedAt && project.tier === "free")
       ? adminMonthlyQuota(c.env, userId)
       : null,
     getAdminUsage(c.env, "users", [userId]),
-    loadAdminUserBilling(c.env.DB, userId),
+    loadAdminUserBilling(c.env.DB, userId, preferredEnv),
     !user.closedAt
       ? loadAdminProjectQuotas(c.env, userId, projects)
       : Promise.resolve<Record<string, AdminProjectQuotaDetail>>({}),

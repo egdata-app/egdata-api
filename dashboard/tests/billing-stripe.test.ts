@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  getOrCreateStripeCustomer,
   getProjectBillingSummary,
   getPublicBillingPlans,
   reconcileBillingState,
@@ -1801,5 +1802,58 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
       remaining: 1_310_000,
       bonus: 1_010_000,
     });
+  });
+
+  it("retains separate test and live Stripe customer rows per owner_epic_id without overwriting", async () => {
+    const h = await createBillingHarness();
+    let seq = 0;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = typeof input === "string" ? input : input.toString();
+        if (url === "https://api.stripe.com/v1/customers" && init?.method === "POST") {
+          seq += 1;
+          const headers = new Headers(init.headers);
+          const isTest = headers.get("Authorization")?.includes("sk_test_");
+          return new Response(
+            JSON.stringify({ id: isTest ? `cus_test_${seq}` : `cus_live_${seq}` }),
+            { status: 200, headers: { "Content-Type": "application/json" } },
+          );
+        }
+        return new Response("Not found", { status: 404 });
+      }),
+    );
+
+    const testRes = await getOrCreateStripeCustomer(
+      { ...h.env, STRIPE_SECRET_KEY: "sk_test_123", STRIPE_MODE: undefined } as DashboardEnv,
+      "owner_1",
+      "Owner One",
+    );
+    expect(testRes).toEqual({ stripeCustomerId: "cus_test_1", environment: "test" });
+
+    const liveRes = await getOrCreateStripeCustomer(
+      { ...h.env, STRIPE_SECRET_KEY: "sk_live_456", STRIPE_MODE: undefined } as DashboardEnv,
+      "owner_1",
+      "Owner One",
+    );
+    expect(liveRes).toEqual({ stripeCustomerId: "cus_live_2", environment: "live" });
+
+    // Switching back to test reuses existing cus_test_1 and keeps both rows intact
+    const testAgain = await getOrCreateStripeCustomer(
+      { ...h.env, STRIPE_SECRET_KEY: "sk_test_123", STRIPE_MODE: undefined } as DashboardEnv,
+      "owner_1",
+      "Owner One",
+    );
+    expect(testAgain).toEqual({ stripeCustomerId: "cus_test_1", environment: "test" });
+
+    const rows = h.sqlite
+      .prepare(
+        "SELECT environment, stripe_customer_id FROM billing_customers WHERE owner_epic_id = 'owner_1' ORDER BY environment ASC",
+      )
+      .all();
+    expect(rows).toEqual([
+      { environment: "live", stripe_customer_id: "cus_live_2" },
+      { environment: "test", stripe_customer_id: "cus_test_1" },
+    ]);
   });
 });
