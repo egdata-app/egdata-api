@@ -470,11 +470,19 @@ describe("usage authorization and aggregation", () => {
         const query = String(init.body);
         queries.push(query);
         // Reproduce the live SQL planner: source columns are no longer visible
-        // in ORDER BY after SELECT has renamed them to d0/d1.
+        // in ORDER BY after SELECT has renamed them to d0/d1, and GROUP BY
+        // must not group by constant literals or unaliased expressions.
+        const grouping = query.split("GROUP BY ")[1]?.split(" ORDER BY")[0];
+        if (grouping && (grouping.includes("'") || grouping.includes("if(")))
+          return new Response("invalid GROUP BY expression", { status: 422 });
         const ordering = query.split("ORDER BY ")[1]?.split(" LIMIT")[0];
         if (ordering && /\bblob\d+\b/.test(ordering))
           return new Response("unable to find type of column", { status: 422 });
-        return Response.json({ data: [] });
+        return Response.json({
+          data: query.includes("blob11 AS d0")
+            ? [{ d0: "ES", requests: "5" }]
+            : [],
+        });
       }),
     );
     expect((await call()).status).toBe(200);
@@ -483,16 +491,24 @@ describe("usage authorization and aggregation", () => {
       ["projects", 1],
       ["keys", 2],
       ["origins", 1],
-      ["ips", 2],
+      ["ips", 1],
       ["userAgents", 1],
     ] as const) {
       const response = await call(
         `/table?dimension=${dimension}&sort=p95LatencyMs&direction=asc&offset=25`,
       );
       expect(response.status).toBe(200);
+      const groupCols = columns === 2 ? "d0, d1" : "d0";
       expect(queries.at(-1)).toContain(
-        `ORDER BY p95LatencyMs ASC, d0 ASC${columns === 2 ? ", d1 ASC" : ""} LIMIT 26 OFFSET 25`,
+        `GROUP BY ${groupCols} ORDER BY p95LatencyMs ASC, d0 ASC${columns === 2 ? ", d1 ASC" : ""} LIMIT 26 OFFSET 25`,
       );
+      if (dimension === "ips") {
+        const body = (await response.json()) as UsageTableResult;
+        expect(body.rows[0]).toMatchObject({
+          label: "ES",
+          detail: "Country only",
+        });
+      }
     }
   });
 
