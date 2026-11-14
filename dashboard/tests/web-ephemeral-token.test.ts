@@ -19,7 +19,19 @@ const ctx = {
 } as unknown as ExecutionContext;
 
 function createTestEnv(overrides: Partial<DashboardEnv> = {}): DashboardEnv {
-  const { db } = sqliteD1();
+  let db: any;
+  if ("DB" in overrides) {
+    db = overrides.DB;
+  } else {
+    const fresh = sqliteD1();
+    fresh.sqlite.exec("PRAGMA foreign_keys = ON;");
+    for (const file of readdirSync("migrations")
+      .filter((f) => f.endsWith(".sql"))
+      .sort()) {
+      fresh.sqlite.exec(readFileSync(`migrations/${file}`, "utf8"));
+    }
+    db = fresh.db;
+  }
   return {
     DB: db,
     ANALYTICS: { writeDataPoint: vi.fn() },
@@ -515,6 +527,81 @@ describe("Web ephemeral tokens & computeIpSubnet", () => {
       expect(response.status).toBe(401);
       const json = (await response.json()) as any;
       expect(json.code).toBe("INVALID_API_KEY");
+    });
+
+    it("fails closed with 503 ACCOUNT_STATUS_UNAVAILABLE when D1 query fails and does not cache active state", async () => {
+      clearWebOwnerEpicIdCache();
+      const failingDb = {
+        prepare: vi.fn(() => ({
+          bind: vi.fn(() => ({
+            first: vi.fn().mockRejectedValue(new Error("D1 connection lost")),
+          })),
+        })),
+      } as any;
+
+      const env = createTestEnv({ DB: failingDb });
+      const payload = {
+        exp: Date.now() + 60_000,
+        subnet: "198.51.100.0/24",
+      };
+      const token = await signWebEphemeralToken(payload, TEST_SECRET);
+
+      const request = new Request("https://api.egdata.app/v1/offers", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Origin: "https://egdata.app",
+          "Sec-Fetch-Site": "same-site",
+          "cf-connecting-ip": "198.51.100.42",
+        },
+      });
+
+      const response = await handleV1ApiProxy(request, env, ctx, "/v1/offers");
+      expect(response.status).toBe(503);
+      expect(response.headers.get("Retry-After")).toBe("30");
+      const json = (await response.json()) as any;
+      expect(json.code).toBe("ACCOUNT_STATUS_UNAVAILABLE");
+
+      // Verify that no active state was cached: a subsequent call on a healthy DB with an inactive key still rejects with 403
+      const { db, sqlite } = sqliteD1();
+      sqlite.exec("PRAGMA foreign_keys = ON;");
+      for (const file of readdirSync("migrations")
+        .filter((f) => f.endsWith(".sql"))
+        .sort()) {
+        sqlite.exec(readFileSync(`migrations/${file}`, "utf8"));
+      }
+
+      sqlite
+        .prepare(
+          "INSERT OR IGNORE INTO users (epic_account_id, display_name) VALUES ('egdata_web_owner', 'EGDATA Web')",
+        )
+        .run();
+      sqlite
+        .prepare(
+          "INSERT OR IGNORE INTO projects (id, owner_epic_id, name, slug, tier) VALUES ('prj_egdata_web', 'egdata_web_owner', 'egdata.app', 'egdata-web', 'enterprise')",
+        )
+        .run();
+      sqlite
+        .prepare(
+          `INSERT OR REPLACE INTO api_keys (
+            id, project_id, owner_epic_id, name, key_prefix, key_hash, tier, active,
+            scopes_json, allowed_ips_json, allowed_origins_json, allowed_paths_json, allowed_methods_json
+          ) VALUES (
+            'key_egdata_web_browser', 'prj_egdata_web', 'egdata_web_owner', 'Browser Key', 'egw_browser_', 'hash_browser', 'enterprise', 0,
+            '[]', '[]', '[]', '[]', '["GET","HEAD","POST"]'
+          )`,
+        )
+        .run();
+
+      const healthyEnv = createTestEnv({ DB: db });
+      const nextResponse = await handleV1ApiProxy(
+        request,
+        healthyEnv,
+        ctx,
+        "/v1/offers",
+      );
+      expect(nextResponse.status).toBe(403);
+      const nextJson = (await nextResponse.json()) as any;
+      expect(nextJson.code).toBe("KEY_DISABLED");
     });
   });
 

@@ -143,41 +143,39 @@ export async function resolveWebBrowserKeyState(
   }
 
   // 2. Query D1
-  if (env.DB) {
-    try {
-      const row = await env.DB.prepare(
-        `SELECT k.active, k.revoked_at, k.expires_at, k.owner_epic_id, p.deleted_at
-         FROM api_keys k
-         LEFT JOIN projects p ON p.id = k.project_id
-         WHERE k.id = ?
-         LIMIT 1`,
-      )
-        .bind(webKeyId)
-        .first<{
-          active: number | boolean;
-          revoked_at: string | number | null;
-          expires_at: string | null;
-          owner_epic_id: string | null;
-          deleted_at: string | number | null;
-        }>();
+  if (!env.DB) {
+    throw new Error("D1 unavailable");
+  }
 
-      if (row) {
-        const isRevoked = row.revoked_at !== null || row.deleted_at !== null;
-        const state: WebBrowserKeyState = {
-          revoked: isRevoked,
-          active: isRevoked ? false : Boolean(row.active),
-          expiresAt: row.expires_at ?? null,
-          ownerEpicId: row.owner_epic_id ?? null,
-        };
-        cachedWebBrowserKeyState = {
-          state,
-          expiresAt: now + 30_000,
-        };
-        return state;
-      }
-    } catch {
-      // D1 query error, fall through to default
-    }
+  const row = await env.DB.prepare(
+    `SELECT k.active, k.revoked_at, k.expires_at, k.owner_epic_id, p.deleted_at
+     FROM api_keys k
+     LEFT JOIN projects p ON p.id = k.project_id
+     WHERE k.id = ?
+     LIMIT 1`,
+  )
+    .bind(webKeyId)
+    .first<{
+      active: number | boolean;
+      revoked_at: string | number | null;
+      expires_at: string | null;
+      owner_epic_id: string | null;
+      deleted_at: string | number | null;
+    }>();
+
+  if (row) {
+    const isRevoked = row.revoked_at !== null || row.deleted_at !== null;
+    const state: WebBrowserKeyState = {
+      revoked: isRevoked,
+      active: isRevoked ? false : Boolean(row.active),
+      expiresAt: row.expires_at ?? null,
+      ownerEpicId: row.owner_epic_id ?? null,
+    };
+    cachedWebBrowserKeyState = {
+      state,
+      expiresAt: now + 30_000,
+    };
+    return state;
   }
 
   const defaultState: WebBrowserKeyState = {
@@ -702,7 +700,47 @@ export async function handleV1ApiProxy(
       });
     }
 
-    const keyState = await resolveWebBrowserKeyState(env, webKeyId);
+    let keyState: WebBrowserKeyState;
+    try {
+      keyState = await resolveWebBrowserKeyState(env, webKeyId);
+    } catch {
+      recordApiTelemetry(
+        env,
+        baseTelemetry(
+          request,
+          {
+            ownerEpicId: webOwnerEpicId,
+            keyId: webKeyId,
+            projectId: webProjectId,
+          },
+          {
+            routeTemplate: route?.path ?? pathname,
+            statusCode: 503,
+            cacheStatus: "EDGE_BLOCK",
+            limitOutcome: "account_status_unavailable",
+            startedAt,
+            country,
+            clientIp,
+            userAgent,
+            operationId: route?.operationId,
+            policyFamily: "web_token",
+            errorCode: "ACCOUNT_STATUS_UNAVAILABLE",
+          },
+        ),
+      );
+      const response = v1Problem(request, {
+        requestId,
+        status: 503,
+        code: "ACCOUNT_STATUS_UNAVAILABLE",
+        detail:
+          "Credential and account status could not be verified. Please retry shortly.",
+        headers: { ...corsFor(request), "Retry-After": "30" },
+      });
+      return request.method === "HEAD"
+        ? new Response(null, response)
+        : response;
+    }
+
     if (keyState.revoked) {
       recordApiTelemetry(
         env,
