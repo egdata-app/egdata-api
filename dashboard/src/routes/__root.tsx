@@ -19,7 +19,7 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ProfileNavigation } from "../components/AccountPage";
 import { AffiliationDisclaimerModal } from "../components/AffiliationDisclaimerModal";
 import { DevControlsTrigger } from "../components/DevControlsModal";
@@ -35,6 +35,7 @@ import { useUnreadAlerts } from "../lib/alerts";
 import { dashboardClient } from "../lib/api";
 import { DashboardAuthProvider, useDashboardAuth } from "../lib/auth-context";
 import { readVerificationToken } from "../lib/email-verification";
+import { resolveDashboardSeo } from "../lib/seo";
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -48,6 +49,35 @@ function RootLayout() {
       <AppToastRegion />
     </DashboardAuthProvider>
   );
+}
+
+function syncMetaTag(
+  attribute: "name" | "property",
+  key: string,
+  content: string | null,
+) {
+  const selector = `meta[${attribute}="${key}"]`;
+  const existing = document.head.querySelector(selector);
+  if (!content) {
+    existing?.remove();
+    return;
+  }
+  const el = existing ?? document.createElement("meta");
+  el.setAttribute(attribute, key);
+  el.setAttribute("content", content);
+  if (!existing) document.head.appendChild(el);
+}
+
+function syncCanonicalLink(href: string | null) {
+  const existing = document.head.querySelector('link[rel="canonical"]');
+  if (!href) {
+    existing?.remove();
+    return;
+  }
+  const el = existing ?? document.createElement("link");
+  el.setAttribute("rel", "canonical");
+  el.setAttribute("href", href);
+  if (!existing) document.head.appendChild(el);
 }
 
 function DashboardShell() {
@@ -80,6 +110,24 @@ function DashboardShell() {
       ? selectedProject?.id
       : undefined,
   );
+  const isDocsRoute =
+    currentPath === "/docs" || currentPath.startsWith("/docs/");
+
+  useEffect(() => {
+    const seo = resolveDashboardSeo(currentPath, window.location.origin);
+    document.title = seo.title;
+    syncMetaTag("name", "description", seo.description);
+    syncMetaTag("name", "robots", seo.robots);
+    syncCanonicalLink(seo.canonicalUrl);
+
+    if (!seo.includeOg) {
+      for (const el of document.head.querySelectorAll(
+        'meta[property^="og:"], meta[name^="twitter:"]',
+      )) {
+        el.remove();
+      }
+    }
+  }, [currentPath]);
 
   if (loading) {
     return (
@@ -92,7 +140,7 @@ function DashboardShell() {
     );
   }
 
-  if (sessionError)
+  if (sessionError && !isDocsRoute)
     return (
       <main className="max-w-lg mx-auto p-8 space-y-4">
         <h1 className="text-xl font-semibold">
@@ -116,12 +164,12 @@ function DashboardShell() {
     );
 
   if (!authenticated || !user) {
-    if (currentPath === "/docs" || currentPath.startsWith("/docs/")) {
+    if (isDocsRoute) {
       return (
         <main className="max-w-7xl mx-auto p-6">
-          <a href="/" className="text-epic-accent block mb-6">
+          <Link to="/" className="text-epic-accent block mb-6">
             egdata Developers · Sign in to manage projects and alerts
-          </a>
+          </Link>
           <Outlet />
         </main>
       );
@@ -456,7 +504,7 @@ function UnauthenticatedLanding({
 
   return (
     <div className="min-h-screen flex flex-col justify-between px-4 py-10">
-      <div className="max-w-5xl mx-auto w-full flex items-center justify-between">
+      <header className="max-w-5xl mx-auto w-full flex items-center justify-between gap-4">
         <div className="flex items-center gap-2.5">
           <EgdataLogo className="h-8 w-8" />
           <span className="font-bold text-lg tracking-tight">egdata</span>
@@ -464,16 +512,35 @@ function UnauthenticatedLanding({
             Developer Portal
           </span>
         </div>
-        <a
-          href="https://egdata.app"
-          className="text-xs font-medium text-epic-text-muted hover:text-epic-text flex items-center gap-1"
+        <nav
+          aria-label="Primary"
+          className="flex items-center gap-4 text-xs font-medium text-epic-text-muted"
         >
-          Back to egdata.app
-          <ArrowUpRight className="w-3.5 h-3.5" />
-        </a>
-      </div>
+          <Link
+            to="/docs"
+            className="hover:text-epic-text flex items-center gap-1 transition-colors"
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            API Docs
+          </Link>
+          <Link
+            to="/docs/$slug"
+            params={{ slug: "problems" }}
+            className="hover:text-epic-text transition-colors hidden sm:inline"
+          >
+            Problem Codes
+          </Link>
+          <a
+            href="https://egdata.app"
+            className="hover:text-epic-text flex items-center gap-1 transition-colors"
+          >
+            Back to egdata.app
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </a>
+        </nav>
+      </header>
 
-      <div className="max-w-4xl mx-auto w-full grid md:grid-cols-2 gap-8 items-center my-12">
+      <main className="max-w-4xl mx-auto w-full grid md:grid-cols-2 gap-8 items-center my-12">
         <div className="space-y-5">
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white leading-tight">
             Build with Epic Games Store data.
@@ -580,19 +647,29 @@ function UnauthenticatedLanding({
             )}
           </div>
         </div>
-      </div>
+      </main>
 
-      <div className="max-w-5xl mx-auto w-full text-center text-xs text-epic-text-muted">
+      <footer className="max-w-5xl mx-auto w-full text-center text-xs text-epic-text-muted">
         egdata is not affiliated with Epic Games, Inc.
         <div className="mt-3 flex justify-center gap-4">
-          <a href="/terms" className="underline">
+          <Link to="/docs" className="underline">
+            API Docs
+          </Link>
+          <Link
+            to="/docs/$slug"
+            params={{ slug: "problems" }}
+            className="underline"
+          >
+            Problem Codes
+          </Link>
+          <a href="/terms" rel="nofollow" className="underline">
             Developer Terms
           </a>
-          <a href="/privacy" className="underline">
+          <a href="/privacy" rel="nofollow" className="underline">
             Privacy Notice
           </a>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
