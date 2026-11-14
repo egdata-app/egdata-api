@@ -30,10 +30,77 @@ import searchRoutes from "./routes/search.js";
 import sellersRoutes from "./routes/sellers.js";
 import statsRoutes from "./routes/stats.js";
 import systemRoutes from "./routes/system.js";
+import { recordSsrTelemetryHit } from "./ssr-telemetry.js";
+
+function patternFor(path: string): RegExp {
+  const escaped = path
+    .split("/")
+    .map((segment) =>
+      segment.startsWith("{") && segment.endsWith("}")
+        ? "[^/]+"
+        : segment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+    )
+    .join("/");
+  return new RegExp(`^${escaped}$`);
+}
+
+const compiledOperations = v1Operations.map((operation) => ({
+  operation,
+  pattern: patternFor(operation.path),
+}));
 
 const v1 = new Hono<{ Variables: V1Variables }>();
 
 v1.use("*", v1Context());
+v1.use("*", async (c, next) => {
+  const startedAt = performance.now();
+  await next();
+  const key = c.get("v1Key");
+  const targetKeyId = process.env.WEB_SSR_KEY_ID || "key_egdata_web_ssr";
+  if (key?.keyId === targetKeyId) {
+    const requestPath =
+      c.req.path === "/v1" || c.req.path.startsWith("/v1/")
+        ? c.req.path
+        : `/v1${c.req.path === "/" ? "" : c.req.path}`;
+    const method = c.req.method.toUpperCase();
+    const match = compiledOperations.find(
+      (entry) =>
+        entry.pattern.test(requestPath) &&
+        (entry.operation.method === method ||
+          (method === "HEAD" && entry.operation.method === "GET")),
+    );
+    const routeTemplate = match?.operation.path ?? requestPath;
+    const operationId = match?.operation.operationId ?? null;
+    const statusCode = c.res.status;
+    const latencyMs = Math.max(0, Math.round(performance.now() - startedAt));
+    const country = c.req.query("country")?.toUpperCase() || "XX";
+    const responseBytes = Number(c.res.headers.get("content-length") || 0);
+    const cacheStatus = c.res.headers.get("x-cache") || "SSR_DIRECT";
+    const errorCode = statusCode >= 400 ? `HTTP_${statusCode}` : "";
+
+    recordSsrTelemetryHit({
+      requestId: (c.get("requestId") as string) || `req_${crypto.randomUUID()}`,
+      keyId: targetKeyId,
+      projectId:
+        key.projectId || process.env.WEB_PROJECT_ID || "prj_egdata_web",
+      ownerEpicId: process.env.WEB_OWNER_EPIC_ID,
+      tier: "enterprise",
+      routeTemplate,
+      operationId,
+      method,
+      statusCode,
+      cacheStatus,
+      limitOutcome: "allowed",
+      policyFamily: "ssr",
+      errorCode,
+      country,
+      latencyMs,
+      upstreamMs: latencyMs,
+      responseBytes,
+      timestamp: Date.now(),
+    });
+  }
+});
 v1.use("*", async (c, next) => {
   // NDJSON hydration is a streaming protocol; buffering it for an ETag would
   // turn the response into a single delayed document.
@@ -82,23 +149,6 @@ v1.route("/", statsRoutes);
 v1.route("/", franchisesRoutes);
 v1.route("/", gameAwardsRoutes);
 v1.route("/", assetsRoutes);
-
-function patternFor(path: string): RegExp {
-  const escaped = path
-    .split("/")
-    .map((segment) =>
-      segment.startsWith("{") && segment.endsWith("}")
-        ? "[^/]+"
-        : segment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
-    )
-    .join("/");
-  return new RegExp(`^${escaped}$`);
-}
-
-const compiledOperations = v1Operations.map((operation) => ({
-  operation,
-  pattern: patternFor(operation.path),
-}));
 
 v1.all("*", (c) => {
   const requestPath =

@@ -309,6 +309,12 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
         rpm_limit: 8000,
       },
       { project_id: "p_pro", source: "manual", tier: "pro", rpm_limit: 1200 },
+      {
+        project_id: "prj_egdata_web",
+        source: "manual",
+        tier: "enterprise",
+        rpm_limit: 6000,
+      },
     ]);
 
     const freeCustomEnt = await resolveEffectiveProjectEntitlement(

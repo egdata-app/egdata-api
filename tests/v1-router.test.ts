@@ -1,6 +1,11 @@
 import { Hono } from "hono";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import v1Router from "../src/v1/router.js";
+import {
+  clearSsrTelemetryBufferForTesting,
+  flushSsrTelemetry,
+  getSsrTelemetryBufferForTesting,
+} from "../src/v1/ssr-telemetry.js";
 
 const app = new Hono().route("/v1", v1Router);
 
@@ -171,5 +176,65 @@ describe("versioned v1 origin router", () => {
       body: JSON.stringify({ title: "Hades", page: 2 }),
     });
     expect(unknownField.status).toBe(400);
+  });
+
+  it("records telemetry in ring buffer for key_egdata_web_ssr and flushes batch to internal telemetry", async () => {
+    clearSsrTelemetryBufferForTesting();
+    process.env.ORIGIN_AUTH_TOKEN = "test-worker-token";
+    process.env.DEVS_TELEMETRY_URL =
+      "https://devs.egdata.app/_internal/telemetry";
+
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ ok: true, ingested: 1 }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const ssrHeaders = {
+      "x-egdata-key-id": "key_egdata_web_ssr",
+      "x-egdata-key-tier": "enterprise",
+      "x-egdata-key-project": "prj_egdata_web",
+      "x-egdata-worker-token": "test-worker-token",
+    };
+
+    const res = await app.request("/v1/countries", {
+      headers: ssrHeaders,
+    });
+    expect(res.status).toBe(200);
+
+    const buffer = getSsrTelemetryBufferForTesting();
+    expect(buffer.length).toBe(1);
+    expect(buffer[0]).toMatchObject({
+      keyId: "key_egdata_web_ssr",
+      projectId: "prj_egdata_web",
+      tier: "enterprise",
+      routeTemplate: "/v1/countries",
+      operationId: "listCountries",
+      method: "GET",
+      statusCode: 200,
+      cacheStatus: "SSR_DIRECT",
+      limitOutcome: "allowed",
+      policyFamily: "ssr",
+    });
+
+    await flushSsrTelemetry();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][0]).toBe(
+      "https://devs.egdata.app/_internal/telemetry",
+    );
+    const sentHeaders = fetchMock.mock.calls[0][1].headers;
+    expect(sentHeaders.Authorization).toBe("Bearer test-worker-token");
+    expect(sentHeaders["x-egdata-worker-token"]).toBe("test-worker-token");
+    const sentBody = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(sentBody.events).toHaveLength(1);
+    expect(sentBody.events[0].keyId).toBe("key_egdata_web_ssr");
+
+    // Buffer is drained after flush
+    expect(getSsrTelemetryBufferForTesting().length).toBe(0);
+
+    vi.unstubAllGlobals();
+    clearSsrTelemetryBufferForTesting();
   });
 });

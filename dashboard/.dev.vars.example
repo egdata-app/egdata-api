@@ -6,3 +6,5 @@ CF_ACCOUNT_ID=
 CF_ANALYTICS_API_TOKEN=
 ANTI_ABUSE_EDGE_SECRET=
 ORIGIN_AUTH_TOKEN=
+WEB_EPHEMERAL_KEY_SECRET=dev-web-ephemeral-key-secret-at-least-32-bytes
+WEB_OWNER_EPIC_ID=<your-admin-epic-id>

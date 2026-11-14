@@ -52,6 +52,30 @@ function parseIpv6(ip: string): Uint16Array | null {
   return groups;
 }
 
+export function computeIpSubnet(ip: string | null | undefined): string {
+  if (!ip) return "local";
+  let trimmed = ip.trim();
+  if (!trimmed) return "local";
+  if (trimmed.toLowerCase().startsWith("::ffff:")) {
+    trimmed = trimmed.slice(7);
+  }
+  const v4 = parseIpv4(trimmed);
+  if (v4 !== null) {
+    const b0 = (v4 >>> 24) & 0xff;
+    const b1 = (v4 >>> 16) & 0xff;
+    const b2 = (v4 >>> 8) & 0xff;
+    return `${b0}.${b1}.${b2}.0/24`;
+  }
+  const v6 = parseIpv6(trimmed);
+  if (v6 !== null) {
+    const g0 = v6[0].toString(16);
+    const g1 = v6[1].toString(16);
+    const g2 = v6[2].toString(16);
+    return `${g0}:${g1}:${g2}::/48`;
+  }
+  return "local";
+}
+
 export function isValidIpOrCidr(rule: string): boolean {
   const trimmed = rule.trim();
   if (!trimmed) return false;
