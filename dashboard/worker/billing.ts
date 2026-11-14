@@ -8,6 +8,7 @@ import {
   type PlanVersionId,
 } from "./plans.js";
 import {
+  isPaidSubscriptionStatusActive,
   readAccountMonthlyQuota,
   readProjectBillingQuota,
   readProjectDailyQuota,
@@ -614,8 +615,7 @@ export async function initiateSubscriptionCheckout(
     );
   }
 
-  const planVersionId =
-    params.planId === "scale" ? "scale-v1" : "pro-v1";
+  const planVersionId = params.planId === "scale" ? "scale-v1" : "pro-v1";
   const spec = getPlanVersion(planVersionId);
   if (!spec || !spec.selfServePurchasable) {
     throw new BillingError("INVALID_PLAN", "Unsupported plan requested.", 400);
@@ -629,7 +629,9 @@ export async function initiateSubscriptionCheckout(
   );
 
   // Expire stale abandoned checkout_pending rows (> 30 min old) so user can retry cleanly
-  const cutoffIso = new Date(Date.now() - PENDING_CHECKOUT_TTL_MS).toISOString();
+  const cutoffIso = new Date(
+    Date.now() - PENDING_CHECKOUT_TTL_MS,
+  ).toISOString();
   await env.DB.prepare(
     `UPDATE billing_subscriptions
         SET status = 'incomplete_expired', updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
@@ -731,7 +733,10 @@ export async function initiateSubscriptionCheckout(
       .run();
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    if (msg.includes("UNIQUE") || msg.includes("idx_billing_sub_live_project")) {
+    if (
+      msg.includes("UNIQUE") ||
+      msg.includes("idx_billing_sub_live_project")
+    ) {
       throw new BillingError(
         "SUBSCRIPTION_ALREADY_ACTIVE",
         "A checkout or active subscription is already in progress for this project.",
@@ -805,7 +810,11 @@ export async function initiateSubscriptionCheckout(
       actorId: params.ownerEpicId,
       action: "checkout_initiated",
       status: "ok",
-      details: { planVersionId: spec.versionId, receiptId, sessionId: session.id },
+      details: {
+        planVersionId: spec.versionId,
+        receiptId,
+        sessionId: session.id,
+      },
     });
 
     return {
@@ -950,13 +959,11 @@ async function upsertSubscriptionEntitlementGrant(
   }
 
   const nowMs = Date.now();
-  const isSuspended =
-    params.status === "canceled" ||
-    params.status === "incomplete_expired" ||
-    params.status === "unpaid" ||
-    (params.status === "past_due" &&
-      params.graceUntilMs !== null &&
-      nowMs >= params.graceUntilMs);
+  const isSuspended = !isPaidSubscriptionStatusActive(
+    params.status,
+    params.graceUntilMs,
+    nowMs,
+  );
 
   const latest = await env.DB.prepare(
     `SELECT MAX(revision) AS max_rev FROM entitlement_grants WHERE project_id = ?`,
@@ -1057,7 +1064,12 @@ async function upsertSubscriptionEntitlementGrant(
       .run();
   }
 
-  return invalidateAndSyncProject(env, params.projectId, params.ownerEpicId, "free");
+  return invalidateAndSyncProject(
+    env,
+    params.projectId,
+    params.ownerEpicId,
+    "free",
+  );
 }
 
 export async function changeSubscriptionPlan(
@@ -1090,7 +1102,10 @@ export async function changeSubscriptionPlan(
     const canceled = await cancelStripeSubscription(
       env,
       sub.stripe_subscription_id,
-      { atPeriodEnd: true, cancelNote: "Developer self-service cancel at period end" },
+      {
+        atPeriodEnd: true,
+        cancelNote: "Developer self-service cancel at period end",
+      },
       params.idempotencyKey || `cancel:${sub.id}:${sub.current_period_end}`,
     );
     await env.DB.prepare(
@@ -1153,7 +1168,11 @@ export async function changeSubscriptionPlan(
       actorId: params.ownerEpicId,
       action: "subscription_downgrade_scheduled",
       status: "scheduled",
-      details: { from: sub.plan_version_id, to: targetVersionId, effectiveAt: sub.current_period_end },
+      details: {
+        from: sub.plan_version_id,
+        to: targetVersionId,
+        effectiveAt: sub.current_period_end,
+      },
     });
 
     const entitlement = await invalidateAndSyncProject(
@@ -1162,14 +1181,21 @@ export async function changeSubscriptionPlan(
       sub.owner_epic_id,
       "free",
     );
-    return { entitlement, scheduledForPeriodEnd: true, pendingPlanVersionId: targetVersionId };
+    return {
+      entitlement,
+      scheduledForPeriodEnd: true,
+      pendingPlanVersionId: targetVersionId,
+    };
   }
 
   // Immediate upgrade (or un-canceling same plan) — consumed usage in DO period state is preserved!
   const priceId = resolveAllowlistedStripePriceId(env, params.targetPlanId);
   let itemId = sub.stripe_subscription_item_id;
   if (!itemId) {
-    const live = await retrieveStripeSubscription(env, sub.stripe_subscription_id);
+    const live = await retrieveStripeSubscription(
+      env,
+      sub.stripe_subscription_id,
+    );
     itemId = live.items?.data[0]?.id ?? null;
   }
   if (!itemId) {
@@ -1195,7 +1221,8 @@ export async function changeSubscriptionPlan(
         environment: sub.environment,
       },
     },
-    params.idempotencyKey || `upgrade:${sub.id}:${targetVersionId}:${sub.current_period_end}`,
+    params.idempotencyKey ||
+      `upgrade:${sub.id}:${targetVersionId}:${sub.current_period_end}`,
   );
 
   // Preserve current period bounds (or Stripe returned bounds) without resetting DO usage.
@@ -1296,17 +1323,21 @@ async function applyStripeSubscriptionSnapshot(
   const projectId =
     existing?.project_id ?? stripeSub.metadata?.projectId ?? null;
   if (!ownerEpicId || !projectId) {
-    throw new Error(`Subscription ${stripeSub.id} missing project/owner attribution`);
+    throw new Error(
+      `Subscription ${stripeSub.id} missing project/owner attribution`,
+    );
   }
 
   const item = stripeSub.items?.data?.[0];
   const priceId = item?.price?.id ?? existing?.stripe_price_id ?? null;
   const mappedPlanVersion =
     resolvePlanVersionFromStripePrice(env, priceId) ??
-    ((stripeSub.metadata?.planVersionId as PlanVersionId | undefined) ??
-      (existing?.plan_version_id as PlanVersionId | undefined));
+    (stripeSub.metadata?.planVersionId as PlanVersionId | undefined) ??
+    (existing?.plan_version_id as PlanVersionId | undefined);
   if (!mappedPlanVersion) {
-    throw new Error(`Unrecognized Stripe price '${priceId}' on subscription ${stripeSub.id}`);
+    throw new Error(
+      `Unrecognized Stripe price '${priceId}' on subscription ${stripeSub.id}`,
+    );
   }
 
   // Guard out-of-order events if Stripe event timestamp is older than already applied state
@@ -1319,7 +1350,9 @@ async function applyStripeSubscriptionSnapshot(
           authoritative,
           environment,
           Math.max(eventCreated, existing.last_event_created),
-          { reason: "Out-of-order reconciliation from live Stripe subscription" },
+          {
+            reason: "Out-of-order reconciliation from live Stripe subscription",
+          },
         );
       }
     }
@@ -1374,7 +1407,9 @@ async function applyStripeSubscriptionSnapshot(
         periodStartMs,
         periodEndMs,
         stripeSub.cancel_at_period_end ? 1 : 0,
-        stripeSub.canceled_at ? stripeSub.canceled_at * 1000 : existing.canceled_at,
+        stripeSub.canceled_at
+          ? stripeSub.canceled_at * 1000
+          : existing.canceled_at,
         graceUntilMs,
         eventCreated,
         options?.lastInvoiceId ?? null,
@@ -1448,7 +1483,12 @@ export async function handleStripeWebhook(
   if (!validSig) {
     return {
       status: 400,
-      body: { error: { code: "INVALID_STRIPE_SIGNATURE", message: "Webhook signature verification failed." } },
+      body: {
+        error: {
+          code: "INVALID_STRIPE_SIGNATURE",
+          message: "Webhook signature verification failed.",
+        },
+      },
     };
   }
 
@@ -1458,14 +1498,21 @@ export async function handleStripeWebhook(
   } catch {
     return {
       status: 400,
-      body: { error: { code: "INVALID_JSON", message: "Invalid webhook payload." } },
+      body: {
+        error: { code: "INVALID_JSON", message: "Invalid webhook payload." },
+      },
     };
   }
 
   if (!event?.id || !event?.type || !event?.data?.object) {
     return {
       status: 400,
-      body: { error: { code: "INVALID_EVENT", message: "Malformed Stripe event envelope." } },
+      body: {
+        error: {
+          code: "INVALID_EVENT",
+          message: "Malformed Stripe event envelope.",
+        },
+      },
     };
   }
 
@@ -1520,7 +1567,8 @@ export async function handleStripeWebhook(
         const subId =
           typeof obj.subscription === "string"
             ? obj.subscription
-            : typeof (obj.subscription as { id?: string } | undefined)?.id === "string"
+            : typeof (obj.subscription as { id?: string } | undefined)?.id ===
+                "string"
               ? (obj.subscription as { id: string }).id
               : null;
         if (subId) {
@@ -1718,8 +1766,7 @@ export async function handleStripeWebhook(
       }
 
       case "charge.refunded": {
-        const invoiceId =
-          typeof obj.invoice === "string" ? obj.invoice : null;
+        const invoiceId = typeof obj.invoice === "string" ? obj.invoice : null;
         const refunded = Number(obj.amount_refunded ?? 0);
         const total = Number(obj.amount ?? 0);
         const fullRefund = total > 0 && refunded >= total;
@@ -1852,14 +1899,21 @@ export async function handleStripeWebhook(
     )
       .bind(
         nextAttempt,
-        err instanceof Error ? err.message.slice(0, 500) : "webhook_processing_error",
+        err instanceof Error
+          ? err.message.slice(0, 500)
+          : "webhook_processing_error",
         environment,
         event.id,
       )
       .run();
     return {
       status: 500,
-      body: { error: { code: "WEBHOOK_PROCESSING_FAILED", message: "Webhook processing failed and will be retried." } },
+      body: {
+        error: {
+          code: "WEBHOOK_PROCESSING_FAILED",
+          message: "Webhook processing failed and will be retried.",
+        },
+      },
     };
   }
 }
@@ -1949,7 +2003,7 @@ export async function requestSubscriptionWithdrawal(
     paymentIntentId =
       typeof inv.payment_intent === "string"
         ? inv.payment_intent
-        : inv.payment_intent?.id ?? null;
+        : (inv.payment_intent?.id ?? null);
     chargeId = inv.charge ?? null;
     invoiceAmountPaid =
       typeof inv.amount_paid === "number" ? inv.amount_paid : null;
@@ -1963,14 +2017,14 @@ export async function requestSubscriptionWithdrawal(
       paymentIntentId =
         typeof latest.payment_intent === "string"
           ? latest.payment_intent
-          : latest.payment_intent?.id ?? null;
+          : (latest.payment_intent?.id ?? null);
       chargeId = latest.charge ?? null;
     } else if (typeof latest === "string") {
       const inv = await retrieveStripeInvoice(env, latest);
       paymentIntentId =
         typeof inv.payment_intent === "string"
           ? inv.payment_intent
-          : inv.payment_intent?.id ?? null;
+          : (inv.payment_intent?.id ?? null);
       chargeId = inv.charge ?? null;
       invoiceAmountPaid =
         typeof inv.amount_paid === "number" ? inv.amount_paid : null;
@@ -1989,7 +2043,7 @@ export async function requestSubscriptionWithdrawal(
   const baseCents =
     invoiceAmountPaid !== null && invoiceAmountPaid > 0
       ? invoiceAmountPaid
-      : receipt?.price_eur_cents ?? 0;
+      : (receipt?.price_eur_cents ?? 0);
   const totalPeriodMs = Math.max(
     1,
     sub.current_period_end - sub.current_period_start,
@@ -2052,8 +2106,7 @@ export async function requestSubscriptionWithdrawal(
       `cancel_withdraw:${withdrawalId}`,
     );
 
-    const isFull =
-      baseCents > 0 ? refund.amount >= baseCents : true;
+    const isFull = baseCents > 0 ? refund.amount >= baseCents : true;
     const reqStatus = isFull ? "refunded_full" : "refunded_partial";
 
     await env.DB.prepare(
@@ -2094,7 +2147,11 @@ export async function requestSubscriptionWithdrawal(
       actorId: params.ownerEpicId,
       action: requestKind,
       status: reqStatus,
-      details: { withdrawalId, stripeRefundId: refund.id, amountCents: refund.amount },
+      details: {
+        withdrawalId,
+        stripeRefundId: refund.id,
+        amountCents: refund.amount,
+      },
     });
 
     await queueBillingNotification(
@@ -2119,7 +2176,10 @@ export async function requestSubscriptionWithdrawal(
               updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
         WHERE id = ?`,
     )
-      .bind(err instanceof Error ? err.message.slice(0, 500) : "refund_failed", withdrawalId)
+      .bind(
+        err instanceof Error ? err.message.slice(0, 500) : "refund_failed",
+        withdrawalId,
+      )
       .run();
     if (err instanceof BillingError) throw err;
     throw new BillingError(
@@ -2164,7 +2224,9 @@ export async function cancelSubscriptionsForProjectDeletion(
             WHERE id = ?`,
         )
           .bind(
-            err instanceof Error ? err.message.slice(0, 500) : "delete_cancel_failed",
+            err instanceof Error
+              ? err.message.slice(0, 500)
+              : "delete_cancel_failed",
             sub.id,
           )
           .run();
@@ -2322,8 +2384,7 @@ export async function getProjectBillingSummary(
     (r) => typeof r.withdrawal_expires_at === "number",
   ) as { withdrawal_expires_at?: number } | undefined;
   const effectiveWithdrawalExpiresAt =
-    sub &&
-    ["active", "trialing", "past_due"].includes(sub.status)
+    sub && ["active", "trialing", "past_due"].includes(sub.status)
       ? (latestCheckoutReceipt?.withdrawal_expires_at ??
         sub.current_period_start +
           BILLING_POLICY_DEFAULTS.withdrawalWindowDays * DAY_MS)
@@ -2448,7 +2509,12 @@ export async function reconcileBillingState(env: DashboardEnv): Promise<{
           `reconcile_cancel:${sub.id}`,
         ).catch(() => {});
       }
-      await invalidateAndSyncProject(env, sub.project_id, sub.owner_epic_id, "free");
+      await invalidateAndSyncProject(
+        env,
+        sub.project_id,
+        sub.owner_epic_id,
+        "free",
+      );
       await env.DB.prepare(
         `UPDATE billing_subscriptions
             SET needs_reconcile = 0, reconcile_error = NULL,

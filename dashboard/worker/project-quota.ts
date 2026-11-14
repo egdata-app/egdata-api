@@ -118,6 +118,25 @@ type BillingSubscriptionRow = {
   grace_until: number | null;
 };
 
+/**
+ * Returns true only for Stripe subscription states that actively entitle a
+ * project to paid capacity (`active`, `trialing`, or `past_due` within an
+ * explicit unexpired grace window).
+ */
+export function isPaidSubscriptionStatusActive(
+  status: string | null | undefined,
+  graceUntilMs: number | null | undefined,
+  nowMs = Date.now(),
+): boolean {
+  if (status === "active" || status === "trialing") {
+    return true;
+  }
+  if (status === "past_due") {
+    return graceUntilMs != null && nowMs < graceUntilMs;
+  }
+  return false;
+}
+
 export async function resolveEffectiveProjectEntitlement(
   env: DashboardEnv,
   meta: Pick<
@@ -246,16 +265,12 @@ export async function resolveEffectiveProjectEntitlement(
   const subStatus = subscription?.status ?? null;
   const graceUntil = subscription?.grace_until ?? null;
 
-  if (grant.source === "subscription" && subscription) {
-    const graceExpired =
-      subStatus === "past_due" && graceUntil !== null && nowMs >= graceUntil;
-    const periodExpired =
-      (subStatus === "canceled" ||
-        subStatus === "incomplete_expired" ||
-        subStatus === "unpaid") &&
-      nowMs >= subscription.current_period_end;
+  if (grant.source === "subscription" && !subscription) {
+    throw new Error("subscription_record_missing");
+  }
 
-    if (graceExpired || periodExpired || subStatus === "incomplete_expired") {
+  if (grant.source === "subscription" && subscription) {
+    if (!isPaidSubscriptionStatusActive(subStatus, graceUntil, nowMs)) {
       return {
         ...fallbackProjectEntitlement({
           projectId: meta.projectId,
@@ -269,7 +284,8 @@ export async function resolveEffectiveProjectEntitlement(
         }),
         status: "expired",
         subscriptionId: subscription.id,
-        reason: graceExpired ? "grace_expired" : "subscription_expired",
+        reason:
+          subStatus === "past_due" ? "grace_expired" : "subscription_expired",
       };
     }
 

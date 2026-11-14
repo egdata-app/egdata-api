@@ -1028,4 +1028,121 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
       "nl-search-period;q=10000;r=9999",
     );
   });
+
+  it("fails closed when a subscription grant has a missing billing_subscriptions row and restricts paid access to active/grace statuses", async () => {
+    const h = await createPaidPlansHarness({ commercialLimitsEnabled: true });
+    const now = Date.now();
+    const futureEnd = now + 15 * 86_400_000;
+
+    // 1. Orphaned subscription grant (subscription_id is NULL) fails closed
+    h.sqlite.exec(`
+      UPDATE projects SET tier = 'pro' WHERE id = 'prj_sub';
+      INSERT INTO entitlement_grants(
+        id, project_id, owner_epic_id, source, plan_id, plan_version_id,
+        tier, rpm_limit, period_allowance, expensive_limits_json,
+        effective_from, revision, subscription_id, reason
+      ) VALUES (
+        'grant_orphan_sub', 'prj_sub', 'owner_pro', 'subscription', 'pro', 'pro-v1',
+        'pro', 200, 300000, '${JSON.stringify({
+          minute: PLAN_VERSIONS["pro-v1"].expensiveMinuteLimits,
+          period: PLAN_VERSIONS["pro-v1"].expensivePeriodBudgets,
+          entitlements: PLAN_VERSIONS["pro-v1"].entitlements,
+        })}',
+        ${now - 1000}, 2000, NULL, 'Orphan subscription grant'
+      );
+    `);
+
+    const { rawKey, meta } = await h.issueKey({
+      projectId: "prj_sub",
+      ownerEpicId: "owner_pro",
+      tier: "pro",
+    });
+
+    await expect(
+      resolveEffectiveProjectEntitlement(h.env, meta, now),
+    ).rejects.toThrow("subscription_record_missing");
+
+    const v1Res = await h.callGateway("/v1/countries", {
+      "x-api-key": rawKey,
+    });
+    expect(v1Res.status).toBe(503);
+    expect(await v1Res.json()).toMatchObject({
+      code: "ACCOUNT_STATUS_UNAVAILABLE",
+    });
+
+    const legacyRes = await h.callGateway("/offers", {
+      "x-api-key": rawKey,
+    });
+    expect(legacyRes.status).toBe(503);
+    expect(await legacyRes.json()).toMatchObject({
+      error: { code: "ACCOUNT_STATUS_UNAVAILABLE" },
+    });
+
+    // 2. Non-active subscription statuses (including canceled before period end, incomplete, paused, unpaid, or past_due without grace) must downgrade to Free
+    h.sqlite.exec(`
+      INSERT INTO billing_subscriptions(
+        id, owner_epic_id, project_id, environment, stripe_customer_id,
+        stripe_subscription_id, plan_version_id, status,
+        current_period_start, current_period_end, cancel_at_period_end, grace_until
+      ) VALUES (
+        'sub_missing', 'owner_pro', 'prj_sub', 'test', 'cus_status_test',
+        'sub_stripe_status_test', 'pro-v1', 'active',
+        ${now - 86_400_000}, ${futureEnd}, 0, NULL
+      );
+      UPDATE entitlement_grants SET subscription_id = 'sub_missing' WHERE id = 'grant_orphan_sub';
+    `);
+
+    for (const status of ["active", "trialing"] as const) {
+      h.sqlite.exec(
+        `UPDATE billing_subscriptions SET status = '${status}', grace_until = NULL WHERE id = 'sub_missing'`,
+      );
+      const allowed = await resolveEffectiveProjectEntitlement(
+        h.env,
+        meta,
+        now,
+      );
+      expect(allowed.tier).toBe("pro");
+      expect(allowed.status).toBe("active");
+    }
+
+    h.sqlite.exec(
+      `UPDATE billing_subscriptions SET status = 'past_due', grace_until = ${now + 86_400_000} WHERE id = 'sub_missing'`,
+    );
+    const inGrace = await resolveEffectiveProjectEntitlement(h.env, meta, now);
+    expect(inGrace.tier).toBe("pro");
+    expect(inGrace.status).toBe("grace");
+
+    for (const [status, graceSql] of [
+      ["past_due", "NULL"],
+      ["past_due", String(now - 1000)],
+      ["canceled", "NULL"],
+      ["unpaid", "NULL"],
+      ["incomplete", "NULL"],
+      ["incomplete_expired", "NULL"],
+      ["paused", "NULL"],
+      ["checkout_pending", "NULL"],
+    ] as const) {
+      h.sqlite.exec(
+        `UPDATE billing_subscriptions SET status = '${status}', grace_until = ${graceSql} WHERE id = 'sub_missing'`,
+      );
+      const restricted = await resolveEffectiveProjectEntitlement(
+        h.env,
+        meta,
+        now,
+      );
+      expect(restricted.tier).toBe("free");
+      expect(restricted.rpmLimit).toBe(PLAN_VERSIONS["free-v1"].rpmLimit);
+      expect(restricted.status).toBe("expired");
+    }
+
+    // 3. Dangling non-null subscription_id whose billing_subscriptions row was removed also fails closed
+    h.sqlite.exec(`
+      PRAGMA foreign_keys = OFF;
+      DELETE FROM billing_subscriptions WHERE id = 'sub_missing';
+      PRAGMA foreign_keys = ON;
+    `);
+    await expect(
+      resolveEffectiveProjectEntitlement(h.env, meta, now),
+    ).rejects.toThrow("subscription_record_missing");
+  });
 });
