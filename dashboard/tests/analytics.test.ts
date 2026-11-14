@@ -538,7 +538,7 @@ describe("usage authorization and aggregation", () => {
         )
       ).status,
     ).toBe(200);
-    expect(queries).toHaveLength(18);
+    expect(queries).toHaveLength(15);
     for (const query of queries) {
       expect(query).toContain(
         `AND ${apiVersion === "legacy" ? "NOT " : ""}(blob3 = '/v1' OR startsWith(blob3, '/v1/'))`,
@@ -740,5 +740,45 @@ describe("usage authorization and aggregation", () => {
       expect(query).toContain("= 'application'");
       expect(query).not.toMatch(/GROUP BY[^;\n]*(if\(|')/);
     }
+  });
+
+  it("falls back to base telemetry columns when extended columns (double6/double7/blob14) are unwritten and retries transient 429", async () => {
+    const { env, call } = await setup();
+    env.CF_ACCOUNT_ID = "account";
+    env.CF_ANALYTICS_API_TOKEN = "token";
+    let saw429 = false;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url, init) => {
+        const body = String(init.body);
+        if (!saw429 && body.includes("blob6 AS label")) {
+          saw429 = true;
+          return new Response("rate limit", {
+            status: 429,
+            headers: { "retry-after": "0" },
+          });
+        }
+        if (
+          body.includes("double6") ||
+          body.includes("double7") ||
+          body.includes("blob14")
+        ) {
+          return new Response("Unknown identifier double6", { status: 422 });
+        }
+        if (body.includes("AS latLt50")) {
+          return Response.json({
+            data: [{ requests: 10, cacheHits: 6, errors: 1, avgLatencyMs: 25 }],
+          });
+        }
+        return Response.json({ data: [] });
+      }),
+    );
+
+    const res = await call("?hours=24&scope=project");
+    expect(res.status).toBe(200);
+    const data = (await res.json()) as AnalyticsDashboardSummary;
+    expect(data.totals.requests).toBe(10);
+    expect(data.policyBreakdown).toEqual([]);
+    expect(saw429).toBe(true);
   });
 });
