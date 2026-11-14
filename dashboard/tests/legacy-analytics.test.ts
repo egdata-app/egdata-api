@@ -88,8 +88,11 @@ describe("legacy gateway telemetry", () => {
       "other",
       "XX",
       "privacy-v1",
+      "",
+      "",
+      "",
     ]);
-    expect(point.doubles).toEqual([1, expect.any(Number), 0, 1, 0]);
+    expect(point.doubles).toEqual([1, expect.any(Number), 0, 1, 0, 0, 0]);
     expect(env.API_KEYS_KV.get).not.toHaveBeenCalled();
     expect(env.RATE_LIMITER_FREE.limit).not.toHaveBeenCalled();
   });
@@ -169,7 +172,9 @@ describe("legacy gateway telemetry", () => {
     expect(writeDataPoint).toHaveBeenCalledOnce();
     const point = writeDataPoint.mock.calls[0][0];
     expect(point.blobs[4]).toBe(String(status));
-    expect(point.doubles.slice(2)).toEqual([status === 429 ? 1 : 0, 0, 1]);
+    expect(point.doubles.slice(2, 5)).toEqual([status === 429 ? 1 : 0, 0, 1]);
+    expect(point.doubles[5]).toEqual(expect.any(Number));
+    expect(point.doubles[6]).toEqual(expect.any(Number));
   });
 
   it.each([

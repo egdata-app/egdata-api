@@ -9,7 +9,16 @@ const identifier = z
   .string()
   .regex(/^[a-zA-Z0-9_.:@-]{1,96}$/)
   .optional();
-const filters = z.object({
+const isoTimestamp = z.iso
+  .datetime()
+  .refine(
+    (value) =>
+      Date.parse(value) <= Date.now() + 60_000 &&
+      Date.parse(value) >= Date.now() - 60 * 86400_000,
+    "Invalid reporting window",
+  );
+
+const baseFilters = z.object({
   hours: z.coerce.number().int().min(1).max(720).default(24),
   scope: z.enum(["project", "all"]).default("project"),
   apiVersion: z.enum(["all", "legacy", "v1"]).default("all"),
@@ -19,36 +28,93 @@ const filters = z.object({
   method: z
     .enum(["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
     .optional(),
-  end: z.iso
-    .datetime()
-    .refine(
-      (value) =>
-        Date.parse(value) <= Date.now() + 60_000 &&
-        Date.parse(value) >= Date.now() - 60 * 86400_000,
-      "Invalid reporting window",
-    )
+  statusClass: z.enum(["all", "2xx", "3xx", "4xx", "5xx"]).optional(),
+  statusCode: z
+    .string()
+    .regex(/^[1-5]\d{2}$/)
     .optional(),
+  limitOutcome: z
+    .string()
+    .regex(/^[a-z0-9_]{1,32}$/)
+    .optional(),
+  cacheStatus: z
+    .string()
+    .regex(/^[A-Z0-9_]{1,32}$/)
+    .optional(),
+  country: z
+    .string()
+    .regex(/^[A-Z]{2}$/)
+    .optional(),
+  clientCategory: z
+    .enum(["browser", "application", "bot", "other", "unknown"])
+    .optional(),
+  originPresence: z.enum(["present", "direct"]).optional(),
+  policyFamily: z
+    .string()
+    .regex(/^[a-z0-9_-]{1,40}$/i)
+    .optional(),
+  excludeConsole: z
+    .enum(["true", "false"])
+    .transform((value) => value === "true")
+    .optional(),
+  start: isoTimestamp.optional(),
+  end: isoTimestamp.optional(),
 });
-const tableFilters = filters.extend({
-  dimension: z
-    .enum(["endpoints", "projects", "keys", "origins", "ips", "userAgents"])
-    .default("endpoints"),
-  search: z.string().trim().max(180).optional(),
-  sort: z
-    .enum([
-      "requests",
-      "cacheHitRate",
-      "rateLimited",
-      "blockedPolicy",
-      "errorRate",
-      "avgLatencyMs",
-      "p95LatencyMs",
-    ])
-    .default("requests"),
-  direction: z.enum(["asc", "desc"]).default("desc"),
-  offset: z.coerce.number().int().min(0).max(1_000_000).default(0),
-  limit: z.coerce.number().int().min(1).max(100).default(25),
-});
+
+const validateWindow = (
+  value: { start?: string; end?: string },
+  ctx: z.RefinementCtx,
+) => {
+  if (!value.start) return;
+  const startMs = Date.parse(value.start);
+  const endMs = value.end ? Date.parse(value.end) : Date.now();
+  if (endMs <= startMs || endMs - startMs > 31 * 86400_000) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Invalid reporting window",
+    });
+  }
+};
+
+const filters = baseFilters.superRefine(validateWindow);
+const tableFilters = baseFilters
+  .extend({
+    dimension: z
+      .enum([
+        "endpoints",
+        "projects",
+        "keys",
+        "origins",
+        "ips",
+        "userAgents",
+        "statusCodes",
+        "limitOutcomes",
+        "cacheStatuses",
+        "policies",
+      ])
+      .default("endpoints"),
+    search: z.string().trim().max(180).optional(),
+    minRequests: z.coerce.number().int().min(0).max(1_000_000).default(0),
+    sort: z
+      .enum([
+        "requests",
+        "cacheHitRate",
+        "errors",
+        "errorRate",
+        "rateLimited",
+        "blockedPolicy",
+        "avgLatencyMs",
+        "p50LatencyMs",
+        "p95LatencyMs",
+        "p99LatencyMs",
+        "label",
+      ])
+      .default("requests"),
+    direction: z.enum(["asc", "desc"]).default("desc"),
+    offset: z.coerce.number().int().min(0).max(1_000_000).default(0),
+    limit: z.coerce.number().int().min(1).max(100).default(25),
+  })
+  .superRefine(validateWindow);
 
 export const analyticsRoutes = new Hono<{
   Bindings: DashboardEnv;

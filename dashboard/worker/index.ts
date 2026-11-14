@@ -550,21 +550,23 @@ dashboardApi.post("/analytics/simulate", async (c) => {
   }
 
   const routes = [
-    "/offers/{id}",
-    "/search/v2/search",
-    "/free-games",
-    "/offers/top-sellers",
-    "/items/{id}",
-    "/graphql",
+    { route: "/v1/offers/{id}", method: "GET", operationId: "getOffer", policy: "" },
+    { route: "/v1/search/v2", method: "POST", operationId: "searchV2", policy: "search" },
+    { route: "/v1/free-games", method: "GET", operationId: "getFreeGames", policy: "" },
+    { route: "/v1/offers/top-sellers", method: "GET", operationId: "getTopSellers", policy: "" },
+    { route: "/v1/items/{id}", method: "GET", operationId: "getItem", policy: "" },
+    { route: "/v1/catalog/hydrate", method: "POST", operationId: "hydrateCatalog", policy: "bulk" },
+    { route: "/offers/{id}", method: "GET", operationId: "", policy: "" },
   ];
   const statuses = [
-    { status: 200, cache: "HIT", outcome: "ok" },
-    { status: 200, cache: "HIT", outcome: "ok" },
-    { status: 200, cache: "HIT", outcome: "ok" },
-    { status: 200, cache: "MISS", outcome: "ok" },
-    { status: 304, cache: "REVALIDATED", outcome: "ok" },
-    { status: 429, cache: "EDGE_BLOCK", outcome: "rate_limited" },
-    { status: 403, cache: "EDGE_BLOCK", outcome: "origin_denied" },
+    { status: 200, cache: "HIT", outcome: "ok", errorCode: "", policy: "" },
+    { status: 200, cache: "HIT", outcome: "ok", errorCode: "", policy: "" },
+    { status: 200, cache: "HIT", outcome: "ok", errorCode: "", policy: "" },
+    { status: 200, cache: "MISS", outcome: "ok", errorCode: "", policy: "" },
+    { status: 304, cache: "REVALIDATED", outcome: "ok", errorCode: "", policy: "" },
+    { status: 429, cache: "EDGE_BLOCK", outcome: "rate_limited", errorCode: "RATE_LIMITED", policy: "rpm" },
+    { status: 403, cache: "EDGE_BLOCK", outcome: "origin_denied", errorCode: "ORIGIN_DENIED", policy: "key_policy" },
+    { status: 500, cache: "MISS", outcome: "ok", errorCode: "HTTP_500", policy: "" },
   ];
   const origins = [
     "https://egdata.app",
@@ -577,27 +579,54 @@ dashboardApi.post("/analytics/simulate", async (c) => {
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6) Chrome/131.0",
     "PriceBot/1.4 (+https://tracker.example.dev)",
   ];
+  const countries = ["US", "ES", "DE", "GB", "JP"];
+  const nowMs = Date.now();
 
-  for (let i = 0; i < 36; i++) {
+  for (let i = 0; i < 48; i++) {
     const pick = statuses[i % statuses.length];
-    recordApiTelemetry(c.env, {
-      ownerEpicId: user.epicAccountId,
-      keyId: sampleKey.id,
-      projectId: sampleKey.projectId,
-      routeTemplate: routes[i % routes.length],
-      method: "GET",
-      statusCode: pick.status,
-      cacheStatus: pick.cache,
-      limitOutcome: pick.outcome,
-      origin: origins[i % origins.length],
-      clientIp: ips[i % ips.length],
-      userAgent: uas[i % uas.length],
-      country: i % 2 === 0 ? "US" : "ES",
-      latencyMs: pick.cache === "HIT" ? 2 + (i % 5) : 38 + (i % 40),
-    });
+    const target = routes[i % routes.length];
+    const latency =
+      pick.cache === "HIT"
+        ? 3 + (i % 7)
+        : pick.cache === "EDGE_BLOCK"
+          ? 2 + (i % 4)
+          : 48 + ((i * 37) % 420);
+    const ts = new Date(nowMs - (i % 12) * 3600_000 - (i % 5) * 60_000).toISOString();
+    recordApiTelemetry(
+      c.env,
+      {
+        ownerEpicId: user.epicAccountId,
+        keyId: sampleKey.id,
+        projectId: sampleKey.projectId,
+        routeTemplate: target.route,
+        method: target.method,
+        statusCode: pick.status,
+        cacheStatus: pick.cache,
+        limitOutcome: pick.outcome,
+        origin: origins[i % origins.length],
+        clientIp: ips[i % ips.length],
+        userAgent: uas[i % uas.length],
+        country: countries[i % countries.length],
+        latencyMs: latency,
+        operationId: target.operationId,
+        policyFamily: pick.policy || target.policy,
+        errorCode: pick.errorCode,
+        upstreamLatencyMs:
+          pick.cache === "HIT" || pick.cache === "EDGE_BLOCK"
+            ? 0
+            : Math.max(10, latency - 4),
+        responseBytes:
+          pick.cache === "EDGE_BLOCK"
+            ? 180
+            : target.policy === "bulk"
+              ? 48_500 + (i % 10) * 1024
+              : 2_400 + (i % 15) * 320,
+      },
+      ts,
+    );
   }
 
-  return c.json({ ok: true, generated: 36 });
+  return c.json({ ok: true, generated: 48 });
 });
 
 // ---------------------------------------------------------

@@ -538,7 +538,7 @@ describe("usage authorization and aggregation", () => {
         )
       ).status,
     ).toBe(200);
-    expect(queries).toHaveLength(10);
+    expect(queries).toHaveLength(18);
     for (const query of queries) {
       expect(query).toContain(
         `AND ${apiVersion === "legacy" ? "NOT " : ""}(blob3 = '/v1' OR startsWith(blob3, '/v1/'))`,
@@ -564,5 +564,181 @@ describe("usage authorization and aggregation", () => {
     const result = await call();
     expect(result.status).toBe(503);
     expect(await result.text()).not.toContain("private upstream error");
+  });
+
+  it("supports developer insight filters, new dimensions, extended sorts, latency buckets, and endpoint highlights", async () => {
+    const { env, call, event } = await setup();
+    event({
+      routeTemplate: "/v1/offers/{id}",
+      operationId: "offers.getOfferById",
+      method: "GET",
+      statusCode: 200,
+      cacheStatus: "HIT",
+      limitOutcome: "ok",
+      policyFamily: "read",
+      country: "ES",
+      userAgent: "curl/8.5.0",
+      origin: "",
+      latencyMs: 12,
+      upstreamLatencyMs: 0,
+      responseBytes: 1024,
+    });
+    event({
+      routeTemplate: "/v1/search",
+      operationId: "search.searchOffers",
+      method: "POST",
+      statusCode: 429,
+      cacheStatus: "MISS",
+      limitOutcome: "rate_limited",
+      policyFamily: "expensive",
+      errorCode: "rate_limited",
+      country: "US",
+      userAgent: "Mozilla/5.0 Chrome/120.0",
+      origin: "https://atlas.example",
+      latencyMs: 650,
+      upstreamLatencyMs: 420,
+      responseBytes: 256,
+    });
+    event({
+      routeTemplate: "/v1/offers/{id}",
+      operationId: "offers.getOfferById",
+      method: "GET",
+      statusCode: 500,
+      cacheStatus: "MISS",
+      limitOutcome: "ok",
+      policyFamily: "read",
+      errorCode: "upstream_5xx",
+      country: "ES",
+      userAgent: "node-fetch/3.0",
+      origin: "https://atlas.example",
+      latencyMs: 1400,
+      upstreamLatencyMs: 1350,
+      responseBytes: 512,
+    });
+    event({
+      keyId: "console_session_1",
+      routeTemplate: "/v1/offers/{id}",
+      operationId: "offers.getOfferById",
+      method: "GET",
+      statusCode: 200,
+      cacheStatus: "MISS",
+      limitOutcome: "ok",
+      policyFamily: "read",
+      country: "ES",
+      userAgent: "Mozilla/5.0 Chrome/120.0",
+      origin: "https://devs.egdata.app",
+      latencyMs: 30,
+    });
+
+    const writeCalls = (
+      env.ANALYTICS?.writeDataPoint as ReturnType<typeof vi.fn>
+    ).mock.calls;
+    expect(writeCalls).toHaveLength(4);
+    expect(writeCalls[1][0].blobs.slice(12)).toEqual([
+      "search.searchOffers",
+      "expensive",
+      "rate_limited",
+    ]);
+    expect(writeCalls[1][0].doubles.slice(5)).toEqual([420, 256]);
+
+    // Exclude API Console removes 1 event
+    const noConsoleRes = await call("?excludeConsole=true");
+    expect(noConsoleRes.status).toBe(200);
+    const noConsole = (await noConsoleRes.json()) as AnalyticsDashboardSummary;
+    expect(noConsole.totals.requests).toBe(3);
+    expect(noConsole.totals.cacheMisses).toBe(2);
+    expect(noConsole.totals.status2xx).toBe(1);
+    expect(noConsole.totals.status4xx).toBe(1);
+    expect(noConsole.totals.status5xx).toBe(1);
+    expect(noConsole.totals.avgHitLatencyMs).toBe(12);
+    expect(noConsole.totals.avgMissLatencyMs).toBe(1025);
+    expect(
+      noConsole.latencyDistribution?.reduce((s, b) => s + b.requests, 0),
+    ).toBe(3);
+    expect(noConsole.busiestEndpoints?.[0]?.operationId).toBe("getOffer");
+    expect(noConsole.errorEndpoints?.[0]?.errors).toBeGreaterThanOrEqual(1);
+    expect(noConsole.policyBreakdown?.length).toBeGreaterThan(0);
+
+    // Filter by statusClass=5xx
+    const only5xx = (await (
+      await call("?statusClass=5xx")
+    ).json()) as AnalyticsDashboardSummary;
+    expect(only5xx.totals.requests).toBe(1);
+    expect(only5xx.totals.errors).toBe(1);
+
+    // Filter by cacheStatus=HIT and country=ES and originPresence=direct
+    const hitDirect = (await (
+      await call("?cacheStatus=HIT&country=ES&originPresence=direct")
+    ).json()) as AnalyticsDashboardSummary;
+    expect(hitDirect.totals.requests).toBe(1);
+    expect(hitDirect.totals.cacheHits).toBe(1);
+
+    // Table with minRequests=2 excludes /v1/search (1 request)
+    const minReqTable = (await (
+      await call("/table?dimension=endpoints&minRequests=2")
+    ).json()) as UsageTableResult;
+    expect(minReqTable.rows).toHaveLength(1);
+    expect(minReqTable.rows[0].label).toBe("/v1/offers/{id}");
+    expect(minReqTable.rows[0].method).toBe("GET");
+    expect(minReqTable.rows[0].operationId).toBe("getOffer");
+
+    // Table dimensions: statusCodes, limitOutcomes, cacheStatuses, policies + sort=label
+    for (const dimension of [
+      "statusCodes",
+      "limitOutcomes",
+      "cacheStatuses",
+      "policies",
+    ]) {
+      const tableRes = await call(
+        `/table?dimension=${dimension}&sort=label&direction=asc`,
+      );
+      expect(tableRes.status).toBe(200);
+      const table = (await tableRes.json()) as UsageTableResult;
+      expect(table.rows.length).toBeGreaterThan(0);
+      expect(table.rows.map((r) => r.label)).toEqual(
+        [...table.rows.map((r) => r.label)].sort((a, b) => a.localeCompare(b)),
+      );
+    }
+
+    // Custom start/end window outside events returns 0 requests; >31d span rejected
+    const emptyWindow = (await (
+      await call(
+        "?start=2026-11-01T00:00:00.000Z&end=2026-11-02T00:00:00.000Z",
+      )
+    ).json()) as AnalyticsDashboardSummary;
+    expect(emptyWindow.totals.requests).toBe(0);
+    const badWindow = await call(
+      "?start=2026-09-01T00:00:00.000Z&end=2026-11-02T00:00:00.000Z",
+    );
+    expect(badWindow.status).toBe(400);
+  });
+
+  it("compiles remote SQL predicates for new filters without invalid GROUP BY expressions", async () => {
+    const { env, call } = await setup();
+    env.CF_ACCOUNT_ID = "account";
+    env.CF_ANALYTICS_API_TOKEN = "token";
+    const queries: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url, init) => {
+        queries.push(String(init.body));
+        return Response.json({ data: [] });
+      }),
+    );
+
+    const res = await call(
+      "?statusClass=4xx&excludeConsole=true&policyFamily=expensive&originPresence=present&clientCategory=application&country=DE",
+    );
+    expect(res.status).toBe(200);
+    expect(queries.length).toBeGreaterThan(0);
+    for (const query of queries) {
+      expect(query).toContain("startsWith(blob5, '4')");
+      expect(query).toContain("NOT startsWith(blob1, 'console_')");
+      expect(query).toContain("blob14 = 'expensive'");
+      expect(query).toContain("blob8 != '(direct)' AND blob8 != ''");
+      expect(query).toContain("blob11 = 'DE'");
+      expect(query).toContain("= 'application'");
+      expect(query).not.toMatch(/GROUP BY[^;\n]*(if\(|')/);
+    }
   });
 });
