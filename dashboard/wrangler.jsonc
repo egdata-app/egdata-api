@@ -154,6 +154,9 @@
     "EMAIL_FROM_NAME": "egdata Developer Portal",
     "REQUIRE_API_KEY": "false",
     "ALLOW_FIRST_PARTY_ORIGINS": "https://egdata.app",
-    "RATE_LIMIT_ENVIRONMENT": "staging"
+    "RATE_LIMIT_ENVIRONMENT": "staging",
+    "WEB_PROJECT_ID": "prj_egdata_web",
+    "WEB_BROWSER_KEY_ID": "key_egdata_web_browser",
+    "WEB_SSR_KEY_ID": "key_egdata_web_ssr"
   }
 }

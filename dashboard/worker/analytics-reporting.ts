@@ -61,13 +61,17 @@ function literal(value: string) {
   return `'${value.replace(/\\/g, "\\\\").replace(/'/g, "''")}'`;
 }
 function windowFor(p: UsageFilters) {
-  const endMs = Math.floor(new Date(p.end ?? Date.now()).getTime() / 1000) * 1000;
+  const endMs =
+    Math.floor(new Date(p.end ?? Date.now()).getTime() / 1000) * 1000;
   const end = new Date(endMs).toISOString();
   const startMs = p.start
     ? Math.floor(new Date(p.start).getTime() / 1000) * 1000
     : endMs - p.hours * 3600_000;
   const start = new Date(startMs).toISOString();
-  const hours = Math.max(1, Math.round(((endMs - startMs) / 3600_000) * 100) / 100);
+  const hours = Math.max(
+    1,
+    Math.round(((endMs - startMs) / 3600_000) * 100) / 100,
+  );
   return {
     end,
     start,
@@ -397,9 +401,7 @@ function aggregate(events: Event[]): UsageMetrics {
     avgUpstreamLatencyMs: avg(
       events.map((e) => Math.max(0, e.upstreamLatencyMs ?? 0)),
     ),
-    avgResponseBytes: avg(
-      events.map((e) => Math.max(0, e.responseBytes ?? 0)),
-    ),
+    avgResponseBytes: avg(events.map((e) => Math.max(0, e.responseBytes ?? 0))),
     p50LatencyMs: quantile(0.5),
     p95LatencyMs: quantile(0.95),
     p99LatencyMs: quantile(0.99),
@@ -516,6 +518,26 @@ function usageRow(
   };
 }
 
+const DEFAULT_PROJECTS_FALLBACK: Record<string, string> = {
+  prj_egdata_web: "egdata.app",
+};
+
+const DEFAULT_KEYS_FALLBACK: Record<
+  string,
+  { name: string; project: string; prefix: string }
+> = {
+  key_egdata_web_browser: {
+    name: "egdata.app Browser (Ephemeral)",
+    project: "egdata.app",
+    prefix: "egw_browser_",
+  },
+  key_egdata_web_ssr: {
+    name: "egdata.app SSR (Internal)",
+    project: "egdata.app",
+    prefix: "egw_ssr_",
+  },
+};
+
 async function enrich(
   env: DashboardEnv,
   rows: UsageRow[],
@@ -552,27 +574,55 @@ async function enrich(
     }),
   );
   return rows.map((row, i) => {
-    if (
-      (dimension === "projects" ? row.projectId : row.keyId) ===
-      UNATTRIBUTED_LEGACY_ID
-    )
+    const id = dimension === "projects" ? row.projectId : row.keyId;
+    if (id === UNATTRIBUTED_LEGACY_ID)
       return { ...row, label: unattributedLabel, detail: unattributedDetail };
     const meta = results[i].results?.[0] as
       | { name: string; project?: string; owner: string }
       | undefined;
-    if (!meta || (owner !== null && meta.owner !== owner))
+    const projectFallback =
+      dimension === "projects" && id
+        ? DEFAULT_PROJECTS_FALLBACK[id]
+        : undefined;
+    const keyFallback =
+      dimension === "keys" && id ? DEFAULT_KEYS_FALLBACK[id] : undefined;
+
+    if (!meta || (owner !== null && meta.owner !== owner)) {
+      if (meta && owner !== null && meta.owner !== owner) {
+        return {
+          ...row,
+          detail: row.keyId?.startsWith("console_")
+            ? "API console"
+            : "Historical activity",
+        };
+      }
+      if (projectFallback) {
+        return {
+          ...row,
+          label: projectFallback,
+          detail: row.projectId ?? "",
+        };
+      }
+      if (keyFallback) {
+        return {
+          ...row,
+          label: keyFallback.name,
+          detail: keyFallback.project,
+        };
+      }
       return {
         ...row,
         detail: row.keyId?.startsWith("console_")
           ? "API console"
           : "Historical activity",
       };
+    }
     return {
       ...row,
-      label: meta.name,
+      label: meta.name ?? (projectFallback || keyFallback?.name),
       detail:
         dimension === "keys"
-          ? (meta.project ?? row.projectId ?? "")
+          ? (meta.project ?? keyFallback?.project ?? row.projectId ?? "")
           : (row.projectId ?? ""),
     };
   });
@@ -599,6 +649,26 @@ async function searchIds(
       .includes((p.search ?? "").toLowerCase())
   )
     ids.push(UNATTRIBUTED_LEGACY_ID);
+
+  if (p.ownerEpicId === null) {
+    const s = (p.search ?? "").toLowerCase();
+    if (dimension === "projects") {
+      for (const [id, name] of Object.entries(DEFAULT_PROJECTS_FALLBACK)) {
+        if (!ids.includes(id) && `${name} ${id}`.toLowerCase().includes(s)) {
+          ids.push(id);
+        }
+      }
+    } else if (dimension === "keys") {
+      for (const [id, item] of Object.entries(DEFAULT_KEYS_FALLBACK)) {
+        if (
+          !ids.includes(id) &&
+          `${item.name} ${item.project} ${id}`.toLowerCase().includes(s)
+        ) {
+          ids.push(id);
+        }
+      }
+    }
+  }
   return ids;
 }
 
@@ -659,7 +729,9 @@ export async function queryUsageTable(
     const having = minRequests > 0 ? ` HAVING requests >= ${minRequests}` : "";
     const orderBy =
       sort === "label"
-        ? aliases.map((alias) => `${alias} ${direction.toUpperCase()}`).join(", ")
+        ? aliases
+            .map((alias) => `${alias} ${direction.toUpperCase()}`)
+            .join(", ")
         : `${sort} ${direction.toUpperCase()}, ${aliases.map((alias) => `${alias} ASC`).join(", ")}`;
     const result = await sqlWithSchemaFallback(
       env,
@@ -692,7 +764,8 @@ export async function queryUsageTable(
       );
     rows.sort((a, b) => {
       if (sort === "label") {
-        const cmp = a.label.localeCompare(b.label) || a.detail.localeCompare(b.detail);
+        const cmp =
+          a.label.localeCompare(b.label) || a.detail.localeCompare(b.detail);
         return direction === "asc" ? cmp : -cmp;
       }
       const left = Number(a[sort] ?? 0);
@@ -737,7 +810,15 @@ export async function queryDashboardAnalytics(
       }
     : { ...p, end: start };
   const bucketMinutes =
-    hours <= 2 ? 1 : hours <= 6 ? 5 : hours <= 48 ? 60 : hours <= 168 ? 360 : 1440;
+    hours <= 2
+      ? 1
+      : hours <= 6
+        ? 5
+        : hours <= 48
+          ? 60
+          : hours <= 168
+            ? 360
+            : 1440;
   const bucketMs = bucketMinutes * 60_000;
   let totals: UsageMetrics, previous: UsageMetrics | null;
   let timeseries: AnalyticsDashboardSummary["timeseries"];
@@ -934,7 +1015,10 @@ export async function queryDashboardAnalytics(
     const events = eventsFor(p);
     totals = aggregate(events);
     latencyDistribution = [
-      { label: "<50 ms", requests: events.filter((e) => e.latencyMs < 50).length },
+      {
+        label: "<50 ms",
+        requests: events.filter((e) => e.latencyMs < 50).length,
+      },
       {
         label: "50–150 ms",
         requests: events.filter((e) => e.latencyMs >= 50 && e.latencyMs < 150)
@@ -950,7 +1034,10 @@ export async function queryDashboardAnalytics(
         requests: events.filter((e) => e.latencyMs >= 500 && e.latencyMs < 1000)
           .length,
       },
-      { label: ">1 s", requests: events.filter((e) => e.latencyMs >= 1000).length },
+      {
+        label: ">1 s",
+        requests: events.filter((e) => e.latencyMs >= 1000).length,
+      },
     ];
     // An isolate's bounded buffer cannot establish coverage of a previous period.
     previous = null;

@@ -15,7 +15,11 @@ import {
   consoleSessionRoutes,
   revokeConsoleLogin,
 } from "./console-sessions.js";
-import { generateApiKeySecret, sha256Hex } from "./crypto.js";
+import {
+  generateApiKeySecret,
+  sha256Hex,
+  timingSafeStringEqual,
+} from "./crypto.js";
 import {
   createProject,
   insertApiKey,
@@ -38,7 +42,11 @@ import { deliverDeveloperMail } from "./developer-mail.js";
 import { ingestMailEvent } from "./developer-mail-events.js";
 import { developerStatus } from "./developer-status.js";
 import { sendLimitIncreaseRequestEmail } from "./email.js";
-import { ingestUsage, usageEventSchema } from "./endpoint-alerts.js";
+import {
+  ingestUsage,
+  type UsageEvent,
+  usageEventSchema,
+} from "./endpoint-alerts.js";
 import {
   clearDashboardSessionCookie,
   handleEpicOAuthCallback,
@@ -70,6 +78,7 @@ import {
   type EpicSessionUser,
   HTTP_METHODS,
 } from "./types.js";
+import { resolveWebOwnerEpicId } from "./v1.js";
 
 type AppContext = {
   Bindings: DashboardEnv;
@@ -806,6 +815,136 @@ rootApp.route("/_dashboard/api", dashboardApi);
 
 export { ApiKeyRateLimiter } from "./rate-limiter.js";
 
+export async function handleInternalTelemetry(
+  request: Request,
+  env: DashboardEnv,
+  _ctx: ExecutionContext,
+): Promise<Response> {
+  if (request.method !== "POST") {
+    return new Response("Method Not Allowed", { status: 405 });
+  }
+
+  const authHeader =
+    request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
+  const workerHeader = request.headers.get("x-egdata-worker-token") ?? "";
+  const token = authHeader || workerHeader;
+
+  if (
+    !env.ORIGIN_AUTH_TOKEN ||
+    !token ||
+    !(await timingSafeStringEqual(token, env.ORIGIN_AUTH_TOKEN))
+  ) {
+    return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const reader = request.body?.getReader();
+  if (!reader) return new Response("Body required", { status: 400 });
+
+  let size = 0;
+  let text = "";
+  const decoder = new TextDecoder();
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > 512_000) {
+      await reader.cancel();
+      return new Response("Payload Too Large", { status: 413 });
+    }
+    text += decoder.decode(value, { stream: true });
+  }
+  text += decoder.decode();
+
+  let body: { events?: unknown };
+  try {
+    body = JSON.parse(text || "null");
+  } catch {
+    return new Response("Invalid JSON", { status: 400 });
+  }
+
+  if (!body || !Array.isArray(body.events)) {
+    return new Response("Invalid body: events array required", { status: 400 });
+  }
+
+  if (body.events.length > 2000) {
+    return new Response("Too many events (max 2000)", { status: 400 });
+  }
+
+  const fallbackOwner = await resolveWebOwnerEpicId(env);
+  const nowMs = Date.now();
+  const usageEventsMap = new Map<string, UsageEvent>();
+
+  for (const event of body.events) {
+    if (!event || typeof event !== "object") continue;
+    const e = event as Record<string, any>;
+    const ownerEpicId = e.ownerEpicId || fallbackOwner;
+    const keyId = e.keyId || env.WEB_SSR_KEY_ID || "key_egdata_web_ssr";
+    const projectId = e.projectId || env.WEB_PROJECT_ID || "prj_egdata_web";
+    const ts = typeof e.timestamp === "number" ? e.timestamp : nowMs;
+    const timestampIso = new Date(ts).toISOString();
+
+    recordApiTelemetry(
+      env,
+      {
+        ownerEpicId,
+        keyId,
+        projectId,
+        routeTemplate: String(e.routeTemplate || ""),
+        method: String(e.method || "GET"),
+        statusCode: typeof e.statusCode === "number" ? e.statusCode : 200,
+        cacheStatus: String(e.cacheStatus || "SSR_DIRECT"),
+        limitOutcome: String(e.limitOutcome || "allowed"),
+        origin: "(direct)",
+        clientIp: "",
+        userAgent: "ssr",
+        country: typeof e.country === "string" ? e.country : "XX",
+        latencyMs: typeof e.latencyMs === "number" ? e.latencyMs : 0,
+        operationId: e.operationId ? String(e.operationId) : undefined,
+        policyFamily: String(e.policyFamily || "ssr"),
+        errorCode: String(e.errorCode || ""),
+        upstreamLatencyMs:
+          typeof e.upstreamMs === "number"
+            ? e.upstreamMs
+            : typeof e.latencyMs === "number"
+              ? e.latencyMs
+              : 0,
+        responseBytes:
+          typeof e.responseBytes === "number" ? e.responseBytes : 0,
+      },
+      timestampIso,
+    );
+
+    if (e.operationId && keyId && projectId) {
+      const usageDate = timestampIso.slice(0, 10);
+      const mapKey = `${keyId}:${e.operationId}:${usageDate}`;
+      const existing = usageEventsMap.get(mapKey);
+      if (!existing || ts < existing.firstUsedAt) {
+        usageEventsMap.set(mapKey, {
+          projectId,
+          keyId,
+          operationId: String(e.operationId),
+          usageDate,
+          firstUsedAt: ts,
+        });
+      }
+    }
+  }
+
+  const usageEvents = Array.from(usageEventsMap.values());
+  if (usageEvents.length > 0 && env.DB) {
+    try {
+      await ingestUsage(env.DB, usageEvents, nowMs);
+    } catch (err) {
+      console.error("Failed to ingest SSR usage events into D1", err);
+    }
+  }
+
+  return Response.json({ ok: true, ingested: body.events.length });
+}
+
 export default {
   async queue(batch: MessageBatch<unknown>, env: DashboardEnv) {
     if (batch.queue === "egdata-developer-email-events") {
@@ -910,6 +1049,10 @@ export default {
 
     if (request.headers.has(CONSOLE_HEADER)) {
       return consoleProxy.fetch(request, env, ctx);
+    }
+
+    if (url.pathname === "/_internal/telemetry") {
+      return handleInternalTelemetry(request, env, ctx);
     }
 
     // The API hostname owns every path, including /proxy and /_dashboard/api.

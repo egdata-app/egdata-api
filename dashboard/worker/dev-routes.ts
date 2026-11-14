@@ -35,7 +35,13 @@ const patchStateSchema = z.object({
       tier: z.enum(["free", "pro", "scale", "enterprise"]),
       customRpm: z.number().int().min(150).max(500_000).nullable(),
       dailyCapMode: z.enum(["tier", "none", "custom"]).default("tier"),
-      dailyCapCustom: z.number().int().min(1).max(1_000_000).nullable().optional(),
+      dailyCapCustom: z
+        .number()
+        .int()
+        .min(1)
+        .max(1_000_000)
+        .nullable()
+        .optional(),
     })
     .optional(),
 });
@@ -48,7 +54,12 @@ export const devRoutes = new Hono<{
 devRoutes.use("*", async (c, next) => {
   if (!isLocalDevToolsAvailable(c.env, c.req.url)) {
     return c.json(
-      { error: { code: "NOT_FOUND", message: "Not available outside local dev." } },
+      {
+        error: {
+          code: "NOT_FOUND",
+          message: "Not available outside local dev.",
+        },
+      },
       404,
     );
   }
@@ -74,18 +85,28 @@ async function ensureVerifiedOnboarding(
     .run();
 
   const rollout = await db
-    .prepare("SELECT revision, terms_version, privacy_version FROM legal_rollout WHERE id=1")
-    .first<{ revision: string; terms_version: string; privacy_version: string }>()
+    .prepare(
+      "SELECT revision, terms_version, privacy_version FROM legal_rollout WHERE id=1",
+    )
+    .first<{
+      revision: string;
+      terms_version: string;
+      privacy_version: string;
+    }>()
     .catch(() => null);
   if (!rollout) return;
 
   const [terms, privacy] = await Promise.all([
     db
-      .prepare("SELECT edition, sha256 FROM legal_documents WHERE kind='terms' AND version=?")
+      .prepare(
+        "SELECT edition, sha256 FROM legal_documents WHERE kind='terms' AND version=?",
+      )
       .bind(rollout.terms_version)
       .first<{ edition: string; sha256: string }>(),
     db
-      .prepare("SELECT sha256 FROM legal_documents WHERE kind='privacy' AND version=?")
+      .prepare(
+        "SELECT sha256 FROM legal_documents WHERE kind='privacy' AND version=?",
+      )
       .bind(rollout.privacy_version)
       .first<{ sha256: string }>(),
   ]);
@@ -294,15 +315,18 @@ devRoutes.patch("/state", async (c) => {
       const spec = getPlanVersion(project.tier);
       const rpmLimit =
         project.customRpm ??
-        quotaForProject({ tier: project.tier, customRpm: null }, undefined, false);
+        quotaForProject(
+          { tier: project.tier, customRpm: null },
+          undefined,
+          false,
+        );
       const dailyLimit =
         project.dailyCapMode === "none"
           ? null
           : project.dailyCapMode === "custom"
             ? (project.dailyCapCustom ?? 5_000)
             : (spec?.initialDailyLimit ?? null);
-      const dailyUntil =
-        dailyLimit !== null ? nowMs + 14 * 86_400_000 : null;
+      const dailyUntil = dailyLimit !== null ? nowMs + 14 * 86_400_000 : null;
       const expensiveLimits = {
         minute: spec
           ? spec.expensiveMinuteLimits
@@ -357,7 +381,12 @@ devRoutes.patch("/state", async (c) => {
         invalidateLocalKeyCache(key_hash);
         await c.env.API_KEYS_KV.delete(`apikey:${key_hash}`);
       }),
-      invalidateAndSyncProject(c.env, project.id, user.epicAccountId, project.tier),
+      invalidateAndSyncProject(
+        c.env,
+        project.id,
+        user.epicAccountId,
+        project.tier,
+      ),
     ]);
   }
 
@@ -377,11 +406,36 @@ devRoutes.post("/seed", async (c) => {
       "INSERT OR IGNORE INTO user_roles(user_id, role) VALUES(?, 'admin')",
     ).bind(user.epicAccountId),
     c.env.DB.prepare(
-      `UPDATE users SET project_limit = MAX(project_limit, 5), updated_at=?
+      `UPDATE users SET project_limit = MAX(project_limit, 10), last_project_created_at = 0, updated_at=?
         WHERE epic_account_id=?`,
     ).bind(nowIso, user.epicAccountId),
   ]);
   await ensureVerifiedOnboarding(c.env.DB, user.epicAccountId, nowMs);
+
+  await c.env.DB.batch([
+    c.env.DB.prepare(
+      `INSERT OR IGNORE INTO projects (id, owner_epic_id, name, slug, description, website_url, tier, custom_rpm)
+       VALUES ('prj_egdata_web', ?, 'egdata.app', 'egdata-web', 'Official egdata.app website (SSR & Browser)', 'https://egdata.app', 'enterprise', 6000)`,
+    ).bind(user.epicAccountId),
+    c.env.DB.prepare(
+      `INSERT OR IGNORE INTO entitlement_grants (
+         id, project_id, owner_epic_id, source, plan_id, plan_version_id, tier,
+         rpm_limit, period_allowance, expensive_limits_json, effective_from, effective_until,
+         revision, subscription_id, granted_by, reason
+       ) VALUES (
+         'egr_egdata_web_enterprise', 'prj_egdata_web', ?, 'manual', 'enterprise', 'manual-custom', 'enterprise',
+         6000, NULL, '{}', 0, NULL, 1, NULL, 'system', 'Official egdata.app website'
+       )`,
+    ).bind(user.epicAccountId),
+    c.env.DB.prepare(
+      `INSERT OR IGNORE INTO api_keys (
+         id, project_id, owner_epic_id, name, key_prefix, key_hash, tier, active,
+         scopes_json, allowed_origins_json, allowed_methods_json, last_used_at
+       ) VALUES
+         ('key_egdata_web_browser', 'prj_egdata_web', ?, 'egdata.app Browser (Ephemeral)', 'egw_browser_', 'system_ephemeral_browser_key_hash', 'enterprise', 1, '["catalog:read","offers:read","items:read","search:read","stats:read","builds:read"]', '["https://egdata.app"]', '["GET","HEAD","POST"]', ?),
+         ('key_egdata_web_ssr', 'prj_egdata_web', ?, 'egdata.app SSR (Internal)', 'egw_ssr_', 'system_internal_ssr_key_hash', 'enterprise', 1, '["catalog:read","offers:read","items:read","search:read","stats:read","builds:read"]', '[]', '["GET","HEAD","POST"]', ?)`,
+    ).bind(user.epicAccountId, nowIso, user.epicAccountId, nowIso),
+  ]);
 
   const alreadySeeded = await c.env.DB.prepare(
     "SELECT 1 AS found FROM users WHERE epic_account_id='seed_user_pro' LIMIT 1",
