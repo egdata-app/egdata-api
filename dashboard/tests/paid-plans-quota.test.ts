@@ -275,9 +275,24 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
       )
       .all();
     expect(plans).toEqual([
-      { version_id: "free-v1", rpm_limit: 60, period_allowance: 100_000, price_eur_cents: 0 },
-      { version_id: "pro-v1", rpm_limit: 200, period_allowance: 300_000, price_eur_cents: 900 },
-      { version_id: "scale-v1", rpm_limit: 600, period_allowance: 1_000_000, price_eur_cents: 1_900 },
+      {
+        version_id: "free-v1",
+        rpm_limit: 60,
+        period_allowance: 100_000,
+        price_eur_cents: 0,
+      },
+      {
+        version_id: "pro-v1",
+        rpm_limit: 200,
+        period_allowance: 300_000,
+        price_eur_cents: 900,
+      },
+      {
+        version_id: "scale-v1",
+        rpm_limit: 600,
+        period_allowance: 1_000_000,
+        price_eur_cents: 1_900,
+      },
     ]);
 
     // Existing paid manual rows backfilled into entitlement_grants; free custom_rpm stays on free-v1
@@ -287,7 +302,12 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
       )
       .all();
     expect(grants).toEqual([
-      { project_id: "p_ent", source: "manual", tier: "enterprise", rpm_limit: 8000 },
+      {
+        project_id: "p_ent",
+        source: "manual",
+        tier: "enterprise",
+        rpm_limit: 8000,
+      },
       { project_id: "p_pro", source: "manual", tier: "pro", rpm_limit: 1200 },
     ]);
 
@@ -406,17 +426,20 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
 
   it("5.2: rejects spoofed Origin bypass across legacy routes and authenticates only with FIRST_PARTY_SERVICE_TOKEN", async () => {
     const h = await createPaidPlansHarness({ commercialLimitsEnabled: true });
-    const spoofedRoutes: Array<{ path: string; method: string; body?: string }> =
-      [
-        { path: "/offers/123", method: "GET" },
-        { path: "/graphql", method: "POST", body: '{"query":"{ __typename }"}' },
-        {
-          path: "/search/natural-language",
-          method: "POST",
-          body: '{"query":"rpg"}',
-        },
-        { path: "/catalog/items", method: "GET" },
-      ];
+    const spoofedRoutes: Array<{
+      path: string;
+      method: string;
+      body?: string;
+    }> = [
+      { path: "/offers/123", method: "GET" },
+      { path: "/graphql", method: "POST", body: '{"query":"{ __typename }"}' },
+      {
+        path: "/search/natural-language",
+        method: "POST",
+        body: '{"query":"rpg"}',
+      },
+      { path: "/catalog/items", method: "GET" },
+    ];
 
     for (const route of spoofedRoutes) {
       const spoofed = await h.callGateway(
@@ -533,8 +556,12 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
           periodType: "billing_period",
           periodStart: Date.UTC(2026, 10, 1),
           periodEnd: Date.UTC(2026, 11, 1),
-          expensiveMinuteLimits: { ...PLAN_VERSIONS["scale-v1"].expensiveMinuteLimits },
-          expensivePeriodBudgets: { ...PLAN_VERSIONS["scale-v1"].expensivePeriodBudgets },
+          expensiveMinuteLimits: {
+            ...PLAN_VERSIONS["scale-v1"].expensiveMinuteLimits,
+          },
+          expensivePeriodBudgets: {
+            ...PLAN_VERSIONS["scale-v1"].expensivePeriodBudgets,
+          },
           entitlements: [...PLAN_VERSIONS["scale-v1"].entitlements],
           status: "active",
           graceUntil: null,
@@ -612,13 +639,20 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
       entitlementRevision: 1000,
     });
 
-    const okPro = await h.callGateway("/v1/search/natural-language", {
-      "x-api-key": proKey,
-      "Content-Type": "application/json",
-    }, "POST", JSON.stringify({ query: "action" }));
+    const okPro = await h.callGateway(
+      "/v1/search/natural-language",
+      {
+        "x-api-key": proKey,
+        "Content-Type": "application/json",
+      },
+      "POST",
+      JSON.stringify({ query: "action" }),
+    );
     expect(okPro.status).toBe(200);
     expect(okPro.headers.get("RateLimit")).toContain("global;q=200;r=199");
-    expect(okPro.headers.get("RateLimit")).toContain("period;q=300000;r=299999");
+    expect(okPro.headers.get("RateLimit")).toContain(
+      "period;q=300000;r=299999",
+    );
 
     const usageAfterOne = await readProjectBillingQuota(
       h.env,
@@ -630,6 +664,42 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
     );
     expect(usageAfterOne?.used).toBe(1);
     expect(usageAfterOne?.policyCounts["nl-search-period"]).toBe(1);
+
+    // Upstream 500 & 502 on expensive period-budget endpoints restore both period used count and policyCounts
+    h.upstream.mockResolvedValueOnce(
+      new Response("Upstream err", { status: 500 }),
+    );
+    const nl500 = await h.callGateway(
+      "/v1/search/natural-language",
+      { "x-api-key": proKey, "Content-Type": "application/json" },
+      "POST",
+      JSON.stringify({ query: "strategy" }),
+    );
+    expect(nl500.status).toBe(500);
+    await h.flushWaitUntils();
+
+    h.upstream.mockRejectedValueOnce(new Error("connect ECONNREFUSED"));
+    const legacyNl502 = await h.callGateway(
+      "/search/natural-language",
+      { "x-api-key": proKey, "Content-Type": "application/json" },
+      "POST",
+      JSON.stringify({ query: "indie" }),
+    );
+    expect(legacyNl502.status).toBe(502);
+    await h.flushWaitUntils();
+
+    const usageAfterExpensiveFailures = await readProjectBillingQuota(
+      h.env,
+      "owner_pro",
+      "prj_sub",
+      300_000,
+      periodStart,
+      periodEnd,
+    );
+    expect(usageAfterExpensiveFailures?.used).toBe(1);
+    expect(usageAfterExpensiveFailures?.policyCounts["nl-search-period"]).toBe(
+      1,
+    );
 
     // Exhaust Pro NL period budget (2,500) via DO period counter and confirm 429 EXPENSIVE_BUDGET_EXCEEDED
     const doStub = h.namespace.get("account:test:owner_pro");
@@ -653,8 +723,12 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
     });
 
     // Upstream 500 credits period unit back once, idempotently (replay cannot double-credit or go negative)
-    h.upstream.mockResolvedValueOnce(new Response("Upstream err", { status: 500 }));
-    const errRes = await h.callGateway("/v1/countries", { "x-api-key": proKey });
+    h.upstream.mockResolvedValueOnce(
+      new Response("Upstream err", { status: 500 }),
+    );
+    const errRes = await h.callGateway("/v1/countries", {
+      "x-api-key": proKey,
+    });
     expect(errRes.status).toBe(500);
     await h.flushWaitUntils();
     const after5xx = await readProjectBillingQuota(
@@ -727,10 +801,14 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
       tier: "scale",
     });
     await syncProjectEntitlementToLimiter(h.env, scaleEnt);
-    const scaleRes = await h.callGateway("/v1/countries", { "x-api-key": proKey });
+    const scaleRes = await h.callGateway("/v1/countries", {
+      "x-api-key": proKey,
+    });
     expect(scaleRes.status).toBe(200);
     expect(scaleRes.headers.get("RateLimit")).toContain("global;q=600;");
-    expect(scaleRes.headers.get("RateLimit")).toContain("period;q=1000000;r=987654");
+    expect(scaleRes.headers.get("RateLimit")).toContain(
+      "period;q=1000000;r=987654",
+    );
 
     // Stale KV metadata still says tier='pro', but D1/DO revocation after cancel reverts capacity immediately to Free (60 RPM)
     h.sqlite.exec(`
@@ -741,7 +819,9 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
     expect(proMeta.tier).toBe("pro");
     const syncedFree = await resolveEffectiveProjectEntitlement(h.env, proMeta);
     await syncProjectEntitlementToLimiter(h.env, syncedFree);
-    const reverted = await h.callGateway("/v1/countries", { "x-api-key": proKey });
+    const reverted = await h.callGateway("/v1/countries", {
+      "x-api-key": proKey,
+    });
     expect(reverted.status).toBe(200);
     expect(reverted.headers.get("RateLimit")).toContain("global;q=60;");
     expect(reverted.headers.get("RateLimit")).toContain("monthly;q=100000;");
@@ -858,7 +938,9 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
     // Live gateway request enforces elevated 1,310,000 period limit
     const res = await h.callGateway("/v1/countries", { "x-api-key": rawKey });
     expect(res.status).toBe(200);
-    expect(res.headers.get("RateLimit")).toContain("period;q=1310000;r=1309999");
+    expect(res.headers.get("RateLimit")).toContain(
+      "period;q=1310000;r=1309999",
+    );
 
     // Monthly bonus on free-tier quota also expands allowance before any usage
     const monthStart = utcMonthBounds(Date.now()).monthStart;
@@ -886,7 +968,9 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
     });
 
     // Warm key metadata in KV so request reaches entitlement resolution instead of key lookup
-    const warmRes = await h.callGateway("/v1/countries", { "x-api-key": rawKey });
+    const warmRes = await h.callGateway("/v1/countries", {
+      "x-api-key": rawKey,
+    });
     expect(warmRes.status).toBe(200);
     const upstreamBeforeOutage = h.upstream.mock.calls.length;
 
@@ -894,14 +978,18 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
       throw new Error("D1_ERROR: database temporarily unavailable");
     });
 
-    const v1Outage = await h.callGateway("/v1/countries", { "x-api-key": rawKey });
+    const v1Outage = await h.callGateway("/v1/countries", {
+      "x-api-key": rawKey,
+    });
     expect(v1Outage.status).toBe(503);
     expect(v1Outage.headers.get("Retry-After")).toBe("30");
     expect(await v1Outage.json()).toMatchObject({
       code: "ACCOUNT_STATUS_UNAVAILABLE",
     });
 
-    const legacyOutage = await h.callGateway("/offers", { "x-api-key": rawKey });
+    const legacyOutage = await h.callGateway("/offers", {
+      "x-api-key": rawKey,
+    });
     expect(legacyOutage.status).toBe(503);
     expect(legacyOutage.headers.get("Retry-After")).toBe("30");
     expect(await legacyOutage.json()).toMatchObject({
@@ -936,6 +1024,8 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
     );
     expect(res.status).toBe(200);
     expect(res.headers.get("RateLimit")).toContain("period;q=1000000;r=999999");
-    expect(res.headers.get("RateLimit")).toContain("nl-search-period;q=10000;r=9999");
+    expect(res.headers.get("RateLimit")).toContain(
+      "nl-search-period;q=10000;r=9999",
+    );
   });
 });

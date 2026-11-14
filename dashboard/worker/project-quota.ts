@@ -655,6 +655,7 @@ export async function creditAdmittedRequestUsage(
     ownerEpicId: string;
     projectId: string;
     entitlement?: EffectiveProjectEntitlement | null;
+    periodBudget?: { key: ExpensivePeriodBudgetKey; policyName: string } | null;
     reason: string;
   },
 ): Promise<void> {
@@ -674,6 +675,16 @@ export async function creditAdmittedRequestUsage(
   const windowStart = isPeriod
     ? params.entitlement!.periodStart!
     : utcMonthBounds(Date.now()).monthStart;
+  const budgetLimit =
+    isPeriod &&
+    params.periodBudget &&
+    params.entitlement?.expensivePeriodBudgets
+      ? params.entitlement.expensivePeriodBudgets[params.periodBudget.key]
+      : undefined;
+  const periodPolicyName =
+    Number.isInteger(budgetLimit) && (budgetLimit ?? 0) > 0
+      ? params.periodBudget?.policyName
+      : undefined;
 
   await stub.creditUsage({
     adjustmentId: params.adjustmentId,
@@ -683,6 +694,7 @@ export async function creditAdmittedRequestUsage(
     windowStart,
     periodEnd: params.entitlement?.periodEnd ?? undefined,
     amount: 1,
+    ...(periodPolicyName ? { periodPolicyName } : {}),
     reason: params.reason,
   });
 }

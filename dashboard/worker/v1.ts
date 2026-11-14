@@ -593,6 +593,7 @@ export async function handleV1ApiProxy(
         ownerEpicId: meta.ownerEpicId,
         projectId: meta.projectId,
         entitlement,
+        periodBudget,
         reason: "origin_unavailable",
       }).catch(() => {}),
     );
@@ -612,6 +613,7 @@ export async function handleV1ApiProxy(
         ownerEpicId: meta.ownerEpicId,
         projectId: meta.projectId,
         entitlement,
+        periodBudget,
         reason: `upstream_status_${upstreamResponse.status}`,
       }).catch(() => {}),
     );

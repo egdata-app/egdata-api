@@ -548,6 +548,7 @@ export async function handleEdgeApiProxy(
         ownerEpicId: keyMeta.ownerEpicId,
         projectId: keyMeta.projectId,
         entitlement,
+        periodBudget,
         reason: "origin_unavailable",
       }).catch(() => {}),
     );
@@ -567,6 +568,7 @@ export async function handleEdgeApiProxy(
         ownerEpicId: keyMeta.ownerEpicId,
         projectId: keyMeta.projectId,
         entitlement,
+        periodBudget,
         reason: `upstream_status_${upstreamResponse.status}`,
       }).catch(() => {}),
     );

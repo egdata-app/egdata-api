@@ -1,8 +1,5 @@
 import { DurableObject } from "cloudflare:workers";
-import {
-  type EffectiveProjectEntitlement,
-  PLAN_VERSIONS,
-} from "./plans.js";
+import { type EffectiveProjectEntitlement, PLAN_VERSIONS } from "./plans.js";
 import {
   type AdmissionResult,
   applyUsageCredit,
@@ -418,12 +415,19 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
 
     if (!row) return null;
 
-    let expensiveMinuteLimits = { ...PLAN_VERSIONS["free-v1"].expensiveMinuteLimits };
+    let expensiveMinuteLimits = {
+      ...PLAN_VERSIONS["free-v1"].expensiveMinuteLimits,
+    };
     try {
-      const parsed = JSON.parse(row.expensive_minute_json) as Record<string, number>;
+      const parsed = JSON.parse(row.expensive_minute_json) as Record<
+        string,
+        number
+      >;
       if (parsed && typeof parsed === "object") {
         expensiveMinuteLimits = {
-          "offers-list": Number(parsed["offers-list"]) || expensiveMinuteLimits["offers-list"],
+          "offers-list":
+            Number(parsed["offers-list"]) ||
+            expensiveMinuteLimits["offers-list"],
           search: Number(parsed.search) || expensiveMinuteLimits.search,
           heavy: Number(parsed.heavy) || expensiveMinuteLimits.heavy,
           bulk: Number(parsed.bulk) || expensiveMinuteLimits.bulk,
@@ -433,10 +437,14 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       // keep default
     }
 
-    let expensivePeriodBudgets: EffectiveProjectEntitlement["expensivePeriodBudgets"] = null;
+    let expensivePeriodBudgets: EffectiveProjectEntitlement["expensivePeriodBudgets"] =
+      null;
     if (row.expensive_period_json) {
       try {
-        const parsed = JSON.parse(row.expensive_period_json) as Record<string, number>;
+        const parsed = JSON.parse(row.expensive_period_json) as Record<
+          string,
+          number
+        >;
         if (parsed && typeof parsed === "object") {
           expensivePeriodBudgets = {
             "nl-search": Number(parsed["nl-search"]) || 0,
@@ -463,9 +471,11 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       projectId: row.project_id,
       ownerEpicId,
       planId: row.plan_id as EffectiveProjectEntitlement["planId"],
-      planVersionId: row.plan_version_id as EffectiveProjectEntitlement["planVersionId"],
+      planVersionId:
+        row.plan_version_id as EffectiveProjectEntitlement["planVersionId"],
       tier: row.tier as EffectiveProjectEntitlement["tier"],
-      grantSource: row.grant_source as EffectiveProjectEntitlement["grantSource"],
+      grantSource:
+        row.grant_source as EffectiveProjectEntitlement["grantSource"],
       revision: row.revision,
       rpmLimit: row.rpm_limit,
       periodAllowance: row.period_allowance,
@@ -497,7 +507,9 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       stored.graceUntil !== null &&
       now >= stored.graceUntil;
     const paidSuspended =
-      stored.status === "expired" || stored.status === "revoked" || graceExpired;
+      stored.status === "expired" ||
+      stored.status === "revoked" ||
+      graceExpired;
 
     const freeSpec = PLAN_VERSIONS["free-v1"];
     const effectiveRpm = paidSuspended ? freeSpec.rpmLimit : stored.rpmLimit;
@@ -615,7 +627,10 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     };
     if (
       typeof this.ctx.storage.transactionSync === "function" &&
-      (nextDailyState || (accountId && nextMonthlyState) || nextPeriodState || usageEvent)
+      (nextDailyState ||
+        (accountId && nextMonthlyState) ||
+        nextPeriodState ||
+        usageEvent)
     ) {
       this.ctx.storage.transactionSync(applyWrites);
     } else {
@@ -766,7 +781,9 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
       hasMonthlyPolicy && request.ownerEpicId
         ? this.readMonthlyState(request.ownerEpicId)
         : null;
-    const periodState = hasPeriodPolicy ? this.readPeriodState(counterId) : null;
+    const periodState = hasPeriodPolicy
+      ? this.readPeriodState(counterId)
+      : null;
 
     const decision = decideAdmission({
       now,
@@ -878,6 +895,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     windowStart?: number;
     periodEnd?: number;
     amount?: number;
+    periodPolicyName?: string;
     reason: string;
     mode?: "refund" | "bonus";
   }): Promise<{ applied: boolean; remainingUsed: number; bonus?: number }> {
@@ -907,7 +925,8 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
 
       if (params.scope === "month") {
         const monthly = this.readMonthlyState(params.ownerEpicId);
-        const sameMonth = monthly !== null && monthly.monthStart === windowStart;
+        const sameMonth =
+          monthly !== null && monthly.monthStart === windowStart;
         const currentUsed = sameMonth ? monthly.used : 0;
         const currentBonus = sameMonth ? (monthly.bonus ?? 0) : 0;
         if (existing) {
@@ -1002,16 +1021,28 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
             if (currentBonus > 0) appliedBonus = currentBonus;
             return;
           }
-          remainingUsed = samePeriod ? applyUsageCredit(currentUsed, amount) : 0;
+          remainingUsed = samePeriod
+            ? applyUsageCredit(currentUsed, amount)
+            : 0;
           if (currentBonus > 0) appliedBonus = currentBonus;
           if (samePeriod) {
+            const nextPolicyCounts = { ...period.policyCounts };
+            if (
+              params.periodPolicyName &&
+              typeof nextPolicyCounts[params.periodPolicyName] === "number"
+            ) {
+              nextPolicyCounts[params.periodPolicyName] = applyUsageCredit(
+                nextPolicyCounts[params.periodPolicyName],
+                amount,
+              );
+            }
             this.writePeriodState(
               params.projectId,
               {
                 periodStart: period.periodStart,
                 periodEnd: period.periodEnd,
                 used: remainingUsed,
-                policyCounts: period.policyCounts,
+                policyCounts: nextPolicyCounts,
                 bonus: currentBonus,
               },
               now,
