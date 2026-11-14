@@ -51,7 +51,7 @@ const baseFilters = z.object({
   originPresence: z.enum(["present", "direct"]).optional(),
   policyFamily: z
     .string()
-    .regex(/^[a-z0-9_-]{1,40}$/i)
+    .regex(/^(\(none\)|[a-z0-9_-]{1,40})$/i)
     .optional(),
   excludeConsole: z
     .enum(["true", "false"])

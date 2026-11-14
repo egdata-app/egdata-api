@@ -75,7 +75,7 @@ function windowFor(p: UsageFilters) {
     spanMs: Math.max(60_000, endMs - startMs),
   };
 }
-function where(p: Params) {
+function where(p: Params, includePolicyFamily = true) {
   const { start, end } = windowFor(p);
   const parts = [
     `timestamp >= toDateTime('${start.slice(0, 19).replace("T", " ")}')`,
@@ -106,7 +106,7 @@ function where(p: Params) {
   } else if (p.originPresence === "direct") {
     parts.push("(blob8 = '(direct)' OR blob8 = '')");
   }
-  if (p.policyFamily) {
+  if (p.policyFamily && includePolicyFamily) {
     parts.push(
       p.policyFamily === "(none)"
         ? "blob14 = ''"
@@ -146,10 +146,12 @@ function isSchemaOrDialectError(error: unknown): boolean {
   return status === 400 || status === 422;
 }
 
-function metricSqlSelection(): string {
-  return Date.now() < extendedSchemaUnavailableUntil
-    ? baseMetricSql
-    : extendedMetricSql;
+function shouldTryExtendedSchema(): boolean {
+  return Date.now() >= extendedSchemaUnavailableUntil;
+}
+
+function hasNamedPolicyFilter(p: Pick<Params, "policyFamily">): boolean {
+  return Boolean(p.policyFamily && p.policyFamily !== "(none)");
 }
 
 function metrics(row: SqlRow = {}): UsageMetrics {
@@ -229,20 +231,37 @@ async function sql(env: DashboardEnv, query: string): Promise<SqlRow[]> {
   throw new Error("Usage history is unavailable (429). Please retry.");
 }
 
-async function sqlWithMetricFallback(
+/** Run an Analytics Engine SQL query with automatic fallback when extended schema columns (double6/double7/blob14) do not exist yet. */
+async function sqlWithSchemaFallback(
   env: DashboardEnv,
-  buildQuery: (selectedMetricSql: string) => string,
+  p: Params,
+  buildQuery: (opts: { metricSql: string; whereClause: string }) => string,
+  options: { requiresExtendedColumn?: boolean } = {},
 ): Promise<SqlRow[]> {
-  const firstSql = metricSqlSelection();
-  try {
-    return await sql(env, buildQuery(firstSql));
-  } catch (error) {
-    if (firstSql !== baseMetricSql && isSchemaOrDialectError(error)) {
+  if (shouldTryExtendedSchema()) {
+    try {
+      return await sql(
+        env,
+        buildQuery({
+          metricSql: extendedMetricSql,
+          whereClause: where(p, true),
+        }),
+      );
+    } catch (error) {
+      if (!isSchemaOrDialectError(error)) throw error;
       extendedSchemaUnavailableUntil = Date.now() + 5 * 60_000;
-      return sql(env, buildQuery(baseMetricSql));
     }
-    throw error;
   }
+  if (options.requiresExtendedColumn || hasNamedPolicyFilter(p)) {
+    return [];
+  }
+  return sql(
+    env,
+    buildQuery({
+      metricSql: baseMetricSql,
+      whereClause: where(p, false),
+    }),
+  );
 }
 
 async function runLimited<T>(
@@ -412,10 +431,13 @@ export async function getAdminUsage(
   try {
     if (remote(env)) {
       const column = dimension === "users" ? "index1" : "blob2";
-      const rows = await sqlWithMetricFallback(
+      const adminParams: Params = { ...params, end: window.end };
+      const rows = await sqlWithSchemaFallback(
         env,
-        (mSql) => `SELECT ${column} AS id, ${mSql}
-        FROM egdata_api_usage ${where({ ...params, end: window.end })}
+        adminParams,
+        ({ metricSql, whereClause }) =>
+          `SELECT ${column} AS id, ${metricSql}
+        FROM egdata_api_usage ${whereClause}
         AND ${column} IN (${ids.map(literal).join(",")}) GROUP BY ${column} FORMAT JSON`,
       );
       for (const row of rows) {
@@ -639,10 +661,12 @@ export async function queryUsageTable(
       sort === "label"
         ? aliases.map((alias) => `${alias} ${direction.toUpperCase()}`).join(", ")
         : `${sort} ${direction.toUpperCase()}, ${aliases.map((alias) => `${alias} ASC`).join(", ")}`;
-    const result = await sqlWithMetricFallback(
+    const result = await sqlWithSchemaFallback(
       env,
-      (mSql) =>
-        `SELECT ${cols.map((col, i) => `${col} AS d${i}`).join(", ")}, ${mSql} FROM egdata_api_usage ${where(p)}${filter} GROUP BY ${aliases.join(", ")}${having} ORDER BY ${orderBy} LIMIT ${limit + 1} OFFSET ${offset} FORMAT JSON`,
+      p,
+      ({ metricSql, whereClause }) =>
+        `SELECT ${cols.map((col, i) => `${col} AS d${i}`).join(", ")}, ${metricSql} FROM egdata_api_usage ${whereClause}${filter} GROUP BY ${aliases.join(", ")}${having} ORDER BY ${orderBy} LIMIT ${limit + 1} OFFSET ${offset} FORMAT JSON`,
+      { requiresExtendedColumn: dimension === "policies" },
     );
     rows = result.map((r) => {
       const values = cols.map((_, i) => String(r[`d${i}`] ?? ""));
@@ -727,14 +751,21 @@ export async function queryDashboardAnalytics(
   let clientBreakdown: AnalyticsDashboardSummary["clientBreakdown"];
   let policyBreakdown: AnalyticsDashboardSummary["policyBreakdown"];
   const quotaProjectIds = params.quotaProjectIds;
-  const breakdown = async (col: string, limit = 50) =>
-    sql(
+  const breakdown = (col: string, limit = 50, requiresExtendedColumn = false) =>
+    sqlWithSchemaFallback(
       env,
-      `SELECT ${col} AS label, SUM(_sample_interval * double1) AS requests FROM egdata_api_usage ${where(p)} GROUP BY label ORDER BY requests DESC LIMIT ${limit} FORMAT JSON`,
+      p,
+      ({ whereClause }) =>
+        `SELECT ${col} AS label, SUM(_sample_interval * double1) AS requests FROM egdata_api_usage ${whereClause} GROUP BY label ORDER BY requests DESC LIMIT ${limit} FORMAT JSON`,
+      { requiresExtendedColumn },
     );
-  const breakdownOptional = async (col: string, limit = 50) => {
+  const breakdownOptional = async (
+    col: string,
+    limit = 50,
+    requiresExtendedColumn = false,
+  ) => {
     try {
-      return await breakdown(col, limit);
+      return await breakdown(col, limit, requiresExtendedColumn);
     } catch (error) {
       if (isSchemaOrDialectError(error)) return [];
       throw error;
@@ -749,27 +780,32 @@ export async function queryDashboardAnalytics(
     const results = (await runLimited(
       [
         () =>
-          sqlWithMetricFallback(
+          sqlWithSchemaFallback(
             env,
-            (mSql) =>
-              `SELECT ${mSql}, ${latencyBucketSql} FROM egdata_api_usage ${where(p)} FORMAT JSON`,
+            p,
+            ({ metricSql, whereClause }) =>
+              `SELECT ${metricSql}, ${latencyBucketSql} FROM egdata_api_usage ${whereClause} FORMAT JSON`,
           ),
         () =>
-          sqlWithMetricFallback(
+          sqlWithSchemaFallback(
             env,
-            (mSql) =>
-              `SELECT ${mSql} FROM egdata_api_usage ${where(previousParams)} FORMAT JSON`,
+            previousParams,
+            ({ metricSql, whereClause }) =>
+              `SELECT ${metricSql} FROM egdata_api_usage ${whereClause} FORMAT JSON`,
           ),
         () =>
-          sqlWithMetricFallback(
+          sqlWithSchemaFallback(
             env,
-            (mSql) =>
-              `SELECT toStartOfInterval(timestamp, INTERVAL '${bucketMinutes}' MINUTE) AS bucket, ${mSql} FROM egdata_api_usage ${where(p)} GROUP BY bucket ORDER BY bucket ASC FORMAT JSON`,
+            p,
+            ({ metricSql, whereClause }) =>
+              `SELECT toStartOfInterval(timestamp, INTERVAL '${bucketMinutes}' MINUTE) AS bucket, ${metricSql} FROM egdata_api_usage ${whereClause} GROUP BY bucket ORDER BY bucket ASC FORMAT JSON`,
           ),
         () =>
-          sql(
+          sqlWithSchemaFallback(
             env,
-            `SELECT toStartOfInterval(timestamp, INTERVAL '${bucketMinutes}' MINUTE) AS bucket, SUM(_sample_interval * double1) AS requests, SUM(_sample_interval * double5) AS errors, SUM(_sample_interval * double2) / SUM(_sample_interval) AS avgLatencyMs, quantileExactWeighted(0.95)(double2, _sample_interval) AS p95LatencyMs FROM egdata_api_usage ${where(previousParams)} GROUP BY bucket ORDER BY bucket ASC FORMAT JSON`,
+            previousParams,
+            ({ whereClause }) =>
+              `SELECT toStartOfInterval(timestamp, INTERVAL '${bucketMinutes}' MINUTE) AS bucket, SUM(_sample_interval * double1) AS requests, SUM(_sample_interval * double5) AS errors, SUM(_sample_interval * double2) / SUM(_sample_interval) AS avgLatencyMs, quantileExactWeighted(0.95)(double2, _sample_interval) AS p95LatencyMs FROM egdata_api_usage ${whereClause} GROUP BY bucket ORDER BY bucket ASC FORMAT JSON`,
           ).catch((error) => {
             if (isSchemaOrDialectError(error)) return [];
             throw error;
@@ -782,12 +818,14 @@ export async function queryDashboardAnalytics(
           breakdownOptional(
             "if(blob12 = 'privacy-v1', blob10, 'legacy (redacted)')",
           ),
-        () => breakdownOptional("if(blob14 = '', '(none)', blob14)", 8),
+        () => breakdownOptional("if(blob14 = '', '(none)', blob14)", 8, true),
         () =>
           quotaProjectIds && quotaProjectIds.length > 0
-            ? sql(
+            ? sqlWithSchemaFallback(
                 env,
-                `SELECT toStartOfInterval(timestamp, INTERVAL '${bucketMinutes}' MINUTE) AS bucket, SUM(_sample_interval * double1) AS requests FROM egdata_api_usage ${where(p)} AND blob7 = 'ok' AND blob2 IN (${quotaProjectIds.map(literal).join(", ")}) GROUP BY bucket ORDER BY bucket ASC FORMAT JSON`,
+                p,
+                ({ whereClause }) =>
+                  `SELECT toStartOfInterval(timestamp, INTERVAL '${bucketMinutes}' MINUTE) AS bucket, SUM(_sample_interval * double1) AS requests FROM egdata_api_usage ${whereClause} AND blob7 = 'ok' AND blob2 IN (${quotaProjectIds.map(literal).join(", ")}) GROUP BY bucket ORDER BY bucket ASC FORMAT JSON`,
               )
             : Promise.resolve(quotaProjectIds ? [] : undefined),
       ],
@@ -973,7 +1011,15 @@ export async function queryDashboardAnalytics(
       ).sort((a, b) => a.bucket.localeCompare(b.bucket));
     }
   }
-  const [endpoints, endpointsByVolume, projects, keysAll] = await runLimited(
+  const [
+    endpoints,
+    busiestEndpoints,
+    slowestEndpoints,
+    errorEndpoints,
+    projects,
+    keys,
+    busiestKeys,
+  ] = await runLimited(
     [
       () =>
         queryUsageTable(env, {
@@ -986,31 +1032,41 @@ export async function queryDashboardAnalytics(
         queryUsageTable(env, {
           ...p,
           dimension: "endpoints",
-          limit: 50,
+          limit: 5,
           sort: "requests",
+        }),
+      () =>
+        queryUsageTable(env, {
+          ...p,
+          dimension: "endpoints",
+          limit: 5,
+          sort: "p95LatencyMs",
+        }),
+      () =>
+        queryUsageTable(env, {
+          ...p,
+          dimension: "endpoints",
+          limit: 5,
+          sort: "errors",
         }),
       () => queryUsageTable(env, { ...p, dimension: "projects", limit: 5 }),
       () =>
         queryUsageTable(env, {
           ...p,
           dimension: "keys",
-          limit: 50,
+          limit: 5,
           sort: "rateLimited",
+        }),
+      () =>
+        queryUsageTable(env, {
+          ...p,
+          dimension: "keys",
+          limit: 5,
+          sort: "requests",
         }),
     ],
     4,
   );
-  const busiestEndpoints = endpointsByVolume.rows.slice(0, 5);
-  const slowestEndpoints = [...endpointsByVolume.rows]
-    .sort((a, b) => b.p95LatencyMs - a.p95LatencyMs || b.requests - a.requests)
-    .slice(0, 5);
-  const errorEndpoints = [...endpointsByVolume.rows]
-    .filter((r) => r.errors > 0)
-    .sort((a, b) => b.errors - a.errors || b.errorRate - a.errorRate)
-    .slice(0, 5);
-  const busiestKeys = [...keysAll.rows]
-    .sort((a, b) => b.requests - a.requests || b.rateLimited - a.rateLimited)
-    .slice(0, 5);
   return {
     source: source(env),
     scope: p.ownerEpicId === null ? "all" : "project",
@@ -1031,11 +1087,11 @@ export async function queryDashboardAnalytics(
     clientBreakdown,
     policyBreakdown,
     endpoints: endpoints.rows,
-    busiestEndpoints,
-    slowestEndpoints,
-    errorEndpoints,
+    busiestEndpoints: busiestEndpoints.rows,
+    slowestEndpoints: slowestEndpoints.rows,
+    errorEndpoints: errorEndpoints.rows,
     projects: projects.rows,
-    keys: keysAll.rows.slice(0, 5),
-    busiestKeys,
+    keys: keys.rows,
+    busiestKeys: busiestKeys.rows,
   };
 }
