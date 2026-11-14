@@ -5,6 +5,7 @@ import {
   clearSsrTelemetryBufferForTesting,
   flushSsrTelemetry,
   getSsrTelemetryBufferForTesting,
+  recordSsrTelemetryHit,
 } from "../src/v1/ssr-telemetry.js";
 
 const app = new Hono().route("/v1", v1Router);
@@ -234,6 +235,103 @@ describe("versioned v1 origin router", () => {
     // Buffer is drained after flush
     expect(getSsrTelemetryBufferForTesting().length).toBe(0);
 
+    vi.unstubAllGlobals();
+    clearSsrTelemetryBufferForTesting();
+  });
+
+  it("restores telemetry events to the buffer when flush fails and sends them on retry", async () => {
+    clearSsrTelemetryBufferForTesting();
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    let callCount = 0;
+    const fetchMock = vi.fn(async (_url: string, _init?: unknown) => {
+      callCount++;
+      if (callCount === 1) {
+        // First attempt returns HTTP 503
+        return new Response(JSON.stringify({ error: "Service Unavailable" }), {
+          status: 503,
+        });
+      }
+      if (callCount === 2) {
+        // Second attempt throws network error
+        throw new Error("Network timeout");
+      }
+      // Subsequent attempts succeed
+      return new Response(JSON.stringify({ ok: true, ingested: 1 }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const ssrHeaders = {
+      "x-egdata-key-id": "key_egdata_web_ssr",
+      "x-egdata-key-tier": "enterprise",
+      "x-egdata-key-project": "prj_egdata_web",
+      "x-egdata-worker-token": "test-worker-token",
+    };
+
+    // Record request 1
+    const res = await app.request("/v1/countries", {
+      headers: ssrHeaders,
+    });
+    expect(res.status).toBe(200);
+    expect(getSsrTelemetryBufferForTesting()).toHaveLength(1);
+
+    // First flush fails with 503
+    await flushSsrTelemetry();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    // Events must be restored to the ring buffer
+    expect(getSsrTelemetryBufferForTesting()).toHaveLength(1);
+    expect(warnSpy).toHaveBeenCalledWith(
+      "[v1 SSR Telemetry] Failed to flush batch: HTTP 503",
+    );
+
+    // Second flush throws network error
+    await flushSsrTelemetry();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    // Events must still be preserved in the ring buffer
+    expect(getSsrTelemetryBufferForTesting()).toHaveLength(1);
+    expect(warnSpy).toHaveBeenCalledWith(
+      "[v1 SSR Telemetry] Network flush error",
+      expect.any(Error),
+    );
+
+    // Verify bounded capacity behavior on restore (never exceeds 2000)
+    for (let i = 0; i < 2005; i++) {
+      recordSsrTelemetryHit({
+        requestId: `req_${i}`,
+        keyId: "key_egdata_web_ssr",
+        projectId: "prj_egdata_web",
+        tier: "enterprise",
+        routeTemplate: "/v1/countries",
+        operationId: "listCountries",
+        method: "GET",
+        statusCode: 200,
+        cacheStatus: "SSR_DIRECT",
+        limitOutcome: "allowed",
+        policyFamily: "ssr",
+        errorCode: "",
+        country: "US",
+        latencyMs: 10,
+        upstreamMs: 10,
+        responseBytes: 100,
+        timestamp: Date.now(),
+      });
+    }
+    expect(getSsrTelemetryBufferForTesting().length).toBe(2000);
+
+    // Test concurrent flushes deduplication
+    const flush1 = flushSsrTelemetry();
+    const flush2 = flushSsrTelemetry();
+    await Promise.all([flush1, flush2]);
+    // Only one new fetch call should have occurred (total 3 calls)
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+
+    // Buffer is fully drained after successful flush
+    expect(getSsrTelemetryBufferForTesting()).toHaveLength(0);
+
+    warnSpy.mockRestore();
     vi.unstubAllGlobals();
     clearSsrTelemetryBufferForTesting();
   });
