@@ -6,4 +6,7 @@ Allow: /docs/
 Allow: /problems$
 Allow: /problems/
 Allow: /assets/
-Allow: /og-image.png
+Allow: /og-image.png$
+Allow: /_dashboard/api/auth/session$
+Allow: /_dashboard/reference/history$
+Allow: /proxy/v1/open-api.json$

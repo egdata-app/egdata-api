@@ -17,6 +17,95 @@ export type DashboardSeoMetadata = {
   ogUrl: string | null;
 };
 
+export type SocialMetaTag = {
+  attribute: "property" | "name";
+  key: string;
+  content: string | null;
+};
+
+export function getDashboardSocialMetaTags(
+  seo: DashboardSeoMetadata,
+): SocialMetaTag[] {
+  const active = Boolean(seo.includeOg && seo.ogUrl && seo.ogImageUrl);
+  return [
+    {
+      attribute: "property",
+      key: "og:type",
+      content: active ? "website" : null,
+    },
+    {
+      attribute: "property",
+      key: "og:site_name",
+      content: active ? "egdata Developer Portal" : null,
+    },
+    {
+      attribute: "property",
+      key: "og:title",
+      content: active ? seo.title : null,
+    },
+    {
+      attribute: "property",
+      key: "og:description",
+      content: active ? seo.description : null,
+    },
+    {
+      attribute: "property",
+      key: "og:url",
+      content: active ? seo.ogUrl : null,
+    },
+    {
+      attribute: "property",
+      key: "og:image",
+      content: active ? seo.ogImageUrl : null,
+    },
+    {
+      attribute: "property",
+      key: "og:image:type",
+      content: active ? "image/png" : null,
+    },
+    {
+      attribute: "property",
+      key: "og:image:width",
+      content: active ? "1200" : null,
+    },
+    {
+      attribute: "property",
+      key: "og:image:height",
+      content: active ? "630" : null,
+    },
+    {
+      attribute: "property",
+      key: "og:image:alt",
+      content: active ? HOMEPAGE_OG_ALT : null,
+    },
+    {
+      attribute: "name",
+      key: "twitter:card",
+      content: active ? "summary_large_image" : null,
+    },
+    {
+      attribute: "name",
+      key: "twitter:title",
+      content: active ? seo.title : null,
+    },
+    {
+      attribute: "name",
+      key: "twitter:description",
+      content: active ? seo.description : null,
+    },
+    {
+      attribute: "name",
+      key: "twitter:image",
+      content: active ? seo.ogImageUrl : null,
+    },
+    {
+      attribute: "name",
+      key: "twitter:image:alt",
+      content: active ? HOMEPAGE_OG_ALT : null,
+    },
+  ];
+}
+
 export function isCrawlableDashboardPath(pathname: string): boolean {
   return (
     pathname === "/" ||
@@ -92,6 +181,19 @@ export function resolveDashboardSeo(
       : "";
     const slug = rawSlug ? safeDecode(rawSlug) : "";
     const entry = findDoc(slug || "problems");
+
+    if (slug && !entry) {
+      return {
+        title: "Problem Not Found — egdata API Problems",
+        description:
+          "Stable v1 problem codes, HTTP statuses, and client recovery steps for the egdata API.",
+        canonicalUrl: null,
+        robots: "noindex, nofollow",
+        includeOg: false,
+        ogImageUrl: null,
+        ogUrl: null,
+      };
+    }
 
     return {
       title: entry

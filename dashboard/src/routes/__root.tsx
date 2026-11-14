@@ -35,7 +35,7 @@ import { useUnreadAlerts } from "../lib/alerts";
 import { dashboardClient } from "../lib/api";
 import { DashboardAuthProvider, useDashboardAuth } from "../lib/auth-context";
 import { readVerificationToken } from "../lib/email-verification";
-import { resolveDashboardSeo } from "../lib/seo";
+import { getDashboardSocialMetaTags, resolveDashboardSeo } from "../lib/seo";
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -110,8 +110,11 @@ function DashboardShell() {
       ? selectedProject?.id
       : undefined,
   );
-  const isDocsRoute =
-    currentPath === "/docs" || currentPath.startsWith("/docs/");
+  const isPublicDocsRoute =
+    currentPath === "/docs" ||
+    currentPath.startsWith("/docs/") ||
+    currentPath === "/problems" ||
+    currentPath.startsWith("/problems/");
 
   useEffect(() => {
     const seo = resolveDashboardSeo(currentPath, window.location.origin);
@@ -119,6 +122,10 @@ function DashboardShell() {
     syncMetaTag("name", "description", seo.description);
     syncMetaTag("name", "robots", seo.robots);
     syncCanonicalLink(seo.canonicalUrl);
+
+    for (const tag of getDashboardSocialMetaTags(seo)) {
+      syncMetaTag(tag.attribute, tag.key, tag.content);
+    }
 
     if (!seo.includeOg) {
       for (const el of document.head.querySelectorAll(
@@ -140,7 +147,7 @@ function DashboardShell() {
     );
   }
 
-  if (sessionError && !isDocsRoute)
+  if (sessionError && !isPublicDocsRoute)
     return (
       <main className="max-w-lg mx-auto p-8 space-y-4">
         <h1 className="text-xl font-semibold">
@@ -164,7 +171,7 @@ function DashboardShell() {
     );
 
   if (!authenticated || !user) {
-    if (isDocsRoute) {
+    if (isPublicDocsRoute) {
       return (
         <main className="max-w-7xl mx-auto p-6">
           <Link to="/" className="text-epic-accent block mb-6">

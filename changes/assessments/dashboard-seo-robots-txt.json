@@ -1,11 +1,11 @@
 {
-  "baseCommit": "c7174208a44ee65985ec14027fa6c26f1384fb9c",
-  "diffHash": "8f3be13368a1b0e3050a4d7a196935cc11d4fcf8763d57eed505f16671d73605",
+  "baseCommit": "9277a5d20cb1652456dbca3d9e0cdfd661cf6cc4",
+  "diffHash": "0aad02e6567b89fa4a8f32b945992fa5bb929678c1e5f4cbc714a1c8b53ad14a",
   "operations": [],
   "unknownFiles": [
     {
       "file": "dashboard/worker/index.ts",
-      "reason": "Developer portal Cloudflare Worker entrypoint (devs.egdata.app). Adds GET/HEAD /robots.txt and HTML <head> SEO / X-Robots-Tag handling strictly for non-API SPA asset responses after the API_PROXY_HOST (api.egdata.app) proxy check and outside /api/*, /oauth/*, and /webhooks/* routes; all public legacy and v1 API operations and proxy behavior remain unchanged.",
+      "reason": "Developer portal Cloudflare Worker entrypoint (devs.egdata.app). Adds GET/HEAD /robots.txt and HTML <head> SEO / X-Robots-Tag handling (preserving null-body statuses such as 304) strictly for non-API SPA asset responses after the API_PROXY_HOST (api.egdata.app) proxy check and outside /api/*, /oauth/*, and /webhooks/* routes; all public legacy and v1 API operations and proxy behavior remain unchanged.",
       "endpoints": []
     },
     {

@@ -1,5 +1,6 @@
 import {
   type DashboardSeoMetadata,
+  getDashboardSocialMetaTags,
   HOMEPAGE_DESCRIPTION,
   HOMEPAGE_OG_ALT,
   HOMEPAGE_TITLE,
@@ -9,6 +10,7 @@ import {
 
 export {
   type DashboardSeoMetadata,
+  getDashboardSocialMetaTags,
   HOMEPAGE_DESCRIPTION,
   HOMEPAGE_OG_ALT,
   HOMEPAGE_TITLE,
@@ -24,7 +26,10 @@ Allow: /docs/
 Allow: /problems$
 Allow: /problems/
 Allow: /assets/
-Allow: /og-image.png
+Allow: /og-image.png$
+Allow: /_dashboard/api/auth/session$
+Allow: /_dashboard/reference/history$
+Allow: /proxy/v1/open-api.json$
 `;
 
 function escapeHtml(value: string): string {
@@ -49,23 +54,10 @@ function renderSeoHeadTags(seo: DashboardSeoMetadata): string {
     );
   }
 
-  if (seo.includeOg && seo.ogUrl && seo.ogImageUrl) {
+  for (const tag of getDashboardSocialMetaTags(seo)) {
+    if (!tag.content) continue;
     lines.push(
-      `<meta property="og:type" content="website" />`,
-      `<meta property="og:site_name" content="egdata Developer Portal" />`,
-      `<meta property="og:title" content="${escapeHtml(seo.title)}" />`,
-      `<meta property="og:description" content="${escapeHtml(seo.description)}" />`,
-      `<meta property="og:url" content="${escapeHtml(seo.ogUrl)}" />`,
-      `<meta property="og:image" content="${escapeHtml(seo.ogImageUrl)}" />`,
-      `<meta property="og:image:type" content="image/png" />`,
-      `<meta property="og:image:width" content="1200" />`,
-      `<meta property="og:image:height" content="630" />`,
-      `<meta property="og:image:alt" content="${escapeHtml(HOMEPAGE_OG_ALT)}" />`,
-      `<meta name="twitter:card" content="summary_large_image" />`,
-      `<meta name="twitter:title" content="${escapeHtml(seo.title)}" />`,
-      `<meta name="twitter:description" content="${escapeHtml(seo.description)}" />`,
-      `<meta name="twitter:image" content="${escapeHtml(seo.ogImageUrl)}" />`,
-      `<meta name="twitter:image:alt" content="${escapeHtml(HOMEPAGE_OG_ALT)}" />`,
+      `<meta ${tag.attribute}="${tag.key}" content="${escapeHtml(tag.content)}" />`,
     );
   }
 
@@ -87,8 +79,8 @@ export function applyDashboardSeoHtml(
   pathname: string,
   origin: string,
 ): string {
-  const headMatch = /<head\b[^>]*>[\s\S]*?<\/head>/i.exec(html);
-  if (!headMatch) return html;
+  const headMatch = html.match(/<head\b[^>]*>[\s\S]*?<\/head>/i);
+  if (!headMatch || headMatch.index === undefined) return html;
 
   const seo = resolveDashboardSeo(pathname, origin);
   const originalHead = headMatch[0];

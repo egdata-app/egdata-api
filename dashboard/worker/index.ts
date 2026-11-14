@@ -58,8 +58,8 @@ import { purgeDeletedProjects } from "./project-retention.js";
 import { handleEdgeApiProxy } from "./proxy.js";
 import {
   applyDashboardSeoHtml,
-  isCrawlableDashboardPath,
   ROBOTS_TXT,
+  resolveDashboardSeo,
 } from "./seo.js";
 import {
   type AllowedHttpMethod,
@@ -555,12 +555,42 @@ dashboardApi.post("/analytics/simulate", async (c) => {
   }
 
   const routes = [
-    { route: "/v1/offers/{id}", method: "GET", operationId: "getOffer", policy: "" },
-    { route: "/v1/search/v2", method: "POST", operationId: "searchV2", policy: "search" },
-    { route: "/v1/free-games", method: "GET", operationId: "getFreeGames", policy: "" },
-    { route: "/v1/offers/top-sellers", method: "GET", operationId: "getTopSellers", policy: "" },
-    { route: "/v1/items/{id}", method: "GET", operationId: "getItem", policy: "" },
-    { route: "/v1/catalog/hydrate", method: "POST", operationId: "hydrateCatalog", policy: "bulk" },
+    {
+      route: "/v1/offers/{id}",
+      method: "GET",
+      operationId: "getOffer",
+      policy: "",
+    },
+    {
+      route: "/v1/search/v2",
+      method: "POST",
+      operationId: "searchV2",
+      policy: "search",
+    },
+    {
+      route: "/v1/free-games",
+      method: "GET",
+      operationId: "getFreeGames",
+      policy: "",
+    },
+    {
+      route: "/v1/offers/top-sellers",
+      method: "GET",
+      operationId: "getTopSellers",
+      policy: "",
+    },
+    {
+      route: "/v1/items/{id}",
+      method: "GET",
+      operationId: "getItem",
+      policy: "",
+    },
+    {
+      route: "/v1/catalog/hydrate",
+      method: "POST",
+      operationId: "hydrateCatalog",
+      policy: "bulk",
+    },
     { route: "/offers/{id}", method: "GET", operationId: "", policy: "" },
   ];
   const statuses = [
@@ -568,10 +598,34 @@ dashboardApi.post("/analytics/simulate", async (c) => {
     { status: 200, cache: "HIT", outcome: "ok", errorCode: "", policy: "" },
     { status: 200, cache: "HIT", outcome: "ok", errorCode: "", policy: "" },
     { status: 200, cache: "MISS", outcome: "ok", errorCode: "", policy: "" },
-    { status: 304, cache: "REVALIDATED", outcome: "ok", errorCode: "", policy: "" },
-    { status: 429, cache: "EDGE_BLOCK", outcome: "rate_limited", errorCode: "RATE_LIMITED", policy: "rpm" },
-    { status: 403, cache: "EDGE_BLOCK", outcome: "origin_denied", errorCode: "ORIGIN_DENIED", policy: "key_policy" },
-    { status: 500, cache: "MISS", outcome: "ok", errorCode: "HTTP_500", policy: "" },
+    {
+      status: 304,
+      cache: "REVALIDATED",
+      outcome: "ok",
+      errorCode: "",
+      policy: "",
+    },
+    {
+      status: 429,
+      cache: "EDGE_BLOCK",
+      outcome: "rate_limited",
+      errorCode: "RATE_LIMITED",
+      policy: "rpm",
+    },
+    {
+      status: 403,
+      cache: "EDGE_BLOCK",
+      outcome: "origin_denied",
+      errorCode: "ORIGIN_DENIED",
+      policy: "key_policy",
+    },
+    {
+      status: 500,
+      cache: "MISS",
+      outcome: "ok",
+      errorCode: "HTTP_500",
+      policy: "",
+    },
   ];
   const origins = [
     "https://egdata.app",
@@ -596,7 +650,9 @@ dashboardApi.post("/analytics/simulate", async (c) => {
         : pick.cache === "EDGE_BLOCK"
           ? 2 + (i % 4)
           : 48 + ((i * 37) % 420);
-    const ts = new Date(nowMs - (i % 12) * 3600_000 - (i % 5) * 60_000).toISOString();
+    const ts = new Date(
+      nowMs - (i % 12) * 3600_000 - (i % 5) * 60_000,
+    ).toISOString();
     recordApiTelemetry(
       c.env,
       {
@@ -977,21 +1033,29 @@ export default {
 
       const contentType = headers.get("content-type")?.toLowerCase() ?? "";
       if (contentType.includes("text/html")) {
-        if (!isCrawlableDashboardPath(url.pathname)) {
+        const canonicalOrigin = (env.DASHBOARD_ORIGIN || url.origin).replace(
+          /\/+$/,
+          "",
+        );
+        const seo = resolveDashboardSeo(url.pathname, canonicalOrigin);
+        if (seo.robots === "noindex, nofollow") {
           headers.set("X-Robots-Tag", "noindex, nofollow");
         }
-        if (request.method === "HEAD") {
-          headers.delete("Content-Length");
+        const isNullBodyStatus =
+          response.status === 101 ||
+          response.status === 204 ||
+          response.status === 205 ||
+          response.status === 304;
+        if (request.method === "HEAD" || isNullBodyStatus) {
+          if (request.method === "HEAD") {
+            headers.delete("Content-Length");
+          }
           return new Response(null, {
             status: response.status,
             statusText: response.statusText,
             headers,
           });
         }
-        const canonicalOrigin = (env.DASHBOARD_ORIGIN || url.origin).replace(
-          /\/+$/,
-          "",
-        );
         const html = applyDashboardSeoHtml(
           await response.text(),
           url.pathname,
