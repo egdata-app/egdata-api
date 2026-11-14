@@ -741,4 +741,180 @@ describe("usage authorization and aggregation", () => {
       expect(query).not.toMatch(/GROUP BY[^;\n]*(if\(|')/);
     }
   });
+
+  it("falls back to base telemetry columns when extended columns (double6/double7/blob14) are unwritten and retries transient 429", async () => {
+    const { env, call } = await setup();
+    env.CF_ACCOUNT_ID = "account";
+    env.CF_ANALYTICS_API_TOKEN = "token";
+    let saw429 = false;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url, init) => {
+        const body = String(init.body);
+        if (!saw429 && body.includes("blob6 AS label")) {
+          saw429 = true;
+          return new Response("rate limit", {
+            status: 429,
+            headers: { "retry-after": "0" },
+          });
+        }
+        if (
+          body.includes("double6") ||
+          body.includes("double7") ||
+          body.includes("blob14")
+        ) {
+          return new Response("Unknown identifier double6", { status: 422 });
+        }
+        if (body.includes("AS latLt50")) {
+          return Response.json({
+            data: [{ requests: 10, cacheHits: 6, errors: 1, avgLatencyMs: 25 }],
+          });
+        }
+        return Response.json({ data: [] });
+      }),
+    );
+
+    const res = await call("?hours=24&scope=project");
+    expect(res.status).toBe(200);
+    const data = (await res.json()) as AnalyticsDashboardSummary;
+    expect(data.totals.requests).toBe(10);
+    expect(data.policyBreakdown).toEqual([]);
+    expect(saw429).toBe(true);
+  });
+
+  it("queries dedicated server-sorted highlight rankings across all endpoints and keys", async () => {
+    const { env, call } = await setup();
+    env.CF_ACCOUNT_ID = "account";
+    env.CF_ANALYTICS_API_TOKEN = "token";
+    const queries: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url, init) => {
+        const body = String(init.body);
+        queries.push(body);
+        if (
+          body.includes("SELECT blob3 AS d0, blob4 AS d1") &&
+          body.includes("ORDER BY p95LatencyMs DESC")
+        ) {
+          return Response.json({
+            data: [
+              {
+                d0: "/v1/slow-rare",
+                d1: "GET",
+                requests: 1,
+                p95LatencyMs: 950,
+              },
+            ],
+          });
+        }
+        if (
+          body.includes("SELECT blob3 AS d0, blob4 AS d1") &&
+          body.includes("ORDER BY errors DESC")
+        ) {
+          return Response.json({
+            data: [
+              {
+                d0: "/v1/broken-rare",
+                d1: "POST",
+                requests: 3,
+                errors: 3,
+                errorRate: 100,
+              },
+            ],
+          });
+        }
+        if (
+          body.includes("SELECT blob1 AS d0, blob2 AS d1") &&
+          body.includes("ORDER BY requests DESC")
+        ) {
+          return Response.json({
+            data: [{ d0: "ka", d1: "a", requests: 200 }],
+          });
+        }
+        return Response.json({ data: [] });
+      }),
+    );
+
+    const res = await call("?hours=24&scope=project");
+    expect(res.status).toBe(200);
+    const data = (await res.json()) as AnalyticsDashboardSummary;
+    expect(data.slowestEndpoints?.map((row) => row.label)).toEqual([
+      "/v1/slow-rare",
+    ]);
+    expect(data.errorEndpoints?.map((row) => row.label)).toEqual([
+      "/v1/broken-rare",
+    ]);
+    expect(data.busiestKeys?.map((row) => row.keyId)).toEqual(["ka"]);
+    expect(
+      queries.some(
+        (q) =>
+          q.includes("ORDER BY p95LatencyMs DESC") && q.includes("LIMIT 6 "),
+      ),
+    ).toBe(true);
+    expect(
+      queries.some(
+        (q) => q.includes("ORDER BY errors DESC") && q.includes("LIMIT 6 "),
+      ),
+    ).toBe(true);
+  });
+
+  it("handles policyFamily filters and policies dimension cleanly when extended schema (blob14) is unavailable", async () => {
+    const { env, call } = await setup();
+    env.CF_ACCOUNT_ID = "account";
+    env.CF_ANALYTICS_API_TOKEN = "token";
+    const queries: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url, init) => {
+        const body = String(init.body);
+        queries.push(body);
+        if (
+          body.includes("double6") ||
+          body.includes("double7") ||
+          body.includes("blob14")
+        ) {
+          return new Response("Unknown identifier blob14", { status: 422 });
+        }
+        if (body.includes("AS latLt50")) {
+          return Response.json({
+            data: [{ requests: 12, cacheHits: 8, errors: 0 }],
+          });
+        }
+        return Response.json({ data: [] });
+      }),
+    );
+
+    // 1. Named policyFamily cannot match pre-extended rows: returns empty summary (200), not 503.
+    const namedRes = await call(
+      "?hours=24&scope=project&policyFamily=expensive",
+    );
+    expect(namedRes.status).toBe(200);
+    const named = (await namedRes.json()) as AnalyticsDashboardSummary;
+    expect(named.totals.requests).toBe(0);
+    expect(named.endpoints).toEqual([]);
+
+    // 2. Subsequent named policyFamily request respects cached schema unavailability without sending blob14 again.
+    const countBeforeSecondNamed = queries.length;
+    const namedTableRes = await call(
+      "/table?dimension=endpoints&policyFamily=expensive",
+    );
+    expect(namedTableRes.status).toBe(200);
+    expect(
+      ((await namedTableRes.json()) as UsageTableResult).rows,
+    ).toEqual([]);
+    expect(queries.length).toBe(countBeforeSecondNamed);
+
+    // 3. '(none)' policyFamily falls back to base-schema rows without blob14 predicate.
+    const noneRes = await call("?hours=24&scope=project&policyFamily=(none)");
+    expect(noneRes.status).toBe(200);
+    const noneData = (await noneRes.json()) as AnalyticsDashboardSummary;
+    expect(noneData.totals.requests).toBe(12);
+
+    // 4. policies dimension table falls back to empty list rather than 503.
+    const policiesTableRes = await call("/table?dimension=policies");
+    expect(policiesTableRes.status).toBe(200);
+    expect(
+      ((await policiesTableRes.json()) as UsageTableResult).rows,
+    ).toEqual([]);
+  });
 });
