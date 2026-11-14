@@ -74,7 +74,8 @@ function downloadReceiptJson(receipt: BillingPurchaseReceipt) {
 }
 
 function ProfileBillingPage() {
-  const { projects, account, refreshSession } = useDashboardAuth();
+  const { projects, account, paidPlansEnabled, refreshSession } =
+    useDashboardAuth();
   const [plansData, setPlansData] = useState<BillingPlansResponse | null>(null);
   const [summaries, setSummaries] = useState<ProjectBillingSummaryResponse[]>(
     [],
@@ -100,6 +101,10 @@ function ProfileBillingPage() {
 
   const loadAll = useCallback(
     async (signal?: AbortSignal) => {
+      if (!paidPlansEnabled) {
+        setLoading(false);
+        return;
+      }
       setError("");
       try {
         const [plansRes, receiptsRes, projectSummaries] = await Promise.all([
@@ -128,7 +133,7 @@ function ProfileBillingPage() {
         if (!signal?.aborted) setLoading(false);
       }
     },
-    [projects],
+    [paidPlansEnabled, projects],
   );
 
   useEffect(() => {
@@ -293,6 +298,42 @@ function ProfileBillingPage() {
     } finally {
       setBusyKey(null);
     }
+  }
+
+  if (!paidPlansEnabled) {
+    return (
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-semibold tracking-tight">
+            Billing &amp; subscriptions
+          </h1>
+          <p className="text-sm text-epic-text-muted max-w-2xl leading-relaxed">
+            Self-service paid plans and Stripe billing are currently paused.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-epic-border bg-epic-surface p-6 space-y-4">
+          <p className="text-sm text-epic-text">
+            If your integration requires higher rate limits or additional
+            projects while paid plans are paused, submit a manual review request
+            on the Rate Limits page.
+          </p>
+          <div className="flex flex-wrap gap-2.5">
+            <Link
+              to="/limits"
+              className={buttonStyles({ variant: "primary", size: "sm" })}
+            >
+              Rate limits &amp; quota requests
+            </Link>
+            <Link
+              to="/profile"
+              className={buttonStyles({ variant: "secondary", size: "sm" })}
+            >
+              Back to profile
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -481,7 +522,9 @@ function ProfileBillingPage() {
                       )}
                       {summary.usage && (
                         <div>
-                          <div className="text-epic-text-muted">Period usage</div>
+                          <div className="text-epic-text-muted">
+                            Period usage
+                          </div>
                           <div className="font-mono text-sm text-white tabular-nums">
                             {summary.usage.used.toLocaleString()} /{" "}
                             {summary.usage.allowance.toLocaleString()}
@@ -499,8 +542,8 @@ function ProfileBillingPage() {
                       <strong className="font-mono text-white">
                         {sub.planVersionId}
                       </strong>{" "}
-                      (payment not completed yet). Click Subscribe below to resume
-                      or switch plans.
+                      (payment not completed yet). Click Subscribe below to
+                      resume or switch plans.
                     </span>
                     <Button
                       variant="secondary"

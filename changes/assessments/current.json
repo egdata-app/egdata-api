@@ -1,6 +1,6 @@
 {
   "baseCommit": "b67ec7efcd7e06c435c9088693460cf158351556",
-  "diffHash": "a7630dea32222c4561425dbea2166e8a72a96e68a468c5fc1358c947b4b42bef",
+  "diffHash": "f407f6a0a51959f6ad8c739026265caa61d0cd5e665e64b0a7f5db5fc1372ea0",
   "operations": [
     {
       "endpoint": "legacy:autocompleteOffers",
@@ -2573,6 +2573,11 @@
     {
       "file": "dashboard/worker/stripe.ts",
       "reason": "Internal Stripe REST API client and HMAC-SHA256 webhook signature verifier used only by billing.ts and billing-routes.ts; no direct impact on public API endpoints.",
+      "endpoints": []
+    },
+    {
+      "file": "dashboard/wrangler.jsonc",
+      "reason": "Cloudflare Worker configuration adding the Flagship feature-flag binding (FLAGS) used to keep paid plans and commercial limits paused by default; does not change public API route contracts directly.",
       "endpoints": []
     }
   ]

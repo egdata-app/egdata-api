@@ -3,12 +3,10 @@ import { UNATTRIBUTED_LEGACY_ID } from "./analytics-types.js";
 import { sha256Hex, timingSafeStringEqual } from "./crypto.js";
 import { touchApiKeyLastUsed } from "./db.js";
 import { fetchLegacyWithEdgeCache } from "./edge-cache.js";
+import { resolveCommercialLimitsEnabled } from "./flags.js";
 import { resolveApiKeyMetadata } from "./key-cache.js";
 import { evaluateKeyPermissions } from "./permissions.js";
-import {
-  evaluatePlanEntitlement,
-  isCommercialLimitsEnabled,
-} from "./plans.js";
+import { evaluatePlanEntitlement } from "./plans.js";
 import {
   admitProjectRequest,
   creditAdmittedRequestUsage,
@@ -380,7 +378,10 @@ export async function handleEdgeApiProxy(
   }
 
   // 6. Share one global project allowance with v1 and the API console.
-  const commercial = isCommercialLimitsEnabled(env);
+  const commercial = await resolveCommercialLimitsEnabled(env, {
+    userId: keyMeta.ownerEpicId,
+    environment: env.RATE_LIMIT_ENVIRONMENT,
+  });
   const expensivePolicy = resolveLegacyExpensivePolicy(
     upstreamPath,
     request.method,
@@ -512,8 +513,7 @@ export async function handleEdgeApiProxy(
   }
 
   // 8. Serve from Worker edge cache or forward to the dedicated origin after permission/entitlement/rate-limit checks.
-  const requestCreditId =
-    request.headers.get("cf-ray") || crypto.randomUUID();
+  const requestCreditId = request.headers.get("cf-ray") || crypto.randomUUID();
   let upstreamResponse: Response;
   let cacheStatus: string;
   try {

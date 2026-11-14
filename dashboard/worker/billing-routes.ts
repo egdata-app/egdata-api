@@ -11,6 +11,8 @@ import {
   requestSubscriptionWithdrawal,
 } from "./billing.js";
 import { readDashboardSession, requireDashboardUser } from "./epic-auth.js";
+import { isPaidPlansEnabled } from "./flags.js";
+import { isDashboardAdmin } from "./limit-reviews.js";
 import { StripeApiError } from "./stripe.js";
 import type { DashboardEnv, EpicSessionUser } from "./types.js";
 
@@ -21,10 +23,7 @@ type BillingAppContext = {
   };
 };
 
-async function requireSessionOnly(
-  c: Context<BillingAppContext>,
-  next: Next,
-) {
+async function requireSessionOnly(c: Context<BillingAppContext>, next: Next) {
   const user = await readDashboardSession(c);
   if (!user) {
     return c.json(
@@ -101,7 +100,38 @@ const withdrawalSchema = z.object({
   idempotencyKey: z.string().trim().min(1).max(128).optional(),
 });
 
+async function requirePaidPlansEnabled(
+  c: Context<BillingAppContext>,
+  next: Next,
+) {
+  let user = c.get("user") as EpicSessionUser | undefined;
+  if (!user) {
+    user = (await readDashboardSession(c).catch(() => null)) ?? undefined;
+  }
+  const isAdmin = user ? await isDashboardAdmin(c.env, user) : false;
+  const enabled = await isPaidPlansEnabled(c.env, {
+    userId: user?.epicAccountId,
+    environment: c.env.RATE_LIMIT_ENVIRONMENT,
+    isAdmin,
+  });
+  if (!enabled) {
+    return c.json(
+      {
+        error: {
+          code: "PAID_PLANS_PAUSED",
+          message: "Paid plans and self-serve billing are currently paused.",
+        },
+      },
+      404,
+      { "Cache-Control": "no-store" },
+    );
+  }
+  return next();
+}
+
 export const billingRoutes = new Hono<BillingAppContext>();
+
+billingRoutes.use("/*", requirePaidPlansEnabled);
 
 billingRoutes.get("/plans", (c) => {
   return c.json(getPublicBillingPlans(), 200, {
@@ -188,36 +218,32 @@ billingRoutes.post("/portal", requireSessionOnly, async (c) => {
   }
 });
 
-billingRoutes.post(
-  "/subscription/change",
-  requireDashboardUser,
-  async (c) => {
-    const parsed = changePlanSchema.safeParse(
-      await c.req.json().catch(() => null),
-    );
-    if (!parsed.success) {
-      return c.json(
-        {
-          error: {
-            code: "VALIDATION_ERROR",
-            message: "Invalid subscription change parameters.",
-          },
+billingRoutes.post("/subscription/change", requireDashboardUser, async (c) => {
+  const parsed = changePlanSchema.safeParse(
+    await c.req.json().catch(() => null),
+  );
+  if (!parsed.success) {
+    return c.json(
+      {
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Invalid subscription change parameters.",
         },
-        400,
-      );
-    }
-    const user = c.get("user");
-    try {
-      const result = await changeSubscriptionPlan(c.env, {
-        ownerEpicId: user.epicAccountId,
-        ...parsed.data,
-      });
-      return c.json(result, 200);
-    } catch (err) {
-      return handleBillingError(c, err);
-    }
-  },
-);
+      },
+      400,
+    );
+  }
+  const user = c.get("user");
+  try {
+    const result = await changeSubscriptionPlan(c.env, {
+      ownerEpicId: user.epicAccountId,
+      ...parsed.data,
+    });
+    return c.json(result, 200);
+  } catch (err) {
+    return handleBillingError(c, err);
+  }
+});
 
 billingRoutes.post("/withdrawals", requireSessionOnly, async (c) => {
   const parsed = withdrawalSchema.safeParse(
@@ -282,20 +308,28 @@ billingRoutes.get("/receipts", requireSessionOnly, async (c) => {
 
 export const projectBillingRoutes = new Hono<BillingAppContext>();
 
-projectBillingRoutes.get("/:projectId/billing", requireSessionOnly, async (c) => {
-  const user = c.get("user");
-  const projectId = c.req.param("projectId") ?? "";
-  try {
-    const summary = await getProjectBillingSummary(
-      c.env,
-      projectId,
-      user.epicAccountId,
-    );
-    return c.json(summary, 200);
-  } catch (err) {
-    return handleBillingError(c, err);
-  }
-});
+projectBillingRoutes.use("/:projectId/billing", requirePaidPlansEnabled);
+projectBillingRoutes.use("/:projectId/entitlements", requirePaidPlansEnabled);
+projectBillingRoutes.use("/:projectId/usage", requirePaidPlansEnabled);
+
+projectBillingRoutes.get(
+  "/:projectId/billing",
+  requireSessionOnly,
+  async (c) => {
+    const user = c.get("user");
+    const projectId = c.req.param("projectId") ?? "";
+    try {
+      const summary = await getProjectBillingSummary(
+        c.env,
+        projectId,
+        user.epicAccountId,
+      );
+      return c.json(summary, 200);
+    } catch (err) {
+      return handleBillingError(c, err);
+    }
+  },
+);
 
 projectBillingRoutes.get(
   "/:projectId/entitlements",

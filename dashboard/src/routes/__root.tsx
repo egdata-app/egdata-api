@@ -60,6 +60,8 @@ function DashboardShell() {
     selectedProject,
     setSelectedProjectId,
     devAuthAvailable,
+    paidPlansEnabled,
+    commercialLimitsEnabled,
     refreshSession,
     account,
     sessionError,
@@ -124,7 +126,13 @@ function DashboardShell() {
         </main>
       );
     }
-    return <UnauthenticatedLanding devAuthAvailable={devAuthAvailable} />;
+    return (
+      <UnauthenticatedLanding
+        devAuthAvailable={devAuthAvailable}
+        paidPlansEnabled={paidPlansEnabled}
+        commercialLimitsEnabled={commercialLimitsEnabled}
+      />
+    );
   }
 
   if (
@@ -434,8 +442,12 @@ function DashboardShell() {
 
 function UnauthenticatedLanding({
   devAuthAvailable,
+  paidPlansEnabled,
+  commercialLimitsEnabled,
 }: {
   devAuthAvailable: boolean;
+  paidPlansEnabled: boolean;
+  commercialLimitsEnabled: boolean;
 }) {
   const authError =
     typeof window !== "undefined"
@@ -539,21 +551,33 @@ function UnauthenticatedLanding({
             <div className="flex items-center justify-between">
               <span>Free tier</span>
               <span className="font-mono text-epic-text">
-                100,000 req/month · 60 req/min
+                100,000 req/month · {commercialLimitsEnabled ? "60" : "120"}{" "}
+                req/min
               </span>
             </div>
-            <div className="flex items-center justify-between">
-              <span>Pro (€9/mo VAT incl.)</span>
-              <span className="font-mono text-epic-accent">
-                300,000 req/period · 200 req/min
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Scale (€19/mo VAT incl.)</span>
-              <span className="font-mono text-epic-accent">
-                1,000,000 req/period · 600 req/min
-              </span>
-            </div>
+            {paidPlansEnabled ? (
+              <>
+                <div className="flex items-center justify-between">
+                  <span>Pro (€9/mo VAT incl.)</span>
+                  <span className="font-mono text-epic-accent">
+                    300,000 req/period · 200 req/min
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Scale (€19/mo VAT incl.)</span>
+                  <span className="font-mono text-epic-accent">
+                    1,000,000 req/period · 600 req/min
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center justify-between">
+                <span>Higher throughput</span>
+                <span className="text-epic-text">
+                  Available via operator review
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -47,6 +47,7 @@ import {
   revokeDashboardSession,
   startEpicOAuthRedirect,
 } from "./epic-auth.js";
+import { resolveFeatureFlags } from "./flags.js";
 import { removeKeyFromKv, syncKeyToKv } from "./key-cache.js";
 import { isDashboardAdmin, limitReviewRoutes } from "./limit-reviews.js";
 import { isValidIpOrCidr } from "./permissions.js";
@@ -151,6 +152,9 @@ dashboardApi.get("/auth/session", async (c) => {
   );
 
   if (!user) {
+    const features = await resolveFeatureFlags(c.env, {
+      environment: c.env.RATE_LIMIT_ENVIRONMENT,
+    });
     return c.json({
       authenticated: false,
       isAdmin: false,
@@ -158,6 +162,7 @@ dashboardApi.get("/auth/session", async (c) => {
       projects: [],
       oauthConfigured: hasEpicCredentials,
       devAuthAvailable,
+      features,
     });
   }
 
@@ -167,14 +172,21 @@ dashboardApi.get("/auth/session", async (c) => {
     user,
     account.eligible,
   );
+  const isAdmin = await isDashboardAdmin(c.env, user);
+  const features = await resolveFeatureFlags(c.env, {
+    userId: user.epicAccountId,
+    environment: c.env.RATE_LIMIT_ENVIRONMENT,
+    isAdmin,
+  });
   return c.json({
     authenticated: true,
-    isAdmin: await isDashboardAdmin(c.env, user),
+    isAdmin,
     user,
     projects: account.eligible ? projects : [],
     account,
     oauthConfigured: hasEpicCredentials,
     devAuthAvailable,
+    features,
   });
 });
 

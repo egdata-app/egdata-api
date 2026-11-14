@@ -19,6 +19,7 @@ import {
   type DeveloperReceipt,
   dashboardClient,
 } from "../lib/api";
+import { useDashboardAuth } from "../lib/auth-context";
 import { renderMarkdown } from "../lib/docs/markdown";
 
 export const Route = createFileRoute("/profile/receipts")({
@@ -151,6 +152,7 @@ function ReceiptDocument({
 }
 
 function ReceiptsPage() {
+  const { paidPlansEnabled } = useDashboardAuth();
   const { receipt: requested, tab: requestedTab } = Route.useSearch();
   const [receipts, setReceipts] = useState<DeveloperReceipt[] | null>(null);
   const [billingReceipts, setBillingReceipts] = useState<
@@ -175,9 +177,11 @@ function ReceiptsPage() {
     setBillingReceipts(null);
     void Promise.all([
       dashboardClient.getAgreementReceipts(controller.signal),
-      dashboardClient
-        .getBillingReceipts(controller.signal)
-        .catch(() => ({ receipts: [], withdrawals: [] })),
+      paidPlansEnabled
+        ? dashboardClient
+            .getBillingReceipts(controller.signal)
+            .catch(() => ({ receipts: [], withdrawals: [] }))
+        : Promise.resolve({ receipts: [], withdrawals: [] }),
     ])
       .then(([agreementRes, billingRes]) => {
         if (controller.signal.aborted) return;
@@ -193,16 +197,17 @@ function ReceiptsPage() {
         }
       });
     return () => controller.abort();
-  }, [retry]);
+  }, [paidPlansEnabled, retry]);
 
-  const activeTab: "billing" | "agreements" =
-    manualTab ??
-    (requested
-      ? "agreements"
-      : billingReceipts &&
-          (billingReceipts.length > 0 || withdrawals.length > 0)
-        ? "billing"
-        : "agreements");
+  const activeTab: "billing" | "agreements" = !paidPlansEnabled
+    ? "agreements"
+    : (manualTab ??
+      (requested
+        ? "agreements"
+        : billingReceipts &&
+            (billingReceipts.length > 0 || withdrawals.length > 0)
+          ? "billing"
+          : "agreements"));
 
   const receipt = requested
     ? receipts?.find((item) => item.receipt_id === requested)
@@ -253,50 +258,55 @@ function ReceiptsPage() {
         <div className="space-y-2">
           <h1 className="text-3xl font-semibold tracking-tight">Receipts</h1>
           <p className="text-sm text-epic-text-muted leading-relaxed">
-            Printable and downloadable records for your paid-plan purchases,
-            withdrawal requests, and Developer Terms acceptances.
+            {paidPlansEnabled
+              ? "Printable and downloadable records for your paid-plan purchases, withdrawal requests, and Developer Terms acceptances."
+              : "Printable and downloadable records for your Developer Terms acceptances."}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2.5">
-          <Link
-            to="/profile/billing"
-            className={buttonStyles({ variant: "secondary", size: "sm" })}
-          >
-            Manage subscriptions
-          </Link>
-          <Button
-            variant="secondary"
-            size="sm"
-            isPending={openingPortal}
-            onPress={() => void openPortal()}
-          >
-            <CreditCard className="h-4 w-4" aria-hidden="true" />
-            Stripe Invoices (Portal)
-            <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-          </Button>
-        </div>
+        {paidPlansEnabled && (
+          <div className="flex flex-wrap gap-2.5">
+            <Link
+              to="/profile/billing"
+              className={buttonStyles({ variant: "secondary", size: "sm" })}
+            >
+              Manage subscriptions
+            </Link>
+            <Button
+              variant="secondary"
+              size="sm"
+              isPending={openingPortal}
+              onPress={() => void openPortal()}
+            >
+              <CreditCard className="h-4 w-4" aria-hidden="true" />
+              Stripe Invoices (Portal)
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+            </Button>
+          </div>
+        )}
       </div>
 
-      <div
-        role="tablist"
-        aria-label="Receipt categories"
-        className="mb-6 flex flex-wrap gap-2 print:hidden"
-      >
-        <Button
-          variant={activeTab === "billing" ? "primary" : "secondary"}
-          size="sm"
-          onPress={() => setManualTab("billing")}
+      {paidPlansEnabled && (
+        <div
+          role="tablist"
+          aria-label="Receipt categories"
+          className="mb-6 flex flex-wrap gap-2 print:hidden"
         >
-          Purchase &amp; Billing ({billingReceipts?.length ?? 0})
-        </Button>
-        <Button
-          variant={activeTab === "agreements" ? "primary" : "secondary"}
-          size="sm"
-          onPress={() => setManualTab("agreements")}
-        >
-          Agreement Receipts ({receipts?.length ?? 0})
-        </Button>
-      </div>
+          <Button
+            variant={activeTab === "billing" ? "primary" : "secondary"}
+            size="sm"
+            onPress={() => setManualTab("billing")}
+          >
+            Purchase &amp; Billing ({billingReceipts?.length ?? 0})
+          </Button>
+          <Button
+            variant={activeTab === "agreements" ? "primary" : "secondary"}
+            size="sm"
+            onPress={() => setManualTab("agreements")}
+          >
+            Agreement Receipts ({receipts?.length ?? 0})
+          </Button>
+        </div>
+      )}
 
       {error ? (
         <div

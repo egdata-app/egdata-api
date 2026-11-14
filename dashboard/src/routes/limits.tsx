@@ -45,7 +45,8 @@ const TIER_OPTIONS = [
 ];
 
 function RateLimitsPage() {
-  const { selectedProject, isAdmin, refreshSession } = useDashboardAuth();
+  const { selectedProject, isAdmin, paidPlansEnabled, refreshSession } =
+    useDashboardAuth();
   const [contactEmail, setContactEmail] = useState("");
   const [requestedTier, setRequestedTier] = useState<
     "pro" | "scale" | "enterprise" | "custom"
@@ -73,6 +74,11 @@ function RateLimitsPage() {
   const canceledSyncStartedRef = useRef(false);
 
   const loadBilling = useCallback(async () => {
+    if (!paidPlansEnabled) {
+      setPlansData(null);
+      setBillingSummary(null);
+      return;
+    }
     try {
       const [plansRes, projectRes] = await Promise.all([
         dashboardClient.getBillingPlans(),
@@ -85,7 +91,7 @@ function RateLimitsPage() {
     } catch {
       // Billing catalog unavailable only in isolated mock environments
     }
-  }, [selectedProject]);
+  }, [paidPlansEnabled, selectedProject]);
 
   const loadHistory = useCallback(async () => {
     setHistoryError(false);
@@ -110,6 +116,7 @@ function RateLimitsPage() {
     const targetProjectId = urlProjectId || selectedProject?.id;
 
     if (
+      paidPlansEnabled &&
       checkoutBanner === "canceled" &&
       targetProjectId &&
       !canceledSyncStartedRef.current
@@ -125,7 +132,13 @@ function RateLimitsPage() {
       void Promise.all([loadHistory(), loadBilling()]);
     }
     setWebsiteUrl(selectedProject?.websiteUrl ?? "");
-  }, [checkoutBanner, loadHistory, loadBilling, selectedProject]);
+  }, [
+    checkoutBanner,
+    loadHistory,
+    loadBilling,
+    paidPlansEnabled,
+    selectedProject,
+  ]);
 
   async function handleCancelPendingCheckout() {
     if (!selectedProject) return;
@@ -311,27 +324,28 @@ function RateLimitsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-white">
-          Plans, Rate Limits &amp; Billing
+          {paidPlansEnabled
+            ? "Plans, Rate Limits & Billing"
+            : "Rate Limits & Quota Requests"}
         </h1>
         <p className="text-sm text-epic-text-muted mt-1">
-          Self-service monthly plans use fixed EUR consumer pricing (VAT
-          included), hard caps, and explicit allowances. Minute ceilings use
-          fixed UTC-aligned 60-second windows per project. Billing portal and
-          invoices remain available even when quota is exhausted.
+          {paidPlansEnabled
+            ? "Self-service monthly plans use fixed EUR consumer pricing (VAT included), hard caps, and explicit allowances. Minute ceilings use fixed UTC-aligned 60-second windows per project. Billing portal and invoices remain available even when quota is exhausted."
+            : "Monitor your free monthly account quota and request an operator review if your integration needs higher rate limits or additional projects."}
         </p>
       </div>
 
-      {checkoutBanner === "success" && (
+      {paidPlansEnabled && checkoutBanner === "success" && (
         <div className="rounded-xl border border-epic-success/40 bg-epic-success/10 p-4 text-xs text-epic-text flex items-center gap-2.5">
           <CheckCircle2 className="w-4 h-4 text-epic-success shrink-0" />
           <span>
-            Checkout completed. Your subscription activation is synced via Stripe
-            webhooks and usually appears within seconds.
+            Checkout completed. Your subscription activation is synced via
+            Stripe webhooks and usually appears within seconds.
           </span>
         </div>
       )}
 
-      {checkoutBanner === "canceled" && (
+      {paidPlansEnabled && checkoutBanner === "canceled" && (
         <div className="rounded-xl border border-epic-border bg-epic-surface p-4 text-xs text-epic-text-muted">
           Checkout was canceled before payment. Your project remains unchanged.
         </div>
@@ -352,7 +366,9 @@ function RateLimitsPage() {
       billingSummary?.entitlement.grantSource === "grandfathered" ? (
         <div className="rounded-xl border border-epic-accent/30 bg-epic-surface p-4 text-xs text-epic-text flex flex-wrap items-center justify-between gap-2">
           <div>
-            <strong>Explicit {billingSummary.entitlement.grantSource} grant:</strong>{" "}
+            <strong>
+              Explicit {billingSummary.entitlement.grantSource} grant:
+            </strong>{" "}
             {billingSummary.entitlement.rpmLimit.toLocaleString()} requests/min
             {billingSummary.entitlement.reason
               ? ` · ${billingSummary.entitlement.reason}`
@@ -363,7 +379,7 @@ function RateLimitsPage() {
       ) : null}
 
       {/* Commercial Plans Comparison & Self-Service Checkout */}
-      {plansData && (
+      {paidPlansEnabled && plansData && (
         <section className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -454,7 +470,9 @@ function RateLimitsPage() {
                       )}
                       <li>
                         • Budgets: NL Search{" "}
-                        {plan.expensivePeriodBudgets["nl-search"].toLocaleString()}
+                        {plan.expensivePeriodBudgets[
+                          "nl-search"
+                        ].toLocaleString()}
                         , Bulk{" "}
                         {plan.expensivePeriodBudgets.bulk.toLocaleString()}, OG
                         Images{" "}
@@ -534,32 +552,32 @@ function RateLimitsPage() {
               billingSummary.subscription.status,
             )) &&
             !billingSummary?.selfServeCheckoutBlocked && (
-            <label className="flex items-start gap-2.5 rounded-xl border border-epic-border bg-epic-bg/60 p-3.5 text-xs text-epic-text-muted cursor-pointer">
-              <input
-                type="checkbox"
-                checked={withdrawalAcknowledged}
-                onChange={(e) => setWithdrawalAcknowledged(e.target.checked)}
-                className="mt-0.5 rounded border-epic-border"
-              />
-              <span>
-                I understand subscriptions renew monthly in EUR (VAT included for
-                consumers), use hard request caps with an initial{" "}
-                <strong className="text-epic-text">
-                  {plansData.initialPeriodDailyLimitDays}-day daily pacing cap
-                </strong>
-                , and can be canceled any time via the Billing Portal. I
-                expressly request immediate API access during the{" "}
-                <strong className="text-epic-text">
-                  {plansData.withdrawalWindowDays}-day statutory withdrawal
-                  period
-                </strong>{" "}
-                and acknowledge that withdrawing early issues a time-based{" "}
-                <strong className="text-epic-text">pro-rata refund</strong>{" "}
-                deducting elapsed subscription time and disables future
-                self-serve checkouts on this account.
-              </span>
-            </label>
-          )}
+              <label className="flex items-start gap-2.5 rounded-xl border border-epic-border bg-epic-bg/60 p-3.5 text-xs text-epic-text-muted cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={withdrawalAcknowledged}
+                  onChange={(e) => setWithdrawalAcknowledged(e.target.checked)}
+                  className="mt-0.5 rounded border-epic-border"
+                />
+                <span>
+                  I understand subscriptions renew monthly in EUR (VAT included
+                  for consumers), use hard request caps with an initial{" "}
+                  <strong className="text-epic-text">
+                    {plansData.initialPeriodDailyLimitDays}-day daily pacing cap
+                  </strong>
+                  , and can be canceled any time via the Billing Portal. I
+                  expressly request immediate API access during the{" "}
+                  <strong className="text-epic-text">
+                    {plansData.withdrawalWindowDays}-day statutory withdrawal
+                    period
+                  </strong>{" "}
+                  and acknowledge that withdrawing early issues a time-based{" "}
+                  <strong className="text-epic-text">pro-rata refund</strong>{" "}
+                  deducting elapsed subscription time and disables future
+                  self-serve checkouts on this account.
+                </span>
+              </label>
+            )}
 
           {billingSummary?.subscription?.status === "checkout_pending" && (
             <div className="rounded-xl border border-epic-border bg-epic-bg/40 p-4 flex flex-wrap items-center justify-between gap-3">
@@ -572,8 +590,8 @@ function RateLimitsPage() {
                   <strong className="font-mono text-epic-text">
                     {billingSummary.subscription.planVersionId}
                   </strong>{" "}
-                  has not been paid yet. Click Subscribe above to resume or switch
-                  plans, or cancel the pending checkout.
+                  has not been paid yet. Click Subscribe above to resume or
+                  switch plans, or cancel the pending checkout.
                 </p>
               </div>
               <Button
@@ -591,83 +609,86 @@ function RateLimitsPage() {
             ["active", "trialing", "past_due"].includes(
               billingSummary.subscription.status,
             ) && (
-            <div className="rounded-xl border border-epic-border bg-epic-bg/40 p-4 space-y-3.5">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-epic-accent" />
-                    Subscription &amp; Withdrawal Controls
-                  </h3>
-                  <p className="text-xs text-epic-text-muted mt-0.5">
-                    Status:{" "}
-                    <strong className="text-epic-text">
-                      {billingSummary.subscription.status}
-                    </strong>{" "}
-                    · Period ends{" "}
-                    {billingSummary.subscription.currentPeriodEnd.slice(0, 10)}
-                    {billingSummary.subscription.cancelAtPeriodEnd
-                      ? " (cancels at period end)"
-                      : ""}
-                    {billingSummary.subscription.pendingPlanVersionId
-                      ? ` · Scheduled change: ${billingSummary.subscription.pendingPlanVersionId}`
-                      : ""}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {["active", "trialing", "past_due"].includes(
-                    billingSummary.subscription.status,
-                  ) &&
-                    !billingSummary.subscription.cancelAtPeriodEnd && (
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        isPending={billingBusy}
-                        onPress={() => void handleChangePlan("free")}
-                      >
-                        Cancel at period end
-                      </Button>
-                    )}
-                </div>
-              </div>
-
-              {["active", "trialing", "past_due"].includes(
-                billingSummary.subscription.status,
-              ) && billingSummary.withdrawalEligible ? (
-                <div className="pt-3 border-t border-epic-border flex flex-wrap items-end gap-3">
-                  <div className="flex-1 min-w-56">
-                    <TextField
-                      label="14-Day Statutory Withdrawal / Pro-Rata Refund (optional reason)"
-                      value={withdrawalReason}
-                      onChange={setWithdrawalReason}
-                      placeholder="Request immediate cancellation & time-based pro-rata refund"
-                    />
+              <div className="rounded-xl border border-epic-border bg-epic-bg/40 p-4 space-y-3.5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-epic-accent" />
+                      Subscription &amp; Withdrawal Controls
+                    </h3>
+                    <p className="text-xs text-epic-text-muted mt-0.5">
+                      Status:{" "}
+                      <strong className="text-epic-text">
+                        {billingSummary.subscription.status}
+                      </strong>{" "}
+                      · Period ends{" "}
+                      {billingSummary.subscription.currentPeriodEnd.slice(
+                        0,
+                        10,
+                      )}
+                      {billingSummary.subscription.cancelAtPeriodEnd
+                        ? " (cancels at period end)"
+                        : ""}
+                      {billingSummary.subscription.pendingPlanVersionId
+                        ? ` · Scheduled change: ${billingSummary.subscription.pendingPlanVersionId}`
+                        : ""}
+                    </p>
                   </div>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    isPending={billingBusy}
-                    onPress={() => void handleWithdrawal()}
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    Request Withdrawal / Pro-Rata Refund
-                  </Button>
+                  <div className="flex flex-wrap gap-2">
+                    {["active", "trialing", "past_due"].includes(
+                      billingSummary.subscription.status,
+                    ) &&
+                      !billingSummary.subscription.cancelAtPeriodEnd && (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          isPending={billingBusy}
+                          onPress={() => void handleChangePlan("free")}
+                        >
+                          Cancel at period end
+                        </Button>
+                      )}
+                  </div>
                 </div>
-              ) : (
-                <p className="pt-3 border-t border-epic-border text-xs text-epic-text-muted">
-                  The {plansData.withdrawalWindowDays}-day statutory withdrawal
-                  window has ended
-                  {billingSummary.withdrawalExpiresAt
-                    ? ` (closed ${billingSummary.withdrawalExpiresAt.slice(0, 10)})`
-                    : ""}
-                  . Use{" "}
-                  <strong className="text-epic-text">
-                    Cancel at period end
-                  </strong>{" "}
-                  above to stop future renewals.
-                </p>
-              )}
-            </div>
-          )}
+
+                {["active", "trialing", "past_due"].includes(
+                  billingSummary.subscription.status,
+                ) && billingSummary.withdrawalEligible ? (
+                  <div className="pt-3 border-t border-epic-border flex flex-wrap items-end gap-3">
+                    <div className="flex-1 min-w-56">
+                      <TextField
+                        label="14-Day Statutory Withdrawal / Pro-Rata Refund (optional reason)"
+                        value={withdrawalReason}
+                        onChange={setWithdrawalReason}
+                        placeholder="Request immediate cancellation & time-based pro-rata refund"
+                      />
+                    </div>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      isPending={billingBusy}
+                      onPress={() => void handleWithdrawal()}
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      Request Withdrawal / Pro-Rata Refund
+                    </Button>
+                  </div>
+                ) : (
+                  <p className="pt-3 border-t border-epic-border text-xs text-epic-text-muted">
+                    The {plansData.withdrawalWindowDays}-day statutory
+                    withdrawal window has ended
+                    {billingSummary.withdrawalExpiresAt
+                      ? ` (closed ${billingSummary.withdrawalExpiresAt.slice(0, 10)})`
+                      : ""}
+                    . Use{" "}
+                    <strong className="text-epic-text">
+                      Cancel at period end
+                    </strong>{" "}
+                    above to stop future renewals.
+                  </p>
+                )}
+              </div>
+            )}
         </section>
       )}
 

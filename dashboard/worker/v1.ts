@@ -2,12 +2,10 @@ import { recordApiTelemetry } from "./analytics.js";
 import { sha256Hex } from "./crypto.js";
 import { touchApiKeyLastUsed } from "./db.js";
 import { fetchV1WithEdgeCache } from "./edge-cache.js";
+import { resolveCommercialLimitsEnabled } from "./flags.js";
 import { resolveApiKeyMetadata } from "./key-cache.js";
 import { evaluateKeyPermissions } from "./permissions.js";
-import {
-  evaluatePlanEntitlement,
-  isCommercialLimitsEnabled,
-} from "./plans.js";
+import { evaluatePlanEntitlement } from "./plans.js";
 import {
   admitProjectRequest,
   creditAdmittedRequestUsage,
@@ -423,7 +421,10 @@ export async function handleV1ApiProxy(
     });
   }
 
-  const commercial = isCommercialLimitsEnabled(env);
+  const commercial = await resolveCommercialLimitsEnabled(env, {
+    userId: meta.ownerEpicId,
+    environment: env.RATE_LIMIT_ENVIRONMENT,
+  });
   const policies = route.expensive
     ? [
         {

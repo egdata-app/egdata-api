@@ -152,7 +152,10 @@ async function createBillingHarness(options?: {
 
       const form = new URLSearchParams(rawBody);
       if (url.pathname === "/v1/customers" && req.method === "POST") {
-        return Response.json({ id: "cus_stripe_001", email: form.get("email") });
+        return Response.json({
+          id: "cus_stripe_001",
+          email: form.get("email"),
+        });
       }
       if (url.pathname === "/v1/checkout/sessions" && req.method === "POST") {
         const meta: Record<string, string> = {};
@@ -193,13 +196,23 @@ async function createBillingHarness(options?: {
           const existing = checkoutSessions.get(sessionId);
           if (!existing) {
             return Response.json(
-              { error: { message: "No such checkout session", code: "resource_missing" } },
+              {
+                error: {
+                  message: "No such checkout session",
+                  code: "resource_missing",
+                },
+              },
               { status: 404 },
             );
           }
           if (existing.status !== "open") {
             return Response.json(
-              { error: { message: "Session cannot be expired", code: "checkout_session_not_open" } },
+              {
+                error: {
+                  message: "Session cannot be expired",
+                  code: "checkout_session_not_open",
+                },
+              },
               { status: 400 },
             );
           }
@@ -210,7 +223,12 @@ async function createBillingHarness(options?: {
           const existing = checkoutSessions.get(suffix);
           if (!existing) {
             return Response.json(
-              { error: { message: "No such checkout session", code: "resource_missing" } },
+              {
+                error: {
+                  message: "No such checkout session",
+                  code: "resource_missing",
+                },
+              },
               { status: 404 },
             );
           }
@@ -252,7 +270,9 @@ async function createBillingHarness(options?: {
           if (failNextStripeDelete) {
             failNextStripeDelete = false;
             return Response.json(
-              { error: { message: "Stripe temporary error", code: "api_error" } },
+              {
+                error: { message: "Stripe temporary error", code: "api_error" },
+              },
               { status: 500 },
             );
           }
@@ -293,7 +313,10 @@ async function createBillingHarness(options?: {
               : defaultAmount,
         });
       }
-      return Response.json({ error: { message: "Unhandled Stripe mock route" } }, { status: 404 });
+      return Response.json(
+        { error: { message: "Unhandled Stripe mock route" } },
+        { status: 404 },
+      );
     }),
   );
 
@@ -304,6 +327,7 @@ async function createBillingHarness(options?: {
     API_PROXY_HOST: "api.egdata.app",
     UPSTREAM_API_ORIGIN: "https://origin-api.egdata.app",
     ORIGIN_AUTH_TOKEN: "origin-secret-token",
+    PAID_PLANS_ENABLED: "true",
     COMMERCIAL_PLAN_LIMITS_ENABLED: "true",
     RATE_LIMIT_ENVIRONMENT: "test",
     STRIPE_MODE: "test",
@@ -368,7 +392,9 @@ async function createBillingHarness(options?: {
             ? { "Content-Type": "application/json" }
             : {}),
         },
-        ...(opts?.body !== undefined ? { body: JSON.stringify(opts.body) } : {}),
+        ...(opts?.body !== undefined
+          ? { body: JSON.stringify(opts.body) }
+          : {}),
       }),
       env,
       ctx,
@@ -744,7 +770,9 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
     expect(withdrawJson.status).toBe("refunded_full");
     expect(withdrawJson.stripeRefundId).toBe("re_1");
     expect(
-      h.stripeCalls.some((c) => c.path === "/v1/refunds" && c.method === "POST"),
+      h.stripeCalls.some(
+        (c) => c.path === "/v1/refunds" && c.method === "POST",
+      ),
     ).toBe(true);
 
     // Paid grant revoked & subscription canceled immediately
@@ -795,7 +823,9 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
     expect(adjRes.status).toBe(200);
     expect(
       h.sqlite
-        .prepare("SELECT reason FROM usage_adjustments WHERE adjustment_id = 'adj_test_001'")
+        .prepare(
+          "SELECT reason FROM usage_adjustments WHERE adjustment_id = 'adj_test_001'",
+        )
         .get(),
     ).toEqual({ reason: "Operator credit test" });
   });
@@ -850,15 +880,22 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
     expect(rowAfterDelete.needs_reconcile).toBe(1);
 
     // Admin reconcile clears needs_reconcile & finishes Stripe DELETE
-    const recRes = await h.dashFetch("/_dashboard/api/admin/billing/reconcile", {
-      method: "POST",
-      user: "admin_1",
-    });
+    const recRes = await h.dashFetch(
+      "/_dashboard/api/admin/billing/reconcile",
+      {
+        method: "POST",
+        user: "admin_1",
+      },
+    );
     expect(recRes.status).toBe(200);
-    expect(((await recRes.json()) as { reconciledCount: number }).reconciledCount).toBe(1);
+    expect(
+      ((await recRes.json()) as { reconciledCount: number }).reconciledCount,
+    ).toBe(1);
     expect(
       h.sqlite
-        .prepare("SELECT needs_reconcile FROM billing_subscriptions WHERE id = 'sub_del_1'")
+        .prepare(
+          "SELECT needs_reconcile FROM billing_subscriptions WHERE id = 'sub_del_1'",
+        )
         .get(),
     ).toEqual({ needs_reconcile: 0 });
 
@@ -874,7 +911,9 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
     expect(restoreRes.status).toBe(200);
     expect(
       h.sqlite
-        .prepare("SELECT id, status FROM billing_subscriptions WHERE id = 'sub_del_1'")
+        .prepare(
+          "SELECT id, status FROM billing_subscriptions WHERE id = 'sub_del_1'",
+        )
         .get(),
     ).toEqual({ id: "sub_del_1", status: "canceled" });
 
@@ -937,9 +976,9 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
         },
       });
       expect(res.status).toBe(400);
-      expect(((await res.json()) as { error: { code: string } }).error.code).toBe(
-        "VALIDATION_ERROR",
-      );
+      expect(
+        ((await res.json()) as { error: { code: string } }).error.code,
+      ).toBe("VALIDATION_ERROR");
     }
 
     const badPortalUrls = [
@@ -954,9 +993,9 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
         body: { returnUrl },
       });
       expect(res.status).toBe(400);
-      expect(((await res.json()) as { error: { code: string } }).error.code).toBe(
-        "VALIDATION_ERROR",
-      );
+      expect(
+        ((await res.json()) as { error: { code: string } }).error.code,
+      ).toBe("VALIDATION_ERROR");
     }
 
     // None of the rejected requests should have touched Stripe
@@ -1398,7 +1437,11 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
     expect(day1Ent.initialDailyLimitUntil).toBeGreaterThan(Date.now());
     const originalUntil = day1Ent.initialDailyLimitUntil;
 
-    const summaryDay1 = await getProjectBillingSummary(h.env, "prj_1", "owner_1");
+    const summaryDay1 = await getProjectBillingSummary(
+      h.env,
+      "prj_1",
+      "owner_1",
+    );
     expect(summaryDay1.withdrawalEligible).toBe(true);
     expect(summaryDay1.selfServeCheckoutBlocked).toBe(false);
     expect(summaryDay1.dailyUsage).toMatchObject({
@@ -1432,7 +1475,9 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
     });
     expect(admit1.allowed).toBe(true);
     expect(admit2.allowed).toBe(true);
-    expect((await readProjectDailyQuota(h.env, "owner_1", "prj_1", 12_000))?.used).toBe(2);
+    expect(
+      (await readProjectDailyQuota(h.env, "owner_1", "prj_1", 12_000))?.used,
+    ).toBe(2);
 
     await creditAdmittedRequestUsage(h.env, {
       adjustmentId: "req_credit_5xx_1",
@@ -1441,7 +1486,9 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
       entitlement: day1Ent,
       reason: "5xx_upstream_error",
     });
-    expect((await readProjectDailyQuota(h.env, "owner_1", "prj_1", 12_000))?.used).toBe(1);
+    expect(
+      (await readProjectDailyQuota(h.env, "owner_1", "prj_1", 12_000))?.used,
+    ).toBe(1);
 
     // Day 2: Upgrade Pro -> Scale; daily cap moves to 35,000 while expiry stays pinned
     vi.setSystemTime(new Date("2026-11-13T12:00:00Z"));
@@ -1475,7 +1522,11 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
     expect(day15Ent.initialDailyLimit).toBeNull();
     expect(day15Ent.initialDailyLimitUntil).toBeNull();
 
-    const summaryDay15 = await getProjectBillingSummary(h.env, "prj_1", "owner_1");
+    const summaryDay15 = await getProjectBillingSummary(
+      h.env,
+      "prj_1",
+      "owner_1",
+    );
     expect(summaryDay15.dailyUsage).toBeNull();
     expect(summaryDay15.withdrawalEligible).toBe(false);
 
@@ -1555,10 +1606,13 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
 
     // Period is Nov 12 -> Dec 12 (30 days = 2,592,000,000 ms). Withdraw at Day 6 -> 24/30 * 1900 = 1520 cents.
     vi.setSystemTime(new Date("2026-11-18T12:00:00Z"));
-    const withdrawRes = await h.dashFetch("/_dashboard/api/billing/withdrawals", {
-      method: "POST",
-      body: { projectId: "prj_1", reason: "Testing time-based proration" },
-    });
+    const withdrawRes = await h.dashFetch(
+      "/_dashboard/api/billing/withdrawals",
+      {
+        method: "POST",
+        body: { projectId: "prj_1", reason: "Testing time-based proration" },
+      },
+    );
     expect(withdrawRes.status).toBe(200);
     const withdrawJson = (await withdrawRes.json()) as {
       status: string;
@@ -1631,16 +1685,21 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
 
     // Advance 14 days + 1 second
     vi.setSystemTime(new Date("2026-11-26T12:00:01Z"));
-    const expiredRes = await h.dashFetch("/_dashboard/api/billing/withdrawals", {
-      method: "POST",
-      body: { projectId: "prj_1", reason: "Too late" },
-    });
+    const expiredRes = await h.dashFetch(
+      "/_dashboard/api/billing/withdrawals",
+      {
+        method: "POST",
+        body: { projectId: "prj_1", reason: "Too late" },
+      },
+    );
     expect(expiredRes.status).toBe(409);
     expect(await expiredRes.json()).toMatchObject({
       error: { code: "WITHDRAWAL_WINDOW_EXPIRED" },
     });
     expect(
-      h.stripeCalls.some((c) => c.path === "/v1/refunds" && c.method === "POST"),
+      h.stripeCalls.some(
+        (c) => c.path === "/v1/refunds" && c.method === "POST",
+      ),
     ).toBe(false);
   });
 
@@ -1691,24 +1750,34 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
     });
 
     vi.setSystemTime(new Date("2026-11-15T12:00:00Z"));
-    const withdrawRes = await h.dashFetch("/_dashboard/api/billing/withdrawals", {
-      method: "POST",
-      body: { projectId: "prj_1", reason: "Testing one-strike guard" },
-    });
+    const withdrawRes = await h.dashFetch(
+      "/_dashboard/api/billing/withdrawals",
+      {
+        method: "POST",
+        body: { projectId: "prj_1", reason: "Testing one-strike guard" },
+      },
+    );
     expect(withdrawRes.status).toBe(200);
 
-    const prj2Summary = await getProjectBillingSummary(h.env, "prj_2", "owner_1");
+    const prj2Summary = await getProjectBillingSummary(
+      h.env,
+      "prj_2",
+      "owner_1",
+    );
     expect(prj2Summary.selfServeCheckoutBlocked).toBe(true);
 
-    const blockedCheckout = await h.dashFetch("/_dashboard/api/billing/checkout", {
-      method: "POST",
-      body: {
-        projectId: "prj_2",
-        planId: "scale",
-        termsVersion: "1.0",
-        withdrawalAcknowledged: true,
+    const blockedCheckout = await h.dashFetch(
+      "/_dashboard/api/billing/checkout",
+      {
+        method: "POST",
+        body: {
+          projectId: "prj_2",
+          planId: "scale",
+          termsVersion: "1.0",
+          withdrawalAcknowledged: true,
+        },
       },
-    });
+    );
     expect(blockedCheckout.status).toBe(403);
     expect(await blockedCheckout.json()).toMatchObject({
       error: { code: "WITHDRAWAL_LIMIT_REACHED" },
@@ -1811,12 +1880,17 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
       "fetch",
       vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
         const url = typeof input === "string" ? input : input.toString();
-        if (url === "https://api.stripe.com/v1/customers" && init?.method === "POST") {
+        if (
+          url === "https://api.stripe.com/v1/customers" &&
+          init?.method === "POST"
+        ) {
           seq += 1;
           const headers = new Headers(init.headers);
           const isTest = headers.get("Authorization")?.includes("sk_test_");
           return new Response(
-            JSON.stringify({ id: isTest ? `cus_test_${seq}` : `cus_live_${seq}` }),
+            JSON.stringify({
+              id: isTest ? `cus_test_${seq}` : `cus_live_${seq}`,
+            }),
             { status: 200, headers: { "Content-Type": "application/json" } },
           );
         }
@@ -1825,26 +1899,47 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
     );
 
     const testRes = await getOrCreateStripeCustomer(
-      { ...h.env, STRIPE_SECRET_KEY: "sk_test_123", STRIPE_MODE: undefined } as DashboardEnv,
+      {
+        ...h.env,
+        STRIPE_SECRET_KEY: "sk_test_123",
+        STRIPE_MODE: undefined,
+      } as DashboardEnv,
       "owner_1",
       "Owner One",
     );
-    expect(testRes).toEqual({ stripeCustomerId: "cus_test_1", environment: "test" });
+    expect(testRes).toEqual({
+      stripeCustomerId: "cus_test_1",
+      environment: "test",
+    });
 
     const liveRes = await getOrCreateStripeCustomer(
-      { ...h.env, STRIPE_SECRET_KEY: "sk_live_456", STRIPE_MODE: undefined } as DashboardEnv,
+      {
+        ...h.env,
+        STRIPE_SECRET_KEY: "sk_live_456",
+        STRIPE_MODE: undefined,
+      } as DashboardEnv,
       "owner_1",
       "Owner One",
     );
-    expect(liveRes).toEqual({ stripeCustomerId: "cus_live_2", environment: "live" });
+    expect(liveRes).toEqual({
+      stripeCustomerId: "cus_live_2",
+      environment: "live",
+    });
 
     // Switching back to test reuses existing cus_test_1 and keeps both rows intact
     const testAgain = await getOrCreateStripeCustomer(
-      { ...h.env, STRIPE_SECRET_KEY: "sk_test_123", STRIPE_MODE: undefined } as DashboardEnv,
+      {
+        ...h.env,
+        STRIPE_SECRET_KEY: "sk_test_123",
+        STRIPE_MODE: undefined,
+      } as DashboardEnv,
       "owner_1",
       "Owner One",
     );
-    expect(testAgain).toEqual({ stripeCustomerId: "cus_test_1", environment: "test" });
+    expect(testAgain).toEqual({
+      stripeCustomerId: "cus_test_1",
+      environment: "test",
+    });
 
     const rows = h.sqlite
       .prepare(

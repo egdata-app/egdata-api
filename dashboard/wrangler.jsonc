@@ -136,6 +136,12 @@
       }
     ]
   },
+  "flagship": [
+    {
+      "binding": "FLAGS",
+      "app_id": "ac466270-a547-431a-9a8a-8e53812cbbe7"
+    }
+  ],
   "triggers": { "crons": ["*/5 * * * *", "17 3 * * *"] },
   "vars": {
     "USAGE_TRACKING_ENABLED": "true",

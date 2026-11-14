@@ -1,3 +1,4 @@
+import { resolveCommercialLimitsEnabled } from "./flags.js";
 import {
   BILLING_POLICY_DEFAULTS,
   type EffectiveProjectEntitlement,
@@ -5,7 +6,6 @@ import {
   fallbackProjectEntitlement,
   type GrantSource,
   getPlanVersion,
-  isCommercialLimitsEnabled,
   legacyExpensiveLimitsForProject,
   PLAN_VERSIONS,
 } from "./plans.js";
@@ -126,7 +126,10 @@ export async function resolveEffectiveProjectEntitlement(
   >,
   nowMs = Date.now(),
 ): Promise<EffectiveProjectEntitlement> {
-  const commercial = isCommercialLimitsEnabled(env);
+  const commercial = await resolveCommercialLimitsEnabled(env, {
+    userId: meta.ownerEpicId,
+    environment: env.RATE_LIMIT_ENVIRONMENT,
+  });
   if (!env.DB || !meta.projectId) {
     return fallbackProjectEntitlement({
       projectId: meta.projectId,
@@ -238,17 +241,18 @@ export async function resolveEffectiveProjectEntitlement(
     });
   }
 
-  const spec = getPlanVersion(grant.plan_version_id) ?? getPlanVersion(grant.plan_id);
+  const spec =
+    getPlanVersion(grant.plan_version_id) ?? getPlanVersion(grant.plan_id);
   const subStatus = subscription?.status ?? null;
   const graceUntil = subscription?.grace_until ?? null;
 
   if (grant.source === "subscription" && subscription) {
     const graceExpired =
-      subStatus === "past_due" &&
-      graceUntil !== null &&
-      nowMs >= graceUntil;
+      subStatus === "past_due" && graceUntil !== null && nowMs >= graceUntil;
     const periodExpired =
-      (subStatus === "canceled" || subStatus === "incomplete_expired" || subStatus === "unpaid") &&
+      (subStatus === "canceled" ||
+        subStatus === "incomplete_expired" ||
+        subStatus === "unpaid") &&
       nowMs >= subscription.current_period_end;
 
     if (graceExpired || periodExpired || subStatus === "incomplete_expired") {
@@ -291,7 +295,9 @@ export async function resolveEffectiveProjectEntitlement(
       };
       if (parsed.minute) {
         expensiveMinuteLimits = {
-          "offers-list": Number(parsed.minute["offers-list"]) || expensiveMinuteLimits["offers-list"],
+          "offers-list":
+            Number(parsed.minute["offers-list"]) ||
+            expensiveMinuteLimits["offers-list"],
           search: Number(parsed.minute.search) || expensiveMinuteLimits.search,
           heavy: Number(parsed.minute.heavy) || expensiveMinuteLimits.heavy,
           bulk: Number(parsed.minute.bulk) || expensiveMinuteLimits.bulk,
@@ -299,7 +305,9 @@ export async function resolveEffectiveProjectEntitlement(
       }
       if (parsed.period) {
         expensivePeriodBudgets = {
-          "nl-search": Number(parsed.period["nl-search"]) || expensivePeriodBudgets["nl-search"],
+          "nl-search":
+            Number(parsed.period["nl-search"]) ||
+            expensivePeriodBudgets["nl-search"],
           bulk: Number(parsed.period.bulk) || expensivePeriodBudgets.bulk,
           image: Number(parsed.period.image) || expensivePeriodBudgets.image,
         };
@@ -307,7 +315,10 @@ export async function resolveEffectiveProjectEntitlement(
       if (Array.isArray(parsed.entitlements)) {
         entitlements = parsed.entitlements;
       }
-      if (typeof parsed.initialDailyLimit === "number" && parsed.initialDailyLimit > 0) {
+      if (
+        typeof parsed.initialDailyLimit === "number" &&
+        parsed.initialDailyLimit > 0
+      ) {
         initialDailyLimit = parsed.initialDailyLimit;
       } else if (parsed.initialDailyLimit === null) {
         initialDailyLimit = null;
@@ -339,7 +350,9 @@ export async function resolveEffectiveProjectEntitlement(
       projectId: meta.projectId,
       ownerEpicId: meta.ownerEpicId,
       planId: (grant.plan_id as EffectiveProjectEntitlement["planId"]) ?? "pro",
-      planVersionId: (grant.plan_version_id as EffectiveProjectEntitlement["planVersionId"]) ?? "pro-v1",
+      planVersionId:
+        (grant.plan_version_id as EffectiveProjectEntitlement["planVersionId"]) ??
+        "pro-v1",
       tier: (grant.tier as ApiKeyTier) ?? "pro",
       grantSource: "subscription",
       revision: grant.revision,
@@ -364,12 +377,18 @@ export async function resolveEffectiveProjectEntitlement(
   // Manual or grandfathered explicit grant
   let parsedMinute = spec
     ? { ...spec.expensiveMinuteLimits }
-    : legacyExpensiveLimitsForProject(grant.tier as ApiKeyTier, grant.rpm_limit);
+    : legacyExpensiveLimitsForProject(
+        grant.tier as ApiKeyTier,
+        grant.rpm_limit,
+      );
   let parsedPeriod = spec ? { ...spec.expensivePeriodBudgets } : null;
   let parsedEntitlements = spec
     ? [...spec.entitlements]
     : [...PLAN_VERSIONS["scale-v1"].entitlements];
-  if (grant.tier === "enterprise" && !parsedEntitlements.includes("tier:enterprise")) {
+  if (
+    grant.tier === "enterprise" &&
+    !parsedEntitlements.includes("tier:enterprise")
+  ) {
     parsedEntitlements.push("tier:enterprise");
   }
 
@@ -386,7 +405,8 @@ export async function resolveEffectiveProjectEntitlement(
     };
     if (parsed.minute) {
       parsedMinute = {
-        "offers-list": Number(parsed.minute["offers-list"]) || parsedMinute["offers-list"],
+        "offers-list":
+          Number(parsed.minute["offers-list"]) || parsedMinute["offers-list"],
         search: Number(parsed.minute.search) || parsedMinute.search,
         heavy: Number(parsed.minute.heavy) || parsedMinute.heavy,
         bulk: Number(parsed.minute.bulk) || parsedMinute.bulk,
@@ -424,7 +444,8 @@ export async function resolveEffectiveProjectEntitlement(
     projectId: meta.projectId,
     ownerEpicId: meta.ownerEpicId,
     planId: grant.plan_id as EffectiveProjectEntitlement["planId"],
-    planVersionId: grant.plan_version_id as EffectiveProjectEntitlement["planVersionId"],
+    planVersionId:
+      grant.plan_version_id as EffectiveProjectEntitlement["planVersionId"],
     tier: grant.tier as ApiKeyTier,
     grantSource: grant.source as GrantSource,
     revision: grant.revision,
@@ -485,7 +506,10 @@ export async function admitProjectRequest(
     throw new Error("quota_binding_or_identity_missing");
   }
   const now = Date.now();
-  const commercial = isCommercialLimitsEnabled(env);
+  const commercial = await resolveCommercialLimitsEnabled(env, {
+    userId: meta.ownerEpicId,
+    environment: env.RATE_LIMIT_ENVIRONMENT,
+  });
   const entitlement = options?.entitlement ?? null;
   const effectiveTier = entitlement?.tier ?? meta.tier;
   const rpmLimit = quotaForProject(meta, entitlement, commercial);
@@ -549,7 +573,8 @@ export async function admitProjectRequest(
     activePeriodEnd !== null &&
     activePeriodEnd > activePeriodStart
   ) {
-    const budgetLimit = entitlement.expensivePeriodBudgets[options.periodBudget.key];
+    const budgetLimit =
+      entitlement.expensivePeriodBudgets[options.periodBudget.key];
     if (Number.isInteger(budgetLimit) && budgetLimit > 0) {
       periodPolicies.push({
         name: options.periodBudget.policyName,
@@ -692,7 +717,11 @@ export async function readProjectBillingQuota(
   periodStart: number,
   periodEnd: number,
 ): Promise<
-  (PeriodQuotaSummary & { policyCounts: Record<string, number>; status: "ok" | "warning" | "critical" | "exhausted" }) | null
+  | (PeriodQuotaSummary & {
+      policyCounts: Record<string, number>;
+      status: "ok" | "warning" | "critical" | "exhausted";
+    })
+  | null
 > {
   if (!env.API_KEY_RATE_LIMITER || !ownerEpicId || !projectId) {
     return null;
@@ -710,10 +739,12 @@ export async function readProjectBillingQuota(
     periodEnd,
   );
   const criticalThreshold = Math.ceil(
-    (summary.allowance * BILLING_POLICY_DEFAULTS.usageWarningThresholds[1]) / 100,
+    (summary.allowance * BILLING_POLICY_DEFAULTS.usageWarningThresholds[1]) /
+      100,
   );
   const warningThreshold = Math.ceil(
-    (summary.allowance * BILLING_POLICY_DEFAULTS.usageWarningThresholds[0]) / 100,
+    (summary.allowance * BILLING_POLICY_DEFAULTS.usageWarningThresholds[0]) /
+      100,
   );
   const status =
     summary.used >= summary.allowance

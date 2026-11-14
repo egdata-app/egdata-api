@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { CreditCard, FileText, ReceiptText, UserRound } from "lucide-react";
 import type { ReactNode } from "react";
+import { useDashboardAuth } from "../lib/auth-context";
 
 export function AccountPage({ children }: { children: ReactNode }) {
   return <div className="account-page">{children}</div>;
@@ -8,19 +9,27 @@ export function AccountPage({ children }: { children: ReactNode }) {
 
 export function ProfileNavigation() {
   const path = useRouterState({ select: (state) => state.location.pathname });
+  const { paidPlansEnabled } = useDashboardAuth();
+  const items = [
+    { label: "Profile", to: "/profile", icon: UserRound },
+    ...(paidPlansEnabled
+      ? [
+          {
+            label: "Billing",
+            to: "/profile/billing",
+            icon: CreditCard,
+          } as const,
+        ]
+      : []),
+    { label: "Agreements", to: "/profile/agreements", icon: FileText },
+    { label: "Receipts", to: "/profile/receipts", icon: ReceiptText },
+  ] as const;
   return (
     <nav
       aria-label="Account settings"
       className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto [scrollbar-width:none]"
     >
-      {(
-        [
-          { label: "Profile", to: "/profile", icon: UserRound },
-          { label: "Billing", to: "/profile/billing", icon: CreditCard },
-          { label: "Agreements", to: "/profile/agreements", icon: FileText },
-          { label: "Receipts", to: "/profile/receipts", icon: ReceiptText },
-        ] as const
-      ).map(({ label, to, icon: Icon }) => {
+      {items.map(({ label, to, icon: Icon }) => {
         const active = path.replace(/\/$/, "") === to;
         return (
           <Link

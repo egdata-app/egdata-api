@@ -61,7 +61,10 @@ export interface PublicBillingPlan {
   rpmLimit: number;
   periodAllowance: number;
   initialDailyLimit: number | null;
-  expensiveMinuteLimits: Record<"offers-list" | "search" | "heavy" | "bulk", number>;
+  expensiveMinuteLimits: Record<
+    "offers-list" | "search" | "heavy" | "bulk",
+    number
+  >;
   expensivePeriodBudgets: Record<"nl-search" | "bulk" | "image", number>;
   supportLevel: string;
   exhaustionBehavior: "hard_cap";
@@ -91,7 +94,12 @@ export interface ProjectBillingSummaryResponse {
     planId: string;
     planVersionId: string;
     tier: DashboardProject["tier"];
-    grantSource: "free" | "subscription" | "manual" | "grandfathered" | "legacy";
+    grantSource:
+      | "free"
+      | "subscription"
+      | "manual"
+      | "grandfathered"
+      | "legacy";
     revision: number;
     rpmLimit: number;
     periodAllowance: number | null;
@@ -195,6 +203,11 @@ export interface BillingWithdrawalRecord {
   created_at: string;
 }
 
+export interface FeatureFlagsState {
+  paidPlans: boolean;
+  commercialLimits: boolean;
+}
+
 export interface SessionResponse {
   authenticated: boolean;
   isAdmin: boolean;
@@ -203,6 +216,7 @@ export interface SessionResponse {
   oauthConfigured: boolean;
   devAuthAvailable: boolean;
   account?: DeveloperStatus;
+  features?: FeatureFlagsState;
 }
 
 export class DashboardApiError extends Error {
