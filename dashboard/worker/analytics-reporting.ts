@@ -116,26 +116,41 @@ function where(p: Params) {
   if (p.excludeConsole) parts.push("NOT startsWith(blob1, 'console_')");
   return `WHERE ${parts.join(" AND ")}`;
 }
-const metricSql = `SUM(_sample_interval * double1) AS requests,
+const baseMetricSql = `SUM(_sample_interval * double1) AS requests,
   SUM(_sample_interval * double4) AS cacheHits,
   SUM(_sample_interval * (double1 - double4)) AS cacheMisses,
   SUM(_sample_interval * double3) AS rateLimited,
   SUM(_sample_interval * if(blob7 != 'ok' AND blob7 != 'rate_limited' AND blob7 != 'monthly_quota_exceeded' AND blob7 != 'period_quota_exceeded' AND blob7 != 'expensive_budget_exceeded', 1, 0)) AS blockedPolicy,
   SUM(_sample_interval * double5) AS errors,
-  SUM(_sample_interval * if(startsWith(blob5, '2'), double1, 0)) AS status2xx,
-  SUM(_sample_interval * if(startsWith(blob5, '3'), double1, 0)) AS status3xx,
-  SUM(_sample_interval * if(startsWith(blob5, '4'), double1, 0)) AS status4xx,
-  SUM(_sample_interval * if(startsWith(blob5, '5'), double1, 0)) AS status5xx,
+  SUM(_sample_interval * if(startsWith(blob5, '2'), double1, 0.0)) AS status2xx,
+  SUM(_sample_interval * if(startsWith(blob5, '3'), double1, 0.0)) AS status3xx,
+  SUM(_sample_interval * if(startsWith(blob5, '4'), double1, 0.0)) AS status4xx,
+  SUM(_sample_interval * if(startsWith(blob5, '5'), double1, 0.0)) AS status5xx,
   100 * SUM(_sample_interval * double4) / SUM(_sample_interval * double1) AS cacheHitRate,
   100 * SUM(_sample_interval * double5) / SUM(_sample_interval * double1) AS errorRate,
   SUM(_sample_interval * double2) / SUM(_sample_interval) AS avgLatencyMs,
-  SUM(_sample_interval * if(double4 = 1, double2, 0)) / SUM(_sample_interval * if(double4 = 1, double1, 0)) AS avgHitLatencyMs,
-  SUM(_sample_interval * if(double4 = 0 AND blob6 != 'EDGE_BLOCK', double2, 0)) / SUM(_sample_interval * if(double4 = 0 AND blob6 != 'EDGE_BLOCK', double1, 0)) AS avgMissLatencyMs,
-  SUM(_sample_interval * double6) / SUM(_sample_interval * double1) AS avgUpstreamLatencyMs,
-  SUM(_sample_interval * double7) / SUM(_sample_interval * double1) AS avgResponseBytes,
+  SUM(_sample_interval * if(double4 = 1, double2, 0.0)) / SUM(_sample_interval * if(double4 = 1, double1, 0.0)) AS avgHitLatencyMs,
+  SUM(_sample_interval * if(double4 = 0 AND blob6 != 'EDGE_BLOCK', double2, 0.0)) / SUM(_sample_interval * if(double4 = 0 AND blob6 != 'EDGE_BLOCK', double1, 0.0)) AS avgMissLatencyMs,
   quantileExactWeighted(0.5)(double2, _sample_interval) AS p50LatencyMs,
   quantileExactWeighted(0.95)(double2, _sample_interval) AS p95LatencyMs,
   quantileExactWeighted(0.99)(double2, _sample_interval) AS p99LatencyMs`;
+
+const extendedMetricSql = `${baseMetricSql},
+  SUM(_sample_interval * double6) / SUM(_sample_interval * double1) AS avgUpstreamLatencyMs,
+  SUM(_sample_interval * double7) / SUM(_sample_interval * double1) AS avgResponseBytes`;
+
+let extendedSchemaUnavailableUntil = 0;
+
+function isSchemaOrDialectError(error: unknown): boolean {
+  const status = (error as { status?: number } | null)?.status;
+  return status === 400 || status === 422;
+}
+
+function metricSqlSelection(): string {
+  return Date.now() < extendedSchemaUnavailableUntil
+    ? baseMetricSql
+    : extendedMetricSql;
+}
 
 function metrics(row: SqlRow = {}): UsageMetrics {
   const n = (key: string) =>
@@ -166,26 +181,86 @@ function metrics(row: SqlRow = {}): UsageMetrics {
   };
 }
 
+class AnalyticsSqlError extends Error {
+  status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
+
 async function sql(env: DashboardEnv, query: string): Promise<SqlRow[]> {
   if (!env.CF_ACCOUNT_ID || !env.CF_ANALYTICS_API_TOKEN)
     throw new Error("Usage history is not configured.");
-  const res = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(env.CF_ACCOUNT_ID)}/analytics_engine/sql`,
-    {
+  const url = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(env.CF_ACCOUNT_ID)}/analytics_engine/sql`;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const res = await fetch(url, {
       method: "POST",
       headers: { Authorization: `Bearer ${env.CF_ANALYTICS_API_TOKEN}` },
       body: query,
       signal: AbortSignal.timeout(20_000),
-    },
-  );
-  if (!res.ok)
-    throw new Error(
+    });
+    if (res.ok) {
+      const result = (await res.json()) as { data?: SqlRow[] };
+      if (!Array.isArray(result.data))
+        throw new Error("Usage history returned an invalid response.");
+      return result.data;
+    }
+    const detail = await res.text().catch(() => "");
+    if (attempt === 0 && res.status === 429) {
+      const retryAfterSec = Number(res.headers.get("retry-after") ?? "");
+      const delayMs =
+        Number.isFinite(retryAfterSec) && retryAfterSec > 0
+          ? Math.min(1_500, retryAfterSec * 1_000)
+          : 250;
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      continue;
+    }
+    console.error("Analytics Engine SQL error", {
+      status: res.status,
+      detail: detail.slice(0, 500),
+      query: query.slice(0, 500),
+    });
+    throw new AnalyticsSqlError(
+      res.status,
       `Usage history is unavailable (${res.status}). Please retry.`,
     );
-  const result = (await res.json()) as { data?: SqlRow[] };
-  if (!Array.isArray(result.data))
-    throw new Error("Usage history returned an invalid response.");
-  return result.data;
+  }
+  throw new Error("Usage history is unavailable (429). Please retry.");
+}
+
+async function sqlWithMetricFallback(
+  env: DashboardEnv,
+  buildQuery: (selectedMetricSql: string) => string,
+): Promise<SqlRow[]> {
+  const firstSql = metricSqlSelection();
+  try {
+    return await sql(env, buildQuery(firstSql));
+  } catch (error) {
+    if (firstSql !== baseMetricSql && isSchemaOrDialectError(error)) {
+      extendedSchemaUnavailableUntil = Date.now() + 5 * 60_000;
+      return sql(env, buildQuery(baseMetricSql));
+    }
+    throw error;
+  }
+}
+
+async function runLimited<T>(
+  tasks: Array<() => Promise<T>>,
+  concurrency = 4,
+): Promise<T[]> {
+  const results = new Array<T>(tasks.length);
+  let next = 0;
+  const workerCount = Math.min(concurrency, tasks.length);
+  await Promise.all(
+    Array.from({ length: workerCount }, async () => {
+      while (next < tasks.length) {
+        const idx = next++;
+        results[idx] = await tasks[idx]();
+      }
+    }),
+  );
+  return results;
 }
 function remote(env: DashboardEnv) {
   return Boolean(env.CF_ACCOUNT_ID && env.CF_ANALYTICS_API_TOKEN);
@@ -337,9 +412,9 @@ export async function getAdminUsage(
   try {
     if (remote(env)) {
       const column = dimension === "users" ? "index1" : "blob2";
-      const rows = await sql(
+      const rows = await sqlWithMetricFallback(
         env,
-        `SELECT ${column} AS id, ${metricSql}
+        (mSql) => `SELECT ${column} AS id, ${mSql}
         FROM egdata_api_usage ${where({ ...params, end: window.end })}
         AND ${column} IN (${ids.map(literal).join(",")}) GROUP BY ${column} FORMAT JSON`,
       );
@@ -564,9 +639,10 @@ export async function queryUsageTable(
       sort === "label"
         ? aliases.map((alias) => `${alias} ${direction.toUpperCase()}`).join(", ")
         : `${sort} ${direction.toUpperCase()}, ${aliases.map((alias) => `${alias} ASC`).join(", ")}`;
-    const result = await sql(
+    const result = await sqlWithMetricFallback(
       env,
-      `SELECT ${cols.map((col, i) => `${col} AS d${i}`).join(", ")}, ${metricSql} FROM egdata_api_usage ${where(p)}${filter} GROUP BY ${aliases.join(", ")}${having} ORDER BY ${orderBy} LIMIT ${limit + 1} OFFSET ${offset} FORMAT JSON`,
+      (mSql) =>
+        `SELECT ${cols.map((col, i) => `${col} AS d${i}`).join(", ")}, ${mSql} FROM egdata_api_usage ${where(p)}${filter} GROUP BY ${aliases.join(", ")}${having} ORDER BY ${orderBy} LIMIT ${limit + 1} OFFSET ${offset} FORMAT JSON`,
     );
     rows = result.map((r) => {
       const values = cols.map((_, i) => String(r[`d${i}`] ?? ""));
@@ -651,49 +727,84 @@ export async function queryDashboardAnalytics(
   let clientBreakdown: AnalyticsDashboardSummary["clientBreakdown"];
   let policyBreakdown: AnalyticsDashboardSummary["policyBreakdown"];
   const quotaProjectIds = params.quotaProjectIds;
-  const breakdown = async (col: string, limit?: number) =>
+  const breakdown = async (col: string, limit = 50) =>
     sql(
       env,
-      `SELECT ${col} AS label, SUM(_sample_interval * double1) AS requests FROM egdata_api_usage ${where(p)} GROUP BY label ORDER BY requests DESC${limit ? ` LIMIT ${limit}` : ""} FORMAT JSON`,
+      `SELECT ${col} AS label, SUM(_sample_interval * double1) AS requests FROM egdata_api_usage ${where(p)} GROUP BY label ORDER BY requests DESC LIMIT ${limit} FORMAT JSON`,
     );
-  const latencyBucketSql = `SUM(_sample_interval * if(double2 < 50, double1, 0)) AS latLt50,
-    SUM(_sample_interval * if(double2 >= 50 AND double2 < 150, double1, 0)) AS lat50to150,
-    SUM(_sample_interval * if(double2 >= 150 AND double2 < 500, double1, 0)) AS lat150to500,
-    SUM(_sample_interval * if(double2 >= 500 AND double2 < 1000, double1, 0)) AS lat500to1000,
-    SUM(_sample_interval * if(double2 >= 1000, double1, 0)) AS latGte1000`;
+  const breakdownOptional = async (col: string, limit = 50) => {
+    try {
+      return await breakdown(col, limit);
+    } catch (error) {
+      if (isSchemaOrDialectError(error)) return [];
+      throw error;
+    }
+  };
+  const latencyBucketSql = `SUM(_sample_interval * if(double2 < 50, double1, 0.0)) AS latLt50,
+    SUM(_sample_interval * if(double2 >= 50 AND double2 < 150, double1, 0.0)) AS lat50to150,
+    SUM(_sample_interval * if(double2 >= 150 AND double2 < 500, double1, 0.0)) AS lat150to500,
+    SUM(_sample_interval * if(double2 >= 500 AND double2 < 1000, double1, 0.0)) AS lat500to1000,
+    SUM(_sample_interval * if(double2 >= 1000, double1, 0.0)) AS latGte1000`;
   if (remote(env)) {
-    const quotaQuery =
-      quotaProjectIds && quotaProjectIds.length > 0
-        ? sql(
+    const results = (await runLimited(
+      [
+        () =>
+          sqlWithMetricFallback(
             env,
-            `SELECT toStartOfInterval(timestamp, INTERVAL '${bucketMinutes}' MINUTE) AS bucket, SUM(_sample_interval * double1) AS requests FROM egdata_api_usage ${where(p)} AND blob7 = 'ok' AND blob2 IN (${quotaProjectIds.map(literal).join(", ")}) GROUP BY bucket ORDER BY bucket ASC FORMAT JSON`,
-          )
-        : Promise.resolve(quotaProjectIds ? [] : undefined);
-    const results = await Promise.all([
-      sql(
-        env,
-        `SELECT ${metricSql}, ${latencyBucketSql} FROM egdata_api_usage ${where(p)} FORMAT JSON`,
-      ),
-      sql(
-        env,
-        `SELECT ${metricSql} FROM egdata_api_usage ${where(previousParams)} FORMAT JSON`,
-      ),
-      sql(
-        env,
-        `SELECT toStartOfInterval(timestamp, INTERVAL '${bucketMinutes}' MINUTE) AS bucket, ${metricSql} FROM egdata_api_usage ${where(p)} GROUP BY bucket ORDER BY bucket ASC FORMAT JSON`,
-      ),
-      sql(
-        env,
-        `SELECT toStartOfInterval(timestamp, INTERVAL '${bucketMinutes}' MINUTE) AS bucket, SUM(_sample_interval * double1) AS requests, SUM(_sample_interval * double5) AS errors, SUM(_sample_interval * double2) / SUM(_sample_interval) AS avgLatencyMs, quantileExactWeighted(0.95)(double2, _sample_interval) AS p95LatencyMs FROM egdata_api_usage ${where(previousParams)} GROUP BY bucket ORDER BY bucket ASC FORMAT JSON`,
-      ),
-      breakdown("blob6"),
-      breakdown("blob7"),
-      breakdown("blob5"),
-      breakdown("blob11", 8),
-      breakdown("if(blob12 = 'privacy-v1', blob10, 'legacy (redacted)')"),
-      breakdown("if(blob14 = '', '(none)', blob14)", 8),
-      quotaQuery,
-    ]);
+            (mSql) =>
+              `SELECT ${mSql}, ${latencyBucketSql} FROM egdata_api_usage ${where(p)} FORMAT JSON`,
+          ),
+        () =>
+          sqlWithMetricFallback(
+            env,
+            (mSql) =>
+              `SELECT ${mSql} FROM egdata_api_usage ${where(previousParams)} FORMAT JSON`,
+          ),
+        () =>
+          sqlWithMetricFallback(
+            env,
+            (mSql) =>
+              `SELECT toStartOfInterval(timestamp, INTERVAL '${bucketMinutes}' MINUTE) AS bucket, ${mSql} FROM egdata_api_usage ${where(p)} GROUP BY bucket ORDER BY bucket ASC FORMAT JSON`,
+          ),
+        () =>
+          sql(
+            env,
+            `SELECT toStartOfInterval(timestamp, INTERVAL '${bucketMinutes}' MINUTE) AS bucket, SUM(_sample_interval * double1) AS requests, SUM(_sample_interval * double5) AS errors, SUM(_sample_interval * double2) / SUM(_sample_interval) AS avgLatencyMs, quantileExactWeighted(0.95)(double2, _sample_interval) AS p95LatencyMs FROM egdata_api_usage ${where(previousParams)} GROUP BY bucket ORDER BY bucket ASC FORMAT JSON`,
+          ).catch((error) => {
+            if (isSchemaOrDialectError(error)) return [];
+            throw error;
+          }),
+        () => breakdown("blob6"),
+        () => breakdown("blob7"),
+        () => breakdown("blob5"),
+        () => breakdownOptional("blob11", 8),
+        () =>
+          breakdownOptional(
+            "if(blob12 = 'privacy-v1', blob10, 'legacy (redacted)')",
+          ),
+        () => breakdownOptional("if(blob14 = '', '(none)', blob14)", 8),
+        () =>
+          quotaProjectIds && quotaProjectIds.length > 0
+            ? sql(
+                env,
+                `SELECT toStartOfInterval(timestamp, INTERVAL '${bucketMinutes}' MINUTE) AS bucket, SUM(_sample_interval * double1) AS requests FROM egdata_api_usage ${where(p)} AND blob7 = 'ok' AND blob2 IN (${quotaProjectIds.map(literal).join(", ")}) GROUP BY bucket ORDER BY bucket ASC FORMAT JSON`,
+              )
+            : Promise.resolve(quotaProjectIds ? [] : undefined),
+      ],
+      4,
+    )) as [
+      SqlRow[],
+      SqlRow[],
+      SqlRow[],
+      SqlRow[],
+      SqlRow[],
+      SqlRow[],
+      SqlRow[],
+      SqlRow[],
+      SqlRow[],
+      SqlRow[],
+      SqlRow[] | undefined,
+    ];
     const totalsRow = results[0][0] ?? {};
     totals = metrics(totalsRow);
     latencyDistribution = LATENCY_BUCKETS.map((b) => ({
@@ -862,53 +973,44 @@ export async function queryDashboardAnalytics(
       ).sort((a, b) => a.bucket.localeCompare(b.bucket));
     }
   }
-  const [
-    endpoints,
-    busiestEndpoints,
-    slowestEndpoints,
-    errorEndpoints,
-    projects,
-    keys,
-    busiestKeys,
-  ] = await Promise.all([
-    queryUsageTable(env, {
-      ...p,
-      dimension: "endpoints",
-      limit: 5,
-      sort: "rateLimited",
-    }),
-    queryUsageTable(env, {
-      ...p,
-      dimension: "endpoints",
-      limit: 5,
-      sort: "requests",
-    }),
-    queryUsageTable(env, {
-      ...p,
-      dimension: "endpoints",
-      limit: 5,
-      sort: "p95LatencyMs",
-    }),
-    queryUsageTable(env, {
-      ...p,
-      dimension: "endpoints",
-      limit: 5,
-      sort: "errors",
-    }),
-    queryUsageTable(env, { ...p, dimension: "projects", limit: 5 }),
-    queryUsageTable(env, {
-      ...p,
-      dimension: "keys",
-      limit: 5,
-      sort: "rateLimited",
-    }),
-    queryUsageTable(env, {
-      ...p,
-      dimension: "keys",
-      limit: 5,
-      sort: "requests",
-    }),
-  ]);
+  const [endpoints, endpointsByVolume, projects, keysAll] = await runLimited(
+    [
+      () =>
+        queryUsageTable(env, {
+          ...p,
+          dimension: "endpoints",
+          limit: 5,
+          sort: "rateLimited",
+        }),
+      () =>
+        queryUsageTable(env, {
+          ...p,
+          dimension: "endpoints",
+          limit: 50,
+          sort: "requests",
+        }),
+      () => queryUsageTable(env, { ...p, dimension: "projects", limit: 5 }),
+      () =>
+        queryUsageTable(env, {
+          ...p,
+          dimension: "keys",
+          limit: 50,
+          sort: "rateLimited",
+        }),
+    ],
+    4,
+  );
+  const busiestEndpoints = endpointsByVolume.rows.slice(0, 5);
+  const slowestEndpoints = [...endpointsByVolume.rows]
+    .sort((a, b) => b.p95LatencyMs - a.p95LatencyMs || b.requests - a.requests)
+    .slice(0, 5);
+  const errorEndpoints = [...endpointsByVolume.rows]
+    .filter((r) => r.errors > 0)
+    .sort((a, b) => b.errors - a.errors || b.errorRate - a.errorRate)
+    .slice(0, 5);
+  const busiestKeys = [...keysAll.rows]
+    .sort((a, b) => b.requests - a.requests || b.rateLimited - a.rateLimited)
+    .slice(0, 5);
   return {
     source: source(env),
     scope: p.ownerEpicId === null ? "all" : "project",
@@ -929,11 +1031,11 @@ export async function queryDashboardAnalytics(
     clientBreakdown,
     policyBreakdown,
     endpoints: endpoints.rows,
-    busiestEndpoints: busiestEndpoints.rows,
-    slowestEndpoints: slowestEndpoints.rows,
-    errorEndpoints: errorEndpoints.rows,
+    busiestEndpoints,
+    slowestEndpoints,
+    errorEndpoints,
     projects: projects.rows,
-    keys: keys.rows,
-    busiestKeys: busiestKeys.rows,
+    keys: keysAll.rows.slice(0, 5),
+    busiestKeys,
   };
 }
