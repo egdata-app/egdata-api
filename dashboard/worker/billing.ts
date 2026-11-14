@@ -2502,12 +2502,22 @@ export async function reconcileBillingState(env: DashboardEnv): Promise<{
         sub.stripe_subscription_id &&
         env.STRIPE_SECRET_KEY?.trim()
       ) {
-        await cancelStripeSubscription(
-          env,
-          sub.stripe_subscription_id,
-          { atPeriodEnd: false },
-          `reconcile_cancel:${sub.id}`,
-        ).catch(() => {});
+        try {
+          await cancelStripeSubscription(
+            env,
+            sub.stripe_subscription_id,
+            { atPeriodEnd: false },
+            `reconcile_cancel:${sub.id}`,
+          );
+        } catch (cancelErr) {
+          const isAlreadyGone =
+            cancelErr instanceof StripeApiError &&
+            (cancelErr.status === 404 ||
+              cancelErr.stripeCode === "resource_missing");
+          if (!isAlreadyGone) {
+            throw cancelErr;
+          }
+        }
       }
       await invalidateAndSyncProject(
         env,
@@ -2524,8 +2534,19 @@ export async function reconcileBillingState(env: DashboardEnv): Promise<{
         .bind(sub.id)
         .run();
       reconciledCount++;
-    } catch {
+    } catch (err) {
       // leave needs_reconcile = 1 for next cron tick
+      await env.DB.prepare(
+        `UPDATE billing_subscriptions
+            SET reconcile_error = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
+          WHERE id = ?`,
+      )
+        .bind(
+          err instanceof Error ? err.message.slice(0, 500) : "reconcile_failed",
+          sub.id,
+        )
+        .run()
+        .catch(() => {});
     }
   }
 

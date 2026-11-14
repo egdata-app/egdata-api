@@ -879,7 +879,29 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
     expect(rowAfterDelete.status).toBe("canceled");
     expect(rowAfterDelete.needs_reconcile).toBe(1);
 
-    // Admin reconcile clears needs_reconcile & finishes Stripe DELETE
+    // If Stripe DELETE fails again during reconcile, preserve needs_reconcile = 1 for retry
+    h.setFailNextStripeDelete(true);
+    const failedRecRes = await h.dashFetch(
+      "/_dashboard/api/admin/billing/reconcile",
+      {
+        method: "POST",
+        user: "admin_1",
+      },
+    );
+    expect(failedRecRes.status).toBe(200);
+    expect(
+      ((await failedRecRes.json()) as { reconciledCount: number })
+        .reconciledCount,
+    ).toBe(0);
+    const rowAfterFailedReconcile = h.sqlite
+      .prepare(
+        "SELECT needs_reconcile, reconcile_error FROM billing_subscriptions WHERE id = 'sub_del_1'",
+      )
+      .get() as { needs_reconcile: number; reconcile_error: string | null };
+    expect(rowAfterFailedReconcile.needs_reconcile).toBe(1);
+    expect(rowAfterFailedReconcile.reconcile_error).toBeTruthy();
+
+    // Admin reconcile clears needs_reconcile & finishes Stripe DELETE once Stripe recovers
     const recRes = await h.dashFetch(
       "/_dashboard/api/admin/billing/reconcile",
       {
@@ -894,10 +916,10 @@ describe("Phase C: Stripe billing control plane & webhook lifecycle", () => {
     expect(
       h.sqlite
         .prepare(
-          "SELECT needs_reconcile FROM billing_subscriptions WHERE id = 'sub_del_1'",
+          "SELECT needs_reconcile, reconcile_error FROM billing_subscriptions WHERE id = 'sub_del_1'",
         )
         .get(),
-    ).toEqual({ needs_reconcile: 0 });
+    ).toEqual({ needs_reconcile: 0, reconcile_error: null });
 
     // Restore project: subscription stays canceled & financial record remains intact
     const restoreRes = await h.dashFetch(
