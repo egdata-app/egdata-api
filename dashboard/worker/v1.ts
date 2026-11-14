@@ -444,6 +444,7 @@ export async function handleV1ApiProxy(
     route.operationId,
   );
 
+  const admittedAtMs = Date.now();
   let admission: AdmissionResult;
   try {
     admission = await admitProjectRequest(
@@ -593,6 +594,8 @@ export async function handleV1ApiProxy(
         ownerEpicId: meta.ownerEpicId,
         projectId: meta.projectId,
         entitlement,
+        admission,
+        admittedAtMs,
         periodBudget,
         reason: "origin_unavailable",
       }).catch(() => {}),
@@ -613,6 +616,8 @@ export async function handleV1ApiProxy(
         ownerEpicId: meta.ownerEpicId,
         projectId: meta.projectId,
         entitlement,
+        admission,
+        admittedAtMs,
         periodBudget,
         reason: `upstream_status_${upstreamResponse.status}`,
       }).catch(() => {}),

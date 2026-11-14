@@ -881,6 +881,74 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     };
   }
 
+  private refundProjectPeriodState(
+    projectId: string,
+    expectedWindowStart: number,
+    options: {
+      refundTotal: boolean;
+      periodPolicyName?: string;
+      amount: number;
+      now: number;
+    },
+  ): { samePeriod: boolean; remainingUsed: number; bonus: number } {
+    const period = this.readPeriodState(projectId);
+    const samePeriod =
+      period !== null &&
+      (expectedWindowStart === 0 || period.periodStart === expectedWindowStart);
+    if (!samePeriod) {
+      return { samePeriod: false, remainingUsed: 0, bonus: 0 };
+    }
+    const remainingUsed = options.refundTotal
+      ? applyUsageCredit(period.used, options.amount)
+      : period.used;
+    const currentBonus = period.bonus ?? 0;
+    const nextPolicyCounts = { ...period.policyCounts };
+    const periodPolicyName = options.periodPolicyName;
+    const shouldDecrementPolicy =
+      typeof periodPolicyName === "string" &&
+      periodPolicyName.length > 0 &&
+      typeof nextPolicyCounts[periodPolicyName] === "number";
+    if (shouldDecrementPolicy) {
+      nextPolicyCounts[periodPolicyName] = applyUsageCredit(
+        nextPolicyCounts[periodPolicyName],
+        options.amount,
+      );
+    }
+    if (options.refundTotal || shouldDecrementPolicy) {
+      this.writePeriodState(
+        projectId,
+        {
+          periodStart: period.periodStart,
+          periodEnd: period.periodEnd,
+          used: remainingUsed,
+          policyCounts: nextPolicyCounts,
+          bonus: currentBonus,
+        },
+        options.now,
+      );
+    }
+    return { samePeriod: true, remainingUsed, bonus: currentBonus };
+  }
+
+  private refundProjectDailyState(
+    projectId: string,
+    expectedDayStart: number,
+    amount: number,
+    now: number,
+  ): void {
+    const daily = this.readDailyState(projectId);
+    if (daily && daily.dayStart === expectedDayStart) {
+      this.writeDailyState(
+        projectId,
+        {
+          dayStart: daily.dayStart,
+          used: applyUsageCredit(daily.used, amount),
+        },
+        now,
+      );
+    }
+  }
+
   /**
    * Idempotent usage credit for service-side failures ("refund") or operator
    * quota grants ("bonus"). Replaying the same adjustmentId does not
@@ -894,6 +962,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     scope: "period" | "month";
     windowStart?: number;
     periodEnd?: number;
+    dayStart?: number;
     amount?: number;
     periodPolicyName?: string;
     reason: string;
@@ -910,6 +979,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
     const windowStart =
       params.windowStart ??
       (params.scope === "month" ? monthBounds.monthStart : 0);
+    const targetDayStart = params.dayStart ?? utcDayBounds(now).dayStart;
 
     let applied = false;
     let remainingUsed = 0;
@@ -957,13 +1027,29 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
               now,
             );
           }
+          if (params.projectId) {
+            if (params.periodPolicyName) {
+              this.refundProjectPeriodState(params.projectId, windowStart, {
+                refundTotal: false,
+                periodPolicyName: params.periodPolicyName,
+                amount,
+                now,
+              });
+            }
+            this.refundProjectDailyState(
+              params.projectId,
+              targetDayStart,
+              amount,
+              now,
+            );
+          }
         }
       } else {
         if (!params.projectId) {
           throw new Error("projectId is required for period usage credit");
         }
-        const period = this.readPeriodState(params.projectId);
         if (mode === "bonus") {
+          const period = this.readPeriodState(params.projectId);
           const stored = this.readStoredEntitlement(
             params.projectId,
             params.ownerEpicId,
@@ -1011,6 +1097,7 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
             );
           }
         } else {
+          const period = this.readPeriodState(params.projectId);
           const samePeriod =
             period !== null &&
             (windowStart === 0 || period.periodStart === windowStart);
@@ -1021,45 +1108,24 @@ export class ApiKeyRateLimiter extends DurableObject<DashboardEnv> {
             if (currentBonus > 0) appliedBonus = currentBonus;
             return;
           }
-          remainingUsed = samePeriod
-            ? applyUsageCredit(currentUsed, amount)
-            : 0;
-          if (currentBonus > 0) appliedBonus = currentBonus;
-          if (samePeriod) {
-            const nextPolicyCounts = { ...period.policyCounts };
-            if (
-              params.periodPolicyName &&
-              typeof nextPolicyCounts[params.periodPolicyName] === "number"
-            ) {
-              nextPolicyCounts[params.periodPolicyName] = applyUsageCredit(
-                nextPolicyCounts[params.periodPolicyName],
-                amount,
-              );
-            }
-            this.writePeriodState(
-              params.projectId,
-              {
-                periodStart: period.periodStart,
-                periodEnd: period.periodEnd,
-                used: remainingUsed,
-                policyCounts: nextPolicyCounts,
-                bonus: currentBonus,
-              },
+          const refund = this.refundProjectPeriodState(
+            params.projectId,
+            windowStart,
+            {
+              refundTotal: true,
+              periodPolicyName: params.periodPolicyName,
+              amount,
               now,
-            );
-          }
-          const daily = this.readDailyState(params.projectId);
-          const dayBounds = utcDayBounds(now);
-          if (daily && daily.dayStart === dayBounds.dayStart) {
-            this.writeDailyState(
-              params.projectId,
-              {
-                dayStart: daily.dayStart,
-                used: applyUsageCredit(daily.used, amount),
-              },
-              now,
-            );
-          }
+            },
+          );
+          remainingUsed = refund.remainingUsed;
+          if (refund.bonus > 0) appliedBonus = refund.bonus;
+          this.refundProjectDailyState(
+            params.projectId,
+            targetDayStart,
+            amount,
+            now,
+          );
         }
       }
 

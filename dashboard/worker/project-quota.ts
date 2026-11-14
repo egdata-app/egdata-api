@@ -12,6 +12,7 @@ import {
 import {
   type AdmissionResult,
   DAILY_POLICY_NAME,
+  DAY_WINDOW_MS,
   type DailyQuotaSummary,
   FREE_MONTHLY_ALLOWANCE,
   MONTHLY_POLICY_NAME,
@@ -19,6 +20,7 @@ import {
   PERIOD_POLICY_NAME,
   type PeriodQuotaSummary,
   type QuotaPolicy,
+  utcDayBounds,
   utcMonthBounds,
 } from "./rate-limiter-core.js";
 import type {
@@ -671,6 +673,8 @@ export async function creditAdmittedRequestUsage(
     ownerEpicId: string;
     projectId: string;
     entitlement?: EffectiveProjectEntitlement | null;
+    admission?: AdmissionResult | null;
+    admittedAtMs?: number;
     periodBudget?: { key: ExpensivePeriodBudgetKey; policyName: string } | null;
     reason: string;
   },
@@ -684,22 +688,79 @@ export async function creditAdmittedRequestUsage(
   const stub = env.API_KEY_RATE_LIMITER.get(objectId);
   if (typeof stub.creditUsage !== "function") return;
 
-  const isPeriod =
-    params.entitlement?.periodType === "billing_period" &&
-    params.entitlement.periodStart !== null;
+  const admittedNow = params.admittedAtMs ?? Date.now();
+  const admittedMonthBounds = utcMonthBounds(admittedNow);
+  const policies = params.admission?.policies ?? [];
+  const monthlyPolicy = policies.find(
+    (entry) =>
+      entry.name === MONTHLY_POLICY_NAME &&
+      (entry.window ?? "minute") === "month",
+  );
+  const periodPolicy = policies.find(
+    (entry) =>
+      entry.name === PERIOD_POLICY_NAME &&
+      (entry.window ?? "minute") === "period",
+  );
+  const dailyPolicy = policies.find(
+    (entry) =>
+      entry.name === DAILY_POLICY_NAME && (entry.window ?? "minute") === "day",
+  );
+  const expensivePolicyName = params.periodBudget?.policyName;
+  const expensivePolicy = expensivePolicyName
+    ? policies.find(
+        (entry) =>
+          entry.name === expensivePolicyName &&
+          (entry.window ?? "minute") === "period",
+      )
+    : undefined;
+
+  const isPeriod = params.admission
+    ? Boolean(periodPolicy)
+    : params.entitlement?.periodType === "billing_period" &&
+      Boolean(params.entitlement.periodAllowance);
   const scope = isPeriod ? "period" : "month";
+  const explicitPeriod =
+    params.entitlement?.periodStart != null &&
+    params.entitlement?.periodEnd != null &&
+    params.entitlement.periodEnd > params.entitlement.periodStart
+      ? {
+          start: params.entitlement.periodStart,
+          end: params.entitlement.periodEnd,
+        }
+      : null;
+
   const windowStart = isPeriod
-    ? params.entitlement!.periodStart!
-    : utcMonthBounds(Date.now()).monthStart;
+    ? explicitPeriod
+      ? explicitPeriod.start
+      : periodPolicy
+        ? utcMonthBounds(periodPolicy.resetAt - 1).monthStart
+        : admittedMonthBounds.monthStart
+    : monthlyPolicy
+      ? utcMonthBounds(monthlyPolicy.resetAt - 1).monthStart
+      : admittedMonthBounds.monthStart;
+
+  const periodEnd = isPeriod
+    ? explicitPeriod
+      ? explicitPeriod.end
+      : (periodPolicy?.resetAt ?? admittedMonthBounds.resetAt)
+    : (expensivePolicy?.resetAt ??
+      monthlyPolicy?.resetAt ??
+      admittedMonthBounds.resetAt);
+
+  const dayStart = dailyPolicy
+    ? dailyPolicy.resetAt - DAY_WINDOW_MS
+    : utcDayBounds(admittedNow).dayStart;
+
   const budgetLimit =
-    isPeriod &&
-    params.periodBudget &&
-    params.entitlement?.expensivePeriodBudgets
+    params.periodBudget && params.entitlement?.expensivePeriodBudgets
       ? params.entitlement.expensivePeriodBudgets[params.periodBudget.key]
       : undefined;
-  const periodPolicyName =
-    Number.isInteger(budgetLimit) && (budgetLimit ?? 0) > 0
-      ? params.periodBudget?.policyName
+  const periodPolicyName = params.admission
+    ? expensivePolicy?.name
+    : (isPeriod || params.entitlement?.tier === "free") &&
+        Number.isInteger(budgetLimit) &&
+        (budgetLimit ?? 0) > 0
+      ? expensivePolicyName
       : undefined;
 
   await stub.creditUsage({
@@ -708,7 +769,8 @@ export async function creditAdmittedRequestUsage(
     projectId: params.projectId,
     scope,
     windowStart,
-    periodEnd: params.entitlement?.periodEnd ?? undefined,
+    periodEnd,
+    dayStart,
     amount: 1,
     ...(periodPolicyName ? { periodPolicyName } : {}),
     reason: params.reason,

@@ -1145,4 +1145,86 @@ describe("0012 migration & Phase B paid-plans foundations", () => {
       resolveEffectiveProjectEntitlement(h.env, meta, now),
     ).rejects.toThrow("subscription_record_missing");
   });
+
+  it("restores free-tier expensive period budgets on 5xx/502 and targets the admission month across UTC rollover", async () => {
+    const h = await createPaidPlansHarness({ commercialLimitsEnabled: true });
+    const { rawKey: freeKey } = await h.issueKey({
+      projectId: "prj_free_1",
+      ownerEpicId: "owner_free",
+      tier: "free",
+    });
+
+    const novBounds = utcMonthBounds(Date.UTC(2026, 10, 30, 23, 59, 59, 500));
+
+    // 1. Free-tier 500 (/v1) and 502 (legacy) restore BOTH monthly account usage AND expensive period policy count
+    h.upstream.mockResolvedValueOnce(
+      new Response("Upstream err", { status: 500 }),
+    );
+    const freeNl500 = await h.callGateway(
+      "/v1/search/natural-language",
+      { "x-api-key": freeKey, "Content-Type": "application/json" },
+      "POST",
+      JSON.stringify({ query: "rpg" }),
+    );
+    expect(freeNl500.status).toBe(500);
+    await h.flushWaitUntils();
+
+    h.upstream.mockRejectedValueOnce(new Error("connect ECONNREFUSED"));
+    const freeLegacy502 = await h.callGateway(
+      "/search/natural-language",
+      { "x-api-key": freeKey, "Content-Type": "application/json" },
+      "POST",
+      JSON.stringify({ query: "puzzle" }),
+    );
+    expect(freeLegacy502.status).toBe(502);
+    await h.flushWaitUntils();
+
+    expect((await readAccountMonthlyQuota(h.env, "owner_free")).used).toBe(0);
+    const freePeriodAfterFailures = await readProjectBillingQuota(
+      h.env,
+      "owner_free",
+      "prj_free_1",
+      PLAN_VERSIONS["free-v1"].expensivePeriodBudgets["nl-search"],
+      novBounds.monthStart,
+      novBounds.resetAt,
+    );
+    expect(freePeriodAfterFailures?.policyCounts["nl-search-period"] ?? 0).toBe(
+      0,
+    );
+
+    // 2. Request admitted on Nov 30 whose 500 completes after Dec 1 rollover must NOT decrement December counters
+    h.upstream.mockImplementationOnce(async () => {
+      vi.setSystemTime(new Date("2026-12-01T00:00:00.500Z"));
+      return new Response("Delayed upstream error", { status: 500 });
+    });
+    const crossMonthRes = await h.callGateway(
+      "/v1/search/natural-language",
+      { "x-api-key": freeKey, "Content-Type": "application/json" },
+      "POST",
+      JSON.stringify({ query: "cross-month" }),
+    );
+    expect(crossMonthRes.status).toBe(500);
+
+    // Clear or let a real December request establish December's counters first, then flush November's credit
+    const decOkRes = await h.callGateway(
+      "/v1/search/natural-language",
+      { "x-api-key": freeKey, "Content-Type": "application/json" },
+      "POST",
+      JSON.stringify({ query: "december-ok" }),
+    );
+    expect(decOkRes.status).toBe(200);
+    await h.flushWaitUntils();
+
+    const decBounds = utcMonthBounds(Date.UTC(2026, 11, 1, 0, 0, 0, 500));
+    expect((await readAccountMonthlyQuota(h.env, "owner_free")).used).toBe(1);
+    const decPeriodAfterFlush = await readProjectBillingQuota(
+      h.env,
+      "owner_free",
+      "prj_free_1",
+      PLAN_VERSIONS["free-v1"].expensivePeriodBudgets["nl-search"],
+      decBounds.monthStart,
+      decBounds.resetAt,
+    );
+    expect(decPeriodAfterFlush?.policyCounts["nl-search-period"]).toBe(1);
+  });
 });

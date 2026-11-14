@@ -403,6 +403,7 @@ export async function handleEdgeApiProxy(
     upstreamPath,
     request.method,
   );
+  const admittedAtMs = Date.now();
   let admission: AdmissionResult;
   try {
     admission = await admitProjectRequest(
@@ -548,6 +549,8 @@ export async function handleEdgeApiProxy(
         ownerEpicId: keyMeta.ownerEpicId,
         projectId: keyMeta.projectId,
         entitlement,
+        admission,
+        admittedAtMs,
         periodBudget,
         reason: "origin_unavailable",
       }).catch(() => {}),
@@ -568,6 +571,8 @@ export async function handleEdgeApiProxy(
         ownerEpicId: keyMeta.ownerEpicId,
         projectId: keyMeta.projectId,
         entitlement,
+        admission,
+        admittedAtMs,
         periodBudget,
         reason: `upstream_status_${upstreamResponse.status}`,
       }).catch(() => {}),
