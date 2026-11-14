@@ -124,6 +124,13 @@ function extractCredentials(request: Request): {
   };
 }
 
+function parsedContentLength(headers: Headers): number {
+  const raw = headers.get("content-length");
+  if (!raw) return 0;
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) && parsed > 0 ? Math.round(parsed) : 0;
+}
+
 function baseTelemetry(
   request: Request,
   meta: { ownerEpicId: string; keyId: string; projectId: string },
@@ -136,6 +143,11 @@ function baseTelemetry(
     country: string;
     clientIp: string | null;
     userAgent: string;
+    operationId?: string;
+    policyFamily?: string;
+    errorCode?: string;
+    upstreamLatencyMs?: number;
+    responseBytes?: number;
   },
 ) {
   return {
@@ -152,6 +164,11 @@ function baseTelemetry(
     userAgent: options.userAgent,
     country: options.country,
     latencyMs: performance.now() - options.startedAt,
+    operationId: options.operationId,
+    policyFamily: options.policyFamily,
+    errorCode: options.errorCode,
+    upstreamLatencyMs: options.upstreamLatencyMs,
+    responseBytes: options.responseBytes,
   };
 }
 
@@ -347,6 +364,9 @@ export async function handleV1ApiProxy(
         country,
         clientIp,
         userAgent,
+        operationId: route.operationId,
+        policyFamily: "key_policy",
+        errorCode: policy.reason.toUpperCase(),
       }),
     );
     return v1Problem(request, {
@@ -405,6 +425,9 @@ export async function handleV1ApiProxy(
         country,
         clientIp,
         userAgent,
+        operationId: route.operationId,
+        policyFamily: "plan_entitlement",
+        errorCode: "PLAN_ENTITLEMENT_REQUIRED",
       }),
     );
     return v1Problem(request, {
@@ -499,6 +522,13 @@ export async function handleV1ApiProxy(
     const resetIso = exhausted
       ? new Date(exhausted.resetAt).toISOString()
       : new Date(admission.resetAt).toISOString();
+    const limitCode = monthlyExhausted
+      ? "MONTHLY_QUOTA_EXCEEDED"
+      : periodExhausted || dailyExhausted
+        ? "PERIOD_QUOTA_EXCEEDED"
+        : periodBudgetExhausted
+          ? "EXPENSIVE_BUDGET_EXCEEDED"
+          : "RATE_LIMITED";
     recordApiTelemetry(
       env,
       baseTelemetry(request, meta, {
@@ -516,18 +546,16 @@ export async function handleV1ApiProxy(
         country,
         clientIp,
         userAgent,
+        operationId: route.operationId,
+        policyFamily:
+          admission.exhaustedPolicy ?? periodBudget?.key ?? route.expensive ?? "rpm",
+        errorCode: limitCode,
       }),
     );
     return v1Problem(request, {
       requestId,
       status: 429,
-      code: monthlyExhausted
-        ? "MONTHLY_QUOTA_EXCEEDED"
-        : periodExhausted || dailyExhausted
-          ? "PERIOD_QUOTA_EXCEEDED"
-          : periodBudgetExhausted
-            ? "EXPENSIVE_BUDGET_EXCEEDED"
-            : "RATE_LIMITED",
+      code: limitCode,
       detail: monthlyExhausted
         ? `The free account monthly quota of ${exhausted?.limit.toLocaleString() ?? "100,000"} requests is exhausted across all free projects, API keys, and console sessions until the first day of the next calendar month at 00:00 UTC.`
         : dailyExhausted && exhausted
@@ -559,6 +587,7 @@ export async function handleV1ApiProxy(
 
   let upstreamResponse: Response;
   let cacheStatus: string;
+  const upstreamStartedAt = performance.now();
   try {
     const cachedResult = await fetchV1WithEdgeCache({
       request,
@@ -625,6 +654,8 @@ export async function handleV1ApiProxy(
   }
 
   const routeTemplate = route.path;
+  const upstreamElapsedMs =
+    cacheStatus === "HIT" ? 0 : performance.now() - upstreamStartedAt;
   recordApiTelemetry(
     env,
     baseTelemetry(request, meta, {
@@ -636,6 +667,12 @@ export async function handleV1ApiProxy(
       country,
       clientIp,
       userAgent,
+      operationId: route.operationId,
+      policyFamily: periodBudget?.key ?? route.expensive ?? "",
+      errorCode:
+        upstreamResponse.status >= 400 ? `HTTP_${upstreamResponse.status}` : "",
+      upstreamLatencyMs: upstreamElapsedMs,
+      responseBytes: parsedContentLength(upstreamResponse.headers),
     }),
   );
 

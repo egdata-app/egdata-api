@@ -335,9 +335,11 @@ function renderPaidProjectSection({
 export function MonthlyQuotaPanel({
   showLimitLink = true,
   refreshKey = 0,
+  onStatusLoaded,
 }: {
   showLimitLink?: boolean;
   refreshKey?: number;
+  onStatusLoaded?: (monthly: AccountMonthlyQuotaStatus) => void;
 }) {
   const { projects, selectedProject, paidPlansEnabled } = useDashboardAuth();
   const [monthly, setMonthly] = useState<AccountMonthlyQuotaStatus | null>(
@@ -372,6 +374,7 @@ export function MonthlyQuotaPanel({
         if (!signal?.aborted) {
           setMonthly(monthlyRes.monthly);
           setProjectBilling(billingRes);
+          onStatusLoaded?.(monthlyRes.monthly);
         }
       } catch (err) {
         if (!signal?.aborted) {
@@ -385,7 +388,7 @@ export function MonthlyQuotaPanel({
         if (!signal?.aborted) setLoading(false);
       }
     },
-    [paidPlansEnabled, selectedProject],
+    [paidPlansEnabled, selectedProject, onStatusLoaded],
   );
 
   // Both local and page refresh controls cancel any older in-flight read.

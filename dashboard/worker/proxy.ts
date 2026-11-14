@@ -117,6 +117,13 @@ async function isTrustedFirstPartyRequest(
   return timingSafeStringEqual(supplied, expected);
 }
 
+function parsedContentLength(headers: Headers): number {
+  const raw = headers.get("content-length");
+  if (!raw) return 0;
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) && parsed > 0 ? Math.round(parsed) : 0;
+}
+
 const lastUsedTouchDebounce = new Map<string, number>();
 
 export async function handleEdgeApiProxy(
@@ -189,6 +196,13 @@ export async function handleEdgeApiProxy(
       userAgent,
       country,
       latencyMs: performance.now() - startMs,
+      errorCode:
+        limitOutcome !== "ok"
+          ? limitOutcome.toUpperCase()
+          : response.status >= 400
+            ? `HTTP_${response.status}`
+            : "",
+      responseBytes: parsedContentLength(response.headers),
     });
     return response;
   };
@@ -306,6 +320,8 @@ export async function handleEdgeApiProxy(
       userAgent,
       country,
       latencyMs: performance.now() - startMs,
+      policyFamily: "key_policy",
+      errorCode: policy.reason.toUpperCase(),
     });
 
     return edgeErrorJson(
@@ -454,6 +470,13 @@ export async function handleEdgeApiProxy(
     const resetIso = exhausted
       ? new Date(exhausted.resetAt).toISOString()
       : new Date(admission.resetAt).toISOString();
+    const limitCode = monthlyExhausted
+      ? "MONTHLY_QUOTA_EXCEEDED"
+      : periodExhausted || dailyExhausted
+        ? "PERIOD_QUOTA_EXCEEDED"
+        : periodBudgetExhausted
+          ? "EXPENSIVE_BUDGET_EXCEEDED"
+          : "RATE_LIMITED";
     recordApiTelemetry(env, {
       ownerEpicId: keyMeta.ownerEpicId,
       keyId: keyMeta.keyId,
@@ -474,17 +497,17 @@ export async function handleEdgeApiProxy(
       userAgent,
       country,
       latencyMs: performance.now() - startMs,
+      policyFamily:
+        admission.exhaustedPolicy ??
+        periodBudget?.key ??
+        expensivePolicy ??
+        "rpm",
+      errorCode: limitCode,
     });
 
     return edgeErrorJson(
       429,
-      monthlyExhausted
-        ? "MONTHLY_QUOTA_EXCEEDED"
-        : periodExhausted || dailyExhausted
-          ? "PERIOD_QUOTA_EXCEEDED"
-          : periodBudgetExhausted
-            ? "EXPENSIVE_BUDGET_EXCEEDED"
-            : "RATE_LIMITED",
+      limitCode,
       monthlyExhausted
         ? "Free account monthly quota of 100,000 requests is exhausted across all free projects, API keys, and console sessions until the next calendar month at 00:00 UTC. Request higher limits in the egdata Developer Portal."
         : dailyExhausted && exhausted
@@ -517,6 +540,7 @@ export async function handleEdgeApiProxy(
   const requestCreditId = request.headers.get("cf-ray") || crypto.randomUUID();
   let upstreamResponse: Response;
   let cacheStatus: string;
+  const upstreamStartedAt = performance.now();
   try {
     const cachedResult = await fetchLegacyWithEdgeCache({
       request,
@@ -583,6 +607,8 @@ export async function handleEdgeApiProxy(
     upstreamPath,
     upstreamResponse.headers.get("x-route-template"),
   );
+  const upstreamElapsedMs =
+    cacheStatus === "HIT" ? 0 : performance.now() - upstreamStartedAt;
 
   // 8. Fire-and-forget telemetry to Workers Analytics Engine (0ms latency impact)
   recordApiTelemetry(env, {
@@ -599,6 +625,11 @@ export async function handleEdgeApiProxy(
     userAgent,
     country,
     latencyMs: performance.now() - startMs,
+    policyFamily: periodBudget?.key ?? expensivePolicy ?? "",
+    errorCode:
+      upstreamResponse.status >= 400 ? `HTTP_${upstreamResponse.status}` : "",
+    upstreamLatencyMs: upstreamElapsedMs,
+    responseBytes: parsedContentLength(upstreamResponse.headers),
   });
 
   // Stream response body untouched (zero buffering, preserves strong/weak ETags & gzip/br)

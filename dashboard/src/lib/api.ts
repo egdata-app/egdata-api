@@ -16,6 +16,7 @@ import type { DeveloperReceipt } from "../../worker/developer-receipts";
 import type { DeveloperStatus } from "../../worker/developer-status";
 
 export type {
+  StatusClassFilter,
   UsageDimension,
   UsageFilters,
   UsageMetrics,
@@ -232,7 +233,10 @@ export class DashboardApiError extends Error {
 function usageQuery(params: UsageTableFilters) {
   const qs = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined && value !== "") qs.set(key, String(value));
+    if (value === undefined || value === "" || value === false) continue;
+    if (key === "minRequests" && value === 0) continue;
+    if (key === "statusClass" && value === "all") continue;
+    qs.set(key, String(value));
   }
   return qs.toString();
 }
