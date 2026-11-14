@@ -428,8 +428,20 @@ describe("Worker-level post-auth edge caching", () => {
         ctx,
       );
 
-    // First-party exception still works when keys are required.
-    await call("/countries", { headers: { Origin: "https://egdata.app" } });
+    // Spoofed Origin alone is rejected; trusted first-party service token succeeds when keys are required.
+    env.FIRST_PARTY_SERVICE_TOKEN = "trusted-first-party-secret";
+    expect(
+      (await call("/countries", { headers: { Origin: "https://egdata.app" } }))
+        .status,
+    ).toBe(401);
+    expect(defaultCache.put).not.toHaveBeenCalled();
+
+    await call("/countries", {
+      headers: {
+        Origin: "https://egdata.app",
+        "X-Egdata-First-Party-Token": "trusted-first-party-secret",
+      },
+    });
     await ctx.flush();
     expect(defaultCache.put).toHaveBeenCalledTimes(1);
     expect((await call()).status).toBe(401);

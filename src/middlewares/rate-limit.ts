@@ -177,6 +177,7 @@ const numberFromEnv = (name: string, fallback: number) => {
 };
 
 const skipCheapRequests = (c: Context) =>
+  c.get("trustedGatewayAuthenticated") === true ||
   c.req.method === "OPTIONS" ||
   c.req.method === "HEAD" ||
   ["/health", "/ping", "/robots.txt"].includes(c.req.path) ||

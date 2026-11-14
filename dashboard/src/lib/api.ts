@@ -48,6 +48,166 @@ export type {
   LimitIncreaseRequestRecord,
 };
 
+export interface PublicBillingPlan {
+  versionId: "free-v1" | "pro-v1" | "scale-v1";
+  planId: "free" | "pro" | "scale";
+  tier: "free" | "pro" | "scale" | "enterprise";
+  displayName: string;
+  priceEurCents: number;
+  currency: "eur";
+  vatIncluded: boolean;
+  billingInterval: "month";
+  periodType: "calendar_month" | "billing_period";
+  rpmLimit: number;
+  periodAllowance: number;
+  initialDailyLimit: number | null;
+  expensiveMinuteLimits: Record<
+    "offers-list" | "search" | "heavy" | "bulk",
+    number
+  >;
+  expensivePeriodBudgets: Record<"nl-search" | "bulk" | "image", number>;
+  supportLevel: string;
+  exhaustionBehavior: "hard_cap";
+  selfServePurchasable: boolean;
+}
+
+export interface BillingPlansResponse {
+  currency: string;
+  vatIncludedInConsumerPrices: boolean;
+  defaultVatRatePercent: number;
+  gracePeriodDays: number;
+  withdrawalWindowDays: number;
+  initialPeriodDailyLimitDays: number;
+  termsVersion: string;
+  plans: PublicBillingPlan[];
+}
+
+export interface ProjectBillingSummaryResponse {
+  project: {
+    id: string;
+    name: string;
+    tier: DashboardProject["tier"];
+    deletedAt: string | null;
+  };
+  entitlement: {
+    projectId: string;
+    planId: string;
+    planVersionId: string;
+    tier: DashboardProject["tier"];
+    grantSource:
+      | "free"
+      | "subscription"
+      | "manual"
+      | "grandfathered"
+      | "legacy";
+    revision: number;
+    rpmLimit: number;
+    periodAllowance: number | null;
+    periodType: "calendar_month" | "billing_period" | "unlimited";
+    periodStart: number | null;
+    periodEnd: number | null;
+    initialDailyLimit?: number | null;
+    initialDailyLimitUntil?: number | null;
+    expensiveMinuteLimits: Record<string, number>;
+    expensivePeriodBudgets: Record<string, number> | null;
+    status: "active" | "grace" | "canceled_active" | "expired" | "revoked";
+    graceUntil: number | null;
+    cancelAtPeriodEnd: boolean;
+    subscriptionId: string | null;
+    reason: string | null;
+  };
+  subscription: {
+    id: string;
+    planVersionId: string;
+    pendingPlanVersionId: string | null;
+    status: string;
+    currentPeriodStart: string;
+    currentPeriodEnd: string;
+    cancelAtPeriodEnd: boolean;
+    graceUntil: string | null;
+    disputeStatus: string;
+    refundStatus: string;
+    refundedEurCents: number;
+  } | null;
+  usage: {
+    used: number;
+    remaining: number;
+    allowance: number;
+    resetAt: string | number;
+    status: "ok" | "warning" | "critical" | "exhausted";
+    policyCounts?: Record<string, number>;
+  } | null;
+  dailyUsage: {
+    dayStart: number;
+    resetAt: number;
+    resetAtIso: string;
+    used: number;
+    remaining: number;
+    allowance: number;
+  } | null;
+  withdrawalEligible: boolean;
+  withdrawalExpiresAt: string | null;
+  selfServeCheckoutBlocked: boolean;
+  grants: Array<Record<string, unknown>>;
+  receipts: Array<{
+    id: string;
+    plan_version_id: string;
+    price_eur_cents: number;
+    currency: string;
+    terms_version: string;
+    withdrawal_expires_at: number;
+    action_type: string;
+    accepted_at: number;
+  }>;
+  withdrawals: Array<{
+    id: string;
+    request_kind: string;
+    status: string;
+    requested_amount_cents: number | null;
+    refunded_amount_cents: number;
+    reason: string;
+    created_at: string;
+  }>;
+}
+
+export interface BillingPurchaseReceipt {
+  id: string;
+  project_id: string;
+  project_name: string | null;
+  subscription_id: string | null;
+  stripe_checkout_session_id: string | null;
+  plan_version_id: string;
+  price_eur_cents: number;
+  currency: string;
+  vat_included: number;
+  terms_version: string;
+  withdrawal_acknowledged: number;
+  withdrawal_expires_at: number;
+  action_type: string;
+  accepted_at: number;
+  created_at: string;
+}
+
+export interface BillingWithdrawalRecord {
+  id: string;
+  project_id: string;
+  project_name: string | null;
+  subscription_id: string;
+  request_kind: string;
+  status: string;
+  requested_amount_cents: number | null;
+  refunded_amount_cents: number;
+  stripe_refund_id: string | null;
+  reason: string;
+  resolution_note: string;
+  created_at: string;
+}
+
+export interface FeatureFlagsState {
+  paidPlans: boolean;
+  commercialLimits: boolean;
+}
+
 export interface SessionResponse {
   authenticated: boolean;
   isAdmin: boolean;
@@ -56,6 +216,7 @@ export interface SessionResponse {
   oauthConfigured: boolean;
   devAuthAvailable: boolean;
   account?: DeveloperStatus;
+  features?: FeatureFlagsState;
 }
 
 export class DashboardApiError extends Error {
@@ -209,6 +370,30 @@ export const dashboardClient = {
       { method: "POST", body: JSON.stringify({ reason }) },
     ),
 
+  reconcileAdminBilling: () =>
+    apiFetch<{
+      ok: boolean;
+      expiredGraceCount: number;
+      reconciledCount: number;
+    }>("/admin/billing/reconcile", { method: "POST" }),
+
+  creditAdminProjectUsage: (
+    projectId: string,
+    payload: {
+      adjustmentId: string;
+      scope: "period" | "month";
+      amount: number;
+      reason: string;
+    },
+  ) =>
+    apiFetch<{ ok: boolean }>(
+      `/admin/projects/${encodeURIComponent(projectId)}/usage-adjustments`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+    ),
+
   getAdminAudit: (
     projectId: string,
     owner: string,
@@ -325,7 +510,7 @@ export const dashboardClient = {
   submitLimitRequest: (payload: {
     projectId: string;
     contactEmail: string;
-    requestedTier: "pro" | "enterprise" | "custom";
+    requestedTier: "pro" | "scale" | "enterprise" | "custom";
     requestedRpm: number;
     expectedMonthlyRequests: number;
     websiteUrl?: string;
@@ -338,4 +523,132 @@ export const dashboardClient = {
       method: "POST",
       body: JSON.stringify(payload),
     }),
+
+  getBillingPlans: () => apiFetch<BillingPlansResponse>("/billing/plans"),
+
+  getProjectBilling: (projectId: string, signal?: AbortSignal) =>
+    apiFetch<ProjectBillingSummaryResponse>(
+      `/projects/${encodeURIComponent(projectId)}/billing`,
+      { signal },
+    ),
+
+  startBillingCheckout: (payload: {
+    projectId: string;
+    planId: "pro" | "scale";
+    termsVersion: string;
+    withdrawalAcknowledged: boolean;
+    idempotencyKey?: string;
+  }) =>
+    apiFetch<{
+      subscriptionId: string;
+      checkoutSessionId: string;
+      checkoutUrl: string | null;
+      alreadyPending: boolean;
+      planVersionId: string;
+    }>("/billing/checkout", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  cancelPendingBillingCheckout: (projectId: string) =>
+    apiFetch<{ canceled: boolean; alreadyCompleted?: boolean }>(
+      "/billing/checkout/cancel",
+      {
+        method: "POST",
+        body: JSON.stringify({ projectId }),
+      },
+    ),
+
+  createBillingPortal: (returnUrl?: string) =>
+    apiFetch<{ url: string; sessionId: string }>("/billing/portal", {
+      method: "POST",
+      body: JSON.stringify(returnUrl ? { returnUrl } : {}),
+    }),
+
+  changeSubscriptionPlan: (payload: {
+    projectId: string;
+    targetPlanId: "free" | "pro" | "scale";
+    idempotencyKey?: string;
+  }) =>
+    apiFetch<{ scheduledForPeriodEnd: boolean; pendingPlanVersionId?: string }>(
+      "/billing/subscription/change",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+    ),
+
+  requestWithdrawal: (payload: {
+    projectId: string;
+    reason?: string;
+    idempotencyKey?: string;
+  }) =>
+    apiFetch<{
+      withdrawalId: string;
+      status: string;
+      refundedAmountCents: number;
+      requestKind: string;
+    }>("/billing/withdrawals", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  getBillingReceipts: (signal?: AbortSignal) =>
+    apiFetch<{
+      receipts: BillingPurchaseReceipt[];
+      withdrawals: BillingWithdrawalRecord[];
+    }>("/billing/receipts", { signal }),
+
+  getDevState: (projectId?: string, signal?: AbortSignal) =>
+    apiFetch<DevStateSnapshot>(
+      `/dev/state${projectId ? `?projectId=${encodeURIComponent(projectId)}` : ""}`,
+      { signal },
+    ),
+
+  updateDevState: (payload: {
+    isAdmin?: boolean;
+    projectLimit?: number;
+    onboardingVerified?: boolean;
+    clearWithdrawalBlock?: boolean;
+    project?: {
+      id: string;
+      tier: "free" | "pro" | "scale" | "enterprise";
+      customRpm: number | null;
+      dailyCapMode: "tier" | "none" | "custom";
+      dailyCapCustom?: number | null;
+    };
+  }) =>
+    apiFetch<{ ok: boolean }>("/dev/state", {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    }),
+
+  seedLocalDb: () =>
+    apiFetch<{ ok: boolean; adminGranted: boolean; seededUsers: number }>(
+      "/dev/seed",
+      { method: "POST" },
+    ),
 };
+
+export interface DevStateSnapshot {
+  isAdmin: boolean;
+  projectLimit: number;
+  onboardingVerified: boolean;
+  selfServeCheckoutBlocked: boolean;
+  seededUserCount: number;
+  project: {
+    id: string;
+    name: string;
+    tier: "free" | "pro" | "scale" | "enterprise";
+    customRpm: number | null;
+    entitlement: {
+      planVersionId: string;
+      grantSource: string;
+      rpmLimit: number;
+      periodAllowance: number | null;
+      initialDailyLimit?: number | null;
+      initialDailyLimitUntil?: number | null;
+      status: string;
+    } | null;
+  } | null;
+}

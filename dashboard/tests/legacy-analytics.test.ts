@@ -13,6 +13,7 @@ function environment(overrides: Partial<DashboardEnv> = {}) {
     ORIGIN_AUTH_TOKEN: "test-origin-token",
     REQUIRE_API_KEY: "false",
     ALLOW_FIRST_PARTY_ORIGINS: "https://egdata.app",
+    FIRST_PARTY_SERVICE_TOKEN: "test-first-party-secret",
     ANALYTICS: { writeDataPoint },
     API_KEYS_KV: { get: vi.fn(async () => null) },
     DB: {
@@ -58,6 +59,9 @@ describe("legacy gateway telemetry", () => {
         method,
         headers: {
           ...(origin ? { origin } : {}),
+          ...(origin === "https://egdata.app" && requireKey === "true"
+            ? { "x-egdata-first-party-token": "test-first-party-secret" }
+            : {}),
           "cf-connecting-ip": "192.0.2.4",
           "user-agent": "Legacy client",
           "x-egdata-key-project": "spoofed-project",

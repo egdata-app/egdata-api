@@ -314,11 +314,7 @@ export function evaluateKeyPermissions(
   }
 
   const neededScope = requiredScope ?? requiredScopeForPath(request.pathname);
-  if (
-    meta.scopes.length > 0 &&
-    !meta.scopes.includes(neededScope) &&
-    !meta.scopes.includes("catalog:read")
-  ) {
+  if (meta.scopes.length > 0 && !meta.scopes.includes(neededScope)) {
     return {
       allowed: false,
       reason: "scope_denied",

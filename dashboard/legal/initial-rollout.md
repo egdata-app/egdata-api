@@ -34,26 +34,27 @@ inboxes before requiring email verification in production.
 1. Deploy the origin build that removes Aikido's SDK, instrumentation preloads and
    runtime hooks. Check external startup settings too and record the last possible
    telemetry send. Resolve historical runtime-data retention/deletion separately.
-   Apply migrations `0008_developer_accounts.sql` through `0011_email_delivery.sql`
-   before the new Worker. They enable account/receipt, privacy and email features
-   but seed no documents or onboarding requirement. All four remain pending remotely.
+   Apply migrations `0008_developer_accounts.sql` through `0012_paid_plans_billing.sql`
+   before the new Worker (or through `0011_email_delivery.sql` for a free-only v1.0 rollout). They enable account/receipt, privacy, email, and billing features
+   but seed no documents or onboarding requirement. All remain pending remotely.
    Migration 0010 clears legacy avatar URLs. Review the production restore procedure
    and retain migration history and immutable legal evidence.
 2. Build and deploy the matching SPA/Worker. Check account menu, logout, receipt,
    recent-login deletion, email replacement and same-tab verification-link login.
    Check both existing users and a new account; verify mobile/keyboard navigation.
-3. Review the completed UTF-8 files `legal/terms-1.0.md` and
-   `legal/privacy-1.0.md` against the verified deployment. Their wording is final;
-   operational evidence remains in this guide and `operations.md`. Both documents
+3. Review the completed UTF-8 files (`legal/terms-1.0.md` and `legal/privacy-1.0.md`
+   for free-only launch, or `legal/terms-2.0.md` and `legal/privacy-2.0.md` once all
+   `[TO COMPLETE]` paid/LSSI placeholders are resolved for the paid-plans launch)
+   against the verified deployment. Operational evidence remains in this guide and `operations.md`. Both documents
    refer to `/legal/history` for the publication record. Choose the actual
    publication/activation time, not the preparation date. The notice applies from
    that time; an individual's initial terms agreement starts on express acceptance.
    Preserve the exact reviewed bytes used to prepare SQL. The script is offline:
    finalized wording and SQL preparation alone do not activate onboarding.
-4. From `dashboard/`, prepare SQL offline:
+4. From `dashboard/`, prepare SQL offline (for example, `1.0` for free-only or `2.0` once finalized for paid plans):
 
    ```sh
-   node scripts/prepare-legal-rollout.mjs legal/terms-1.0.md legal/privacy-1.0.md 1.0 2026-11-12T00:00:00Z initial-legal.sql
+   node scripts/prepare-legal-rollout.mjs legal/terms-2.0.md legal/privacy-2.0.md 2.0 2026-11-13T00:00:00Z initial-legal.sql
    ```
 
    The timestamp above is illustrative; substitute the actual approved publication

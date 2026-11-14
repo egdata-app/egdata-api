@@ -12,6 +12,7 @@ import {
   type DeveloperStatus,
   dashboardClient,
   type EpicSessionUser,
+  type FeatureFlagsState,
   type SessionResponse,
 } from "./api";
 import {
@@ -31,6 +32,9 @@ interface DashboardAuthContextValue {
   setSelectedProjectId: (id: string) => void;
   oauthConfigured: boolean;
   devAuthAvailable: boolean;
+  features: FeatureFlagsState;
+  paidPlansEnabled: boolean;
+  commercialLimitsEnabled: boolean;
   refreshSession: () => Promise<void>;
   logout: () => Promise<void>;
   account: DeveloperStatus | null;
@@ -145,6 +149,11 @@ export function DashboardAuthProvider({
     session.projects[0] ??
     null;
 
+  const features: FeatureFlagsState = session.features ?? {
+    paidPlans: false,
+    commercialLimits: false,
+  };
+
   return (
     <DashboardAuthContext.Provider
       value={{
@@ -164,6 +173,9 @@ export function DashboardAuthProvider({
         },
         oauthConfigured: session.oauthConfigured,
         devAuthAvailable: session.devAuthAvailable,
+        features,
+        paidPlansEnabled: features.paidPlans,
+        commercialLimitsEnabled: features.commercialLimits,
         refreshSession,
         logout,
       }}

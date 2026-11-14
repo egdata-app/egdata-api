@@ -22,6 +22,7 @@ import {
 import { useState } from "react";
 import { ProfileNavigation } from "../components/AccountPage";
 import { AffiliationDisclaimerModal } from "../components/AffiliationDisclaimerModal";
+import { DevControlsTrigger } from "../components/DevControlsModal";
 import { AccountMenu } from "../components/DeveloperAccount";
 import { EgdataLogo, EpicGamesIcon } from "../components/icons/BrandIcons";
 import { Button } from "../components/ui/Button";
@@ -59,6 +60,8 @@ function DashboardShell() {
     selectedProject,
     setSelectedProjectId,
     devAuthAvailable,
+    paidPlansEnabled,
+    commercialLimitsEnabled,
     refreshSession,
     account,
     sessionError,
@@ -123,7 +126,13 @@ function DashboardShell() {
         </main>
       );
     }
-    return <UnauthenticatedLanding devAuthAvailable={devAuthAvailable} />;
+    return (
+      <UnauthenticatedLanding
+        devAuthAvailable={devAuthAvailable}
+        paidPlansEnabled={paidPlansEnabled}
+        commercialLimitsEnabled={commercialLimitsEnabled}
+      />
+    );
   }
 
   if (
@@ -243,7 +252,8 @@ function DashboardShell() {
             {selectedProject && (
               <Tag
                 tone={
-                  selectedProject.tier === "enterprise"
+                  selectedProject.tier === "enterprise" ||
+                  selectedProject.tier === "scale"
                     ? "accent"
                     : selectedProject.tier === "pro"
                       ? "success"
@@ -265,6 +275,7 @@ function DashboardShell() {
             </a>
 
             <div className="flex items-center gap-2.5 pl-3 border-l border-epic-border">
+              <DevControlsTrigger />
               <AccountMenu />
             </div>
           </div>
@@ -431,8 +442,12 @@ function DashboardShell() {
 
 function UnauthenticatedLanding({
   devAuthAvailable,
+  paidPlansEnabled,
+  commercialLimitsEnabled,
 }: {
   devAuthAvailable: boolean;
+  paidPlansEnabled: boolean;
+  commercialLimitsEnabled: boolean;
 }) {
   const authError =
     typeof window !== "undefined"
@@ -534,21 +549,35 @@ function UnauthenticatedLanding({
 
           <div className="pt-4 border-t border-epic-border space-y-2 text-xs text-epic-text-muted">
             <div className="flex items-center justify-between">
-              <span>Free limit per project</span>
-              <span className="font-mono text-epic-text">120 requests/min</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Free allowance per account</span>
+              <span>Free tier</span>
               <span className="font-mono text-epic-text">
-                100,000 requests/month
+                100,000 req/month · {commercialLimitsEnabled ? "60" : "120"}{" "}
+                req/min
               </span>
             </div>
-            <div className="flex items-center justify-between">
-              <span>Pro limit per project</span>
-              <span className="font-mono text-epic-accent">
-                1,200 requests/min
-              </span>
-            </div>
+            {paidPlansEnabled ? (
+              <>
+                <div className="flex items-center justify-between">
+                  <span>Pro (€9/mo VAT incl.)</span>
+                  <span className="font-mono text-epic-accent">
+                    300,000 req/period · 200 req/min
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Scale (€19/mo VAT incl.)</span>
+                  <span className="font-mono text-epic-accent">
+                    1,000,000 req/period · 600 req/min
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center justify-between">
+                <span>Higher throughput</span>
+                <span className="text-epic-text">
+                  Available via operator review
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

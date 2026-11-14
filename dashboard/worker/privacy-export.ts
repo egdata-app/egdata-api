@@ -33,6 +33,18 @@ export function accountDataExport(db: D1Database, owner: string) {
       "alert_reads",
       "SELECT project_id,record_id,read_at FROM alert_reads WHERE user_id=?",
     ],
+    [
+      "billing_subscriptions",
+      "SELECT id,project_id,plan_version_id,status,environment,current_period_start,current_period_end,cancel_at_period_end,refund_status,refunded_eur_cents,dispute_status,created_at FROM billing_subscriptions WHERE owner_epic_id=?",
+    ],
+    [
+      "purchase_receipts",
+      "SELECT id,project_id,subscription_id,plan_version_id,price_eur_cents,currency,vat_included,terms_version,withdrawal_expires_at,accepted_at FROM purchase_receipts WHERE owner_epic_id=?",
+    ],
+    [
+      "withdrawal_requests",
+      "SELECT id,project_id,subscription_id,request_kind,status,requested_amount_cents,refunded_amount_cents,created_at FROM withdrawal_requests WHERE owner_epic_id=?",
+    ],
   ] as const;
   const encoder = new TextEncoder();
   let source = 0;
@@ -57,12 +69,30 @@ export function accountDataExport(db: D1Database, owner: string) {
             return;
           }
           const [section, query] = current;
-          const { results } = await db
-            .prepare(
-              `${query.replace("SELECT ", "SELECT rowid AS __cursor,")} AND rowid>? ORDER BY rowid LIMIT 250`,
-            )
-            .bind(owner, cursor)
-            .all<Record<string, unknown> & { __cursor: number }>();
+          let results: Array<Record<string, unknown> & { __cursor: number }> =
+            [];
+          try {
+            const queried = await db
+              .prepare(
+                `${query.replace("SELECT ", "SELECT rowid AS __cursor,")} AND rowid>? ORDER BY rowid LIMIT 250`,
+              )
+              .bind(owner, cursor)
+              .all<Record<string, unknown> & { __cursor: number }>();
+            results = queried.results;
+          } catch (err) {
+            const msg = err instanceof Error ? err.message : String(err);
+            if (
+              msg.includes("no such table") &&
+              (section === "billing_subscriptions" ||
+                section === "purchase_receipts" ||
+                section === "withdrawal_requests")
+            ) {
+              source++;
+              cursor = 0;
+              continue;
+            }
+            throw err;
+          }
           if (results.length)
             controller.enqueue(
               encoder.encode(

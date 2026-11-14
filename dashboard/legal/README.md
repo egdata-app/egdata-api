@@ -1,9 +1,12 @@
 # Developer legal documents and enforcement plan
 
-Text finalized: 2026-11-12. Status: version 1.0 wording complete; unpublished and not effective. Initial onboarding is implemented locally.
+- **Version 1.0 (free/non-commercial baseline, finalized 2026-11-12):** unpublished and not effective; preserved intact.
+- **Version 2.0 (paid plans & Stripe billing, drafted 2026-11-13):** covers Free (`free-v1`), Pro (`pro-v1`, EUR 9/mo), and Scale (`scale-v1`, EUR 19/mo) plans, Stripe Checkout/Billing Portal, 14-day initial daily limits, 14-day statutory withdrawal with pro-rata refund and one-per-account self-serve limit, 3-day `past_due` grace period, and billing/Stripe privacy disclosures. **Contains `[TO COMPLETE]` placeholders for Spanish LSSI Art. 10 / consumer pre-contract operator details (postal address, NIF, tax/VAT invoicing status)** and is blocked from SQL preparation until completed.
 
-- [Developer Terms of Service, version 1.0](terms-1.0.md)
-- [Developer Privacy Notice, version 1.0](privacy-1.0.md)
+- [Developer Terms of Service, version 2.0 (draft)](terms-2.0.md)
+- [Developer Privacy Notice, version 2.0 (draft)](privacy-2.0.md)
+- [Developer Terms of Service, version 1.0 (free baseline)](terms-1.0.md)
+- [Developer Privacy Notice, version 1.0 (free baseline)](privacy-1.0.md)
 - [Proposed agreement/access API error contract](api-agreement-errors.md)
 - [Initial rollout and publication steps](initial-rollout.md)
 - [Production evidence and privacy/email operations](operations.md)

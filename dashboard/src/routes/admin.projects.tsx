@@ -57,8 +57,9 @@ export const Route = createFileRoute("/admin/projects")({
 const propagationNotice =
   "Existing key caches may take up to five minutes to refresh.";
 const tiers = [
-  { id: "free", name: "Free · 120 requests/min" },
-  { id: "pro", name: "Pro · 1,200 requests/min" },
+  { id: "free", name: "Free · 60/120 requests/min" },
+  { id: "pro", name: "Pro · 200 requests/min (manual override 1,200)" },
+  { id: "scale", name: "Scale · 600 requests/min" },
   { id: "enterprise", name: "Enterprise · 6,000 requests/min" },
 ];
 

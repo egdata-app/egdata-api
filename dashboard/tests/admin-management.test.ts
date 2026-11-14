@@ -391,7 +391,7 @@ describe("administrator user and project management", () => {
       error: {
         code: "VALIDATION_ERROR",
         message:
-          "Custom RPM overrides require pro or enterprise tier; free tier projects remain subject to the 100,000/month cap.",
+          "Custom RPM overrides require pro, scale, or enterprise tier; free tier projects remain subject to the 100,000/month cap.",
       },
     });
     expect(batch).not.toHaveBeenCalled();
@@ -1215,5 +1215,140 @@ describe("administrator user and project management", () => {
     expect(detail.onboarding.eligible).toBe(false);
     expect(detail.agreements).toHaveLength(1);
     expect(detail.agreements[0].receiptId).toBe("rcpt_closed");
+  });
+
+  it("includes billing customer, subscriptions, purchase receipts, withdrawals, actions, and usage adjustments in user detail", async () => {
+    const { sqlite, call } = setup();
+    const periodStart = Date.now() - 86_400_000;
+    const periodEnd = Date.now() + 29 * 86_400_000;
+    sqlite.exec(`
+      INSERT INTO billing_customers(owner_epic_id, stripe_customer_id, environment, email)
+        VALUES('owner', 'cus_admin_test', 'test', 'owner@example.com');
+      INSERT INTO billing_subscriptions(
+        id, owner_epic_id, project_id, stripe_customer_id, stripe_subscription_id,
+        stripe_price_id, plan_version_id, pending_plan_version_id, status, environment,
+        current_period_start, current_period_end, cancel_at_period_end, last_invoice_id,
+        dispute_status, refund_status, refunded_eur_cents, needs_reconcile
+      ) VALUES (
+        'bsub_1', 'owner', 'project', 'cus_admin_test', 'sub_stripe_1',
+        'price_scale', 'scale-v1', 'pro-v1', 'active', 'test',
+        ${periodStart}, ${periodEnd}, 1, 'in_1',
+        'none', 'partial', 450, 0
+      );
+      INSERT INTO purchase_receipts(
+        id, owner_epic_id, project_id, subscription_id, stripe_checkout_session_id,
+        plan_version_id, price_eur_cents, currency, vat_included, terms_version,
+        withdrawal_acknowledged, withdrawal_expires_at, action_type, accepted_at
+      ) VALUES (
+        'rcpt_buy_1', 'owner', 'project', 'bsub_1', 'cs_test_1',
+        'scale-v1', 1900, 'eur', 1, '1.0',
+        1, ${periodStart + 14 * 86_400_000}, 'checkout', ${periodStart}
+      );
+      INSERT INTO withdrawal_requests(
+        id, owner_epic_id, project_id, subscription_id, request_kind, status,
+        requested_amount_cents, refunded_amount_cents, stripe_refund_id, reason,
+        resolution_note, idempotency_key
+      ) VALUES (
+        'wdr_1', 'owner', 'project', 'bsub_1', 'goodwill_refund', 'refunded_partial',
+        450, 450, 're_1', 'Billing support adjustment', 'Partial refund issued', 'idem_wdr_1'
+      );
+      INSERT INTO billing_actions(
+        id, owner_epic_id, project_id, subscription_id, actor_id, action, status, details_json
+      ) VALUES (
+        'bact_1', 'owner', 'project', 'bsub_1', 'owner', 'checkout_completed', 'ok', '{"amount":1900}'
+      );
+      INSERT INTO usage_adjustments(
+        adjustment_id, project_id, owner_epic_id, scope, window_start, amount, reason, actor_id
+      ) VALUES (
+        'adj_1', 'project', 'owner', 'period', ${periodStart}, 25000, 'Onboarding credit', 'admin'
+      );
+      INSERT INTO entitlement_grants(
+        id, project_id, owner_epic_id, source, plan_id, plan_version_id, tier,
+        rpm_limit, period_allowance, expensive_limits_json, effective_from,
+        effective_until, revision, subscription_id, granted_by, reason
+      ) VALUES (
+        'grant_sub_1', 'project', 'owner', 'subscription', 'scale', 'scale-v1', 'scale',
+        600, 1000000, '{"minute":{"offers-list":60,"search":600,"heavy":180,"bulk":40},"period":{"nl-search":10000,"bulk":40000,"image":50000},"initialDailyLimit":35000,"initialDailyLimitUntil":9999999999999}',
+        ${periodStart}, ${periodEnd}, 2, 'bsub_1', 'stripe_webhook', 'Subscription activated'
+      );
+    `);
+
+    const res = await call("/users/owner");
+    expect(res.status).toBe(200);
+    const detail = (await res.json()) as AdminUserDetail;
+    expect(detail.billing.customer).toMatchObject({
+      stripeCustomerId: "cus_admin_test",
+      environment: "test",
+      email: "owner@example.com",
+    });
+    expect(detail.billing.subscriptions).toHaveLength(1);
+    expect(detail.billing.subscriptions[0]).toMatchObject({
+      id: "bsub_1",
+      projectId: "project",
+      projectName: "Project",
+      planVersionId: "scale-v1",
+      pendingPlanVersionId: "pro-v1",
+      status: "active",
+      cancelAtPeriodEnd: true,
+      refundedEurCents: 450,
+    });
+    expect(detail.billing.receipts).toHaveLength(1);
+    expect(detail.billing.receipts[0]).toMatchObject({
+      id: "rcpt_buy_1",
+      projectName: "Project",
+      stripeCheckoutSessionId: "cs_test_1",
+      priceEurCents: 1900,
+      vatIncluded: true,
+    });
+    expect(detail.billing.withdrawals).toHaveLength(1);
+    expect(detail.billing.withdrawals[0]).toMatchObject({
+      id: "wdr_1",
+      status: "refunded_partial",
+      refundedAmountCents: 450,
+    });
+    expect(detail.billing.selfServeCheckoutBlocked).toBe(false);
+    expect(detail.billing.actions).toHaveLength(1);
+    expect(detail.billing.actions[0]).toMatchObject({
+      action: "checkout_completed",
+      details: { amount: 1900 },
+    });
+    expect(detail.billing.usageAdjustments).toHaveLength(1);
+    expect(detail.billing.usageAdjustments[0]).toMatchObject({
+      adjustmentId: "adj_1",
+      amount: 25000,
+    });
+    expect(detail.billing.grants).toHaveLength(1);
+    expect(detail.billing.grants[0]).toMatchObject({
+      id: "grant_sub_1",
+      source: "subscription",
+      planVersionId: "scale-v1",
+      rpmLimit: 600,
+      periodAllowance: 1000000,
+      initialDailyLimit: 35000,
+      grantedBy: "stripe_webhook",
+      reason: "Subscription activated",
+    });
+    expect(detail.projectQuotas.project).toMatchObject({
+      planVersionId: "scale-v1",
+      grantSource: "subscription",
+      rpmLimit: 600,
+      periodAllowance: 1000000,
+      initialDailyLimit: 35000,
+    });
+
+    sqlite.exec(`
+      INSERT INTO withdrawal_requests(
+        id, owner_epic_id, project_id, subscription_id, request_kind, status,
+        requested_amount_cents, refunded_amount_cents, stripe_refund_id, reason,
+        resolution_note, idempotency_key
+      ) VALUES (
+        'wdr_stat_1', 'owner', 'project', 'bsub_1', 'statutory_withdrawal', 'refunded_partial',
+        1200, 1200, 're_stat_1', '14-day withdrawal', 'Pro-rata refund', 'idem_wdr_stat_1'
+      );
+    `);
+    const blockedRes = await call("/users/owner");
+    expect(blockedRes.status).toBe(200);
+    const blockedDetail = (await blockedRes.json()) as AdminUserDetail;
+    expect(blockedDetail.billing.selfServeCheckoutBlocked).toBe(true);
   });
 });

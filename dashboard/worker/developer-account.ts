@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { z } from "zod";
+import { cancelSubscriptionsForAccountClose } from "./billing.js";
 import { bytesToHex, sha256Hex } from "./crypto.js";
 import { deliverDeveloperMail, sendDeveloperMail } from "./developer-mail.js";
 import { reconcileMailEvents } from "./developer-mail-events.js";
@@ -336,6 +337,14 @@ developerAccount.delete("/", async (c) => {
     );
   const owner = c.get("user").epicAccountId;
   const now = Date.now();
+  try {
+    await cancelSubscriptionsForAccountClose(c.env, owner);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (!msg.includes("no such table")) {
+      console.error("Account closure subscription cancel notice", msg);
+    }
+  }
   // The closure tombstone invalidates every login and warm key cache immediately.
   // It lives beyond both session (7d) and credential-cache (5m) lifetimes.
   const projectIds = "SELECT id FROM projects WHERE owner_epic_id=?";

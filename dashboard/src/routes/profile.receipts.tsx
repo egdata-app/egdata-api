@@ -1,16 +1,73 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, Download, FileText, Printer, ShieldCheck } from "lucide-react";
+import {
+  Check,
+  CreditCard,
+  Download,
+  ExternalLink,
+  FileText,
+  Printer,
+  RotateCcw,
+  ShieldCheck,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button, buttonStyles } from "../components/ui/Button";
-import { type DeveloperReceipt, dashboardClient } from "../lib/api";
+import { Badge } from "../components/ui/Controls";
+import { notify } from "../components/ui/Toast";
+import {
+  type BillingPurchaseReceipt,
+  type BillingWithdrawalRecord,
+  type DeveloperReceipt,
+  dashboardClient,
+} from "../lib/api";
+import { useDashboardAuth } from "../lib/auth-context";
 import { renderMarkdown } from "../lib/docs/markdown";
 
 export const Route = createFileRoute("/profile/receipts")({
-  validateSearch: (search: Record<string, unknown>): { receipt?: string } => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { receipt?: string; tab?: "billing" | "agreements" } => ({
     receipt: typeof search.receipt === "string" ? search.receipt : undefined,
+    tab:
+      search.tab === "billing" || search.tab === "agreements"
+        ? search.tab
+        : undefined,
   }),
   component: ReceiptsPage,
 });
+
+function formatEur(cents: number, currency = "eur") {
+  return `${currency.toUpperCase()} ${(cents / 100).toFixed(2)}`;
+}
+
+function downloadPurchaseReceipt(receipt: BillingPurchaseReceipt) {
+  const payload = {
+    receiptId: receipt.id,
+    projectId: receipt.project_id,
+    projectName: receipt.project_name,
+    subscriptionId: receipt.subscription_id,
+    stripeCheckoutSessionId: receipt.stripe_checkout_session_id,
+    planVersionId: receipt.plan_version_id,
+    amount: formatEur(receipt.price_eur_cents, receipt.currency),
+    priceEurCents: receipt.price_eur_cents,
+    currency: receipt.currency,
+    vatIncluded: receipt.vat_included === 1,
+    termsVersion: receipt.terms_version,
+    actionType: receipt.action_type,
+    acceptedAtUtc: new Date(receipt.accepted_at).toISOString(),
+    withdrawalWindowExpiresAtUtc: new Date(
+      receipt.withdrawal_expires_at,
+    ).toISOString(),
+  };
+  const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `egdata-purchase-receipt-${receipt.id}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
 function ReceiptDocument({
   document,
@@ -95,50 +152,162 @@ function ReceiptDocument({
 }
 
 function ReceiptsPage() {
-  const { receipt: requested } = Route.useSearch();
+  const { paidPlansEnabled } = useDashboardAuth();
+  const { receipt: requested, tab: requestedTab } = Route.useSearch();
   const [receipts, setReceipts] = useState<DeveloperReceipt[] | null>(null);
+  const [billingReceipts, setBillingReceipts] = useState<
+    BillingPurchaseReceipt[] | null
+  >(null);
+  const [withdrawals, setWithdrawals] = useState<BillingWithdrawalRecord[]>([]);
+  const [selectedPurchaseId, setSelectedPurchaseId] = useState<string | null>(
+    null,
+  );
+  const [manualTab, setManualTab] = useState<"billing" | "agreements" | null>(
+    requested ? "agreements" : (requestedTab ?? null),
+  );
+  const [openingPortal, setOpeningPortal] = useState(false);
   const [error, setError] = useState("");
   const [retry, setRetry] = useState(0);
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: retry is an explicit user-triggered reload key.
   useEffect(() => {
     const controller = new AbortController();
     setError("");
     setReceipts(null);
-    void dashboardClient
-      .getAgreementReceipts(controller.signal)
-      .then((result) => {
-        if (!controller.signal.aborted) setReceipts(result.acceptances);
+    setBillingReceipts(null);
+    void Promise.all([
+      dashboardClient.getAgreementReceipts(controller.signal),
+      paidPlansEnabled
+        ? dashboardClient
+            .getBillingReceipts(controller.signal)
+            .catch(() => ({ receipts: [], withdrawals: [] }))
+        : Promise.resolve({ receipts: [], withdrawals: [] }),
+    ])
+      .then(([agreementRes, billingRes]) => {
+        if (controller.signal.aborted) return;
+        setReceipts(agreementRes.acceptances);
+        setBillingReceipts(billingRes.receipts);
+        setWithdrawals(billingRes.withdrawals);
       })
       .catch((err) => {
-        if (!controller.signal.aborted)
+        if (!controller.signal.aborted) {
           setError(
             err instanceof Error ? err.message : "Could not load receipts.",
           );
+        }
       });
     return () => controller.abort();
-  }, [retry]);
+  }, [paidPlansEnabled, retry]);
+
+  const activeTab: "billing" | "agreements" = !paidPlansEnabled
+    ? "agreements"
+    : (manualTab ??
+      (requested
+        ? "agreements"
+        : billingReceipts &&
+            (billingReceipts.length > 0 || withdrawals.length > 0)
+          ? "billing"
+          : "agreements"));
+
   const receipt = requested
     ? receipts?.find((item) => item.receipt_id === requested)
     : receipts?.[0];
+
+  const purchaseReceipt = useMemo(() => {
+    if (!billingReceipts || billingReceipts.length === 0) return null;
+    if (selectedPurchaseId) {
+      return (
+        billingReceipts.find((r) => r.id === selectedPurchaseId) ??
+        billingReceipts[0]
+      );
+    }
+    return billingReceipts[0];
+  }, [billingReceipts, selectedPurchaseId]);
+
   useEffect(() => {
-    if (!receipt) return;
+    const targetId =
+      activeTab === "billing" ? purchaseReceipt?.id : receipt?.receipt_id;
+    if (!targetId) return;
     const previousTitle = document.title;
-    document.title = `egdata-receipt-${receipt.receipt_id}`;
+    document.title = `egdata-receipt-${targetId}`;
     return () => {
       document.title = previousTitle;
     };
-  }, [receipt]);
+  }, [activeTab, purchaseReceipt, receipt]);
+
+  async function openPortal() {
+    setOpeningPortal(true);
+    try {
+      const portal = await dashboardClient.createBillingPortal(
+        window.location.href,
+      );
+      window.location.assign(portal.url);
+    } catch (err) {
+      notify({
+        title: "Could not open Billing Portal",
+        description: err instanceof Error ? err.message : "Try again shortly.",
+        tone: "danger",
+      });
+      setOpeningPortal(false);
+    }
+  }
+
   return (
     <>
-      <div className="mb-8 space-y-3 print:hidden">
-        <h1 className="text-3xl font-semibold tracking-tight">
-          Agreement receipts
-        </h1>
-        <p className="text-sm text-epic-text-muted leading-relaxed">
-          Your record of the terms you accepted and the privacy notice provided
-          at the time. Each receipt stays tied to its original event.
-        </p>
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4 print:hidden">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-semibold tracking-tight">Receipts</h1>
+          <p className="text-sm text-epic-text-muted leading-relaxed">
+            {paidPlansEnabled
+              ? "Printable and downloadable records for your paid-plan purchases, withdrawal requests, and Developer Terms acceptances."
+              : "Printable and downloadable records for your Developer Terms acceptances."}
+          </p>
+        </div>
+        {paidPlansEnabled && (
+          <div className="flex flex-wrap gap-2.5">
+            <Link
+              to="/profile/billing"
+              className={buttonStyles({ variant: "secondary", size: "sm" })}
+            >
+              Manage subscriptions
+            </Link>
+            <Button
+              variant="secondary"
+              size="sm"
+              isPending={openingPortal}
+              onPress={() => void openPortal()}
+            >
+              <CreditCard className="h-4 w-4" aria-hidden="true" />
+              Stripe Invoices (Portal)
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+            </Button>
+          </div>
+        )}
       </div>
+
+      {paidPlansEnabled && (
+        <div
+          role="tablist"
+          aria-label="Receipt categories"
+          className="mb-6 flex flex-wrap gap-2 print:hidden"
+        >
+          <Button
+            variant={activeTab === "billing" ? "primary" : "secondary"}
+            size="sm"
+            onPress={() => setManualTab("billing")}
+          >
+            Purchase &amp; Billing ({billingReceipts?.length ?? 0})
+          </Button>
+          <Button
+            variant={activeTab === "agreements" ? "primary" : "secondary"}
+            size="sm"
+            onPress={() => setManualTab("agreements")}
+          >
+            Agreement Receipts ({receipts?.length ?? 0})
+          </Button>
+        </div>
+      )}
+
       {error ? (
         <div
           role="alert"
@@ -149,8 +318,235 @@ function ReceiptsPage() {
             Try again
           </Button>
         </div>
-      ) : !receipts ? (
+      ) : !receipts || !billingReceipts ? (
         <output className="text-epic-text-muted">Loading receipts…</output>
+      ) : activeTab === "billing" ? (
+        <div className="space-y-8">
+          {!purchaseReceipt ? (
+            <section className="rounded-2xl border border-epic-border bg-epic-surface p-8 space-y-4">
+              <CreditCard
+                className="h-8 w-8 text-epic-text-muted"
+                aria-hidden="true"
+              />
+              <h2 className="text-xl font-semibold">
+                No purchase receipts yet
+              </h2>
+              <p className="text-sm text-epic-text-muted">
+                When you subscribe to Pro or Scale, each checkout confirmation
+                receipt and refund record appears here alongside your Stripe
+                invoices.
+              </p>
+              <Link
+                to="/profile/billing"
+                className={buttonStyles({ variant: "secondary" })}
+              >
+                View plans &amp; billing
+              </Link>
+            </section>
+          ) : (
+            <>
+              {billingReceipts.length > 1 && (
+                <nav
+                  aria-label="Purchase receipt history"
+                  className="flex flex-wrap gap-2 print:hidden"
+                >
+                  {billingReceipts.map((item) => (
+                    <Button
+                      key={item.id}
+                      variant={
+                        purchaseReceipt.id === item.id ? "primary" : "secondary"
+                      }
+                      size="sm"
+                      onPress={() => setSelectedPurchaseId(item.id)}
+                    >
+                      {item.project_name ?? item.project_id} ·{" "}
+                      {item.plan_version_id} ·{" "}
+                      {new Date(item.accepted_at).toLocaleDateString()}
+                    </Button>
+                  ))}
+                </nav>
+              )}
+
+              <div className="flex flex-wrap gap-3 print:hidden">
+                <Button onPress={() => window.print()}>
+                  <Printer className="h-4 w-4" aria-hidden="true" /> Print /
+                  Save as PDF
+                </Button>
+                <Button
+                  variant="secondary"
+                  onPress={() => downloadPurchaseReceipt(purchaseReceipt)}
+                >
+                  <Download className="h-4 w-4" aria-hidden="true" /> Download
+                  JSON receipt
+                </Button>
+              </div>
+
+              <article
+                key={purchaseReceipt.id}
+                aria-label="Purchase receipt"
+                className="agreement-receipt rounded-2xl border border-epic-border bg-epic-surface p-5 sm:p-8 space-y-6"
+              >
+                <header className="space-y-3 border-b border-epic-border pb-6">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-epic-accent">
+                    egdata Developers · Purchase Receipt
+                  </p>
+                  <h2 className="text-2xl font-semibold tracking-tight">
+                    Subscription checkout record
+                  </h2>
+                  <p className="flex items-center gap-2 text-sm text-epic-success">
+                    <ShieldCheck
+                      className="h-5 w-5 shrink-0"
+                      aria-hidden="true"
+                    />
+                    {formatEur(
+                      purchaseReceipt.price_eur_cents,
+                      purchaseReceipt.currency,
+                    )}{" "}
+                    (
+                    {purchaseReceipt.vat_included
+                      ? "VAT included"
+                      : "Excl. VAT"}
+                    ) · {purchaseReceipt.plan_version_id}
+                  </p>
+                </header>
+
+                <dl className="grid gap-5 sm:grid-cols-2 text-sm">
+                  <div>
+                    <dt className="text-epic-text-muted mb-1">Receipt ID</dt>
+                    <dd className="font-mono text-xs break-all select-all">
+                      {purchaseReceipt.id}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-epic-text-muted mb-1">
+                      Recorded at (UTC)
+                    </dt>
+                    <dd>
+                      <time
+                        dateTime={new Date(
+                          purchaseReceipt.accepted_at,
+                        ).toISOString()}
+                      >
+                        {new Date(purchaseReceipt.accepted_at)
+                          .toISOString()
+                          .replace("T", " ")
+                          .replace(/\.\d+Z$/, " UTC")}
+                      </time>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-epic-text-muted mb-1">Project</dt>
+                    <dd className="text-xs">
+                      <span className="font-medium">
+                        {purchaseReceipt.project_name ??
+                          purchaseReceipt.project_id}
+                      </span>{" "}
+                      <span className="font-mono text-epic-text-muted">
+                        ({purchaseReceipt.project_id})
+                      </span>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-epic-text-muted mb-1">
+                      Plan &amp; billing cadence
+                    </dt>
+                    <dd className="font-mono text-xs">
+                      {purchaseReceipt.plan_version_id} · monthly recurring
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-epic-text-muted mb-1">Terms version</dt>
+                    <dd className="font-mono text-xs">
+                      {purchaseReceipt.terms_version}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-epic-text-muted mb-1">
+                      14-day withdrawal window expires
+                    </dt>
+                    <dd className="text-xs">
+                      {new Date(purchaseReceipt.withdrawal_expires_at)
+                        .toISOString()
+                        .replace("T", " ")
+                        .replace(/\.\d+Z$/, " UTC")}
+                    </dd>
+                  </div>
+                  {purchaseReceipt.stripe_checkout_session_id && (
+                    <div className="sm:col-span-2">
+                      <dt className="text-epic-text-muted mb-1">
+                        Stripe checkout session
+                      </dt>
+                      <dd className="font-mono text-xs break-all select-all">
+                        {purchaseReceipt.stripe_checkout_session_id}
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+
+                <footer className="text-xs leading-relaxed text-epic-text-muted border-t border-epic-border pt-5">
+                  Official Stripe VAT invoices are available anytime in the
+                  Stripe Billing Portal. Questions?{" "}
+                  <a
+                    href="mailto:contact@egdata.app"
+                    className="text-epic-accent underline"
+                  >
+                    contact@egdata.app
+                  </a>
+                </footer>
+              </article>
+            </>
+          )}
+
+          {withdrawals.length > 0 && (
+            <section
+              aria-label="Withdrawal and refund records"
+              className="rounded-2xl border border-epic-border bg-epic-surface p-6 space-y-4 print:hidden"
+            >
+              <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                <RotateCcw className="w-4 h-4 text-epic-accent" />
+                Withdrawals &amp; Refunds
+              </h2>
+              <div className="divide-y divide-epic-border rounded-xl border border-epic-border overflow-hidden">
+                {withdrawals.map((w) => (
+                  <div key={w.id} className="p-4 text-xs space-y-1">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span className="font-mono text-white">
+                        {w.request_kind} ·{" "}
+                        {formatEur(
+                          w.refunded_amount_cents ||
+                            w.requested_amount_cents ||
+                            0,
+                        )}
+                      </span>
+                      <Badge
+                        tone={
+                          w.status.startsWith("refunded")
+                            ? "success"
+                            : w.status === "failed" || w.status === "denied"
+                              ? "danger"
+                              : "warning"
+                        }
+                      >
+                        {w.status}
+                      </Badge>
+                    </div>
+                    <p className="text-epic-text-muted">
+                      {w.project_name ?? w.project_id} ·{" "}
+                      {new Date(w.created_at).toLocaleString()}
+                      {w.stripe_refund_id ? ` · ${w.stripe_refund_id}` : ""}
+                    </p>
+                    {w.reason && <p className="text-epic-text">{w.reason}</p>}
+                    {w.resolution_note && (
+                      <p className="text-epic-text-muted">
+                        {w.resolution_note}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
       ) : !receipt ? (
         <section className="rounded-2xl border border-epic-border bg-epic-surface p-8 space-y-4">
           <FileText

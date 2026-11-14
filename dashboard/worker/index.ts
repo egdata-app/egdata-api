@@ -7,6 +7,8 @@ import {
 } from "./alert-routes.js";
 import { recordApiTelemetry } from "./analytics.js";
 import { analyticsRoutes } from "./analytics-routes.js";
+import { handleStripeWebhook, reconcileBillingState } from "./billing.js";
+import { billingRoutes, projectBillingRoutes } from "./billing-routes.js";
 import {
   CONSOLE_HEADER,
   consoleProxy,
@@ -26,6 +28,7 @@ import {
   updateProject,
   upsertEpicUserAndDefaultProject,
 } from "./db.js";
+import { devRoutes, isLocalDevToolsAvailable } from "./dev-routes.js";
 import {
   developerAccount,
   publicLegalDocument,
@@ -44,6 +47,7 @@ import {
   revokeDashboardSession,
   startEpicOAuthRedirect,
 } from "./epic-auth.js";
+import { resolveFeatureFlags } from "./flags.js";
 import { removeKeyFromKv, syncKeyToKv } from "./key-cache.js";
 import { isDashboardAdmin, limitReviewRoutes } from "./limit-reviews.js";
 import { isValidIpOrCidr } from "./permissions.js";
@@ -142,21 +146,23 @@ dashboardApi.post("/auth/logout", async (c) => {
 
 dashboardApi.get("/auth/session", async (c) => {
   const user = await readDashboardSession(c);
-  const isLocal =
-    ["localhost", "127.0.0.1"].includes(new URL(c.req.url).hostname) &&
-    c.env.ENABLE_DEV_AUTH === "true";
+  const devAuthAvailable = isLocalDevToolsAvailable(c.env, c.req.url);
   const hasEpicCredentials = Boolean(
     c.env.EPIC_CLIENT_ID && c.env.EPIC_CLIENT_SECRET,
   );
 
   if (!user) {
+    const features = await resolveFeatureFlags(c.env, {
+      environment: c.env.RATE_LIMIT_ENVIRONMENT,
+    });
     return c.json({
       authenticated: false,
       isAdmin: false,
       user: null,
       projects: [],
       oauthConfigured: hasEpicCredentials,
-      devAuthAvailable: !hasEpicCredentials && isLocal,
+      devAuthAvailable,
+      features,
     });
   }
 
@@ -166,14 +172,21 @@ dashboardApi.get("/auth/session", async (c) => {
     user,
     account.eligible,
   );
+  const isAdmin = await isDashboardAdmin(c.env, user);
+  const features = await resolveFeatureFlags(c.env, {
+    userId: user.epicAccountId,
+    environment: c.env.RATE_LIMIT_ENVIRONMENT,
+    isAdmin,
+  });
   return c.json({
     authenticated: true,
-    isAdmin: await isDashboardAdmin(c.env, user),
+    isAdmin,
     user,
     projects: account.eligible ? projects : [],
     account,
     oauthConfigured: hasEpicCredentials,
-    devAuthAvailable: !hasEpicCredentials && isLocal,
+    devAuthAvailable,
+    features,
   });
 });
 
@@ -593,8 +606,8 @@ dashboardApi.post("/analytics/simulate", async (c) => {
 const limitRequestSchema = z.object({
   projectId: z.string().min(1),
   contactEmail: z.string().email("Enter a valid contact email address."),
-  requestedTier: z.enum(["pro", "enterprise", "custom"]),
-  requestedRpm: z.number().int().min(150).max(500_000),
+  requestedTier: z.enum(["pro", "scale", "enterprise", "custom"]),
+  requestedRpm: z.number().int().min(60).max(500_000),
   expectedMonthlyRequests: z.number().int().min(10_000).max(10_000_000_000),
   websiteUrl: optionalHttpUrlSchema,
   useCase: z
@@ -695,6 +708,9 @@ const rootApp = new Hono<AppContext>();
 dashboardApi.route("/alerts", alertRoutes);
 dashboardApi.route("/account", developerAccount);
 dashboardApi.route("/console-sessions", consoleSessionRoutes);
+dashboardApi.route("/billing", billingRoutes);
+dashboardApi.route("/projects", projectBillingRoutes);
+dashboardApi.route("/dev", devRoutes);
 
 rootApp.route("/_dashboard/api", dashboardApi);
 
@@ -764,6 +780,9 @@ export default {
   },
   async scheduled(_event: ScheduledController, env: DashboardEnv) {
     await deliverDeveloperMail(env);
+    await reconcileBillingState(env).catch((err) => {
+      console.error("Billing reconciliation failed", err);
+    });
     if (_event.cron !== "17 3 * * *") return;
     await purgeDeletedProjects(env.DB);
     await purgePrivacyRecords(env.DB);
@@ -856,6 +875,21 @@ export default {
       request.method === "GET"
     ) {
       return publicHistory(env);
+    }
+
+    // Verified Stripe webhooks bypass dashboard session and CSRF middleware and
+    // authenticate strictly via raw-body HMAC signature verification.
+    if (url.pathname === "/_webhooks/stripe" && request.method === "POST") {
+      const rawBody = await request.text();
+      const result = await handleStripeWebhook(
+        env,
+        rawBody,
+        request.headers.get("stripe-signature"),
+      );
+      return Response.json(result.body, {
+        status: result.status,
+        headers: { "Cache-Control": "no-store" },
+      });
     }
 
     // Dashboard internal API & Epic OAuth callbacks

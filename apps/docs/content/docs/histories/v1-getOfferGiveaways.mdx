@@ -16,6 +16,17 @@ Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/ma
 
 Verification: Dockerfile; Dockerfile-Google; package.json; pnpm release:check --base 8ef79d0; Live GET https://api.egdata.app/health returned 200 with healthy Redis and MongoDB after correcting the service startup arguments.; Live GET https://api.egdata.app/countries returned 200 after correcting the service startup arguments..
 
+## 2026-11-13 — Enforce Free/Pro/Scale paid plans, server entitlements, period budgets, and Stripe billing
+
+Record: [paid-plans-and-billing](https://github.com/egdata-app/egdata-api/blob/main/changes/records/paid-plans-and-billing.json).
+
+- **v1 GET /v1/offers/&#123;id&#125;/giveaways** (getOfferGiveaways; changed; compatible)
+  - Before: Version 1 gateway admission enforced Free/Pro/Enterprise RPM and monthly quota without server-side plan entitlement gates, Scale tier support, or paid billing-period allowances. Keys holding the `catalog:read` scope bypassed granular scope restrictions, and ordinary admitted requests could clear active-minute expensive-policy counters in the same window.
+  - After: Version 1 gateway now enforces Free (60 RPM when commercial limits are enabled, 100,000/month UTC), Pro (200 RPM, 300,000/billing period), Scale (600 RPM, 1,000,000/billing period), and explicit manual/enterprise grants, returning RFC 9457 Problem JSON `403 PLAN_ENTITLEMENT_REQUIRED` and `429 PERIOD_QUOTA_EXCEEDED` when exceeded, with idempotent `5xx` period-unit credit-back. Server-owned entitlements are checked prior to edge cache and quota admission, `catalog:read` wildcard bypass is removed, and active-minute expensive counters remain isolated.
+  - Client action: Authenticate with an API key on a plan carrying the required entitlement and handle HTTP 403 (PLAN_ENTITLEMENT_REQUIRED) and HTTP 429 (PERIOD_QUOTA_EXCEEDED / EXPENSIVE_BUDGET_EXCEEDED) with Retry-After.
+
+Verification: dashboard/tests/paid-plans-quota.test.ts; dashboard/tests/billing-stripe.test.ts; dashboard/tests/monthly-quota.test.ts; dashboard/tests/edge-cache.test.ts; dashboard/tests/admin-management.test.ts; dashboard/tests/legacy-analytics.test.ts; tests/middleware-origin-auth.test.ts; src/openapi/project-quota.ts; src/openapi/v1.ts; pnpm dashboard:test; pnpm test:unit; pnpm openapi:check; pnpm docs:check; pnpm release:check --base main.
+
 ## 2026-11-12 — Add verified-email onboarding, immutable receipts, privacy operations, and authoritative account closure
 
 Record: [developer-onboarding-account-closure](https://github.com/egdata-app/egdata-api/blob/main/changes/records/developer-onboarding-account-closure.json).

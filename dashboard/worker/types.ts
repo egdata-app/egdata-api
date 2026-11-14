@@ -1,4 +1,6 @@
-export type ApiKeyTier = "free" | "pro" | "enterprise";
+import type { GrantSource } from "./plans.js";
+
+export type ApiKeyTier = "free" | "pro" | "scale" | "enterprise";
 
 export const API_SCOPES = [
   "catalog:read",
@@ -31,6 +33,8 @@ export interface CachedKeyMetadata {
   allowedMethods: AllowedHttpMethod[];
   customRpm: number | null;
   expiresAt: string | null;
+  entitlementRevision?: number;
+  grantSource?: GrantSource;
 }
 
 export interface EpicSessionUser {
@@ -82,7 +86,7 @@ export interface LimitIncreaseRequestRecord {
   projectName?: string;
   ownerDisplayName?: string;
   contactEmail: string;
-  requestedTier: "pro" | "enterprise" | "custom";
+  requestedTier: "pro" | "scale" | "enterprise" | "custom";
   requestedRpm: number;
   expectedMonthlyRequests: number;
   useCase: string;
@@ -107,8 +111,27 @@ export interface AccountMonthlyQuotaStatus {
 export interface DashboardEnv
   extends Omit<
     Env,
-    "EPIC_CLIENT_ID" | "EPIC_CLIENT_SECRET" | "ENABLE_DEV_AUTH"
+    | "EPIC_CLIENT_ID"
+    | "EPIC_CLIENT_SECRET"
+    | "ENABLE_DEV_AUTH"
+    | "DASHBOARD_SESSION_SECRET"
+    | "CF_ACCOUNT_ID"
+    | "CF_ANALYTICS_API_TOKEN"
+    | "ANTI_ABUSE_EDGE_SECRET"
+    | "ORIGIN_AUTH_TOKEN"
+    | "CHANGELOG_INGEST_TOKEN"
+    | "FIRST_PARTY_SERVICE_TOKEN"
+    | "FLAGS"
+    | "PAID_PLANS_ENABLED"
+    | "COMMERCIAL_PLAN_LIMITS_ENABLED"
+    | "STRIPE_SECRET_KEY"
+    | "STRIPE_WEBHOOK_SECRET"
+    | "STRIPE_PRICE_ID_PRO"
+    | "STRIPE_PRICE_ID_SCALE"
+    | "STRIPE_PORTAL_CONFIGURATION_ID"
+    | "STRIPE_MODE"
   > {
+  FLAGS?: Pick<Flagship, "getBooleanValue">;
   EPIC_CLIENT_ID?: string;
   EPIC_CLIENT_SECRET?: string;
   DASHBOARD_SESSION_SECRET?: string;
@@ -124,4 +147,13 @@ export interface DashboardEnv
   /** Prevents counter sharing between independently deployed environments. */
   RATE_LIMIT_ENVIRONMENT: string;
   CHANGELOG_INGEST_TOKEN?: string;
+  FIRST_PARTY_SERVICE_TOKEN?: string;
+  PAID_PLANS_ENABLED?: string;
+  COMMERCIAL_PLAN_LIMITS_ENABLED?: string;
+  STRIPE_SECRET_KEY?: string;
+  STRIPE_WEBHOOK_SECRET?: string;
+  STRIPE_PRICE_ID_PRO?: string;
+  STRIPE_PRICE_ID_SCALE?: string;
+  STRIPE_PORTAL_CONFIGURATION_ID?: string;
+  STRIPE_MODE?: string;
 }

@@ -21,6 +21,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile.index'
 import { Route as DocsIndexRouteImport } from './routes/docs.index'
 import { Route as ProfileReceiptsRouteImport } from './routes/profile.receipts'
+import { Route as ProfileBillingRouteImport } from './routes/profile.billing'
 import { Route as ProfileAgreementsRouteImport } from './routes/profile.agreements'
 import { Route as DocsSlugRouteImport } from './routes/docs.$slug'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
@@ -88,6 +89,11 @@ const ProfileReceiptsRoute = ProfileReceiptsRouteImport.update({
   path: '/receipts',
   getParentRoute: () => ProfileRoute,
 } as any)
+const ProfileBillingRoute = ProfileBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => ProfileRoute,
+} as any)
 const ProfileAgreementsRoute = ProfileAgreementsRouteImport.update({
   id: '/agreements',
   path: '/agreements',
@@ -133,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersRouteWithChildren
   '/docs/$slug': typeof DocsSlugRoute
   '/profile/agreements': typeof ProfileAgreementsRoute
+  '/profile/billing': typeof ProfileBillingRoute
   '/profile/receipts': typeof ProfileReceiptsRoute
   '/docs/': typeof DocsIndexRoute
   '/profile/': typeof ProfileIndexRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/admin/projects': typeof AdminProjectsRoute
   '/docs/$slug': typeof DocsSlugRoute
   '/profile/agreements': typeof ProfileAgreementsRoute
+  '/profile/billing': typeof ProfileBillingRoute
   '/profile/receipts': typeof ProfileReceiptsRoute
   '/docs': typeof DocsIndexRoute
   '/profile': typeof ProfileIndexRoute
@@ -171,6 +179,7 @@ export interface FileRoutesById {
   '/admin/users': typeof AdminUsersRouteWithChildren
   '/docs/$slug': typeof DocsSlugRoute
   '/profile/agreements': typeof ProfileAgreementsRoute
+  '/profile/billing': typeof ProfileBillingRoute
   '/profile/receipts': typeof ProfileReceiptsRoute
   '/docs/': typeof DocsIndexRoute
   '/profile/': typeof ProfileIndexRoute
@@ -193,6 +202,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/docs/$slug'
     | '/profile/agreements'
+    | '/profile/billing'
     | '/profile/receipts'
     | '/docs/'
     | '/profile/'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/admin/projects'
     | '/docs/$slug'
     | '/profile/agreements'
+    | '/profile/billing'
     | '/profile/receipts'
     | '/docs'
     | '/profile'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/docs/$slug'
     | '/profile/agreements'
+    | '/profile/billing'
     | '/profile/receipts'
     | '/docs/'
     | '/profile/'
@@ -337,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileReceiptsRouteImport
       parentRoute: typeof ProfileRoute
     }
+    '/profile/billing': {
+      id: '/profile/billing'
+      path: '/billing'
+      fullPath: '/profile/billing'
+      preLoaderRoute: typeof ProfileBillingRouteImport
+      parentRoute: typeof ProfileRoute
+    }
     '/profile/agreements': {
       id: '/profile/agreements'
       path: '/agreements'
@@ -396,12 +415,14 @@ const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
 
 interface ProfileRouteChildren {
   ProfileAgreementsRoute: typeof ProfileAgreementsRoute
+  ProfileBillingRoute: typeof ProfileBillingRoute
   ProfileReceiptsRoute: typeof ProfileReceiptsRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
 }
 
 const ProfileRouteChildren: ProfileRouteChildren = {
   ProfileAgreementsRoute: ProfileAgreementsRoute,
+  ProfileBillingRoute: ProfileBillingRoute,
   ProfileReceiptsRoute: ProfileReceiptsRoute,
   ProfileIndexRoute: ProfileIndexRoute,
 }
