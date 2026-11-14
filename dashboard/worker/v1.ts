@@ -85,8 +85,112 @@ export async function signWebEphemeralToken(
 
 let cachedWebOwnerEpicId: string | null = null;
 
+export interface WebBrowserKeyState {
+  revoked: boolean;
+  active: boolean;
+  expiresAt: string | null;
+  ownerEpicId: string | null;
+}
+
+let cachedWebBrowserKeyState: {
+  state: WebBrowserKeyState;
+  expiresAt: number;
+} | null = null;
+
 export function clearWebOwnerEpicIdCache(): void {
   cachedWebOwnerEpicId = null;
+  cachedWebBrowserKeyState = null;
+}
+
+export async function resolveWebBrowserKeyState(
+  env: DashboardEnv,
+  webKeyId: string,
+): Promise<WebBrowserKeyState> {
+  const now = Date.now();
+  if (cachedWebBrowserKeyState && cachedWebBrowserKeyState.expiresAt > now) {
+    return cachedWebBrowserKeyState.state;
+  }
+
+  // 1. Check API_KEYS_KV
+  if (env.API_KEYS_KV) {
+    try {
+      const fromKv = await env.API_KEYS_KV.get<
+        CachedKeyMetadata & { cacheExpiresAt?: number }
+      >("apikey:system_ephemeral_browser_key_hash", {
+        type: "json",
+        cacheTtl: 60,
+      });
+      if (
+        fromKv &&
+        typeof fromKv.cacheExpiresAt === "number" &&
+        fromKv.cacheExpiresAt > now
+      ) {
+        const state: WebBrowserKeyState = {
+          active: fromKv.active,
+          expiresAt: fromKv.expiresAt ?? null,
+          revoked: false,
+          ownerEpicId: fromKv.ownerEpicId ?? null,
+        };
+        cachedWebBrowserKeyState = {
+          state,
+          expiresAt: Math.min(now + 30_000, fromKv.cacheExpiresAt),
+        };
+        return state;
+      }
+    } catch {
+      // KV lookup failure, fall through to D1
+    }
+  }
+
+  // 2. Query D1
+  if (env.DB) {
+    try {
+      const row = await env.DB.prepare(
+        `SELECT k.active, k.revoked_at, k.expires_at, k.owner_epic_id, p.deleted_at
+         FROM api_keys k
+         LEFT JOIN projects p ON p.id = k.project_id
+         WHERE k.id = ?
+         LIMIT 1`,
+      )
+        .bind(webKeyId)
+        .first<{
+          active: number | boolean;
+          revoked_at: string | number | null;
+          expires_at: string | null;
+          owner_epic_id: string | null;
+          deleted_at: string | number | null;
+        }>();
+
+      if (row) {
+        const isRevoked = row.revoked_at !== null || row.deleted_at !== null;
+        const state: WebBrowserKeyState = {
+          revoked: isRevoked,
+          active: isRevoked ? false : Boolean(row.active),
+          expiresAt: row.expires_at ?? null,
+          ownerEpicId: row.owner_epic_id ?? null,
+        };
+        cachedWebBrowserKeyState = {
+          state,
+          expiresAt: now + 30_000,
+        };
+        return state;
+      }
+    } catch {
+      // D1 query error, fall through to default
+    }
+  }
+
+  const defaultState: WebBrowserKeyState = {
+    revoked: false,
+    active: true,
+    expiresAt: null,
+    ownerEpicId: null,
+  };
+  cachedWebBrowserKeyState = {
+    state: defaultState,
+    expiresAt: now + 30_000,
+  };
+  return defaultState;
 }
 
 export async function resolveWebOwnerEpicId(
@@ -598,14 +702,53 @@ export async function handleV1ApiProxy(
       });
     }
 
+    const keyState = await resolveWebBrowserKeyState(env, webKeyId);
+    if (keyState.revoked) {
+      recordApiTelemetry(
+        env,
+        baseTelemetry(
+          request,
+          {
+            ownerEpicId: webOwnerEpicId,
+            keyId: webKeyId,
+            projectId: webProjectId,
+          },
+          {
+            routeTemplate: route?.path ?? pathname,
+            statusCode: 401,
+            cacheStatus: "EDGE_BLOCK",
+            limitOutcome: "forbidden",
+            startedAt,
+            country,
+            clientIp,
+            userAgent,
+            operationId: route?.operationId,
+            policyFamily: "web_token",
+            errorCode: "INVALID_API_KEY",
+          },
+        ),
+      );
+      return v1Problem(request, {
+        requestId,
+        status: 401,
+        code: "INVALID_API_KEY",
+        detail: "The provided API key is invalid, revoked, or expired.",
+        headers: {
+          ...corsFor(request),
+          "WWW-Authenticate": 'Bearer realm="egdata-v1", error="invalid_token"',
+        },
+      });
+    }
+
     const requestOrigin = request.headers.get("origin");
     meta = {
       keyId: webKeyId,
       projectId: webProjectId,
-      ownerEpicId: webOwnerEpicId,
+      ownerEpicId:
+        env.WEB_OWNER_EPIC_ID || keyState.ownerEpicId || webOwnerEpicId,
       name: "egdata.app Browser (Ephemeral)",
       tier: "enterprise",
-      active: true,
+      active: keyState.active,
       scopes: [...API_SCOPES],
       allowedIps: [],
       allowedOrigins: requestOrigin
@@ -614,7 +757,7 @@ export async function handleV1ApiProxy(
       allowedPaths: [],
       allowedMethods: ["GET", "HEAD", "POST"],
       customRpm: null,
-      expiresAt: null,
+      expiresAt: keyState.expiresAt,
     };
   } else {
     try {

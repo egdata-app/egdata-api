@@ -1,8 +1,9 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import worker, { handleInternalTelemetry } from "../worker/index";
+import worker from "../worker/index";
 import type { DashboardEnv } from "../worker/types";
 import {
+  clearWebOwnerEpicIdCache,
   computeIpSubnet,
   handleV1ApiProxy,
   signWebEphemeralToken,
@@ -42,7 +43,12 @@ function createTestEnv(overrides: Partial<DashboardEnv> = {}): DashboardEnv {
 }
 
 describe("Web ephemeral tokens & computeIpSubnet", () => {
+  beforeEach(() => {
+    clearWebOwnerEpicIdCache();
+  });
+
   afterEach(() => {
+    clearWebOwnerEpicIdCache();
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -399,6 +405,116 @@ describe("Web ephemeral tokens & computeIpSubnet", () => {
       expect(response.status).toBe(401);
       const json = (await response.json()) as any;
       expect(json.code).toBe("EXPIRED_WEB_TOKEN");
+    });
+
+    it("rejects valid egw_ token with 403 KEY_DISABLED when registered browser key is inactive", async () => {
+      clearWebOwnerEpicIdCache();
+      const { db, sqlite } = sqliteD1();
+      sqlite.exec("PRAGMA foreign_keys = ON;");
+      for (const file of readdirSync("migrations")
+        .filter((f) => f.endsWith(".sql"))
+        .sort()) {
+        sqlite.exec(readFileSync(`migrations/${file}`, "utf8"));
+      }
+
+      // Seed web owner, project, and browser key
+      sqlite
+        .prepare(
+          "INSERT OR IGNORE INTO users (epic_account_id, display_name) VALUES ('egdata_web_owner', 'EGDATA Web')",
+        )
+        .run();
+      sqlite
+        .prepare(
+          "INSERT OR IGNORE INTO projects (id, owner_epic_id, name, slug, tier) VALUES ('prj_egdata_web', 'egdata_web_owner', 'egdata.app', 'egdata-web', 'enterprise')",
+        )
+        .run();
+      sqlite
+        .prepare(
+          `INSERT OR REPLACE INTO api_keys (
+            id, project_id, owner_epic_id, name, key_prefix, key_hash, tier, active,
+            scopes_json, allowed_ips_json, allowed_origins_json, allowed_paths_json, allowed_methods_json
+          ) VALUES (
+            'key_egdata_web_browser', 'prj_egdata_web', 'egdata_web_owner', 'Browser Key', 'egw_browser_', 'hash_browser', 'enterprise', 0,
+            '[]', '[]', '[]', '[]', '["GET","HEAD","POST"]'
+          )`,
+        )
+        .run();
+
+      const env = createTestEnv({ DB: db });
+      const payload = {
+        exp: Date.now() + 60_000,
+        subnet: "198.51.100.0/24",
+      };
+      const token = await signWebEphemeralToken(payload, TEST_SECRET);
+
+      const request = new Request("https://api.egdata.app/v1/offers", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Origin: "https://egdata.app",
+          "Sec-Fetch-Site": "same-site",
+          "cf-connecting-ip": "198.51.100.42",
+        },
+      });
+
+      const response = await handleV1ApiProxy(request, env, ctx, "/v1/offers");
+      expect(response.status).toBe(403);
+      const json = (await response.json()) as any;
+      expect(json.code).toBe("KEY_DISABLED");
+    });
+
+    it("rejects valid egw_ token with 401 INVALID_API_KEY when registered browser key is revoked", async () => {
+      clearWebOwnerEpicIdCache();
+      const { db, sqlite } = sqliteD1();
+      sqlite.exec("PRAGMA foreign_keys = ON;");
+      for (const file of readdirSync("migrations")
+        .filter((f) => f.endsWith(".sql"))
+        .sort()) {
+        sqlite.exec(readFileSync(`migrations/${file}`, "utf8"));
+      }
+
+      // Seed web owner, project, and browser key
+      sqlite
+        .prepare(
+          "INSERT OR IGNORE INTO users (epic_account_id, display_name) VALUES ('egdata_web_owner', 'EGDATA Web')",
+        )
+        .run();
+      sqlite
+        .prepare(
+          "INSERT OR IGNORE INTO projects (id, owner_epic_id, name, slug, tier) VALUES ('prj_egdata_web', 'egdata_web_owner', 'egdata.app', 'egdata-web', 'enterprise')",
+        )
+        .run();
+      sqlite
+        .prepare(
+          `INSERT OR REPLACE INTO api_keys (
+            id, project_id, owner_epic_id, name, key_prefix, key_hash, tier, active, revoked_at,
+            scopes_json, allowed_ips_json, allowed_origins_json, allowed_paths_json, allowed_methods_json
+          ) VALUES (
+            'key_egdata_web_browser', 'prj_egdata_web', 'egdata_web_owner', 'Browser Key', 'egw_browser_', 'hash_browser', 'enterprise', 1, strftime('%Y-%m-%dT%H:%M:%SZ', 'now'),
+            '[]', '[]', '[]', '[]', '["GET","HEAD","POST"]'
+          )`,
+        )
+        .run();
+
+      const env = createTestEnv({ DB: db });
+      const payload = {
+        exp: Date.now() + 60_000,
+        subnet: "198.51.100.0/24",
+      };
+      const token = await signWebEphemeralToken(payload, TEST_SECRET);
+
+      const request = new Request("https://api.egdata.app/v1/offers", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Origin: "https://egdata.app",
+          "Sec-Fetch-Site": "same-site",
+          "cf-connecting-ip": "198.51.100.42",
+        },
+      });
+
+      const response = await handleV1ApiProxy(request, env, ctx, "/v1/offers");
+      expect(response.status).toBe(401);
+      const json = (await response.json()) as any;
+      expect(json.code).toBe("INVALID_API_KEY");
     });
   });
 

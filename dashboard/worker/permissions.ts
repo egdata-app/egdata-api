@@ -255,6 +255,7 @@ export interface PolicyEvaluationResult {
   reason:
     | "ok"
     | "key_inactive"
+    | "key_disabled"
     | "key_expired"
     | "method_denied"
     | "ip_denied"
@@ -279,8 +280,8 @@ export function evaluateKeyPermissions(
   if (!meta.active) {
     return {
       allowed: false,
-      reason: "key_inactive",
-      status: 401,
+      reason: "key_disabled",
+      status: 403,
       message: "API key has been revoked or deactivated.",
     };
   }
