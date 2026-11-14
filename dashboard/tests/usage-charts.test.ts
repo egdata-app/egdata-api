@@ -67,4 +67,47 @@ describe("buildUsageChartPoints", () => {
     expect(points.map((p) => p.requests)).toEqual([0, 120, 120, 200]);
     expect(points.map((p) => p.quotaRequests)).toEqual([0, 90, 90, 120]);
   });
+
+  it("aligns previousTimeseries and separates HIT vs MISS latency and error status buckets", () => {
+    const points = buildUsageChartPoints(
+      {
+        start: "2026-11-01T00:00:00.000Z",
+        end: "2026-11-03T00:00:00.000Z",
+        bucketMinutes: 1440,
+        timeseries: [
+          {
+            bucket: "2026-11-01T00:00:00.000Z",
+            ...bucketMetrics(100, 75),
+            rateLimited: 2,
+            status2xx: 85,
+            status3xx: 5,
+            status4xx: 7,
+            status5xx: 3,
+            avgHitLatencyMs: 8,
+            avgMissLatencyMs: 240,
+          },
+        ],
+        previousTimeseries: [
+          {
+            bucket: "2026-11-01T00:00:00.000Z",
+            requests: 50,
+            errors: 4,
+            avgLatencyMs: 12,
+            p95LatencyMs: 30,
+          },
+        ],
+      },
+      false,
+    );
+    expect(points[0]).toMatchObject({
+      requests: 100,
+      status2xx3xx: 90,
+      status4xxOther: 5,
+      status5xx: 3,
+      avgHitLatencyMs: 8,
+      avgMissLatencyMs: 240,
+      prevRequests: 50,
+    });
+    expect(points[1].requests).toBeNull();
+  });
 });

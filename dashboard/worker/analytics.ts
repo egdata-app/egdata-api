@@ -17,12 +17,17 @@ import type { DashboardEnv } from "./types.js";
  * blob10: coarse client category, never a raw user agent
  * blob11: country (CF country code e.g. "US", "ES")
  * blob12: privacy schema marker ("privacy-v1")
+ * blob13: operationId (e.g. "getOffer", optional)
+ * blob14: policyFamily (e.g. "offers-list", "search", "heavy", "bulk", "nl-search", "image", "rpm", optional)
+ * blob15: errorCode (e.g. "RATE_LIMITED", "HTTP_500", optional)
  *
  * double1: requestCount (1)
  * double2: latencyMs
  * double3: rateLimitedFlag (1 or 0)
  * double4: cacheHitFlag (1 or 0)
  * double5: errorFlag (1 or 0 for 4xx/5xx)
+ * double6: upstreamLatencyMs (0 for edge hits/blocks)
+ * double7: responseBytes (from Content-Length if known, else 0)
  */
 
 export interface ApiTelemetryEvent {
@@ -39,6 +44,11 @@ export interface ApiTelemetryEvent {
   userAgent: string;
   country: string;
   latencyMs: number;
+  operationId?: string;
+  policyFamily?: string;
+  errorCode?: string;
+  upstreamLatencyMs?: number;
+  responseBytes?: number;
 }
 
 // Keep a lightweight bounded ring buffer in isolate memory so local `vite dev` / demo
@@ -61,55 +71,68 @@ export function clientCategory(userAgent: string): string {
 export function recordApiTelemetry(
   env: DashboardEnv,
   event: ApiTelemetryEvent,
+  timestamp?: string,
 ): void {
   // Minimize before either storage sink. Do not substitute stable hashes for IPs.
-  event = {
+  const normalized: ApiTelemetryEvent = {
     ...event,
     origin:
       event.origin && event.origin !== "(direct)" ? "(present)" : "(direct)",
     clientIp: "",
     userAgent: clientCategory(event.userAgent),
     country: /^[A-Z]{2}$/.test(event.country) ? event.country : "XX",
+    operationId: (event.operationId ?? "").slice(0, 80),
+    policyFamily: (event.policyFamily ?? "").slice(0, 40),
+    errorCode: (event.errorCode ?? "").slice(0, 64),
+    upstreamLatencyMs: Math.max(0, event.upstreamLatencyMs ?? 0),
+    responseBytes: Math.max(0, event.responseBytes ?? 0),
   };
   const isCacheHit =
-    event.cacheStatus === "HIT" ||
-    event.cacheStatus === "STALE" ||
-    event.cacheStatus === "UPDATING" ||
-    event.cacheStatus === "REVALIDATED" ||
-    event.statusCode === 304
+    normalized.cacheStatus === "HIT" ||
+    normalized.cacheStatus === "STALE" ||
+    normalized.cacheStatus === "UPDATING" ||
+    normalized.cacheStatus === "REVALIDATED" ||
+    normalized.statusCode === 304
       ? 1
       : 0;
   const isRateLimited =
-    event.limitOutcome === "rate_limited" ||
-    event.limitOutcome === "monthly_quota_exceeded" ||
-    event.statusCode === 429
+    normalized.limitOutcome === "rate_limited" ||
+    normalized.limitOutcome === "monthly_quota_exceeded" ||
+    normalized.limitOutcome === "period_quota_exceeded" ||
+    normalized.limitOutcome === "expensive_budget_exceeded" ||
+    normalized.statusCode === 429
       ? 1
       : 0;
-  const isError = event.statusCode >= 400 ? 1 : 0;
+  const isError = normalized.statusCode >= 400 ? 1 : 0;
 
   try {
     env.ANALYTICS.writeDataPoint({
-      indexes: [event.ownerEpicId.slice(0, 96)],
+      indexes: [normalized.ownerEpicId.slice(0, 96)],
       blobs: [
-        event.keyId.slice(0, 64),
-        event.projectId.slice(0, 64),
-        event.routeTemplate.slice(0, 180),
-        event.method.slice(0, 16),
-        String(event.statusCode),
-        event.cacheStatus.slice(0, 32),
-        event.limitOutcome.slice(0, 32),
-        (event.origin || "(direct)").slice(0, 180),
+        normalized.keyId.slice(0, 64),
+        normalized.projectId.slice(0, 64),
+        normalized.routeTemplate.slice(0, 180),
+        normalized.method.slice(0, 16),
+        String(normalized.statusCode),
+        normalized.cacheStatus.slice(0, 32),
+        normalized.limitOutcome.slice(0, 32),
+        (normalized.origin || "(direct)").slice(0, 180),
         "",
-        event.userAgent,
-        (event.country || "XX").slice(0, 8),
+        normalized.userAgent,
+        (normalized.country || "XX").slice(0, 8),
         "privacy-v1",
+        normalized.operationId ?? "",
+        normalized.policyFamily ?? "",
+        normalized.errorCode ?? "",
       ],
       doubles: [
         1,
-        Math.max(0, event.latencyMs),
+        Math.max(0, normalized.latencyMs),
         isRateLimited,
         isCacheHit,
         isError,
+        normalized.upstreamLatencyMs ?? 0,
+        normalized.responseBytes ?? 0,
       ],
     });
   } catch {
@@ -120,8 +143,8 @@ export function recordApiTelemetry(
     localEventsBuffer.shift();
   }
   localEventsBuffer.push({
-    ...event,
-    timestamp: new Date().toISOString(),
+    ...normalized,
+    timestamp: timestamp ?? new Date().toISOString(),
   });
 }
 

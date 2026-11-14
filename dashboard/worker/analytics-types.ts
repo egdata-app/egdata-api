@@ -13,6 +13,15 @@ export interface UsageMetrics {
   p50LatencyMs: number;
   p95LatencyMs: number;
   p99LatencyMs: number;
+  cacheMisses?: number;
+  status2xx?: number;
+  status3xx?: number;
+  status4xx?: number;
+  status5xx?: number;
+  avgHitLatencyMs?: number;
+  avgMissLatencyMs?: number;
+  avgUpstreamLatencyMs?: number;
+  avgResponseBytes?: number;
 }
 
 export type UsageDimension =
@@ -21,15 +30,23 @@ export type UsageDimension =
   | "keys"
   | "origins"
   | "ips"
-  | "userAgents";
+  | "userAgents"
+  | "statusCodes"
+  | "limitOutcomes"
+  | "cacheStatuses"
+  | "policies";
 export type UsageSort =
   | "requests"
   | "cacheHitRate"
+  | "errors"
+  | "errorRate"
   | "rateLimited"
   | "blockedPolicy"
-  | "errorRate"
   | "avgLatencyMs"
-  | "p95LatencyMs";
+  | "p50LatencyMs"
+  | "p95LatencyMs"
+  | "p99LatencyMs"
+  | "label";
 export interface UsageRow extends UsageMetrics {
   id: string;
   label: string;
@@ -38,7 +55,11 @@ export interface UsageRow extends UsageMetrics {
   method?: string;
   projectId?: string;
   keyId?: string;
+  operationId?: string;
+  scope?: string;
+  expensive?: string;
 }
+export type StatusClassFilter = "all" | "2xx" | "3xx" | "4xx" | "5xx";
 export interface UsageFilters {
   hours: number;
   scope?: "project" | "all";
@@ -47,12 +68,23 @@ export interface UsageFilters {
   keyId?: string;
   route?: string;
   method?: string;
-  /** Fixed end time keeps comparisons and table pages on the same window. */
+  statusClass?: StatusClassFilter;
+  statusCode?: string;
+  limitOutcome?: string;
+  cacheStatus?: string;
+  country?: string;
+  clientCategory?: string;
+  originPresence?: "present" | "direct";
+  policyFamily?: string;
+  excludeConsole?: boolean;
+  /** Optional explicit start/end keep zoomed windows, comparisons, and table pages aligned. */
+  start?: string;
   end?: string;
 }
 export interface UsageTableFilters extends UsageFilters {
   dimension?: UsageDimension;
   search?: string;
+  minRequests?: number;
   sort?: UsageSort;
   direction?: "asc" | "desc";
   offset?: number;
@@ -75,11 +107,26 @@ export interface AnalyticsDashboardSummary {
   totals: UsageMetrics;
   previous: UsageMetrics | null;
   timeseries: Array<UsageMetrics & { bucket: string }>;
+  previousTimeseries?: Array<{
+    bucket: string;
+    requests: number;
+    errors: number;
+    avgLatencyMs: number;
+    p95LatencyMs: number;
+  }>;
   quotaTimeseries?: Array<{ bucket: string; requests: number }>;
+  latencyDistribution?: Array<{ label: string; requests: number }>;
   endpoints: UsageRow[];
+  busiestEndpoints?: UsageRow[];
+  slowestEndpoints?: UsageRow[];
+  errorEndpoints?: UsageRow[];
   projects: UsageRow[];
   keys: UsageRow[];
+  busiestKeys?: UsageRow[];
   cacheBreakdown: Array<{ status: string; requests: number }>;
   limitOutcomes: Array<{ outcome: string; requests: number }>;
   statusCodes: Array<{ status: string; requests: number }>;
+  countryBreakdown?: Array<{ country: string; requests: number }>;
+  clientBreakdown?: Array<{ category: string; requests: number }>;
+  policyBreakdown?: Array<{ policy: string; requests: number }>;
 }
