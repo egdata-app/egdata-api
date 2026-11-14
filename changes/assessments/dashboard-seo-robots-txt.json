@@ -1,0 +1,17 @@
+{
+  "baseCommit": "c7174208a44ee65985ec14027fa6c26f1384fb9c",
+  "diffHash": "8f3be13368a1b0e3050a4d7a196935cc11d4fcf8763d57eed505f16671d73605",
+  "operations": [],
+  "unknownFiles": [
+    {
+      "file": "dashboard/worker/index.ts",
+      "reason": "Developer portal Cloudflare Worker entrypoint (devs.egdata.app). Adds GET/HEAD /robots.txt and HTML <head> SEO / X-Robots-Tag handling strictly for non-API SPA asset responses after the API_PROXY_HOST (api.egdata.app) proxy check and outside /api/*, /oauth/*, and /webhooks/* routes; all public legacy and v1 API operations and proxy behavior remain unchanged.",
+      "endpoints": []
+    },
+    {
+      "file": "dashboard/worker/seo.ts",
+      "reason": "Developer portal SEO helper exporting strict ROBOTS_TXT and applyDashboardSeoHtml for devs.egdata.app HTML responses only. Never invoked for api.egdata.app requests or REST API routes; affects no public legacy or v1 operations.",
+      "endpoints": []
+    }
+  ]
+}

@@ -57,6 +57,11 @@ import { readAccountMonthlyQuota } from "./project-quota.js";
 import { purgeDeletedProjects } from "./project-retention.js";
 import { handleEdgeApiProxy } from "./proxy.js";
 import {
+  applyDashboardSeoHtml,
+  isCrawlableDashboardPath,
+  ROBOTS_TXT,
+} from "./seo.js";
+import {
   type AllowedHttpMethod,
   API_SCOPES,
   type ApiScope,
@@ -830,6 +835,20 @@ export default {
       return handleEdgeApiProxy(request, env, ctx);
     }
 
+    if (
+      url.pathname === "/robots.txt" &&
+      ["GET", "HEAD"].includes(request.method)
+    ) {
+      return new Response(request.method === "HEAD" ? null : ROBOTS_TXT, {
+        status: 200,
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "Cache-Control": "public, max-age=3600",
+          "X-Content-Type-Options": "nosniff",
+        },
+      });
+    }
+
     if (url.pathname === "/_internal/change-records") {
       if (
         env.RATE_LIMITER_DASHBOARD_API &&
@@ -926,6 +945,37 @@ export default {
           ? "no-referrer"
           : "strict-origin-when-cross-origin",
       );
+
+      const contentType = headers.get("content-type")?.toLowerCase() ?? "";
+      if (contentType.includes("text/html")) {
+        if (!isCrawlableDashboardPath(url.pathname)) {
+          headers.set("X-Robots-Tag", "noindex, nofollow");
+        }
+        if (request.method === "HEAD") {
+          headers.delete("Content-Length");
+          return new Response(null, {
+            status: response.status,
+            statusText: response.statusText,
+            headers,
+          });
+        }
+        const canonicalOrigin = (env.DASHBOARD_ORIGIN || url.origin).replace(
+          /\/+$/,
+          "",
+        );
+        const html = applyDashboardSeoHtml(
+          await response.text(),
+          url.pathname,
+          canonicalOrigin,
+        );
+        headers.delete("Content-Length");
+        return new Response(html, {
+          status: response.status,
+          statusText: response.statusText,
+          headers,
+        });
+      }
+
       return new Response(response.body, {
         status: response.status,
         statusText: response.statusText,

@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /
+Allow: /$
+Allow: /docs$
+Allow: /docs/
+Allow: /problems$
+Allow: /problems/
+Allow: /assets/
+Allow: /og-image.png
