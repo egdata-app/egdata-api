@@ -5,6 +5,17 @@ description: History for GET /v1/profiles/{id}/information
 
 `GET /v1/profiles/{id}/information` — active. Recorded dates are not deployment dates.
 
+## 2026-11-16 — Accept dashboard console session key identities on v1 endpoints
+
+Record: [console-session-v1-key-context](https://github.com/egdata-app/egdata-api/blob/main/changes/records/console-session-v1-key-context.json).
+
+- **v1 GET /v1/profiles/&#123;id&#125;/information** (getProfileInformation; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+
+Verification: tests/v1-origin-provenance.test.ts; tests/v1-router.test.ts; dashboard/tests/console-sessions.test.ts.
+
 ## 2026-11-13 — Fix container startup after Aikido removal
 
 Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.

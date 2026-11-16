@@ -27,7 +27,8 @@ const INTERNAL_HEADERS = [
 ] as const;
 
 const REQUEST_ID_PATTERN = /^[A-Za-z0-9_-]{8,80}$/;
-const KEY_ID_PATTERN = /^key_[A-Za-z0-9_-]{4,80}$/;
+// API keys use `key_<id>`; dashboard "Try it" console sessions use `console_<projectId>`.
+const KEY_ID_PATTERN = /^(?:key|console)_[A-Za-z0-9_-]{4,80}$/;
 const TIERS = new Set<ApiKeyTier>(["free", "pro", "scale", "enterprise"]);
 
 export const PUBLIC_V1_PATHS = new Set(["/health", "/open-api.json"]);
