@@ -84,6 +84,24 @@ describe("versioned v1 origin router", () => {
     const response = await app.request("/v1/countries");
     expect(response.status).toBe(401);
     expect((await response.json()).code).toBe("MISSING_KEY_CONTEXT");
+
+    const invalidPrefix = await app.request("/v1/countries", {
+      headers: {
+        "x-egdata-key-id": "other_12345",
+        "x-egdata-key-tier": "free",
+      },
+    });
+    expect(invalidPrefix.status).toBe(401);
+    expect((await invalidPrefix.json()).code).toBe("MISSING_KEY_CONTEXT");
+
+    const consoleSession = await app.request("/v1/countries", {
+      headers: {
+        "x-egdata-key-id": "console_prj_a",
+        "x-egdata-key-tier": "free",
+        "x-egdata-key-project": "prj_a",
+      },
+    });
+    expect(consoleSession.status).toBe(200);
   });
 
   it("treats health and the OpenAPI document as public", async () => {
