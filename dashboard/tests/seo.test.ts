@@ -275,6 +275,17 @@ describe("dashboard homepage OG image and per-route SEO", () => {
     expect(html).toContain(
       '<meta name="twitter:image" content="https://devs.egdata.app/og-image.png" />',
     );
+    expect(html).toContain("egdata API");
+    expect(html).not.toMatch(/epic\s*games/i);
+    expect(indexHtml).toContain("egdata API");
+    expect(indexHtml).not.toMatch(/epic\s*games/i);
+  });
+
+  it("omits Epic Games references from fallback SEO metadata", () => {
+    const privateSeo = resolveDashboardSeo("/keys", "https://devs.egdata.app");
+    expect(privateSeo.description).toContain("egdata API");
+    expect(privateSeo.title).not.toMatch(/epic\s*games/i);
+    expect(privateSeo.description).not.toMatch(/epic\s*games/i);
   });
 
   it("serves indexable route-specific SEO without homepage OG tags on docs and problems", async () => {
