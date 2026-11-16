@@ -10,7 +10,7 @@ import {
 } from "../../models/index.js";
 import { localizeOffers } from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
-import { cached, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, v1CacheKey } from "../cache.js";
 import { decodeCursor, encodeCursor } from "../cursor.js";
 import { notFound, ProblemError, problemResponse } from "../errors.js";
 import {
@@ -162,10 +162,18 @@ app.get("/sellers/:id", async (c) => {
         ? { $and: [baseFilter, sellerOfferKeysetFilter(last)] }
         : baseFilter;
 
-      const rows = await Offer.find(filter, undefined, {
-        limit: limit + 1,
-        sort: mongoSortSpec(SELLER_OFFER_SORT),
-      }).lean();
+      const [rows, total] = await Promise.all([
+        Offer.find(filter, undefined, {
+          limit: limit + 1,
+          sort: mongoSortSpec(SELLER_OFFER_SORT),
+        }).lean(),
+        cachedTotal(
+          "sellers.offers",
+          { id, filters },
+          SELLER_OFFERS_TTL_SECONDS,
+          () => Offer.countDocuments(baseFilter),
+        ),
+      ]);
       const { items, hasMore } = trimPage(rows, limit);
 
       const prices =
@@ -199,6 +207,7 @@ app.get("/sellers/:id", async (c) => {
           hasMore && lastOffer
             ? encodeCursor(cursorBinding, sellerOfferCursorTuple(lastOffer))
             : null,
+          total,
         ),
         localization: localizationMeta(localized[0]),
       };

@@ -12,7 +12,7 @@ import {
   localizeOffers,
 } from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
-import { cached, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, v1CacheKey } from "../cache.js";
 import { decodeCursor, encodeCursor } from "../cursor.js";
 import {
   badRequest,
@@ -226,10 +226,13 @@ app.get("/items", async (c) => {
     async () => {
       const last = cursor ? decodeCursor(cursor, cursorBinding) : null;
       const filter = last ? itemKeysetFilter(last) : {};
-      const rows = await Item.find(filter, undefined, {
-        limit: limit + 1,
-        sort: mongoSortSpec(ITEM_LIST_SORT),
-      }).lean();
+      const [rows, total] = await Promise.all([
+        Item.find(filter, undefined, {
+          limit: limit + 1,
+          sort: mongoSortSpec(ITEM_LIST_SORT),
+        }).lean(),
+        cachedTotal("items.list", {}, 60, () => Item.countDocuments({})),
+      ]);
 
       const { items, hasMore } = trimPage(rows, limit);
       const data = items.map((item) => serializeItem(item));
@@ -243,6 +246,7 @@ app.get("/items", async (c) => {
           hasMore && lastItem
             ? encodeCursor(cursorBinding, itemCursorTuple(lastItem))
             : null,
+          total,
         ),
       };
     },
@@ -378,94 +382,99 @@ app.get("/items/:id/changelog", async (c) => {
         ? { $and: [baseMatch, changelogKeysetFilter(last)] }
         : baseMatch;
 
-      const rows = await db.db
-        .collection("changelogs_v2")
-        .aggregate([
-          { $match: match },
-          { $sort: mongoSortSpec(CHANGELOG_SORT) },
-          { $limit: limit + 1 },
-          {
-            $lookup: {
-              from: "items",
-              let: { contextId: "$metadata.contextId" },
-              pipeline: [
-                { $match: { $expr: { $eq: ["$id", "$$contextId"] } } },
-              ],
-              as: "itemDoc",
+      const [rows, total] = await Promise.all([
+        db.db
+          .collection("changelogs_v2")
+          .aggregate([
+            { $match: match },
+            { $sort: mongoSortSpec(CHANGELOG_SORT) },
+            { $limit: limit + 1 },
+            {
+              $lookup: {
+                from: "items",
+                let: { contextId: "$metadata.contextId" },
+                pipeline: [
+                  { $match: { $expr: { $eq: ["$id", "$$contextId"] } } },
+                ],
+                as: "itemDoc",
+              },
             },
-          },
-          {
-            $lookup: {
-              from: "assets",
-              let: { contextId: "$metadata.contextId" },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ["$artifactId", "$$contextId"] },
-                  },
-                },
-              ],
-              as: "assetDoc",
-            },
-          },
-          {
-            $lookup: {
-              from: "builds",
-              let: { contextId: "$metadata.contextId" },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: {
-                      $eq: [{ $toString: "$_id" }, "$$contextId"],
+            {
+              $lookup: {
+                from: "assets",
+                let: { contextId: "$metadata.contextId" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ["$artifactId", "$$contextId"] },
                     },
                   },
-                },
-              ],
-              as: "buildDoc",
+                ],
+                as: "assetDoc",
+              },
             },
-          },
-          {
-            $addFields: {
-              document: {
-                $switch: {
-                  branches: [
-                    {
-                      case: {
-                        $eq: ["$metadata.contextType", "item"],
+            {
+              $lookup: {
+                from: "builds",
+                let: { contextId: "$metadata.contextId" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $eq: [{ $toString: "$_id" }, "$$contextId"],
                       },
-                      // biome-ignore lint/suspicious/noThenProperty: MongoDB $switch branches use a then field.
-                      then: { $arrayElemAt: ["$itemDoc", 0] },
                     },
-                    {
-                      case: {
-                        $eq: ["$metadata.contextType", "asset"],
+                  },
+                ],
+                as: "buildDoc",
+              },
+            },
+            {
+              $addFields: {
+                document: {
+                  $switch: {
+                    branches: [
+                      {
+                        case: {
+                          $eq: ["$metadata.contextType", "item"],
+                        },
+                        // biome-ignore lint/suspicious/noThenProperty: MongoDB $switch branches use a then field.
+                        then: { $arrayElemAt: ["$itemDoc", 0] },
                       },
-                      // biome-ignore lint/suspicious/noThenProperty: MongoDB $switch branches use a then field.
-                      then: { $arrayElemAt: ["$assetDoc", 0] },
-                    },
-                    {
-                      case: {
-                        $eq: ["$metadata.contextType", "build"],
+                      {
+                        case: {
+                          $eq: ["$metadata.contextType", "asset"],
+                        },
+                        // biome-ignore lint/suspicious/noThenProperty: MongoDB $switch branches use a then field.
+                        then: { $arrayElemAt: ["$assetDoc", 0] },
                       },
-                      // biome-ignore lint/suspicious/noThenProperty: MongoDB $switch branches use a then field.
-                      then: { $arrayElemAt: ["$buildDoc", 0] },
-                    },
-                  ],
-                  default: null,
+                      {
+                        case: {
+                          $eq: ["$metadata.contextType", "build"],
+                        },
+                        // biome-ignore lint/suspicious/noThenProperty: MongoDB $switch branches use a then field.
+                        then: { $arrayElemAt: ["$buildDoc", 0] },
+                      },
+                    ],
+                    default: null,
+                  },
                 },
               },
             },
-          },
-          {
-            $project: {
-              _id: 1,
-              metadata: 1,
-              timestamp: 1,
-              document: 1,
+            {
+              $project: {
+                _id: 1,
+                metadata: 1,
+                timestamp: 1,
+                document: 1,
+              },
             },
-          },
-        ])
-        .toArray();
+          ])
+          .toArray(),
+        cachedTotal("items.changelog", { id }, 60, () =>
+          db.db.collection("changelogs_v2").countDocuments(baseMatch),
+        ),
+      ]);
 
       const { items, hasMore } = trimPage(rows, limit);
       const data = items.map((row) => serializeValue(row));
@@ -482,6 +491,7 @@ app.get("/items/:id/changelog", async (c) => {
                 lastItem._id ? String(lastItem._id) : null,
               ])
             : null,
+          total,
         ),
       };
     },

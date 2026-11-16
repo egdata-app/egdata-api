@@ -8,7 +8,7 @@ import {
 } from "../../models/index.js";
 import { localizeOffers } from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
-import { cached, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, v1CacheKey } from "../cache.js";
 import { decodeCursor, encodeCursor } from "../cursor.js";
 import {
   badRequest,
@@ -136,18 +136,24 @@ app.get("/collections/:slug", async (c) => {
     60,
     async () => {
       const last = cursor ? decodeCursor(cursor, binding) : null;
-      const filter: AnyRecord = {
+      const baseFilter: AnyRecord = {
         collectionId: collection._id,
         position: { $gt: 0 },
       };
+      const filter: AnyRecord = { ...baseFilter };
       if (last) {
         Object.assign(filter, mongoKeysetFilter(sort, last));
       }
 
-      const positions = await GamePosition.find(filter, undefined, {
-        limit: limit + 1,
-        sort: mongoSortSpec(sort),
-      }).lean();
+      const [positions, total] = await Promise.all([
+        GamePosition.find(filter, undefined, {
+          limit: limit + 1,
+          sort: mongoSortSpec(sort),
+        }).lean(),
+        cachedTotal("collections.positions", { slug }, 60, () =>
+          GamePosition.countDocuments(baseFilter),
+        ),
+      ]);
       const { items, hasMore } = trimPage(positions as AnyRecord[], limit);
       const offerIds = items.map((entry) => String(entry.offerId ?? ""));
 
@@ -201,6 +207,7 @@ app.get("/collections/:slug", async (c) => {
                 String(lastPosition.offerId),
               ])
             : null,
+          total,
         ),
         title: String(collection.name ?? ""),
         updatedAt: isoOrNull(collection.updatedAt),
@@ -258,7 +265,7 @@ app.get("/collections/:slug/:week", async (c) => {
     60,
     async () => {
       const last = cursor ? decodeCursor(cursor, binding) : null;
-      const pipeline: AnyRecord[] = [
+      const basePipeline: AnyRecord[] = [
         { $match: { collectionId: collection._id } },
         { $unwind: "$positions" },
         {
@@ -290,6 +297,7 @@ app.get("/collections/:slug/:week", async (c) => {
         },
         { $match: { position: { $gt: 0 } } },
       ];
+      const pipeline: AnyRecord[] = [...basePipeline];
 
       if (last) {
         pipeline.push({ $match: mongoKeysetFilter(sort, last) });
@@ -300,7 +308,21 @@ app.get("/collections/:slug/:week", async (c) => {
         { $limit: limit + 1 },
       );
 
-      const fetched = await GamePosition.aggregate<AnyRecord>(pipeline).exec();
+      const [fetched, total] = await Promise.all([
+        GamePosition.aggregate<AnyRecord>(pipeline).exec(),
+        cachedTotal(
+          "collections.week",
+          { slug, week: parsedWeek.week },
+          60,
+          async () => {
+            const countRows = await GamePosition.aggregate<{ total: number }>([
+              ...basePipeline,
+              { $count: "total" },
+            ]).exec();
+            return Number(countRows[0]?.total ?? 0);
+          },
+        ),
+      ]);
       const { items, hasMore } = trimPage(fetched, limit);
       const offerIds = items.map((entry) => String(entry.offerId ?? ""));
 
@@ -359,6 +381,7 @@ app.get("/collections/:slug/:week", async (c) => {
                 String(lastPosition.offerId),
               ])
             : null,
+          total,
         ),
         title: String(collection.name ?? ""),
         updatedAt: isoOrNull(collection.updatedAt),

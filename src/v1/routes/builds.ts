@@ -22,7 +22,7 @@ import {
   buildSummary,
   effectiveBuildPlatform,
 } from "../../utils/builds.js";
-import { cached, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, v1CacheKey } from "../cache.js";
 import { decodeCursor, encodeCursor } from "../cursor.js";
 import {
   badRequest,
@@ -379,6 +379,7 @@ type ComparisonBytes = {
 type ComparisonResult = {
   changes: BuildFileChange[];
   hasMore: boolean;
+  total: number;
   files: Record<BuildFileChangeStatus, number> & { total: number };
   fileBytes: ComparisonBytes;
   installTags: { added: string[]; removed: string[] };
@@ -519,6 +520,7 @@ async function compareSnapshotPage(
   const directoryDeltas = new Map<string, number>();
   const changes: BuildFileChange[] = [];
   let hasMore = false;
+  let total = 0;
 
   const record = (change: BuildFileChange) => {
     files[change.status] += 1;
@@ -555,6 +557,7 @@ async function compareSnapshotPage(
     }
 
     if (!matchesComparisonFilters(change, filters)) return;
+    total += 1;
     if (!isAfterComparisonCursor(change.path, filters)) return;
     if (changes.length < filters.limit) {
       changes.push(change);
@@ -604,6 +607,7 @@ async function compareSnapshotPage(
   return {
     changes,
     hasMore,
+    total,
     files,
     fileBytes,
     installTags: {
@@ -651,10 +655,14 @@ app.get("/builds", async (c) => {
     LIST_TTL_SECONDS,
     async () => {
       const last = cursor ? decodeCursor(cursor, cursorBinding) : null;
-      const rows =
+      const [rows, total] = await Promise.all([
         sortDir === "asc"
-          ? await listBuildsAscending(sortBy, limit, last)
-          : await listBuildsDescending(sortBy, limit, last);
+          ? listBuildsAscending(sortBy, limit, last)
+          : listBuildsDescending(sortBy, limit, last),
+        cachedTotal("builds.list", {}, LIST_TTL_SECONDS, () =>
+          buildsCollection().countDocuments({}),
+        ),
+      ]);
       const { items, hasMore } = trimPage(rows, limit);
       const appNames = uniqueStrings(items.map((build) => build.appName));
       const catalogItems =
@@ -688,6 +696,7 @@ app.get("/builds", async (c) => {
           hasMore && lastBuild
             ? encodeCursor(cursorBinding, buildListTuple(lastBuild, sortBy))
             : null,
+          total,
         ),
       };
     },
@@ -776,17 +785,19 @@ app.get("/builds/:id/history", async (c) => {
         );
       }
 
-      const rows = await buildsCollection()
-        .find(conditions.length === 1 ? filter : { $and: conditions })
-        .sort(mongoSortSpec(BUILD_HISTORY_SORT))
-        .limit(limit + 1)
-        .toArray();
+      const [rows, total, previousComparableBuildId] = await Promise.all([
+        buildsCollection()
+          .find(conditions.length === 1 ? filter : { $and: conditions })
+          .sort(mongoSortSpec(BUILD_HISTORY_SORT))
+          .limit(limit + 1)
+          .toArray(),
+        cachedTotal("builds.history", { id, scope }, LIST_TTL_SECONDS, () =>
+          buildsCollection().countDocuments(filter),
+        ),
+        findPreviousComparableBuildId(build, platform),
+      ]);
       const { items, hasMore } = trimPage(rows, limit);
       const lastRow = items.at(-1);
-      const previousComparableBuildId = await findPreviousComparableBuildId(
-        build,
-        platform,
-      );
 
       return {
         data: items.map((entry) => ({
@@ -804,6 +815,7 @@ app.get("/builds/:id/history", async (c) => {
                 String(lastRow._id),
               ])
             : null,
+          total,
         ),
         previousComparableBuildId,
       };
@@ -986,6 +998,7 @@ app.get("/builds/:targetId/compare/:baseId", async (c) => {
           comparison.hasMore && lastChange
             ? encodeCursor(cursorBinding, [lastChange.path])
             : null,
+          comparison.total,
         ),
       };
     },
@@ -1053,14 +1066,14 @@ app.get("/builds/:id/files", async (c) => {
     SNAPSHOT_TTL_SECONDS,
     async () => {
       const last = cursor ? decodeCursor(cursor, cursorBinding) : null;
-      const conditions: MongoFilter[] = [buildSnapshotQuery(build)];
+      const baseConditions: MongoFilter[] = [buildSnapshotQuery(build)];
       if (search) {
-        conditions.push({
+        baseConditions.push({
           fileName: { $regex: new RegExp(escapeRegex(search), "i") },
         });
       }
       if (extensions && extensions.size > 0) {
-        conditions.push({
+        baseConditions.push({
           fileName: {
             $regex: new RegExp(
               `\\.(${[...extensions].map(escapeRegex).join("|")})$`,
@@ -1069,14 +1082,32 @@ app.get("/builds/:id/files", async (c) => {
           },
         });
       }
-      if (last) conditions.push(keysetFilter(sortFields, last));
+      const baseFilter =
+        baseConditions.length === 1
+          ? baseConditions[0]
+          : { $and: baseConditions };
+      const conditions: MongoFilter[] = last
+        ? [...baseConditions, keysetFilter(sortFields, last)]
+        : baseConditions;
 
-      const rows = await db.db
-        .collection("files")
-        .find(conditions.length === 1 ? conditions[0] : { $and: conditions })
-        .sort(mongoSortSpec(sortFields))
-        .limit(limit + 1)
-        .toArray();
+      const [rows, total] = await Promise.all([
+        db.db
+          .collection("files")
+          .find(conditions.length === 1 ? conditions[0] : { $and: conditions })
+          .sort(mongoSortSpec(sortFields))
+          .limit(limit + 1)
+          .toArray(),
+        cachedTotal(
+          "builds.files",
+          {
+            id,
+            q: search,
+            extensions: extensions ? [...extensions].sort() : null,
+          },
+          SNAPSHOT_TTL_SECONDS,
+          () => db.db.collection("files").countDocuments(baseFilter),
+        ),
+      ]);
       const { items, hasMore } = trimPage(rows, limit);
       const lastRow = items.at(-1);
 
@@ -1088,6 +1119,7 @@ app.get("/builds/:id/files", async (c) => {
           hasMore && lastRow
             ? encodeCursor(cursorBinding, fileSortTuple(sort, lastRow))
             : null,
+          total,
         ),
       };
     },
@@ -1140,7 +1172,7 @@ app.get("/builds/:id/tree", async (c) => {
         ? { fileName: { $regex: new RegExp(`^${escapeRegex(childPrefix)}`) } }
         : { fileName: { $type: "string" } };
 
-      const pipeline: Record<string, unknown>[] = [
+      const basePipeline: Record<string, unknown>[] = [
         { $match: { $and: [buildSnapshotQuery(build), pathFilter] } },
         {
           $set: {
@@ -1178,6 +1210,7 @@ app.get("/builds/:id/tree", async (c) => {
           },
         },
       ];
+      const pipeline: Record<string, unknown>[] = [...basePipeline];
       if (last) {
         pipeline.push({
           $match: keysetFilter(BUILD_TREE_SORT, [
@@ -1235,10 +1268,20 @@ app.get("/builds/:id/tree", async (c) => {
         },
       );
 
-      const rows = await db.db
-        .collection("files")
-        .aggregate(pipeline)
-        .toArray();
+      const [rows, total] = await Promise.all([
+        db.db.collection("files").aggregate(pipeline).toArray(),
+        cachedTotal("builds.tree", { id, path }, SNAPSHOT_TTL_SECONDS, async () => {
+          const countRows = await db.db
+            .collection("files")
+            .aggregate<{ total: number }>([
+              ...basePipeline,
+              { $project: { _id: 1 } },
+              { $count: "total" },
+            ])
+            .toArray();
+          return Number(countRows[0]?.total ?? 0);
+        }),
+      ]);
       const { items, hasMore } = trimPage(rows, limit);
       const nodes: AnyRecord[] = items.map((row) => {
         const node = serializeValue(row) as AnyRecord;
@@ -1260,6 +1303,7 @@ app.get("/builds/:id/tree", async (c) => {
                 String(lastNode.name),
               ])
             : null,
+          total,
         ),
       };
     },
@@ -1291,17 +1335,21 @@ app.get("/builds/:id/items", async (c) => {
     LIST_TTL_SECONDS,
     async () => {
       const last = cursor ? decodeCursor(cursor, cursorBinding) : null;
-      const conditions: MongoFilter[] = [
-        { "releaseInfo.appId": build.appName },
-      ];
+      const baseFilter: MongoFilter = { "releaseInfo.appId": build.appName };
+      const conditions: MongoFilter[] = [baseFilter];
       if (last) {
         conditions.push(keysetFilter(BUILD_ITEM_SORT, [last[0] ?? null]));
       }
-      const rows = await Item.find(
-        conditions.length === 1 ? conditions[0] : { $and: conditions },
-        undefined,
-        { limit: limit + 1, sort: { id: 1 } },
-      ).lean();
+      const [rows, total] = await Promise.all([
+        Item.find(
+          conditions.length === 1 ? conditions[0] : { $and: conditions },
+          undefined,
+          { limit: limit + 1, sort: { id: 1 } },
+        ).lean(),
+        cachedTotal("builds.items", { id }, LIST_TTL_SECONDS, () =>
+          Item.countDocuments(baseFilter),
+        ),
+      ]);
       const { items, hasMore } = trimPage(rows, limit);
       const lastRow = items.at(-1);
 
@@ -1315,6 +1363,7 @@ app.get("/builds/:id/items", async (c) => {
                 isString(lastRow.id) ? lastRow.id : null,
               ])
             : null,
+          total,
         ),
       };
     },

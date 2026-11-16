@@ -73,7 +73,7 @@ export const freeGamesOperations = defineOperations([
       cursorParameter(),
     ],
     responseDescription:
-      "`data` is the page of expanded offers; `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`.",
+      "`data` is the page of expanded offers; `meta.pagination` carries `limit`, `hasMore`, `nextCursor`, and `total`.",
     legacy: ["/free-games/history"],
   },
   {
@@ -82,7 +82,7 @@ export const freeGamesOperations = defineOperations([
     path: "/v1/free-games/search",
     summary: "Search free games",
     description:
-      "Searches the `egdata.offers` OpenSearch index for offers with giveaway entries, using the legacy title, offer type, tag, and category filters. Pagination uses `search_after` instead of offsets, so cursors stay stable while the index changes. Results default to `lastModifiedDate` descending with `id.keyword` ascending as a unique tie-breaker. `meta.result.total` is an OpenSearch estimate and may be a lower bound when the index reports a `gte` relation.",
+      "Searches the `egdata.offers` OpenSearch index for offers with giveaway entries, using the legacy title, offer type, tag, and category filters. Pagination uses `search_after` instead of offsets, so cursors stay stable while the index changes. Results default to `lastModifiedDate` descending with `id.keyword` ascending as a unique tie-breaker. `meta.pagination.total` and `meta.result.total` report the exact OpenSearch hit count.",
     tags: ["Free Games"],
     scope: "catalog:read",
     auth: "key",
@@ -131,7 +131,7 @@ export const freeGamesOperations = defineOperations([
       cursorParameter(),
     ],
     responseDescription:
-      "`data` is the page of localized offers; `meta.result` carries the estimated total, the total relation, `timedOut`, and `tookMs`.",
+      "`data` is the page of localized offers; `meta.pagination` carries `limit`, `hasMore`, `nextCursor`, and `total`, and `meta.result` carries the hit total, the total relation, `timedOut`, and `tookMs`.",
     legacy: ["/free-games/search"],
   },
   {

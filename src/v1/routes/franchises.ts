@@ -140,7 +140,7 @@ async function loadFranchisePage(options: {
   if (offerIds.length === 0) {
     return {
       data: { ...base, elements: [], stats: emptyStats() },
-      pagination: pageMeta(limit, false, null),
+      pagination: pageMeta(limit, false, null, 0),
     };
   }
 
@@ -247,6 +247,7 @@ async function loadFranchisePage(options: {
       limit,
       hasMore,
       hasMore && lastItem ? encodeCursor(binding, cursorTuple(lastItem)) : null,
+      allOffersBasic.length,
     ),
   };
 }

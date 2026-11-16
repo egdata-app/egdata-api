@@ -8,7 +8,7 @@ import {
   localizeOffers,
 } from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
-import { cached, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, v1CacheKey } from "../cache.js";
 import { type CursorSortTuple, decodeCursor, encodeCursor } from "../cursor.js";
 import {
   ProblemError,
@@ -19,6 +19,7 @@ import {
   type MongoSortField,
   mongoKeysetFilter,
   mongoSortSpec,
+  openSearchTotalHits,
   pageMeta,
   parsePagination,
   trimPage,
@@ -327,10 +328,15 @@ app.get("/free-games/history", async (c) => {
         Object.assign(filter, mongoKeysetFilter(sort, tuple));
       }
 
-      const rows = await FreeGames.find(filter, undefined, {
-        limit: limit + 1,
-        sort: mongoSortSpec(sort),
-      }).lean();
+      const [rows, total] = await Promise.all([
+        FreeGames.find(filter, undefined, {
+          limit: limit + 1,
+          sort: mongoSortSpec(sort),
+        }).lean(),
+        cachedTotal("free-games.history", {}, 60, () =>
+          FreeGames.countDocuments({}),
+        ),
+      ]);
       const { items, hasMore } = trimPage(rows as AnyRecord[], limit);
       const offerIds = items.map((row) => String(row.id ?? ""));
 
@@ -398,6 +404,7 @@ app.get("/free-games/history", async (c) => {
                   : String(lastRow.id),
               ])
             : null,
+          total,
         ),
       };
     },
@@ -507,6 +514,7 @@ app.get("/free-games/search", async (c) => {
             index: SEARCH_INDEX,
             body: {
               size: limit + 1,
+              track_total_hits: true,
               query: { bool: { must, filter } },
               sort,
               ...(searchAfter ? { search_after: searchAfter } : {}),
@@ -550,8 +558,7 @@ app.get("/free-games/search", async (c) => {
       );
 
       const total = response.body.hits.total;
-      const totalValue =
-        typeof total === "number" ? total : (total?.value ?? null);
+      const totalValue = openSearchTotalHits(total);
       const totalRelation =
         typeof total === "number" ? "eq" : (total?.relation ?? null);
 
@@ -564,6 +571,7 @@ app.get("/free-games/search", async (c) => {
           hasMore && lastHit
             ? encodeCursor(binding, cursorTupleForHit(lastHit, sortField))
             : null,
+          totalValue,
         ),
         result: {
           total: totalValue,

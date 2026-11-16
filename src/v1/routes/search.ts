@@ -11,13 +11,15 @@ import {
 import { Changelog, Offer, TagModel } from "../../models/index.js";
 import { localizeOffers } from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
-import { cached, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, v1CacheKey } from "../cache.js";
 import { decodeCursor, encodeCursor } from "../cursor.js";
 import { badRequest, notFound, ProblemError } from "../errors.js";
 import {
   type MongoSortField,
   mongoKeysetFilter,
   mongoSortSpec,
+  openSearchTotalHits,
+  pageMeta,
   parsePagination,
   trimPage,
 } from "../pagination.js";
@@ -517,7 +519,7 @@ async function runSearch(input: SearchInput) {
         index: "egdata.offers",
         body: {
           size: input.limit + 1,
-          track_total_hits: false,
+          track_total_hits: true,
           query: { bool: { must, filter } },
           sort,
           ...(aggregations ? { aggregations } : {}),
@@ -552,20 +554,21 @@ async function runSearch(input: SearchInput) {
       })),
       input.locale,
     );
+    const total = openSearchTotalHits(response.body.hits.total);
     const lastHit = items.at(-1);
     const lastSort = lastHit?.sort;
     return {
       offers: localized.map((offer) =>
         serializeOffer(offer, { price: offer.price }),
       ),
-      pagination: {
-        limit: input.limit,
+      pagination: pageMeta(
+        input.limit,
         hasMore,
-        nextCursor:
-          hasMore && lastSort
-            ? encodeCursor(binding, lastSort as Array<string | number | null>)
-            : null,
-      },
+        hasMore && lastSort
+          ? encodeCursor(binding, lastSort as Array<string | number | null>)
+          : null,
+        total,
+      ),
       facets: serializeValue(response.body.aggregations ?? {}),
       result: {
         tookMs: response.body.took ?? 0,
@@ -811,11 +814,12 @@ app.get("/search/changelog", async (c) => {
       60,
       async () => {
         const last = cursor ? decodeCursor(cursor, binding) : null;
-        const filter: Record<string, unknown> = {
+        const baseFilter: Record<string, unknown> = {
           "metadata.contextType": { $nin: ["file", "achievements"] },
         };
-        if (query.type) filter["metadata.contextType"] = query.type;
-        if (query.id) filter["metadata.contextId"] = query.id;
+        if (query.type) baseFilter["metadata.contextType"] = query.type;
+        if (query.id) baseFilter["metadata.contextId"] = query.id;
+        const filter: Record<string, unknown> = { ...baseFilter };
         if (last) {
           const tuple: Array<string | number | null | Date | ObjectId> = [
             ...last,
@@ -832,27 +836,35 @@ app.get("/search/changelog", async (c) => {
             ),
           );
         }
-        const rows = await Changelog.find(filter, undefined, {
-          limit: limit + 1,
-          sort: mongoSortSpec(CHANGELOG_SORT),
-        }).lean();
+        const [rows, total] = await Promise.all([
+          Changelog.find(filter, undefined, {
+            limit: limit + 1,
+            sort: mongoSortSpec(CHANGELOG_SORT),
+          }).lean(),
+          cachedTotal(
+            "search.changelog",
+            { id: query.id ?? null, type: query.type ?? null },
+            60,
+            () => Changelog.countDocuments(baseFilter),
+          ),
+        ]);
         const { items, hasMore } = trimPage(rows, limit);
         const lastRow = items.at(-1) as Record<string, any> | undefined;
         return {
           hits: items.map((row) => serializeValue(row)),
-          pagination: {
+          pagination: pageMeta(
             limit,
             hasMore,
-            nextCursor:
-              hasMore && lastRow
-                ? encodeCursor(binding, [
-                    lastRow.timestamp
-                      ? new Date(lastRow.timestamp).toISOString()
-                      : null,
-                    String(lastRow._id),
-                  ])
-                : null,
-          },
+            hasMore && lastRow
+              ? encodeCursor(binding, [
+                  lastRow.timestamp
+                    ? new Date(lastRow.timestamp).toISOString()
+                    : null,
+                  String(lastRow._id),
+                ])
+              : null,
+            total,
+          ),
         };
       },
     );
@@ -887,7 +899,7 @@ app.get("/search/changelog", async (c) => {
       index: "egdata.changelog",
       body: {
         size: limit + 1,
-        track_total_hits: false,
+        track_total_hits: true,
         query: { bool: { must, must_not: filter } },
         sort: [
           { timestamp: { order: "desc", missing: "_last" } },
@@ -915,6 +927,7 @@ app.get("/search/changelog", async (c) => {
     sort?: Array<string | number | null>;
   }>;
   const { items, hasMore } = trimPage(rawHits, limit);
+  const total = openSearchTotalHits(response.body.hits.total);
   const lastHit = items.at(-1);
   const lastSort = lastHit?.sort;
   const page = {
@@ -922,14 +935,14 @@ app.get("/search/changelog", async (c) => {
       ...(serializeValue(hit._source ?? {}) as Record<string, unknown>),
       _id: hit._id,
     })),
-    pagination: {
+    pagination: pageMeta(
       limit,
       hasMore,
-      nextCursor:
-        hasMore && lastSort
-          ? encodeCursor(binding, lastSort as Array<string | number | null>)
-          : null,
-    },
+      hasMore && lastSort
+        ? encodeCursor(binding, lastSort as Array<string | number | null>)
+        : null,
+      total,
+    ),
   };
   return jsonSuccess(c, page.hits, {
     pagination: page.pagination,

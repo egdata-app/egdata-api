@@ -2,6 +2,177 @@
 
 Generated from validated change records. Recorded dates are not deployment dates.
 
+## 2026-11-16 — Add total count to v1 pagination metadata while preserving forward-only signed cursors
+
+Record: [v1-pagination-total-count](https://github.com/egdata-app/egdata-api/blob/main/changes/records/v1-pagination-total-count.json).
+
+- **v1 GET /v1/builds** (listBuilds; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/history** (getBuildHistory; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125;** (compareBuilds; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/files** (listBuildFiles; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/tree** (getBuildTree; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/items** (listBuildItems; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sales** (listSales; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/active-sales** (listActiveSales; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/changelog** (listChangelog; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/changelist** (listChangelist; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;** (getCollection; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;/&#123;week&#125;** (getCollectionWeek; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/franchises/&#123;slug&#125;** (getFranchise; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/free-games/history** (listFreeGamesHistory; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/free-games/search** (searchFreeGames; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without `total`, and OpenSearch queries skipped or capped hit counting.
+  - After: `meta.pagination` includes `total` (exact integer count when available, or `null`) with `track_total_hits: true`, while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/items** (listItems; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/changelog** (getItemChangelog; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/multisearch/offers** (multisearchOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without `total`, and OpenSearch queries skipped or capped hit counting.
+  - After: `meta.pagination` includes `total` (exact integer count when available, or `null`) with `track_total_hits: true`, while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/multisearch/items** (multisearchItems; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without `total`, and OpenSearch queries skipped or capped hit counting.
+  - After: `meta.pagination` includes `total` (exact integer count when available, or `null`) with `track_total_hits: true`, while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/changelog** (listOfferChangelog; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price-history** (listOfferPriceHistory; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews** (listOfferReviews; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers** (listOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/events/&#123;id&#125;** (getOfferEvent; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/upcoming** (listUpcomingOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/top-wishlisted** (listTopWishlisted; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/top-sellers** (listTopSellers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/latest-released** (listLatestReleased; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/profiles/leaderboard** (listProfileLeaderboard; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/achievements** (listProfileAchievements; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/games** (listProfileGames; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;** (listPromotionOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sandboxes** (listSandboxes; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/items** (listSandboxItems; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/offers** (listSandboxOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/assets** (listSandboxAssets; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/changelog** (getSandboxChangelog; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/builds** (listSandboxBuilds; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/search** (searchOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without `total`, and OpenSearch queries skipped or capped hit counting.
+  - After: `meta.pagination` includes `total` (exact integer count when available, or `null`) with `track_total_hits: true`, while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/search/changelog** (searchChangelog; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without `total`, and OpenSearch queries skipped or capped hit counting.
+  - After: `meta.pagination` includes `total` (exact integer count when available, or `null`) with `track_total_hits: true`, while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;** (listSellerOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+
+Verification: tests/v1-pagination.test.ts; tests/v1-offers-list.test.ts; tests/v1-pagination-totals.test.ts; tests/v1-router.test.ts; pnpm openapi:check.
+
 ## 2026-11-13 — Cache anonymous country, tag and genre reads at the edge
 
 Record: [anonymous-catalog-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/anonymous-catalog-edge-cache.json).

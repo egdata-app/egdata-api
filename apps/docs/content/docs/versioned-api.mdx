@@ -95,12 +95,17 @@ Paginated collections put the array in `data` and pagination state under `meta.p
 {
   "data": [/* ... */],
   "meta": {
-    "pagination": { "limit": 20, "hasMore": true, "nextCursor": "opaque-cursor" }
+    "pagination": {
+      "limit": 20,
+      "hasMore": true,
+      "nextCursor": "opaque-cursor",
+      "total": 1240
+    }
   }
 }
 ```
 
-Pagination is forward-only. There are no guaranteed totals or page counts. Live catalog changes can move records during traversal; use the returned cursor for the next page and do not construct cursors yourself.
+`meta.pagination.total` provides the total matching count when applicable (`null` when unavailable) so frontends can render total results or page counts (`Math.ceil(total / limit)`). Pagination itself remains strictly forward-only: `page` and `offset` parameters are rejected, and cursors are HMAC-signed and bound to the operation context so clients cannot jump to arbitrary pages. Live catalog changes can move records during traversal; use the returned cursor for the next page and do not construct cursors yourself.
 
 `POST /v1/search` is read-only and normalizes a JSON filter document into a bodyless `303` redirect to the equivalent GET URL. The redirect uses the origin's configured public v1 base (staging uses `https://devs.egdata.app/proxy/v1`).
 
