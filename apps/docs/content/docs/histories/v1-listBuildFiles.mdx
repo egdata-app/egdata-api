@@ -5,6 +5,17 @@ description: History for GET /v1/builds/{id}/files
 
 `GET /v1/builds/{id}/files` — active. Recorded dates are not deployment dates.
 
+## 2026-11-16 — Add total count to v1 pagination metadata while preserving forward-only signed cursors
+
+Record: [v1-pagination-total-count](https://github.com/egdata-app/egdata-api/blob/main/changes/records/v1-pagination-total-count.json).
+
+- **v1 GET /v1/builds/&#123;id&#125;/files** (listBuildFiles; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+
+Verification: tests/v1-pagination.test.ts; tests/v1-offers-list.test.ts; tests/v1-pagination-totals.test.ts; tests/v1-router.test.ts; pnpm openapi:check.
+
 ## 2026-11-13 — Fix container startup after Aikido removal
 
 Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.

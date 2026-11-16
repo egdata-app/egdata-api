@@ -6,7 +6,7 @@ import {
   localizeOffers,
 } from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
-import { cached, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, v1CacheKey } from "../cache.js";
 import { decodeCursor, encodeCursor } from "../cursor.js";
 import {
   badRequest,
@@ -178,9 +178,10 @@ app.get("/promotions/:id", async (c) => {
 
       let rows: AnyRecord[];
       let hasMore: boolean;
+      let total: number;
 
       if (sortBy === "price") {
-        const pipeline: AnyRecord[] = [
+        const basePipeline: AnyRecord[] = [
           {
             $match: {
               tags: { $elemMatch: { id } },
@@ -222,6 +223,7 @@ app.get("/promotions/:id", async (c) => {
             },
           },
         ];
+        const pipeline: AnyRecord[] = [...basePipeline];
 
         if (last) {
           const priceValue = last[0] ?? null;
@@ -249,10 +251,25 @@ app.get("/promotions/:id", async (c) => {
           { $limit: limit + 1 },
         );
 
-        const fetched = await Offer.aggregate<AnyRecord>(pipeline).exec();
+        const [fetched, counted] = await Promise.all([
+          Offer.aggregate<AnyRecord>(pipeline).exec(),
+          cachedTotal(
+            "promotions.offers",
+            { id, q, region, sortBy: "price" },
+            60,
+            async () => {
+              const countRows = await Offer.aggregate<{ total: number }>([
+                ...basePipeline,
+                { $count: "total" },
+              ]).exec();
+              return Number(countRows[0]?.total ?? 0);
+            },
+          ),
+        ]);
         const trimmed = trimPage(fetched, limit);
         rows = trimmed.items;
         hasMore = trimmed.hasMore;
+        total = counted;
       } else {
         const sort: MongoSortField[] = [
           {
@@ -263,10 +280,11 @@ app.get("/promotions/:id", async (c) => {
           { field: "id", direction: 1, nulls: "last" },
         ];
 
-        const filter: AnyRecord = {
+        const baseFilter: AnyRecord = {
           tags: { $elemMatch: { id } },
           ...titleFilter(q),
         };
+        const filter: AnyRecord = { ...baseFilter };
         if (last) {
           const tuple = [
             filterValueFromCursor(last[0] ?? null, sortBy),
@@ -275,13 +293,22 @@ app.get("/promotions/:id", async (c) => {
           Object.assign(filter, mongoKeysetFilter(sort, tuple));
         }
 
-        const fetched = await Offer.find(filter, undefined, {
-          limit: limit + 1,
-          sort: mongoSortSpec(sort),
-        }).lean();
+        const [fetched, counted] = await Promise.all([
+          Offer.find(filter, undefined, {
+            limit: limit + 1,
+            sort: mongoSortSpec(sort),
+          }).lean(),
+          cachedTotal(
+            "promotions.offers",
+            { id, q, sortBy: "default" },
+            60,
+            () => Offer.countDocuments(baseFilter),
+          ),
+        ]);
         const trimmed = trimPage(fetched as AnyRecord[], limit);
         rows = trimmed.items;
         hasMore = trimmed.hasMore;
+        total = counted;
       }
 
       const offerIds = rows.map((row) => String(row.id ?? ""));
@@ -324,7 +351,7 @@ app.get("/promotions/:id", async (c) => {
 
       return {
         data,
-        pagination: pageMeta(limit, hasMore, nextCursor),
+        pagination: pageMeta(limit, hasMore, nextCursor, total),
         title: String(event.name ?? ""),
         start: cursor ? null : 0,
       };

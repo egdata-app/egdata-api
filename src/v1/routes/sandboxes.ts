@@ -19,7 +19,7 @@ import {
   localizeOffers,
 } from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
-import { cached, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, v1CacheKey } from "../cache.js";
 import { decodeCursor, encodeCursor } from "../cursor.js";
 import { notFound, ProblemError, problemResponse } from "../errors.js";
 import {
@@ -325,10 +325,15 @@ app.get("/sandboxes", async (c) => {
       const filter = last
         ? keysetFilter(SANDBOX_LIST_SORT, [last[0] ?? null])
         : {};
-      const rows = await Namespace.find(filter, undefined, {
-        limit: limit + 1,
-        sort: mongoSortSpec(SANDBOX_LIST_SORT),
-      }).lean();
+      const [rows, total] = await Promise.all([
+        Namespace.find(filter, undefined, {
+          limit: limit + 1,
+          sort: mongoSortSpec(SANDBOX_LIST_SORT),
+        }).lean(),
+        cachedTotal("sandboxes.list", {}, LIST_TTL_SECONDS, () =>
+          Namespace.countDocuments({}),
+        ),
+      ]);
 
       const { items, hasMore } = trimPage(rows, limit);
       const lastRow = items.at(-1);
@@ -340,6 +345,7 @@ app.get("/sandboxes", async (c) => {
           hasMore && lastRow
             ? encodeCursor(cursorBinding, [String(lastRow._id)])
             : null,
+          total,
         ),
       };
     },
@@ -434,14 +440,22 @@ app.get("/sandboxes/:sandboxId/items", async (c) => {
           ]),
         );
       }
-      const rows = await Item.find(
-        conditions.length === 1 ? filter : { $and: conditions },
-        undefined,
-        {
-          limit: limit + 1,
-          sort: mongoSortSpec(SANDBOX_ITEM_SORT),
-        },
-      ).lean();
+      const [rows, total] = await Promise.all([
+        Item.find(
+          conditions.length === 1 ? filter : { $and: conditions },
+          undefined,
+          {
+            limit: limit + 1,
+            sort: mongoSortSpec(SANDBOX_ITEM_SORT),
+          },
+        ).lean(),
+        cachedTotal(
+          "sandboxes.items",
+          { sandboxId, entitlementType, status, platforms, title },
+          LIST_TTL_SECONDS,
+          () => Item.countDocuments(filter),
+        ),
+      ]);
 
       const { items, hasMore } = trimPage(rows, limit);
       const lastRow = items.at(-1);
@@ -456,6 +470,7 @@ app.get("/sandboxes/:sandboxId/items", async (c) => {
                 isString(lastRow.id) ? lastRow.id : null,
               ])
             : null,
+          total,
         ),
       };
     },
@@ -521,14 +536,22 @@ app.get("/sandboxes/:sandboxId/offers", async (c) => {
           ]),
         );
       }
-      const offers = await Offer.find(
-        conditions.length === 1 ? filter : { $and: conditions },
-        undefined,
-        {
-          limit: limit + 1,
-          sort: mongoSortSpec(SANDBOX_OFFER_SORT),
-        },
-      ).lean();
+      const [offers, total] = await Promise.all([
+        Offer.find(
+          conditions.length === 1 ? filter : { $and: conditions },
+          undefined,
+          {
+            limit: limit + 1,
+            sort: mongoSortSpec(SANDBOX_OFFER_SORT),
+          },
+        ).lean(),
+        cachedTotal(
+          "sandboxes.offers",
+          { sandboxId, offerType, title },
+          LIST_TTL_SECONDS,
+          () => Offer.countDocuments(filter),
+        ),
+      ]);
 
       const { items, hasMore } = trimPage(offers, limit);
       const offerIds = items
@@ -566,6 +589,7 @@ app.get("/sandboxes/:sandboxId/offers", async (c) => {
                 isString(lastOffer.id) ? lastOffer.id : null,
               ])
             : null,
+          total,
         ),
         localization: localizationMeta(localized[0]),
       };
@@ -624,6 +648,7 @@ app.get("/sandboxes/:sandboxId/assets", async (c) => {
       hasMore && lastAsset
         ? encodeCursor(cursorBinding, [...assetTuple(lastAsset)])
         : null,
+      assets.length,
     ),
   });
 });
@@ -782,15 +807,20 @@ app.get("/sandboxes/:sandboxId/changelog", async (c) => {
           }
         : baseMatch;
 
-      const rows = await db.db
-        .collection("changelogs_v2")
-        .aggregate([
-          { $match: match },
-          { $sort: mongoSortSpec(SANDBOX_CHANGELOG_SORT) },
-          { $limit: limit + 1 },
-          { $project: { _id: 1, metadata: 1, timestamp: 1 } },
-        ])
-        .toArray();
+      const [rows, total] = await Promise.all([
+        db.db
+          .collection("changelogs_v2")
+          .aggregate([
+            { $match: match },
+            { $sort: mongoSortSpec(SANDBOX_CHANGELOG_SORT) },
+            { $limit: limit + 1 },
+            { $project: { _id: 1, metadata: 1, timestamp: 1 } },
+          ])
+          .toArray(),
+        cachedTotal("sandboxes.changelog", { sandboxId }, LIST_TTL_SECONDS, () =>
+          db.db.collection("changelogs_v2").countDocuments(baseMatch),
+        ),
+      ]);
 
       const { items, hasMore } = trimPage(rows, limit);
       const hits = await Promise.all(
@@ -822,6 +852,7 @@ app.get("/sandboxes/:sandboxId/changelog", async (c) => {
                 lastRow._id ? String(lastRow._id) : null,
               ])
             : null,
+          total,
         ),
       };
     },
@@ -884,12 +915,23 @@ app.get("/sandboxes/:sandboxId/builds", async (c) => {
           ]),
         );
       }
-      const builds = await db.db
-        .collection<BuildDocument>("builds")
-        .find(conditions.length === 1 ? filter : { $and: conditions })
-        .sort(mongoSortSpec(SANDBOX_BUILD_SORT))
-        .limit(limit + 1)
-        .toArray();
+      const [builds, total] = await Promise.all([
+        db.db
+          .collection<BuildDocument>("builds")
+          .find(conditions.length === 1 ? filter : { $and: conditions })
+          .sort(mongoSortSpec(SANDBOX_BUILD_SORT))
+          .limit(limit + 1)
+          .toArray(),
+        cachedTotal(
+          "sandboxes.builds",
+          { sandboxId, platforms },
+          LIST_TTL_SECONDS,
+          () =>
+            appIds.length === 0
+              ? Promise.resolve(0)
+              : db.db.collection("builds").countDocuments(filter),
+        ),
+      ]);
 
       const { items: pageItems, hasMore } = trimPage(builds, limit);
       const lastBuild = pageItems.at(-1);
@@ -904,6 +946,7 @@ app.get("/sandboxes/:sandboxId/builds", async (c) => {
                 String(lastBuild._id),
               ])
             : null,
+          total,
         ),
       };
     },

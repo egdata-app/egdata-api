@@ -39,7 +39,7 @@ import {
   priceAvailabilityKey,
 } from "../../utils/price-eligibility.js";
 import { toUsdCents } from "../../utils/price-usd.js";
-import { cached, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, v1CacheKey } from "../cache.js";
 import { type CursorSortTuple, decodeCursor, encodeCursor } from "../cursor.js";
 import {
   badRequest,
@@ -576,10 +576,23 @@ app.get("/offers/:id/changelog", async (c) => {
         },
       );
 
-      const rows = (await db.db
-        .collection("changelogs_v2")
-        .aggregate(pipeline)
-        .toArray()) as AnyRecord[];
+      const [rows, total] = await Promise.all([
+        db.db
+          .collection("changelogs_v2")
+          .aggregate(pipeline)
+          .toArray() as Promise<AnyRecord[]>,
+        cachedTotal(
+          "offer-details.changelog",
+          {
+            id,
+            query: search,
+            type: changeType,
+            field: changeField,
+          },
+          DYNAMIC_TTL_SECONDS,
+          () => db.db.collection("changelogs_v2").countDocuments(match),
+        ),
+      ]);
       const { items, hasMore } = trimPage(rows, limit);
       const lastRow = items.at(-1);
 
@@ -594,6 +607,7 @@ app.get("/offers/:id/changelog", async (c) => {
                 encodeCursorId(lastRow._id),
               ])
             : null,
+          total,
         ),
       };
     },
@@ -1641,18 +1655,31 @@ app.get("/offers/:id/price-history", async (c) => {
     DYNAMIC_TTL_SECONDS,
     async () => {
       await requireOffer(id, { id: 1 });
-      const filter: AnyRecord = { offerId: id, region };
-      if (since) filter.updatedAt = { $gte: since };
+      const baseFilter: AnyRecord = { offerId: id, region };
+      if (since) baseFilter.updatedAt = { $gte: since };
+      const filter: AnyRecord = { ...baseFilter };
       if (cursor) {
         Object.assign(
           filter,
           keysetFilter(PRICE_HISTORY_SORT, decodeCursor(cursor, binding)),
         );
       }
-      const rows = (await PriceEngineHistorical.find(filter, undefined, {
-        limit: limit + 1,
-        sort: mongoSortSpec(PRICE_HISTORY_SORT),
-      }).lean()) as AnyRecord[];
+      const [rows, total] = await Promise.all([
+        PriceEngineHistorical.find(filter, undefined, {
+          limit: limit + 1,
+          sort: mongoSortSpec(PRICE_HISTORY_SORT),
+        }).lean() as Promise<AnyRecord[]>,
+        cachedTotal(
+          "offer-details.price-history",
+          {
+            id,
+            region,
+            since: filters.since,
+          },
+          DYNAMIC_TTL_SECONDS,
+          () => PriceEngineHistorical.countDocuments(baseFilter),
+        ),
+      ]);
       const { items, hasMore } = trimPage(rows, limit);
       const lastRow = items.at(-1);
 
@@ -1667,6 +1694,7 @@ app.get("/offers/:id/price-history", async (c) => {
                 encodeCursorId(lastRow._id),
               ])
             : null,
+          total,
         ),
       };
     },
@@ -1982,18 +2010,30 @@ app.get("/offers/:id/reviews", async (c) => {
     }),
     DYNAMIC_TTL_SECONDS,
     async () => {
-      const filter: AnyRecord = { id };
-      if (verified !== undefined) filter.verified = verified;
+      const baseFilter: AnyRecord = { id };
+      if (verified !== undefined) baseFilter.verified = verified;
+      const filter: AnyRecord = { ...baseFilter };
       if (cursor) {
         Object.assign(
           filter,
           keysetFilter(REVIEW_SORT, decodeCursor(cursor, binding)),
         );
       }
-      const rows = (await Review.find(filter, undefined, {
-        limit: limit + 1,
-        sort: mongoSortSpec(REVIEW_SORT),
-      }).lean()) as AnyRecord[];
+      const [rows, total] = await Promise.all([
+        Review.find(filter, undefined, {
+          limit: limit + 1,
+          sort: mongoSortSpec(REVIEW_SORT),
+        }).lean() as Promise<AnyRecord[]>,
+        cachedTotal(
+          "offer-details.reviews",
+          {
+            id,
+            verified: verified ?? null,
+          },
+          DYNAMIC_TTL_SECONDS,
+          () => Review.countDocuments(baseFilter),
+        ),
+      ]);
       const { items, hasMore } = trimPage(rows, limit);
 
       const userIds = Array.from(
@@ -2031,6 +2071,7 @@ app.get("/offers/:id/reviews", async (c) => {
                 encodeCursorId(lastRow._id),
               ])
             : null,
+          total,
         ),
       };
     },

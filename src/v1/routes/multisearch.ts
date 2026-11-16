@@ -8,7 +8,12 @@ import { orderOffersObject } from "../../utils/order-offers-object.js";
 import { cached, v1CacheKey } from "../cache.js";
 import { decodeCursor, encodeCursor } from "../cursor.js";
 import { ProblemError } from "../errors.js";
-import { parsePagination, trimPage } from "../pagination.js";
+import {
+  openSearchTotalHits,
+  pageMeta,
+  parsePagination,
+  trimPage,
+} from "../pagination.js";
 import {
   parseBoolean,
   parseCsv,
@@ -271,7 +276,7 @@ app.get("/multisearch/offers", async (c) => {
           index: "egdata.offers",
           body: {
             size: limit + 1,
-            track_total_hits: false,
+            track_total_hits: true,
             query: { bool: { must, filter } },
             sort,
             ...(searchAfter ? { search_after: searchAfter } : {}),
@@ -287,6 +292,7 @@ app.get("/multisearch/offers", async (c) => {
         _id?: string;
       }>;
       const { items, hasMore } = trimPage(rawHits, limit);
+      const total = openSearchTotalHits(response.body.hits.total);
       const localized = await localizeOffers(
         items.map((hit) => orderOffersObject({ ...(hit._source ?? {}) })),
         locale,
@@ -294,14 +300,14 @@ app.get("/multisearch/offers", async (c) => {
       const lastSort = items.at(-1)?.sort;
       return {
         hits: localized.map((offer) => serializeOffer(offer)),
-        pagination: {
+        pagination: pageMeta(
           limit,
           hasMore,
-          nextCursor:
-            hasMore && lastSort
-              ? encodeCursor(binding, lastSort as Array<string | number | null>)
-              : null,
-        },
+          hasMore && lastSort
+            ? encodeCursor(binding, lastSort as Array<string | number | null>)
+            : null,
+          total,
+        ),
         result: {
           tookMs: response.body.took ?? 0,
           timedOut: Boolean(response.body.timed_out),
@@ -367,7 +373,7 @@ app.get("/multisearch/items", async (c) => {
           index: "egdata.items",
           body: {
             size: limit + 1,
-            track_total_hits: false,
+            track_total_hits: true,
             query: { bool: { must, filter } },
             sort: [
               { lastModifiedDate: { order: "desc", missing: "_last" } },
@@ -384,6 +390,7 @@ app.get("/multisearch/items", async (c) => {
         sort?: Array<string | number | null>;
       }>;
       const { items, hasMore } = trimPage(rawHits, limit);
+      const total = openSearchTotalHits(response.body.hits.total);
       const lastSort = items.at(-1)?.sort;
       return {
         hits: items.map((hit) => {
@@ -395,14 +402,14 @@ app.get("/multisearch/items", async (c) => {
               : {},
           };
         }),
-        pagination: {
+        pagination: pageMeta(
           limit,
           hasMore,
-          nextCursor:
-            hasMore && lastSort
-              ? encodeCursor(binding, lastSort as Array<string | number | null>)
-              : null,
-        },
+          hasMore && lastSort
+            ? encodeCursor(binding, lastSort as Array<string | number | null>)
+            : null,
+          total,
+        ),
         result: {
           tookMs: response.body.took ?? 0,
           timedOut: Boolean(response.body.timed_out),

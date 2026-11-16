@@ -15,13 +15,14 @@ import { countries, regions } from "../../utils/countries.js";
 import { getFeaturedGames } from "../../utils/get-featured-games.js";
 import { localizeOffers } from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
-import { cached, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, v1CacheKey } from "../cache.js";
 import { decodeCursor, encodeCursor } from "../cursor.js";
 import { notFound } from "../errors.js";
 import {
   type MongoSortField,
   mongoKeysetFilter,
   mongoSortSpec,
+  pageMeta,
   parsePagination,
   trimPage,
 } from "../pagination.js";
@@ -236,11 +237,12 @@ app.get("/sales", async (c) => {
     60,
     async () => {
       const last = cursor ? decodeCursor(cursor, binding) : null;
-      const filter: Record<string, unknown> = {
+      const baseFilter: Record<string, unknown> = {
         region,
         "price.discount": { $gt: 0 },
         "appliedRules.endDate": { $ne: null },
       };
+      const filter: Record<string, unknown> = { ...baseFilter };
       if (last) {
         Object.assign(
           filter,
@@ -254,10 +256,15 @@ app.get("/sales", async (c) => {
           ),
         );
       }
-      const prices = await PriceEngine.find(filter, undefined, {
-        limit: limit + 1,
-        sort: mongoSortSpec(SALES_SORT),
-      }).lean();
+      const [prices, total] = await Promise.all([
+        PriceEngine.find(filter, undefined, {
+          limit: limit + 1,
+          sort: mongoSortSpec(SALES_SORT),
+        }).lean(),
+        cachedTotal("catalog.sales", { region }, 60, () =>
+          PriceEngine.countDocuments(baseFilter),
+        ),
+      ]);
       const { items, hasMore } = trimPage(prices as PriceEngineType[], limit);
       const offers = await Offer.find({
         id: { $in: items.map((price) => price.offerId) },
@@ -281,19 +288,19 @@ app.get("/sales", async (c) => {
         offers: localized.map((offer) =>
           serializeOffer(offer, { price: offer.price }),
         ),
-        pagination: {
+        pagination: pageMeta(
           limit,
           hasMore,
-          nextCursor:
-            hasMore && lastPrice
-              ? encodeCursor(binding, [
-                  lastPrice.appliedRules?.endDate
-                    ? new Date(lastPrice.appliedRules.endDate).toISOString()
-                    : null,
-                  String(lastPrice.offerId),
-                ])
-              : null,
-        },
+          hasMore && lastPrice
+            ? encodeCursor(binding, [
+                lastPrice.appliedRules?.endDate
+                  ? new Date(lastPrice.appliedRules.endDate).toISOString()
+                  : null,
+                String(lastPrice.offerId),
+              ])
+            : null,
+          total,
+        ),
         localeMeta: localizationMeta(localized[0]),
       };
     },
@@ -334,11 +341,12 @@ app.get("/active-sales", async (c) => {
     60,
     async () => {
       const last = cursor ? decodeCursor(cursor, binding) : null;
-      const filter: Record<string, unknown> = {
+      const baseFilter: Record<string, unknown> = {
         name: { $regex: "(Sale|Savings|Promotion|Deals)", $options: "i" },
         referenceCount: { $gt: 0 },
         id: { $nin: [33639] },
       };
+      const filter: Record<string, unknown> = { ...baseFilter };
       if (last) {
         Object.assign(
           filter,
@@ -352,10 +360,15 @@ app.get("/active-sales", async (c) => {
           ),
         );
       }
-      const tags = await TagModel.find(filter, undefined, {
-        limit: limit + 1,
-        sort: mongoSortSpec(sort),
-      }).lean();
+      const [tags, total] = await Promise.all([
+        TagModel.find(filter, undefined, {
+          limit: limit + 1,
+          sort: mongoSortSpec(sort),
+        }).lean(),
+        cachedTotal("catalog.active-sales", {}, 60, () =>
+          TagModel.countDocuments(baseFilter),
+        ),
+      ]);
       const { items: pageTags, hasMore } = trimPage(tags, limit);
 
       const elements = await Promise.all(
@@ -404,21 +417,21 @@ app.get("/active-sales", async (c) => {
       const lastTag = pageTags.at(-1);
       return {
         elements,
-        pagination: {
+        pagination: pageMeta(
           limit,
           hasMore,
-          nextCursor:
-            hasMore && lastTag
-              ? encodeCursor(binding, [
-                  lastTag.updated
-                    ? new Date(lastTag.updated).toISOString()
-                    : null,
-                  typeof lastTag.id === "number"
-                    ? lastTag.id
-                    : String(lastTag.id),
-                ])
-              : null,
-        },
+          hasMore && lastTag
+            ? encodeCursor(binding, [
+                lastTag.updated
+                  ? new Date(lastTag.updated).toISOString()
+                  : null,
+                typeof lastTag.id === "number"
+                  ? lastTag.id
+                  : String(lastTag.id),
+              ])
+            : null,
+          total,
+        ),
       };
     },
   );
@@ -585,9 +598,10 @@ const listChangelog = async (
     60,
     async () => {
       const last = cursor ? decodeCursor(cursor, binding) : null;
-      const filter: Record<string, unknown> = {
+      const baseFilter: Record<string, unknown> = {
         "metadata.contextType": { $nin: ["file", "achievements"] },
       };
+      const filter: Record<string, unknown> = { ...baseFilter };
       if (last) {
         const tuple: Array<string | number | null | Date | ObjectId> = [
           ...last,
@@ -604,10 +618,15 @@ const listChangelog = async (
           ),
         );
       }
-      const rows = await Changelog.find(filter, undefined, {
-        limit: limit + 1,
-        sort: mongoSortSpec(CHANGELOG_SORT),
-      }).lean();
+      const [rows, total] = await Promise.all([
+        Changelog.find(filter, undefined, {
+          limit: limit + 1,
+          sort: mongoSortSpec(CHANGELOG_SORT),
+        }).lean(),
+        cachedTotal("catalog.changelog", {}, 60, () =>
+          Changelog.countDocuments(baseFilter),
+        ),
+      ]);
       const { items, hasMore } = trimPage(rows, limit);
       const elements = await Promise.all(
         items.map(async (change) => {
@@ -628,19 +647,19 @@ const listChangelog = async (
       const lastRow = items.at(-1) as Record<string, any> | undefined;
       return {
         elements,
-        pagination: {
+        pagination: pageMeta(
           limit,
           hasMore,
-          nextCursor:
-            hasMore && lastRow
-              ? encodeCursor(binding, [
-                  lastRow.timestamp
-                    ? new Date(lastRow.timestamp).toISOString()
-                    : null,
-                  String(lastRow._id),
-                ])
-              : null,
-        },
+          hasMore && lastRow
+            ? encodeCursor(binding, [
+                lastRow.timestamp
+                  ? new Date(lastRow.timestamp).toISOString()
+                  : null,
+                String(lastRow._id),
+              ])
+            : null,
+          total,
+        ),
       };
     },
   );

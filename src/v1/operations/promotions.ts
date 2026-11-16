@@ -69,7 +69,7 @@ export const promotionsOperations = defineOperations([
       cursorParameter(),
     ],
     responseDescription:
-      "`data` is the page of expanded localized offers; `meta.title` is the event name, `meta.start` is 0 on the first page (null afterwards, because cursors do not expose offsets), and `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`.",
+      "`data` is the page of expanded localized offers; `meta.title` is the event name, `meta.start` is 0 on the first page (null afterwards, because cursors do not expose offsets), and `meta.pagination` carries `limit`, `hasMore`, `nextCursor`, and `total`.",
     legacy: ["/promotions/{id}"],
   },
   {

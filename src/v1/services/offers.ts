@@ -10,12 +10,14 @@ import {
   localizeOffers,
 } from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
-import { cached, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, v1CacheKey } from "../cache.js";
 import { decodeCursor, encodeCursor } from "../cursor.js";
 import {
   type MongoSortField,
   mongoKeysetFilter,
   mongoSortSpec,
+  type PageMeta,
+  pageMeta,
   trimPage,
 } from "../pagination.js";
 import {
@@ -54,11 +56,7 @@ const offerCursorTuple = (offer: AnyRecord): Array<string | number | null> => [
 
 export type OfferListResult = {
   offers: SerializedOffer[];
-  pagination: {
-    limit: number;
-    hasMore: boolean;
-    nextCursor: string | null;
-  };
+  pagination: PageMeta;
   localization: Record<string, unknown>;
   cacheTtl: number;
 };
@@ -96,10 +94,15 @@ export async function listOffers(options: {
       const filter: Filter<Record<string, any>> = last
         ? offerFilterFromCursor(last)
         : {};
-      const rows = await Offer.find(filter, undefined, {
-        limit: limit + 1,
-        sort: mongoSortSpec(OFFER_LIST_SORT),
-      }).lean();
+      const [rows, total] = await Promise.all([
+        Offer.find(filter, undefined, {
+          limit: limit + 1,
+          sort: mongoSortSpec(OFFER_LIST_SORT),
+        }).lean(),
+        cachedTotal("offers.list", { filters: options.filters ?? {} }, 60, () =>
+          Offer.countDocuments({}),
+        ),
+      ]);
 
       const { items, hasMore } = trimPage(rows as AnyRecord[], limit);
       const prices = await PriceEngine.find({
@@ -127,14 +130,14 @@ export async function listOffers(options: {
 
       return {
         offers,
-        pagination: {
+        pagination: pageMeta(
           limit,
           hasMore,
-          nextCursor:
-            hasMore && items.length > 0
-              ? encodeCursor(cursorBinding, offerCursorTuple(items.at(-1)!))
-              : null,
-        },
+          hasMore && items.length > 0
+            ? encodeCursor(cursorBinding, offerCursorTuple(items.at(-1)!))
+            : null,
+          total,
+        ),
         localization: localizationMeta(localized[0]),
         cacheTtl: getLocalizedCacheTtlSeconds(localized, 60),
       };

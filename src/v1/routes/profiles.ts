@@ -3,7 +3,7 @@ import { z } from "zod";
 import { epicStoreClient } from "../../clients/epic.js";
 import { db } from "../../db/index.js";
 import { AchievementSet, Offer, Sandbox } from "../../models/index.js";
-import { cached, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, v1CacheKey } from "../cache.js";
 import { type CursorSortTuple, decodeCursor, encodeCursor } from "../cursor.js";
 import { notFound } from "../errors.js";
 import {
@@ -252,10 +252,22 @@ app.get("/profiles/leaderboard", async (c) => {
     PROFILE_TTL_SECONDS,
     async () => {
       const last = cursor ? decodeCursor(cursor, binding) : null;
-      const rows = (await db.db
-        .collection("player-achievements")
-        .aggregate(leaderboardPipeline(last, limit), { allowDiskUse: true })
-        .toArray()) as AnyRecord[];
+      const [rows, total] = await Promise.all([
+        db.db
+          .collection("player-achievements")
+          .aggregate(leaderboardPipeline(last, limit), { allowDiskUse: true })
+          .toArray() as Promise<AnyRecord[]>,
+        cachedTotal("profiles.leaderboard", {}, PROFILE_TTL_SECONDS, async () => {
+          const countRows = (await db.db
+            .collection("player-achievements")
+            .aggregate(
+              [{ $group: { _id: "$epicAccountId" } }, { $count: "total" }],
+              { allowDiskUse: true },
+            )
+            .toArray()) as AnyRecord[];
+          return Number(countRows[0]?.total ?? 0);
+        }),
+      ]);
       const { items, hasMore } = trimPage(rows, limit);
       const lastEntry = items[items.length - 1];
 
@@ -267,6 +279,7 @@ app.get("/profiles/leaderboard", async (c) => {
           hasMore && lastEntry
             ? encodeCursor(binding, leaderboardCursorTuple(lastEntry))
             : null,
+          total,
         ),
       };
     },
@@ -682,6 +695,7 @@ app.get("/profiles/:id/achievements", async (c) => {
           hasMore && lastRow
             ? encodeCursor(binding, achievementsCursorTuple(lastRow))
             : null,
+          count,
         ),
       };
     },
@@ -1110,13 +1124,7 @@ function gameSortValue(row: AnyRecord, field: string): string | number | null {
 const gamesCursorTuple = (sort: GameSort, row: AnyRecord): CursorSortTuple =>
   GAME_SORTS[sort].fields.map((field) => gameSortValue(row, field.field));
 
-function gamesPipeline(
-  accountId: string,
-  sort: GameSort,
-  platinumOnly: boolean,
-  last: CursorSortTuple | null,
-  limit: number,
-): AnyRecord[] {
+function gamesBasePipeline(accountId: string, platinumOnly: boolean): AnyRecord[] {
   const pipeline: AnyRecord[] = [
     { $match: { epicAccountId: accountId } },
     {
@@ -1148,6 +1156,18 @@ function gamesPipeline(
       },
     });
   }
+
+  return pipeline;
+}
+
+function gamesPipeline(
+  accountId: string,
+  sort: GameSort,
+  platinumOnly: boolean,
+  last: CursorSortTuple | null,
+  limit: number,
+): AnyRecord[] {
+  const pipeline: AnyRecord[] = gamesBasePipeline(accountId, platinumOnly);
 
   pipeline.push(
     {
@@ -1306,15 +1326,32 @@ app.get("/profiles/:id/games", async (c) => {
       }
 
       const last = cursor ? decodeCursor(cursor, binding) : null;
-      const rows = (await db.db
-        .collection("player-achievements")
-        .aggregate(gamesPipeline(id, sort, platinumOnly, last, limit), {
-          allowDiskUse: true,
-          ...(sort === "alphabetical"
-            ? { collation: { locale: "en", strength: 2 } }
-            : {}),
-        })
-        .toArray()) as AnyRecord[];
+      const [rows, total] = await Promise.all([
+        db.db
+          .collection("player-achievements")
+          .aggregate(gamesPipeline(id, sort, platinumOnly, last, limit), {
+            allowDiskUse: true,
+            ...(sort === "alphabetical"
+              ? { collation: { locale: "en", strength: 2 } }
+              : {}),
+          })
+          .toArray() as Promise<AnyRecord[]>,
+        cachedTotal(
+          "profiles.games",
+          { id, platinum: platinumOnly },
+          GAMES_TTL_SECONDS,
+          async () => {
+            const countRows = (await db.db
+              .collection("player-achievements")
+              .aggregate(
+                [...gamesBasePipeline(id, platinumOnly), { $count: "total" }],
+                { allowDiskUse: true },
+              )
+              .toArray()) as AnyRecord[];
+            return Number(countRows[0]?.total ?? 0);
+          },
+        ),
+      ]);
 
       const { items, hasMore } = trimPage(rows, limit);
       const lastRow = items[items.length - 1];
@@ -1327,6 +1364,7 @@ app.get("/profiles/:id/games", async (c) => {
           hasMore && lastRow
             ? encodeCursor(binding, gamesCursorTuple(sort, lastRow))
             : null,
+          total,
         ),
       };
     },
