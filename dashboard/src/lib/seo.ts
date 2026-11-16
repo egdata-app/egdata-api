@@ -1,11 +1,10 @@
 import { findDoc } from "./docs/entries";
 
-export const HOMEPAGE_TITLE =
-  "egdata Developer Portal — Epic Games Store API & Keys";
+export const HOMEPAGE_TITLE = "egdata Developer Portal — API Keys & Usage";
 export const HOMEPAGE_DESCRIPTION =
-  "Build with Epic Games Store data. Create API keys, configure endpoint permissions, inspect usage analytics, and explore the v1 API reference.";
+  "Build with the egdata API. Create API keys, configure endpoint permissions, inspect usage analytics, and explore the v1 API reference.";
 export const HOMEPAGE_OG_ALT =
-  "egdata Developer Portal — Build with Epic Games Store data, API keys, permissions, and usage analytics.";
+  "egdata Developer Portal — Build with the egdata API, API keys, permissions, and usage analytics.";
 
 export type DashboardSeoMetadata = {
   title: string;
@@ -213,7 +212,7 @@ export function resolveDashboardSeo(
   return {
     title: "egdata Developer Portal — API Keys & Usage",
     description:
-      "Create API keys, manage access to Epic Games Store data, track usage, and request higher limits.",
+      "Create API keys, manage access to the egdata API, track usage, and request higher limits.",
     canonicalUrl: null,
     robots: "noindex, nofollow",
     includeOg: false,
