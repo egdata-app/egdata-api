@@ -1,0 +1,190 @@
+{
+  "date": "2026-11-18T19:47:31+0100",
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+  "logicalCpus": 4,
+  "hostMemoryGiB": 7.758342742919922,
+  "originAffinity": [
+    0,
+    2
+  ],
+  "node": "v22.17.0",
+  "nodeBundleSha256": "293dce442980ca83e6987cbea7f0ab0ae15d6d8ae2ea2d60892b83f670119190",
+  "rustBinarySha256": "d27c1b0ea2e9ad3151377bcb1c52eb84a997a1c06ef5ecadd83c45855df66678",
+  "rounds": 1,
+  "workloads": {
+    "countries-paced": {
+      "path": "/v1/countries",
+      "requestsPerTrial": 1500,
+      "concurrency": 8,
+      "offeredRps": 250,
+      "encoding": {
+        "Node": "gzip",
+        "Rust": "gzip"
+      },
+      "sameBodyBytes": true
+    },
+    "countries-burst": {
+      "path": "/v1/countries",
+      "requestsPerTrial": 2500,
+      "concurrency": 8,
+      "offeredRps": null,
+      "encoding": {
+        "Node": "gzip",
+        "Rust": "gzip"
+      },
+      "sameBodyBytes": true
+    },
+    "search-warm-cache": {
+      "path": "/v1/search",
+      "requestsPerTrial": 120,
+      "concurrency": 4,
+      "offeredRps": 20,
+      "encoding": {
+        "Node": "gzip",
+        "Rust": "gzip"
+      },
+      "sameBodyBytes": true
+    },
+    "graphql-item-mongo": {
+      "path": "/graphql",
+      "requestsPerTrial": 90,
+      "concurrency": 4,
+      "offeredRps": 15,
+      "encoding": {
+        "Node": "gzip",
+        "Rust": "gzip"
+      },
+      "sameBodyBytes": true
+    }
+  },
+  "trials": [
+    {
+      "origin": "Node",
+      "workload": "countries-paced",
+      "round": 1,
+      "requests": 1500,
+      "seconds": 5.999951877001877,
+      "serverCpuSeconds": 2.66,
+      "cpuMsPerRequest": 1.7733333333333334,
+      "meanCpuCores": 0.4433368891167139,
+      "requestsPerSecond": 250.00200514100405,
+      "p50Ms": 1.9667010001285234,
+      "p95Ms": 7.7805649998481385,
+      "peakRssMiB": 273.76171875,
+      "endRssMiB": 273.76171875
+    },
+    {
+      "origin": "Rust",
+      "workload": "countries-paced",
+      "round": 1,
+      "requests": 1500,
+      "seconds": 5.998071382000489,
+      "serverCpuSeconds": 0.6799999999999999,
+      "cpuMsPerRequest": 0.45333333333333325,
+      "meanCpuCores": 0.11336977449794952,
+      "requestsPerSecond": 250.0803849219475,
+      "p50Ms": 0.8319530006701825,
+      "p95Ms": 1.4507140003843233,
+      "peakRssMiB": 35.24609375,
+      "endRssMiB": 35.24609375
+    },
+    {
+      "origin": "Node",
+      "workload": "countries-burst",
+      "round": 1,
+      "requests": 2500,
+      "seconds": 2.2010494759997528,
+      "serverCpuSeconds": 2.1399999999999997,
+      "cpuMsPerRequest": 0.8559999999999999,
+      "meanCpuCores": 0.9722634694651635,
+      "requestsPerSecond": 1135.8218101228547,
+      "p50Ms": 6.588931000806042,
+      "p95Ms": 12.0801279990701,
+      "peakRssMiB": 330.76171875,
+      "endRssMiB": 330.76171875
+    },
+    {
+      "origin": "Rust",
+      "workload": "countries-burst",
+      "round": 1,
+      "requests": 2500,
+      "seconds": 2.6400365289991896,
+      "serverCpuSeconds": 1.98,
+      "cpuMsPerRequest": 0.792,
+      "meanCpuCores": 0.7499896225870016,
+      "requestsPerSecond": 946.9565941755071,
+      "p50Ms": 4.895113001111895,
+      "p95Ms": 24.679996000486426,
+      "peakRssMiB": 35.96484375,
+      "endRssMiB": 35.38671875
+    },
+    {
+      "origin": "Node",
+      "workload": "search-warm-cache",
+      "round": 1,
+      "requests": 120,
+      "seconds": 5.954488839000987,
+      "serverCpuSeconds": 0.34000000000000075,
+      "cpuMsPerRequest": 2.8333333333333397,
+      "meanCpuCores": 0.05709977954330067,
+      "requestsPerSecond": 20.152863368223723,
+      "p50Ms": 4.830201998629491,
+      "p95Ms": 10.552665000432171,
+      "peakRssMiB": 333.625,
+      "endRssMiB": 333.625
+    },
+    {
+      "origin": "Rust",
+      "workload": "search-warm-cache",
+      "round": 1,
+      "requests": 120,
+      "seconds": 5.953383879001194,
+      "serverCpuSeconds": 0.11000000000000032,
+      "cpuMsPerRequest": 0.9166666666666693,
+      "meanCpuCores": 0.01847688679844632,
+      "requestsPerSecond": 20.156603780123202,
+      "p50Ms": 1.997105500777252,
+      "p95Ms": 4.614626002876321,
+      "peakRssMiB": 35.1640625,
+      "endRssMiB": 35.16015625
+    },
+    {
+      "origin": "Node",
+      "workload": "graphql-item-mongo",
+      "round": 1,
+      "requests": 90,
+      "seconds": 5.936810683000658,
+      "serverCpuSeconds": 0.41000000000000014,
+      "cpuMsPerRequest": 4.555555555555557,
+      "meanCpuCores": 0.06906064920917653,
+      "requestsPerSecond": 15.159654704453377,
+      "p50Ms": 7.069197001328575,
+      "p95Ms": 12.4461719969986,
+      "peakRssMiB": 334.515625,
+      "endRssMiB": 334.515625
+    },
+    {
+      "origin": "Rust",
+      "workload": "graphql-item-mongo",
+      "round": 1,
+      "requests": 90,
+      "seconds": 5.93744240900196,
+      "serverCpuSeconds": 0.13999999999999968,
+      "cpuMsPerRequest": 1.555555555555552,
+      "meanCpuCores": 0.023579176075500266,
+      "requestsPerSecond": 15.158041762821634,
+      "p50Ms": 3.9237730015884154,
+      "p95Ms": 17.819888002122752,
+      "peakRssMiB": 36.1796875,
+      "endRssMiB": 36.15234375
+    }
+  ],
+  "idleAfterStartupMiB": {
+    "Node": 205.453125,
+    "Rust": 35.03515625
+  },
+  "idleAfterLoadMiB": {
+    "Node": 205.59765625,
+    "Rust": 36.15234375
+  }
+}

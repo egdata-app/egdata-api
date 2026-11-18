@@ -1,0 +1,377 @@
+[
+  {
+    "name": "offer-og-png-success",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/offer-a/og?country=US"
+    },
+    "input": {
+      "source": {
+        "offer": {
+          "_id": "mongo-offer-a",
+          "id": "offer-a",
+          "namespace": "ns-a",
+          "title": "Parity Game",
+          "offerType": "BASE_GAME",
+          "publisherDisplayName": "Parity Studio",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "releaseDate": "2026-10-10T00:00:00.000Z",
+          "keyImages": [],
+          "items": [],
+          "seller": {
+            "name": "Seller"
+          }
+        },
+        "price": null,
+        "subItems": [],
+        "items": [],
+        "assets": [],
+        "build": null
+      },
+      "renderer": {
+        "card": {
+          "title": "Parity Game",
+          "subtitle": "Base game · Parity Studio",
+          "price": "Unavailable",
+          "priceDetail": "USD · US",
+          "lastUpdate": "01 Oct 2026",
+          "assetSize": "Not available",
+          "assetDetail": "Latest download",
+          "releaseDate": "10 Oct 2026"
+        },
+        "coverLength": 0
+      }
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "image/png",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "byteLength": 4,
+        "sha256": "0f4636c78f65d3639ece5a064b5ae753e3408614a14fb18ab4d7540d2c248543"
+      }
+    }
+  },
+  {
+    "name": "offer-og-webp-success",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/offer-a/og.webp?country=US"
+    },
+    "input": {
+      "source": {
+        "offer": {
+          "_id": "mongo-offer-a",
+          "id": "offer-a",
+          "namespace": "ns-a",
+          "title": "Parity Game",
+          "offerType": "BASE_GAME",
+          "publisherDisplayName": "Parity Studio",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "releaseDate": "2026-10-10T00:00:00.000Z",
+          "keyImages": [],
+          "items": [],
+          "seller": {
+            "name": "Seller"
+          }
+        },
+        "price": null,
+        "subItems": [],
+        "items": [],
+        "assets": [],
+        "build": null
+      },
+      "renderer": {
+        "card": {
+          "title": "Parity Game",
+          "subtitle": "Base game · Parity Studio",
+          "price": "Unavailable",
+          "priceDetail": "USD · US",
+          "lastUpdate": "01 Oct 2026",
+          "assetSize": "Not available",
+          "assetDetail": "Latest download",
+          "releaseDate": "10 Oct 2026"
+        },
+        "coverLength": 0
+      }
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "image/webp",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "byteLength": 4,
+        "sha256": "a40ff3d5900fb7698b8c865041347cb49eccedc8f93945f89629ad104aaecce4"
+      }
+    }
+  },
+  {
+    "name": "offer-og-missing",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/missing/og"
+    },
+    "input": {
+      "source": {
+        "offer": null
+      }
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/offer-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No offer exists with this ID.",
+        "code": "OFFER_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "sandbox-og-png-success",
+    "request": {
+      "method": "GET",
+      "path": "/v1/sandboxes/sandbox-a/og"
+    },
+    "input": {
+      "source": {
+        "sandbox": {
+          "_id": "sandbox-a",
+          "title": "Parity Sandbox",
+          "updated": "2026-10-02T00:00:00.000Z"
+        },
+        "offers": 0,
+        "items": [],
+        "assets": [],
+        "identity": null
+      },
+      "renderer": {
+        "card": {
+          "title": "Parity Sandbox",
+          "subtitle": "Sandbox",
+          "metrics": [
+            {
+              "label": "OFFERS",
+              "value": "0",
+              "detail": "Store entries"
+            },
+            {
+              "label": "ITEMS",
+              "value": "0",
+              "detail": "Catalog items"
+            },
+            {
+              "label": "ASSETS",
+              "value": "0",
+              "detail": "Distribution records"
+            }
+          ],
+          "footer": {
+            "label": "Last update",
+            "value": "02 Oct 2026"
+          }
+        },
+        "coverLength": 0
+      }
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "image/png",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "byteLength": 4,
+        "sha256": "0f4636c78f65d3639ece5a064b5ae753e3408614a14fb18ab4d7540d2c248543"
+      }
+    }
+  },
+  {
+    "name": "sandbox-og-webp-success",
+    "request": {
+      "method": "GET",
+      "path": "/v1/sandboxes/sandbox-a/og.webp"
+    },
+    "input": {
+      "source": {
+        "sandbox": {
+          "_id": "sandbox-a",
+          "title": "Parity Sandbox",
+          "updated": "2026-10-02T00:00:00.000Z"
+        },
+        "offers": 0,
+        "items": [],
+        "assets": [],
+        "identity": null
+      },
+      "renderer": {
+        "card": {
+          "title": "Parity Sandbox",
+          "subtitle": "Sandbox",
+          "metrics": [
+            {
+              "label": "OFFERS",
+              "value": "0",
+              "detail": "Store entries"
+            },
+            {
+              "label": "ITEMS",
+              "value": "0",
+              "detail": "Catalog items"
+            },
+            {
+              "label": "ASSETS",
+              "value": "0",
+              "detail": "Distribution records"
+            }
+          ],
+          "footer": {
+            "label": "Last update",
+            "value": "02 Oct 2026"
+          }
+        },
+        "coverLength": 0
+      }
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "image/webp",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "byteLength": 4,
+        "sha256": "a40ff3d5900fb7698b8c865041347cb49eccedc8f93945f89629ad104aaecce4"
+      }
+    }
+  },
+  {
+    "name": "sandbox-og-missing",
+    "request": {
+      "method": "GET",
+      "path": "/v1/sandboxes/missing/og"
+    },
+    "input": {
+      "source": {
+        "sandbox": null
+      }
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/sandbox-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No sandbox exists with this ID.",
+        "code": "SANDBOX_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "free-games-og-redirect",
+    "request": {
+      "method": "GET",
+      "path": "/v1/free-games/og?country=ES"
+    },
+    "input": {
+      "source": {}
+    },
+    "response": {
+      "status": 302,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "location": "https://api.egdata.app/free-games/og?country=ES"
+      },
+      "body": ""
+    }
+  },
+  {
+    "name": "game-awards-og-redirect",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards/og"
+    },
+    "input": {
+      "source": {}
+    },
+    "response": {
+      "status": 302,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "location": "https://api.egdata.app/game-awards/og"
+      },
+      "body": ""
+    }
+  },
+  {
+    "name": "collections-og-redirect-escaped-slug",
+    "request": {
+      "method": "GET",
+      "path": "/v1/collections/top%20sellers/2025-W01/og?v=2"
+    },
+    "input": {
+      "source": {}
+    },
+    "response": {
+      "status": 302,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "location": "https://api.egdata.app/collections/top%20sellers/2025-W01/og?v=2"
+      },
+      "body": ""
+    }
+  }
+]

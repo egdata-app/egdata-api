@@ -1,0 +1,4037 @@
+[
+  {
+    "name": "legacy search ",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:590ef44979864ec7dbdf2960755691d03639148bbdaf1b04b2f0db7718ff7c96:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": []
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ],
+            "aggregations": {
+              "offerType": {
+                "terms": {
+                  "field": "offerType.keyword",
+                  "size": 100
+                }
+              },
+              "technologies": {
+                "terms": {
+                  "field": "lastBuilds.technologies.technology.keyword",
+                  "size": 10000
+                }
+              },
+              "price_stats": {
+                "stats": {
+                  "field": "prices.US.price.discountPrice"
+                }
+              },
+              "tags": {
+                "terms": {
+                  "field": "tags.name.keyword",
+                  "size": 10000
+                }
+              },
+              "developer": {
+                "terms": {
+                  "field": "developerDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "publisher": {
+                "terms": {
+                  "field": "publisherDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "seller": {
+                "terms": {
+                  "field": "seller.name.keyword",
+                  "size": 1000
+                }
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "id": "a",
+                  "namespace": "ns",
+                  "title": "Example",
+                  "offerType": "BASE_GAME",
+                  "customAttributes": [
+                    {
+                      "key": "test",
+                      "value": "value"
+                    }
+                  ],
+                  "prices": {
+                    "US": {
+                      "offerId": "a",
+                      "currency": "USD"
+                    }
+                  }
+                }
+              }
+            ],
+            "total": {
+              "value": 1
+            }
+          },
+          "aggregations": {
+            "offerType": {
+              "buckets": []
+            },
+            "tags": {
+              "buckets": [
+                "t"
+              ]
+            },
+            "extra": 1
+          },
+          "took": 3,
+          "timed_out": false
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:590ef44979864ec7dbdf2960755691d03639148bbdaf1b04b2f0db7718ff7c96:locale:en-US",
+          "payload": {
+            "total": 1,
+            "offers": [
+              {
+                "id": "a",
+                "namespace": "ns",
+                "title": "Example",
+                "offerType": "BASE_GAME",
+                "customAttributes": {
+                  "test": {
+                    "type": "STRING",
+                    "value": "value"
+                  }
+                },
+                "price": {
+                  "offerId": "a",
+                  "currency": "USD"
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "page": 1,
+            "limit": 10,
+            "aggregations": {
+              "offerType": {
+                "buckets": []
+              },
+              "tags": {
+                "buckets": [
+                  "t"
+                ]
+              }
+            },
+            "meta": {
+              "ms": 3,
+              "timed_out": false,
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"9361c6327d03d5401edfbfc8235b5dc99365c006\""
+      },
+      "body": {
+        "total": 1,
+        "offers": [
+          {
+            "id": "a",
+            "namespace": "ns",
+            "title": "Example",
+            "offerType": "BASE_GAME",
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "value"
+              }
+            },
+            "price": {
+              "offerId": "a",
+              "currency": "USD"
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "page": 1,
+        "limit": 10,
+        "aggregations": {
+          "offerType": {
+            "buckets": []
+          },
+          "tags": {
+            "buckets": [
+              "t"
+            ]
+          }
+        },
+        "meta": {
+          "ms": 3,
+          "timed_out": false,
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy search ?facets=minimal&title=Game",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?facets=minimal&title=Game"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:c816adc09524b84aadef40b92bd72ee202f0514160da4615b8d54b41e658a8be:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "multi_match": {
+                            "query": "Game",
+                            "fields": [
+                              "title^4",
+                              "title.synonym^3",
+                              "developerDisplayName^2",
+                              "publisherDisplayName^2",
+                              "tags.name",
+                              "description"
+                            ],
+                            "type": "best_fields",
+                            "fuzziness": "AUTO",
+                            "operator": "and"
+                          }
+                        },
+                        {
+                          "match_phrase": {
+                            "title": {
+                              "query": "Game",
+                              "boost": 10,
+                              "slop": 2
+                            }
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": []
+              }
+            },
+            "sort": [
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              },
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              }
+            ],
+            "aggregations": {
+              "offerType": {
+                "terms": {
+                  "field": "offerType.keyword",
+                  "size": 100
+                }
+              },
+              "technologies": {
+                "terms": {
+                  "field": "lastBuilds.technologies.technology.keyword",
+                  "size": 1000
+                }
+              },
+              "price_stats": {
+                "stats": {
+                  "field": "prices.US.price.discountPrice"
+                }
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "id": "a",
+                  "namespace": "ns",
+                  "title": "Example",
+                  "offerType": "BASE_GAME",
+                  "customAttributes": [
+                    {
+                      "key": "test",
+                      "value": "value"
+                    }
+                  ],
+                  "prices": {
+                    "US": {
+                      "offerId": "a",
+                      "currency": "USD"
+                    }
+                  }
+                }
+              }
+            ],
+            "total": {
+              "value": 1
+            }
+          },
+          "aggregations": {
+            "offerType": {
+              "buckets": []
+            },
+            "tags": {
+              "buckets": [
+                "t"
+              ]
+            },
+            "extra": 1
+          },
+          "took": 3,
+          "timed_out": false
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:c816adc09524b84aadef40b92bd72ee202f0514160da4615b8d54b41e658a8be:locale:en-US",
+          "payload": {
+            "total": 1,
+            "offers": [
+              {
+                "id": "a",
+                "namespace": "ns",
+                "title": "Example",
+                "offerType": "BASE_GAME",
+                "customAttributes": {
+                  "test": {
+                    "type": "STRING",
+                    "value": "value"
+                  }
+                },
+                "price": {
+                  "offerId": "a",
+                  "currency": "USD"
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "page": 1,
+            "limit": 10,
+            "aggregations": {
+              "offerType": {
+                "buckets": []
+              }
+            },
+            "meta": {
+              "ms": 3,
+              "timed_out": false,
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"e677202c282b708d38f4932e76aacf1a698d8dad\""
+      },
+      "body": {
+        "total": 1,
+        "offers": [
+          {
+            "id": "a",
+            "namespace": "ns",
+            "title": "Example",
+            "offerType": "BASE_GAME",
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "value"
+              }
+            },
+            "price": {
+              "offerId": "a",
+              "currency": "USD"
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "page": 1,
+        "limit": 10,
+        "aggregations": {
+          "offerType": {
+            "buckets": []
+          }
+        },
+        "meta": {
+          "ms": 3,
+          "timed_out": false,
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy search ?facets=none&onSale=false&limit=2&page=3",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?facets=none&onSale=false&limit=2&page=3"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:72ebd2ae9342704b7eff5102c92591412713523f5c371d0e824292a6fcc51dd5:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 4,
+            "size": 2,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "prices.US.price.discount": {
+                        "gt": 0
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "id": "a",
+                  "namespace": "ns",
+                  "title": "Example",
+                  "offerType": "BASE_GAME",
+                  "customAttributes": [
+                    {
+                      "key": "test",
+                      "value": "value"
+                    }
+                  ],
+                  "prices": {
+                    "US": {
+                      "offerId": "a",
+                      "currency": "USD"
+                    }
+                  }
+                }
+              }
+            ],
+            "total": {
+              "value": 1
+            }
+          },
+          "aggregations": {
+            "offerType": {
+              "buckets": []
+            },
+            "tags": {
+              "buckets": [
+                "t"
+              ]
+            },
+            "extra": 1
+          },
+          "took": 3,
+          "timed_out": false
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:72ebd2ae9342704b7eff5102c92591412713523f5c371d0e824292a6fcc51dd5:locale:en-US",
+          "payload": {
+            "total": 1,
+            "offers": [
+              {
+                "id": "a",
+                "namespace": "ns",
+                "title": "Example",
+                "offerType": "BASE_GAME",
+                "customAttributes": {
+                  "test": {
+                    "type": "STRING",
+                    "value": "value"
+                  }
+                },
+                "price": {
+                  "offerId": "a",
+                  "currency": "USD"
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "page": 3,
+            "limit": 2,
+            "aggregations": {},
+            "meta": {
+              "ms": 3,
+              "timed_out": false,
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"07893eaeb0266dcd0cd57845d683fb37922cb3d6\""
+      },
+      "body": {
+        "total": 1,
+        "offers": [
+          {
+            "id": "a",
+            "namespace": "ns",
+            "title": "Example",
+            "offerType": "BASE_GAME",
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "value"
+              }
+            },
+            "price": {
+              "offerId": "a",
+              "currency": "USD"
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "page": 3,
+        "limit": 2,
+        "aggregations": {},
+        "meta": {
+          "ms": 3,
+          "timed_out": false,
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy search ?tags=b,a,a&technologies%5B%5D=RPG&priceMin=2&isLowestPrice=true&sortBy=upcoming",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?tags=b,a,a&technologies%5B%5D=RPG&priceMin=2&isLowestPrice=true&sortBy=upcoming"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:f0f04c5fb2e6229470e257dffb1f90b573ae3d1f8b648384ab3aa913122721a2:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "terms_set": {
+                      "tags.id.keyword": {
+                        "terms": [
+                          "a",
+                          "b"
+                        ],
+                        "minimum_should_match_script": {
+                          "source": "2"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "terms_set": {
+                      "lastBuilds.technologies.technology.keyword": {
+                        "terms": [
+                          "RPG"
+                        ],
+                        "minimum_should_match_script": {
+                          "source": "1"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "range": {
+                      "prices.US.price.discountPrice": {
+                        "gte": 2
+                      }
+                    }
+                  },
+                  {
+                    "term": {
+                      "isAtLowestPriceUS": true
+                    }
+                  },
+                  {
+                    "range": {
+                      "prices.US.price.discount": {
+                        "gt": 0
+                      }
+                    }
+                  },
+                  {
+                    "range": {
+                      "releaseDate": {
+                        "gte": "now"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "releaseDate": {
+                  "order": "asc"
+                }
+              }
+            ],
+            "aggregations": {
+              "offerType": {
+                "terms": {
+                  "field": "offerType.keyword",
+                  "size": 100
+                }
+              },
+              "technologies": {
+                "terms": {
+                  "field": "lastBuilds.technologies.technology.keyword",
+                  "size": 10000
+                }
+              },
+              "price_stats": {
+                "stats": {
+                  "field": "prices.US.price.discountPrice"
+                }
+              },
+              "tags": {
+                "terms": {
+                  "field": "tags.name.keyword",
+                  "size": 10000
+                }
+              },
+              "developer": {
+                "terms": {
+                  "field": "developerDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "publisher": {
+                "terms": {
+                  "field": "publisherDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "seller": {
+                "terms": {
+                  "field": "seller.name.keyword",
+                  "size": 1000
+                }
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "id": "a",
+                  "namespace": "ns",
+                  "title": "Example",
+                  "offerType": "BASE_GAME",
+                  "customAttributes": [
+                    {
+                      "key": "test",
+                      "value": "value"
+                    }
+                  ],
+                  "prices": {
+                    "US": {
+                      "offerId": "a",
+                      "currency": "USD"
+                    }
+                  }
+                }
+              }
+            ],
+            "total": {
+              "value": 1
+            }
+          },
+          "aggregations": {
+            "offerType": {
+              "buckets": []
+            },
+            "tags": {
+              "buckets": [
+                "t"
+              ]
+            },
+            "extra": 1
+          },
+          "took": 3,
+          "timed_out": false
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:f0f04c5fb2e6229470e257dffb1f90b573ae3d1f8b648384ab3aa913122721a2:locale:en-US",
+          "payload": {
+            "total": 1,
+            "offers": [
+              {
+                "id": "a",
+                "namespace": "ns",
+                "title": "Example",
+                "offerType": "BASE_GAME",
+                "customAttributes": {
+                  "test": {
+                    "type": "STRING",
+                    "value": "value"
+                  }
+                },
+                "price": {
+                  "offerId": "a",
+                  "currency": "USD"
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "page": 1,
+            "limit": 10,
+            "aggregations": {
+              "offerType": {
+                "buckets": []
+              },
+              "tags": {
+                "buckets": [
+                  "t"
+                ]
+              }
+            },
+            "meta": {
+              "ms": 3,
+              "timed_out": false,
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"9361c6327d03d5401edfbfc8235b5dc99365c006\""
+      },
+      "body": {
+        "total": 1,
+        "offers": [
+          {
+            "id": "a",
+            "namespace": "ns",
+            "title": "Example",
+            "offerType": "BASE_GAME",
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "value"
+              }
+            },
+            "price": {
+              "offerId": "a",
+              "currency": "USD"
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "page": 1,
+        "limit": 10,
+        "aggregations": {
+          "offerType": {
+            "buckets": []
+          },
+          "tags": {
+            "buckets": [
+              "t"
+            ]
+          }
+        },
+        "meta": {
+          "ms": 3,
+          "timed_out": false,
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy search ?sortBy=releaseDate&sortDir=asc",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?sortBy=releaseDate&sortDir=asc"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:3eac256a42ef598cfe4ccbc47d1e213f40fa238e211b30772a57ffa415366a2d:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "releaseDate": {
+                        "gte": "now"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "releaseDate": {
+                  "order": "asc"
+                }
+              }
+            ],
+            "aggregations": {
+              "offerType": {
+                "terms": {
+                  "field": "offerType.keyword",
+                  "size": 100
+                }
+              },
+              "technologies": {
+                "terms": {
+                  "field": "lastBuilds.technologies.technology.keyword",
+                  "size": 10000
+                }
+              },
+              "price_stats": {
+                "stats": {
+                  "field": "prices.US.price.discountPrice"
+                }
+              },
+              "tags": {
+                "terms": {
+                  "field": "tags.name.keyword",
+                  "size": 10000
+                }
+              },
+              "developer": {
+                "terms": {
+                  "field": "developerDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "publisher": {
+                "terms": {
+                  "field": "publisherDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "seller": {
+                "terms": {
+                  "field": "seller.name.keyword",
+                  "size": 1000
+                }
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "id": "a",
+                  "namespace": "ns",
+                  "title": "Example",
+                  "offerType": "BASE_GAME",
+                  "customAttributes": [
+                    {
+                      "key": "test",
+                      "value": "value"
+                    }
+                  ],
+                  "prices": {
+                    "US": {
+                      "offerId": "a",
+                      "currency": "USD"
+                    }
+                  }
+                }
+              }
+            ],
+            "total": {
+              "value": 1
+            }
+          },
+          "aggregations": {
+            "offerType": {
+              "buckets": []
+            },
+            "tags": {
+              "buckets": [
+                "t"
+              ]
+            },
+            "extra": 1
+          },
+          "took": 3,
+          "timed_out": false
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:3eac256a42ef598cfe4ccbc47d1e213f40fa238e211b30772a57ffa415366a2d:locale:en-US",
+          "payload": {
+            "total": 1,
+            "offers": [
+              {
+                "id": "a",
+                "namespace": "ns",
+                "title": "Example",
+                "offerType": "BASE_GAME",
+                "customAttributes": {
+                  "test": {
+                    "type": "STRING",
+                    "value": "value"
+                  }
+                },
+                "price": {
+                  "offerId": "a",
+                  "currency": "USD"
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "page": 1,
+            "limit": 10,
+            "aggregations": {
+              "offerType": {
+                "buckets": []
+              },
+              "tags": {
+                "buckets": [
+                  "t"
+                ]
+              }
+            },
+            "meta": {
+              "ms": 3,
+              "timed_out": false,
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"9361c6327d03d5401edfbfc8235b5dc99365c006\""
+      },
+      "body": {
+        "total": 1,
+        "offers": [
+          {
+            "id": "a",
+            "namespace": "ns",
+            "title": "Example",
+            "offerType": "BASE_GAME",
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "value"
+              }
+            },
+            "price": {
+              "offerId": "a",
+              "currency": "USD"
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "page": 1,
+        "limit": 10,
+        "aggregations": {
+          "offerType": {
+            "buckets": []
+          },
+          "tags": {
+            "buckets": [
+              "t"
+            ]
+          }
+        },
+        "meta": {
+          "ms": 3,
+          "timed_out": false,
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy search ?pastGiveaways=1&expand=full&sortBy=giveawayDate",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?pastGiveaways=1&expand=full&sortBy=giveawayDate"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:96b0d75d2ae9b3beb80231ad7a4167742594cf25c225254627a7a70343f0dbf6:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "exists": {
+                      "field": "freeEntries"
+                    }
+                  },
+                  {
+                    "exists": {
+                      "field": "freeEntries"
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "freeEntries.endDate": {
+                  "order": "desc"
+                }
+              }
+            ],
+            "aggregations": {
+              "offerType": {
+                "terms": {
+                  "field": "offerType.keyword",
+                  "size": 100
+                }
+              },
+              "technologies": {
+                "terms": {
+                  "field": "lastBuilds.technologies.technology.keyword",
+                  "size": 10000
+                }
+              },
+              "price_stats": {
+                "stats": {
+                  "field": "prices.US.price.discountPrice"
+                }
+              },
+              "tags": {
+                "terms": {
+                  "field": "tags.name.keyword",
+                  "size": 10000
+                }
+              },
+              "developer": {
+                "terms": {
+                  "field": "developerDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "publisher": {
+                "terms": {
+                  "field": "publisherDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "seller": {
+                "terms": {
+                  "field": "seller.name.keyword",
+                  "size": 1000
+                }
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "id": "a",
+                  "namespace": "ns",
+                  "title": "Example",
+                  "offerType": "BASE_GAME",
+                  "customAttributes": [
+                    {
+                      "key": "test",
+                      "value": "value"
+                    }
+                  ],
+                  "prices": {
+                    "US": {
+                      "offerId": "a",
+                      "currency": "USD"
+                    }
+                  }
+                }
+              }
+            ],
+            "total": {
+              "value": 1
+            }
+          },
+          "aggregations": {
+            "offerType": {
+              "buckets": []
+            },
+            "tags": {
+              "buckets": [
+                "t"
+              ]
+            },
+            "extra": 1
+          },
+          "took": 3,
+          "timed_out": false
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:96b0d75d2ae9b3beb80231ad7a4167742594cf25c225254627a7a70343f0dbf6:locale:en-US",
+          "payload": {
+            "total": 1,
+            "offers": [
+              {
+                "id": "a",
+                "namespace": "ns",
+                "title": "Example",
+                "offerType": "BASE_GAME",
+                "customAttributes": {
+                  "test": {
+                    "type": "STRING",
+                    "value": "value"
+                  }
+                },
+                "price": {
+                  "offerId": "a",
+                  "currency": "USD"
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "page": 1,
+            "limit": 10,
+            "aggregations": {
+              "offerType": {
+                "buckets": []
+              },
+              "tags": {
+                "buckets": [
+                  "t"
+                ]
+              }
+            },
+            "meta": {
+              "ms": 3,
+              "timed_out": false,
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"9361c6327d03d5401edfbfc8235b5dc99365c006\""
+      },
+      "body": {
+        "total": 1,
+        "offers": [
+          {
+            "id": "a",
+            "namespace": "ns",
+            "title": "Example",
+            "offerType": "BASE_GAME",
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "value"
+              }
+            },
+            "price": {
+              "offerId": "a",
+              "currency": "USD"
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "page": 1,
+        "limit": 10,
+        "aggregations": {
+          "offerType": {
+            "buckets": []
+          },
+          "tags": {
+            "buckets": [
+              "t"
+            ]
+          }
+        },
+        "meta": {
+          "ms": 3,
+          "timed_out": false,
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy search ?categories=apps&refundType=FULL&seller=ID&isCodeRedemptionOnly=1&excludeBlockchain=1&sortBy=discountPercent",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?categories=apps&refundType=FULL&seller=ID&isCodeRedemptionOnly=1&excludeBlockchain=1&sortBy=discountPercent"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:de7c913e27b04e163bf909ec0ad40d1c608b7557c3bc7510f7045125b79f5c31:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "terms": {
+                      "categories.keyword": [
+                        "apps"
+                      ]
+                    }
+                  },
+                  {
+                    "term": {
+                      "seller.id.keyword": "ID"
+                    }
+                  },
+                  {
+                    "term": {
+                      "refundType.keyword": "FULL"
+                    }
+                  },
+                  {
+                    "term": {
+                      "isCodeRedemptionOnly": true
+                    }
+                  },
+                  {
+                    "bool": {
+                      "must_not": [
+                        {
+                          "term": {
+                            "customAttributes.isBlockchainUsed": true
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "prices.US.appliedRules.discountSetting.discountPercentage": {
+                  "order": "desc"
+                }
+              }
+            ],
+            "aggregations": {
+              "offerType": {
+                "terms": {
+                  "field": "offerType.keyword",
+                  "size": 100
+                }
+              },
+              "technologies": {
+                "terms": {
+                  "field": "lastBuilds.technologies.technology.keyword",
+                  "size": 10000
+                }
+              },
+              "price_stats": {
+                "stats": {
+                  "field": "prices.US.price.discountPrice"
+                }
+              },
+              "tags": {
+                "terms": {
+                  "field": "tags.name.keyword",
+                  "size": 10000
+                }
+              },
+              "developer": {
+                "terms": {
+                  "field": "developerDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "publisher": {
+                "terms": {
+                  "field": "publisherDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "seller": {
+                "terms": {
+                  "field": "seller.name.keyword",
+                  "size": 1000
+                }
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "id": "a",
+                  "namespace": "ns",
+                  "title": "Example",
+                  "offerType": "BASE_GAME",
+                  "customAttributes": [
+                    {
+                      "key": "test",
+                      "value": "value"
+                    }
+                  ],
+                  "prices": {
+                    "US": {
+                      "offerId": "a",
+                      "currency": "USD"
+                    }
+                  }
+                }
+              }
+            ],
+            "total": {
+              "value": 1
+            }
+          },
+          "aggregations": {
+            "offerType": {
+              "buckets": []
+            },
+            "tags": {
+              "buckets": [
+                "t"
+              ]
+            },
+            "extra": 1
+          },
+          "took": 3,
+          "timed_out": false
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:de7c913e27b04e163bf909ec0ad40d1c608b7557c3bc7510f7045125b79f5c31:locale:en-US",
+          "payload": {
+            "total": 1,
+            "offers": [
+              {
+                "id": "a",
+                "namespace": "ns",
+                "title": "Example",
+                "offerType": "BASE_GAME",
+                "customAttributes": {
+                  "test": {
+                    "type": "STRING",
+                    "value": "value"
+                  }
+                },
+                "price": {
+                  "offerId": "a",
+                  "currency": "USD"
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "page": 1,
+            "limit": 10,
+            "aggregations": {
+              "offerType": {
+                "buckets": []
+              },
+              "tags": {
+                "buckets": [
+                  "t"
+                ]
+              }
+            },
+            "meta": {
+              "ms": 3,
+              "timed_out": false,
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"9361c6327d03d5401edfbfc8235b5dc99365c006\""
+      },
+      "body": {
+        "total": 1,
+        "offers": [
+          {
+            "id": "a",
+            "namespace": "ns",
+            "title": "Example",
+            "offerType": "BASE_GAME",
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "value"
+              }
+            },
+            "price": {
+              "offerId": "a",
+              "currency": "USD"
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "page": 1,
+        "limit": 10,
+        "aggregations": {
+          "offerType": {
+            "buckets": []
+          },
+          "tags": {
+            "buckets": [
+              "t"
+            ]
+          }
+        },
+        "meta": {
+          "ms": 3,
+          "timed_out": false,
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy search fractional prices",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?priceMin=1.125&priceMax=2.875"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:37f8df9987c84bc937e76161499e1806cd46c88736876efa5578f373a1330dfe:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "prices.US.price.discountPrice": {
+                        "gte": 1.125,
+                        "lte": 2.875
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ],
+            "aggregations": {
+              "offerType": {
+                "terms": {
+                  "field": "offerType.keyword",
+                  "size": 100
+                }
+              },
+              "technologies": {
+                "terms": {
+                  "field": "lastBuilds.technologies.technology.keyword",
+                  "size": 10000
+                }
+              },
+              "price_stats": {
+                "stats": {
+                  "field": "prices.US.price.discountPrice"
+                }
+              },
+              "tags": {
+                "terms": {
+                  "field": "tags.name.keyword",
+                  "size": 10000
+                }
+              },
+              "developer": {
+                "terms": {
+                  "field": "developerDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "publisher": {
+                "terms": {
+                  "field": "publisherDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "seller": {
+                "terms": {
+                  "field": "seller.name.keyword",
+                  "size": 1000
+                }
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "id": "a",
+                  "namespace": "ns",
+                  "title": "Example",
+                  "offerType": "BASE_GAME",
+                  "customAttributes": [
+                    {
+                      "key": "test",
+                      "value": "value"
+                    }
+                  ],
+                  "prices": {
+                    "US": {
+                      "offerId": "a",
+                      "currency": "USD"
+                    }
+                  }
+                }
+              }
+            ],
+            "total": {
+              "value": 1
+            }
+          },
+          "aggregations": {
+            "offerType": {
+              "buckets": []
+            },
+            "tags": {
+              "buckets": [
+                "t"
+              ]
+            },
+            "extra": 1
+          },
+          "took": 3,
+          "timed_out": false
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:37f8df9987c84bc937e76161499e1806cd46c88736876efa5578f373a1330dfe:locale:en-US",
+          "payload": {
+            "total": 1,
+            "offers": [
+              {
+                "id": "a",
+                "namespace": "ns",
+                "title": "Example",
+                "offerType": "BASE_GAME",
+                "customAttributes": {
+                  "test": {
+                    "type": "STRING",
+                    "value": "value"
+                  }
+                },
+                "price": {
+                  "offerId": "a",
+                  "currency": "USD"
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "page": 1,
+            "limit": 10,
+            "aggregations": {
+              "offerType": {
+                "buckets": []
+              },
+              "tags": {
+                "buckets": [
+                  "t"
+                ]
+              }
+            },
+            "meta": {
+              "ms": 3,
+              "timed_out": false,
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"9361c6327d03d5401edfbfc8235b5dc99365c006\""
+      },
+      "body": {
+        "total": 1,
+        "offers": [
+          {
+            "id": "a",
+            "namespace": "ns",
+            "title": "Example",
+            "offerType": "BASE_GAME",
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "value"
+              }
+            },
+            "price": {
+              "offerId": "a",
+              "currency": "USD"
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "page": 1,
+        "limit": 10,
+        "aggregations": {
+          "offerType": {
+            "buckets": []
+          },
+          "tags": {
+            "buckets": [
+              "t"
+            ]
+          }
+        },
+        "meta": {
+          "ms": 3,
+          "timed_out": false,
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy search warm cache",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:590ef44979864ec7dbdf2960755691d03639148bbdaf1b04b2f0db7718ff7c96:locale:en-US"
+        },
+        "result": {
+          "total": 2,
+          "offers": [],
+          "meta": {
+            "cached": false
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"6610463aeeb21f872efec11db26a06d3477e052c\""
+      },
+      "body": {
+        "total": 2,
+        "offers": [],
+        "meta": {
+          "cached": true
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy search reroutes",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search?expand=full",
+      "rawBody": "{\"tags\":[\"a,b\",\"a\",\"b\"],\"facets\":\"minimal\",\"page\":0,\"limit\":150,\"unknown\":1}",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=DE"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 303,
+      "headers": {
+        "cache-control": "no-store",
+        "location": "/search/v2/search?country=DE&expand=true&facets=minimal&limit=100&tags%5B%5D=a&tags%5B%5D=a%2Cb&tags%5B%5D=b"
+      },
+      "body": ""
+    }
+  },
+  {
+    "name": "legacy v2 null",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "null"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"a351a058ca958011067cee2c6ebb488fceed98c7\""
+      },
+      "body": {
+        "message": "Invalid body"
+      }
+    }
+  },
+  {
+    "name": "legacy v2 invalid filters",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "{\"seller\":1,\"onSale\":null,\"sortBy\":\"wrong\",\"page\":1.5,\"tags\":[\" \"]}"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"deb3028a87c1de0c472d68f795106806a11064a6\""
+      },
+      "body": {
+        "message": "Invalid search filters",
+        "issues": [
+          {
+            "origin": "string",
+            "code": "too_small",
+            "minimum": 1,
+            "inclusive": true,
+            "path": [
+              "tags",
+              0
+            ],
+            "message": "Too small: expected string to have >=1 characters"
+          },
+          {
+            "expected": "string",
+            "code": "invalid_type",
+            "path": [
+              "seller"
+            ],
+            "message": "Invalid input: expected string, received number"
+          },
+          {
+            "expected": "boolean",
+            "code": "invalid_type",
+            "path": [
+              "onSale"
+            ],
+            "message": "Invalid input: expected boolean, received null"
+          },
+          {
+            "code": "invalid_value",
+            "values": [
+              "releaseDate",
+              "lastModifiedDate",
+              "effectiveDate",
+              "creationDate",
+              "viewableDate",
+              "pcReleaseDate",
+              "upcoming",
+              "priceAsc",
+              "priceDesc",
+              "price",
+              "discount",
+              "discountPercent",
+              "priceUpdatedAt",
+              "giveawayDate"
+            ],
+            "path": [
+              "sortBy"
+            ],
+            "message": "Invalid option: expected one of \"releaseDate\"|\"lastModifiedDate\"|\"effectiveDate\"|\"creationDate\"|\"viewableDate\"|\"pcReleaseDate\"|\"upcoming\"|\"priceAsc\"|\"priceDesc\"|\"price\"|\"discount\"|\"discountPercent\"|\"priceUpdatedAt\"|\"giveawayDate\""
+          },
+          {
+            "expected": "int",
+            "format": "safeint",
+            "code": "invalid_type",
+            "path": [
+              "page"
+            ],
+            "message": "Invalid input: expected int, received number"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "legacy v2 invalid technologies",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "{\"technologies\":[\"\"],\"page\":\"invalid\"}"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"80cf624c7358804fd48d390a9751a36eae79c000\""
+      },
+      "body": {
+        "message": "Invalid technologies. Provide an array of non-empty technology names."
+      }
+    }
+  },
+  {
+    "name": "legacy search NaN",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?page=no"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"fcb103ada4ad6555b851815ebe6f954e9c332646\""
+      },
+      "body": {
+        "message": "Invalid search filters",
+        "issues": [
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "NaN",
+            "path": [
+              "page"
+            ],
+            "message": "Invalid input: expected number, received NaN"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "legacy search unavailable",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:590ef44979864ec7dbdf2960755691d03639148bbdaf1b04b2f0db7718ff7c96:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": []
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ],
+            "aggregations": {
+              "offerType": {
+                "terms": {
+                  "field": "offerType.keyword",
+                  "size": 100
+                }
+              },
+              "technologies": {
+                "terms": {
+                  "field": "lastBuilds.technologies.technology.keyword",
+                  "size": 10000
+                }
+              },
+              "price_stats": {
+                "stats": {
+                  "field": "prices.US.price.discountPrice"
+                }
+              },
+              "tags": {
+                "terms": {
+                  "field": "tags.name.keyword",
+                  "size": 10000
+                }
+              },
+              "developer": {
+                "terms": {
+                  "field": "developerDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "publisher": {
+                "terms": {
+                  "field": "publisherDisplayName.keyword",
+                  "size": 1000
+                }
+              },
+              "seller": {
+                "terms": {
+                  "field": "seller.name.keyword",
+                  "size": 1000
+                }
+              }
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "search inputs radices",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?facets=none&page=0b11&limit=0O12&priceMin=0x1ffffffffffffffff&priceMax=0x100000000000000000000000000000001"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:8e0261a091baab732881cca2ed6272c3e9392cf5dd967c603e57ca0dc0290997:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 20,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "prices.US.price.discountPrice": {
+                        "gte": 36893488147419103000,
+                        "lte": 3.402823669209385e+38
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 0
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:8e0261a091baab732881cca2ed6272c3e9392cf5dd967c603e57ca0dc0290997:locale:en-US",
+          "payload": {
+            "total": 0,
+            "offers": [],
+            "page": 3,
+            "limit": 10,
+            "aggregations": {},
+            "meta": {
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"50ebe827ddea22eccbfdfedbf9e7821cfe479d7e\""
+      },
+      "body": {
+        "total": 0,
+        "offers": [],
+        "page": 3,
+        "limit": 10,
+        "aggregations": {},
+        "meta": {
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "search inputs oversized-radix",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?facets=none&priceMax=0b100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:93c9d5436747727aa63a5d73771c5cc3171dbd2ee66c663f6734cb3176c97daa:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "prices.US.price.discountPrice": {
+                        "lte": 1.6069380442589903e+60
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 0
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:93c9d5436747727aa63a5d73771c5cc3171dbd2ee66c663f6734cb3176c97daa:locale:en-US",
+          "payload": {
+            "total": 0,
+            "offers": [],
+            "page": 1,
+            "limit": 10,
+            "aggregations": {},
+            "meta": {
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"194d673100f6c1d4ed53bfea1cd099b88342a732\""
+      },
+      "body": {
+        "total": 0,
+        "offers": [],
+        "page": 1,
+        "limit": 10,
+        "aggregations": {},
+        "meta": {
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "search inputs unicode-trim",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?facets=none&limit=%EF%BB%BF0x0a%C2%A0&page=%20&priceMin=-0&priceMax=.015625"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:ab19a84bd663f8497f38be9b9f6ea00d218eac07bb3d2f2cfc27bc0aaa48447a:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "prices.US.price.discountPrice": {
+                        "gte": 0,
+                        "lte": 0.015625
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 0
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:ab19a84bd663f8497f38be9b9f6ea00d218eac07bb3d2f2cfc27bc0aaa48447a:locale:en-US",
+          "payload": {
+            "total": 0,
+            "offers": [],
+            "page": 1,
+            "limit": 10,
+            "aggregations": {},
+            "meta": {
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"194d673100f6c1d4ed53bfea1cd099b88342a732\""
+      },
+      "body": {
+        "total": 0,
+        "offers": [],
+        "page": 1,
+        "limit": 10,
+        "aggregations": {},
+        "meta": {
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "search inputs duplicate-scalars",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?facets=none&title=first&title=second&priceMin=3&priceMin=no&limit=4&limit=bogus&onSale=true&onSale=no"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:18c17f6da84b4a2be3b59df7024fbc2b8676e6b1ba5f00df499dcbaffc54a195:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 4,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "multi_match": {
+                            "query": "first",
+                            "fields": [
+                              "title^4",
+                              "title.synonym^3",
+                              "developerDisplayName^2",
+                              "publisherDisplayName^2",
+                              "tags.name",
+                              "description"
+                            ],
+                            "type": "best_fields",
+                            "fuzziness": "AUTO",
+                            "operator": "and"
+                          }
+                        },
+                        {
+                          "match_phrase": {
+                            "title": {
+                              "query": "first",
+                              "boost": 10,
+                              "slop": 2
+                            }
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "range": {
+                      "prices.US.price.discountPrice": {
+                        "gte": 3
+                      }
+                    }
+                  },
+                  {
+                    "range": {
+                      "prices.US.price.discount": {
+                        "gt": 0
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              },
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 0
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:18c17f6da84b4a2be3b59df7024fbc2b8676e6b1ba5f00df499dcbaffc54a195:locale:en-US",
+          "payload": {
+            "total": 0,
+            "offers": [],
+            "page": 1,
+            "limit": 4,
+            "aggregations": {},
+            "meta": {
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"ea246c67c4ac9beee14fe88b67ce7b7cf2a29e3d\""
+      },
+      "body": {
+        "total": 0,
+        "offers": [],
+        "page": 1,
+        "limit": 4,
+        "aggregations": {},
+        "meta": {
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "search inputs mixed-list-styles",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?facets=none&tags=z,b&tags%5B%5D=c%2Cb&tags%5B%5D=b&tags%5B%5D=b&tags%5B%5D=%20a%20&categories=j,i&categories=z&technologies=,,"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:ccad3ec47069715bf1b85e423087124f807107982ce85a37b7c9bca7ab2ae353:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "terms_set": {
+                      "tags.id.keyword": {
+                        "terms": [
+                          "a",
+                          "b",
+                          "c,b"
+                        ],
+                        "minimum_should_match_script": {
+                          "source": "3"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "terms": {
+                      "categories.keyword": [
+                        "i",
+                        "j"
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 0
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:ccad3ec47069715bf1b85e423087124f807107982ce85a37b7c9bca7ab2ae353:locale:en-US",
+          "payload": {
+            "total": 0,
+            "offers": [],
+            "page": 1,
+            "limit": 10,
+            "aggregations": {},
+            "meta": {
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"194d673100f6c1d4ed53bfea1cd099b88342a732\""
+      },
+      "body": {
+        "total": 0,
+        "offers": [],
+        "page": 1,
+        "limit": 10,
+        "aggregations": {},
+        "meta": {
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "search inputs largest-safe-page",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?facets=none&page=9007199254740991&limit=99"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:74a61d9912008b600febb878ede7bf156926e61bf99cb048eca2c732749845e2:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 891712726219358000,
+            "size": 99,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": []
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 0
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:74a61d9912008b600febb878ede7bf156926e61bf99cb048eca2c732749845e2:locale:en-US",
+          "payload": {
+            "total": 0,
+            "offers": [],
+            "page": 9007199254740991,
+            "limit": 99,
+            "aggregations": {},
+            "meta": {
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"c8560c295b3d12d8d1ed0fd17017d62fb2741c5f\""
+      },
+      "body": {
+        "total": 0,
+        "offers": [],
+        "page": 9007199254740991,
+        "limit": 99,
+        "aggregations": {},
+        "meta": {
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "search inputs clamp",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?facets=none&limit=-3&page=0&priceMin=-2e-2&priceMax=1e127"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:v2:d54f9d09c5f05633552dda3808e771ae64600e2ca55d500ef640054ef54e8939:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 1,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "prices.US.price.discountPrice": {
+                        "gte": -0.02,
+                        "lte": 1e+127
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 0
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:v2:d54f9d09c5f05633552dda3808e771ae64600e2ca55d500ef640054ef54e8939:locale:en-US",
+          "payload": {
+            "total": 0,
+            "offers": [],
+            "page": 1,
+            "limit": 1,
+            "aggregations": {},
+            "meta": {
+              "cached": false
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"282f51195a8d071e0600a5a106f16a2a328c7303\""
+      },
+      "body": {
+        "total": 0,
+        "offers": [],
+        "page": 1,
+        "limit": 1,
+        "aggregations": {},
+        "meta": {
+          "cached": false
+        }
+      }
+    }
+  },
+  {
+    "name": "search inputs infinite",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?priceMax=-Infinity&priceMin=Infinity&page=1e309&limit=%2BInfinity"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"d7623772f0fe474b9bf1162253575f27adcd3431\""
+      },
+      "body": {
+        "message": "Invalid search filters",
+        "issues": [
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "Infinity",
+            "path": [
+              "limit"
+            ],
+            "message": "Invalid input: expected number, received number"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "Infinity",
+            "path": [
+              "page"
+            ],
+            "message": "Invalid input: expected number, received number"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "Infinity",
+            "path": [
+              "price",
+              "min"
+            ],
+            "message": "Invalid input: expected number, received number"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "Infinity",
+            "path": [
+              "price",
+              "max"
+            ],
+            "message": "Invalid input: expected number, received number"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "search inputs invalid-numbers",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?priceMax=0x_1&priceMin=0b2&page=inf&limit=-0x10"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"0149dcb22f8528e11c58c05f1c41e79d4b54b2cc\""
+      },
+      "body": {
+        "message": "Invalid search filters",
+        "issues": [
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "NaN",
+            "path": [
+              "limit"
+            ],
+            "message": "Invalid input: expected number, received NaN"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "NaN",
+            "path": [
+              "page"
+            ],
+            "message": "Invalid input: expected number, received NaN"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "NaN",
+            "path": [
+              "price",
+              "min"
+            ],
+            "message": "Invalid input: expected number, received NaN"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "NaN",
+            "path": [
+              "price",
+              "max"
+            ],
+            "message": "Invalid input: expected number, received NaN"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "search inputs huge-radix",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?priceMin=0x10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"9fc71aa60ad59df44ee62b9a8a44d7ddfd9992ec\""
+      },
+      "body": {
+        "message": "Invalid search filters",
+        "issues": [
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "Infinity",
+            "path": [
+              "price",
+              "min"
+            ],
+            "message": "Invalid input: expected number, received number"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "search inputs unsafe-integers",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?limit=-0x0d&page=9007199254740992"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"b3fa6707bfb291af7e1b823e2686b78acce87534\""
+      },
+      "body": {
+        "message": "Invalid search filters",
+        "issues": [
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "NaN",
+            "path": [
+              "limit"
+            ],
+            "message": "Invalid input: expected number, received NaN"
+          },
+          {
+            "code": "too_big",
+            "maximum": 9007199254740991,
+            "note": "Integers must be within the safe integer range.",
+            "origin": "int",
+            "inclusive": true,
+            "path": [
+              "page"
+            ],
+            "message": "Too big: expected int to be <=9007199254740991"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "search inputs bounds",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?page=-9007199254740992&limit=0x10000000000000000"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"418ecadfc2913d92f5be92b9ca0f524a282d5d7e\""
+      },
+      "body": {
+        "message": "Invalid search filters",
+        "issues": [
+          {
+            "code": "too_big",
+            "maximum": 9007199254740991,
+            "note": "Integers must be within the safe integer range.",
+            "origin": "int",
+            "inclusive": true,
+            "path": [
+              "limit"
+            ],
+            "message": "Too big: expected int to be <=9007199254740991"
+          },
+          {
+            "code": "too_small",
+            "minimum": -9007199254740991,
+            "note": "Integers must be within the safe integer range.",
+            "origin": "int",
+            "inclusive": true,
+            "path": [
+              "page"
+            ],
+            "message": "Too small: expected int to be >=-9007199254740991"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "search inputs multiple-schema-issues",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?priceMin=bad&page=3.1&sortDir=no&limit=1.5&onSale=maybe&tags%5B%5D=%20&tags%5B%5D=+&sortBy=bad"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"172670327ef0434e8234cd75c4cf6d0d1c440056\""
+      },
+      "body": {
+        "message": "Invalid search filters",
+        "issues": [
+          {
+            "origin": "string",
+            "code": "too_small",
+            "minimum": 1,
+            "inclusive": true,
+            "path": [
+              "tags",
+              0
+            ],
+            "message": "Too small: expected string to have >=1 characters"
+          },
+          {
+            "origin": "string",
+            "code": "too_small",
+            "minimum": 1,
+            "inclusive": true,
+            "path": [
+              "tags",
+              1
+            ],
+            "message": "Too small: expected string to have >=1 characters"
+          },
+          {
+            "expected": "boolean",
+            "code": "invalid_type",
+            "path": [
+              "onSale"
+            ],
+            "message": "Invalid input: expected boolean, received string"
+          },
+          {
+            "code": "invalid_value",
+            "values": [
+              "releaseDate",
+              "lastModifiedDate",
+              "effectiveDate",
+              "creationDate",
+              "viewableDate",
+              "pcReleaseDate",
+              "upcoming",
+              "priceAsc",
+              "priceDesc",
+              "price",
+              "discount",
+              "discountPercent",
+              "priceUpdatedAt",
+              "giveawayDate"
+            ],
+            "path": [
+              "sortBy"
+            ],
+            "message": "Invalid option: expected one of \"releaseDate\"|\"lastModifiedDate\"|\"effectiveDate\"|\"creationDate\"|\"viewableDate\"|\"pcReleaseDate\"|\"upcoming\"|\"priceAsc\"|\"priceDesc\"|\"price\"|\"discount\"|\"discountPercent\"|\"priceUpdatedAt\"|\"giveawayDate\""
+          },
+          {
+            "code": "invalid_value",
+            "values": [
+              "asc",
+              "desc"
+            ],
+            "path": [
+              "sortDir"
+            ],
+            "message": "Invalid option: expected one of \"asc\"|\"desc\""
+          },
+          {
+            "expected": "int",
+            "format": "safeint",
+            "code": "invalid_type",
+            "path": [
+              "limit"
+            ],
+            "message": "Invalid input: expected int, received number"
+          },
+          {
+            "expected": "int",
+            "format": "safeint",
+            "code": "invalid_type",
+            "path": [
+              "page"
+            ],
+            "message": "Invalid input: expected int, received number"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "NaN",
+            "path": [
+              "price",
+              "min"
+            ],
+            "message": "Invalid input: expected number, received NaN"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "search inputs technology-precedence",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?tags%5B%5D=%20&technologies=valid&technologies%5B%5D=%20&priceMin=bad"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"80cf624c7358804fd48d390a9751a36eae79c000\""
+      },
+      "body": {
+        "message": "Invalid technologies. Provide an array of non-empty technology names."
+      }
+    }
+  },
+  {
+    "name": "search inputs first-invalid",
+    "request": {
+      "method": "GET",
+      "path": "/search/v2/search?page=bad&page=1&onSale=maybe&onSale=true"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"f6f80ad087772dd0f99917ec95754605244d0d89\""
+      },
+      "body": {
+        "message": "Invalid search filters",
+        "issues": [
+          {
+            "expected": "boolean",
+            "code": "invalid_type",
+            "path": [
+              "onSale"
+            ],
+            "message": "Invalid input: expected boolean, received string"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "NaN",
+            "path": [
+              "page"
+            ],
+            "message": "Invalid input: expected number, received NaN"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "search inputs malformed",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "{\"limit\":2,",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"a351a058ca958011067cee2c6ebb488fceed98c7\""
+      },
+      "body": {
+        "message": "Invalid body"
+      }
+    }
+  },
+  {
+    "name": "search inputs empty",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"a351a058ca958011067cee2c6ebb488fceed98c7\""
+      },
+      "body": {
+        "message": "Invalid body"
+      }
+    }
+  },
+  {
+    "name": "search inputs trailing-comma",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "{\"page\":1,}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"a351a058ca958011067cee2c6ebb488fceed98c7\""
+      },
+      "body": {
+        "message": "Invalid body"
+      }
+    }
+  },
+  {
+    "name": "search inputs array",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "[]",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"a351a058ca958011067cee2c6ebb488fceed98c7\""
+      },
+      "body": {
+        "message": "Invalid body"
+      }
+    }
+  },
+  {
+    "name": "search inputs string",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "\"text\"",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"a351a058ca958011067cee2c6ebb488fceed98c7\""
+      },
+      "body": {
+        "message": "Invalid body"
+      }
+    }
+  },
+  {
+    "name": "search inputs boolean",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "false",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"a351a058ca958011067cee2c6ebb488fceed98c7\""
+      },
+      "body": {
+        "message": "Invalid body"
+      }
+    }
+  },
+  {
+    "name": "search inputs raw-nan",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "{\"limit\":NaN}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"a351a058ca958011067cee2c6ebb488fceed98c7\""
+      },
+      "body": {
+        "message": "Invalid body"
+      }
+    }
+  },
+  {
+    "name": "search inputs non-finite",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "{\"page\":1e999,\"limit\":-1e999,\"price\":{\"min\":1e999,\"max\":\"Infinity\"}}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"7cfdbc8f36bbee8a37393823ae818f2df32c9faa\""
+      },
+      "body": {
+        "message": "Invalid search filters",
+        "issues": [
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "Infinity",
+            "path": [
+              "limit"
+            ],
+            "message": "Invalid input: expected number, received number"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "Infinity",
+            "path": [
+              "page"
+            ],
+            "message": "Invalid input: expected number, received number"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "received": "Infinity",
+            "path": [
+              "price",
+              "min"
+            ],
+            "message": "Invalid input: expected number, received number"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "path": [
+              "price",
+              "max"
+            ],
+            "message": "Invalid input: expected number, received string"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "search inputs ignored-overflow",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "{\"title\":\"game\",\"ignored\":{\"both\":[1e999,-1e999]}}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 303,
+      "headers": {
+        "cache-control": "no-store",
+        "location": "/search/v2/search?country=US&title=game"
+      },
+      "body": ""
+    }
+  },
+  {
+    "name": "search inputs overwritten-keys",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "{\"page\":1e999,\"page\":1,\"price\":{\"max\":2,\"max\":3}}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 303,
+      "headers": {
+        "cache-control": "no-store",
+        "location": "/search/v2/search?country=US&priceMax=3"
+      },
+      "body": ""
+    }
+  },
+  {
+    "name": "search inputs mistyped-overflows",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "{\"title\":1e999,\"tags\":[-1e999,{}],\"sortBy\":1e999,\"price\":1e999}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"a4259801aadfda963cc562fcb035c8a6d6b445c0\""
+      },
+      "body": {
+        "message": "Invalid search filters",
+        "issues": [
+          {
+            "expected": "string",
+            "code": "invalid_type",
+            "path": [
+              "title"
+            ],
+            "message": "Invalid input: expected string, received number"
+          },
+          {
+            "expected": "string",
+            "code": "invalid_type",
+            "path": [
+              "tags",
+              0
+            ],
+            "message": "Invalid input: expected string, received number"
+          },
+          {
+            "expected": "string",
+            "code": "invalid_type",
+            "path": [
+              "tags",
+              1
+            ],
+            "message": "Invalid input: expected string, received object"
+          },
+          {
+            "code": "invalid_value",
+            "values": [
+              "releaseDate",
+              "lastModifiedDate",
+              "effectiveDate",
+              "creationDate",
+              "viewableDate",
+              "pcReleaseDate",
+              "upcoming",
+              "priceAsc",
+              "priceDesc",
+              "price",
+              "discount",
+              "discountPercent",
+              "priceUpdatedAt",
+              "giveawayDate"
+            ],
+            "path": [
+              "sortBy"
+            ],
+            "message": "Invalid option: expected one of \"releaseDate\"|\"lastModifiedDate\"|\"effectiveDate\"|\"creationDate\"|\"viewableDate\"|\"pcReleaseDate\"|\"upcoming\"|\"priceAsc\"|\"priceDesc\"|\"price\"|\"discount\"|\"discountPercent\"|\"priceUpdatedAt\"|\"giveawayDate\""
+          },
+          {
+            "expected": "object",
+            "code": "invalid_type",
+            "path": [
+              "price"
+            ],
+            "message": "Invalid input: expected object, received number"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "search inputs false-numbers",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "{\"price\":{\"min\":\"NaN\",\"max\":\"Infinity\"},\"limit\":\"-Infinity\",\"page\":\"1\"}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"4cb61764382a50638b9fe6caec358812923c8b48\""
+      },
+      "body": {
+        "message": "Invalid search filters",
+        "issues": [
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "path": [
+              "limit"
+            ],
+            "message": "Invalid input: expected number, received string"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "path": [
+              "page"
+            ],
+            "message": "Invalid input: expected number, received string"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "path": [
+              "price",
+              "min"
+            ],
+            "message": "Invalid input: expected number, received string"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "path": [
+              "price",
+              "max"
+            ],
+            "message": "Invalid input: expected number, received string"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "search inputs top-level-overflow",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "1e999",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"a351a058ca958011067cee2c6ebb488fceed98c7\""
+      },
+      "body": {
+        "message": "Invalid body"
+      }
+    }
+  },
+  {
+    "name": "search inputs bom",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "﻿{\"title\":\"game\"}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 303,
+      "headers": {
+        "cache-control": "no-store",
+        "location": "/search/v2/search?country=US&title=game"
+      },
+      "body": ""
+    }
+  },
+  {
+    "name": "search inputs technologies-first",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "{\"title\":3,\"tags\":[\"\"],\"technologies\":[null],\"page\":{}}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"80cf624c7358804fd48d390a9751a36eae79c000\""
+      },
+      "body": {
+        "message": "Invalid technologies. Provide an array of non-empty technology names."
+      }
+    }
+  },
+  {
+    "name": "search inputs schema-issue-order",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "{\"price\":{\"max\":\"x\",\"min\":[]},\"page\":[],\"limit\":1.25,\"sortDir\":0,\"sortBy\":false,\"isLowestPriceEver\":2,\"onSale\":null,\"excludeBlockchain\":{},\"refundType\":8,\"publisherDisplayName\":[],\"developerDisplayName\":false,\"seller\":{},\"customAttributes\":[{},\" \"],\"categories\":[null,\"\"],\"tags\":[\"\",false],\"offerType\":9,\"title\":[]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"39f4ab91133fd3b99bc888b18e8662913c01f351\""
+      },
+      "body": {
+        "message": "Invalid search filters",
+        "issues": [
+          {
+            "expected": "string",
+            "code": "invalid_type",
+            "path": [
+              "title"
+            ],
+            "message": "Invalid input: expected string, received array"
+          },
+          {
+            "expected": "string",
+            "code": "invalid_type",
+            "path": [
+              "offerType"
+            ],
+            "message": "Invalid input: expected string, received number"
+          },
+          {
+            "origin": "string",
+            "code": "too_small",
+            "minimum": 1,
+            "inclusive": true,
+            "path": [
+              "tags",
+              0
+            ],
+            "message": "Too small: expected string to have >=1 characters"
+          },
+          {
+            "expected": "string",
+            "code": "invalid_type",
+            "path": [
+              "tags",
+              1
+            ],
+            "message": "Invalid input: expected string, received boolean"
+          },
+          {
+            "expected": "string",
+            "code": "invalid_type",
+            "path": [
+              "categories",
+              0
+            ],
+            "message": "Invalid input: expected string, received null"
+          },
+          {
+            "origin": "string",
+            "code": "too_small",
+            "minimum": 1,
+            "inclusive": true,
+            "path": [
+              "categories",
+              1
+            ],
+            "message": "Too small: expected string to have >=1 characters"
+          },
+          {
+            "expected": "string",
+            "code": "invalid_type",
+            "path": [
+              "customAttributes",
+              0
+            ],
+            "message": "Invalid input: expected string, received object"
+          },
+          {
+            "origin": "string",
+            "code": "too_small",
+            "minimum": 1,
+            "inclusive": true,
+            "path": [
+              "customAttributes",
+              1
+            ],
+            "message": "Too small: expected string to have >=1 characters"
+          },
+          {
+            "expected": "string",
+            "code": "invalid_type",
+            "path": [
+              "seller"
+            ],
+            "message": "Invalid input: expected string, received object"
+          },
+          {
+            "expected": "string",
+            "code": "invalid_type",
+            "path": [
+              "developerDisplayName"
+            ],
+            "message": "Invalid input: expected string, received boolean"
+          },
+          {
+            "expected": "string",
+            "code": "invalid_type",
+            "path": [
+              "publisherDisplayName"
+            ],
+            "message": "Invalid input: expected string, received array"
+          },
+          {
+            "expected": "string",
+            "code": "invalid_type",
+            "path": [
+              "refundType"
+            ],
+            "message": "Invalid input: expected string, received number"
+          },
+          {
+            "expected": "boolean",
+            "code": "invalid_type",
+            "path": [
+              "excludeBlockchain"
+            ],
+            "message": "Invalid input: expected boolean, received object"
+          },
+          {
+            "expected": "boolean",
+            "code": "invalid_type",
+            "path": [
+              "onSale"
+            ],
+            "message": "Invalid input: expected boolean, received null"
+          },
+          {
+            "expected": "boolean",
+            "code": "invalid_type",
+            "path": [
+              "isLowestPriceEver"
+            ],
+            "message": "Invalid input: expected boolean, received number"
+          },
+          {
+            "code": "invalid_value",
+            "values": [
+              "releaseDate",
+              "lastModifiedDate",
+              "effectiveDate",
+              "creationDate",
+              "viewableDate",
+              "pcReleaseDate",
+              "upcoming",
+              "priceAsc",
+              "priceDesc",
+              "price",
+              "discount",
+              "discountPercent",
+              "priceUpdatedAt",
+              "giveawayDate"
+            ],
+            "path": [
+              "sortBy"
+            ],
+            "message": "Invalid option: expected one of \"releaseDate\"|\"lastModifiedDate\"|\"effectiveDate\"|\"creationDate\"|\"viewableDate\"|\"pcReleaseDate\"|\"upcoming\"|\"priceAsc\"|\"priceDesc\"|\"price\"|\"discount\"|\"discountPercent\"|\"priceUpdatedAt\"|\"giveawayDate\""
+          },
+          {
+            "code": "invalid_value",
+            "values": [
+              "asc",
+              "desc"
+            ],
+            "path": [
+              "sortDir"
+            ],
+            "message": "Invalid option: expected one of \"asc\"|\"desc\""
+          },
+          {
+            "expected": "int",
+            "format": "safeint",
+            "code": "invalid_type",
+            "path": [
+              "limit"
+            ],
+            "message": "Invalid input: expected int, received number"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "path": [
+              "page"
+            ],
+            "message": "Invalid input: expected number, received array"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "path": [
+              "price",
+              "min"
+            ],
+            "message": "Invalid input: expected number, received array"
+          },
+          {
+            "expected": "number",
+            "code": "invalid_type",
+            "path": [
+              "price",
+              "max"
+            ],
+            "message": "Invalid input: expected number, received string"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "search inputs normalized-redirect",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBody": "{\"facets\":{},\"unknown\":2,\"price\":{\"min\":1e-8,\"max\":2.125,\"unknown\":true},\"tags\":[\"𐀀\",\"\",\"a,b\",\"a,b\",\" B \"],\"title\":\" hi \",\"limit\":99,\"page\":3}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 303,
+      "headers": {
+        "cache-control": "no-store",
+        "location": "/search/v2/search?country=US&limit=99&page=3&priceMax=2.125&priceMin=1e-8&tags%5B%5D=B&tags%5B%5D=a%2Cb&tags%5B%5D=%F0%90%80%80&tags%5B%5D=%EE%80%80&title=hi"
+      },
+      "body": ""
+    }
+  },
+  {
+    "name": "search inputs bad locale before corrupt JSON",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search?locale=not_a_locale",
+      "rawBody": "{"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"3ee02d874cbce220455202c8f9286d53d68c33da\""
+      },
+      "body": {
+        "message": "Invalid locale parameter: not_a_locale"
+      }
+    }
+  },
+  {
+    "name": "search inputs malformed UTF-8 in title",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBodyBytes": [
+        123,
+        34,
+        116,
+        105,
+        116,
+        108,
+        101,
+        34,
+        58,
+        34,
+        255,
+        34,
+        125
+      ]
+    },
+    "trace": [],
+    "response": {
+      "status": 303,
+      "headers": {
+        "cache-control": "no-store",
+        "location": "/search/v2/search?country=US&title=%EF%BF%BD"
+      },
+      "body": ""
+    }
+  },
+  {
+    "name": "search inputs malformed UTF-8 outside string",
+    "request": {
+      "method": "POST",
+      "path": "/search/v2/search",
+      "rawBodyBytes": [
+        123,
+        34,
+        116,
+        105,
+        116,
+        108,
+        101,
+        34,
+        58,
+        255,
+        125
+      ]
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"a351a058ca958011067cee2c6ebb488fceed98c7\""
+      },
+      "body": {
+        "message": "Invalid body"
+      }
+    }
+  }
+]

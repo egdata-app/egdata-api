@@ -1,0 +1,924 @@
+[
+  {
+    "name": "accepted",
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      },
+      {
+        "method": "submit",
+        "type": "achievement-refresh",
+        "payload": {
+          "accountId": "example"
+        },
+        "requestId": "request_from_test_12345"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:example",
+        "raw": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false,\"acceptedAt\":\"1970-01-01T00:16:40.000Z\",\"jobType\":\"achievement-refresh\",\"orchestrator\":\"temporal\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": false
+      }
+    ],
+    "output": {
+      "metadata": {
+        "jobId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "workflowId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "statusUrl": "/status/ok",
+        "deduplicated": false,
+        "acceptedAt": "1970-01-01T00:16:40.000Z",
+        "jobType": "achievement-refresh",
+        "orchestrator": "temporal",
+        "timestamp": 1000000
+      },
+      "reusedCooldown": false
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+      "refresh-achievements:example": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false,\"acceptedAt\":\"1970-01-01T00:16:40.000Z\",\"jobType\":\"achievement-refresh\",\"orchestrator\":\"temporal\",\"timestamp\":1000000}"
+    }
+  },
+  {
+    "name": "reuse existing active",
+    "initial": {
+      "refresh-achievements:example": "{\"timestamp\":9.99e5}"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      }
+    ],
+    "output": {
+      "reusedCooldown": true
+    },
+    "values": {
+      "refresh-achievements:example": "{\"timestamp\":9.99e5}"
+    }
+  },
+  {
+    "name": "reacquire expired",
+    "initial": {
+      "refresh-achievements:example": "{\"timestamp\":100.0}"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      },
+      {
+        "method": "submit",
+        "type": "achievement-refresh",
+        "payload": {
+          "accountId": "example"
+        },
+        "requestId": "request_from_test_12345"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:example",
+        "raw": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false,\"acceptedAt\":\"1970-01-01T00:16:40.000Z\",\"jobType\":\"achievement-refresh\",\"orchestrator\":\"temporal\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": false
+      }
+    ],
+    "output": {
+      "metadata": {
+        "jobId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "workflowId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "statusUrl": "/status/ok",
+        "deduplicated": false,
+        "acceptedAt": "1970-01-01T00:16:40.000Z",
+        "jobType": "achievement-refresh",
+        "orchestrator": "temporal",
+        "timestamp": 1000000
+      },
+      "reusedCooldown": false
+    },
+    "values": {
+      "refresh-achievements:example": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false,\"acceptedAt\":\"1970-01-01T00:16:40.000Z\",\"jobType\":\"achievement-refresh\",\"orchestrator\":\"temporal\",\"timestamp\":1000000}",
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}"
+    }
+  },
+  {
+    "name": "existing request wins",
+    "initial": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"previous_lock_id_12345\",\"timestamp\":999999}"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      },
+      {
+        "method": "submit",
+        "type": "achievement-refresh",
+        "payload": {
+          "accountId": "example"
+        },
+        "requestId": "previous_lock_id_12345"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:example",
+        "raw": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false,\"acceptedAt\":\"1970-01-01T00:16:40.000Z\",\"jobType\":\"achievement-refresh\",\"orchestrator\":\"temporal\",\"timestamp\":999999}",
+        "ttl": 9999,
+        "nx": false
+      }
+    ],
+    "output": {
+      "metadata": {
+        "jobId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "workflowId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "statusUrl": "/status/ok",
+        "deduplicated": false,
+        "acceptedAt": "1970-01-01T00:16:40.000Z",
+        "jobType": "achievement-refresh",
+        "orchestrator": "temporal",
+        "timestamp": 999999
+      },
+      "reusedCooldown": false
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"previous_lock_id_12345\",\"timestamp\":999999}",
+      "refresh-achievements:example": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false,\"acceptedAt\":\"1970-01-01T00:16:40.000Z\",\"jobType\":\"achievement-refresh\",\"orchestrator\":\"temporal\",\"timestamp\":999999}"
+    }
+  },
+  {
+    "name": "slot decimal integer",
+    "initial": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"previous_lock_id_12345\",\"timestamp\":999999.0}"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      },
+      {
+        "method": "submit",
+        "type": "achievement-refresh",
+        "payload": {
+          "accountId": "example"
+        },
+        "requestId": "previous_lock_id_12345"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:example",
+        "raw": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false,\"acceptedAt\":\"1970-01-01T00:16:40.000Z\",\"jobType\":\"achievement-refresh\",\"orchestrator\":\"temporal\",\"timestamp\":999999}",
+        "ttl": 9999,
+        "nx": false
+      }
+    ],
+    "output": {
+      "metadata": {
+        "jobId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "workflowId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "statusUrl": "/status/ok",
+        "deduplicated": false,
+        "acceptedAt": "1970-01-01T00:16:40.000Z",
+        "jobType": "achievement-refresh",
+        "orchestrator": "temporal",
+        "timestamp": 999999
+      },
+      "reusedCooldown": false
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"previous_lock_id_12345\",\"timestamp\":999999.0}",
+      "refresh-achievements:example": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false,\"acceptedAt\":\"1970-01-01T00:16:40.000Z\",\"jobType\":\"achievement-refresh\",\"orchestrator\":\"temporal\",\"timestamp\":999999}"
+    }
+  },
+  {
+    "name": "expires after acceptance",
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1010010
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      },
+      {
+        "method": "submit",
+        "type": "achievement-refresh",
+        "payload": {
+          "accountId": "example"
+        },
+        "requestId": "request_from_test_12345"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:example",
+        "raw": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false,\"acceptedAt\":\"1970-01-01T00:16:50.010Z\",\"jobType\":\"achievement-refresh\",\"orchestrator\":\"temporal\",\"timestamp\":1000000}",
+        "ttl": 1,
+        "nx": false
+      }
+    ],
+    "output": {
+      "metadata": {
+        "jobId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "workflowId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "statusUrl": "/status/ok",
+        "deduplicated": false,
+        "acceptedAt": "1970-01-01T00:16:50.010Z",
+        "jobType": "achievement-refresh",
+        "orchestrator": "temporal",
+        "timestamp": 1000000
+      },
+      "reusedCooldown": false
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+      "refresh-achievements:example": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false,\"acceptedAt\":\"1970-01-01T00:16:50.010Z\",\"jobType\":\"achievement-refresh\",\"orchestrator\":\"temporal\",\"timestamp\":1000000}"
+    }
+  },
+  {
+    "name": "slot disappeared",
+    "dropSlot": true,
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      }
+    ],
+    "output": {
+      "error": "Achievement refresh cooldown could not be established"
+    },
+    "values": {}
+  },
+  {
+    "name": "invalid ttl",
+    "ttl": 0,
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "calls": [],
+    "output": {
+      "error": "Achievement refresh cooldown must be a positive integer"
+    },
+    "values": {}
+  },
+  {
+    "name": "unsafe ttl",
+    "ttl": 9007199254740992,
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "calls": [],
+    "output": {
+      "error": "Achievement refresh cooldown must be a positive integer"
+    },
+    "values": {}
+  },
+  {
+    "name": "invalid accepted date",
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      9000000000000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      },
+      {
+        "method": "submit",
+        "type": "achievement-refresh",
+        "payload": {
+          "accountId": "example"
+        },
+        "requestId": "request_from_test_12345"
+      }
+    ],
+    "output": {
+      "error": "Invalid time value"
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}"
+    }
+  },
+  {
+    "name": "bad status {",
+    "initial": {
+      "refresh-achievements:example": "{"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      }
+    ],
+    "output": {
+      "error": "Achievement refresh status cache entry is not valid JSON"
+    },
+    "values": {
+      "refresh-achievements:example": "{"
+    }
+  },
+  {
+    "name": "bad status []",
+    "initial": {
+      "refresh-achievements:example": "[]"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      }
+    ],
+    "output": {
+      "error": "Achievement refresh status cache entry must be an object"
+    },
+    "values": {
+      "refresh-achievements:example": "[]"
+    }
+  },
+  {
+    "name": "bad status {\"timestamp\":0.5}",
+    "initial": {
+      "refresh-achievements:example": "{\"timestamp\":0.5}"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      }
+    ],
+    "output": {
+      "error": "Achievement refresh status cache entry has an invalid timestamp"
+    },
+    "values": {
+      "refresh-achievements:example": "{\"timestamp\":0.5}"
+    }
+  },
+  {
+    "name": "bad status {\"timestamp\":9007199254740992}",
+    "initial": {
+      "refresh-achievements:example": "{\"timestamp\":9007199254740992}"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      }
+    ],
+    "output": {
+      "error": "Achievement refresh status cache entry has an invalid timestamp"
+    },
+    "values": {
+      "refresh-achievements:example": "{\"timestamp\":9007199254740992}"
+    }
+  },
+  {
+    "name": "bad slot null",
+    "initial": {
+      "refresh-achievements:temporal-cooldown:example": "null"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      }
+    ],
+    "output": {
+      "error": "Achievement refresh cooldown cache entry must be an object"
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "null"
+    }
+  },
+  {
+    "name": "bad slot {",
+    "initial": {
+      "refresh-achievements:temporal-cooldown:example": "{"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      }
+    ],
+    "output": {
+      "error": "Achievement refresh cooldown cache entry is not valid JSON"
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "{"
+    }
+  },
+  {
+    "name": "bad slot {\"requestId\":\"short\",\"timestamp\":1000000}",
+    "initial": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"short\",\"timestamp\":1000000}"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      }
+    ],
+    "output": {
+      "error": "Achievement refresh cooldown cache entry is invalid"
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"short\",\"timestamp\":1000000}"
+    }
+  },
+  {
+    "name": "bad slot {\"requestId\":\"previous_lock_id_12345\",\"timestamp\":1000001}",
+    "initial": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"previous_lock_id_12345\",\"timestamp\":1000001}"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      }
+    ],
+    "output": {
+      "error": "Achievement refresh cooldown expired before submission"
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"previous_lock_id_12345\",\"timestamp\":1000001}"
+    }
+  },
+  {
+    "name": "bad slot {\"requestId\":\"previous_lock_id_12345\",\"timestamp\":990000}",
+    "initial": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"previous_lock_id_12345\",\"timestamp\":990000}"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      }
+    ],
+    "output": {
+      "error": "Achievement refresh cooldown expired before submission"
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"previous_lock_id_12345\",\"timestamp\":990000}"
+    }
+  },
+  {
+    "name": "bad slot {\"requestId\":\"previous_lock_id_12345\",\"timestamp\":9007199254740992}",
+    "initial": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"previous_lock_id_12345\",\"timestamp\":9007199254740992}"
+    },
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      }
+    ],
+    "output": {
+      "error": "Achievement refresh cooldown cache entry is invalid"
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"previous_lock_id_12345\",\"timestamp\":9007199254740992}"
+    }
+  },
+  {
+    "name": "failure at 0",
+    "failAt": 0,
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      }
+    ],
+    "output": {
+      "error": "fixture failure"
+    },
+    "values": {}
+  },
+  {
+    "name": "failure at 1",
+    "failAt": 1,
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      }
+    ],
+    "output": {
+      "error": "fixture failure"
+    },
+    "values": {}
+  },
+  {
+    "name": "failure at 2",
+    "failAt": 2,
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      }
+    ],
+    "output": {
+      "error": "fixture failure"
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}"
+    }
+  },
+  {
+    "name": "failure at 3",
+    "failAt": 3,
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      },
+      {
+        "method": "submit",
+        "type": "achievement-refresh",
+        "payload": {
+          "accountId": "example"
+        },
+        "requestId": "request_from_test_12345"
+      }
+    ],
+    "output": {
+      "error": "fixture failure"
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}"
+    }
+  },
+  {
+    "name": "failure at 4",
+    "failAt": 4,
+    "times": [
+      1000000,
+      1000000,
+      1000000,
+      1000000
+    ],
+    "ttl": 10000,
+    "calls": [
+      {
+        "method": "get",
+        "key": "refresh-achievements:example"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:temporal-cooldown:example",
+        "raw": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": true
+      },
+      {
+        "method": "get",
+        "key": "refresh-achievements:temporal-cooldown:example"
+      },
+      {
+        "method": "submit",
+        "type": "achievement-refresh",
+        "payload": {
+          "accountId": "example"
+        },
+        "requestId": "request_from_test_12345"
+      },
+      {
+        "method": "set",
+        "key": "refresh-achievements:example",
+        "raw": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false,\"acceptedAt\":\"1970-01-01T00:16:40.000Z\",\"jobType\":\"achievement-refresh\",\"orchestrator\":\"temporal\",\"timestamp\":1000000}",
+        "ttl": 10000,
+        "nx": false
+      }
+    ],
+    "output": {
+      "error": "fixture failure"
+    },
+    "values": {
+      "refresh-achievements:temporal-cooldown:example": "{\"requestId\":\"request_from_test_12345\",\"timestamp\":1000000}"
+    }
+  }
+]

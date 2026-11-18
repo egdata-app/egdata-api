@@ -1,0 +1,1943 @@
+[
+  {
+    "name": "typename-get",
+    "request": {
+      "path": "/graphql?query=%7B+__typename+%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "alias-limit-across-fragment-and-operations",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "fragment Fields on Query { a0: __typename a1: __typename a2: __typename a3: __typename a4: __typename a5: __typename a6: __typename a7: __typename a8: __typename a9: __typename a10: __typename a11: __typename a12: __typename a13: __typename a14: __typename a15: __typename a16: __typename a17: __typename a18: __typename a19: __typename a20: __typename a21: __typename a22: __typename a23: __typename a24: __typename a25: __typename a26: __typename a27: __typename a28: __typename a29: __typename a30: __typename a31: __typename a32: __typename a33: __typename a34: __typename a35: __typename a36: __typename a37: __typename a38: __typename a39: __typename a40: __typename a41: __typename a42: __typename a43: __typename a44: __typename a45: __typename a46: __typename a47: __typename a48: __typename a49: __typename }\nquery First { ...Fields aliasOne: __typename }\nquery Second { aliasTwo: __typename }",
+        "operationName": "Second"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"42316bf0daf2bcfa00c704d6f310fa44ae4e2994\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Query contains more than 50 aliased fields.\",\"locations\":[{\"line\":2,\"column\":25}],\"extensions\":{\"code\":\"GRAPHQL_VALIDATION_FAILED\",\"aliasCount\":51,\"maxAliases\":50}}]}\n"
+    }
+  },
+  {
+    "name": "depth-limit-nested-offers",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{ offer(id: \"fixture\") { related { related { related { related { related { related { related { related { related { related { related { related { id } } } } } } } } } } } } } }"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"be1e30534c7aabd7ed6554abd03e2659615c7b73\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Query depth of 14 exceeds the maximum allowed depth of 12.\",\"locations\":[{\"line\":1,\"column\":1}],\"extensions\":{\"code\":\"GRAPHQL_VALIDATION_FAILED\",\"depth\":14,\"maxDepth\":12}}]}\n"
+    }
+  },
+  {
+    "name": "typename-post",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query Hello { name: __typename }",
+        "operationName": "Hello"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"09eda27abd63d6be3ca781aa44cc9a4aa389e536\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"name\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "item-variables",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query Get($id: ID!) { item(id:$id) { id title } }",
+        "variables": {
+          "id": "fixture-item"
+        }
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "fixture-item"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "title": 1,
+              "_id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "fixture-item",
+          "namespace": "fixture-store",
+          "title": "Sample item"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"dd0fdbcd829815ee6944ce3197891c5752606b5c\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"item\":{\"id\":\"fixture-item\",\"title\":\"Sample item\"}}}\n"
+    }
+  },
+  {
+    "name": "item-cache-get",
+    "request": {
+      "path": "/graphql?query=%7Bitem%28id%3A%22fixture-item%22%29%7Bid+title%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "fixture-item"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "title": 1,
+              "_id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "fixture-item",
+          "namespace": "fixture-store",
+          "title": "Sample item"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=300, s-maxage=300, stale-while-revalidate=3000",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3000",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"dd0fdbcd829815ee6944ce3197891c5752606b5c\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"item\":{\"id\":\"fixture-item\",\"title\":\"Sample item\"}}}\n"
+    }
+  },
+  {
+    "name": "item-conditional-get",
+    "request": {
+      "path": "/graphql?query=%7Bitem%28id%3A%22fixture-item%22%29%7Bid+title%7D%7D",
+      "method": "GET",
+      "headers": {
+        "if-none-match": "\"dd0fdbcd829815ee6944ce3197891c5752606b5c\""
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "fixture-item"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "title": 1,
+              "_id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "fixture-item",
+          "namespace": "fixture-store",
+          "title": "Sample item"
+        }
+      }
+    ],
+    "response": {
+      "status": 304,
+      "headers": {
+        "cache-control": "public, max-age=300, s-maxage=300, stale-while-revalidate=3000",
+        "etag": "\"dd0fdbcd829815ee6944ce3197891c5752606b5c\"",
+        "vary": "Accept-Encoding, Origin"
+      },
+      "body": ""
+    }
+  },
+  {
+    "name": "missing-build",
+    "request": {
+      "path": "/graphql?query=%7Bbuild%28id%3A%2264c000000000000000000001%22%29%7B_id%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "builds",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$oid": "64c000000000000000000001"
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=3600",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"397e50433b15025fba2246906ffa2b81b05950db\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"build\":null}}\n"
+    }
+  },
+  {
+    "name": "graphql-response-media",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/graphql-response+json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/graphql-response+json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-quality",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/json;q=0.1, application/graphql-response+json;q=0.8"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/graphql-response+json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-separate-accept-fields",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": [
+          "text/plain",
+          "application/graphql-response+json"
+        ]
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/graphql-response+json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-separate-content-types",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "content-type": [
+          "application/json",
+          "text/plain"
+        ]
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 415,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"a6e2ebe773a81a8783184943b91c1a3323a89ea9\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"GET requests may not have a content-type header other than application/json.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "media-callback",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/json;callbackSpec=1.0"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; callbackSpec=1.0; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-parameter-priority",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/json;q=1, application/json;charset=utf-8;q=0, application/graphql-response+json;q=.5"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/graphql-response+json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-precision",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/json;q=0.9001, application/graphql-response+json;q=0.9002"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/graphql-response+json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-suffix",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/json;q=0.75tail, application/graphql-response+json;q=.5"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-subtype-wildcard",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "*/graphql-response+json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/graphql-response+json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-duplicate",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/json, application/graphql-response+json, application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/graphql-response+json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-quoted-parameter",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/json;unknown=\"x,y;z\", application/graphql-response+json;charset=\"UTF-8\""
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/graphql-response+json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-quoted-quality",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/json;q=\"0.9\""
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-no-match",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/json;charset=latin1"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 406,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"315f0dd8c2c1ca15b5c232feb560b9ce030ebb35\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"An 'accept' header was provided for this request which does not accept application/json; charset=utf-8 or application/graphql-response+json; charset=utf-8\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "media-wildcard-parameter",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/json;extension=*"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-invalid-tokens",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "/json, application/, missing, bad type/json, application/bad type"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 406,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"315f0dd8c2c1ca15b5c232feb560b9ce030ebb35\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"An 'accept' header was provided for this request which does not accept application/json; charset=utf-8 or application/graphql-response+json; charset=utf-8\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "media-duplicate-parameter",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/json;charset=latin1;CHARSET=UTF-8"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-latin1-parameter",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/json;charset=\"café\", application/graphql-response+json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/graphql-response+json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-empty-header",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": ""
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-all",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "*/*"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "media-zero",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "*/*;q=0"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 406,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"315f0dd8c2c1ca15b5c232feb560b9ce030ebb35\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"An 'accept' header was provided for this request which does not accept application/json; charset=utf-8 or application/graphql-response+json; charset=utf-8\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "media-specific-exclusion",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "application/json;q=0, */*;q=1"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/graphql-response+json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "json-fallback-accept",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "accept": "text/plain"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 406,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"315f0dd8c2c1ca15b5c232feb560b9ce030ebb35\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"An 'accept' header was provided for this request which does not accept application/json; charset=utf-8 or application/graphql-response+json; charset=utf-8\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-empty",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"62bea3b3995fb5008a8ea540086d2ac32351592c\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"POST body missing, invalid Content-Type, or JSON object has no keys.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-missing-query",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "variables": {}
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"9e968c6c80797ab4daa651c07437799bf9a0b51f\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"GraphQL operations must contain a non-empty `query` or a `persistedQuery` extension.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-non-string",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": 42
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"2e015a333490429a4fbeaf9a0beb73e14a073035\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"GraphQL queries must be strings.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-document",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": {
+          "kind": "Document"
+        }
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"9e88c6242154950d0c2ddc08b86da2931035c214\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"GraphQL queries must be strings. It looks like you're sending the internal graphql-js representation of a parsed query in your request instead of a request in the GraphQL query language. You can convert an AST to a string using the `print` function from `graphql`, or use a client like `apollo-client` which converts the internal representation to a string for you.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-false-query",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": false
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"9e968c6c80797ab4daa651c07437799bf9a0b51f\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"GraphQL operations must contain a non-empty `query` or a `persistedQuery` extension.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-nested-extensions",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{__typename}",
+        "extensions": "{}"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"8a0932106344dee4b35782bbd42d5005fdac2e50\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"`extensions` in a POST body should be provided as an object, not a recursively JSON-encoded string.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-array-extensions",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{__typename}",
+        "extensions": []
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"ffdb77f1da80e44cf5a74df7eb48abb3703bfd30\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"`extensions` in a POST body must be an object if provided.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-primitive-variables",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{__typename}",
+        "variables": 0
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"f3e5053022f9a58fe9b0a0fc889252e5cb923edd\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"`variables` in a POST body must be an object if provided.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-nonstring-name",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{__typename}",
+        "operationName": false
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"2e887cb4bb0be32b0bb3e76e2c42b5615562ca96\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"`operationName` in a POST body must be a string if provided.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-validation-order",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{__typename}",
+        "extensions": [],
+        "variables": "bad",
+        "operationName": 0
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"df3dfdbc7b66461ac12374f3164bd370c4806004\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"`variables` in a POST body should be provided as an object, not a recursively JSON-encoded string.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-variables-string",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{__typename}",
+        "variables": "{}"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"df3dfdbc7b66461ac12374f3164bd370c4806004\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"`variables` in a POST body should be provided as an object, not a recursively JSON-encoded string.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-batch",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": [
+        {
+          "query": "{__typename}"
+        }
+      ]
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"fcde87a652ba15407a9f09522b6857034ca266c5\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Operation batching disabled.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-csrf",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "text/plain"
+      },
+      "body": {
+        "query": "{__typename}"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"1d40892b0950bab0b918d69a2671f477e1ce9d1c\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"This operation has been blocked as a potential Cross-Site Request Forgery (CSRF). Please either specify a 'content-type' header (with a type that is not one of application/x-www-form-urlencoded, multipart/form-data, text/plain) or provide a non-empty value for one of the following headers: x-apollo-operation-name, apollo-require-preflight\\n\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "post-preflight-marker",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "text/plain",
+        "apollo-require-preflight": "true"
+      },
+      "body": {
+        "query": "{__typename}"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"ffc35d6308261ac9a696bab9361f261f54feb40b\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"__typename\":\"Query\"}}\n"
+    }
+  },
+  {
+    "name": "get-invalid-type",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D",
+      "method": "GET",
+      "headers": {
+        "content-type": "text/plain"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 415,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"a6e2ebe773a81a8783184943b91c1a3323a89ea9\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"GET requests may not have a content-type header other than application/json.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "get-duplicate",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D&query=second",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"b2d15f472cdaccd5b85f4610d70237e44947fed4\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"The 'query' search parameter may only be specified once.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "get-invalid-json",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D&variables=%7B",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"b513e4f8c8348a1b5a5e7fbc28d6185d7cf629e7\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"The variables search parameter contains invalid JSON.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "get-array-vars",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D&variables=[]",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"1355b4c3e03425980b43aa51097d3a81820bf3c9\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"The variables search parameter should contain a JSON-encoded object.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "empty-get",
+    "request": {
+      "path": "/graphql",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"9e968c6c80797ab4daa651c07437799bf9a0b51f\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"GraphQL operations must contain a non-empty `query` or a `persistedQuery` extension.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "get-duplicate-operationName",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D&operationName=%7B%7D&operationName=%7B%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"25bf8493f5d0b3fd7b1406b4d4665861d1897f2e\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"The 'operationName' search parameter may only be specified once.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "get-duplicate-variables",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D&variables=%7B%7D&variables=%7B%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"421b8b21f3e748d129a1579cbe56e3b812a499e5\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"The 'variables' search parameter may only be specified once.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "get-duplicate-extensions",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D&extensions=%7B%7D&extensions=%7B%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"b8f72d25349e94f9649ddf4d8d03d60a3aa17293\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"The 'extensions' search parameter may only be specified once.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "get-invalid-extensions",
+    "request": {
+      "path": "/graphql?query=%7B__typename%7D&extensions=42",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"33eef95417283082422be62b236908d4cb91aafa\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"The extensions search parameter should contain a JSON-encoded object.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "unknown-operation",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query Known { __typename }",
+        "operationName": "Other"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"52d499d15509ff94100100a869cf7049836da5a1\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Unknown operation named \\\"Other\\\".\",\"extensions\":{\"code\":\"OPERATION_RESOLUTION_FAILURE\"}}]}\n"
+    }
+  },
+  {
+    "name": "ambiguous-operation",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query A { __typename } query B { __typename }"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"c049f8b7b16abcb1648a7cb10516bf454ed05bb6\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Must provide operation name if query contains multiple operations.\",\"extensions\":{\"code\":\"OPERATION_RESOLUTION_FAILURE\"}}]}\n"
+    }
+  },
+  {
+    "name": "invalid-before-unknown-operation",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query A {madeUpField}",
+        "operationName": "B"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"246c2009a28895e8b07c41793a793cda26f0dab5\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Cannot query field \\\"madeUpField\\\" on type \\\"Query\\\".\",\"locations\":[{\"line\":1,\"column\":10}],\"extensions\":{\"code\":\"GRAPHQL_VALIDATION_FAILED\"}}]}\n"
+    }
+  },
+  {
+    "name": "invalid-before-ambiguous-operation",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query A {madeUpField} query B {__typename}"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"246c2009a28895e8b07c41793a793cda26f0dab5\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Cannot query field \\\"madeUpField\\\" on type \\\"Query\\\".\",\"locations\":[{\"line\":1,\"column\":10}],\"extensions\":{\"code\":\"GRAPHQL_VALIDATION_FAILED\"}}]}\n"
+    }
+  },
+  {
+    "name": "invalid-document-before-get-mutation",
+    "request": {
+      "path": "/graphql?query=mutation+A+%7B__typename%7D+query+B+%7BmadeUpField%7D&operationName=A",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"ea0ddc07f3879e53c618ee8ee0fd34e2a0977953\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Cannot query field \\\"madeUpField\\\" on type \\\"Query\\\".\",\"locations\":[{\"line\":1,\"column\":34}],\"extensions\":{\"code\":\"GRAPHQL_VALIDATION_FAILED\"}}]}\n"
+    }
+  },
+  {
+    "name": "method-not-allowed",
+    "request": {
+      "path": "/graphql",
+      "method": "PUT",
+      "headers": {
+        "apollo-require-preflight": "true"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 405,
+      "headers": {
+        "allow": "GET, POST",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"b7132232c8c8e0c871fc95b8f2fb300a3d7cc006\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Apollo Server supports only GET/POST requests.\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  },
+  {
+    "name": "bad-apq-version",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "extensions": {
+          "persistedQuery": {
+            "version": 2
+          }
+        }
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"8b3f0f944b6509354a64d3fc68935373c7175fc2\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Unsupported persisted query version.\",\"extensions\":{\"code\":\"PERSISTED_QUERY_NOT_SUPPORTED\"}}]}"
+    }
+  },
+  {
+    "name": "apq-cache-miss",
+    "request": {
+      "path": "/graphql?extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%22e28c750a0a7dba5eca95bf5634d7e573be9ab2108697c0329a59cb1b30ff9554%22%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"c8c30986076340317169d8f9e7f3ecdb9b87d5ab\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"PersistedQueryNotFound\",\"extensions\":{\"code\":\"PERSISTED_QUERY_NOT_FOUND\"}}]}"
+    }
+  },
+  {
+    "name": "apq-register",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{item(id:\"fixture-item\"){title}}",
+        "extensions": {
+          "persistedQuery": {
+            "version": 1,
+            "sha256Hash": "e28c750a0a7dba5eca95bf5634d7e573be9ab2108697c0329a59cb1b30ff9554"
+          }
+        }
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "fixture-item"
+            }
+          },
+          "options": {
+            "projection": {
+              "title": 1,
+              "id": 1,
+              "_id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "fixture-item",
+          "namespace": "fixture-store",
+          "title": "Sample item"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"8dd891868578a436252831af6109618ee1e75962\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"item\":{\"title\":\"Sample item\"}}}\n"
+    }
+  },
+  {
+    "name": "apq-cache-hit",
+    "request": {
+      "path": "/graphql?extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%22e28c750a0a7dba5eca95bf5634d7e573be9ab2108697c0329a59cb1b30ff9554%22%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "fixture-item"
+            }
+          },
+          "options": {
+            "projection": {
+              "title": 1,
+              "id": 1,
+              "_id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "fixture-item",
+          "namespace": "fixture-store",
+          "title": "Sample item"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=300, s-maxage=300, stale-while-revalidate=3000",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3000",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"8dd891868578a436252831af6109618ee1e75962\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"item\":{\"title\":\"Sample item\"}}}\n"
+    }
+  },
+  {
+    "name": "validation-field",
+    "request": {
+      "path": "/graphql?query=%7BmadeUpField%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"1df5b90a5dd1573e31c70d7358806e4f91f569d6\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Cannot query field \\\"madeUpField\\\" on type \\\"Query\\\".\",\"locations\":[{\"line\":1,\"column\":2}],\"extensions\":{\"code\":\"GRAPHQL_VALIDATION_FAILED\"}}]}\n"
+    }
+  },
+  {
+    "name": "graphql-parse-error",
+    "request": {
+      "path": "/graphql?query=%7Bitem%28",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"8db0a4a029666ca4bc39b5a18a5fc4e0c6b31bff\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Syntax Error: Expected Name, found <EOF>.\",\"locations\":[{\"line\":1,\"column\":7}],\"extensions\":{\"code\":\"GRAPHQL_PARSE_FAILED\"}}]}\n"
+    }
+  },
+  {
+    "name": "variable-missing",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query One($id: ID!) { item(id:$id){title} }"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"332fe09922b7f60c68f3b6e9b5edfa17f6759455\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Variable \\\"$id\\\" of required type \\\"ID!\\\" was not provided.\",\"locations\":[{\"line\":1,\"column\":11}],\"extensions\":{\"code\":\"BAD_USER_INPUT\"}}]}\n"
+    }
+  },
+  {
+    "name": "variable-numeric-id",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query One($id: ID!) { item(id:$id){title} }",
+        "variables": {
+          "id": 42
+        }
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "42"
+            }
+          },
+          "options": {
+            "projection": {
+              "title": 1,
+              "id": 1,
+              "_id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "fixture-item",
+          "namespace": "fixture-store",
+          "title": "Sample item"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"8dd891868578a436252831af6109618ee1e75962\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"item\":{\"title\":\"Sample item\"}}}\n"
+    }
+  },
+  {
+    "name": "variable-string-int",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query($limit:Int){items(limit:$limit){total}}",
+        "variables": {
+          "limit": "12"
+        }
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"49454501647348eb556b3a361b095c3384093fb8\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Variable \\\"$limit\\\" got invalid value \\\"12\\\"; Int cannot represent non-integer value: \\\"12\\\"\",\"locations\":[{\"line\":1,\"column\":7}],\"extensions\":{\"code\":\"BAD_USER_INPUT\"}}]}\n"
+    }
+  },
+  {
+    "name": "variable-invalid-boolean",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query($show:Boolean!){__typename @include(if:$show)}",
+        "variables": {
+          "show": 1
+        }
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"6fcb83ba53fb5356bbcf5941d7a80140cff5672c\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Variable \\\"$show\\\" got invalid value 1; Boolean cannot represent a non boolean value: 1\",\"locations\":[{\"line\":1,\"column\":7}],\"extensions\":{\"code\":\"BAD_USER_INPUT\"}}]}\n"
+    }
+  },
+  {
+    "name": "invalid-object-id-partial",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{service:__typename build(id:\"bad\"){_id}}"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"a09ba1a6692f4902d996546e1ca6fa180efcfe72\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"input must be a 24 character hex string, 12 byte Uint8Array, or an integer\",\"locations\":[{\"line\":1,\"column\":21}],\"path\":[\"build\"],\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\"}}],\"data\":{\"service\":\"Query\",\"build\":null}}\n"
+    }
+  },
+  {
+    "name": "variable-null",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query One($id: ID!) { item(id:$id){title} }",
+        "variables": {
+          "id": null
+        }
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"e253b8bdf6dd6cb7d31a2495b2fd64acb0824728\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Variable \\\"$id\\\" of non-null type \\\"ID!\\\" must not be null.\",\"locations\":[{\"line\":1,\"column\":11}],\"extensions\":{\"code\":\"BAD_USER_INPUT\"}}]}\n"
+    }
+  },
+  {
+    "name": "variable-default",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query One($id: ID! = \"fixture-item\") { item(id:$id){title} }"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "fixture-item"
+            }
+          },
+          "options": {
+            "projection": {
+              "title": 1,
+              "id": 1,
+              "_id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "fixture-item",
+          "namespace": "fixture-store",
+          "title": "Sample item"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"8dd891868578a436252831af6109618ee1e75962\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"item\":{\"title\":\"Sample item\"}}}\n"
+    }
+  },
+  {
+    "name": "multiple-missing",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query Two($one:ID!,$two:ID!){a:item(id:$one){id} b:item(id:$two){id}}"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"2bb0724bdf1082fc79b136a30dfb9c17cbc45305\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Variable \\\"$one\\\" of required type \\\"ID!\\\" was not provided.\",\"locations\":[{\"line\":1,\"column\":11}],\"extensions\":{\"code\":\"BAD_USER_INPUT\"}},{\"message\":\"Variable \\\"$two\\\" of required type \\\"ID!\\\" was not provided.\",\"locations\":[{\"line\":1,\"column\":20}],\"extensions\":{\"code\":\"BAD_USER_INPUT\"}}]}\n"
+    }
+  },
+  {
+    "name": "invalid-document-before-variables",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query One($id: ID!) { item(id:$id){madeUpField} }"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"ea35dd023ad8e085f4a8814eb1e3833eb948cffa\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Cannot query field \\\"madeUpField\\\" on type \\\"Item\\\".\",\"locations\":[{\"line\":1,\"column\":36}],\"extensions\":{\"code\":\"GRAPHQL_VALIDATION_FAILED\"}}]}\n"
+    }
+  },
+  {
+    "name": "parse-argument-name",
+    "request": {
+      "path": "/graphql?query=%7Bitem%28+%3A+%22x%22%29%7Bid%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"367c0906dee4aa652ab19d08a47107892dfb49f0\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Syntax Error: Expected Name, found \\\":\\\".\",\"locations\":[{\"line\":1,\"column\":8}],\"extensions\":{\"code\":\"GRAPHQL_PARSE_FAILED\"}}]}\n"
+    }
+  },
+  {
+    "name": "get-mutation",
+    "request": {
+      "path": "/graphql?query=mutation+Change+%7B+__typename+%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 405,
+      "headers": {
+        "allow": "POST",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"4b8e684f872c91a7f0bb309f36529c607fe901d0\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"GET requests only support query operations, not mutation operations\",\"extensions\":{\"code\":\"BAD_REQUEST\"}}]}\n"
+    }
+  }
+]

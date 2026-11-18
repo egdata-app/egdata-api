@@ -1,0 +1,6676 @@
+[
+  {
+    "name": "detail-attributes-missing",
+    "request": {
+      "method": "GET",
+      "path": "/items/i"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$eq": "i"
+                }
+              },
+              {
+                "id": {
+                  "$eq": "i"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"bdc74d8932c37449dd088a924ee2eee8a0d7bdb5\""
+      },
+      "body": {
+        "id": "i",
+        "title": "Item",
+        "releaseInfo": [
+          {
+            "appId": "game"
+          }
+        ],
+        "customAttributes": {}
+      }
+    }
+  },
+  {
+    "name": "bulk-attributes-missing",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{\"items\":[\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "i",
+            "title": "Item",
+            "releaseInfo": [
+              {
+                "appId": "game"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"42cc1eda1f46d2388cef2bc78fc5d5298b4b7851\""
+      },
+      "body": [
+        {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": {}
+        }
+      ]
+    }
+  },
+  {
+    "name": "detail-attributes-null",
+    "request": {
+      "method": "GET",
+      "path": "/items/i"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$eq": "i"
+                }
+              },
+              {
+                "id": {
+                  "$eq": "i"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": null
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"bdc74d8932c37449dd088a924ee2eee8a0d7bdb5\""
+      },
+      "body": {
+        "id": "i",
+        "title": "Item",
+        "releaseInfo": [
+          {
+            "appId": "game"
+          }
+        ],
+        "customAttributes": {}
+      }
+    }
+  },
+  {
+    "name": "bulk-attributes-null",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{\"items\":[\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "i",
+            "title": "Item",
+            "releaseInfo": [
+              {
+                "appId": "game"
+              }
+            ],
+            "customAttributes": null
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"42cc1eda1f46d2388cef2bc78fc5d5298b4b7851\""
+      },
+      "body": [
+        {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": {}
+        }
+      ]
+    }
+  },
+  {
+    "name": "detail-attributes-false",
+    "request": {
+      "method": "GET",
+      "path": "/items/i"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$eq": "i"
+                }
+              },
+              {
+                "id": {
+                  "$eq": "i"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": false
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"bdc74d8932c37449dd088a924ee2eee8a0d7bdb5\""
+      },
+      "body": {
+        "id": "i",
+        "title": "Item",
+        "releaseInfo": [
+          {
+            "appId": "game"
+          }
+        ],
+        "customAttributes": {}
+      }
+    }
+  },
+  {
+    "name": "bulk-attributes-false",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{\"items\":[\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "i",
+            "title": "Item",
+            "releaseInfo": [
+              {
+                "appId": "game"
+              }
+            ],
+            "customAttributes": false
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"42cc1eda1f46d2388cef2bc78fc5d5298b4b7851\""
+      },
+      "body": [
+        {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": {}
+        }
+      ]
+    }
+  },
+  {
+    "name": "detail-attributes-zero",
+    "request": {
+      "method": "GET",
+      "path": "/items/i"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$eq": "i"
+                }
+              },
+              {
+                "id": {
+                  "$eq": "i"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": 0
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"bdc74d8932c37449dd088a924ee2eee8a0d7bdb5\""
+      },
+      "body": {
+        "id": "i",
+        "title": "Item",
+        "releaseInfo": [
+          {
+            "appId": "game"
+          }
+        ],
+        "customAttributes": {}
+      }
+    }
+  },
+  {
+    "name": "bulk-attributes-zero",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{\"items\":[\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "i",
+            "title": "Item",
+            "releaseInfo": [
+              {
+                "appId": "game"
+              }
+            ],
+            "customAttributes": 0
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"42cc1eda1f46d2388cef2bc78fc5d5298b4b7851\""
+      },
+      "body": [
+        {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": {}
+        }
+      ]
+    }
+  },
+  {
+    "name": "detail-attributes-text",
+    "request": {
+      "method": "GET",
+      "path": "/items/i"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$eq": "i"
+                }
+              },
+              {
+                "id": {
+                  "$eq": "i"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": "legacy"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"8b662e360fadb922282ea278ae0d336f7b2389bd\""
+      },
+      "body": {
+        "id": "i",
+        "title": "Item",
+        "releaseInfo": [
+          {
+            "appId": "game"
+          }
+        ],
+        "customAttributes": "legacy"
+      }
+    }
+  },
+  {
+    "name": "bulk-attributes-text",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{\"items\":[\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "i",
+            "title": "Item",
+            "releaseInfo": [
+              {
+                "appId": "game"
+              }
+            ],
+            "customAttributes": "legacy"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"0746a85630c7998d97c55ba9408517f9f7abf3b9\""
+      },
+      "body": [
+        {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": "legacy"
+        }
+      ]
+    }
+  },
+  {
+    "name": "detail-attributes-object",
+    "request": {
+      "method": "GET",
+      "path": "/items/i"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$eq": "i"
+                }
+              },
+              {
+                "id": {
+                  "$eq": "i"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": {
+            "A": {
+              "value": 12
+            }
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"21924e6792e27330f88a41d04d90bfe7264e2a67\""
+      },
+      "body": {
+        "id": "i",
+        "title": "Item",
+        "releaseInfo": [
+          {
+            "appId": "game"
+          }
+        ],
+        "customAttributes": {
+          "A": {
+            "value": 12
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "bulk-attributes-object",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{\"items\":[\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "i",
+            "title": "Item",
+            "releaseInfo": [
+              {
+                "appId": "game"
+              }
+            ],
+            "customAttributes": {
+              "A": {
+                "value": 12
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"36bf580925ecbb6b38bf2262a1bdc2679e264036\""
+      },
+      "body": [
+        {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": {
+            "A": {
+              "value": 12
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "detail-attributes-malformed",
+    "request": {
+      "method": "GET",
+      "path": "/items/i"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$eq": "i"
+                }
+              },
+              {
+                "id": {
+                  "$eq": "i"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": [
+            null
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "bulk-attributes-malformed",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{\"items\":[\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "i",
+            "title": "Item",
+            "releaseInfo": [
+              {
+                "appId": "game"
+              }
+            ],
+            "customAttributes": [
+              null
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "detail-attributes-mixed",
+    "request": {
+      "method": "GET",
+      "path": "/items/i"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$eq": "i"
+                }
+              },
+              {
+                "id": {
+                  "$eq": "i"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": [
+            {
+              "key": 0,
+              "value": "ignored"
+            },
+            {
+              "key": "__proto__",
+              "value": "ignored"
+            },
+            {
+              "key": 14,
+              "type": 3,
+              "value": 0
+            },
+            {
+              "key": "label",
+              "type": false
+            },
+            {
+              "key": "again",
+              "value": 4
+            },
+            {
+              "key": "again",
+              "value": 8
+            }
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"8a920f67b7d805faa9976c45d40504e6da6e6bcd\""
+      },
+      "body": {
+        "id": "i",
+        "title": "Item",
+        "releaseInfo": [
+          {
+            "appId": "game"
+          }
+        ],
+        "customAttributes": {
+          "14": {
+            "type": 3,
+            "value": 0
+          },
+          "label": {
+            "type": "STRING"
+          },
+          "again": {
+            "type": "STRING",
+            "value": 8
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "bulk-attributes-mixed",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{\"items\":[\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "i",
+            "title": "Item",
+            "releaseInfo": [
+              {
+                "appId": "game"
+              }
+            ],
+            "customAttributes": [
+              {
+                "key": 0,
+                "value": "ignored"
+              },
+              {
+                "key": "__proto__",
+                "value": "ignored"
+              },
+              {
+                "key": 14,
+                "type": 3,
+                "value": 0
+              },
+              {
+                "key": "label",
+                "type": false
+              },
+              {
+                "key": "again",
+                "value": 4
+              },
+              {
+                "key": "again",
+                "value": 8
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e4a4467ef51a745eb458afcf4af6f4a936bccdcd\""
+      },
+      "body": [
+        {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ],
+          "customAttributes": {
+            "14": {
+              "type": 3,
+              "value": 0
+            },
+            "label": {
+              "type": "STRING"
+            },
+            "again": {
+              "type": "STRING",
+              "value": 8
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "bad-none-bulk",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "null",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "bad-none-bulk-offers",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "null",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "bad-object-bulk",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "bad-object-bulk-offers",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "bad-wrong-bulk",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{\"items\":{}}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "bad-wrong-bulk-offers",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":{}}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "bulk-input-malformed",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "offer-input-malformed",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f\""
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "bulk-input-empty",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "offer-input-empty",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f\""
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "bulk-input-bom",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "﻿{\"items\":[\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "offer-input-bom",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "﻿{\"items\":[\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"49e7ab91b0941bfe788d517f9ad7e1ad52a30eee\""
+      },
+      "body": {
+        "i": null
+      }
+    }
+  },
+  {
+    "name": "bulk-input-overflow",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{\"items\":[1e400,\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "offer-input-overflow",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":[1e400,\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"49e7ab91b0941bfe788d517f9ad7e1ad52a30eee\""
+      },
+      "body": {
+        "i": null
+      }
+    }
+  },
+  {
+    "name": "bulk-input-whitespace",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{\"items\":[\"﻿ i ﻿\",\"\",false]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "﻿ i ﻿",
+                ""
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "offer-input-whitespace",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":[\"﻿ i ﻿\",\"\",false]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                ""
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                ""
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"0cdd33595909708194770f5a6a1f4fd053fb1a71\""
+      },
+      "body": {
+        "i": null,
+        "": null
+      }
+    }
+  },
+  {
+    "name": "matched-duplicate",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          },
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Different doc",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "j"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"3da77c55a981cfd051566b907d669ca44b92b912\""
+      },
+      "body": {
+        "i": {
+          "id": "game",
+          "namespace": "ns",
+          "title": "Original",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        },
+        "j": {
+          "id": "game",
+          "namespace": "ns",
+          "title": "Original",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        },
+        "missing": null
+      }
+    }
+  },
+  {
+    "name": "matched-missing",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          },
+          {
+            "namespace": "ns",
+            "title": "Second",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "j"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"252eea053f3b5b876e6463345d1505396045f24f\""
+      },
+      "body": {
+        "i": {
+          "namespace": "ns",
+          "title": "Original",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        },
+        "j": {
+          "namespace": "ns",
+          "title": "Original",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        },
+        "missing": null
+      }
+    }
+  },
+  {
+    "name": "matched-rank",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "first DLC",
+            "offerType": "dlc",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          },
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "unknown rank",
+            "offerType": [],
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          },
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Prepurchase",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "prePurchase": true
+          },
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Ready",
+            "offerType": [
+              "BASE_GAME"
+            ],
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"ac80cf2008f451d6192d7f30e246f5d4d18a517a\""
+      },
+      "body": {
+        "i": {
+          "id": "game",
+          "namespace": "ns",
+          "title": "Ready",
+          "offerType": [
+            "BASE_GAME"
+          ],
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        },
+        "j": null,
+        "missing": null
+      }
+    }
+  },
+  {
+    "name": "bulk-translated",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers?locale=fr-FR",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:game"
+              ]
+            },
+            "locale": "fr-FR"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "entityType": "offer",
+            "entityId": "ns:game",
+            "locale": "fr-FR",
+            "source": "fixture",
+            "fetchedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "data": {
+              "title": "Titre",
+              "description": "only translated"
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"c0640a97ef1a346e696300206ac54decbf341f08\""
+      },
+      "body": {
+        "i": {
+          "id": "game",
+          "namespace": "ns",
+          "title": "Titre",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "locale": "fr-FR",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "source": "fixture",
+            "fetchedAt": "2026-11-12T00:00:00.000Z"
+          }
+        },
+        "j": null,
+        "missing": null
+      }
+    }
+  },
+  {
+    "name": "bulk-fallback",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers?locale=fr-FR",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:game"
+              ]
+            },
+            "locale": "fr-FR"
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"0efa306f2fdfdc26211da1a6049e22f806a23aba\""
+      },
+      "body": {
+        "i": {
+          "id": "game",
+          "namespace": "ns",
+          "title": "Original",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "locale": "fr-FR",
+          "localeStatus": "fallback",
+          "canonicalLocale": "en-US"
+        },
+        "j": null,
+        "missing": null
+      }
+    }
+  },
+  {
+    "name": "mixed-key-identity-en-US",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers?locale=en-US",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"extra\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "extra"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "namespace": "ns",
+            "title": "First object",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          },
+          {
+            "id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "namespace": "ns",
+            "title": "Separate object",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "j"
+              }
+            ]
+          },
+          {
+            "id": "65ba00000000000000000001",
+            "namespace": "ns",
+            "title": "Text id",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "extra"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "extra"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"92e25d6e434162e38351fd6c9027b90b77bed531\""
+      },
+      "body": {
+        "i": {
+          "id": "65ba00000000000000000001",
+          "namespace": "ns",
+          "title": "First object",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        },
+        "j": {
+          "id": "65ba00000000000000000001",
+          "namespace": "ns",
+          "title": "Separate object",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "j"
+            }
+          ],
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        },
+        "extra": {
+          "id": "65ba00000000000000000001",
+          "namespace": "ns",
+          "title": "Text id",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "extra"
+            }
+          ],
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      }
+    }
+  },
+  {
+    "name": "mixed-key-identity-fr-FR",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers?locale=fr-FR",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"extra\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "extra"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "namespace": "ns",
+            "title": "First object",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          },
+          {
+            "id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "namespace": "ns",
+            "title": "Separate object",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "j"
+              }
+            ]
+          },
+          {
+            "id": "65ba00000000000000000001",
+            "namespace": "ns",
+            "title": "Text id",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "extra"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "extra"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:65ba00000000000000000001"
+              ]
+            },
+            "locale": "fr-FR"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "entityType": "offer",
+            "entityId": "ns:65ba00000000000000000001",
+            "locale": "fr-FR",
+            "source": "fixture",
+            "fetchedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "data": {
+              "title": "Titre",
+              "description": "only translated"
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"810b2713b9474c7a25c30520d467bc0c31fff14f\""
+      },
+      "body": {
+        "i": {
+          "id": "65ba00000000000000000001",
+          "namespace": "ns",
+          "title": "First object",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "locale": "fr-FR",
+          "localeStatus": "fallback",
+          "canonicalLocale": "en-US"
+        },
+        "j": {
+          "id": "65ba00000000000000000001",
+          "namespace": "ns",
+          "title": "Separate object",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "j"
+            }
+          ],
+          "locale": "fr-FR",
+          "localeStatus": "fallback",
+          "canonicalLocale": "en-US"
+        },
+        "extra": {
+          "id": "65ba00000000000000000001",
+          "namespace": "ns",
+          "title": "Titre",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "extra"
+            }
+          ],
+          "locale": "fr-FR",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "source": "fixture",
+            "fetchedAt": "2026-11-12T00:00:00.000Z"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "single-native-object-id",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer?locale=fr-FR"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:fr-FR"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "namespace": "ns",
+            "title": "First object",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "offer:item:i:locale:fr-FR",
+          "payload": {
+            "id": "65ba00000000000000000001",
+            "namespace": "ns",
+            "title": "First object",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "locale": "fr-FR",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"d31b9e1fdd17efbe618fef3df1b3e815a06e08f9\""
+      },
+      "body": {
+        "id": "65ba00000000000000000001",
+        "namespace": "ns",
+        "title": "First object",
+        "offerType": "BASE_GAME",
+        "items": [
+          {
+            "id": "i"
+          }
+        ],
+        "locale": "fr-FR",
+        "localeStatus": "fallback",
+        "canonicalLocale": "en-US"
+      }
+    }
+  },
+  {
+    "name": "item-escaped-body-property",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "rawBody": "{\"it\\u0065ms\":[\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "bulk-empty-filter",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers?locale=invalid_locale_code",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"d492f0003e85ddb46ba437cae592e0022b9c3b95\""
+      },
+      "body": {
+        "message": "Invalid locale parameter: invalid_locale_code"
+      }
+    }
+  },
+  {
+    "name": "item-offer-invalid-locale",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer?locale=invalid_locale_code"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"d492f0003e85ddb46ba437cae592e0022b9c3b95\""
+      },
+      "body": {
+        "message": "Invalid locale parameter: invalid_locale_code"
+      }
+    }
+  },
+  {
+    "name": "bulk-subitem-bson-ids",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"extra\",\"n\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "extra",
+                "n"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "extra",
+                "n"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "subItems": [
+              {
+                "id": "i"
+              }
+            ]
+          },
+          {
+            "_id": 17,
+            "subItems": [
+              {
+                "id": "j"
+              }
+            ]
+          },
+          {
+            "_id": "plain",
+            "subItems": [
+              {
+                "id": "extra"
+              }
+            ]
+          },
+          {
+            "_id": null,
+            "subItems": [
+              {
+                "id": "n"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "65ba00000000000000000001"
+                },
+                17,
+                "plain",
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "namespace": "ns",
+            "title": "65ba00000000000000000001",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          },
+          {
+            "id": 17,
+            "namespace": "ns",
+            "title": "17",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          },
+          {
+            "id": "plain",
+            "namespace": "ns",
+            "title": "plain",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          },
+          {
+            "id": null,
+            "namespace": "ns",
+            "title": "null",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"d8e645db785ca89b67d00bbd1b0446195477b1be\""
+      },
+      "body": {
+        "i": null,
+        "j": {
+          "id": 17,
+          "namespace": "ns",
+          "title": "17",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        },
+        "extra": {
+          "id": "plain",
+          "namespace": "ns",
+          "title": "plain",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        },
+        "n": {
+          "id": null,
+          "namespace": "ns",
+          "title": "null",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      }
+    }
+  },
+  {
+    "name": "direct-members-null",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": null
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"964aa306194cbb6957704705d6323eeec51d6333\""
+      },
+      "body": {
+        "i": null,
+        "j": null,
+        "missing": null
+      }
+    }
+  },
+  {
+    "name": "direct-members-text",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": "legacy"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"964aa306194cbb6957704705d6323eeec51d6333\""
+      },
+      "body": {
+        "i": null,
+        "j": null,
+        "missing": null
+      }
+    }
+  },
+  {
+    "name": "direct-members-number",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": 3
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "direct-members-null-entry",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "secondary-members-missing",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "game"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "game"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "secondary-members-text",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "game",
+            "subItems": "legacy"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "game"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"964aa306194cbb6957704705d6323eeec51d6333\""
+      },
+      "body": {
+        "i": null,
+        "j": null,
+        "missing": null
+      }
+    }
+  },
+  {
+    "name": "secondary-members-null-entry",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "game",
+            "subItems": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "game"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "offer-mixed-id-query",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            }
+          },
+          {
+            "_id": 17
+          },
+          {
+            "_id": "plain"
+          },
+          {
+            "_id": null
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "65ba00000000000000000001"
+                },
+                17,
+                "plain",
+                null
+              ]
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "offer:item:i:locale:en-US",
+          "payload": {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"ca6df5835c88a4b8174306894d3eef3d6449384d\""
+      },
+      "body": {
+        "id": "game",
+        "namespace": "ns",
+        "title": "Original",
+        "offerType": "BASE_GAME",
+        "items": [
+          {
+            "id": "i"
+          }
+        ],
+        "locale": "en-US",
+        "localeStatus": "canonical"
+      }
+    }
+  },
+  {
+    "name": "offer-prepurchase-ready",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Wrong",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "prePurchase": "yes"
+          },
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "offer:item:i:locale:en-US",
+          "payload": {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"ca6df5835c88a4b8174306894d3eef3d6449384d\""
+      },
+      "body": {
+        "id": "game",
+        "namespace": "ns",
+        "title": "Original",
+        "offerType": "BASE_GAME",
+        "items": [
+          {
+            "id": "i"
+          }
+        ],
+        "locale": "en-US",
+        "localeStatus": "canonical"
+      }
+    }
+  },
+  {
+    "name": "offer-prepurchase-none",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "prePurchase": 1
+          },
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "prePurchase": true
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f9220d7b7d6902a43a6727bb8ee166245ec6c59a\""
+      },
+      "body": {
+        "error": "No offer found"
+      }
+    }
+  },
+  {
+    "name": "offer-prepurchase-single",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "prePurchase": true
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "offer:item:i:locale:en-US",
+          "payload": {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "prePurchase": true,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"a3806c68c00b5927c8a267b81e6abb39011c5c2c\""
+      },
+      "body": {
+        "id": "game",
+        "namespace": "ns",
+        "title": "Original",
+        "offerType": "BASE_GAME",
+        "items": [
+          {
+            "id": "i"
+          }
+        ],
+        "prePurchase": true,
+        "locale": "en-US",
+        "localeStatus": "canonical"
+      }
+    }
+  },
+  {
+    "name": "offer-translated",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer?locale=fr-FR"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:fr-FR"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            }
+          },
+          {
+            "_id": 17
+          },
+          {
+            "_id": "plain"
+          },
+          {
+            "_id": null
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "65ba00000000000000000001"
+                },
+                17,
+                "plain",
+                null
+              ]
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:game"
+              ]
+            },
+            "locale": "fr-FR"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "entityType": "offer",
+            "entityId": "ns:game",
+            "locale": "fr-FR",
+            "source": "fixture",
+            "fetchedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "data": {
+              "title": "Titre",
+              "description": "only translated"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "offer:item:i:locale:fr-FR",
+          "payload": {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Titre",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "locale": "fr-FR",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "fixture",
+              "fetchedAt": "2026-11-12T00:00:00.000Z"
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"70749b9033c3cc7d5679b4ee76b7f44b0c056b87\""
+      },
+      "body": {
+        "id": "game",
+        "namespace": "ns",
+        "title": "Titre",
+        "offerType": "BASE_GAME",
+        "items": [
+          {
+            "id": "i"
+          }
+        ],
+        "locale": "fr-FR",
+        "localeStatus": "localized",
+        "canonicalLocale": "en-US",
+        "localization": {
+          "source": "fixture",
+          "fetchedAt": "2026-11-12T00:00:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "name": "offer-fallback",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer?locale=fr-FR"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:fr-FR"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            }
+          },
+          {
+            "_id": 17
+          },
+          {
+            "_id": "plain"
+          },
+          {
+            "_id": null
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "65ba00000000000000000001"
+                },
+                17,
+                "plain",
+                null
+              ]
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:game"
+              ]
+            },
+            "locale": "fr-FR"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "offer:item:i:locale:fr-FR",
+          "payload": {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "locale": "fr-FR",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"a5a1b51614e1c844b08494348d96a56044e6c511\""
+      },
+      "body": {
+        "id": "game",
+        "namespace": "ns",
+        "title": "Original",
+        "offerType": "BASE_GAME",
+        "items": [
+          {
+            "id": "i"
+          }
+        ],
+        "locale": "fr-FR",
+        "localeStatus": "fallback",
+        "canonicalLocale": "en-US"
+      }
+    }
+  },
+  {
+    "name": "offer-cache-false",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:en-US"
+        },
+        "result": false
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"7cb6efb98ba5972a9b5090dc2e517fe14d12cb04\""
+      },
+      "body": false
+    }
+  },
+  {
+    "name": "changelog-cache-false",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:i:1:10"
+        },
+        "result": false
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"7cb6efb98ba5972a9b5090dc2e517fe14d12cb04\""
+      },
+      "body": false
+    }
+  },
+  {
+    "name": "changelog-typed-ids",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/changelog?page=2&limit=1"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:i:2:1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": "i"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app"
+          },
+          {
+            "artifactId": 42
+          },
+          {}
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "query": {
+            "appName": {
+              "$in": [
+                "app",
+                42,
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            }
+          },
+          {
+            "_id": 42
+          },
+          {
+            "_id": {
+              "legacy": true
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "metadata.contextId": {
+                  "$in": [
+                    "i",
+                    "app",
+                    42,
+                    null,
+                    "65ba00000000000000000001",
+                    "42",
+                    "[object Object]"
+                  ]
+                }
+              }
+            },
+            {
+              "$sort": {
+                "timestamp": -1
+              }
+            },
+            {
+              "$skip": 1
+            },
+            {
+              "$limit": 1
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$id",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "itemDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "assets",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$artifactId",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "assetDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "builds",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          {
+                            "$toString": "$_id"
+                          },
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "buildDoc"
+              }
+            },
+            {
+              "$addFields": {
+                "document": {
+                  "$switch": {
+                    "branches": [
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "item"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$itemDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "asset"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$assetDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "build"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$buildDoc",
+                            0
+                          ]
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 1,
+                "metadata": 1,
+                "timestamp": 1,
+                "document": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "timestamp": {
+              "$date": "2026-10-01T00:00:00.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "changelog:i:2:1",
+          "payload": [
+            {
+              "timestamp": "2026-10-01T00:00:00.000Z"
+            }
+          ],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"41b78dd2a52641981194e5468541f37a332446ad\""
+      },
+      "body": [
+        {
+          "timestamp": "2026-10-01T00:00:00.000Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "changelog-bad-build-missing",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:i:1:10"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": "i"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app"
+          },
+          {
+            "artifactId": 42
+          },
+          {}
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "query": {
+            "appName": {
+              "$in": [
+                "app",
+                42,
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {}
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "changelog-bad-build-null",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:i:1:10"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": "i"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app"
+          },
+          {
+            "artifactId": 42
+          },
+          {}
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "query": {
+            "appName": {
+              "$in": [
+                "app",
+                42,
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": null
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "builds-app-types",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/builds"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "releaseInfo": [
+            {
+              "appId": 17
+            },
+            {
+              "appId": {
+                "$oid": "65ba00000000000000000001"
+              }
+            },
+            {}
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "query": {
+            "appName": {
+              "$in": [
+                17,
+                {
+                  "$oid": "65ba00000000000000000001"
+                },
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "item-builds-concurrent-assets",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/builds"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "query": {
+            "appName": {
+              "$in": [
+                "game"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "appName": "game",
+            "buildVersion": "1",
+            "labelName": "Live-Windows",
+            "hash": "sha"
+          },
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "appName": "game-b",
+            "buildVersion": "1",
+            "labelName": "Live-Windows",
+            "hash": "sha"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "one",
+          "query": {
+            "artifactId": {
+              "$eq": "game"
+            },
+            "platform": {
+              "$eq": "Windows"
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "one",
+          "query": {
+            "artifactId": {
+              "$eq": "game-b"
+            },
+            "platform": {
+              "$eq": "Windows"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "downloadSizeBytes": 30
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"9f710fc06f854d46311bdadec26561b3d7cda711\""
+      },
+      "body": [
+        {
+          "id": "65ba00000000000000000001",
+          "_id": "65ba00000000000000000001",
+          "appName": "game",
+          "buildVersion": "1",
+          "labelName": "Live-Windows",
+          "platform": "Windows",
+          "hash": "sha",
+          "firstSeenAt": null,
+          "lastSeenAt": null,
+          "createdAt": null,
+          "updatedAt": null,
+          "downloadSizeBytes": null,
+          "installedSizeBytes": null,
+          "technologies": [],
+          "manifest": {
+            "status": "legacy_unverified",
+            "canonicalHash": null,
+            "sourceHash": "sha",
+            "parserVersion": null,
+            "processedAt": null,
+            "fileCount": null,
+            "fileBytes": null,
+            "errorCode": null
+          }
+        },
+        {
+          "id": "65ba00000000000000000001",
+          "_id": "65ba00000000000000000001",
+          "appName": "game-b",
+          "buildVersion": "1",
+          "labelName": "Live-Windows",
+          "platform": "Windows",
+          "hash": "sha",
+          "firstSeenAt": null,
+          "lastSeenAt": null,
+          "createdAt": null,
+          "updatedAt": null,
+          "downloadSizeBytes": 30,
+          "installedSizeBytes": null,
+          "technologies": [],
+          "manifest": {
+            "status": "legacy_unverified",
+            "canonicalHash": null,
+            "sourceHash": "sha",
+            "parserVersion": null,
+            "processedAt": null,
+            "fileCount": null,
+            "fileBytes": null,
+            "errorCode": null
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "item-builds-concurrent-asset-failure",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/builds"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "query": {
+            "appName": {
+              "$in": [
+                "game"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "appName": "game",
+            "buildVersion": "1",
+            "labelName": "Live-Windows",
+            "hash": "sha"
+          },
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "appName": "game-b",
+            "buildVersion": "1",
+            "labelName": "Live-Windows",
+            "hash": "sha"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "one",
+          "query": {
+            "artifactId": {
+              "$eq": "game"
+            },
+            "platform": {
+              "$eq": "Windows"
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "one",
+          "query": {
+            "artifactId": {
+              "$eq": "game-b"
+            },
+            "platform": {
+              "$eq": "Windows"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "downloadSizeBytes": 30
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "item-builds-missing-label",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/builds"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "query": {
+            "appName": {
+              "$in": [
+                "game"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "appName": "game"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "builds-release-missing",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/builds"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {}
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "builds-release-object",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/builds"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "releaseInfo": {}
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "builds-release-null-entry",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/builds"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "releaseInfo": [
+            null
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "item-detail-failure-0",
+    "request": {
+      "method": "GET",
+      "path": "/items/i"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$eq": "i"
+                }
+              },
+              {
+                "id": {
+                  "$eq": "i"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "item-assets-failure-0",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/assets"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": "i"
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "list-failure-0",
+    "request": {
+      "method": "GET",
+      "path": "/items?page=2&limit=3"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {},
+          "options": {
+            "limit": 3,
+            "skip": 3,
+            "sort": {
+              "lastModifiedDate": -1
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "list-failure-1",
+    "request": {
+      "method": "GET",
+      "path": "/items?page=2&limit=3"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {},
+          "options": {
+            "limit": 3,
+            "skip": 3,
+            "sort": {
+              "lastModifiedDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "i",
+            "title": "Item",
+            "releaseInfo": [
+              {
+                "appId": "game"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "related-failure-0",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer?locale=fr-FR"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:fr-FR"
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "related-failure-1",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer?locale=fr-FR"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:fr-FR"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "related-failure-2",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer?locale=fr-FR"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:fr-FR"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            }
+          },
+          {
+            "_id": 17
+          },
+          {
+            "_id": "plain"
+          },
+          {
+            "_id": null
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "65ba00000000000000000001"
+                },
+                17,
+                "plain",
+                null
+              ]
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "related-failure-3",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer?locale=fr-FR"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:fr-FR"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            }
+          },
+          {
+            "_id": 17
+          },
+          {
+            "_id": "plain"
+          },
+          {
+            "_id": null
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "65ba00000000000000000001"
+                },
+                17,
+                "plain",
+                null
+              ]
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:game"
+              ]
+            },
+            "locale": "fr-FR"
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "related-failure-4",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer?locale=fr-FR"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:fr-FR"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            }
+          },
+          {
+            "_id": 17
+          },
+          {
+            "_id": "plain"
+          },
+          {
+            "_id": null
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "65ba00000000000000000001"
+                },
+                17,
+                "plain",
+                null
+              ]
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:game"
+              ]
+            },
+            "locale": "fr-FR"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "entityType": "offer",
+            "entityId": "ns:game",
+            "locale": "fr-FR",
+            "source": "fixture",
+            "fetchedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "data": {
+              "title": "Titre",
+              "description": "only translated"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "offer:item:i:locale:fr-FR",
+          "payload": {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Titre",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "locale": "fr-FR",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "fixture",
+              "fetchedAt": "2026-11-12T00:00:00.000Z"
+            }
+          },
+          "ttl": 3600
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "changes-failure-0",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:i:1:10"
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "changes-failure-1",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:i:1:10"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "changes-failure-2",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:i:1:10"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": "i"
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "changes-failure-3",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:i:1:10"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": "i"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app"
+          },
+          {
+            "artifactId": 42
+          },
+          {}
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "query": {
+            "appName": {
+              "$in": [
+                "app",
+                42,
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "changes-failure-4",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:i:1:10"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": "i"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app"
+          },
+          {
+            "artifactId": 42
+          },
+          {}
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "query": {
+            "appName": {
+              "$in": [
+                "app",
+                42,
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            }
+          },
+          {
+            "_id": 42
+          },
+          {
+            "_id": {
+              "legacy": true
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "metadata.contextId": {
+                  "$in": [
+                    "i",
+                    "app",
+                    42,
+                    null,
+                    "65ba00000000000000000001",
+                    "42",
+                    "[object Object]"
+                  ]
+                }
+              }
+            },
+            {
+              "$sort": {
+                "timestamp": -1
+              }
+            },
+            {
+              "$skip": 0
+            },
+            {
+              "$limit": 10
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$id",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "itemDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "assets",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$artifactId",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "assetDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "builds",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          {
+                            "$toString": "$_id"
+                          },
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "buildDoc"
+              }
+            },
+            {
+              "$addFields": {
+                "document": {
+                  "$switch": {
+                    "branches": [
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "item"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$itemDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "asset"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$assetDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "build"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$buildDoc",
+                            0
+                          ]
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 1,
+                "metadata": 1,
+                "timestamp": 1,
+                "document": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "changes-failure-5",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:i:1:10"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "releaseInfo": [
+            {
+              "appId": "game"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": "i"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app"
+          },
+          {
+            "artifactId": 42
+          },
+          {}
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "query": {
+            "appName": {
+              "$in": [
+                "app",
+                42,
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            }
+          },
+          {
+            "_id": 42
+          },
+          {
+            "_id": {
+              "legacy": true
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "metadata.contextId": {
+                  "$in": [
+                    "i",
+                    "app",
+                    42,
+                    null,
+                    "65ba00000000000000000001",
+                    "42",
+                    "[object Object]"
+                  ]
+                }
+              }
+            },
+            {
+              "$sort": {
+                "timestamp": -1
+              }
+            },
+            {
+              "$skip": 0
+            },
+            {
+              "$limit": 10
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$id",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "itemDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "assets",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$artifactId",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "assetDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "builds",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          {
+                            "$toString": "$_id"
+                          },
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "buildDoc"
+              }
+            },
+            {
+              "$addFields": {
+                "document": {
+                  "$switch": {
+                    "branches": [
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "item"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$itemDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "asset"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$assetDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "build"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$buildDoc",
+                            0
+                          ]
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 1,
+                "metadata": 1,
+                "timestamp": 1,
+                "document": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "timestamp": {
+              "$date": "2026-10-01T00:00:00.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "changelog:i:1:10",
+          "payload": [
+            {
+              "timestamp": "2026-10-01T00:00:00.000Z"
+            }
+          ],
+          "ttl": 3600
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "related-bulk-failure-0",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers?locale=fr-FR",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "related-bulk-failure-1",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers?locale=fr-FR",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "related-bulk-failure-2",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers?locale=fr-FR",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "game",
+            "subItems": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "game"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "related-bulk-failure-3",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers?locale=fr-FR",
+      "rawBody": "{\"items\":[\"i\",\"j\",\"missing\",\"i\"]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "j",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "game",
+            "subItems": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "game"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Original",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:game"
+              ]
+            },
+            "locale": "fr-FR"
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  }
+]

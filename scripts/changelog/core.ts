@@ -107,6 +107,9 @@ export function recordsFrom(files: Snapshot): ChangeRecord[] {
 }
 
 const relevant = (p: string) =>
+  /^rust\/(Cargo\.(toml|lock)$|rust-toolchain\.toml$|crates\/[^/]+\/(Cargo\.toml$|src\/.*\.rs$))/.test(
+    p,
+  ) ||
   /^(src\/|openapi\/|dashboard\/worker\/|dashboard\/(wrangler\.jsonc|package\.json)$|Dockerfile|rslib\.config\.|package\.json$|pnpm-(lock|workspace)\.yaml$)/.test(
     p,
   );

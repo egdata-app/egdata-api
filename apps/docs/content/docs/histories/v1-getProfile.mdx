@@ -5,6 +5,17 @@ description: History for GET /v1/profiles/{id}
 
 `GET /v1/profiles/{id}` — active. Recorded dates are not deployment dates.
 
+## 2026-11-18 — Persist owner review changes and include newly saved reviews in public counts
+
+Record: [persist-owner-review-edits](https://github.com/egdata-app/egdata-api/blob/main/changes/records/persist-owner-review-edits.json).
+
+- **v1 GET /v1/profiles/&#123;id&#125;** (getProfile; fixed; compatible)
+  - Before: A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.
+  - After: A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.
+  - Client action: None
+
+Verification: tests/rust-legacy-account-admin-oracle.test.ts compares authenticated review edits, edition history, concurrent writes and deletion during an edit.; rust/scripts/compare-origins.mjs exercises signed-in owners against the Node and Rust HTTP origins and checks the stored review in MongoDB..
+
 ## 2026-11-16 — Accept dashboard console session key identities on v1 endpoints
 
 Record: [console-session-v1-key-context](https://github.com/egdata-app/egdata-api/blob/main/changes/records/console-session-v1-key-context.json).

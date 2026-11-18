@@ -1,0 +1,1657 @@
+[
+  {
+    "input": null,
+    "errors": [
+      {
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected object, received null"
+      }
+    ]
+  },
+  {
+    "input": false,
+    "errors": [
+      {
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected object, received boolean"
+      }
+    ]
+  },
+  {
+    "input": 0,
+    "errors": [
+      {
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected object, received number"
+      }
+    ]
+  },
+  {
+    "input": "",
+    "errors": [
+      {
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected object, received string"
+      }
+    ]
+  },
+  {
+    "input": [],
+    "errors": [
+      {
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected object, received array"
+      }
+    ]
+  },
+  {
+    "input": {},
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected array, received undefined"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": null
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected array, received null"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": ""
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected array, received string"
+      },
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates",
+        "code": "TOO_SMALL",
+        "message": "Too small: expected string to have >=1 characters"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": []
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates",
+        "code": "TOO_SMALL",
+        "message": "Too small: expected array to have >=1 items"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        null
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected object, received null"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {}
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/requestId",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received undefined"
+      },
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildAppName",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received undefined"
+      },
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildVersion",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received undefined"
+      },
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/platform",
+        "code": "INVALID_VALUE",
+        "message": "Invalid input: expected \"Windows\""
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "output": [
+      {
+        "requestId": "req",
+        "buildAppName": "app",
+        "buildVersion": "",
+        "platform": "Windows"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "code": "CUSTOM",
+        "message": "requestId values must be unique"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ],
+      "extra": true
+    },
+    "errors": [
+      {
+        "code": "UNRECOGNIZED_KEYS",
+        "message": "Unrecognized key: \"extra\""
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": null,
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/requestId",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received null"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": 1,
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/requestId",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received number"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": "",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/requestId",
+        "code": "TOO_SMALL",
+        "message": "Too small: expected string to have >=1 characters"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": false,
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/requestId",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received boolean"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": {},
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/requestId",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received object"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": [],
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/requestId",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received array"
+      },
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/requestId",
+        "code": "TOO_SMALL",
+        "message": "Too small: expected array to have >=1 items"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/requestId",
+        "code": "TOO_BIG",
+        "message": "Too big: expected string to have <=128 characters"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": null,
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildAppName",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received null"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": 1,
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildAppName",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received number"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": "",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildAppName",
+        "code": "TOO_SMALL",
+        "message": "Too small: expected string to have >=1 characters"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": false,
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildAppName",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received boolean"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": {},
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildAppName",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received object"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": [],
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildAppName",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received array"
+      },
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildAppName",
+        "code": "TOO_SMALL",
+        "message": "Too small: expected array to have >=1 items"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildAppName",
+        "code": "TOO_BIG",
+        "message": "Too big: expected string to have <=256 characters"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": null,
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildVersion",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received null"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": 1,
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildVersion",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received number"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": "",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "output": [
+      {
+        "requestId": "req",
+        "buildAppName": "app",
+        "buildVersion": "",
+        "platform": "Windows"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": false,
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildVersion",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received boolean"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": {},
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildVersion",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received object"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": [],
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildVersion",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received array"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/buildVersion",
+        "code": "TOO_BIG",
+        "message": "Too big: expected string to have <=512 characters"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": null
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/platform",
+        "code": "INVALID_VALUE",
+        "message": "Invalid input: expected \"Windows\""
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": 1
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/platform",
+        "code": "INVALID_VALUE",
+        "message": "Invalid input: expected \"Windows\""
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": ""
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/platform",
+        "code": "INVALID_VALUE",
+        "message": "Invalid input: expected \"Windows\""
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": false
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/platform",
+        "code": "INVALID_VALUE",
+        "message": "Invalid input: expected \"Windows\""
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": {}
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/platform",
+        "code": "INVALID_VALUE",
+        "message": "Invalid input: expected \"Windows\""
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": []
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/platform",
+        "code": "INVALID_VALUE",
+        "message": "Invalid input: expected \"Windows\""
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/platform",
+        "code": "INVALID_VALUE",
+        "message": "Invalid input: expected \"Windows\""
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows",
+          "catalogHint": null
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/catalogHint",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected object, received null"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows",
+          "catalogHint": 1
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/catalogHint",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected object, received number"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows",
+          "catalogHint": ""
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/catalogHint",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected object, received string"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows",
+          "catalogHint": false
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/catalogHint",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected object, received boolean"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows",
+          "catalogHint": {}
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/catalogHint/artifactId",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received undefined"
+      },
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/catalogHint/catalogItemId",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received undefined"
+      },
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/catalogHint/catalogNamespace",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received undefined"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows",
+          "catalogHint": []
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/catalogHint",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected object, received array"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows",
+          "catalogHint": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/catalogHint",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected object, received string"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows",
+          "catalogHint": {
+            "artifactId": " a ",
+            "catalogItemId": " i ",
+            "catalogNamespace": " ns "
+          }
+        }
+      ]
+    },
+    "output": [
+      {
+        "requestId": "req",
+        "buildAppName": "app",
+        "buildVersion": "",
+        "platform": "Windows",
+        "catalogHint": {
+          "artifactId": "a",
+          "catalogItemId": "i",
+          "catalogNamespace": "ns"
+        }
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": " req ",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows",
+          "catalogHint": {
+            "artifactId": "",
+            "extra": true
+          }
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/catalogHint/artifactId",
+        "code": "TOO_SMALL",
+        "message": "Too small: expected string to have >=1 characters"
+      },
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/catalogHint/catalogItemId",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received undefined"
+      },
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/catalogHint/catalogNamespace",
+        "code": "INVALID_TYPE",
+        "message": "Invalid input: expected string, received undefined"
+      },
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/catalogHint",
+        "code": "UNRECOGNIZED_KEYS",
+        "message": "Unrecognized key: \"extra\""
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates/0/requestId",
+        "code": "TOO_BIG",
+        "message": "Too big: expected string to have <=128 characters"
+      }
+    ]
+  },
+  {
+    "input": {
+      "candidates": [
+        {
+          "requestId": "0",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "1",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "2",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "3",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "4",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "5",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "6",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "7",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "8",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "9",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "10",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "11",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "12",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "13",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "14",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "15",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "16",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "17",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "18",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "19",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "20",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "21",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "22",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "23",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "24",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "25",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "26",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "27",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "28",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "29",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "30",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "31",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "32",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "33",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "34",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "35",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "36",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "37",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "38",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "39",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "40",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "41",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "42",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "43",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "44",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "45",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "46",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "47",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "48",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "49",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "50",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "51",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "52",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "53",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "54",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "55",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "56",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "57",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "58",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "59",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "60",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "61",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "62",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "63",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "64",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "65",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "66",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "67",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "68",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "69",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "70",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "71",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "72",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "73",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "74",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "75",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "76",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "77",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "78",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "79",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "80",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "81",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "82",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "83",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "84",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "85",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "86",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "87",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "88",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "89",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "90",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "91",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "92",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "93",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "94",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "95",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "96",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "97",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "98",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "99",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        },
+        {
+          "requestId": "100",
+          "buildAppName": " app ",
+          "buildVersion": " ",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "errors": [
+      {
+        "parameter": "candidates",
+        "pointer": "/candidates",
+        "code": "TOO_BIG",
+        "message": "Too big: expected array to have <=100 items"
+      }
+    ]
+  }
+]

@@ -1093,10 +1093,9 @@ app.get("/polls", async (c) => {
 
 app.get("/ownership", epic, async (c) => {
   const { id } = c.req.param();
-  const epic = c.var.epic;
-  const session = c.var.session;
+  const accountId = c.var.session?.epicAccountId ?? c.var.epic?.account_id;
 
-  if ((!epic || !epic.account_id) && !session) {
+  if (!accountId) {
     c.status(401);
     return c.json({
       message: "Unauthorized",
@@ -1113,12 +1112,7 @@ app.get("/ownership", epic, async (c) => {
   }
 
   const isOwned =
-    (session?.user?.email.split("@")[0] ?? epic?.account_id)
-      ? await verifyGameOwnership(
-          session?.user?.email.split("@")[0] ?? (epic?.account_id as string),
-          product._id as unknown as string,
-        )
-      : false;
+    await verifyGameOwnership(accountId, product._id as unknown as string);
 
   return c.json({
     isOwned,

@@ -1,0 +1,3623 @@
+[
+  {
+    "name": "legacy changelog recent enriched",
+    "request": {
+      "method": "GET",
+      "path": "/search/changelog?page=0&limit=100&debug=1"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 7
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            },
+            "skip": 0,
+            "limit": 50
+          }
+        },
+        "result": [
+          {
+            "_id": "507f1f77bcf86cd799439001",
+            "timestamp": "2026-11-17T00:00:00.000Z",
+            "metadata": {
+              "contextType": "offer",
+              "contextId": "offer-1"
+            }
+          },
+          {
+            "_id": "507f1f77bcf86cd799439002",
+            "timestamp": "2026-11-16T00:00:00.000Z",
+            "metadata": {
+              "contextType": "item",
+              "contextId": "item-1"
+            }
+          },
+          {
+            "_id": "507f1f77bcf86cd799439003",
+            "timestamp": "2026-11-15T00:00:00.000Z",
+            "metadata": {
+              "contextType": "asset",
+              "contextId": "asset-1"
+            }
+          },
+          {
+            "_id": "507f1f77bcf86cd799439004",
+            "timestamp": "2026-11-14T00:00:00.000Z",
+            "metadata": {
+              "contextType": "build",
+              "contextId": "507f1f77bcf86cd799439011"
+            }
+          },
+          {
+            "_id": "507f1f77bcf86cd799439005",
+            "timestamp": "2026-11-13T00:00:00.000Z",
+            "metadata": {
+              "contextType": "build",
+              "contextId": "build-str"
+            }
+          },
+          {
+            "_id": "507f1f77bcf86cd799439006",
+            "timestamp": "2026-11-12T00:00:00.000Z",
+            "metadata": {
+              "contextType": "unknown",
+              "contextId": "u-1"
+            }
+          },
+          {
+            "_id": "507f1f77bcf86cd799439007",
+            "timestamp": "2026-11-11T00:00:00.000Z",
+            "metadata": {
+              "contextType": "offer"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-1"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "offer-1",
+          "title": "Offer One"
+        }
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "item-1"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "item-1",
+          "title": "Item One"
+        }
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "artifactId": {
+                  "$eq": "asset-1"
+                }
+              },
+              {
+                "id": {
+                  "$eq": "asset-1"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "artifactId": "asset-1",
+          "itemId": "item-1"
+        }
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$oid": "507f1f77bcf86cd799439011"
+                }
+              },
+              {
+                "_id": {
+                  "$eq": "507f1f77bcf86cd799439011"
+                }
+              }
+            ]
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "appName": 1,
+              "buildVersion": 1
+            }
+          }
+        },
+        "result": {
+          "_id": "507f1f77bcf86cd799439011",
+          "appName": "AppOne",
+          "buildVersion": "1.0"
+        }
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "build-str"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "appName": 1,
+              "buildVersion": 1
+            }
+          }
+        },
+        "result": {
+          "_id": "507f1f77bcf86cd799439011",
+          "appName": "AppOne",
+          "buildVersion": "1.0"
+        }
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "item-1"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "item-1",
+          "title": "Item One"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"9a9b94b7f98e246b93a699691997c6e883467f10\""
+      },
+      "body": {
+        "hits": [
+          {
+            "_id": "507f1f77bcf86cd799439001",
+            "timestamp": "2026-11-17T00:00:00.000Z",
+            "metadata": {
+              "contextType": "offer",
+              "contextId": "offer-1"
+            },
+            "document": {
+              "id": "offer-1",
+              "title": "Offer One"
+            }
+          },
+          {
+            "_id": "507f1f77bcf86cd799439002",
+            "timestamp": "2026-11-16T00:00:00.000Z",
+            "metadata": {
+              "contextType": "item",
+              "contextId": "item-1"
+            },
+            "document": {
+              "id": "item-1",
+              "title": "Item One"
+            }
+          },
+          {
+            "_id": "507f1f77bcf86cd799439003",
+            "timestamp": "2026-11-15T00:00:00.000Z",
+            "metadata": {
+              "contextType": "asset",
+              "contextId": "asset-1"
+            },
+            "document": {
+              "id": "item-1",
+              "title": "Item One"
+            }
+          },
+          {
+            "_id": "507f1f77bcf86cd799439004",
+            "timestamp": "2026-11-14T00:00:00.000Z",
+            "metadata": {
+              "contextType": "build",
+              "contextId": "507f1f77bcf86cd799439011"
+            },
+            "document": {
+              "_id": "507f1f77bcf86cd799439011",
+              "appName": "AppOne",
+              "buildVersion": "1.0"
+            }
+          },
+          {
+            "_id": "507f1f77bcf86cd799439005",
+            "timestamp": "2026-11-13T00:00:00.000Z",
+            "metadata": {
+              "contextType": "build",
+              "contextId": "build-str"
+            },
+            "document": {
+              "_id": "507f1f77bcf86cd799439011",
+              "appName": "AppOne",
+              "buildVersion": "1.0"
+            }
+          },
+          {
+            "_id": "507f1f77bcf86cd799439006",
+            "timestamp": "2026-11-12T00:00:00.000Z",
+            "metadata": {
+              "contextType": "unknown",
+              "contextId": "u-1"
+            },
+            "document": null
+          },
+          {
+            "_id": "507f1f77bcf86cd799439007",
+            "timestamp": "2026-11-11T00:00:00.000Z",
+            "metadata": {
+              "contextType": "offer"
+            },
+            "document": null
+          }
+        ],
+        "estimatedTotalHits": 7,
+        "processingTimeMs": 0,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "legacy changelog recent filtered asset no itemId",
+    "request": {
+      "method": "GET",
+      "path": "/search/changelog?type=asset&id=asset-empty&page=2&limit=abc"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$eq": "asset",
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            },
+            "metadata.contextId": "asset-empty"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "metadata.contextType": {
+              "$eq": "asset",
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            },
+            "metadata.contextId": "asset-empty"
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            },
+            "skip": 10,
+            "limit": 10
+          }
+        },
+        "result": [
+          {
+            "_id": "c-asset-empty",
+            "metadata": {
+              "contextType": "asset",
+              "contextId": "asset-empty"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "artifactId": {
+                  "$eq": "asset-empty"
+                }
+              },
+              {
+                "id": {
+                  "$eq": "asset-empty"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "artifactId": "asset-empty"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"2aaa70a82310787db2ff442896cdde6f43325524\""
+      },
+      "body": {
+        "hits": [
+          {
+            "_id": "c-asset-empty",
+            "metadata": {
+              "contextType": "asset",
+              "contextId": "asset-empty"
+            },
+            "document": null
+          }
+        ],
+        "estimatedTotalHits": 1,
+        "processingTimeMs": 0,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "legacy changelog recent doc lookup error swallows to null",
+    "request": {
+      "method": "GET",
+      "path": "/search/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            },
+            "skip": 0,
+            "limit": 10
+          }
+        },
+        "result": [
+          {
+            "_id": "c-err",
+            "metadata": {
+              "contextType": "offer",
+              "contextId": "offer-err"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-err"
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"5ea1610d12dc8085a93444dff975e7b384fc299f\""
+      },
+      "body": {
+        "hits": [
+          {
+            "_id": "c-err",
+            "metadata": {
+              "contextType": "offer",
+              "contextId": "offer-err"
+            },
+            "document": null
+          }
+        ],
+        "estimatedTotalHits": 1,
+        "processingTimeMs": 0,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "legacy changelog whitespace query hits opensearch then mongo",
+    "request": {
+      "method": "GET",
+      "path": "/search/changelog?query=%20%20"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "  ",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "id": "o1"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "  ",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": []
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            },
+            "skip": 0,
+            "limit": 10
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"1b2d11ad5ca08bb3cb7817e7b9e71323bb49e770\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 0,
+        "processingTimeMs": 0,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "legacy changelog opensearch hydrated and debug",
+    "request": {
+      "method": "GET",
+      "path": "/search/changelog?query=cyber&type=offer&id=offer-1&debug=1"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "cyber",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "id": "ctx-0"
+                }
+              },
+              {
+                "_source": {
+                  "id": "ctx-1"
+                }
+              },
+              {
+                "_source": {
+                  "id": "ctx-2"
+                }
+              },
+              {
+                "_source": {
+                  "id": "ctx-3"
+                }
+              },
+              {
+                "_source": {
+                  "id": "ctx-4"
+                }
+              },
+              {
+                "_source": {
+                  "id": "ctx-5"
+                }
+              },
+              {
+                "_source": {
+                  "id": "ctx-6"
+                }
+              },
+              {
+                "_source": {
+                  "id": "ctx-7"
+                }
+              },
+              {
+                "_source": {
+                  "id": ""
+                }
+              },
+              {}
+            ]
+          }
+        }
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "cyber",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "id": "ctx-6"
+                }
+              },
+              {
+                "_source": {
+                  "id": "ctx-7"
+                }
+              },
+              {
+                "_source": {
+                  "id": "ctx-8"
+                }
+              },
+              {
+                "_source": {
+                  "id": "ctx-9"
+                }
+              },
+              {
+                "_source": {
+                  "id": "ctx-10"
+                }
+              },
+              {
+                "_source": {
+                  "id": "ctx-11"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.changelog",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must_not": [
+                  {
+                    "term": {
+                      "metadata.contextType.keyword": "file"
+                    }
+                  },
+                  {
+                    "term": {
+                      "metadata.contextType.keyword": "achievements"
+                    }
+                  }
+                ],
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "query_string": {
+                            "query": "cyber",
+                            "default_operator": "AND"
+                          }
+                        },
+                        {
+                          "terms": {
+                            "metadata.contextId.keyword": [
+                              "ctx-0",
+                              "ctx-1",
+                              "ctx-2",
+                              "ctx-3",
+                              "ctx-4",
+                              "ctx-5",
+                              "ctx-6",
+                              "ctx-7",
+                              "ctx-8",
+                              "ctx-9",
+                              "ctx-10",
+                              "ctx-11"
+                            ]
+                          }
+                        },
+                        {
+                          "terms": {
+                            "metadata.contextId": [
+                              "ctx-0",
+                              "ctx-1",
+                              "ctx-2",
+                              "ctx-3",
+                              "ctx-4",
+                              "ctx-5",
+                              "ctx-6",
+                              "ctx-7",
+                              "ctx-8",
+                              "ctx-9",
+                              "ctx-10",
+                              "ctx-11"
+                            ]
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "term": {
+                      "metadata.contextId.keyword": "offer-1"
+                    }
+                  },
+                  {
+                    "term": {
+                      "metadata.contextType.keyword": "offer"
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "timestamp": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "took": 7,
+          "hits": {
+            "total": {
+              "value": 2
+            },
+            "hits": [
+              {
+                "_id": "507f1f77bcf86cd799439021",
+                "_source": {
+                  "metadata": {
+                    "contextType": "offer",
+                    "contextId": "offer-1",
+                    "changes": [
+                      {
+                        "field": "title",
+                        "oldValue": null,
+                        "oldValueRaw": "{\"k\":1}",
+                        "newValue": null,
+                        "newValueRaw": "plain-text"
+                      },
+                      {
+                        "field": "desc",
+                        "oldValue": "existing",
+                        "newValue": null,
+                        "newValueRaw": 42
+                      },
+                      {
+                        "field": "empty",
+                        "oldValue": null,
+                        "newValue": null
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "_id": "chg-str-2",
+                "_source": {
+                  "metadata": {
+                    "contextType": "unknown",
+                    "contextId": "none"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "_id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439021"
+                },
+                "507f1f77bcf86cd799439021",
+                "chg-str-2"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "507f1f77bcf86cd799439021",
+            "metadata": {
+              "changes": [
+                {
+                  "oldValue": null
+                },
+                {
+                  "newValue": "from-mongo"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-1"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "offer-1",
+          "title": "Offer One"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"392ec6aa1a5ccb8221c02f3f759d03d064c06a0a\""
+      },
+      "body": {
+        "hits": [
+          {
+            "metadata": {
+              "contextType": "offer",
+              "contextId": "offer-1",
+              "changes": [
+                {
+                  "field": "title",
+                  "oldValue": null,
+                  "oldValueRaw": "{\"k\":1}",
+                  "newValue": "plain-text",
+                  "newValueRaw": "plain-text"
+                },
+                {
+                  "field": "desc",
+                  "oldValue": "existing",
+                  "newValue": "from-mongo",
+                  "newValueRaw": 42
+                },
+                {
+                  "field": "empty",
+                  "oldValue": null,
+                  "newValue": null
+                }
+              ]
+            },
+            "_id": "507f1f77bcf86cd799439021",
+            "document": {
+              "id": "offer-1",
+              "title": "Offer One"
+            }
+          },
+          {
+            "metadata": {
+              "contextType": "unknown",
+              "contextId": "none"
+            },
+            "_id": "chg-str-2",
+            "document": null
+          }
+        ],
+        "estimatedTotalHits": 2,
+        "processingTimeMs": 7,
+        "query": "cyber",
+        "debug": {
+          "relatedContextIdsCount": 12,
+          "relatedContextIdsSample": [
+            "ctx-0",
+            "ctx-1",
+            "ctx-2",
+            "ctx-3",
+            "ctx-4",
+            "ctx-5",
+            "ctx-6",
+            "ctx-7",
+            "ctx-8",
+            "ctx-9"
+          ],
+          "queryBody": {
+            "bool": {
+              "must_not": [
+                {
+                  "term": {
+                    "metadata.contextType.keyword": "file"
+                  }
+                },
+                {
+                  "term": {
+                    "metadata.contextType.keyword": "achievements"
+                  }
+                }
+              ],
+              "must": [
+                {
+                  "bool": {
+                    "should": [
+                      {
+                        "query_string": {
+                          "query": "cyber",
+                          "default_operator": "AND"
+                        }
+                      },
+                      {
+                        "terms": {
+                          "metadata.contextId.keyword": [
+                            "ctx-0",
+                            "ctx-1",
+                            "ctx-2",
+                            "ctx-3",
+                            "ctx-4",
+                            "ctx-5",
+                            "ctx-6",
+                            "ctx-7",
+                            "ctx-8",
+                            "ctx-9",
+                            "ctx-10",
+                            "ctx-11"
+                          ]
+                        }
+                      },
+                      {
+                        "terms": {
+                          "metadata.contextId": [
+                            "ctx-0",
+                            "ctx-1",
+                            "ctx-2",
+                            "ctx-3",
+                            "ctx-4",
+                            "ctx-5",
+                            "ctx-6",
+                            "ctx-7",
+                            "ctx-8",
+                            "ctx-9",
+                            "ctx-10",
+                            "ctx-11"
+                          ]
+                        }
+                      }
+                    ],
+                    "minimum_should_match": 1
+                  }
+                }
+              ],
+              "filter": [
+                {
+                  "term": {
+                    "metadata.contextId.keyword": "offer-1"
+                  }
+                },
+                {
+                  "term": {
+                    "metadata.contextType.keyword": "offer"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy changelog opensearch hydrate mongo error falls back",
+    "request": {
+      "method": "GET",
+      "path": "/search/changelog?query=cyber"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "cyber",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": []
+          }
+        }
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "cyber",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": []
+          }
+        }
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.changelog",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must_not": [
+                  {
+                    "term": {
+                      "metadata.contextType.keyword": "file"
+                    }
+                  },
+                  {
+                    "term": {
+                      "metadata.contextType.keyword": "achievements"
+                    }
+                  }
+                ],
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "query_string": {
+                            "query": "cyber",
+                            "default_operator": "AND"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "timestamp": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "took": 4,
+          "hits": {
+            "total": 1,
+            "hits": [
+              {
+                "_id": "chg-no-oid",
+                "_source": {
+                  "metadata": {
+                    "contextType": "unknown",
+                    "contextId": "x",
+                    "changes": [
+                      {
+                        "oldValueRaw": "[1,2]",
+                        "newValue": "ok"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "_id": {
+              "$in": [
+                "chg-no-oid"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"6f8a6a73fbb40dea88c034df5bfe14d570f54e28\""
+      },
+      "body": {
+        "hits": [
+          {
+            "metadata": {
+              "contextType": "unknown",
+              "contextId": "x",
+              "changes": [
+                {
+                  "oldValueRaw": "[1,2]",
+                  "newValue": "ok",
+                  "oldValue": [
+                    1,
+                    2
+                  ]
+                }
+              ]
+            },
+            "_id": "chg-no-oid",
+            "document": null
+          }
+        ],
+        "estimatedTotalHits": 1,
+        "processingTimeMs": 4,
+        "query": "cyber"
+      }
+    }
+  },
+  {
+    "name": "legacy changelog opensearch mongo fallback without id",
+    "request": {
+      "method": "GET",
+      "path": "/search/changelog?query=cyber&debug=1"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "cyber",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "id": "offer-fb"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "cyber",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": []
+          }
+        }
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.changelog",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must_not": [
+                  {
+                    "term": {
+                      "metadata.contextType.keyword": "file"
+                    }
+                  },
+                  {
+                    "term": {
+                      "metadata.contextType.keyword": "achievements"
+                    }
+                  }
+                ],
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "query_string": {
+                            "query": "cyber",
+                            "default_operator": "AND"
+                          }
+                        },
+                        {
+                          "terms": {
+                            "metadata.contextId.keyword": [
+                              "offer-fb"
+                            ]
+                          }
+                        },
+                        {
+                          "terms": {
+                            "metadata.contextId": [
+                              "offer-fb"
+                            ]
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "timestamp": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "took": 9,
+          "hits": {
+            "total": 0,
+            "hits": []
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            },
+            "metadata.contextId": {
+              "$in": [
+                "offer-fb"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            },
+            "metadata.contextId": {
+              "$in": [
+                "offer-fb"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            },
+            "skip": 0,
+            "limit": 10
+          }
+        },
+        "result": [
+          {
+            "_id": "fb-1",
+            "metadata": {
+              "contextType": "offer",
+              "contextId": "offer-fb"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-fb"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "offer-fb",
+          "title": "Fallback Offer"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"bf2a579534296003600094c03d3ad7eeeb050221\""
+      },
+      "body": {
+        "hits": [
+          {
+            "_id": "fb-1",
+            "metadata": {
+              "contextType": "offer",
+              "contextId": "offer-fb"
+            },
+            "document": {
+              "id": "offer-fb",
+              "title": "Fallback Offer"
+            }
+          }
+        ],
+        "estimatedTotalHits": 1,
+        "processingTimeMs": 9,
+        "query": "cyber",
+        "debug": {
+          "usedMongoFallback": true,
+          "relatedContextIdsCount": 1,
+          "relatedContextIdsSample": [
+            "offer-fb"
+          ],
+          "queryBody": {
+            "bool": {
+              "must_not": [
+                {
+                  "term": {
+                    "metadata.contextType.keyword": "file"
+                  }
+                },
+                {
+                  "term": {
+                    "metadata.contextType.keyword": "achievements"
+                  }
+                }
+              ],
+              "must": [
+                {
+                  "bool": {
+                    "should": [
+                      {
+                        "query_string": {
+                          "query": "cyber",
+                          "default_operator": "AND"
+                        }
+                      },
+                      {
+                        "terms": {
+                          "metadata.contextId.keyword": [
+                            "offer-fb"
+                          ]
+                        }
+                      },
+                      {
+                        "terms": {
+                          "metadata.contextId": [
+                            "offer-fb"
+                          ]
+                        }
+                      }
+                    ],
+                    "minimum_should_match": 1
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy changelog opensearch mongo fallback with id",
+    "request": {
+      "method": "GET",
+      "path": "/search/changelog?query=cyber&id=forced-id"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "cyber",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "id": "offer-fb"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "cyber",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": []
+          }
+        }
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.changelog",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must_not": [
+                  {
+                    "term": {
+                      "metadata.contextType.keyword": "file"
+                    }
+                  },
+                  {
+                    "term": {
+                      "metadata.contextType.keyword": "achievements"
+                    }
+                  }
+                ],
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "query_string": {
+                            "query": "cyber",
+                            "default_operator": "AND"
+                          }
+                        },
+                        {
+                          "terms": {
+                            "metadata.contextId.keyword": [
+                              "offer-fb"
+                            ]
+                          }
+                        },
+                        {
+                          "terms": {
+                            "metadata.contextId": [
+                              "offer-fb"
+                            ]
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "term": {
+                      "metadata.contextId.keyword": "forced-id"
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "timestamp": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "took": 3,
+          "hits": {
+            "total": {
+              "value": 0
+            },
+            "hits": []
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            },
+            "metadata.contextId": "forced-id"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            },
+            "metadata.contextId": "forced-id"
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            },
+            "skip": 0,
+            "limit": 10
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"dc2ae018ae49b696b7549370181b5ba1d2978245\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 0,
+        "processingTimeMs": 3,
+        "query": "cyber"
+      }
+    }
+  },
+  {
+    "name": "legacy changelog opensearch zero hits no related ids skips fallback",
+    "request": {
+      "method": "GET",
+      "path": "/search/changelog?query=nothing"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "nothing",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": []
+          }
+        }
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "nothing",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": []
+          }
+        }
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.changelog",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must_not": [
+                  {
+                    "term": {
+                      "metadata.contextType.keyword": "file"
+                    }
+                  },
+                  {
+                    "term": {
+                      "metadata.contextType.keyword": "achievements"
+                    }
+                  }
+                ],
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "query_string": {
+                            "query": "nothing",
+                            "default_operator": "AND"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "timestamp": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "took": 2,
+          "hits": {
+            "total": {},
+            "hits": []
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"a9c814c2da6c86caa07f4948ec0656064f00d7d2\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 0,
+        "processingTimeMs": 2,
+        "query": "nothing"
+      }
+    }
+  },
+  {
+    "name": "legacy changelog opensearch failure",
+    "request": {
+      "method": "GET",
+      "path": "/search/changelog?query=boom"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "boom",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "size": 100,
+            "query": {
+              "multi_match": {
+                "query": "boom",
+                "fields": [
+                  "title^3",
+                  "description",
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "legacy natural language invalid locale",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language?locale=invalid%20tag",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"rpg\"}"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e39cccf3001fb3869e7c1f52629388929b0c63a2\""
+      },
+      "body": {
+        "message": "Invalid locale parameter: invalid tag"
+      }
+    }
+  },
+  {
+    "name": "legacy natural language malformed json",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{bad"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"71222872faa25245b4d26663b024454ad97e74b4\""
+      },
+      "body": {
+        "message": "Invalid body. Provide a query between 1 and 500 characters and an optional topK between 1 and 50."
+      }
+    }
+  },
+  {
+    "name": "legacy natural language blank query",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"   \"}"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"71222872faa25245b4d26663b024454ad97e74b4\""
+      },
+      "body": {
+        "message": "Invalid body. Provide a query between 1 and 500 characters and an optional topK between 1 and 50."
+      }
+    }
+  },
+  {
+    "name": "legacy natural language too long query",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"71222872faa25245b4d26663b024454ad97e74b4\""
+      },
+      "body": {
+        "message": "Invalid body. Provide a query between 1 and 500 characters and an optional topK between 1 and 50."
+      }
+    }
+  },
+  {
+    "name": "legacy natural language invalid topK float",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"rpg\",\"topK\":1.5}"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"71222872faa25245b4d26663b024454ad97e74b4\""
+      },
+      "body": {
+        "message": "Invalid body. Provide a query between 1 and 500 characters and an optional topK between 1 and 50."
+      }
+    }
+  },
+  {
+    "name": "legacy natural language invalid topK range",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"rpg\",\"topK\":51}"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"71222872faa25245b4d26663b024454ad97e74b4\""
+      },
+      "body": {
+        "message": "Invalid body. Provide a query between 1 and 500 characters and an optional topK between 1 and 50."
+      }
+    }
+  },
+  {
+    "name": "legacy natural language unknown key",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"rpg\",\"extra\":true}"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"71222872faa25245b4d26663b024454ad97e74b4\""
+      },
+      "body": {
+        "message": "Invalid body. Provide a query between 1 and 500 characters and an optional topK between 1 and 50."
+      }
+    }
+  },
+  {
+    "name": "legacy natural language empty matches",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"  cozy farm  \",\"topK\":3}"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "vectorize",
+          "method": "queryNaturalLanguage",
+          "query": "cozy farm",
+          "topK": 3
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"64050a1310a295cf86311080bb030a691b4e03c1\""
+      },
+      "body": {
+        "query": "cozy farm",
+        "count": 0,
+        "matches": []
+      }
+    }
+  },
+  {
+    "name": "legacy natural language ranked localized",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language?locale=de-de",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"rpg\"}"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "vectorize",
+          "method": "queryNaturalLanguage",
+          "query": "rpg",
+          "topK": 10
+        },
+        "result": [
+          {
+            "id": "507f1f77bcf86cd799439031",
+            "score": 0.95,
+            "metadata": {
+              "id": "offer-a"
+            }
+          },
+          {
+            "id": "507f1f77bcf86cd799439032",
+            "score": 0.85
+          },
+          {
+            "id": "not-an-oid",
+            "score": 0.75,
+            "metadata": {
+              "id": ""
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    "offer-a"
+                  ]
+                }
+              },
+              {
+                "_id": {
+                  "$in": [
+                    {
+                      "$oid": "507f1f77bcf86cd799439031"
+                    },
+                    {
+                      "$oid": "507f1f77bcf86cd799439032"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "507f1f77bcf86cd799439031",
+            "id": "offer-a",
+            "namespace": "ns-a",
+            "title": "Original A",
+            "customAttributes": [
+              {
+                "key": "k",
+                "value": "v"
+              }
+            ]
+          },
+          {
+            "_id": "507f1f77bcf86cd799439032",
+            "id": "offer-b",
+            "namespace": "ns-b",
+            "title": "Original B",
+            "customAttributes": null
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns-a:offer-a",
+                "ns-b:offer-b"
+              ]
+            },
+            "locale": "de-DE"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "entityType": "offer",
+            "entityId": "ns-a:offer-a",
+            "locale": "de-DE",
+            "source": "egs",
+            "fetchedAt": "2026-11-16T00:00:00.000Z",
+            "data": {
+              "title": "Deutsch A"
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"a30bfb82c171cac7da82c494563f952059ca1ae5\""
+      },
+      "body": {
+        "query": "rpg",
+        "count": 2,
+        "matches": [
+          {
+            "score": 0.95,
+            "offer": {
+              "_id": "507f1f77bcf86cd799439031",
+              "id": "offer-a",
+              "namespace": "ns-a",
+              "title": "Deutsch A",
+              "customAttributes": {
+                "k": {
+                  "type": "STRING",
+                  "value": "v"
+                }
+              },
+              "locale": "de-DE",
+              "localeStatus": "localized",
+              "canonicalLocale": "en-US",
+              "localization": {
+                "source": "egs",
+                "fetchedAt": "2026-11-16T00:00:00.000Z"
+              }
+            }
+          },
+          {
+            "score": 0.85,
+            "offer": {
+              "_id": "507f1f77bcf86cd799439032",
+              "id": "offer-b",
+              "namespace": "ns-b",
+              "title": "Original B",
+              "locale": "de-DE",
+              "localeStatus": "fallback",
+              "canonicalLocale": "en-US"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "legacy natural language vectorize only metadata id",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"rpg\"}"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "vectorize",
+          "method": "queryNaturalLanguage",
+          "query": "rpg",
+          "topK": 10
+        },
+        "result": [
+          {
+            "id": "vec-1",
+            "score": 0.5,
+            "metadata": {
+              "id": "offer-a"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "offer-a"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "m1",
+            "id": "offer-a",
+            "title": "A"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"cb93f02f2ef8d322e5bdc5881b9037e56f7e195e\""
+      },
+      "body": {
+        "query": "rpg",
+        "count": 1,
+        "matches": [
+          {
+            "score": 0.5,
+            "offer": {
+              "_id": "m1",
+              "id": "offer-a",
+              "title": "A",
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "legacy natural language vectorize only object id",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"rpg\"}"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "vectorize",
+          "method": "queryNaturalLanguage",
+          "query": "rpg",
+          "topK": 10
+        },
+        "result": [
+          {
+            "id": "507f1f77bcf86cd799439031",
+            "score": 0.5
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "_id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439031"
+                }
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "507f1f77bcf86cd799439031",
+            "id": "offer-a",
+            "title": "A"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"e7bbf524f582e3e66a0d3b09a29c3d2a080e4c6b\""
+      },
+      "body": {
+        "query": "rpg",
+        "count": 1,
+        "matches": [
+          {
+            "score": 0.5,
+            "offer": {
+              "_id": "507f1f77bcf86cd799439031",
+              "id": "offer-a",
+              "title": "A",
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "legacy natural language config error",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"rpg\"}"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "vectorize",
+          "method": "queryNaturalLanguage",
+          "query": "rpg",
+          "topK": 10
+        },
+        "error": "config"
+      }
+    ],
+    "response": {
+      "status": 503,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f964b8b9fd968d9ce8311d1b529b8d38fa3a2a07\""
+      },
+      "body": {
+        "message": "Natural-language search is not configured"
+      }
+    }
+  },
+  {
+    "name": "legacy natural language upstream error",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"rpg\"}"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "vectorize",
+          "method": "queryNaturalLanguage",
+          "query": "rpg",
+          "topK": 10
+        },
+        "error": "upstream"
+      }
+    ],
+    "response": {
+      "status": 502,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"b940c50a9e68a3d580ddbf7159e9bbf18ca3f3f4\""
+      },
+      "body": {
+        "message": "Natural-language search is temporarily unavailable"
+      }
+    }
+  },
+  {
+    "name": "legacy natural language unexpected vectorize error",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"rpg\"}"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "vectorize",
+          "method": "queryNaturalLanguage",
+          "query": "rpg",
+          "topK": 10
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"c90e44fa0f4621844f9b3c4cc715d536aef31868\""
+      },
+      "body": {
+        "message": "Natural-language search failed"
+      }
+    }
+  },
+  {
+    "name": "legacy natural language mongo error",
+    "request": {
+      "method": "POST",
+      "path": "/search/natural-language",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "rawBody": "{\"query\":\"rpg\"}"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "vectorize",
+          "method": "queryNaturalLanguage",
+          "query": "rpg",
+          "topK": 10
+        },
+        "result": [
+          {
+            "id": "vec-1",
+            "score": 0.5,
+            "metadata": {
+              "id": "offer-a"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "offer-a"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"c90e44fa0f4621844f9b3c4cc715d536aef31868\""
+      },
+      "body": {
+        "message": "Natural-language search failed"
+      }
+    }
+  },
+  {
+    "name": "legacy search count cache hit",
+    "request": {
+      "method": "GET",
+      "path": "/search/saved-1/count?country=ES"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:count:saved-1:EURO:v0.5"
+        },
+        "result": {
+          "tagCounts": [],
+          "offerTypeCounts": [],
+          "total": 42,
+          "developer": [],
+          "publisher": [],
+          "priceRange": {
+            "minPrice": 100,
+            "maxPrice": 500
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"f9cdf30c6e5001dd75e1dd080c2c6ddd27d1223e\""
+      },
+      "body": {
+        "tagCounts": [],
+        "offerTypeCounts": [],
+        "total": 42,
+        "developer": [],
+        "publisher": [],
+        "priceRange": {
+          "minPrice": 100,
+          "maxPrice": 500
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy search count missing saved query",
+    "request": {
+      "method": "GET",
+      "path": "/search/missing/count",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:count:missing:EURO:v0.5"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "missing"
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"aa320448025524dc9015d94ea363115116936c37\""
+      },
+      "body": {
+        "message": "Query not found"
+      }
+    }
+  },
+  {
+    "name": "legacy search count full filters with tags and cookie country",
+    "request": {
+      "method": "GET",
+      "path": "/search/saved-full/count",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:count:saved-full:EURO:v0.5"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "saved-full"
+        },
+        "result": {
+          "title": "Cyber+Punk",
+          "offerType": "BASE_GAME",
+          "tags": [
+            "1",
+            "2"
+          ],
+          "customAttributes": [
+            "attr1"
+          ],
+          "categories": [
+            "games"
+          ],
+          "seller": "Epic",
+          "developerDisplayName": "Dev",
+          "publisherDisplayName": "Pub",
+          "refundType": "SELF_REFUNDABLE",
+          "isCodeRedemptionOnly": false,
+          "excludeBlockchain": true,
+          "price": {
+            "min": 100,
+            "max": 5000
+          },
+          "onSale": true,
+          "pastGiveaways": true
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "namespace": {
+                  "$ne": "ue"
+                },
+                "title": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "Cyber+Punk",
+                      "options": "i"
+                    }
+                  }
+                },
+                "offerType": "BASE_GAME",
+                "tags.id": {
+                  "$all": [
+                    "1",
+                    "2"
+                  ],
+                  "$ne": "21739"
+                },
+                "customAttributes": {
+                  "$elemMatch": {
+                    "id": {
+                      "$in": [
+                        "attr1"
+                      ]
+                    }
+                  }
+                },
+                "categories": {
+                  "$all": [
+                    "games"
+                  ]
+                },
+                "$or": [
+                  {
+                    "seller.name": "Epic"
+                  },
+                  {
+                    "seller.id": "Epic"
+                  }
+                ],
+                "developerDisplayName": "Dev",
+                "publisherDisplayName": "Pub",
+                "refundType": "SELF_REFUNDABLE",
+                "isCodeRedemptionOnly": false
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "localField": "id",
+                "foreignField": "offerId",
+                "as": "priceEngine",
+                "pipeline": [
+                  {
+                    "$match": {
+                      "region": "EURO",
+                      "price.discountPrice": {
+                        "$gte": 100,
+                        "$lte": 5000
+                      },
+                      "price.discount": {
+                        "$gt": 0
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "$addFields": {
+                "price": {
+                  "$arrayElemAt": [
+                    "$priceEngine",
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$match": {
+                "price": {
+                  "$ne": null
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "freegames",
+                "localField": "id",
+                "foreignField": "id",
+                "as": "freegame"
+              }
+            },
+            {
+              "$match": {
+                "freegame": {
+                  "$ne": []
+                }
+              }
+            },
+            {
+              "$facet": {
+                "total": [
+                  {
+                    "$count": "total"
+                  }
+                ],
+                "tagCounts": [
+                  {
+                    "$unwind": "$tags"
+                  },
+                  {
+                    "$group": {
+                      "_id": "$tags.id",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  }
+                ],
+                "offerTypeCounts": [
+                  {
+                    "$group": {
+                      "_id": "$offerType",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  }
+                ],
+                "developer": [
+                  {
+                    "$unwind": "$developerDisplayName"
+                  },
+                  {
+                    "$group": {
+                      "_id": "$developerDisplayName",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  }
+                ],
+                "publisher": [
+                  {
+                    "$unwind": "$publisherDisplayName"
+                  },
+                  {
+                    "$group": {
+                      "_id": "$publisherDisplayName",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "count": -1
+                    }
+                  }
+                ],
+                "priceRange": [
+                  {
+                    "$group": {
+                      "_id": null,
+                      "minPrice": {
+                        "$min": "$price.price.discountPrice"
+                      },
+                      "maxPrice": {
+                        "$max": "$price.price.discountPrice"
+                      },
+                      "currency": {
+                        "$first": "$price.price.currencyCode"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "tagCounts": [
+              {
+                "_id": "1",
+                "count": 3
+              }
+            ],
+            "offerTypeCounts": [
+              {
+                "_id": "BASE_GAME",
+                "count": 3
+              }
+            ],
+            "total": [
+              {
+                "total": 3
+              }
+            ],
+            "developer": [
+              {
+                "_id": "Dev",
+                "count": 3
+              }
+            ],
+            "publisher": [
+              {
+                "_id": "Pub",
+                "count": 3
+              }
+            ],
+            "priceRange": [
+              {
+                "_id": null,
+                "minPrice": 100,
+                "maxPrice": 500,
+                "currency": "EUR"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:count:saved-full:EURO:v0.5",
+          "payload": {
+            "tagCounts": [
+              {
+                "_id": "1",
+                "count": 3
+              }
+            ],
+            "offerTypeCounts": [
+              {
+                "_id": "BASE_GAME",
+                "count": 3
+              }
+            ],
+            "total": 3,
+            "developer": [
+              {
+                "_id": "Dev",
+                "count": 3
+              }
+            ],
+            "publisher": [
+              {
+                "_id": "Pub",
+                "count": 3
+              }
+            ],
+            "priceRange": {
+              "_id": null,
+              "minPrice": 100,
+              "maxPrice": 500,
+              "currency": "EUR"
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"8c572b7f38fe376801423b3d46be0dc16c57d54e\""
+      },
+      "body": {
+        "tagCounts": [
+          {
+            "_id": "1",
+            "count": 3
+          }
+        ],
+        "offerTypeCounts": [
+          {
+            "_id": "BASE_GAME",
+            "count": 3
+          }
+        ],
+        "total": 3,
+        "developer": [
+          {
+            "_id": "Dev",
+            "count": 3
+          }
+        ],
+        "publisher": [
+          {
+            "_id": "Pub",
+            "count": 3
+          }
+        ],
+        "priceRange": {
+          "_id": null,
+          "minPrice": 100,
+          "maxPrice": 500,
+          "currency": "EUR"
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy search count excludeBlockchain without tags and zero prices",
+    "request": {
+      "method": "GET",
+      "path": "/search/saved-noblock/count?country=XX"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:count:saved-noblock:US:v0.5"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "saved-noblock"
+        },
+        "result": {
+          "excludeBlockchain": true,
+          "price": {
+            "min": 0,
+            "max": 0
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "namespace": {
+                  "$ne": "ue"
+                },
+                "tags.id": {
+                  "$ne": "21739"
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "localField": "id",
+                "foreignField": "offerId",
+                "as": "priceEngine",
+                "pipeline": [
+                  {
+                    "$match": {
+                      "region": "US"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "$addFields": {
+                "price": {
+                  "$arrayElemAt": [
+                    "$priceEngine",
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$match": {
+                "price": {
+                  "$ne": null
+                }
+              }
+            },
+            {
+              "$facet": {
+                "total": [
+                  {
+                    "$count": "total"
+                  }
+                ],
+                "tagCounts": [
+                  {
+                    "$unwind": "$tags"
+                  },
+                  {
+                    "$group": {
+                      "_id": "$tags.id",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  }
+                ],
+                "offerTypeCounts": [
+                  {
+                    "$group": {
+                      "_id": "$offerType",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  }
+                ],
+                "developer": [
+                  {
+                    "$unwind": "$developerDisplayName"
+                  },
+                  {
+                    "$group": {
+                      "_id": "$developerDisplayName",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  }
+                ],
+                "publisher": [
+                  {
+                    "$unwind": "$publisherDisplayName"
+                  },
+                  {
+                    "$group": {
+                      "_id": "$publisherDisplayName",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "count": -1
+                    }
+                  }
+                ],
+                "priceRange": [
+                  {
+                    "$group": {
+                      "_id": null,
+                      "minPrice": {
+                        "$min": "$price.price.discountPrice"
+                      },
+                      "maxPrice": {
+                        "$max": "$price.price.discountPrice"
+                      },
+                      "currency": {
+                        "$first": "$price.price.currencyCode"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:count:saved-noblock:US:v0.5",
+          "payload": {
+            "tagCounts": [],
+            "offerTypeCounts": [],
+            "total": 0,
+            "developer": [],
+            "publisher": [],
+            "priceRange": {
+              "minPrice": null,
+              "maxPrice": null
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"fb3d8fabdf80f5e3c77232f0fc43f29a23c0b411\""
+      },
+      "body": {
+        "tagCounts": [],
+        "offerTypeCounts": [],
+        "total": 0,
+        "developer": [],
+        "publisher": [],
+        "priceRange": {
+          "minPrice": null,
+          "maxPrice": null
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy search count aggregate error",
+    "request": {
+      "method": "GET",
+      "path": "/search/saved-err/count"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:count:saved-err:US:v0.5"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "saved-err"
+        },
+        "result": {
+          "title": "x"
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "namespace": {
+                  "$ne": "ue"
+                },
+                "title": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "x",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "localField": "id",
+                "foreignField": "offerId",
+                "as": "priceEngine",
+                "pipeline": [
+                  {
+                    "$match": {
+                      "region": "US"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "$addFields": {
+                "price": {
+                  "$arrayElemAt": [
+                    "$priceEngine",
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$match": {
+                "price": {
+                  "$ne": null
+                }
+              }
+            },
+            {
+              "$facet": {
+                "total": [
+                  {
+                    "$count": "total"
+                  }
+                ],
+                "tagCounts": [
+                  {
+                    "$unwind": "$tags"
+                  },
+                  {
+                    "$group": {
+                      "_id": "$tags.id",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  }
+                ],
+                "offerTypeCounts": [
+                  {
+                    "$group": {
+                      "_id": "$offerType",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  }
+                ],
+                "developer": [
+                  {
+                    "$unwind": "$developerDisplayName"
+                  },
+                  {
+                    "$group": {
+                      "_id": "$developerDisplayName",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  }
+                ],
+                "publisher": [
+                  {
+                    "$unwind": "$publisherDisplayName"
+                  },
+                  {
+                    "$group": {
+                      "_id": "$publisherDisplayName",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "count": -1
+                    }
+                  }
+                ],
+                "priceRange": [
+                  {
+                    "$group": {
+                      "_id": null,
+                      "minPrice": {
+                        "$min": "$price.price.discountPrice"
+                      },
+                      "maxPrice": {
+                        "$max": "$price.price.discountPrice"
+                      },
+                      "currency": {
+                        "$first": "$price.price.currencyCode"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"df41af2621c10fbcdeea6f43f2628d260e368989\""
+      },
+      "body": {
+        "message": "Error while counting results"
+      }
+    }
+  },
+  {
+    "name": "legacy search count cache write error",
+    "request": {
+      "method": "GET",
+      "path": "/search/saved-cache-err/count"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "search:count:saved-cache-err:US:v0.5"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "saved-cache-err"
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "namespace": {
+                  "$ne": "ue"
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "localField": "id",
+                "foreignField": "offerId",
+                "as": "priceEngine",
+                "pipeline": [
+                  {
+                    "$match": {
+                      "region": "US"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "$addFields": {
+                "price": {
+                  "$arrayElemAt": [
+                    "$priceEngine",
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$match": {
+                "price": {
+                  "$ne": null
+                }
+              }
+            },
+            {
+              "$facet": {
+                "total": [
+                  {
+                    "$count": "total"
+                  }
+                ],
+                "tagCounts": [
+                  {
+                    "$unwind": "$tags"
+                  },
+                  {
+                    "$group": {
+                      "_id": "$tags.id",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  }
+                ],
+                "offerTypeCounts": [
+                  {
+                    "$group": {
+                      "_id": "$offerType",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  }
+                ],
+                "developer": [
+                  {
+                    "$unwind": "$developerDisplayName"
+                  },
+                  {
+                    "$group": {
+                      "_id": "$developerDisplayName",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  }
+                ],
+                "publisher": [
+                  {
+                    "$unwind": "$publisherDisplayName"
+                  },
+                  {
+                    "$group": {
+                      "_id": "$publisherDisplayName",
+                      "count": {
+                        "$sum": 1
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "count": -1
+                    }
+                  }
+                ],
+                "priceRange": [
+                  {
+                    "$group": {
+                      "_id": null,
+                      "minPrice": {
+                        "$min": "$price.price.discountPrice"
+                      },
+                      "maxPrice": {
+                        "$max": "$price.price.discountPrice"
+                      },
+                      "currency": {
+                        "$first": "$price.price.currencyCode"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "search:count:saved-cache-err:US:v0.5",
+          "payload": {
+            "tagCounts": [],
+            "offerTypeCounts": [],
+            "total": 0,
+            "developer": [],
+            "publisher": [],
+            "priceRange": {
+              "minPrice": null,
+              "maxPrice": null
+            }
+          },
+          "ttl": 3600
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"df41af2621c10fbcdeea6f43f2628d260e368989\""
+      },
+      "body": {
+        "message": "Error while counting results"
+      }
+    }
+  }
+]

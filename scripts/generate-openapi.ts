@@ -1,8 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildOpenApiDocument } from "../src/openapi/index.js";
-import { buildV1OpenApiDocument } from "../src/openapi/v1.js";
+import { rustContracts, registrationJson } from "./rust-contracts.js";
 import { renderWorkerRouteTable } from "./v1-worker-routes.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -15,12 +14,15 @@ const WORKER_ROUTES_OUT = resolve(
   "v1-routes.generated.ts",
 );
 
-const legacyDocument = buildOpenApiDocument();
-const v1Document = buildV1OpenApiDocument();
+const { legacyDocument, v1Document } = rustContracts();
 
 await mkdir(dirname(LEGACY_OUT), { recursive: true });
 await writeFile(LEGACY_OUT, `${JSON.stringify(legacyDocument, null, 2)}\n`);
 await writeFile(V1_OUT, `${JSON.stringify(v1Document, null, 2)}\n`);
+await writeFile(
+  resolve(ROOT, "openapi", "rust-routes.generated.json"),
+  registrationJson(),
+);
 await writeFile(WORKER_ROUTES_OUT, renderWorkerRouteTable());
 
 console.log(`wrote ${LEGACY_OUT}`);

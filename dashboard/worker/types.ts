@@ -144,6 +144,8 @@ export interface DashboardEnv
   CF_ANALYTICS_API_TOKEN?: string;
   ANTI_ABUSE_EDGE_SECRET?: string;
   ORIGIN_AUTH_TOKEN?: string;
+  RUST_SHADOW_ORIGIN?: string;
+  RUST_SHADOW_TOKEN?: string;
   ENABLE_DEV_AUTH?: string;
   WEB_EPHEMERAL_KEY_SECRET?: string;
   WEB_OWNER_EPIC_ID?: string;

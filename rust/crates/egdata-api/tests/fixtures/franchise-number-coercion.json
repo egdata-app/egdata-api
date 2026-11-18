@@ -1,0 +1,174 @@
+[
+  {
+    "label": "missing",
+    "value": null,
+    "missing": true,
+    "expected": 0
+  },
+  {
+    "label": "null",
+    "value": null,
+    "expected": 0
+  },
+  {
+    "label": "true",
+    "value": true,
+    "expected": 1
+  },
+  {
+    "label": "false",
+    "value": false,
+    "expected": 0
+  },
+  {
+    "label": "empty string",
+    "value": "",
+    "expected": 0
+  },
+  {
+    "label": "whitespace",
+    "value": "  \t ",
+    "expected": 0
+  },
+  {
+    "label": "numeric string",
+    "value": "12.5",
+    "expected": 12.5
+  },
+  {
+    "label": "exponent",
+    "value": "1.25e2",
+    "expected": 125
+  },
+  {
+    "label": "hex",
+    "value": "0x10",
+    "expected": 16
+  },
+  {
+    "label": "binary",
+    "value": "0b101",
+    "expected": 5
+  },
+  {
+    "label": "octal",
+    "value": "0o17",
+    "expected": 15
+  },
+  {
+    "label": "malformed",
+    "value": "12x",
+    "expected": 0
+  },
+  {
+    "label": "NaN string",
+    "value": "NaN",
+    "expected": 0
+  },
+  {
+    "label": "empty array",
+    "value": [],
+    "expected": 0
+  },
+  {
+    "label": "singleton numeric array",
+    "value": [
+      "7.5"
+    ],
+    "expected": 7.5
+  },
+  {
+    "label": "multi-value array",
+    "value": [
+      1,
+      2
+    ],
+    "expected": 0
+  },
+  {
+    "label": "object",
+    "value": {},
+    "expected": 0
+  },
+  {
+    "label": "decimal overflow",
+    "value": "1e309",
+    "expected": null
+  },
+  {
+    "label": "BOM whitespace",
+    "value": "﻿12.5﻿",
+    "expected": 12.5
+  },
+  {
+    "label": "large hex",
+    "value": "0x12345678901234567890001",
+    "expected": 3.521251666820253e+26
+  },
+  {
+    "label": "large octal",
+    "value": "0o1777777777777777777777777777777",
+    "expected": 2.4758800785707605e+27
+  },
+  {
+    "label": "large binary",
+    "value": "0b111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+    "expected": 1.2379400392853803e+27
+  },
+  {
+    "label": "upper radix",
+    "value": "0X12",
+    "expected": 18
+  },
+  {
+    "label": "trailing underscore",
+    "value": "0x1_2",
+    "expected": 0
+  },
+  {
+    "label": "empty radix",
+    "value": "0b",
+    "expected": 0
+  },
+  {
+    "label": "non-JS whitespace",
+    "value": "12",
+    "expected": 0
+  },
+  {
+    "label": "Rust infinity",
+    "value": "inf",
+    "expected": 0
+  },
+  {
+    "label": "signed Rust infinity",
+    "value": "-inFiniTy",
+    "expected": 0
+  },
+  {
+    "label": "positive Infinity",
+    "value": "+Infinity",
+    "expected": null
+  },
+  {
+    "label": "signed negative infinity",
+    "value": "-Infinity",
+    "expected": null
+  },
+  {
+    "label": "nested array",
+    "value": [
+      [
+        2
+      ]
+    ],
+    "expected": 2
+  },
+  {
+    "label": "nested objects",
+    "value": [
+      {}
+    ],
+    "expected": 0
+  }
+]

@@ -1,0 +1,28 @@
+[package]
+name = "egdata-graphql"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow.workspace = true
+async-graphql.workspace = true
+async-trait.workspace = true
+bson.workspace = true
+chrono.workspace = true
+egdata-core = { path = "../egdata-core" }
+egdata-infra = { path = "../egdata-infra" }
+futures.workspace = true
+hex.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+strsim = "0.11"
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tokio.workspace = true

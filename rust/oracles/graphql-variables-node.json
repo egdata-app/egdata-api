@@ -1,0 +1,1032 @@
+[
+  {
+    "name": "optional missing",
+    "query": "query Test(\n$a:String\n){__typename}",
+    "variables": {
+      "ignored": 1
+    },
+    "coerced": {}
+  },
+  {
+    "name": "required missing",
+    "query": "query Test(\n$v:ID!\n){__typename}",
+    "variables": {},
+    "errors": [
+      {
+        "message": "Variable \"$v\" of required type \"ID!\" was not provided.",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "explicit null",
+    "query": "query Test(\n$v:ID\n){__typename}",
+    "variables": {
+      "v": null
+    },
+    "coerced": {
+      "v": null
+    }
+  },
+  {
+    "name": "required null",
+    "query": "query Test(\n$v:ID! = 2\n){__typename}",
+    "variables": {
+      "v": null
+    },
+    "errors": [
+      {
+        "message": "Variable \"$v\" of non-null type \"ID!\" must not be null.",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "default ID and singleton list",
+    "query": "query Test(\n$v:ID=9, $list:[ID!]=7\n){__typename}",
+    "variables": {},
+    "coerced": {
+      "v": "9",
+      "list": [
+        "7"
+      ]
+    }
+  },
+  {
+    "name": "integer ID",
+    "query": "query Test(\n$v:ID!\n){__typename}",
+    "variables": {
+      "v": 124
+    },
+    "coerced": {
+      "v": "124"
+    }
+  },
+  {
+    "name": "large ID uses JS number spelling",
+    "query": "query Test(\n$v:ID!\n){__typename}",
+    "variables": {
+      "v": 1e+22
+    },
+    "coerced": {
+      "v": "1e+22"
+    }
+  },
+  {
+    "name": "valid integers",
+    "query": "query Test(\n$min:Int!, $max:Int!, $float:Float!\n){__typename}",
+    "variables": {
+      "min": -2147483648,
+      "max": 2147483647,
+      "float": 3.5
+    },
+    "coerced": {
+      "min": -2147483648,
+      "max": 2147483647,
+      "float": 3.5
+    }
+  },
+  {
+    "name": "wrong scalars",
+    "query": "query Test(\n$i:Int!, $f:Float, $b:Boolean!, $s:String!\n){__typename}",
+    "variables": {
+      "i": "42",
+      "f": "1",
+      "b": 0,
+      "s": false
+    },
+    "errors": [
+      {
+        "message": "Variable \"$i\" got invalid value \"42\"; Int cannot represent non-integer value: \"42\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$f\" got invalid value \"1\"; Float cannot represent non numeric value: \"1\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 10
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$b\" got invalid value 0; Boolean cannot represent a non boolean value: 0",
+        "locations": [
+          {
+            "line": 2,
+            "column": 20
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$s\" got invalid value false; String cannot represent a non string value: false",
+        "locations": [
+          {
+            "line": 2,
+            "column": 33
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "integer bounds",
+    "query": "query Test(\n$i:Int!, $j:Int\n){__typename}",
+    "variables": {
+      "i": 2147483648,
+      "j": -2147483649
+    },
+    "errors": [
+      {
+        "message": "Variable \"$i\" got invalid value 2147483648; Int cannot represent non 32-bit signed integer value: 2147483648",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$j\" got invalid value -2147483649; Int cannot represent non 32-bit signed integer value: -2147483649",
+        "locations": [
+          {
+            "line": 2,
+            "column": 10
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "fractional integer and ID",
+    "query": "query Test(\n$i:Int, $id:ID!\n){__typename}",
+    "variables": {
+      "i": 1.5,
+      "id": 0.25
+    },
+    "errors": [
+      {
+        "message": "Variable \"$i\" got invalid value 1.5; Int cannot represent non-integer value: 1.5",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$id\" got invalid value 0.25; ID cannot represent value: 0.25",
+        "locations": [
+          {
+            "line": 2,
+            "column": 9
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nested singleton IDs",
+    "query": "query Test(\n$v:[[ID!]!]\n){__typename}",
+    "variables": {
+      "v": [
+        1,
+        [
+          "2",
+          3
+        ]
+      ]
+    },
+    "coerced": {
+      "v": [
+        [
+          "1"
+        ],
+        [
+          "2",
+          "3"
+        ]
+      ]
+    }
+  },
+  {
+    "name": "nested list paths",
+    "query": "query Test(\n$v:[[Int!]]!\n){__typename}",
+    "variables": {
+      "v": [
+        [
+          true,
+          null,
+          12.5
+        ],
+        null,
+        "4"
+      ]
+    },
+    "errors": [
+      {
+        "message": "Variable \"$v\" got invalid value true at \"v[0][0]\"; Int cannot represent non-integer value: true",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value null at \"v[0][1]\"; Expected non-nullable type \"Int!\" not to be null.",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value 12.5 at \"v[0][2]\"; Int cannot represent non-integer value: 12.5",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"4\" at \"v[2]\"; Int cannot represent non-integer value: \"4\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nested missing path",
+    "query": "query Test(\n$v:[[Int!]!]!\n){__typename}",
+    "variables": {
+      "v": [
+        null
+      ]
+    },
+    "errors": [
+      {
+        "message": "Variable \"$v\" got invalid value null at \"v[0]\"; Expected non-nullable type \"[Int!]!\" not to be null.",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "singleton scalar error path",
+    "query": "query Test(\n$v:[Boolean!]!\n){__typename}",
+    "variables": {
+      "v": 6
+    },
+    "errors": [
+      {
+        "message": "Variable \"$v\" got invalid value 6; Boolean cannot represent a non boolean value: 6",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "valid enum",
+    "query": "query Test(\n$v:ProfileGameSort!\n){__typename}",
+    "variables": {
+      "v": "ALPHABETICAL"
+    },
+    "coerced": {
+      "v": "ALPHABETICAL"
+    }
+  },
+  {
+    "name": "enum case suggestion",
+    "query": "query Test(\n$v:[ProfileGameFilter!]!\n){__typename}",
+    "variables": {
+      "v": [
+        "in_progress",
+        "COMPLETD",
+        true
+      ]
+    },
+    "errors": [
+      {
+        "message": "Variable \"$v\" got invalid value \"in_progress\" at \"v[0]\"; Value \"in_progress\" does not exist in \"ProfileGameFilter\" enum. Did you mean the enum value \"IN_PROGRESS\"?",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"COMPLETD\" at \"v[1]\"; Value \"COMPLETD\" does not exist in \"ProfileGameFilter\" enum. Did you mean the enum value \"COMPLETED\"?",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value true at \"v[2]\"; Enum \"ProfileGameFilter\" cannot represent non-string value: true.",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "enum transposition",
+    "query": "query Test(\n$v:ProfileGameSort\n){__typename}",
+    "variables": {
+      "v": "ALPHAEBTICAL"
+    },
+    "errors": [
+      {
+        "message": "Variable \"$v\" got invalid value \"ALPHAEBTICAL\"; Value \"ALPHAEBTICAL\" does not exist in \"ProfileGameSort\" enum. Did you mean the enum value \"ALPHABETICAL\"?",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "enum unknown",
+    "query": "query Test(\n$v:ProfileActivityType\n){__typename}",
+    "variables": {
+      "v": "WRONG"
+    },
+    "errors": [
+      {
+        "message": "Variable \"$v\" got invalid value \"WRONG\"; Value \"WRONG\" does not exist in \"ProfileActivityType\" enum.",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "JSON object",
+    "query": "query Test(\n$v:JSON!\n){__typename}",
+    "variables": {
+      "v": {
+        "b": "a",
+        "c": [
+          true,
+          null,
+          5
+        ]
+      }
+    },
+    "coerced": {
+      "v": {
+        "b": "a",
+        "c": [
+          true,
+          null,
+          5
+        ]
+      }
+    }
+  },
+  {
+    "name": "inspected object/array",
+    "query": "query Test(\n$v:ID!\n){__typename}",
+    "variables": {
+      "v": {
+        "deep": {
+          "x": {
+            "a": 2
+          }
+        },
+        "arr": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      }
+    },
+    "errors": [
+      {
+        "message": "Variable \"$v\" got invalid value { deep: { x: [Object] }, arr: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ... 2 more items] }; ID cannot represent value: { deep: { x: [Object] }, arr: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ... 2 more items] }",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "offset date",
+    "query": "query Test(\n$v:DateTime!\n){__typename}",
+    "variables": {
+      "v": "2025-05-30T15:04:03.12345+02:00"
+    },
+    "coerced": {
+      "v": "2025-05-30T13:04:03.123Z"
+    }
+  },
+  {
+    "name": "invalid date strings",
+    "query": "query Test(\n$v:[DateTime]!\n){__typename}",
+    "variables": {
+      "v": [
+        "2025-02-29T00:00:00Z",
+        "2025-01-01 00:00:00Z",
+        4
+      ]
+    },
+    "errors": [
+      {
+        "message": "Variable \"$v\" got invalid value \"2025-02-29T00:00:00Z\" at \"v[0]\"; DateTime cannot represent an invalid date-time-string 2025-02-29T00:00:00Z.",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"2025-01-01 00:00:00Z\" at \"v[1]\"; DateTime cannot represent an invalid date-time-string 2025-01-01 00:00:00Z.",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value 4 at \"v[2]\"; DateTime cannot represent non string or Date type 4",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "error limit",
+    "query": "query Test(\n$v:[Int!]\n){__typename}",
+    "variables": {
+      "v": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52"
+      ]
+    },
+    "errors": [
+      {
+        "message": "Variable \"$v\" got invalid value \"0\" at \"v[0]\"; Int cannot represent non-integer value: \"0\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"1\" at \"v[1]\"; Int cannot represent non-integer value: \"1\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"2\" at \"v[2]\"; Int cannot represent non-integer value: \"2\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"3\" at \"v[3]\"; Int cannot represent non-integer value: \"3\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"4\" at \"v[4]\"; Int cannot represent non-integer value: \"4\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"5\" at \"v[5]\"; Int cannot represent non-integer value: \"5\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"6\" at \"v[6]\"; Int cannot represent non-integer value: \"6\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"7\" at \"v[7]\"; Int cannot represent non-integer value: \"7\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"8\" at \"v[8]\"; Int cannot represent non-integer value: \"8\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"9\" at \"v[9]\"; Int cannot represent non-integer value: \"9\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"10\" at \"v[10]\"; Int cannot represent non-integer value: \"10\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"11\" at \"v[11]\"; Int cannot represent non-integer value: \"11\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"12\" at \"v[12]\"; Int cannot represent non-integer value: \"12\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"13\" at \"v[13]\"; Int cannot represent non-integer value: \"13\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"14\" at \"v[14]\"; Int cannot represent non-integer value: \"14\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"15\" at \"v[15]\"; Int cannot represent non-integer value: \"15\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"16\" at \"v[16]\"; Int cannot represent non-integer value: \"16\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"17\" at \"v[17]\"; Int cannot represent non-integer value: \"17\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"18\" at \"v[18]\"; Int cannot represent non-integer value: \"18\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"19\" at \"v[19]\"; Int cannot represent non-integer value: \"19\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"20\" at \"v[20]\"; Int cannot represent non-integer value: \"20\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"21\" at \"v[21]\"; Int cannot represent non-integer value: \"21\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"22\" at \"v[22]\"; Int cannot represent non-integer value: \"22\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"23\" at \"v[23]\"; Int cannot represent non-integer value: \"23\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"24\" at \"v[24]\"; Int cannot represent non-integer value: \"24\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"25\" at \"v[25]\"; Int cannot represent non-integer value: \"25\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"26\" at \"v[26]\"; Int cannot represent non-integer value: \"26\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"27\" at \"v[27]\"; Int cannot represent non-integer value: \"27\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"28\" at \"v[28]\"; Int cannot represent non-integer value: \"28\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"29\" at \"v[29]\"; Int cannot represent non-integer value: \"29\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"30\" at \"v[30]\"; Int cannot represent non-integer value: \"30\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"31\" at \"v[31]\"; Int cannot represent non-integer value: \"31\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"32\" at \"v[32]\"; Int cannot represent non-integer value: \"32\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"33\" at \"v[33]\"; Int cannot represent non-integer value: \"33\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"34\" at \"v[34]\"; Int cannot represent non-integer value: \"34\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"35\" at \"v[35]\"; Int cannot represent non-integer value: \"35\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"36\" at \"v[36]\"; Int cannot represent non-integer value: \"36\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"37\" at \"v[37]\"; Int cannot represent non-integer value: \"37\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"38\" at \"v[38]\"; Int cannot represent non-integer value: \"38\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"39\" at \"v[39]\"; Int cannot represent non-integer value: \"39\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"40\" at \"v[40]\"; Int cannot represent non-integer value: \"40\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"41\" at \"v[41]\"; Int cannot represent non-integer value: \"41\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"42\" at \"v[42]\"; Int cannot represent non-integer value: \"42\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"43\" at \"v[43]\"; Int cannot represent non-integer value: \"43\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"44\" at \"v[44]\"; Int cannot represent non-integer value: \"44\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"45\" at \"v[45]\"; Int cannot represent non-integer value: \"45\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"46\" at \"v[46]\"; Int cannot represent non-integer value: \"46\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"47\" at \"v[47]\"; Int cannot represent non-integer value: \"47\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"48\" at \"v[48]\"; Int cannot represent non-integer value: \"48\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Variable \"$v\" got invalid value \"49\" at \"v[49]\"; Int cannot represent non-integer value: \"49\"",
+        "locations": [
+          {
+            "line": 2,
+            "column": 1
+          }
+        ]
+      },
+      {
+        "message": "Too many errors processing variables, error limit reached. Execution aborted."
+      }
+    ]
+  }
+]

@@ -11,7 +11,7 @@ import { discord } from "../clients/discord.js";
 import client from "../clients/redis.js";
 import { telegramBotService } from "../clients/telegram.js";
 import { db } from "../db/index.js";
-import { auth } from "../utils/auth.js";
+import { getLinkedEpicSession } from "../utils/auth.js";
 import { consola } from "../utils/logger.js";
 
 interface EpicProfileResponse {
@@ -84,15 +84,12 @@ export interface EpicTokenInfo {
 type EpicAuthMiddleware = {
   Variables: {
     epic?: EpicTokenInfo;
-    session?: {
-      user: typeof auth.$Infer.Session.user | null;
-      session: typeof auth.$Infer.Session.session | null;
-    };
+    session?: NonNullable<Awaited<ReturnType<typeof getLinkedEpicSession>>>;
   };
 };
 
 export const epic = createMiddleware<EpicAuthMiddleware>(async (c, next) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers });
+  const session = await getLinkedEpicSession(c.req.raw.headers).catch(() => null);
 
   if (session) {
     c.set("session", session);
@@ -276,11 +273,11 @@ app.get("/", epic, async (c) => {
 
 app.post("/avatar", epic, async (c) => {
   const epicVar = c.var.epic;
-  const session = c.var.session;
+  const accountId = c.var.session?.epicAccountId ?? epicVar?.account_id;
 
   consola.info("Recieved request to change avatar");
 
-  if ((!epicVar || !epicVar.account_id) && !session) {
+  if (!accountId) {
     console.error("Missing EPIC_ACCOUNT_ID", epicVar);
     return c.json({ error: "Missing EPIC_ACCOUNT_ID" }, 401);
   }
@@ -306,7 +303,7 @@ app.post("/avatar", epic, async (c) => {
   formData.set(
     "file",
     file,
-    `${session?.user?.email.split("@")[0] ?? epicVar?.account_id}.${file.name
+    `${accountId}.${file.name
       .split(".")
       .pop()}`,
   );
@@ -333,7 +330,7 @@ app.post("/avatar", epic, async (c) => {
   await db.db.collection("epic").updateOne(
     {
       accountId: {
-        $eq: session.user?.email.split("@")[0] ?? epicVar.account_id,
+        $eq: accountId,
       },
     },
     {
@@ -1230,7 +1227,7 @@ app.get("/discord/callback", epic, async (c) => {
 
   await db.db.collection("epic").updateOne(
     {
-      accountId: { $eq: session.user.email.split("@")[0] },
+      accountId: { $eq: session.epicAccountId },
     },
     {
       $set: {
@@ -1240,7 +1237,7 @@ app.get("/discord/callback", epic, async (c) => {
   );
 
   const isDonor = await db.db.collection("key-codes").findOne({
-    accountId: { $eq: session.user.email.split("@")[0] },
+    accountId: { $eq: session.epicAccountId },
   });
 
   if (isDonor) {

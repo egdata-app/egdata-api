@@ -591,7 +591,7 @@ export async function handleV1ApiProxy(
       pathname,
       reqUrl.search,
       cfProps,
-      { headers: baseHeaders, stripCookies: true },
+      { headers: baseHeaders, stripCookies: true, comparison:{ctx,operationId:pathname} },
     );
     // Fetch responses have immutable headers in Workers. Preserve the upstream
     // status/body while applying the same public metadata headers as before.
@@ -1169,6 +1169,7 @@ export async function handleV1ApiProxy(
           cfProps,
           {
             stripCookies: true,
+            comparison:{ctx,operationId:route.operationId},
             headers: {
               ...baseHeaders,
               "x-egdata-worker-token": env.ORIGIN_AUTH_TOKEN ?? "",

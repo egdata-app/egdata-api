@@ -13,7 +13,7 @@ export const git = (...args: string[]) =>
   }).trimEnd();
 
 const included = (p: string) =>
-  /^(src\/|scripts\/|tests\/|openapi\/|changes\/|dashboard\/(worker|tests)\/|dashboard\/(wrangler\.jsonc|package\.json)$|apps\/docs\/content\/|CHANGELOG.md$|package.json$|pnpm-(lock|workspace)\.yaml$|Dockerfile|rslib.config)/.test(
+  /^(src\/|rust\/|scripts\/|tests\/|openapi\/|changes\/|dashboard\/(worker|tests)\/|dashboard\/(wrangler\.jsonc|package\.json)$|apps\/docs\/content\/|CHANGELOG.md$|package.json$|pnpm-(lock|workspace)\.yaml$|Dockerfile|rslib.config)/.test(
     p,
   );
 

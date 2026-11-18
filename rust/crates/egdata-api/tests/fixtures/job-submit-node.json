@@ -1,0 +1,366 @@
+[
+  {
+    "name": "accepted",
+    "config": {
+      "baseUrl": "http://localhost/prefix",
+      "keyId": "job-test",
+      "secret": "0123456789abcdef0123456789abcdef"
+    },
+    "payload": "{\"name\":\"tést\",\"10\":\"ten\",\"2\":\"two\",\"n\":1.0,\"small\":1e-7}",
+    "requestId": "request_from_test_12345",
+    "responses": [
+      {
+        "status": 202,
+        "body": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false}"
+      }
+    ],
+    "calls": [
+      {
+        "path": "/prefix/v1/jobs/achievement-refreshes",
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "idempotency-key": "egdata-api:achievement-refresh:42e9a6c1bf99f7fef8f23ea37deac61b:0:cdf6b1bc33d66efbb20457eb3297d9ba",
+          "x-api-key-id": "job-test",
+          "x-api-nonce": "fixture-attempt-0",
+          "x-api-signature": "sha256=20a38070bed18fa8899f51cc9ff83efb71918de1d49c4f4c00561c4894d671be",
+          "x-api-timestamp": "-1"
+        },
+        "body": "{\"2\":\"two\",\"10\":\"ten\",\"name\":\"tést\",\"n\":1,\"small\":1e-7}"
+      }
+    ],
+    "output": {
+      "jobId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workflowId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "statusUrl": "/status/ok",
+      "deduplicated": false
+    }
+  },
+  {
+    "name": "retry",
+    "config": {
+      "baseUrl": "http://localhost/prefix",
+      "keyId": "job-test",
+      "secret": "0123456789abcdef0123456789abcdef"
+    },
+    "payload": "{\"name\":\"tést\",\"10\":\"ten\",\"2\":\"two\",\"n\":1.0,\"small\":1e-7}",
+    "requestId": "request_from_test_12345",
+    "responses": [
+      {
+        "status": 429,
+        "body": "try again"
+      },
+      {
+        "status": 202,
+        "body": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false}"
+      }
+    ],
+    "calls": [
+      {
+        "path": "/prefix/v1/jobs/achievement-refreshes",
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "idempotency-key": "egdata-api:achievement-refresh:42e9a6c1bf99f7fef8f23ea37deac61b:0:cdf6b1bc33d66efbb20457eb3297d9ba",
+          "x-api-key-id": "job-test",
+          "x-api-nonce": "fixture-attempt-0",
+          "x-api-signature": "sha256=20a38070bed18fa8899f51cc9ff83efb71918de1d49c4f4c00561c4894d671be",
+          "x-api-timestamp": "-1"
+        },
+        "body": "{\"2\":\"two\",\"10\":\"ten\",\"name\":\"tést\",\"n\":1,\"small\":1e-7}"
+      },
+      {
+        "path": "/prefix/v1/jobs/achievement-refreshes",
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "idempotency-key": "egdata-api:achievement-refresh:42e9a6c1bf99f7fef8f23ea37deac61b:0:cdf6b1bc33d66efbb20457eb3297d9ba",
+          "x-api-key-id": "job-test",
+          "x-api-nonce": "fixture-attempt-1",
+          "x-api-signature": "sha256=3a97b94b5f01fc0dc2854f877ab41c6bb11ff4dce7896f6b7263f133b2cc56c6",
+          "x-api-timestamp": "-1"
+        },
+        "body": "{\"2\":\"two\",\"10\":\"ten\",\"name\":\"tést\",\"n\":1,\"small\":1e-7}"
+      }
+    ],
+    "output": {
+      "jobId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workflowId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "statusUrl": "/status/ok",
+      "deduplicated": false
+    }
+  },
+  {
+    "name": "partial receipt",
+    "config": {
+      "baseUrl": "http://localhost/prefix",
+      "keyId": "job-test",
+      "secret": "0123456789abcdef0123456789abcdef"
+    },
+    "payload": "{\"name\":\"tést\",\"10\":\"ten\",\"2\":\"two\",\"n\":1.0,\"small\":1e-7}",
+    "requestId": "request_from_test_12345",
+    "responses": [
+      {
+        "status": 400,
+        "body": "truncated",
+        "partial": true
+      }
+    ],
+    "calls": [
+      {
+        "path": "/prefix/v1/jobs/achievement-refreshes",
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "idempotency-key": "egdata-api:achievement-refresh:42e9a6c1bf99f7fef8f23ea37deac61b:0:cdf6b1bc33d66efbb20457eb3297d9ba",
+          "x-api-key-id": "job-test",
+          "x-api-nonce": "fixture-attempt-0",
+          "x-api-signature": "sha256=20a38070bed18fa8899f51cc9ff83efb71918de1d49c4f4c00561c4894d671be",
+          "x-api-timestamp": "-1"
+        },
+        "body": "{\"2\":\"two\",\"10\":\"ten\",\"name\":\"tést\",\"n\":1,\"small\":1e-7}"
+      }
+    ],
+    "output": {
+      "error": "Job API response could not be verified",
+      "retryable": true,
+      "status": null
+    }
+  },
+  {
+    "name": "partial receipt retry",
+    "config": {
+      "baseUrl": "http://localhost/prefix",
+      "keyId": "job-test",
+      "secret": "0123456789abcdef0123456789abcdef"
+    },
+    "payload": "{\"name\":\"tést\",\"10\":\"ten\",\"2\":\"two\",\"n\":1.0,\"small\":1e-7}",
+    "requestId": "request_from_test_12345",
+    "responses": [
+      {
+        "status": 400,
+        "body": "truncated",
+        "partial": true
+      },
+      {
+        "status": 202,
+        "body": "{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false}"
+      }
+    ],
+    "calls": [
+      {
+        "path": "/prefix/v1/jobs/achievement-refreshes",
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "idempotency-key": "egdata-api:achievement-refresh:42e9a6c1bf99f7fef8f23ea37deac61b:0:cdf6b1bc33d66efbb20457eb3297d9ba",
+          "x-api-key-id": "job-test",
+          "x-api-nonce": "fixture-attempt-0",
+          "x-api-signature": "sha256=20a38070bed18fa8899f51cc9ff83efb71918de1d49c4f4c00561c4894d671be",
+          "x-api-timestamp": "-1"
+        },
+        "body": "{\"2\":\"two\",\"10\":\"ten\",\"name\":\"tést\",\"n\":1,\"small\":1e-7}"
+      },
+      {
+        "path": "/prefix/v1/jobs/achievement-refreshes",
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "idempotency-key": "egdata-api:achievement-refresh:42e9a6c1bf99f7fef8f23ea37deac61b:0:cdf6b1bc33d66efbb20457eb3297d9ba",
+          "x-api-key-id": "job-test",
+          "x-api-nonce": "fixture-attempt-1",
+          "x-api-signature": "sha256=3a97b94b5f01fc0dc2854f877ab41c6bb11ff4dce7896f6b7263f133b2cc56c6",
+          "x-api-timestamp": "-1"
+        },
+        "body": "{\"2\":\"two\",\"10\":\"ten\",\"name\":\"tést\",\"n\":1,\"small\":1e-7}"
+      }
+    ],
+    "output": {
+      "jobId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workflowId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "statusUrl": "/status/ok",
+      "deduplicated": false
+    }
+  },
+  {
+    "name": "invalid json",
+    "config": {
+      "baseUrl": "http://localhost/prefix",
+      "keyId": "job-test",
+      "secret": "0123456789abcdef0123456789abcdef"
+    },
+    "payload": "{\"name\":\"tést\",\"10\":\"ten\",\"2\":\"two\",\"n\":1.0,\"small\":1e-7}",
+    "requestId": "request_from_test_12345",
+    "responses": [
+      {
+        "status": 202,
+        "body": "{"
+      }
+    ],
+    "calls": [
+      {
+        "path": "/prefix/v1/jobs/achievement-refreshes",
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "idempotency-key": "egdata-api:achievement-refresh:42e9a6c1bf99f7fef8f23ea37deac61b:0:cdf6b1bc33d66efbb20457eb3297d9ba",
+          "x-api-key-id": "job-test",
+          "x-api-nonce": "fixture-attempt-0",
+          "x-api-signature": "sha256=20a38070bed18fa8899f51cc9ff83efb71918de1d49c4f4c00561c4894d671be",
+          "x-api-timestamp": "-1"
+        },
+        "body": "{\"2\":\"two\",\"10\":\"ten\",\"name\":\"tést\",\"n\":1,\"small\":1e-7}"
+      }
+    ],
+    "output": {
+      "error": "Job API returned a non-JSON acceptance body",
+      "retryable": true,
+      "status": 202
+    }
+  },
+  {
+    "name": "null receipt",
+    "config": {
+      "baseUrl": "http://localhost/prefix",
+      "keyId": "job-test",
+      "secret": "0123456789abcdef0123456789abcdef"
+    },
+    "payload": "{\"name\":\"tést\",\"10\":\"ten\",\"2\":\"two\",\"n\":1.0,\"small\":1e-7}",
+    "requestId": "request_from_test_12345",
+    "responses": [
+      {
+        "status": 202,
+        "body": "null"
+      }
+    ],
+    "calls": [
+      {
+        "path": "/prefix/v1/jobs/achievement-refreshes",
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "idempotency-key": "egdata-api:achievement-refresh:42e9a6c1bf99f7fef8f23ea37deac61b:0:cdf6b1bc33d66efbb20457eb3297d9ba",
+          "x-api-key-id": "job-test",
+          "x-api-nonce": "fixture-attempt-0",
+          "x-api-signature": "sha256=20a38070bed18fa8899f51cc9ff83efb71918de1d49c4f4c00561c4894d671be",
+          "x-api-timestamp": "-1"
+        },
+        "body": "{\"2\":\"two\",\"10\":\"ten\",\"name\":\"tést\",\"n\":1,\"small\":1e-7}"
+      }
+    ],
+    "output": {
+      "error": "Job API returned an invalid acceptance body",
+      "retryable": true,
+      "status": null
+    }
+  },
+  {
+    "name": "incomplete receipt",
+    "config": {
+      "baseUrl": "http://localhost/prefix",
+      "keyId": "job-test",
+      "secret": "0123456789abcdef0123456789abcdef"
+    },
+    "payload": "{\"name\":\"tést\",\"10\":\"ten\",\"2\":\"two\",\"n\":1.0,\"small\":1e-7}",
+    "requestId": "request_from_test_12345",
+    "responses": [
+      {
+        "status": 202,
+        "body": "{}"
+      }
+    ],
+    "calls": [
+      {
+        "path": "/prefix/v1/jobs/achievement-refreshes",
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "idempotency-key": "egdata-api:achievement-refresh:42e9a6c1bf99f7fef8f23ea37deac61b:0:cdf6b1bc33d66efbb20457eb3297d9ba",
+          "x-api-key-id": "job-test",
+          "x-api-nonce": "fixture-attempt-0",
+          "x-api-signature": "sha256=20a38070bed18fa8899f51cc9ff83efb71918de1d49c4f4c00561c4894d671be",
+          "x-api-timestamp": "-1"
+        },
+        "body": "{\"2\":\"two\",\"10\":\"ten\",\"name\":\"tést\",\"n\":1,\"small\":1e-7}"
+      }
+    ],
+    "output": {
+      "error": "Job API returned incomplete acceptance metadata",
+      "retryable": true,
+      "status": null
+    }
+  },
+  {
+    "name": "utf8 bom",
+    "config": {
+      "baseUrl": "http://localhost/prefix",
+      "keyId": "job-test",
+      "secret": "0123456789abcdef0123456789abcdef"
+    },
+    "payload": "{\"name\":\"tést\",\"10\":\"ten\",\"2\":\"two\",\"n\":1.0,\"small\":1e-7}",
+    "requestId": "request_from_test_12345",
+    "responses": [
+      {
+        "status": 202,
+        "body": "﻿{\"jobId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"workflowId\":\"api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"statusUrl\":\"/status/ok\",\"deduplicated\":false}"
+      }
+    ],
+    "calls": [
+      {
+        "path": "/prefix/v1/jobs/achievement-refreshes",
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "idempotency-key": "egdata-api:achievement-refresh:42e9a6c1bf99f7fef8f23ea37deac61b:0:cdf6b1bc33d66efbb20457eb3297d9ba",
+          "x-api-key-id": "job-test",
+          "x-api-nonce": "fixture-attempt-0",
+          "x-api-signature": "sha256=20a38070bed18fa8899f51cc9ff83efb71918de1d49c4f4c00561c4894d671be",
+          "x-api-timestamp": "-1"
+        },
+        "body": "{\"2\":\"two\",\"10\":\"ten\",\"name\":\"tést\",\"n\":1,\"small\":1e-7}"
+      }
+    ],
+    "output": {
+      "jobId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workflowId": "api-achievement-refresh-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "statusUrl": "/status/ok",
+      "deduplicated": false
+    }
+  },
+  {
+    "name": "long rejection",
+    "config": {
+      "baseUrl": "http://localhost/prefix",
+      "keyId": "job-test",
+      "secret": "0123456789abcdef0123456789abcdef"
+    },
+    "payload": "{\"name\":\"tést\",\"10\":\"ten\",\"2\":\"two\",\"n\":1.0,\"small\":1e-7}",
+    "requestId": "request_from_test_12345",
+    "responses": [
+      {
+        "status": 403,
+        "body": "﻿🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮  "
+      }
+    ],
+    "calls": [
+      {
+        "path": "/prefix/v1/jobs/achievement-refreshes",
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "idempotency-key": "egdata-api:achievement-refresh:42e9a6c1bf99f7fef8f23ea37deac61b:0:cdf6b1bc33d66efbb20457eb3297d9ba",
+          "x-api-key-id": "job-test",
+          "x-api-nonce": "fixture-attempt-0",
+          "x-api-signature": "sha256=20a38070bed18fa8899f51cc9ff83efb71918de1d49c4f4c00561c4894d671be",
+          "x-api-timestamp": "-1"
+        },
+        "body": "{\"2\":\"two\",\"10\":\"ten\",\"name\":\"tést\",\"n\":1,\"small\":1e-7}"
+      }
+    ],
+    "output": {
+      "error": "Job API rejected the submission with HTTP 403: 🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮",
+      "retryable": false,
+      "status": 403
+    }
+  }
+]

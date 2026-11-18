@@ -44,6 +44,10 @@ const { windows, macos } = await response.json();
 
 Each non-null platform result includes its processing state, inheritance and parent metadata, observation time, and minimum and recommended requirement tiers. A 404 means the offer does not exist or neither platform has a requirements record.
 
+## Offer reviews
+
+Use `GET /offers/{id}/reviews` to read reviews and `GET /offers/{id}/reviews-summary` to read the aggregate score. Both reads also have a `/v1` version. When an owner edits a review, it keeps its identity and creation date. Once cached results refresh, the list shows the saved edit and the summary uses its current rating and recommendation.
+
 ## Offer preview images
 
 Use `GET /offers/{id}/og.webp` for a 1200 × 630 WebP database summary, or `GET /offers/{id}/og` for the same layout as PNG. Both routes are public and accept `country` for regional pricing (for example, `?country=US`). Without it, the `EGDATA_COUNTRY` cookie is used, then `US`. The optional `v` query parameter can vary the URL for cache busting; it does not select a historical snapshot.

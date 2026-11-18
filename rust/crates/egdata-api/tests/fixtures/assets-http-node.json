@@ -1,0 +1,1336 @@
+[
+  {
+    "name": "asset-success",
+    "input": {
+      "asset": {
+        "artifactId": "asset-a",
+        "appName": "Game",
+        "buildVersion": "1.0",
+        "metadata": {
+          "platforms": [
+            "Windows",
+            "Mac"
+          ]
+        }
+      }
+    },
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/asset-a"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"66b2570748412cabdb6336db18d14776462584a2\""
+      },
+      "body": {
+        "data": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "meta": {}
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "asset-a"
+          }
+        }
+      },
+      {
+        "operation": "cacheSet",
+        "key": "v1:assets.detail:id=\"asset-a\"",
+        "value": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ]
+  },
+  {
+    "name": "asset-cache-hit",
+    "input": {
+      "cached": "{\"artifactId\":\"asset-a\",\"appName\":\"Game\",\"buildVersion\":\"1.0\",\"metadata\":{\"platforms\":[\"Windows\",\"Mac\"]}}",
+      "databaseFailure": true
+    },
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/asset-a"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"66b2570748412cabdb6336db18d14776462584a2\""
+      },
+      "body": {
+        "data": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "meta": {}
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      }
+    ]
+  },
+  {
+    "name": "asset-corrupt-cache",
+    "input": {
+      "cached": "{broken",
+      "asset": {
+        "artifactId": "asset-a",
+        "appName": "Game",
+        "buildVersion": "1.0",
+        "metadata": {
+          "platforms": [
+            "Windows",
+            "Mac"
+          ]
+        }
+      }
+    },
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/asset-a"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"66b2570748412cabdb6336db18d14776462584a2\""
+      },
+      "body": {
+        "data": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "meta": {}
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "asset-a"
+          }
+        }
+      },
+      {
+        "operation": "cacheSet",
+        "key": "v1:assets.detail:id=\"asset-a\"",
+        "value": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ]
+  },
+  {
+    "name": "asset-null-cache",
+    "input": {
+      "cached": "null",
+      "asset": {
+        "artifactId": "asset-a",
+        "appName": "Game",
+        "buildVersion": "1.0",
+        "metadata": {
+          "platforms": [
+            "Windows",
+            "Mac"
+          ]
+        }
+      }
+    },
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/asset-a"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"66b2570748412cabdb6336db18d14776462584a2\""
+      },
+      "body": {
+        "data": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "meta": {}
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "asset-a"
+          }
+        }
+      },
+      {
+        "operation": "cacheSet",
+        "key": "v1:assets.detail:id=\"asset-a\"",
+        "value": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ]
+  },
+  {
+    "name": "asset-false-cache",
+    "input": {
+      "cached": "false",
+      "databaseFailure": true
+    },
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/asset-a"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e5294284d1fd2d2f1a160309dece67f5f0a11393\""
+      },
+      "body": {
+        "data": false,
+        "meta": {}
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      }
+    ]
+  },
+  {
+    "name": "asset-cache-read-failure",
+    "input": {
+      "cacheReadFailure": true,
+      "asset": {
+        "artifactId": "asset-a",
+        "appName": "Game",
+        "buildVersion": "1.0",
+        "metadata": {
+          "platforms": [
+            "Windows",
+            "Mac"
+          ]
+        }
+      }
+    },
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/asset-a"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"66b2570748412cabdb6336db18d14776462584a2\""
+      },
+      "body": {
+        "data": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "meta": {}
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "asset-a"
+          }
+        }
+      },
+      {
+        "operation": "cacheSet",
+        "key": "v1:assets.detail:id=\"asset-a\"",
+        "value": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ]
+  },
+  {
+    "name": "asset-cache-write-failure",
+    "input": {
+      "cacheWriteFailure": true,
+      "asset": {
+        "artifactId": "asset-a",
+        "appName": "Game",
+        "buildVersion": "1.0",
+        "metadata": {
+          "platforms": [
+            "Windows",
+            "Mac"
+          ]
+        }
+      }
+    },
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/asset-a"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"66b2570748412cabdb6336db18d14776462584a2\""
+      },
+      "body": {
+        "data": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "meta": {}
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "asset-a"
+          }
+        }
+      },
+      {
+        "operation": "cacheSet",
+        "key": "v1:assets.detail:id=\"asset-a\"",
+        "value": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ]
+  },
+  {
+    "name": "asset-missing",
+    "input": {},
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/asset-a"
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"a63595c082d30b4e9f8d343cf78a86e6523695b3\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/asset-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No asset with artifact ID 'asset-a' exists.",
+        "instance": "/v1/assets/asset-a",
+        "code": "ASSET_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "asset-a"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "asset-database-failure",
+    "input": {
+      "databaseFailure": true
+    },
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/asset-a"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"398c0af5bacf2295ffb1fdaa76f684278548818a\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/assets/asset-a",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "asset-a"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "asset-trimmed-id",
+    "input": {
+      "asset": {
+        "artifactId": "asset-a",
+        "appName": "Game",
+        "buildVersion": "1.0",
+        "metadata": {
+          "platforms": [
+            "Windows",
+            "Mac"
+          ]
+        }
+      }
+    },
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/%20asset-a%20"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"66b2570748412cabdb6336db18d14776462584a2\""
+      },
+      "body": {
+        "data": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "meta": {}
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "asset-a"
+          }
+        }
+      },
+      {
+        "operation": "cacheSet",
+        "key": "v1:assets.detail:id=\"asset-a\"",
+        "value": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ]
+  },
+  {
+    "name": "asset-bom-trimmed-id",
+    "input": {
+      "asset": {
+        "artifactId": "asset-a",
+        "appName": "Game",
+        "buildVersion": "1.0",
+        "metadata": {
+          "platforms": [
+            "Windows",
+            "Mac"
+          ]
+        }
+      }
+    },
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/%EF%BB%BFasset-a%EF%BB%BF"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"66b2570748412cabdb6336db18d14776462584a2\""
+      },
+      "body": {
+        "data": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "meta": {}
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "asset-a"
+          }
+        }
+      },
+      {
+        "operation": "cacheSet",
+        "key": "v1:assets.detail:id=\"asset-a\"",
+        "value": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ]
+  },
+  {
+    "name": "asset-nel-id-not-trimmed",
+    "input": {},
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/%C2%85asset-a%C2%85"
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"fd3839967c4f90d41b05c01a54ce93071dac90ef\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/asset-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No asset with artifact ID 'asset-a' exists.",
+        "instance": "/v1/assets/asset-a",
+        "code": "ASSET_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "asset-a"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "asset-utf16-long-id",
+    "input": {},
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80"
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"727006fa2b699aa43e08c9786211c8daaaf9dc20\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-parameter",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `id` path parameter is too long.",
+        "instance": "/v1/assets/🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀",
+        "code": "INVALID_PARAMETER",
+        "requestId": "req_node_oracle"
+      }
+    },
+    "calls": []
+  },
+  {
+    "name": "asset-empty-id",
+    "input": {},
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/%20"
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e350d02b07ad7eed83ee848b46cf4392c720d0a2\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/missing-parameter",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `id` path parameter is required.",
+        "instance": "/v1/assets/ ",
+        "code": "MISSING_PARAMETER",
+        "requestId": "req_node_oracle"
+      }
+    },
+    "calls": []
+  },
+  {
+    "name": "asset-unicode-id-missing",
+    "input": {},
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/caf%C3%A9"
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"375e416869c6bb306dd9d81ecc1452b38072d2c1\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/asset-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No asset with artifact ID 'café' exists.",
+        "instance": "/v1/assets/café",
+        "code": "ASSET_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"café\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "café"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "asset-reserved-id-missing",
+    "input": {},
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/%2f%3F%23"
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"128440b5c76c3d02742b071a77f7802356e833c1\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/asset-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No asset with artifact ID '/?#' exists.",
+        "instance": "/v1/assets/%2f%3F%23",
+        "code": "ASSET_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"/?#\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "/?#"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "asset-percent-id-missing",
+    "input": {},
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/%25"
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"9fd929d0a8264c3b3164f8ac46e05bd9837742cf\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/asset-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No asset with artifact ID '%' exists.",
+        "instance": "/v1/assets/%25",
+        "code": "ASSET_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"%\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "%"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "asset-double-encoded-id-missing",
+    "input": {},
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/%2520"
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e22e6d89f1295a1bd471cf5597df8cb0550ea0a4\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/asset-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No asset with artifact ID '%20' exists.",
+        "instance": "/v1/assets/%2520",
+        "code": "ASSET_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"%20\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "%20"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "asset-mixed-id-missing",
+    "input": {},
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/a%20b%2Fc"
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"bbae146765c98bb0b04084987301e4cb291b0e3c\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/asset-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No asset with artifact ID 'a b/c' exists.",
+        "instance": "/v1/assets/a b%2Fc",
+        "code": "ASSET_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"a b/c\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "a b/c"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "asset-long-id",
+    "input": {},
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"28b9a6c2909705b5df6a2acd5f2fef012c8bdea2\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-parameter",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `id` path parameter is too long.",
+        "instance": "/v1/assets/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "code": "INVALID_PARAMETER",
+        "requestId": "req_node_oracle"
+      }
+    },
+    "calls": []
+  },
+  {
+    "name": "asset-ignored-query",
+    "input": {
+      "asset": {
+        "artifactId": "asset-a",
+        "appName": "Game",
+        "buildVersion": "1.0",
+        "metadata": {
+          "platforms": [
+            "Windows",
+            "Mac"
+          ]
+        }
+      }
+    },
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/asset-a?extra=1"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"66b2570748412cabdb6336db18d14776462584a2\""
+      },
+      "body": {
+        "data": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "meta": {}
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "asset-a"
+          }
+        }
+      },
+      {
+        "operation": "cacheSet",
+        "key": "v1:assets.detail:id=\"asset-a\"",
+        "value": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ]
+  },
+  {
+    "name": "asset-head",
+    "input": {
+      "asset": {
+        "artifactId": "asset-a",
+        "appName": "Game",
+        "buildVersion": "1.0",
+        "metadata": {
+          "platforms": [
+            "Windows",
+            "Mac"
+          ]
+        }
+      }
+    },
+    "request": {
+      "method": "HEAD",
+      "path": "/v1/assets/asset-a"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": ""
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "asset-a"
+          }
+        }
+      },
+      {
+        "operation": "cacheSet",
+        "key": "v1:assets.detail:id=\"asset-a\"",
+        "value": {
+          "artifactId": "asset-a",
+          "appName": "Game",
+          "buildVersion": "1.0",
+          "metadata": {
+            "platforms": [
+              "Windows",
+              "Mac"
+            ]
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ]
+  },
+  {
+    "name": "asset-deep-document",
+    "input": {
+      "asset": {
+        "artifactId": "asset-a",
+        "metadata": {
+          "child": {
+            "child": {
+              "child": {
+                "child": {
+                  "child": {
+                    "child": {
+                      "child": {
+                        "child": {
+                          "child": {
+                            "child": {
+                              "child": {
+                                "child": {
+                                  "child": {
+                                    "child": "leaf"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "request": {
+      "method": "GET",
+      "path": "/v1/assets/asset-a"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"06083423ea369f426d54bee9e2a32deffac8611b\""
+      },
+      "body": {
+        "data": {
+          "artifactId": "asset-a",
+          "metadata": {
+            "child": {
+              "child": {
+                "child": {
+                  "child": {
+                    "child": {
+                      "child": {
+                        "child": {
+                          "child": {
+                            "child": {
+                              "child": {
+                                "child": {
+                                  "child": null
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "meta": {}
+      }
+    },
+    "calls": [
+      {
+        "operation": "cacheGet",
+        "key": "v1:assets.detail:id=\"asset-a\""
+      },
+      {
+        "operation": "findOne",
+        "collection": "assets",
+        "filter": {
+          "artifactId": {
+            "$eq": "asset-a"
+          }
+        }
+      },
+      {
+        "operation": "cacheSet",
+        "key": "v1:assets.detail:id=\"asset-a\"",
+        "value": {
+          "artifactId": "asset-a",
+          "metadata": {
+            "child": {
+              "child": {
+                "child": {
+                  "child": {
+                    "child": {
+                      "child": {
+                        "child": {
+                          "child": {
+                            "child": {
+                              "child": {
+                                "child": {
+                                  "child": null
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ]
+  }
+]

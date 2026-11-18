@@ -1,0 +1,3771 @@
+[
+  {
+    "name": "offer-regional-single-price",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "regional-offer-oracle"
+            },
+            "region": {
+              "$eq": "US"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "live-us",
+          "offerId": "regional-offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-10T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": 2000,
+            "discountPrice": 1500,
+            "discount": 25,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 1
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-10-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "hist-us-new",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1200,
+              "discount": 25,
+              "basePayoutPrice": 0,
+              "payoutCurrencyExchangeRate": 1
+            }
+          },
+          {
+            "_id": "hist-us-old",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-10-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1000,
+              "discount": 25,
+              "basePayoutPrice": 0,
+              "payoutCurrencyExchangeRate": 1
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\"",
+          "payload": {
+            "currentPrice": {
+              "offerId": "regional-offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 2000,
+              "discountPrice": 1500,
+              "price": {
+                "currencyCode": "USD",
+                "originalPrice": 2000,
+                "discountPrice": 1500,
+                "discount": 25,
+                "basePayoutPrice": 2000,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-10T00:00:00.000Z"
+            },
+            "maxPrice": 1500,
+            "minPrice": 1000,
+            "currentPriceUsd": 1500,
+            "currentOriginalPriceUsd": 2000,
+            "maxPriceUsd": 1500,
+            "minPriceUsd": 1000
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"2dfb99ebb2ee6141d4e1b7836d24813ba94f281b\""
+      },
+      "body": {
+        "data": {
+          "currentPrice": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "currencyCode": "USD",
+            "precision": 2,
+            "originalPrice": 2000,
+            "discountPrice": 1500,
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1500,
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1,
+              "precision": 2
+            },
+            "updatedAt": "2026-11-10T00:00:00.000Z"
+          },
+          "maxPrice": 1500,
+          "minPrice": 1000,
+          "currentPriceUsd": 1500,
+          "currentOriginalPriceUsd": 2000,
+          "maxPriceUsd": 1500,
+          "minPriceUsd": 1000
+        },
+        "meta": {
+          "country": "US",
+          "region": "US"
+        }
+      }
+    }
+  },
+  {
+    "name": "offer-regional-history-current",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "regional-offer-oracle"
+            },
+            "region": {
+              "$eq": "US"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-10-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "hist-us-new",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1200,
+              "discount": 25,
+              "basePayoutPrice": 0,
+              "payoutCurrencyExchangeRate": 1
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\"",
+          "payload": {
+            "currentPrice": {
+              "offerId": "regional-offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 2000,
+              "discountPrice": 1200,
+              "price": {
+                "currencyCode": "USD",
+                "originalPrice": 2000,
+                "discountPrice": 1200,
+                "discount": 25,
+                "basePayoutPrice": 2000,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-12T00:00:00.000Z"
+            },
+            "maxPrice": 1200,
+            "minPrice": 1200,
+            "currentPriceUsd": 1200,
+            "currentOriginalPriceUsd": 2000,
+            "maxPriceUsd": 1200,
+            "minPriceUsd": 1200
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"70980a076d7a3d6501eaba4a606551d336ee4204\""
+      },
+      "body": {
+        "data": {
+          "currentPrice": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "currencyCode": "USD",
+            "precision": 2,
+            "originalPrice": 2000,
+            "discountPrice": 1200,
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1200,
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1,
+              "precision": 2
+            },
+            "updatedAt": "2026-11-12T00:00:00.000Z"
+          },
+          "maxPrice": 1200,
+          "minPrice": 1200,
+          "currentPriceUsd": 1200,
+          "currentOriginalPriceUsd": 2000,
+          "maxPriceUsd": 1200,
+          "minPriceUsd": 1200
+        },
+        "meta": {
+          "country": "US",
+          "region": "US"
+        }
+      }
+    }
+  },
+  {
+    "name": "offer-regional-empty-history-fallback",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "regional-offer-oracle"
+            },
+            "region": {
+              "$eq": "US"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-10-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "region": "US"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"5df1713c3fd967accd75cac3c08439432c75f2a0\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/price-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No US price is available for this offer.",
+        "instance": "/v1/offers/regional-offer-oracle/regional-price",
+        "code": "PRICE_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "offer-regional-grouped-price",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price.all:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "live-us",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-11-10T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1500,
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1
+            }
+          },
+          {
+            "_id": "hist-gb",
+            "offerId": "regional-offer-oracle",
+            "region": "GB",
+            "updatedAt": {
+              "$date": "2026-11-11T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "GBP",
+              "originalPrice": 1599,
+              "discountPrice": 1199,
+              "discount": 25,
+              "basePayoutPrice": 0,
+              "payoutCurrencyExchangeRate": 1.25
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-10-01T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "hist-us-new",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1200,
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1
+            }
+          },
+          {
+            "_id": "hist-us-old",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-10-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1000,
+              "discount": 25,
+              "basePayoutPrice": 0,
+              "payoutCurrencyExchangeRate": 1
+            }
+          },
+          {
+            "_id": "hist-gb",
+            "offerId": "regional-offer-oracle",
+            "region": "GB",
+            "updatedAt": {
+              "$date": "2026-11-11T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "GBP",
+              "originalPrice": 1599,
+              "discountPrice": 1199,
+              "discount": 25,
+              "basePayoutPrice": 0,
+              "payoutCurrencyExchangeRate": 1.25
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.regional-price.all:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\"",
+          "payload": {
+            "GB": {
+              "currentPrice": {
+                "offerId": "regional-offer-oracle",
+                "region": "GB",
+                "currencyCode": "GBP",
+                "precision": 2,
+                "originalPrice": 1599,
+                "discountPrice": 1199,
+                "price": {
+                  "currencyCode": "GBP",
+                  "originalPrice": 1599,
+                  "discountPrice": 1199,
+                  "discount": 25,
+                  "basePayoutPrice": 1999,
+                  "payoutCurrencyExchangeRate": 1.25,
+                  "precision": 2
+                },
+                "updatedAt": "2026-11-11T00:00:00.000Z"
+              },
+              "maxPrice": 1199,
+              "minPrice": 1199,
+              "currentPriceUsd": 1499,
+              "currentOriginalPriceUsd": 1999,
+              "maxPriceUsd": 1499,
+              "minPriceUsd": 1499
+            },
+            "US": {
+              "currentPrice": {
+                "offerId": "regional-offer-oracle",
+                "region": "US",
+                "currencyCode": "USD",
+                "precision": 2,
+                "originalPrice": 2000,
+                "discountPrice": 1500,
+                "price": {
+                  "currencyCode": "USD",
+                  "originalPrice": 2000,
+                  "discountPrice": 1500,
+                  "discount": 25,
+                  "basePayoutPrice": 2000,
+                  "payoutCurrencyExchangeRate": 1,
+                  "precision": 2
+                },
+                "updatedAt": "2026-11-10T00:00:00.000Z"
+              },
+              "maxPrice": 1500,
+              "minPrice": 1000,
+              "currentPriceUsd": 1500,
+              "currentOriginalPriceUsd": 2000,
+              "maxPriceUsd": 1500,
+              "minPriceUsd": 1000
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"90f80037ac97d71b75282c245d41b678b6534dcd\""
+      },
+      "body": {
+        "data": {
+          "GB": {
+            "currentPrice": {
+              "offerId": "regional-offer-oracle",
+              "region": "GB",
+              "currencyCode": "GBP",
+              "precision": 2,
+              "originalPrice": 1599,
+              "discountPrice": 1199,
+              "price": {
+                "currencyCode": "GBP",
+                "originalPrice": 1599,
+                "discountPrice": 1199,
+                "discount": 25,
+                "basePayoutPrice": 1999,
+                "payoutCurrencyExchangeRate": 1.25,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-11T00:00:00.000Z"
+            },
+            "maxPrice": 1199,
+            "minPrice": 1199,
+            "currentPriceUsd": 1499,
+            "currentOriginalPriceUsd": 1999,
+            "maxPriceUsd": 1499,
+            "minPriceUsd": 1499
+          },
+          "US": {
+            "currentPrice": {
+              "offerId": "regional-offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 2000,
+              "discountPrice": 1500,
+              "price": {
+                "currencyCode": "USD",
+                "originalPrice": 2000,
+                "discountPrice": 1500,
+                "discount": 25,
+                "basePayoutPrice": 2000,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-10T00:00:00.000Z"
+            },
+            "maxPrice": 1500,
+            "minPrice": 1000,
+            "currentPriceUsd": 1500,
+            "currentOriginalPriceUsd": 2000,
+            "maxPriceUsd": 1500,
+            "minPriceUsd": 1000
+          }
+        },
+        "meta": {
+          "country": null,
+          "region": null,
+          "grouped": true,
+          "regions": 2
+        }
+      }
+    }
+  },
+  {
+    "name": "offer-regional-invalid-country",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=ZZ",
+      "method": "GET"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"048d33db0040b9639f1a7574f7ad3cf491041af1\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-country",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "Unknown country code 'ZZ'. Use an ISO 3166-1 alpha-2 code such as US or GB.",
+        "instance": "/v1/offers/regional-offer-oracle/regional-price",
+        "code": "INVALID_COUNTRY",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "offer-regional-country-ineligible",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=RU",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e24156ea320bc78083d371511c8067d604a4831c\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/price-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No RU price is available for this offer.",
+        "instance": "/v1/offers/regional-offer-oracle/regional-price",
+        "code": "PRICE_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "offer-regional-cache-hit",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\""
+        },
+        "result": {
+          "currentPrice": null,
+          "maxPrice": 1200,
+          "minPrice": 1200,
+          "currentPriceUsd": 1200,
+          "currentOriginalPriceUsd": 2000,
+          "maxPriceUsd": 1200,
+          "minPriceUsd": 1200
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"84455d0d1453039409b0d782a62a0f0eded4091b\""
+      },
+      "body": {
+        "data": {
+          "currentPrice": null,
+          "maxPrice": 1200,
+          "minPrice": 1200,
+          "currentPriceUsd": 1200,
+          "currentOriginalPriceUsd": 2000,
+          "maxPriceUsd": 1200,
+          "minPriceUsd": 1200
+        },
+        "meta": {
+          "country": "US",
+          "region": "US"
+        }
+      }
+    }
+  },
+  {
+    "name": "regional USD beyond-i64",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "regional-offer-oracle"
+            },
+            "region": {
+              "$eq": "US"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "wide-beyond-i64",
+          "offerId": "regional-offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "originalPrice": 1e+25,
+            "discountPrice": 1e+25,
+            "discount": 25,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 1
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-10-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "hist-us-new",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1200,
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\"",
+          "payload": {
+            "currentPrice": {
+              "offerId": "regional-offer-oracle",
+              "region": "US",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 1e+25,
+              "discountPrice": 1e+25,
+              "price": {
+                "currencyCode": "EUR",
+                "originalPrice": 1e+25,
+                "discountPrice": 1e+25,
+                "discount": 25,
+                "basePayoutPrice": 1e+25,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-01T00:00:00.000Z"
+            },
+            "maxPrice": 1e+25,
+            "minPrice": 1200,
+            "currentPriceUsd": 1e+25,
+            "currentOriginalPriceUsd": 1e+25,
+            "maxPriceUsd": 1e+25,
+            "minPriceUsd": 1200
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"7b3ef1b7e10951c85823c3b98fa50be9f68b25f5\""
+      },
+      "body": {
+        "data": {
+          "currentPrice": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 1e+25,
+            "discountPrice": 1e+25,
+            "price": {
+              "currencyCode": "EUR",
+              "originalPrice": 1e+25,
+              "discountPrice": 1e+25,
+              "discount": 25,
+              "basePayoutPrice": 1e+25,
+              "payoutCurrencyExchangeRate": 1,
+              "precision": 2
+            },
+            "updatedAt": "2026-11-01T00:00:00.000Z"
+          },
+          "maxPrice": 1e+25,
+          "minPrice": 1200,
+          "currentPriceUsd": 1e+25,
+          "currentOriginalPriceUsd": 1e+25,
+          "maxPriceUsd": 1e+25,
+          "minPriceUsd": 1200
+        },
+        "meta": {
+          "country": "US",
+          "region": "US"
+        }
+      }
+    }
+  },
+  {
+    "name": "regional USD wide-fx",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "regional-offer-oracle"
+            },
+            "region": {
+              "$eq": "US"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "wide-wide-fx",
+          "offerId": "regional-offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "originalPrice": 1e+25,
+            "discountPrice": 1e+25,
+            "discount": 25,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 125.5
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-10-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "hist-us-new",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1200,
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\"",
+          "payload": {
+            "currentPrice": {
+              "offerId": "regional-offer-oracle",
+              "region": "US",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 1e+25,
+              "discountPrice": 1e+25,
+              "price": {
+                "currencyCode": "EUR",
+                "originalPrice": 1e+25,
+                "discountPrice": 1e+25,
+                "discount": 25,
+                "basePayoutPrice": 1.255e+27,
+                "payoutCurrencyExchangeRate": 125.5,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-01T00:00:00.000Z"
+            },
+            "maxPrice": 1e+25,
+            "minPrice": 1200,
+            "currentPriceUsd": 1.255e+27,
+            "currentOriginalPriceUsd": 1.255e+27,
+            "maxPriceUsd": 1.255e+27,
+            "minPriceUsd": 1200
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"9e9e16ab4220e1f9424f4df29d97769458c98f22\""
+      },
+      "body": {
+        "data": {
+          "currentPrice": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 1e+25,
+            "discountPrice": 1e+25,
+            "price": {
+              "currencyCode": "EUR",
+              "originalPrice": 1e+25,
+              "discountPrice": 1e+25,
+              "discount": 25,
+              "basePayoutPrice": 1.255e+27,
+              "payoutCurrencyExchangeRate": 125.5,
+              "precision": 2
+            },
+            "updatedAt": "2026-11-01T00:00:00.000Z"
+          },
+          "maxPrice": 1e+25,
+          "minPrice": 1200,
+          "currentPriceUsd": 1.255e+27,
+          "currentOriginalPriceUsd": 1.255e+27,
+          "maxPriceUsd": 1.255e+27,
+          "minPriceUsd": 1200
+        },
+        "meta": {
+          "country": "US",
+          "region": "US"
+        }
+      }
+    }
+  },
+  {
+    "name": "regional USD fx-overflow",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "regional-offer-oracle"
+            },
+            "region": {
+              "$eq": "US"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "wide-fx-overflow",
+          "offerId": "regional-offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "originalPrice": 1e+308,
+            "discountPrice": 1e+308,
+            "discount": 25,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 10000000000
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-10-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "hist-us-new",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1200,
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\"",
+          "payload": {
+            "currentPrice": {
+              "offerId": "regional-offer-oracle",
+              "region": "US",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 1e+308,
+              "discountPrice": 1e+308,
+              "price": {
+                "currencyCode": "EUR",
+                "originalPrice": 1e+308,
+                "discountPrice": 1e+308,
+                "discount": 25,
+                "basePayoutPrice": null,
+                "payoutCurrencyExchangeRate": 10000000000,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-01T00:00:00.000Z"
+            },
+            "maxPrice": 1e+308,
+            "minPrice": 1200,
+            "currentPriceUsd": null,
+            "currentOriginalPriceUsd": null,
+            "maxPriceUsd": null,
+            "minPriceUsd": 1200
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"148c9b1dfd3c302c97c91a3c76fbe7bf93c51142\""
+      },
+      "body": {
+        "data": {
+          "currentPrice": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 1e+308,
+            "discountPrice": 1e+308,
+            "price": {
+              "currencyCode": "EUR",
+              "originalPrice": 1e+308,
+              "discountPrice": 1e+308,
+              "discount": 25,
+              "basePayoutPrice": null,
+              "payoutCurrencyExchangeRate": 10000000000,
+              "precision": 2
+            },
+            "updatedAt": "2026-11-01T00:00:00.000Z"
+          },
+          "maxPrice": 1e+308,
+          "minPrice": 1200,
+          "currentPriceUsd": null,
+          "currentOriginalPriceUsd": null,
+          "maxPriceUsd": null,
+          "minPriceUsd": 1200
+        },
+        "meta": {
+          "country": "US",
+          "region": "US"
+        }
+      }
+    }
+  },
+  {
+    "name": "regional raw decimal",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "regional-offer-oracle"
+            },
+            "region": {
+              "$eq": "US"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "live-us",
+          "offerId": "regional-offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-10T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": {
+              "$numberDecimal": "34.875"
+            },
+            "discountPrice": {
+              "$numberDecimal": "34.875"
+            },
+            "discount": 25,
+            "basePayoutPrice": 2000,
+            "payoutCurrencyExchangeRate": 1
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-10-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "live-us",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-11-10T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": {
+                "$numberLong": "9007199254740997"
+              },
+              "discountPrice": {
+                "$numberLong": "9007199254740997"
+              },
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1
+            }
+          },
+          {
+            "_id": "hist-us-new",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1200,
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\"",
+          "payload": {
+            "currentPrice": {
+              "offerId": "regional-offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 35,
+              "discountPrice": 35,
+              "price": {
+                "currencyCode": "USD",
+                "originalPrice": 35,
+                "discountPrice": 35,
+                "discount": 25,
+                "basePayoutPrice": null,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-10T00:00:00.000Z"
+            },
+            "maxPrice": 9007199254740996,
+            "minPrice": 34.875,
+            "currentPriceUsd": null,
+            "currentOriginalPriceUsd": null,
+            "maxPriceUsd": 1200,
+            "minPriceUsd": 1200
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"822e4918788ecd1246d7a811a9a4fdedc520800e\""
+      },
+      "body": {
+        "data": {
+          "currentPrice": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "currencyCode": "USD",
+            "precision": 2,
+            "originalPrice": 35,
+            "discountPrice": 35,
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 35,
+              "discountPrice": 35,
+              "discount": 25,
+              "basePayoutPrice": null,
+              "payoutCurrencyExchangeRate": 1,
+              "precision": 2
+            },
+            "updatedAt": "2026-11-10T00:00:00.000Z"
+          },
+          "maxPrice": 9007199254740996,
+          "minPrice": 34.875,
+          "currentPriceUsd": null,
+          "currentOriginalPriceUsd": null,
+          "maxPriceUsd": 1200,
+          "minPriceUsd": 1200
+        },
+        "meta": {
+          "country": "US",
+          "region": "US"
+        }
+      }
+    }
+  },
+  {
+    "name": "regional raw native-nan",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "regional-offer-oracle"
+            },
+            "region": {
+              "$eq": "US"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "live-us",
+          "offerId": "regional-offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-10T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": {
+              "$numberDouble": "NaN"
+            },
+            "discountPrice": {
+              "$numberDouble": "NaN"
+            },
+            "discount": 25,
+            "basePayoutPrice": 2000,
+            "payoutCurrencyExchangeRate": 1
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-10-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "hist-us-new",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1200,
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\"",
+          "payload": {
+            "currentPrice": {
+              "offerId": "regional-offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": null,
+              "discountPrice": null,
+              "price": {
+                "currencyCode": "USD",
+                "originalPrice": null,
+                "discountPrice": null,
+                "discount": 25,
+                "basePayoutPrice": null,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-10T00:00:00.000Z"
+            },
+            "maxPrice": null,
+            "minPrice": null,
+            "currentPriceUsd": null,
+            "currentOriginalPriceUsd": null,
+            "maxPriceUsd": null,
+            "minPriceUsd": null
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ed96543ba979c08b223d7608617ee90187591736\""
+      },
+      "body": {
+        "data": {
+          "currentPrice": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "currencyCode": "USD",
+            "precision": 2,
+            "originalPrice": null,
+            "discountPrice": null,
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": null,
+              "discountPrice": null,
+              "discount": 25,
+              "basePayoutPrice": null,
+              "payoutCurrencyExchangeRate": 1,
+              "precision": 2
+            },
+            "updatedAt": "2026-11-10T00:00:00.000Z"
+          },
+          "maxPrice": null,
+          "minPrice": null,
+          "currentPriceUsd": null,
+          "currentOriginalPriceUsd": null,
+          "maxPriceUsd": null,
+          "minPriceUsd": null
+        },
+        "meta": {
+          "country": "US",
+          "region": "US"
+        }
+      }
+    }
+  },
+  {
+    "name": "regional raw native-infinity",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "regional-offer-oracle"
+            },
+            "region": {
+              "$eq": "US"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "live-us",
+          "offerId": "regional-offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-10T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": {
+              "$numberDouble": "Infinity"
+            },
+            "discountPrice": {
+              "$numberDouble": "Infinity"
+            },
+            "discount": 25,
+            "basePayoutPrice": 2000,
+            "payoutCurrencyExchangeRate": 1
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-10-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "hist-us-new",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1200,
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\"",
+          "payload": {
+            "currentPrice": {
+              "offerId": "regional-offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": null,
+              "discountPrice": null,
+              "price": {
+                "currencyCode": "USD",
+                "originalPrice": null,
+                "discountPrice": null,
+                "discount": 25,
+                "basePayoutPrice": null,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-10T00:00:00.000Z"
+            },
+            "maxPrice": null,
+            "minPrice": 1200,
+            "currentPriceUsd": null,
+            "currentOriginalPriceUsd": null,
+            "maxPriceUsd": null,
+            "minPriceUsd": 1200
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ffd65d7842027cc4e3b6b81350eca98a16356f55\""
+      },
+      "body": {
+        "data": {
+          "currentPrice": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "currencyCode": "USD",
+            "precision": 2,
+            "originalPrice": null,
+            "discountPrice": null,
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": null,
+              "discountPrice": null,
+              "discount": 25,
+              "basePayoutPrice": null,
+              "payoutCurrencyExchangeRate": 1,
+              "precision": 2
+            },
+            "updatedAt": "2026-11-10T00:00:00.000Z"
+          },
+          "maxPrice": null,
+          "minPrice": 1200,
+          "currentPriceUsd": null,
+          "currentOriginalPriceUsd": null,
+          "maxPriceUsd": null,
+          "minPriceUsd": 1200
+        },
+        "meta": {
+          "country": "US",
+          "region": "US"
+        }
+      }
+    }
+  },
+  {
+    "name": "regional raw sparse",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "regional-offer-oracle"
+            },
+            "region": {
+              "$eq": "US"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "live-us",
+          "offerId": "regional-offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-10T00:00:00.000Z"
+          },
+          "price": null
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-10-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "hist-us-new",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1200,
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\"",
+          "payload": {
+            "currentPrice": {
+              "offerId": "regional-offer-oracle",
+              "region": "US",
+              "currencyCode": null,
+              "precision": 2,
+              "price": null,
+              "updatedAt": "2026-11-10T00:00:00.000Z"
+            },
+            "maxPrice": 1200,
+            "minPrice": 0,
+            "currentPriceUsd": null,
+            "currentOriginalPriceUsd": null,
+            "maxPriceUsd": 1200,
+            "minPriceUsd": 1200
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e8701010055bdaabc8123198942cbab301ac75fd\""
+      },
+      "body": {
+        "data": {
+          "currentPrice": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "currencyCode": null,
+            "precision": 2,
+            "price": null,
+            "updatedAt": "2026-11-10T00:00:00.000Z"
+          },
+          "maxPrice": 1200,
+          "minPrice": 0,
+          "currentPriceUsd": null,
+          "currentOriginalPriceUsd": null,
+          "maxPriceUsd": 1200,
+          "minPriceUsd": 1200
+        },
+        "meta": {
+          "country": "US",
+          "region": "US"
+        }
+      }
+    }
+  },
+  {
+    "name": "regional raw invalid current currency",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "regional-offer-oracle"
+            },
+            "region": {
+              "$eq": "US"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "live-us",
+          "offerId": "regional-offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-10T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": {}
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-10-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "hist-us-new",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-11-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 2000,
+              "discountPrice": 1200,
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"a4566572cdfb3470b9e6801e45cd7b76869a1bf0\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/regional-offer-oracle/regional-price",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "regional raw group historical current",
+    "request": {
+      "path": "/v1/offers/regional-offer-oracle/regional-price",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "regional-offer-oracle"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "regional-offer-doc",
+          "id": "regional-offer-oracle",
+          "title": "Regional Oracle Game",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "RU"
+          ],
+          "releaseDate": {
+            "$date": "2026-10-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.regional-price.all:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "regional-offer-oracle",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-10-01T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "live-us",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": {
+              "$date": "2026-04-01T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": {
+                "$numberLong": "9007199254740997"
+              },
+              "discountPrice": {
+                "$numberLong": "9007199254740997"
+              },
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1
+            }
+          },
+          {
+            "_id": "live-us",
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "updatedAt": "2026-10-03T00:00:00Z",
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": {
+                "$numberDecimal": "34.875"
+              },
+              "discountPrice": {
+                "$numberDecimal": "34.875"
+              },
+              "discount": 25,
+              "basePayoutPrice": 2000,
+              "payoutCurrencyExchangeRate": 1
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.regional-price.all:availability=\"[[],[\\\"RU\\\"]]\":id=\"regional-offer-oracle\"",
+          "payload": {
+            "US": {
+              "currentPrice": {
+                "offerId": "regional-offer-oracle",
+                "region": "US",
+                "currencyCode": "USD",
+                "precision": 2,
+                "originalPrice": 35,
+                "discountPrice": 35,
+                "price": {
+                  "currencyCode": "USD",
+                  "originalPrice": 35,
+                  "discountPrice": 35,
+                  "discount": 25,
+                  "basePayoutPrice": null,
+                  "payoutCurrencyExchangeRate": 1,
+                  "precision": 2
+                },
+                "updatedAt": "2026-10-03T00:00:00.000Z"
+              },
+              "maxPrice": 9007199254740996,
+              "minPrice": 34.875,
+              "currentPriceUsd": null,
+              "currentOriginalPriceUsd": null,
+              "maxPriceUsd": null,
+              "minPriceUsd": null
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"f3bb7f39af53d0d5a280be0cd965ea0aa9a515ad\""
+      },
+      "body": {
+        "data": {
+          "US": {
+            "currentPrice": {
+              "offerId": "regional-offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 35,
+              "discountPrice": 35,
+              "price": {
+                "currencyCode": "USD",
+                "originalPrice": 35,
+                "discountPrice": 35,
+                "discount": 25,
+                "basePayoutPrice": null,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-10-03T00:00:00.000Z"
+            },
+            "maxPrice": 9007199254740996,
+            "minPrice": 34.875,
+            "currentPriceUsd": null,
+            "currentOriginalPriceUsd": null,
+            "maxPriceUsd": null,
+            "minPriceUsd": null
+          }
+        },
+        "meta": {
+          "country": null,
+          "region": null,
+          "grouped": true,
+          "regions": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "regional decimal nested /v1/offers",
+    "request": {
+      "path": "/v1/offers",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list:filters={}:limit=20:locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {},
+          "options": {
+            "limit": 21,
+            "sort": {
+              "lastModifiedDate": -1,
+              "id": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "regional-offer-doc",
+            "id": "regional-offer-oracle",
+            "title": "Regional Oracle Game",
+            "countriesWhitelist": [],
+            "countriesBlacklist": [
+              "RU"
+            ],
+            "releaseDate": {
+              "$date": "2026-10-01T00:00:00.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "regional-offer-oracle"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              }
+            }
+          },
+          {
+            "offerId": "unmatched",
+            "price": {
+              "currencyCode": {}
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list:filters={}:limit=20:locale=\"en-US\":region=\"US\"",
+          "payload": {
+            "offers": [
+              {
+                "_id": "regional-offer-doc",
+                "id": "regional-offer-oracle",
+                "namespace": null,
+                "title": "Regional Oracle Game",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2026-10-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": [
+                  "RU"
+                ],
+                "countriesWhitelist": [],
+                "refundType": null,
+                "customAttributes": null,
+                "price": {
+                  "offerId": "regional-offer-oracle",
+                  "region": "US",
+                  "currencyCode": "USD",
+                  "precision": 2,
+                  "discountPrice": 350,
+                  "price": {
+                    "currencyCode": "USD",
+                    "discountPrice": 350,
+                    "precision": 2
+                  },
+                  "updatedAt": null
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "pagination": {
+              "limit": 20,
+              "hasMore": false,
+              "nextCursor": null,
+              "total": 1
+            },
+            "localization": {
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "cacheTtl": 60
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8dcc9b386074ebf7702f1d7a742650afee4d3f36\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": "regional-offer-doc",
+            "id": "regional-offer-oracle",
+            "namespace": null,
+            "title": "Regional Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": null,
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": null,
+            "isCodeRedemptionOnly": null,
+            "keyImages": null,
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": null,
+            "items": null,
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": "2026-10-01T00:00:00.000Z",
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": [
+              "RU"
+            ],
+            "countriesWhitelist": [],
+            "refundType": null,
+            "customAttributes": null,
+            "price": {
+              "offerId": "regional-offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "USD",
+                "discountPrice": 350,
+                "precision": 2
+              },
+              "updatedAt": null
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical",
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 1
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "regional decimal flat /v1/offers",
+    "request": {
+      "path": "/v1/offers",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list:filters={}:limit=20:locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {},
+          "options": {
+            "limit": 21,
+            "sort": {
+              "lastModifiedDate": -1,
+              "id": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "regional-offer-doc",
+            "id": "regional-offer-oracle",
+            "title": "Regional Oracle Game",
+            "countriesWhitelist": [],
+            "countriesBlacklist": [
+              "RU"
+            ],
+            "releaseDate": {
+              "$date": "2026-10-01T00:00:00.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "regional-offer-oracle"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "regional-offer-oracle",
+            "currencyCode": "USD",
+            "originalPrice": {
+              "$numberLong": "799"
+            },
+            "discountPrice": {
+              "$numberDecimal": "-12.5"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list:filters={}:limit=20:locale=\"en-US\":region=\"US\"",
+          "payload": {
+            "offers": [
+              {
+                "_id": "regional-offer-doc",
+                "id": "regional-offer-oracle",
+                "namespace": null,
+                "title": "Regional Oracle Game",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2026-10-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": [
+                  "RU"
+                ],
+                "countriesWhitelist": [],
+                "refundType": null,
+                "customAttributes": null,
+                "price": {
+                  "offerId": "regional-offer-oracle",
+                  "region": null,
+                  "currencyCode": "USD",
+                  "precision": 2,
+                  "originalPrice": 799,
+                  "discountPrice": -12,
+                  "updatedAt": null
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "pagination": {
+              "limit": 20,
+              "hasMore": false,
+              "nextCursor": null,
+              "total": 1
+            },
+            "localization": {
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "cacheTtl": 60
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"259fbded812be87a2cb9c093fd16ac6cbd267eac\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": "regional-offer-doc",
+            "id": "regional-offer-oracle",
+            "namespace": null,
+            "title": "Regional Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": null,
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": null,
+            "isCodeRedemptionOnly": null,
+            "keyImages": null,
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": null,
+            "items": null,
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": "2026-10-01T00:00:00.000Z",
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": [
+              "RU"
+            ],
+            "countriesWhitelist": [],
+            "refundType": null,
+            "customAttributes": null,
+            "price": {
+              "offerId": "regional-offer-oracle",
+              "region": null,
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 799,
+              "discountPrice": -12,
+              "updatedAt": null
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical",
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 1
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "regional invalid matched currency /v1/offers",
+    "request": {
+      "path": "/v1/offers",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list:filters={}:limit=20:locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {},
+          "options": {
+            "limit": 21,
+            "sort": {
+              "lastModifiedDate": -1,
+              "id": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "regional-offer-doc",
+            "id": "regional-offer-oracle",
+            "title": "Regional Oracle Game",
+            "countriesWhitelist": [],
+            "countriesBlacklist": [
+              "RU"
+            ],
+            "releaseDate": {
+              "$date": "2026-10-01T00:00:00.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "regional-offer-oracle"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "price": {
+              "currencyCode": {},
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"2e43afe41473768520fa60961461e25a204184cb\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "regional decimal nested /v1/latest-games",
+    "request": {
+      "path": "/v1/latest-games",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.latest-games:locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC",
+                "ADDON"
+              ]
+            }
+          },
+          "options": {
+            "limit": 25,
+            "sort": {
+              "creationDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "regional-offer-doc",
+            "id": "regional-offer-oracle",
+            "title": "Regional Oracle Game",
+            "countriesWhitelist": [],
+            "countriesBlacklist": [
+              "RU"
+            ],
+            "releaseDate": {
+              "$date": "2026-10-01T00:00:00.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "region": "US",
+            "offerId": {
+              "$in": [
+                "regional-offer-oracle"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              }
+            }
+          },
+          {
+            "offerId": "unmatched",
+            "price": {
+              "currencyCode": {}
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.latest-games:locale=\"en-US\":region=\"US\"",
+          "payload": [
+            {
+              "_id": "regional-offer-doc",
+              "id": "regional-offer-oracle",
+              "namespace": null,
+              "title": "Regional Oracle Game",
+              "description": null,
+              "longDescription": null,
+              "offerType": null,
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": null,
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": null,
+              "items": null,
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": "2026-10-01T00:00:00.000Z",
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": [
+                "RU"
+              ],
+              "countriesWhitelist": [],
+              "refundType": null,
+              "customAttributes": null,
+              "price": {
+                "offerId": "regional-offer-oracle",
+                "region": "US",
+                "currencyCode": "USD",
+                "precision": 2,
+                "discountPrice": 350,
+                "price": {
+                  "currencyCode": "USD",
+                  "discountPrice": 350,
+                  "precision": 2
+                },
+                "updatedAt": null
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"7b0ff2491c460c0ce6777d1fe948398168464ec7\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": "regional-offer-doc",
+            "id": "regional-offer-oracle",
+            "namespace": null,
+            "title": "Regional Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": null,
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": null,
+            "isCodeRedemptionOnly": null,
+            "keyImages": null,
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": null,
+            "items": null,
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": "2026-10-01T00:00:00.000Z",
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": [
+              "RU"
+            ],
+            "countriesWhitelist": [],
+            "refundType": null,
+            "customAttributes": null,
+            "price": {
+              "offerId": "regional-offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "USD",
+                "discountPrice": 350,
+                "precision": 2
+              },
+              "updatedAt": null
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "regional decimal flat /v1/latest-games",
+    "request": {
+      "path": "/v1/latest-games",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.latest-games:locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC",
+                "ADDON"
+              ]
+            }
+          },
+          "options": {
+            "limit": 25,
+            "sort": {
+              "creationDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "regional-offer-doc",
+            "id": "regional-offer-oracle",
+            "title": "Regional Oracle Game",
+            "countriesWhitelist": [],
+            "countriesBlacklist": [
+              "RU"
+            ],
+            "releaseDate": {
+              "$date": "2026-10-01T00:00:00.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "region": "US",
+            "offerId": {
+              "$in": [
+                "regional-offer-oracle"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "regional-offer-oracle",
+            "currencyCode": "USD",
+            "originalPrice": {
+              "$numberLong": "799"
+            },
+            "discountPrice": {
+              "$numberDecimal": "-12.5"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.latest-games:locale=\"en-US\":region=\"US\"",
+          "payload": [
+            {
+              "_id": "regional-offer-doc",
+              "id": "regional-offer-oracle",
+              "namespace": null,
+              "title": "Regional Oracle Game",
+              "description": null,
+              "longDescription": null,
+              "offerType": null,
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": null,
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": null,
+              "items": null,
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": "2026-10-01T00:00:00.000Z",
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": [
+                "RU"
+              ],
+              "countriesWhitelist": [],
+              "refundType": null,
+              "customAttributes": null,
+              "price": {
+                "offerId": "regional-offer-oracle",
+                "region": null,
+                "currencyCode": "USD",
+                "precision": 2,
+                "originalPrice": 799,
+                "discountPrice": -12,
+                "updatedAt": null
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"bb00ec42cd8e48de5329d774a0aec7f2a83c5587\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": "regional-offer-doc",
+            "id": "regional-offer-oracle",
+            "namespace": null,
+            "title": "Regional Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": null,
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": null,
+            "isCodeRedemptionOnly": null,
+            "keyImages": null,
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": null,
+            "items": null,
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": "2026-10-01T00:00:00.000Z",
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": [
+              "RU"
+            ],
+            "countriesWhitelist": [],
+            "refundType": null,
+            "customAttributes": null,
+            "price": {
+              "offerId": "regional-offer-oracle",
+              "region": null,
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 799,
+              "discountPrice": -12,
+              "updatedAt": null
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "regional invalid matched currency /v1/latest-games",
+    "request": {
+      "path": "/v1/latest-games",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.latest-games:locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC",
+                "ADDON"
+              ]
+            }
+          },
+          "options": {
+            "limit": 25,
+            "sort": {
+              "creationDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "regional-offer-doc",
+            "id": "regional-offer-oracle",
+            "title": "Regional Oracle Game",
+            "countriesWhitelist": [],
+            "countriesBlacklist": [
+              "RU"
+            ],
+            "releaseDate": {
+              "$date": "2026-10-01T00:00:00.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "region": "US",
+            "offerId": {
+              "$in": [
+                "regional-offer-oracle"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "regional-offer-oracle",
+            "region": "US",
+            "price": {
+              "currencyCode": {},
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"69c353ac6625aaf5caafa9e595dbd72ae0c8c541\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/latest-games",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  }
+]

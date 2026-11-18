@@ -1,0 +1,2395 @@
+{
+  "prices": [
+    {
+      "amount": 500,
+      "currency": "AED",
+      "output": "AED 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "AED",
+      "output": "AED 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "AED",
+      "output": "AED 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "AED",
+      "output": "AED 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "AUD",
+      "output": "A$5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "AUD",
+      "output": "A$5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "AUD",
+      "output": "A$1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "AUD",
+      "output": "A$9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "BGN",
+      "output": "BGN 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "BGN",
+      "output": "BGN 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "BGN",
+      "output": "BGN 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "BGN",
+      "output": "BGN 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "BRL",
+      "output": "R$5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "BRL",
+      "output": "R$5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "BRL",
+      "output": "R$1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "BRL",
+      "output": "R$9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "CAD",
+      "output": "CA$5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "CAD",
+      "output": "CA$5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "CAD",
+      "output": "CA$1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "CAD",
+      "output": "CA$9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "CHF",
+      "output": "CHF 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "CHF",
+      "output": "CHF 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "CHF",
+      "output": "CHF 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "CHF",
+      "output": "CHF 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "CLP",
+      "output": "CLP 5"
+    },
+    {
+      "amount": 550,
+      "currency": "CLP",
+      "output": "CLP 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "CLP",
+      "output": "CLP 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "CLP",
+      "output": "CLP 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "CNY",
+      "output": "CN¥5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "CNY",
+      "output": "CN¥5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "CNY",
+      "output": "CN¥1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "CNY",
+      "output": "CN¥9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "COP",
+      "output": "COP 5"
+    },
+    {
+      "amount": 550,
+      "currency": "COP",
+      "output": "COP 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "COP",
+      "output": "COP 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "COP",
+      "output": "COP 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "CRC",
+      "output": "CRC 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "CRC",
+      "output": "CRC 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "CRC",
+      "output": "CRC 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "CRC",
+      "output": "CRC 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "CZK",
+      "output": "CZK 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "CZK",
+      "output": "CZK 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "CZK",
+      "output": "CZK 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "CZK",
+      "output": "CZK 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "DKK",
+      "output": "DKK 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "DKK",
+      "output": "DKK 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "DKK",
+      "output": "DKK 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "DKK",
+      "output": "DKK 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "EUR",
+      "output": "€5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "EUR",
+      "output": "€5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "EUR",
+      "output": "€1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "EUR",
+      "output": "€9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "GBP",
+      "output": "£5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "GBP",
+      "output": "£5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "GBP",
+      "output": "£1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "GBP",
+      "output": "£9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "HKD",
+      "output": "HK$5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "HKD",
+      "output": "HK$5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "HKD",
+      "output": "HK$1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "HKD",
+      "output": "HK$9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "HUF",
+      "output": "HUF 5"
+    },
+    {
+      "amount": 550,
+      "currency": "HUF",
+      "output": "HUF 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "HUF",
+      "output": "HUF 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "HUF",
+      "output": "HUF 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "IDR",
+      "output": "IDR 5"
+    },
+    {
+      "amount": 550,
+      "currency": "IDR",
+      "output": "IDR 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "IDR",
+      "output": "IDR 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "IDR",
+      "output": "IDR 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "ILS",
+      "output": "₪5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "ILS",
+      "output": "₪5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "ILS",
+      "output": "₪1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "ILS",
+      "output": "₪9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "INR",
+      "output": "₹5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "INR",
+      "output": "₹5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "INR",
+      "output": "₹1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "INR",
+      "output": "₹9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "JPY",
+      "output": "¥5"
+    },
+    {
+      "amount": 550,
+      "currency": "JPY",
+      "output": "¥6"
+    },
+    {
+      "amount": 199900,
+      "currency": "JPY",
+      "output": "¥1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "JPY",
+      "output": "¥10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "KRW",
+      "output": "₩5"
+    },
+    {
+      "amount": 550,
+      "currency": "KRW",
+      "output": "₩6"
+    },
+    {
+      "amount": 199900,
+      "currency": "KRW",
+      "output": "₩1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "KRW",
+      "output": "₩10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "KZT",
+      "output": "KZT 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "KZT",
+      "output": "KZT 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "KZT",
+      "output": "KZT 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "KZT",
+      "output": "KZT 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "MXN",
+      "output": "MX$5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "MXN",
+      "output": "MX$5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "MXN",
+      "output": "MX$1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "MXN",
+      "output": "MX$9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "MYR",
+      "output": "MYR 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "MYR",
+      "output": "MYR 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "MYR",
+      "output": "MYR 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "MYR",
+      "output": "MYR 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "NOK",
+      "output": "NOK 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "NOK",
+      "output": "NOK 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "NOK",
+      "output": "NOK 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "NOK",
+      "output": "NOK 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "NZD",
+      "output": "NZ$5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "NZD",
+      "output": "NZ$5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "NZD",
+      "output": "NZ$1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "NZD",
+      "output": "NZ$9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "PEN",
+      "output": "PEN 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "PEN",
+      "output": "PEN 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "PEN",
+      "output": "PEN 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "PEN",
+      "output": "PEN 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "PHP",
+      "output": "₱5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "PHP",
+      "output": "₱5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "PHP",
+      "output": "₱1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "PHP",
+      "output": "₱9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "PLN",
+      "output": "PLN 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "PLN",
+      "output": "PLN 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "PLN",
+      "output": "PLN 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "PLN",
+      "output": "PLN 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "QAR",
+      "output": "QAR 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "QAR",
+      "output": "QAR 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "QAR",
+      "output": "QAR 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "QAR",
+      "output": "QAR 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "RON",
+      "output": "RON 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "RON",
+      "output": "RON 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "RON",
+      "output": "RON 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "RON",
+      "output": "RON 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "RUB",
+      "output": "RUB 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "RUB",
+      "output": "RUB 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "RUB",
+      "output": "RUB 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "RUB",
+      "output": "RUB 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "SAR",
+      "output": "SAR 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "SAR",
+      "output": "SAR 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "SAR",
+      "output": "SAR 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "SAR",
+      "output": "SAR 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "SEK",
+      "output": "SEK 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "SEK",
+      "output": "SEK 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "SEK",
+      "output": "SEK 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "SEK",
+      "output": "SEK 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "SGD",
+      "output": "SGD 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "SGD",
+      "output": "SGD 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "SGD",
+      "output": "SGD 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "SGD",
+      "output": "SGD 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "THB",
+      "output": "THB 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "THB",
+      "output": "THB 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "THB",
+      "output": "THB 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "THB",
+      "output": "THB 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "TRY",
+      "output": "TRY 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "TRY",
+      "output": "TRY 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "TRY",
+      "output": "TRY 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "TRY",
+      "output": "TRY 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "TWD",
+      "output": "NT$5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "TWD",
+      "output": "NT$5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "TWD",
+      "output": "NT$1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "TWD",
+      "output": "NT$9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "UAH",
+      "output": "UAH 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "UAH",
+      "output": "UAH 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "UAH",
+      "output": "UAH 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "UAH",
+      "output": "UAH 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "USD",
+      "output": "$5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "USD",
+      "output": "$5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "USD",
+      "output": "$1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "USD",
+      "output": "$9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "UYU",
+      "output": "UYU 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "UYU",
+      "output": "UYU 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "UYU",
+      "output": "UYU 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "UYU",
+      "output": "UYU 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "VND",
+      "output": "₫5"
+    },
+    {
+      "amount": 550,
+      "currency": "VND",
+      "output": "₫6"
+    },
+    {
+      "amount": 199900,
+      "currency": "VND",
+      "output": "₫1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "VND",
+      "output": "₫10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "ZAR",
+      "output": "ZAR 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "ZAR",
+      "output": "ZAR 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "ZAR",
+      "output": "ZAR 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "ZAR",
+      "output": "ZAR 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "ADP",
+      "output": "ADP 5"
+    },
+    {
+      "amount": 550,
+      "currency": "ADP",
+      "output": "ADP 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "ADP",
+      "output": "ADP 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "ADP",
+      "output": "ADP 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "AFN",
+      "output": "AFN 5"
+    },
+    {
+      "amount": 550,
+      "currency": "AFN",
+      "output": "AFN 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "AFN",
+      "output": "AFN 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "AFN",
+      "output": "AFN 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "ALL",
+      "output": "ALL 5"
+    },
+    {
+      "amount": 550,
+      "currency": "ALL",
+      "output": "ALL 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "ALL",
+      "output": "ALL 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "ALL",
+      "output": "ALL 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "BHD",
+      "output": "BHD 5.000"
+    },
+    {
+      "amount": 550,
+      "currency": "BHD",
+      "output": "BHD 5.500"
+    },
+    {
+      "amount": 199900,
+      "currency": "BHD",
+      "output": "BHD 1,999.000"
+    },
+    {
+      "amount": 999999,
+      "currency": "BHD",
+      "output": "BHD 9,999.990"
+    },
+    {
+      "amount": 500,
+      "currency": "BIF",
+      "output": "BIF 5"
+    },
+    {
+      "amount": 550,
+      "currency": "BIF",
+      "output": "BIF 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "BIF",
+      "output": "BIF 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "BIF",
+      "output": "BIF 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "BYR",
+      "output": "BYR 5"
+    },
+    {
+      "amount": 550,
+      "currency": "BYR",
+      "output": "BYR 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "BYR",
+      "output": "BYR 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "BYR",
+      "output": "BYR 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "CLF",
+      "output": "CLF 5.0000"
+    },
+    {
+      "amount": 550,
+      "currency": "CLF",
+      "output": "CLF 5.5000"
+    },
+    {
+      "amount": 199900,
+      "currency": "CLF",
+      "output": "CLF 1,999.0000"
+    },
+    {
+      "amount": 999999,
+      "currency": "CLF",
+      "output": "CLF 9,999.9900"
+    },
+    {
+      "amount": 500,
+      "currency": "DJF",
+      "output": "DJF 5"
+    },
+    {
+      "amount": 550,
+      "currency": "DJF",
+      "output": "DJF 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "DJF",
+      "output": "DJF 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "DJF",
+      "output": "DJF 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "ESP",
+      "output": "ESP 5"
+    },
+    {
+      "amount": 550,
+      "currency": "ESP",
+      "output": "ESP 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "ESP",
+      "output": "ESP 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "ESP",
+      "output": "ESP 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "GNF",
+      "output": "GNF 5"
+    },
+    {
+      "amount": 550,
+      "currency": "GNF",
+      "output": "GNF 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "GNF",
+      "output": "GNF 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "GNF",
+      "output": "GNF 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "IQD",
+      "output": "IQD 5"
+    },
+    {
+      "amount": 550,
+      "currency": "IQD",
+      "output": "IQD 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "IQD",
+      "output": "IQD 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "IQD",
+      "output": "IQD 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "IRR",
+      "output": "IRR 5"
+    },
+    {
+      "amount": 550,
+      "currency": "IRR",
+      "output": "IRR 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "IRR",
+      "output": "IRR 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "IRR",
+      "output": "IRR 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "ISK",
+      "output": "ISK 5"
+    },
+    {
+      "amount": 550,
+      "currency": "ISK",
+      "output": "ISK 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "ISK",
+      "output": "ISK 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "ISK",
+      "output": "ISK 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "ITL",
+      "output": "ITL 5"
+    },
+    {
+      "amount": 550,
+      "currency": "ITL",
+      "output": "ITL 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "ITL",
+      "output": "ITL 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "ITL",
+      "output": "ITL 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "JOD",
+      "output": "JOD 5.000"
+    },
+    {
+      "amount": 550,
+      "currency": "JOD",
+      "output": "JOD 5.500"
+    },
+    {
+      "amount": 199900,
+      "currency": "JOD",
+      "output": "JOD 1,999.000"
+    },
+    {
+      "amount": 999999,
+      "currency": "JOD",
+      "output": "JOD 9,999.990"
+    },
+    {
+      "amount": 500,
+      "currency": "KMF",
+      "output": "KMF 5"
+    },
+    {
+      "amount": 550,
+      "currency": "KMF",
+      "output": "KMF 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "KMF",
+      "output": "KMF 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "KMF",
+      "output": "KMF 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "KPW",
+      "output": "KPW 5"
+    },
+    {
+      "amount": 550,
+      "currency": "KPW",
+      "output": "KPW 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "KPW",
+      "output": "KPW 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "KPW",
+      "output": "KPW 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "KWD",
+      "output": "KWD 5.000"
+    },
+    {
+      "amount": 550,
+      "currency": "KWD",
+      "output": "KWD 5.500"
+    },
+    {
+      "amount": 199900,
+      "currency": "KWD",
+      "output": "KWD 1,999.000"
+    },
+    {
+      "amount": 999999,
+      "currency": "KWD",
+      "output": "KWD 9,999.990"
+    },
+    {
+      "amount": 500,
+      "currency": "LAK",
+      "output": "LAK 5"
+    },
+    {
+      "amount": 550,
+      "currency": "LAK",
+      "output": "LAK 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "LAK",
+      "output": "LAK 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "LAK",
+      "output": "LAK 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "LBP",
+      "output": "LBP 5"
+    },
+    {
+      "amount": 550,
+      "currency": "LBP",
+      "output": "LBP 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "LBP",
+      "output": "LBP 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "LBP",
+      "output": "LBP 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "LUF",
+      "output": "LUF 5"
+    },
+    {
+      "amount": 550,
+      "currency": "LUF",
+      "output": "LUF 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "LUF",
+      "output": "LUF 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "LUF",
+      "output": "LUF 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "LYD",
+      "output": "LYD 5.000"
+    },
+    {
+      "amount": 550,
+      "currency": "LYD",
+      "output": "LYD 5.500"
+    },
+    {
+      "amount": 199900,
+      "currency": "LYD",
+      "output": "LYD 1,999.000"
+    },
+    {
+      "amount": 999999,
+      "currency": "LYD",
+      "output": "LYD 9,999.990"
+    },
+    {
+      "amount": 500,
+      "currency": "MGA",
+      "output": "MGA 5"
+    },
+    {
+      "amount": 550,
+      "currency": "MGA",
+      "output": "MGA 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "MGA",
+      "output": "MGA 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "MGA",
+      "output": "MGA 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "MGF",
+      "output": "MGF 5"
+    },
+    {
+      "amount": 550,
+      "currency": "MGF",
+      "output": "MGF 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "MGF",
+      "output": "MGF 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "MGF",
+      "output": "MGF 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "MMK",
+      "output": "MMK 5"
+    },
+    {
+      "amount": 550,
+      "currency": "MMK",
+      "output": "MMK 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "MMK",
+      "output": "MMK 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "MMK",
+      "output": "MMK 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "MRO",
+      "output": "MRO 5"
+    },
+    {
+      "amount": 550,
+      "currency": "MRO",
+      "output": "MRO 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "MRO",
+      "output": "MRO 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "MRO",
+      "output": "MRO 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "OMR",
+      "output": "OMR 5.000"
+    },
+    {
+      "amount": 550,
+      "currency": "OMR",
+      "output": "OMR 5.500"
+    },
+    {
+      "amount": 199900,
+      "currency": "OMR",
+      "output": "OMR 1,999.000"
+    },
+    {
+      "amount": 999999,
+      "currency": "OMR",
+      "output": "OMR 9,999.990"
+    },
+    {
+      "amount": 500,
+      "currency": "PYG",
+      "output": "PYG 5"
+    },
+    {
+      "amount": 550,
+      "currency": "PYG",
+      "output": "PYG 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "PYG",
+      "output": "PYG 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "PYG",
+      "output": "PYG 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "RSD",
+      "output": "RSD 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "RSD",
+      "output": "RSD 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "RSD",
+      "output": "RSD 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "RSD",
+      "output": "RSD 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "RWF",
+      "output": "RWF 5"
+    },
+    {
+      "amount": 550,
+      "currency": "RWF",
+      "output": "RWF 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "RWF",
+      "output": "RWF 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "RWF",
+      "output": "RWF 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "SLL",
+      "output": "SLL 5"
+    },
+    {
+      "amount": 550,
+      "currency": "SLL",
+      "output": "SLL 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "SLL",
+      "output": "SLL 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "SLL",
+      "output": "SLL 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "SOS",
+      "output": "SOS 5"
+    },
+    {
+      "amount": 550,
+      "currency": "SOS",
+      "output": "SOS 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "SOS",
+      "output": "SOS 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "SOS",
+      "output": "SOS 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "STD",
+      "output": "STD 5"
+    },
+    {
+      "amount": 550,
+      "currency": "STD",
+      "output": "STD 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "STD",
+      "output": "STD 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "STD",
+      "output": "STD 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "SYP",
+      "output": "SYP 5"
+    },
+    {
+      "amount": 550,
+      "currency": "SYP",
+      "output": "SYP 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "SYP",
+      "output": "SYP 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "SYP",
+      "output": "SYP 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "TMM",
+      "output": "TMM 5"
+    },
+    {
+      "amount": 550,
+      "currency": "TMM",
+      "output": "TMM 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "TMM",
+      "output": "TMM 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "TMM",
+      "output": "TMM 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "TND",
+      "output": "TND 5.000"
+    },
+    {
+      "amount": 550,
+      "currency": "TND",
+      "output": "TND 5.500"
+    },
+    {
+      "amount": 199900,
+      "currency": "TND",
+      "output": "TND 1,999.000"
+    },
+    {
+      "amount": 999999,
+      "currency": "TND",
+      "output": "TND 9,999.990"
+    },
+    {
+      "amount": 500,
+      "currency": "TRL",
+      "output": "TRL 5"
+    },
+    {
+      "amount": 550,
+      "currency": "TRL",
+      "output": "TRL 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "TRL",
+      "output": "TRL 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "TRL",
+      "output": "TRL 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "UGX",
+      "output": "UGX 5"
+    },
+    {
+      "amount": 550,
+      "currency": "UGX",
+      "output": "UGX 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "UGX",
+      "output": "UGX 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "UGX",
+      "output": "UGX 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "UYI",
+      "output": "UYI 5"
+    },
+    {
+      "amount": 550,
+      "currency": "UYI",
+      "output": "UYI 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "UYI",
+      "output": "UYI 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "UYI",
+      "output": "UYI 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "UYW",
+      "output": "UYW 5.0000"
+    },
+    {
+      "amount": 550,
+      "currency": "UYW",
+      "output": "UYW 5.5000"
+    },
+    {
+      "amount": 199900,
+      "currency": "UYW",
+      "output": "UYW 1,999.0000"
+    },
+    {
+      "amount": 999999,
+      "currency": "UYW",
+      "output": "UYW 9,999.9900"
+    },
+    {
+      "amount": 500,
+      "currency": "VUV",
+      "output": "VUV 5"
+    },
+    {
+      "amount": 550,
+      "currency": "VUV",
+      "output": "VUV 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "VUV",
+      "output": "VUV 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "VUV",
+      "output": "VUV 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "XAF",
+      "output": "FCFA 5"
+    },
+    {
+      "amount": 550,
+      "currency": "XAF",
+      "output": "FCFA 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "XAF",
+      "output": "FCFA 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "XAF",
+      "output": "FCFA 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "XCD",
+      "output": "EC$5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "XCD",
+      "output": "EC$5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "XCD",
+      "output": "EC$1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "XCD",
+      "output": "EC$9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "XCG",
+      "output": "Cg. 5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "XCG",
+      "output": "Cg. 5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "XCG",
+      "output": "Cg. 1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "XCG",
+      "output": "Cg. 9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "XOF",
+      "output": "F CFA 5"
+    },
+    {
+      "amount": 550,
+      "currency": "XOF",
+      "output": "F CFA 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "XOF",
+      "output": "F CFA 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "XOF",
+      "output": "F CFA 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "XPF",
+      "output": "CFPF 5"
+    },
+    {
+      "amount": 550,
+      "currency": "XPF",
+      "output": "CFPF 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "XPF",
+      "output": "CFPF 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "XPF",
+      "output": "CFPF 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "XXX",
+      "output": "¤5.00"
+    },
+    {
+      "amount": 550,
+      "currency": "XXX",
+      "output": "¤5.50"
+    },
+    {
+      "amount": 199900,
+      "currency": "XXX",
+      "output": "¤1,999.00"
+    },
+    {
+      "amount": 999999,
+      "currency": "XXX",
+      "output": "¤9,999.99"
+    },
+    {
+      "amount": 500,
+      "currency": "YER",
+      "output": "YER 5"
+    },
+    {
+      "amount": 550,
+      "currency": "YER",
+      "output": "YER 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "YER",
+      "output": "YER 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "YER",
+      "output": "YER 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "ZMK",
+      "output": "ZMK 5"
+    },
+    {
+      "amount": 550,
+      "currency": "ZMK",
+      "output": "ZMK 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "ZMK",
+      "output": "ZMK 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "ZMK",
+      "output": "ZMK 10,000"
+    },
+    {
+      "amount": 500,
+      "currency": "ZWD",
+      "output": "ZWD 5"
+    },
+    {
+      "amount": 550,
+      "currency": "ZWD",
+      "output": "ZWD 6"
+    },
+    {
+      "amount": 199900,
+      "currency": "ZWD",
+      "output": "ZWD 1,999"
+    },
+    {
+      "amount": 999999,
+      "currency": "ZWD",
+      "output": "ZWD 10,000"
+    }
+  ],
+  "priceStates": [
+    {
+      "amount": null,
+      "currency": "?",
+      "output": "Unavailable"
+    },
+    {
+      "amount": "500",
+      "currency": "USD",
+      "output": "Unavailable"
+    },
+    {
+      "amount": -1,
+      "currency": "",
+      "output": "Unavailable"
+    },
+    {
+      "amount": 0,
+      "currency": "",
+      "output": "Free"
+    },
+    {
+      "amount": 500,
+      "currency": "",
+      "output": null
+    },
+    {
+      "amount": 500,
+      "currency": "ÜSD",
+      "output": null
+    },
+    {
+      "amount": 500,
+      "currency": "uSd",
+      "output": "$5.00"
+    },
+    {
+      "amount": 100.5,
+      "currency": "USD",
+      "output": "$1.01"
+    },
+    {
+      "amount": 100.499999999,
+      "currency": "USD",
+      "output": "$1.00"
+    },
+    {
+      "amount": 99999.5,
+      "currency": "USD",
+      "output": "$1,000.00"
+    },
+    {
+      "amount": 199.95,
+      "currency": "KWD",
+      "output": "KWD 1.999"
+    },
+    {
+      "amount": 50,
+      "currency": "JPY",
+      "output": "¥1"
+    },
+    {
+      "amount": 1e-300,
+      "currency": "JPY",
+      "output": "¥0"
+    },
+    {
+      "amount": 1e+30,
+      "currency": "USD",
+      "output": "$10,000,000,000,000,000,000,000,000,000.00"
+    },
+    {
+      "amount": 1.7976931348623157e+308,
+      "currency": "CLF",
+      "output": "CLF 1,797,693,134,862,315,600,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000.0000"
+    }
+  ],
+  "downloads": [
+    {
+      "assets": [],
+      "output": {
+        "bytes": null
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": "Windows",
+          "downloadSizeBytes": 100
+        },
+        {
+          "artifactId": "app",
+          "platform": "Mac",
+          "downloadSizeBytes": 200
+        }
+      ],
+      "output": {
+        "bytes": 100,
+        "platform": "Windows"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": "Windows",
+          "downloadSizeBytes": 100,
+          "updatedAt": "2026-09-01T00:00:00Z"
+        },
+        {
+          "artifactId": "app",
+          "platform": "Mac",
+          "downloadSizeBytes": 200,
+          "updatedAt": "2026-09-02T00:00:00Z"
+        }
+      ],
+      "output": {
+        "bytes": 200,
+        "platform": "Mac"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": "Windows",
+          "downloadSizeBytes": 100,
+          "updatedAt": null,
+          "createdAt": "2026-09-03T00:00:00Z"
+        },
+        {
+          "artifactId": "app",
+          "platform": "Mac",
+          "downloadSizeBytes": 200,
+          "updatedAt": "2026-09-02T00:00:00Z"
+        }
+      ],
+      "output": {
+        "bytes": 100,
+        "platform": "Windows"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": "Windows",
+          "downloadSizeBytes": 100,
+          "updatedAt": "invalid"
+        },
+        {
+          "artifactId": "app",
+          "platform": "Mac",
+          "downloadSizeBytes": 200,
+          "updatedAt": "invalid"
+        }
+      ],
+      "output": {
+        "bytes": 100,
+        "platform": "Windows"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": "",
+          "downloadSizeBytes": 100
+        },
+        {
+          "artifactId": "app",
+          "platform": "Mac",
+          "downloadSizeBytes": 200
+        }
+      ],
+      "build": {
+        "_id": "build",
+        "appName": "app",
+        "labelName": "Live-Windows",
+        "hash": "hash"
+      },
+      "output": {
+        "bytes": 100,
+        "platform": "Windows"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": "Windows",
+          "downloadSizeBytes": 100
+        }
+      ],
+      "build": {
+        "_id": "build",
+        "appName": "app",
+        "labelName": "Live-Windows",
+        "hash": "hash",
+        "platform": "Unknown"
+      },
+      "output": {
+        "bytes": 100,
+        "platform": "Windows"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": "Windows",
+          "downloadSizeBytes": 100
+        }
+      ],
+      "build": {
+        "_id": "build",
+        "appName": "app",
+        "labelName": "Live-Windows",
+        "hash": "hash",
+        "downloadSizeBytes": 0
+      },
+      "output": {
+        "bytes": 0,
+        "platform": "Windows"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": "Windows",
+          "downloadSizeBytes": 100
+        }
+      ],
+      "build": {
+        "_id": "build",
+        "appName": "app",
+        "labelName": "Live-Windows",
+        "hash": "hash",
+        "downloadSizeBytes": null
+      },
+      "output": {
+        "bytes": 100,
+        "platform": "Windows"
+      }
+    },
+    {
+      "assets": [],
+      "build": {
+        "_id": "build",
+        "appName": "app",
+        "labelName": "Live-Windows",
+        "hash": "hash"
+      },
+      "output": {
+        "bytes": null,
+        "platform": "Windows"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": "Windows",
+          "downloadSizeBytes": 123
+        }
+      ],
+      "build": {
+        "_id": "build",
+        "appName": "other",
+        "labelName": "Live-Windows",
+        "hash": "hash",
+        "platform": "Unknown"
+      },
+      "output": {
+        "bytes": null
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": "Mac",
+          "downloadSizeBytes": 123
+        }
+      ],
+      "build": {
+        "_id": "build",
+        "appName": "app",
+        "labelName": "Live-Windows",
+        "hash": "hash",
+        "platform": "Linux"
+      },
+      "output": {
+        "bytes": null,
+        "platform": "Linux"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": "Mac",
+          "downloadSizeBytes": 0.5
+        }
+      ],
+      "build": {
+        "_id": "build",
+        "appName": "app",
+        "labelName": "Live-Windows",
+        "hash": "hash",
+        "platform": "Mac"
+      },
+      "output": {
+        "bytes": 0.5,
+        "platform": "Mac"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": "Windows",
+          "downloadSizeBytes": 100,
+          "updatedAt": "2020-01-30"
+        },
+        {
+          "artifactId": "app",
+          "platform": "Mac",
+          "downloadSizeBytes": 200,
+          "createdAt": "2026-11-17"
+        }
+      ],
+      "output": {
+        "bytes": 200,
+        "platform": "Mac"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": "Windows",
+          "downloadSizeBytes": 100,
+          "updatedAt": 42
+        },
+        {
+          "artifactId": "app",
+          "platform": "Mac",
+          "downloadSizeBytes": 200,
+          "updatedAt": 91
+        }
+      ],
+      "output": {
+        "bytes": 200,
+        "platform": "Mac"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": 10,
+          "platform": 7,
+          "downloadSizeBytes": 123
+        }
+      ],
+      "build": {
+        "_id": "build",
+        "appName": 10,
+        "labelName": "Live-Windows",
+        "hash": "hash",
+        "platform": 7
+      },
+      "output": {
+        "bytes": 123,
+        "platform": 7
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": false,
+          "downloadSizeBytes": 123
+        }
+      ],
+      "build": {
+        "_id": "build",
+        "appName": "app",
+        "labelName": "Live-Windows",
+        "hash": "hash",
+        "platform": "Linux"
+      },
+      "output": {
+        "bytes": 123,
+        "platform": "Linux"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": {
+            "name": "app"
+          },
+          "platform": "Linux",
+          "downloadSizeBytes": 123
+        }
+      ],
+      "build": {
+        "_id": "build",
+        "appName": {
+          "name": "app"
+        },
+        "labelName": "Live-Windows",
+        "hash": "hash",
+        "platform": "Linux"
+      },
+      "output": {
+        "bytes": null,
+        "platform": "Linux"
+      }
+    },
+    {
+      "assets": [
+        {
+          "platform": "Linux",
+          "downloadSizeBytes": 123
+        }
+      ],
+      "build": {
+        "_id": "build",
+        "labelName": "Live-Windows",
+        "hash": "hash",
+        "platform": "Linux"
+      },
+      "output": {
+        "bytes": 123,
+        "platform": "Linux"
+      }
+    },
+    {
+      "assets": [
+        {
+          "artifactId": "app",
+          "platform": [],
+          "downloadSizeBytes": 123
+        }
+      ],
+      "output": {
+        "bytes": 123,
+        "platform": []
+      }
+    }
+  ],
+  "dates": [
+    {
+      "input": null,
+      "output": "Not available"
+    },
+    {
+      "input": 0,
+      "output": "Not available"
+    },
+    {
+      "input": "invalid",
+      "output": "Not available"
+    },
+    {
+      "input": "2026-09-01",
+      "output": "01 Sept 2026"
+    },
+    {
+      "input": "2026-09-01T00:00:00Z",
+      "output": "01 Sept 2026"
+    },
+    {
+      "input": "2026-09-01T00:30:00+02:00",
+      "output": "31 Aug 2026"
+    },
+    {
+      "input": "2026-12-31T23:59:59.999Z",
+      "output": "31 Dec 2026"
+    }
+  ],
+  "sizes": [
+    {
+      "input": null,
+      "output": "Not available"
+    },
+    {
+      "input": "100",
+      "output": "Not available"
+    },
+    {
+      "input": -1,
+      "output": "Not available"
+    },
+    {
+      "input": 0,
+      "output": "0.00 GB"
+    },
+    {
+      "input": 0.5,
+      "output": "< 0.01 GB"
+    },
+    {
+      "input": 9999999,
+      "output": "< 0.01 GB"
+    },
+    {
+      "input": 10000000,
+      "output": "0.01 GB"
+    },
+    {
+      "input": 125000000,
+      "output": "0.13 GB"
+    },
+    {
+      "input": 625000000,
+      "output": "0.63 GB"
+    },
+    {
+      "input": 1005000000,
+      "output": "1.00 GB"
+    },
+    {
+      "input": 1e+30,
+      "output": "1e+21 GB"
+    }
+  ]
+}

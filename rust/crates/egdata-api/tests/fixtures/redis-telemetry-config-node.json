@@ -1,0 +1,422 @@
+[
+  {
+    "input": {},
+    "output": {
+      "host": "127.0.0.1",
+      "port": 6379,
+      "username": null,
+      "password": null,
+      "tls": false
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": "shared",
+      "REDISPORT": "6300",
+      "REDISUSER": "primary",
+      "REDISPASSWORD": "shared-fixture",
+      "REDISTLS": "true"
+    },
+    "output": {
+      "host": "shared",
+      "port": 6300,
+      "username": "primary",
+      "password": "shared-fixture",
+      "tls": true
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": "shared",
+      "REDISPORT": "6300",
+      "REDISUSER": "primary",
+      "REDISPASSWORD": "shared-fixture",
+      "REDISTLS": " true "
+    },
+    "output": {
+      "host": "shared",
+      "port": 6300,
+      "username": "primary",
+      "password": "shared-fixture",
+      "tls": false
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": "shared",
+      "REDISPORT": "letters",
+      "REDISUSER": "primary",
+      "REDISPASSWORD": "shared-fixture",
+      "REDISTLS": "true"
+    },
+    "output": {
+      "host": "shared",
+      "port": "NaN",
+      "username": "primary",
+      "password": "shared-fixture",
+      "tls": true
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": "shared",
+      "REDISPORT": "-1",
+      "REDISUSER": "primary",
+      "REDISPASSWORD": "shared-fixture",
+      "REDISTLS": "true"
+    },
+    "output": {
+      "host": "shared",
+      "port": -1,
+      "username": "primary",
+      "password": "shared-fixture",
+      "tls": true
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": "shared",
+      "REDISPORT": "65536",
+      "REDISUSER": "primary",
+      "REDISPASSWORD": "shared-fixture",
+      "REDISTLS": "true"
+    },
+    "output": {
+      "host": "shared",
+      "port": 65536,
+      "username": "primary",
+      "password": "shared-fixture",
+      "tls": true
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": "shared",
+      "REDISPORT": "0",
+      "REDISUSER": "primary",
+      "REDISPASSWORD": "shared-fixture",
+      "REDISTLS": "true"
+    },
+    "output": {
+      "host": "shared",
+      "port": 0,
+      "username": "primary",
+      "password": "shared-fixture",
+      "tls": true
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": "shared",
+      "REDISPORT": "1.5",
+      "REDISUSER": "primary",
+      "REDISPASSWORD": "shared-fixture",
+      "REDISTLS": "true"
+    },
+    "output": {
+      "host": "shared",
+      "port": 1.5,
+      "username": "primary",
+      "password": "shared-fixture",
+      "tls": true
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": "shared",
+      "REDISPORT": "0x",
+      "REDISUSER": "primary",
+      "REDISPASSWORD": "shared-fixture",
+      "REDISTLS": "true"
+    },
+    "output": {
+      "host": "shared",
+      "port": "NaN",
+      "username": "primary",
+      "password": "shared-fixture",
+      "tls": true
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": "shared",
+      "REDISPORT": "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+      "REDISUSER": "primary",
+      "REDISPASSWORD": "shared-fixture",
+      "REDISTLS": "true"
+    },
+    "output": {
+      "host": "shared",
+      "port": "Infinity",
+      "username": "primary",
+      "password": "shared-fixture",
+      "tls": true
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": "shared",
+      "REDISPORT": " ",
+      "REDISUSER": "primary",
+      "REDISPASSWORD": "shared-fixture",
+      "REDISTLS": "true"
+    },
+    "output": {
+      "host": "shared",
+      "port": 0,
+      "username": "primary",
+      "password": "shared-fixture",
+      "tls": true
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": "shared",
+      "REDISPORT": "6300",
+      "REDISUSER": "primary",
+      "REDISPASSWORD": "shared-fixture",
+      "REDISTLS": "true",
+      "CACHE_REDIS_HOST": " cache ",
+      "CACHE_REDIS_PASSWORD": " cache-fixture ",
+      "CACHE_REDIS_PORT": "6400"
+    },
+    "output": {
+      "host": "cache",
+      "port": 6400,
+      "username": null,
+      "password": " cache-fixture ",
+      "tls": false
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": "shared",
+      "REDISPORT": "6300",
+      "REDISUSER": "primary",
+      "REDISPASSWORD": "shared-fixture",
+      "REDISTLS": "true",
+      "CACHE_REDIS_HOST": " cache ",
+      "CACHE_REDIS_PASSWORD": " cache-fixture ",
+      "CACHE_REDIS_PORT": "6400",
+      "ANTI_ABUSE_REDIS_HOST": " private "
+    },
+    "output": {
+      "host": "private",
+      "port": 6379,
+      "username": null,
+      "password": null,
+      "tls": false
+    }
+  },
+  {
+    "input": {
+      "CACHE_REDIS_HOST": " cache ",
+      "CACHE_REDIS_PASSWORD": " cache-fixture ",
+      "CACHE_REDIS_PORT": "6400",
+      "ANTI_ABUSE_REDIS_PORT": "6379"
+    },
+    "output": {
+      "error": "ANTI_ABUSE_REDIS_HOST is required"
+    }
+  },
+  {
+    "input": {
+      "CACHE_REDIS_PASSWORD": "x"
+    },
+    "output": {
+      "error": "CACHE_REDIS_HOST is required"
+    }
+  },
+  {
+    "input": {
+      "ANTI_ABUSE_REDIS_HOST": "   ",
+      "ANTI_ABUSE_REDIS_PASSWORD": "   ",
+      "CACHE_REDIS_HOST": " cache ",
+      "CACHE_REDIS_PASSWORD": " cache-fixture ",
+      "CACHE_REDIS_PORT": "6400"
+    },
+    "output": {
+      "host": "cache",
+      "port": 6400,
+      "username": null,
+      "password": " cache-fixture ",
+      "tls": false
+    }
+  },
+  {
+    "input": {
+      "ANTI_ABUSE_REDIS_HOST": "local",
+      "ANTI_ABUSE_REDIS_PORT": "6379"
+    },
+    "output": {
+      "host": "local",
+      "port": 6379,
+      "username": null,
+      "password": null,
+      "tls": false
+    }
+  },
+  {
+    "input": {
+      "ANTI_ABUSE_REDIS_HOST": "local",
+      "ANTI_ABUSE_REDIS_PORT": "1e3"
+    },
+    "output": {
+      "host": "local",
+      "port": 1000,
+      "username": null,
+      "password": null,
+      "tls": false
+    }
+  },
+  {
+    "input": {
+      "ANTI_ABUSE_REDIS_HOST": "local",
+      "ANTI_ABUSE_REDIS_PORT": "0x18EB"
+    },
+    "output": {
+      "host": "local",
+      "port": 6379,
+      "username": null,
+      "password": null,
+      "tls": false
+    }
+  },
+  {
+    "input": {
+      "ANTI_ABUSE_REDIS_HOST": "local",
+      "ANTI_ABUSE_REDIS_PORT": "0b101"
+    },
+    "output": {
+      "host": "local",
+      "port": 5,
+      "username": null,
+      "password": null,
+      "tls": false
+    }
+  },
+  {
+    "input": {
+      "ANTI_ABUSE_REDIS_HOST": "local",
+      "ANTI_ABUSE_REDIS_PORT": "0x+1"
+    },
+    "output": {
+      "error": "ANTI_ABUSE_REDIS_PORT must be an integer between 1 and 65535"
+    }
+  },
+  {
+    "input": {
+      "ANTI_ABUSE_REDIS_HOST": "local",
+      "ANTI_ABUSE_REDIS_PORT": "0b+1"
+    },
+    "output": {
+      "error": "ANTI_ABUSE_REDIS_PORT must be an integer between 1 and 65535"
+    }
+  },
+  {
+    "input": {
+      "ANTI_ABUSE_REDIS_HOST": "local",
+      "ANTI_ABUSE_REDIS_PORT": "0o17"
+    },
+    "output": {
+      "host": "local",
+      "port": 15,
+      "username": null,
+      "password": null,
+      "tls": false
+    }
+  },
+  {
+    "input": {
+      "ANTI_ABUSE_REDIS_HOST": "local",
+      "ANTI_ABUSE_REDIS_PORT": "0"
+    },
+    "output": {
+      "error": "ANTI_ABUSE_REDIS_PORT must be an integer between 1 and 65535"
+    }
+  },
+  {
+    "input": {
+      "ANTI_ABUSE_REDIS_HOST": "local",
+      "ANTI_ABUSE_REDIS_PORT": "65536"
+    },
+    "output": {
+      "error": "ANTI_ABUSE_REDIS_PORT must be an integer between 1 and 65535"
+    }
+  },
+  {
+    "input": {
+      "ANTI_ABUSE_REDIS_HOST": "local",
+      "ANTI_ABUSE_REDIS_PORT": "no"
+    },
+    "output": {
+      "error": "ANTI_ABUSE_REDIS_PORT must be an integer between 1 and 65535"
+    }
+  },
+  {
+    "input": {
+      "ANTI_ABUSE_REDIS_HOST": "local",
+      "ANTI_ABUSE_REDIS_PORT": " "
+    },
+    "output": {
+      "error": "ANTI_ABUSE_REDIS_PORT must be an integer between 1 and 65535"
+    }
+  },
+  {
+    "input": {
+      "ANTI_ABUSE_REDIS_HOST": "local",
+      "ANTI_ABUSE_REDIS_PORT": "+42"
+    },
+    "output": {
+      "host": "local",
+      "port": 42,
+      "username": null,
+      "password": null,
+      "tls": false
+    }
+  },
+  {
+    "input": {
+      "CACHE_REDIS_HOST": "local",
+      "CACHE_REDIS_TLS": "false"
+    },
+    "output": {
+      "host": "local",
+      "port": 6379,
+      "username": null,
+      "password": null,
+      "tls": false
+    }
+  },
+  {
+    "input": {
+      "CACHE_REDIS_HOST": "local",
+      "CACHE_REDIS_TLS": "true"
+    },
+    "output": {
+      "host": "local",
+      "port": 6379,
+      "username": null,
+      "password": null,
+      "tls": true
+    }
+  },
+  {
+    "input": {
+      "CACHE_REDIS_HOST": "local",
+      "CACHE_REDIS_TLS": " true "
+    },
+    "output": {
+      "error": "CACHE_REDIS_TLS must be true or false"
+    }
+  },
+  {
+    "input": {
+      "CACHE_REDIS_HOST": "local",
+      "CACHE_REDIS_TLS": "1"
+    },
+    "output": {
+      "error": "CACHE_REDIS_TLS must be true or false"
+    }
+  }
+]

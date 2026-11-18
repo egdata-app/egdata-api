@@ -10,7 +10,6 @@ const app = new Hono();
 
 app.get("/reviews", epicInfo, async (c) => {
   const epic = c.var.epic;
-  const session = c.var.session;
   const { id } = c.req.param();
   const page = Math.max(Number.parseInt(c.req.query("page") || "1", 10), 1);
   const limit = Math.min(Number.parseInt(c.req.query("limit") || "10", 10), 25);
@@ -18,7 +17,7 @@ app.get("/reviews", epicInfo, async (c) => {
 
   const verifiedFilter = c.req.query("verified");
 
-  const currentUser = session?.user?.email.split("@")[0] ?? epic?.account_id;
+  const currentUser = epic?.account_id;
 
   const query: any = {
     id: id,
@@ -91,10 +90,9 @@ app.post("/reviews", epic, async (c) => {
     await c.req.json<
       Omit<IReview, "id" | "createdAt" | "verified" | "userId">
     >();
-  const epic = c.var.epic;
-  const session = c.var.session;
+  const accountId = c.var.session?.epicAccountId ?? c.var.epic?.account_id;
 
-  if ((!epic || !epic.account_id) && !session) {
+  if (!accountId) {
     c.status(401);
     return c.json({
       message: "Unauthorized",
@@ -109,7 +107,7 @@ app.post("/reviews", epic, async (c) => {
   }
 
   const existingReview = await Review.findOne({
-    userId: session?.user?.email.split("@")[0] ?? epic?.account_id,
+    userId: accountId,
     id,
   });
 
@@ -142,12 +140,7 @@ app.post("/reviews", epic, async (c) => {
   }
 
   const isOwned =
-    (session?.user?.email.split("@")[0] ?? epic?.account_id)
-      ? await verifyGameOwnership(
-          session?.user?.email.split("@")[0] ?? (epic?.account_id as string),
-          product._id as unknown as string,
-        )
-      : false;
+    await verifyGameOwnership(accountId, product._id as unknown as string);
 
   const review: IReview = {
     id,
@@ -156,7 +149,7 @@ app.post("/reviews", epic, async (c) => {
     content: body.content,
     tags: body.tags.slice(0, 5),
     verified: isOwned,
-    userId: (session?.user?.email.split("@")[0] ?? epic?.account_id) as string,
+    userId: accountId,
     createdAt: new Date(),
     recommended: body.recommended,
     updatedAt: new Date(),
@@ -175,10 +168,9 @@ app.post("/reviews", epic, async (c) => {
 app.patch("/reviews", epic, async (c) => {
   const { id } = c.req.param();
   const body = await c.req.json<Omit<IReview, "id" | "createdAt" | "userId">>();
-  const epic = c.var.epic;
-  const session = c.var.session;
+  const accountId = c.var.session?.epicAccountId ?? c.var.epic?.account_id;
 
-  if ((!epic || !epic.account_id) && !session) {
+  if (!accountId) {
     c.status(401);
     return c.json({
       message: "Unauthorized",
@@ -201,55 +193,46 @@ app.patch("/reviews", epic, async (c) => {
     });
   }
 
-  const isOwned = ((session?.user?.email.split("@")[0] ??
-    epic?.account_id) as string)
-    ? await verifyGameOwnership(
-        (session?.user?.email.split("@")[0] ?? epic?.account_id) as string,
-        product._id as unknown as string,
-      )
-    : false;
+  const isOwned = await verifyGameOwnership(accountId, product._id as unknown as string);
 
-  const oldReview = await Review.findOne({
-    userId: (session?.user?.email.split("@")[0] ?? epic?.account_id) as string,
-    id,
-  });
+  const owner = { userId: accountId, id };
+  for (;;) {
+    const oldReview = await Review.findOne(owner);
+    if (!oldReview) return c.json({ message: "Review not found" }, 404);
 
-  if (!oldReview) {
-    c.status(404);
-    return c.json({
-      message: "Review not found",
-    });
-  }
-
-  const review: Omit<IReview, "id" | "createdAt" | "userId"> = {
-    rating: body.rating,
-    title: body.title,
-    content: body.content,
-    tags: body.tags.slice(0, 5),
-    verified: isOwned,
-    recommended: body.recommended,
-    updatedAt: new Date(),
-    editions: [
-      ...(oldReview.editions || []),
+    const history = Array.isArray(oldReview.editions) ? oldReview.editions : [];
+    // Every successful edit appends exactly one edition. Re-read if another
+    // writer advanced the history before this update could acquire the document.
+    const version = Array.isArray(oldReview.editions)
+      ? { $size: history.length }
+      : { $eq: oldReview.editions ?? null };
+    const previous: Record<string, unknown> = {};
+    for (const field of ["rating", "title", "content", "tags", "recommended", "updatedAt"] as const) {
+      if (oldReview[field] !== undefined) {
+        previous[field === "updatedAt" ? "createdAt" : field] = oldReview[field];
+      }
+    }
+    const result = await Review.updateOne(
       {
-        rating: oldReview.rating,
-        title: oldReview.title,
-        content: oldReview.content,
-        tags: oldReview.tags,
-        recommended: oldReview.recommended,
-        createdAt: oldReview.updatedAt,
+        ...owner,
+        ...(oldReview._id == null ? {} : { _id: oldReview._id }),
+        editions: version,
       },
-    ],
-  };
-
-  await Review.findOneAndUpdate(
-    {
-      userId: (session?.user?.email.split("@")[0] ??
-        epic?.account_id) as string,
-      id,
-    },
-    review,
-  );
+      {
+        $set: {
+          rating: body.rating,
+          title: body.title,
+          content: body.content,
+          tags: body.tags.slice(0, 5),
+          verified: isOwned,
+          ...(body.recommended === undefined ? {} : { recommended: body.recommended }),
+          updatedAt: new Date(),
+          editions: [...history, previous],
+        },
+      },
+    );
+    if (result.modifiedCount > 0) break;
+  }
 
   return c.json(
     {
@@ -261,17 +244,16 @@ app.patch("/reviews", epic, async (c) => {
 
 app.delete("/reviews", epic, async (c) => {
   const { id } = c.req.param();
-  const epic = c.var.epic;
-  const session = c.var.session;
+  const accountId = c.var.session?.epicAccountId ?? c.var.epic?.account_id;
 
-  if ((!epic || !epic.account_id) && !session) {
+  if (!accountId) {
     c.status(401);
     return c.json({
       message: "Unauthorized",
     });
   }
   const review = await Review.findOne({
-    userId: (session?.user?.email.split("@")[0] ?? epic?.account_id) as string,
+    userId: accountId,
     id,
   });
 
@@ -283,7 +265,7 @@ app.delete("/reviews", epic, async (c) => {
   }
 
   await Review.deleteOne({
-    userId: (session?.user?.email.split("@")[0] ?? epic?.account_id) as string,
+    userId: accountId,
     id,
   });
 
@@ -360,10 +342,9 @@ app.get("/reviews-summary", async (c) => {
 
 app.get("/reviews/permissions", epic, async (c) => {
   const { id } = c.req.param();
-  const epic = c.var.epic;
-  const session = c.var.session;
+  const accountId = c.var.session?.epicAccountId ?? c.var.epic?.account_id;
 
-  if ((!epic || !epic.account_id) && !session) {
+  if (!accountId) {
     c.status(401);
     return c.json({
       message: "Unauthorized",
@@ -371,7 +352,7 @@ app.get("/reviews/permissions", epic, async (c) => {
   }
 
   const existingReview = await Review.findOne({
-    userId: session?.user?.email.split("@")[0] ?? epic?.account_id,
+    userId: accountId,
     id,
   });
 

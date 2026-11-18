@@ -1,0 +1,933 @@
+[
+  {
+    "name": "legacy standalone features mixed duplicate ids",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/features"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "tags": [
+            {
+              "id": "1264"
+            },
+            {
+              "id": 1264
+            },
+            {
+              "id": 19847
+            },
+            {
+              "id": "19847"
+            }
+          ],
+          "items": [
+            {
+              "id": {
+                "$oid": "65bc00000000000000000001"
+              }
+            },
+            {}
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "subItems": [
+              {
+                "id": {
+                  "$numberDecimal": "1264"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    {
+                      "$oid": "65bc00000000000000000001"
+                    },
+                    null,
+                    {
+                      "$numberDecimal": "1264"
+                    }
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "game"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"c2f092ce2b5d5999f096221b09e2dc83f2d30984\""
+      },
+      "body": {
+        "launcher": "epic",
+        "features": [],
+        "epicFeatures": [
+          "Achievements"
+        ]
+      }
+    }
+  },
+  {
+    "name": "legacy standalone features decimal shadows string",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/features"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "tags": [
+            {
+              "id": "1264"
+            },
+            {
+              "id": {
+                "$numberDecimal": "1264"
+              }
+            },
+            {
+              "id": [
+                19847
+              ]
+            }
+          ],
+          "items": [
+            {
+              "id": {
+                "$oid": "65bc00000000000000000001"
+              }
+            },
+            {}
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "subItems": [
+              {
+                "id": {
+                  "$numberDecimal": "1264"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    {
+                      "$oid": "65bc00000000000000000001"
+                    },
+                    null,
+                    {
+                      "$numberDecimal": "1264"
+                    }
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "game"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"29add66b7e989d6b780cf979a286d349d110c92e\""
+      },
+      "body": {
+        "launcher": "epic",
+        "features": [],
+        "epicFeatures": []
+      }
+    }
+  },
+  {
+    "name": "legacy standalone features native links and sparse tags",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/features"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "tags": [
+            {},
+            7,
+            {
+              "id": null
+            },
+            {
+              "id": "1264"
+            }
+          ],
+          "items": [
+            {
+              "id": {
+                "$oid": "65bc00000000000000000001"
+              }
+            },
+            {}
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "subItems": [
+              {
+                "id": {
+                  "$numberDecimal": "1264"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    {
+                      "$oid": "65bc00000000000000000001"
+                    },
+                    null,
+                    {
+                      "$numberDecimal": "1264"
+                    }
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "game"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "65bc00000000000000000001"
+            },
+            "customAttributes": {
+              "ThirdPartyManagedApp": "managed",
+              "PresenceId": true
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"c2bdfb468209c73b59ea1b3ef49ed40ed56e5020\""
+      },
+      "body": {
+        "launcher": "ea",
+        "features": [
+          "Co-op"
+        ],
+        "epicFeatures": [
+          "Epic Online Services"
+        ]
+      }
+    }
+  },
+  {
+    "name": "legacy standalone features overwritten launcher",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/features"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "tags": [],
+          "items": [
+            {
+              "id": {
+                "$oid": "65bc00000000000000000001"
+              }
+            },
+            {}
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "subItems": [
+              {
+                "id": {
+                  "$numberDecimal": "1264"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    {
+                      "$oid": "65bc00000000000000000001"
+                    },
+                    null,
+                    {
+                      "$numberDecimal": "1264"
+                    }
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "game"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "customAttributes": [
+              {
+                "key": "isUplay",
+                "value": "y"
+              }
+            ]
+          },
+          {
+            "customAttributes": {
+              "isUplay": false,
+              "ThirdPartyManagedApp": {
+                "key": "isUplay"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"f7a6cb69f2e5b837b9d75811de4ec2a3cac77635\""
+      },
+      "body": {
+        "launcher": "ea",
+        "features": [],
+        "epicFeatures": []
+      }
+    }
+  },
+  {
+    "name": "legacy standalone features null tag",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/features"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "tags": [
+            null
+          ],
+          "items": [
+            {
+              "id": {
+                "$oid": "65bc00000000000000000001"
+              }
+            },
+            {}
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "subItems": [
+              {
+                "id": {
+                  "$numberDecimal": "1264"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    {
+                      "$oid": "65bc00000000000000000001"
+                    },
+                    null,
+                    {
+                      "$numberDecimal": "1264"
+                    }
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "game"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "legacy standalone features wrong tags",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/features"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "tags": {},
+          "items": [
+            {
+              "id": {
+                "$oid": "65bc00000000000000000001"
+              }
+            },
+            {}
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "subItems": [
+              {
+                "id": {
+                  "$numberDecimal": "1264"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    {
+                      "$oid": "65bc00000000000000000001"
+                    },
+                    null,
+                    {
+                      "$numberDecimal": "1264"
+                    }
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "game"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "legacy standalone features null attribute",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/features"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "tags": [],
+          "items": [
+            {
+              "id": {
+                "$oid": "65bc00000000000000000001"
+              }
+            },
+            {}
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "subItems": [
+              {
+                "id": {
+                  "$numberDecimal": "1264"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    {
+                      "$oid": "65bc00000000000000000001"
+                    },
+                    null,
+                    {
+                      "$numberDecimal": "1264"
+                    }
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "game"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "customAttributes": [
+              null
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "legacy standalone features missing",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/features"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"20c50f4f8898ce673caf7b361affa29038bfabdf\""
+      },
+      "body": {
+        "message": "Offer not found"
+      }
+    }
+  },
+  {
+    "name": "legacy standalone features invalid direct reference",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/features"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "items": [
+            null
+          ],
+          "tags": []
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "legacy standalone features invalid subitem",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/features"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "items": [],
+          "tags": []
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "subItems": [
+              null
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "legacy standalone features failed subitems",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/features"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "items": [],
+          "tags": []
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  }
+]

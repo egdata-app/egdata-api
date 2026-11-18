@@ -1,0 +1,2919 @@
+[
+  {
+    "name": "bad-locale",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/related?locale=nope"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"d541dece15b3c23193c7251cf73c06fbfeb51be8\""
+      },
+      "body": {
+        "message": "Invalid locale parameter: nope"
+      }
+    }
+  },
+  {
+    "name": "bad-country",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/related?country=invalid"
+    },
+    "trace": [],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"8fa0fd9e94fd7c374a1fd5e37392568240674c91\""
+      },
+      "body": {
+        "message": "Country not found"
+      }
+    }
+  },
+  {
+    "name": "related-missing",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/related"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "related-offers:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {
+            "projection": {
+              "namespace": 1,
+              "id": 1
+            }
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"20c50f4f8898ce673caf7b361affa29038bfabdf\""
+      },
+      "body": {
+        "message": "Offer not found"
+      }
+    }
+  },
+  {
+    "name": "related-found",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/related"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "related-offers:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {
+            "projection": {
+              "namespace": 1,
+              "id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "namespace": "n",
+            "id": {
+              "$ne": "game"
+            }
+          },
+          "options": {
+            "limit": 25
+          }
+        },
+        "result": [
+          {
+            "id": "member",
+            "title": "Member",
+            "namespace": "member-n",
+            "offerType": "BASE_GAME",
+            "customAttributes": [
+              {
+                "key": "foo",
+                "value": "bar",
+                "type": "STRING"
+              }
+            ],
+            "unknownField": "omitted"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "member"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "member",
+            "namespace": "n",
+            "region": "US",
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": 400,
+              "originalPrice": 600,
+              "discount": 200
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "related-offers:game:US:locale:en-US:card:v0.2",
+          "payload": [
+            {
+              "id": "member",
+              "namespace": "member-n",
+              "title": "Member",
+              "offerType": "BASE_GAME",
+              "customAttributes": {
+                "foo": {
+                  "type": "STRING",
+                  "value": "bar"
+                }
+              },
+              "price": {
+                "offerId": "member",
+                "namespace": "n",
+                "region": "US",
+                "price": {
+                  "currencyCode": "USD",
+                  "discountPrice": 400,
+                  "originalPrice": 600,
+                  "discount": 200
+                }
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"999bad94089b78c6824400ea1b7c2445601040e7\""
+      },
+      "body": [
+        {
+          "id": "member",
+          "namespace": "member-n",
+          "title": "Member",
+          "offerType": "BASE_GAME",
+          "customAttributes": {
+            "foo": {
+              "type": "STRING",
+              "value": "bar"
+            }
+          },
+          "price": {
+            "offerId": "member",
+            "namespace": "n",
+            "region": "US",
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": 400,
+              "originalPrice": 600,
+              "discount": 200
+            }
+          },
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      ]
+    }
+  },
+  {
+    "name": "related-localized-fallback",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/related?locale=es-ES&expand=1"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "related-offers:game:US:locale:es-ES:full:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {
+            "projection": {
+              "namespace": 1,
+              "id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "namespace": "n",
+            "id": {
+              "$ne": "game"
+            }
+          },
+          "options": {
+            "limit": 25
+          }
+        },
+        "result": [
+          {
+            "id": "member",
+            "title": "Member",
+            "namespace": "member-n",
+            "offerType": "BASE_GAME",
+            "customAttributes": [
+              {
+                "key": "foo",
+                "value": "bar",
+                "type": "STRING"
+              }
+            ],
+            "unknownField": "omitted"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "member"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "member-n:member"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "related-offers:game:US:locale:es-ES:full:v0.2",
+          "payload": [
+            {
+              "id": "member",
+              "namespace": "member-n",
+              "title": "Member",
+              "offerType": "BASE_GAME",
+              "customAttributes": {
+                "foo": {
+                  "type": "STRING",
+                  "value": "bar"
+                }
+              },
+              "price": null,
+              "locale": "es-ES",
+              "localeStatus": "fallback",
+              "canonicalLocale": "en-US"
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"d69f07ecae7b89788cb9325e1401d3cffba2db5d\""
+      },
+      "body": [
+        {
+          "id": "member",
+          "namespace": "member-n",
+          "title": "Member",
+          "offerType": "BASE_GAME",
+          "customAttributes": {
+            "foo": {
+              "type": "STRING",
+              "value": "bar"
+            }
+          },
+          "price": null,
+          "locale": "es-ES",
+          "localeStatus": "fallback",
+          "canonicalLocale": "en-US"
+        }
+      ]
+    }
+  },
+  {
+    "name": "related-hit",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/related",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "related-offers:game:EURO:locale:en-US:card:v0.2"
+        },
+        "result": [
+          {
+            "cached": true
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"90afcd3552a4f01794c3a1e3e61695615df04235\""
+      },
+      "body": [
+        {
+          "cached": true
+        }
+      ]
+    }
+  },
+  {
+    "name": "suggestions-missing",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/suggestions"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "suggestions:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"20c50f4f8898ce673caf7b361affa29038bfabdf\""
+      },
+      "body": {
+        "message": "Offer not found"
+      }
+    }
+  },
+  {
+    "name": "suggestions",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/suggestions"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "suggestions:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "genre",
+                "foo"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "foo",
+            "groupName": "other"
+          },
+          {
+            "id": "genre",
+            "groupName": "genre"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": {
+                  "$in": [
+                    "genre"
+                  ]
+                }
+              }
+            },
+            "id": {
+              "$ne": "game"
+            },
+            "namespace": {
+              "$ne": "n"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {
+            "limit": 25,
+            "sort": {
+              "lastModifiedDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "member",
+            "title": "Member",
+            "namespace": "member-n",
+            "offerType": "BASE_GAME",
+            "customAttributes": [
+              {
+                "key": "foo",
+                "value": "bar",
+                "type": "STRING"
+              }
+            ],
+            "unknownField": "omitted"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "member"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "member",
+            "namespace": "n",
+            "region": "US",
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": 400,
+              "originalPrice": 600,
+              "discount": 200
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "suggestions:game:US:locale:en-US:card:v0.2",
+          "payload": [
+            {
+              "id": "member",
+              "namespace": "member-n",
+              "title": "Member",
+              "offerType": "BASE_GAME",
+              "customAttributes": {
+                "foo": {
+                  "type": "STRING",
+                  "value": "bar"
+                }
+              },
+              "price": {
+                "offerId": "member",
+                "namespace": "n",
+                "region": "US",
+                "price": {
+                  "currencyCode": "USD",
+                  "discountPrice": 400,
+                  "originalPrice": 600,
+                  "discount": 200
+                }
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"999bad94089b78c6824400ea1b7c2445601040e7\""
+      },
+      "body": [
+        {
+          "id": "member",
+          "namespace": "member-n",
+          "title": "Member",
+          "offerType": "BASE_GAME",
+          "customAttributes": {
+            "foo": {
+              "type": "STRING",
+              "value": "bar"
+            }
+          },
+          "price": {
+            "offerId": "member",
+            "namespace": "n",
+            "region": "US",
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": 400,
+              "originalPrice": 600,
+              "discount": 200
+            }
+          },
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      ]
+    }
+  },
+  {
+    "name": "collection-missing",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/collection"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"20c50f4f8898ce673caf7b361affa29038bfabdf\""
+      },
+      "body": {
+        "message": "Offer not found"
+      }
+    }
+  },
+  {
+    "name": "collection-not-member",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/collection"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"6733d0b1d55543565af7ab2b01a7e2d40bc092be\""
+      },
+      "body": {
+        "message": "Selected offer does not have a collection"
+      }
+    }
+  },
+  {
+    "name": "collection-no-ids",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/collection"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ],
+          "categories": [
+            "collections"
+          ],
+          "customAttributes": []
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "collection-offers:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"6733d0b1d55543565af7ab2b01a7e2d40bc092be\""
+      },
+      "body": {
+        "message": "Selected offer does not have a collection"
+      }
+    }
+  },
+  {
+    "name": "collection-missing-attributes",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/collection"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ],
+          "categories": [
+            "collections"
+          ]
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "collection-offers:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "collection-found",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/collection?expand=full"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ],
+          "categories": [
+            "collections"
+          ],
+          "customAttributes": [
+            {
+              "key": "com.epicgames.app.collectionOfferIds.1",
+              "value": "member"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "collection-offers:game:US:locale:en-US:full:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "member"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "member",
+            "title": "Member",
+            "namespace": "member-n",
+            "offerType": "BASE_GAME",
+            "customAttributes": [
+              {
+                "key": "foo",
+                "value": "bar",
+                "type": "STRING"
+              }
+            ],
+            "unknownField": "omitted"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "member"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "collection-offers:game:US:locale:en-US:full:v0.2",
+          "payload": [
+            {
+              "id": "member",
+              "namespace": "member-n",
+              "title": "Member",
+              "offerType": "BASE_GAME",
+              "customAttributes": {
+                "foo": {
+                  "type": "STRING",
+                  "value": "bar"
+                }
+              },
+              "price": null,
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"8f999b44d84aa257742dd28ff6b36e60f6bd3dfa\""
+      },
+      "body": [
+        {
+          "id": "member",
+          "namespace": "member-n",
+          "title": "Member",
+          "offerType": "BASE_GAME",
+          "customAttributes": {
+            "foo": {
+              "type": "STRING",
+              "value": "bar"
+            }
+          },
+          "price": null,
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      ]
+    }
+  },
+  {
+    "name": "collection-hit",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/collection"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ],
+          "categories": [
+            "collections"
+          ],
+          "customAttributes": [
+            {
+              "key": "com.epicgames.app.collectionOfferIds.1",
+              "value": "member"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "collection-offers:game:US:locale:en-US:card:v0.2"
+        },
+        "result": [
+          {
+            "id": "member",
+            "title": "Member",
+            "namespace": "member-n",
+            "offerType": "BASE_GAME",
+            "customAttributes": [
+              {
+                "key": "foo",
+                "value": "bar",
+                "type": "STRING"
+              }
+            ],
+            "unknownField": "omitted"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"aea4a53f2ac71bbc8d2cf82f1bb4a5efeb3ff39f\""
+      },
+      "body": [
+        {
+          "id": "member",
+          "title": "Member",
+          "namespace": "member-n",
+          "offerType": "BASE_GAME",
+          "customAttributes": [
+            {
+              "key": "foo",
+              "value": "bar",
+              "type": "STRING"
+            }
+          ],
+          "unknownField": "omitted"
+        }
+      ]
+    }
+  },
+  {
+    "name": "collection-prices-down",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/collection"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ],
+          "categories": [
+            "collections"
+          ],
+          "customAttributes": [
+            {
+              "key": "com.epicgames.app.collectionOfferIds.1",
+              "value": "member"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "collection-offers:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "member"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "member",
+            "title": "Member",
+            "namespace": "member-n",
+            "offerType": "BASE_GAME",
+            "customAttributes": [
+              {
+                "key": "foo",
+                "value": "bar",
+                "type": "STRING"
+              }
+            ],
+            "unknownField": "omitted"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "member"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "collection-offers:game:US:locale:en-US:card:v0.2",
+          "payload": [
+            {
+              "id": "member",
+              "namespace": "member-n",
+              "title": "Member",
+              "offerType": "BASE_GAME",
+              "customAttributes": {
+                "foo": {
+                  "type": "STRING",
+                  "value": "bar"
+                }
+              },
+              "price": null,
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"8f999b44d84aa257742dd28ff6b36e60f6bd3dfa\""
+      },
+      "body": [
+        {
+          "id": "member",
+          "namespace": "member-n",
+          "title": "Member",
+          "offerType": "BASE_GAME",
+          "customAttributes": {
+            "foo": {
+              "type": "STRING",
+              "value": "bar"
+            }
+          },
+          "price": null,
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      ]
+    }
+  },
+  {
+    "name": "collection-offers-down",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/collection"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ],
+          "categories": [
+            "collections"
+          ],
+          "customAttributes": [
+            {
+              "key": "com.epicgames.app.collectionOfferIds.1",
+              "value": "member"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "collection-offers:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "member"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "member"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "member",
+            "namespace": "n",
+            "region": "US",
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": 400,
+              "originalPrice": 600,
+              "discount": 200
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "collection-offers:game:US:locale:en-US:card:v0.2",
+          "payload": [],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "bundle-missing-offer",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/bundle"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "bundle:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "game",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"20c50f4f8898ce673caf7b361affa29038bfabdf\""
+      },
+      "body": {
+        "message": "Offer not found"
+      }
+    }
+  },
+  {
+    "name": "bundle-offer-service-failure",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/bundle"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "bundle:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "game",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": {
+          "offerId": "member",
+          "namespace": "n",
+          "region": "US",
+          "price": {
+            "currencyCode": "USD",
+            "discountPrice": 400,
+            "originalPrice": 600,
+            "discount": 200
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"20c50f4f8898ce673caf7b361affa29038bfabdf\""
+      },
+      "body": {
+        "message": "Offer not found"
+      }
+    }
+  },
+  {
+    "name": "bundle-not-a-bundle",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/bundle"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "bundle:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "game",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"08466d50e0f2171cb97198cf95220cbdf0437491\""
+      },
+      "body": {
+        "message": "Selected offer is not a bundle"
+      }
+    }
+  },
+  {
+    "name": "bundle-missing",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/bundle"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "bundle:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "Bundle",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "game",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "bundles",
+          "method": "one",
+          "query": {
+            "_id": "game"
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"0ef0b94f19af61d3dc872f805597e9ee19e1a505\""
+      },
+      "body": {
+        "message": "Bundle not found"
+      }
+    }
+  },
+  {
+    "name": "bundle-members",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/bundle"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "bundle:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "Bundle",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "game",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": {
+          "offerId": "game",
+          "namespace": "n",
+          "region": "US",
+          "price": {
+            "currencyCode": "USD",
+            "discountPrice": 400,
+            "originalPrice": 600,
+            "discount": 200
+          },
+          "updatedAt": {
+            "$date": "2026-01-01T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "bundles",
+          "method": "one",
+          "query": {
+            "_id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "offers": [
+            "member",
+            "unpriced"
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "member",
+                "unpriced"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "member",
+            "title": "Member",
+            "namespace": "member-n",
+            "offerType": "BASE_GAME",
+            "customAttributes": [
+              {
+                "key": "foo",
+                "value": "bar",
+                "type": "STRING"
+              }
+            ],
+            "unknownField": "omitted"
+          },
+          {
+            "id": "unpriced",
+            "title": "Member",
+            "namespace": "member-n",
+            "offerType": "BASE_GAME",
+            "customAttributes": [
+              {
+                "key": "foo",
+                "value": "bar",
+                "type": "STRING"
+              }
+            ],
+            "unknownField": "omitted"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "member",
+                "unpriced"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "member",
+            "namespace": "n",
+            "region": "US",
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": 400,
+              "originalPrice": 600,
+              "discount": 200
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "bundle:game:US:locale:en-US:card:v0.2",
+          "payload": {
+            "offers": [
+              {
+                "id": "member",
+                "namespace": "member-n",
+                "title": "Member",
+                "offerType": "BASE_GAME",
+                "customAttributes": {
+                  "foo": {
+                    "type": "STRING",
+                    "value": "bar"
+                  }
+                },
+                "price": {
+                  "offerId": "member",
+                  "namespace": "n",
+                  "region": "US",
+                  "price": {
+                    "currencyCode": "USD",
+                    "discountPrice": 400,
+                    "originalPrice": 600,
+                    "discount": 200
+                  }
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              },
+              {
+                "id": "unpriced",
+                "namespace": "member-n",
+                "title": "Member",
+                "offerType": "BASE_GAME",
+                "customAttributes": {
+                  "foo": {
+                    "type": "STRING",
+                    "value": "bar"
+                  }
+                },
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "totalPrice": {
+              "country": "US",
+              "offerId": "game",
+              "region": "US",
+              "namespace": "n",
+              "updatedAt": "2026-01-01T00:00:00.000Z",
+              "price": {
+                "discount": 200,
+                "discountPrice": 400,
+                "originalPrice": 600,
+                "basePayoutPrice": 0,
+                "currencyCode": "USD"
+              },
+              "appliedRules": []
+            },
+            "bundlePrice": {
+              "offerId": "game",
+              "namespace": "n",
+              "region": "US",
+              "price": {
+                "currencyCode": "USD",
+                "discountPrice": 400,
+                "originalPrice": 600,
+                "discount": 200
+              },
+              "updatedAt": "2026-01-01T00:00:00.000Z"
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"5910e6efce5bbbbfed798b1eeb111e30a310acd5\""
+      },
+      "body": {
+        "offers": [
+          {
+            "id": "member",
+            "namespace": "member-n",
+            "title": "Member",
+            "offerType": "BASE_GAME",
+            "customAttributes": {
+              "foo": {
+                "type": "STRING",
+                "value": "bar"
+              }
+            },
+            "price": {
+              "offerId": "member",
+              "namespace": "n",
+              "region": "US",
+              "price": {
+                "currencyCode": "USD",
+                "discountPrice": 400,
+                "originalPrice": 600,
+                "discount": 200
+              }
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "id": "unpriced",
+            "namespace": "member-n",
+            "title": "Member",
+            "offerType": "BASE_GAME",
+            "customAttributes": {
+              "foo": {
+                "type": "STRING",
+                "value": "bar"
+              }
+            },
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "totalPrice": {
+          "country": "US",
+          "offerId": "game",
+          "region": "US",
+          "namespace": "n",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "price": {
+            "discount": 200,
+            "discountPrice": 400,
+            "originalPrice": 600,
+            "basePayoutPrice": 0,
+            "currencyCode": "USD"
+          },
+          "appliedRules": []
+        },
+        "bundlePrice": {
+          "offerId": "game",
+          "namespace": "n",
+          "region": "US",
+          "price": {
+            "currencyCode": "USD",
+            "discountPrice": 400,
+            "originalPrice": 600,
+            "discount": 200
+          },
+          "updatedAt": "2026-01-01T00:00:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "name": "bundle-no-live-price",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/bundle"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "bundle:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "Bundle",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "game",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "bundles",
+          "method": "one",
+          "query": {
+            "_id": "game"
+          },
+          "options": {}
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": []
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "bundle:game:US:locale:en-US:card:v0.2",
+          "payload": {
+            "offers": [],
+            "totalPrice": {
+              "country": "US",
+              "offerId": "game",
+              "region": "US",
+              "namespace": "epic",
+              "updatedAt": "2026-11-17T00:00:00.000Z",
+              "price": {
+                "discount": 0,
+                "discountPrice": 0,
+                "originalPrice": 0,
+                "basePayoutPrice": 0,
+                "currencyCode": "USD",
+                "basePayoutCurrencyCode": "USD",
+                "payoutCurrencyExchangeRate": 1
+              },
+              "appliedRules": []
+            },
+            "bundlePrice": null
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"1dec124613ecd582ee0a0ec068517ad9eba8784b\""
+      },
+      "body": {
+        "offers": [],
+        "totalPrice": {
+          "country": "US",
+          "offerId": "game",
+          "region": "US",
+          "namespace": "epic",
+          "updatedAt": "2026-11-17T00:00:00.000Z",
+          "price": {
+            "discount": 0,
+            "discountPrice": 0,
+            "originalPrice": 0,
+            "basePayoutPrice": 0,
+            "currencyCode": "USD",
+            "basePayoutCurrencyCode": "USD",
+            "payoutCurrencyExchangeRate": 1
+          },
+          "appliedRules": []
+        },
+        "bundlePrice": null
+      }
+    }
+  },
+  {
+    "name": "in-bundle-empty",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/in-bundle"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "in-bundle:game:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "bundles",
+          "method": "many",
+          "query": {
+            "offers": "game"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "in-bundle:game:US:locale:en-US:card:v0.2",
+          "payload": [],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "in-bundle-found",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/in-bundle?expand=full"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "in-bundle:game:US:locale:en-US:full:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "bundles",
+          "method": "many",
+          "query": {
+            "offers": "game"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "member"
+          },
+          {
+            "_id": "gone"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "member"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "member",
+          "title": "Member",
+          "namespace": "member-n",
+          "offerType": "BASE_GAME",
+          "customAttributes": [
+            {
+              "key": "foo",
+              "value": "bar",
+              "type": "STRING"
+            }
+          ],
+          "unknownField": "omitted"
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "member",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": {
+          "offerId": "member",
+          "namespace": "n",
+          "region": "US",
+          "price": {
+            "currencyCode": "USD",
+            "discountPrice": 400,
+            "originalPrice": 600,
+            "discount": 200
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "gone"
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "gone",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "in-bundle:game:US:locale:en-US:full:v0.2",
+          "payload": [
+            {
+              "id": "member",
+              "namespace": "member-n",
+              "title": "Member",
+              "offerType": "BASE_GAME",
+              "customAttributes": {
+                "foo": {
+                  "type": "STRING",
+                  "value": "bar"
+                }
+              },
+              "price": {
+                "offerId": "member",
+                "namespace": "n",
+                "region": "US",
+                "price": {
+                  "currencyCode": "USD",
+                  "discountPrice": 400,
+                  "originalPrice": 600,
+                  "discount": 200
+                }
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"999bad94089b78c6824400ea1b7c2445601040e7\""
+      },
+      "body": [
+        {
+          "id": "member",
+          "namespace": "member-n",
+          "title": "Member",
+          "offerType": "BASE_GAME",
+          "customAttributes": {
+            "foo": {
+              "type": "STRING",
+              "value": "bar"
+            }
+          },
+          "price": {
+            "offerId": "member",
+            "namespace": "n",
+            "region": "US",
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": 400,
+              "originalPrice": 600,
+              "discount": 200
+            }
+          },
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      ]
+    }
+  },
+  {
+    "name": "pre-missing",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/has-prepurchase"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "has-prepurchase:game:US:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"20c50f4f8898ce673caf7b361affa29038bfabdf\""
+      },
+      "body": {
+        "message": "Offer not found"
+      }
+    }
+  },
+  {
+    "name": "pre-negative-cold",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/has-prepurchase"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "has-prepurchase:game:US:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": "n",
+            "offerType": "BASE_GAME",
+            "prePurchase": true,
+            "id": {
+              "$ne": "game"
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "has-prepurchase:game:US:locale:en-US",
+          "payload": false,
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"eb0b1fe8569f28feb71ada098c2c53b07d7e7866\""
+      },
+      "body": {
+        "hasPrepurchase": false
+      }
+    }
+  },
+  {
+    "name": "pre-negative-hot",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/has-prepurchase"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "has-prepurchase:game:US:locale:en-US"
+        },
+        "result": false
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"7cb6efb98ba5972a9b5090dc2e517fe14d12cb04\""
+      },
+      "body": false
+    }
+  },
+  {
+    "name": "pre-found",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/has-prepurchase"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "has-prepurchase:game:US:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": "n",
+            "offerType": "BASE_GAME",
+            "prePurchase": true,
+            "id": {
+              "$ne": "game"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "member",
+          "title": "Member",
+          "namespace": "member-n",
+          "offerType": "BASE_GAME",
+          "customAttributes": [
+            {
+              "key": "foo",
+              "value": "bar",
+              "type": "STRING"
+            }
+          ],
+          "unknownField": "omitted"
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "member",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "has-prepurchase:game:US:locale:en-US",
+          "payload": {
+            "hasPrepurchase": true,
+            "offer": {
+              "id": "member",
+              "namespace": "member-n",
+              "title": "Member",
+              "offerType": "BASE_GAME",
+              "customAttributes": {
+                "foo": {
+                  "type": "STRING",
+                  "value": "bar"
+                }
+              },
+              "price": null,
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"1a2e8e2330964fe0ab1bc9f9fb93541384412d13\""
+      },
+      "body": {
+        "hasPrepurchase": true,
+        "offer": {
+          "id": "member",
+          "namespace": "member-n",
+          "title": "Member",
+          "offerType": "BASE_GAME",
+          "customAttributes": {
+            "foo": {
+              "type": "STRING",
+              "value": "bar"
+            }
+          },
+          "price": null,
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      }
+    }
+  },
+  {
+    "name": "regular-missing",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/has-regular"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "has-regular:game:US:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"20c50f4f8898ce673caf7b361affa29038bfabdf\""
+      },
+      "body": {
+        "message": "Offer not found"
+      }
+    }
+  },
+  {
+    "name": "regular-not-pre",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/has-regular"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "has-regular:game:US:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"b5d70b6de27c10f9380772e3c7499dde745b7e39\""
+      },
+      "body": {
+        "isPrepurchase": false
+      }
+    }
+  },
+  {
+    "name": "regular-negative-cold",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/has-regular"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "has-regular:game:US:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ],
+          "prePurchase": true
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": "n",
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            },
+            "id": {
+              "$ne": "game"
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "has-regular:game:US:locale:en-US",
+          "payload": true,
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"b5d70b6de27c10f9380772e3c7499dde745b7e39\""
+      },
+      "body": {
+        "isPrepurchase": false
+      }
+    }
+  },
+  {
+    "name": "regular-negative-hot",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/has-regular"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "has-regular:game:US:locale:en-US"
+        },
+        "result": true
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"5ffe533b830f08a0326348a9160afafc8ada44db\""
+      },
+      "body": true
+    }
+  },
+  {
+    "name": "regular-found",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/has-regular"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "has-regular:game:US:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "namespace": "n",
+          "offerType": "BASE_GAME",
+          "tags": [
+            {
+              "id": "genre"
+            },
+            {
+              "id": "foo"
+            }
+          ],
+          "prePurchase": true
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": "n",
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            },
+            "id": {
+              "$ne": "game"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "member",
+          "title": "Member",
+          "namespace": "member-n",
+          "offerType": "BASE_GAME",
+          "customAttributes": [
+            {
+              "key": "foo",
+              "value": "bar",
+              "type": "STRING"
+            }
+          ],
+          "unknownField": "omitted"
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "member",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": {
+          "offerId": "member",
+          "namespace": "n",
+          "region": "US",
+          "price": {
+            "currencyCode": "USD",
+            "discountPrice": 400,
+            "originalPrice": 600,
+            "discount": 200
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "has-regular:game:US:locale:en-US",
+          "payload": {
+            "isPrepurchase": true,
+            "offer": {
+              "id": "member",
+              "namespace": "member-n",
+              "title": "Member",
+              "offerType": "BASE_GAME",
+              "customAttributes": {
+                "foo": {
+                  "type": "STRING",
+                  "value": "bar"
+                }
+              },
+              "price": {
+                "offerId": "member",
+                "namespace": "n",
+                "region": "US",
+                "price": {
+                  "currencyCode": "USD",
+                  "discountPrice": 400,
+                  "originalPrice": 600,
+                  "discount": 200
+                }
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"4808695c007c5404979358e9358550fad6d70af2\""
+      },
+      "body": {
+        "isPrepurchase": true,
+        "offer": {
+          "id": "member",
+          "namespace": "member-n",
+          "title": "Member",
+          "offerType": "BASE_GAME",
+          "customAttributes": {
+            "foo": {
+              "type": "STRING",
+              "value": "bar"
+            }
+          },
+          "price": {
+            "offerId": "member",
+            "namespace": "n",
+            "region": "US",
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": 400,
+              "originalPrice": 600,
+              "discount": 200
+            }
+          },
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      }
+    }
+  }
+]

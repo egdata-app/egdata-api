@@ -401,16 +401,35 @@ export function routeInventory(files: Snapshot): Endpoint[] {
     v1HandlerFiles.set(`${method} ${path === "/v1/" ? "/v1" : path}`, file);
   });
 
+  const manifest = files.get("openapi/rust-routes.generated.json");
+  const rustSources=new Map<string,string>();
+  if (manifest) {
+    const groups=JSON.parse(manifest) as Record<"legacyRoutes"|"v1Routes", {method:string;path:string;file:string}[]>;
+    for (const route of [...groups.legacyRoutes,...groups.v1Routes]){
+      const key=route.method+" "+route.path;
+      rustSources.set(key,route.file);
+      if (found.has(key)) {
+        const sources=found.get(key)!.sources;
+        if(!sources.includes(route.file))sources.push(route.file);
+      } else if (groups.legacyRoutes.includes(route)) {
+        const id=registered.find(e=>e.apiVersion==="legacy" && e.method===route.method && e.path===route.path && e.status==="active")?.operationId ??
+          `legacy${route.method[0]}${route.method.slice(1).toLowerCase()}${route.path.replace(/[^A-Za-z0-9]+/g,"_")||"Root"}_${hash(key).slice(0,8)}`;
+        found.set(key,{apiVersion:"legacy",operationId:id,method:route.method,path:route.path,sources:[route.file],status:"active"});
+      }
+    }
+  }
+
   const discoveredSources = new Map(
     [...found].map(([k, v]) => [k, v.sources]),
   );
 
   // Existing classifications distinguish public/non-JSON operations from internal/account routes.
   const classificationSource = files.get("src/openapi/route-inventory.ts");
-  if (classificationSource) {
+  const policy=files.get("openapi/route-policy.json");
+  if (classificationSource || policy) {
     const tree = ts.createSourceFile(
       "classifications.ts",
-      classificationSource,
+      classificationSource ?? "",
       ts.ScriptTarget.Latest,
       true,
     );
@@ -441,7 +460,8 @@ export function routeInventory(files: Snapshot): Endpoint[] {
       ts.forEachChild(node, visit);
     }
 
-    visit(tree);
+    if(policy)rules.push(...JSON.parse(policy).routeClassifications);
+    else visit(tree);
 
     for (const [key, e] of found) {
       const rule = rules.find(
@@ -511,6 +531,8 @@ export function routeInventory(files: Snapshot): Endpoint[] {
             sources.push("src/v1/router.ts");
           }
         }
+        const rustSource=rustSources.get(routeKey);
+        if(rustSource && !sources.includes(rustSource))sources.push(rustSource);
         found.set(routeKey, {
           apiVersion: version,
           operationId: operation.operationId,

@@ -1,0 +1,99 @@
+{
+  "cases": [
+    {
+      "parent": {},
+      "args": {
+        "id": "64b000000000000000000001"
+      },
+      "parentType": "Query",
+      "field": "build",
+      "reads": [
+        {
+          "collection": "builds",
+          "filter": {
+            "_id": "64b000000000000000000001"
+          },
+          "projection": null
+        }
+      ],
+      "expected": {
+        "_id": "64b000000000000000000001",
+        "appName": "app-1"
+      }
+    },
+    {
+      "parent": {},
+      "args": {
+        "id": "64b000000000000000000002"
+      },
+      "parentType": "Query",
+      "field": "changelog",
+      "reads": [
+        {
+          "collection": "changelogs_v2",
+          "filter": {
+            "_id": "64b000000000000000000002"
+          },
+          "projection": null
+        }
+      ],
+      "expected": {
+        "_id": "64b000000000000000000002",
+        "metadata": {
+          "contextId": "item-1"
+        }
+      }
+    },
+    {
+      "parent": {},
+      "args": {
+        "id": "item-1",
+        "__selectedFields": [
+          "id",
+          "title"
+        ]
+      },
+      "parentType": "Query",
+      "field": "item",
+      "reads": [
+        {
+          "collection": "items",
+          "filter": {
+            "id": {
+              "$eq": "item-1"
+            }
+          },
+          "projection": {
+            "title": 1,
+            "id": 1,
+            "_id": 1
+          }
+        }
+      ],
+      "expected": {
+        "id": "item-1",
+        "title": "Example"
+      }
+    },
+    {
+      "parent": {},
+      "args": {
+        "id": "namespace-1"
+      },
+      "parentType": "Query",
+      "field": "sandbox",
+      "reads": [
+        {
+          "collection": "namespaces",
+          "filter": {
+            "_id": {
+              "$eq": "namespace-1"
+            }
+          },
+          "projection": null
+        }
+      ],
+      "expected": null
+    }
+  ]
+}

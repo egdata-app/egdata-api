@@ -1,0 +1,3552 @@
+[
+  {
+    "name": "associated-offers",
+    "parentType": "Item",
+    "field": "offers",
+    "parent": {
+      "id": "i",
+      "namespace": "ns",
+      "title": "Example",
+      "releaseInfo": [
+        {
+          "appId": "app",
+          "platform": [
+            "Windows",
+            "Mac"
+          ]
+        },
+        {
+          "appId": "extra",
+          "platform": [
+            "Linux"
+          ]
+        }
+      ]
+    },
+    "args": {
+      "locale": "es"
+    },
+    "expected": [
+      {
+        "id": "o",
+        "namespace": "ns",
+        "title": "Game",
+        "offerType": "BASE_GAME",
+        "developerDisplayName": "Studio",
+        "creationDate": "2020-01-01T00:00:00.000Z",
+        "tags": [
+          {
+            "id": "t",
+            "groupName": "platform",
+            "name": "Deck"
+          }
+        ],
+        "keyImages": [],
+        "locale": "es",
+        "localeStatus": "fallback",
+        "canonicalLocale": "en-US"
+      }
+    ],
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "filter": {
+            "items.id": "i"
+          },
+          "options": {
+            "limit": 100
+          }
+        },
+        "result": [
+          {
+            "id": "o",
+            "namespace": "ns",
+            "title": "Game",
+            "offerType": "BASE_GAME",
+            "developerDisplayName": "Studio",
+            "creationDate": "2020-01-01T00:00:00.000Z",
+            "tags": [
+              {
+                "id": "t",
+                "groupName": "platform",
+                "name": "Deck"
+              }
+            ],
+            "keyImages": []
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o"
+              ]
+            },
+            "locale": "es"
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ]
+  },
+  {
+    "name": "main-offer-preorder",
+    "parentType": "Item",
+    "field": "mainOffer",
+    "parent": {
+      "id": "i",
+      "namespace": "ns",
+      "title": "Example",
+      "releaseInfo": [
+        {
+          "appId": "app",
+          "platform": [
+            "Windows",
+            "Mac"
+          ]
+        },
+        {
+          "appId": "extra",
+          "platform": [
+            "Linux"
+          ]
+        }
+      ]
+    },
+    "args": {},
+    "expected": {
+      "id": "o",
+      "namespace": "ns",
+      "title": "Game",
+      "offerType": "BASE_GAME",
+      "developerDisplayName": "Studio",
+      "creationDate": "2020-01-01T00:00:00.000Z",
+      "tags": [
+        {
+          "id": "t",
+          "groupName": "platform",
+          "name": "Deck"
+        }
+      ],
+      "keyImages": [],
+      "locale": "en-US",
+      "localeStatus": "canonical"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "filter": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "pre"
+          },
+          {
+            "_id": "o"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "filter": {
+            "id": {
+              "$in": [
+                "pre",
+                "o"
+              ]
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "pre",
+            "namespace": "ns",
+            "title": "Game",
+            "offerType": "BASE_GAME",
+            "developerDisplayName": "Studio",
+            "creationDate": "2020-01-01T00:00:00.000Z",
+            "tags": [
+              {
+                "id": "t",
+                "groupName": "platform",
+                "name": "Deck"
+              }
+            ],
+            "keyImages": [],
+            "prePurchase": true
+          },
+          {
+            "id": "o",
+            "namespace": "ns",
+            "title": "Game",
+            "offerType": "BASE_GAME",
+            "developerDisplayName": "Studio",
+            "creationDate": "2020-01-01T00:00:00.000Z",
+            "tags": [
+              {
+                "id": "t",
+                "groupName": "platform",
+                "name": "Deck"
+              }
+            ],
+            "keyImages": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "missing-main-offer",
+    "parentType": "Item",
+    "field": "mainOffer",
+    "parent": {
+      "id": "i",
+      "namespace": "ns",
+      "title": "Example",
+      "releaseInfo": [
+        {
+          "appId": "app",
+          "platform": [
+            "Windows",
+            "Mac"
+          ]
+        },
+        {
+          "appId": "extra",
+          "platform": [
+            "Linux"
+          ]
+        }
+      ]
+    },
+    "args": {},
+    "expected": null,
+    "trace": [
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "filter": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "filter": {
+            "id": {
+              "$in": []
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ]
+  },
+  {
+    "name": "nested-assets",
+    "parentType": "Item",
+    "field": "assets",
+    "parent": {
+      "id": "i",
+      "namespace": "ns",
+      "title": "Example",
+      "releaseInfo": [
+        {
+          "appId": "app",
+          "platform": [
+            "Windows",
+            "Mac"
+          ]
+        },
+        {
+          "appId": "extra",
+          "platform": [
+            "Linux"
+          ]
+        }
+      ]
+    },
+    "args": {},
+    "expected": [
+      {
+        "artifactId": "app",
+        "itemId": "i",
+        "platform": "Windows",
+        "updatedAt": "2026-01-01T00:00:00.000Z"
+      }
+    ],
+    "trace": [
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "filter": {
+            "itemId": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app",
+            "itemId": "i",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nested-builds",
+    "parentType": "Item",
+    "field": "builds",
+    "parent": {
+      "releaseInfo": [
+        {
+          "appId": "app",
+          "platform": [
+            "Windows",
+            "Mac"
+          ]
+        },
+        {
+          "appId": "extra",
+          "platform": [
+            "Linux"
+          ]
+        },
+        {
+          "appId": "app"
+        }
+      ]
+    },
+    "args": {},
+    "expected": [
+      {
+        "_id": "b",
+        "appName": "app",
+        "updatedAt": "2026-01-01T00:00:00.000Z"
+      },
+      null,
+      {
+        "_id": "b",
+        "appName": "app",
+        "updatedAt": "2026-01-01T00:00:00.000Z"
+      }
+    ],
+    "trace": [
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "filter": {
+            "appName": {
+              "$in": [
+                "app",
+                "extra"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "b",
+            "appName": "app",
+            "updatedAt": "1970-01-01T00:00:00.000Z"
+          },
+          {
+            "_id": "b",
+            "appName": "app",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "stored-offer",
+    "parentType": "Changelog",
+    "field": "document",
+    "parent": {
+      "document": {
+        "id": "o",
+        "namespace": "ns",
+        "title": "Game",
+        "offerType": "BASE_GAME",
+        "developerDisplayName": "Studio",
+        "creationDate": "2020-01-01T00:00:00.000Z",
+        "tags": [
+          {
+            "id": "t",
+            "groupName": "platform",
+            "name": "Deck"
+          }
+        ],
+        "keyImages": []
+      }
+    },
+    "args": {
+      "locale": "fr"
+    },
+    "expected": {
+      "id": "o",
+      "namespace": "ns",
+      "title": "Game",
+      "offerType": "BASE_GAME",
+      "developerDisplayName": "Studio",
+      "creationDate": "2020-01-01T00:00:00.000Z",
+      "tags": [
+        {
+          "id": "t",
+          "groupName": "platform",
+          "name": "Deck"
+        }
+      ],
+      "keyImages": [],
+      "locale": "fr",
+      "localeStatus": "fallback",
+      "canonicalLocale": "en-US"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o"
+              ]
+            },
+            "locale": "fr"
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ]
+  },
+  {
+    "name": "linked-offer",
+    "parentType": "Changelog",
+    "field": "document",
+    "parent": {
+      "metadata": {
+        "contextId": "o",
+        "contextType": "offer"
+      }
+    },
+    "args": {},
+    "expected": {
+      "id": "o",
+      "namespace": "ns",
+      "title": "Game",
+      "offerType": "BASE_GAME",
+      "developerDisplayName": "Studio",
+      "creationDate": "2020-01-01T00:00:00.000Z",
+      "tags": [
+        {
+          "id": "t",
+          "groupName": "platform",
+          "name": "Deck"
+        }
+      ],
+      "keyImages": [],
+      "locale": "en-US",
+      "localeStatus": "canonical"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "filter": {
+            "id": {
+              "$eq": "o"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "o",
+          "namespace": "ns",
+          "title": "Game",
+          "offerType": "BASE_GAME",
+          "developerDisplayName": "Studio",
+          "creationDate": "2020-01-01T00:00:00.000Z",
+          "tags": [
+            {
+              "id": "t",
+              "groupName": "platform",
+              "name": "Deck"
+            }
+          ],
+          "keyImages": []
+        }
+      }
+    ]
+  },
+  {
+    "name": "linked-changelog-asset",
+    "parentType": "Changelog",
+    "field": "document",
+    "parent": {
+      "metadata": {
+        "contextType": "asset",
+        "contextId": "app"
+      }
+    },
+    "args": {},
+    "expected": {
+      "artifactId": "app",
+      "itemId": "i",
+      "platform": "Windows",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "assets",
+          "method": "one",
+          "filter": {
+            "artifactId": {
+              "$eq": "app"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "artifactId": "app",
+          "itemId": "i",
+          "platform": "Windows",
+          "updatedAt": "2026-01-01T00:00:00.000Z"
+        }
+      }
+    ]
+  },
+  {
+    "name": "build-loader-numeric-and-invalid-timestamps",
+    "parentType": "Item",
+    "field": "builds",
+    "parent": {
+      "releaseInfo": [
+        {
+          "appId": "app"
+        }
+      ]
+    },
+    "args": {},
+    "expected": [
+      {
+        "appName": "app",
+        "updatedAt": 1000,
+        "marker": "new"
+      }
+    ],
+    "trace": [
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "filter": {
+            "appName": {
+              "$in": [
+                "app"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "appName": "app",
+            "updatedAt": null,
+            "marker": "initial"
+          },
+          {
+            "appName": "app",
+            "updatedAt": true,
+            "marker": "one"
+          },
+          {
+            "appName": "app",
+            "marker": "undated"
+          },
+          {
+            "appName": "app",
+            "updatedAt": 1,
+            "marker": "old"
+          },
+          {
+            "appName": "app",
+            "updatedAt": "invalid",
+            "marker": "invalid"
+          },
+          {
+            "appName": "app",
+            "updatedAt": 1000,
+            "marker": "new"
+          },
+          {
+            "appName": "app",
+            "updatedAt": 500,
+            "marker": "older"
+          },
+          {
+            "updatedAt": 2000,
+            "marker": "unrelated"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "unknown-document-type",
+    "parentType": "Changelog",
+    "field": "document",
+    "parent": {
+      "metadata": {
+        "contextType": "tag"
+      }
+    },
+    "args": {},
+    "expected": null,
+    "trace": []
+  },
+  {
+    "name": "item-history",
+    "parentType": "Item",
+    "field": "changelog",
+    "parent": {
+      "id": "i",
+      "namespace": "ns",
+      "title": "Example",
+      "releaseInfo": [
+        {
+          "appId": "app",
+          "platform": [
+            "Windows",
+            "Mac"
+          ]
+        },
+        {
+          "appId": "extra",
+          "platform": [
+            "Linux"
+          ]
+        }
+      ]
+    },
+    "args": {
+      "limit": 0,
+      "page": 2
+    },
+    "expected": {
+      "elements": [
+        {
+          "_id": "change",
+          "metadata": {
+            "contextId": "i"
+          }
+        }
+      ],
+      "totalCount": 3,
+      "totalPages": 3,
+      "hasNextPage": true,
+      "hasPreviousPage": true
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "filter": {
+            "itemId": "i"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app",
+            "itemId": "i",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "filter": {
+            "appName": {
+              "$in": [
+                "app"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "b",
+            "appName": "app",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "filter": {
+            "metadata.contextId": {
+              "$in": [
+                "i",
+                "app",
+                "b"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 3
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "filter": {
+            "metadata.contextId": {
+              "$in": [
+                "i",
+                "app",
+                "b"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            },
+            "skip": 1,
+            "limit": 1
+          }
+        },
+        "result": [
+          {
+            "_id": "change",
+            "metadata": {
+              "contextId": "i"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "offer-history",
+    "parentType": "Offer",
+    "field": "changelog",
+    "parent": {
+      "id": "o",
+      "items": [
+        {
+          "id": "other"
+        }
+      ]
+    },
+    "args": {
+      "limit": 3
+    },
+    "expected": {
+      "elements": [
+        {
+          "_id": "change",
+          "metadata": {
+            "contextId": "i"
+          }
+        }
+      ],
+      "totalCount": 2,
+      "totalPages": 1,
+      "hasNextPage": false,
+      "hasPreviousPage": false
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "filter": {
+            "_id": "o"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "subItems": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "filter": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    "other",
+                    "i"
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "o"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "i",
+            "namespace": "ns",
+            "title": "Example",
+            "releaseInfo": [
+              {
+                "appId": "app",
+                "platform": [
+                  "Windows",
+                  "Mac"
+                ]
+              },
+              {
+                "appId": "extra",
+                "platform": [
+                  "Linux"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "filter": {
+            "itemId": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app",
+            "itemId": "i",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "filter": {
+            "metadata.contextId": {
+              "$in": [
+                "o",
+                "i",
+                "app"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "filter": {
+            "metadata.contextId": {
+              "$in": [
+                "o",
+                "i",
+                "app"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            },
+            "skip": 0,
+            "limit": 3
+          }
+        },
+        "result": [
+          {
+            "_id": "change",
+            "metadata": {
+              "contextId": "i"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sandbox-history",
+    "parentType": "Sandbox",
+    "field": "changelog",
+    "parent": {
+      "_id": "ns"
+    },
+    "args": {},
+    "expected": {
+      "elements": [
+        {
+          "_id": "change",
+          "metadata": {
+            "contextId": "i"
+          }
+        }
+      ],
+      "totalCount": 2,
+      "totalPages": 1,
+      "hasNextPage": false,
+      "hasPreviousPage": false
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {
+            "sort": {
+              "lastModifiedDate": -1
+            },
+            "limit": 100
+          }
+        },
+        "result": [
+          {
+            "id": "o",
+            "namespace": "ns",
+            "title": "Game",
+            "offerType": "BASE_GAME",
+            "developerDisplayName": "Studio",
+            "creationDate": "2020-01-01T00:00:00.000Z",
+            "tags": [
+              {
+                "id": "t",
+                "groupName": "platform",
+                "name": "Deck"
+              }
+            ],
+            "keyImages": [],
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "filter": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    "i"
+                  ]
+                }
+              },
+              {
+                "namespace": "ns"
+              }
+            ]
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "releaseInfo": 1
+            },
+            "limit": 100
+          }
+        },
+        "result": [
+          {
+            "id": "i",
+            "namespace": "ns",
+            "title": "Example",
+            "releaseInfo": [
+              {
+                "appId": "app",
+                "platform": [
+                  "Windows",
+                  "Mac"
+                ]
+              },
+              {
+                "appId": "extra",
+                "platform": [
+                  "Linux"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "filter": {
+            "itemId": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app",
+            "itemId": "i",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "filter": {
+            "appName": {
+              "$in": [
+                "app",
+                "extra"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            },
+            "limit": 500
+          }
+        },
+        "result": [
+          {
+            "_id": "b",
+            "appName": "app",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "filter": {
+            "metadata.contextId": {
+              "$in": [
+                "ns",
+                "o",
+                "i",
+                "app",
+                "b"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "filter": {
+            "metadata.contextId": {
+              "$in": [
+                "ns",
+                "o",
+                "i",
+                "app",
+                "b"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            },
+            "skip": 0,
+            "limit": 10
+          }
+        },
+        "result": [
+          {
+            "_id": "change",
+            "metadata": {
+              "contextId": "i"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sandbox-offers",
+    "parentType": "Sandbox",
+    "field": "offers",
+    "parent": {
+      "_id": "ns",
+      "locale": "fr"
+    },
+    "args": {},
+    "expected": {
+      "elements": [
+        {
+          "id": "o",
+          "namespace": "ns",
+          "title": "Game",
+          "description": "Description française",
+          "offerType": "BASE_GAME",
+          "creationDate": "2020-01-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [
+            {
+              "id": "t",
+              "groupName": "platform",
+              "name": "Deck"
+            }
+          ],
+          "developerDisplayName": "Studio",
+          "locale": "fr",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "source": "fixture",
+            "fetchedAt": "1970-01-01T00:00:00.000Z"
+          }
+        }
+      ],
+      "total": 1,
+      "page": 1,
+      "limit": 10
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {
+            "sort": {
+              "lastModifiedDate": -1
+            },
+            "skip": 0,
+            "limit": 10
+          }
+        },
+        "result": [
+          {
+            "id": "o",
+            "namespace": "ns",
+            "title": "Game",
+            "offerType": "BASE_GAME",
+            "developerDisplayName": "Studio",
+            "creationDate": "2020-01-01T00:00:00.000Z",
+            "tags": [
+              {
+                "id": "t",
+                "groupName": "platform",
+                "name": "Deck"
+              }
+            ],
+            "keyImages": []
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o"
+              ]
+            },
+            "locale": "fr"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "entityId": "ns:o",
+            "entityType": "offer",
+            "locale": "fr",
+            "source": "fixture",
+            "fetchedAt": "1970-01-01T00:00:00.000Z",
+            "data": {
+              "description": "Description française"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 1
+      }
+    ]
+  },
+  {
+    "name": "localized-sandbox-base-game",
+    "parentType": "Sandbox",
+    "field": "baseGame",
+    "parent": {
+      "_id": "ns"
+    },
+    "args": {
+      "locale": "fr"
+    },
+    "expected": {
+      "id": "o",
+      "namespace": "ns",
+      "title": "Game",
+      "offerType": "BASE_GAME",
+      "creationDate": "2020-01-01T00:00:00.000Z",
+      "keyImages": [],
+      "tags": [
+        {
+          "id": "t",
+          "groupName": "platform",
+          "name": "Deck"
+        }
+      ],
+      "developerDisplayName": "Studio",
+      "locale": "fr",
+      "localeStatus": "fallback",
+      "canonicalLocale": "en-US"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "filter": {
+            "namespace": {
+              "$eq": "ns"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            },
+            "isCodeRedemptionOnly": false
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "o",
+          "namespace": "ns",
+          "title": "Game",
+          "offerType": "BASE_GAME",
+          "developerDisplayName": "Studio",
+          "creationDate": "2020-01-01T00:00:00.000Z",
+          "tags": [
+            {
+              "id": "t",
+              "groupName": "platform",
+              "name": "Deck"
+            }
+          ],
+          "keyImages": []
+        }
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o"
+              ]
+            },
+            "locale": "fr"
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ]
+  },
+  {
+    "name": "sandbox-builds-all-platforms",
+    "parentType": "Sandbox",
+    "field": "builds",
+    "parent": {
+      "_id": "ns"
+    },
+    "args": {},
+    "expected": {
+      "elements": [
+        {
+          "_id": "b",
+          "appName": "app",
+          "updatedAt": "2026-01-01T00:00:00.000Z"
+        }
+      ],
+      "total": 1,
+      "page": 1,
+      "limit": 10
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {
+            "projection": {
+              "releaseInfo": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "i",
+            "namespace": "ns",
+            "title": "Example",
+            "releaseInfo": [
+              {
+                "appId": "app",
+                "platform": [
+                  "Windows",
+                  "Mac"
+                ]
+              },
+              {
+                "appId": "extra",
+                "platform": [
+                  "Linux"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "filter": {
+            "appName": {
+              "$in": [
+                "app",
+                "extra"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            },
+            "skip": 0,
+            "limit": 10
+          }
+        },
+        "result": [
+          {
+            "_id": "b",
+            "appName": "app",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "filter": {
+            "appName": {
+              "$in": [
+                "app",
+                "extra"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      }
+    ]
+  },
+  {
+    "name": "sandbox-assets-filter",
+    "parentType": "Sandbox",
+    "field": "assets",
+    "parent": {
+      "_id": "ns"
+    },
+    "args": {
+      "platform": "Windows"
+    },
+    "expected": {
+      "elements": [
+        {
+          "artifactId": "app",
+          "itemId": "i",
+          "platform": "Windows",
+          "updatedAt": "2026-01-01T00:00:00.000Z"
+        }
+      ],
+      "total": 1,
+      "page": 1,
+      "limit": 10,
+      "count": 1
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1,
+              "releaseInfo": 1,
+              "title": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "i",
+            "namespace": "ns",
+            "title": "Example",
+            "releaseInfo": [
+              {
+                "appId": "app",
+                "platform": [
+                  "Windows",
+                  "Mac"
+                ]
+              },
+              {
+                "appId": "extra",
+                "platform": [
+                  "Linux"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "artifactId": "app",
+            "itemId": "i",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sandbox-builds-filter",
+    "parentType": "Sandbox",
+    "field": "builds",
+    "parent": {
+      "_id": "ns"
+    },
+    "args": {
+      "platform": "Mac,Windows,,",
+      "page": 2,
+      "limit": 1
+    },
+    "expected": {
+      "elements": [
+        {
+          "_id": "b",
+          "appName": "app",
+          "updatedAt": "2026-01-01T00:00:00.000Z"
+        }
+      ],
+      "total": 3,
+      "page": 2,
+      "limit": 1
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "filter": {
+            "namespace": "ns",
+            "releaseInfo": {
+              "$elemMatch": {
+                "platform": {
+                  "$in": [
+                    "Mac",
+                    "Windows"
+                  ]
+                }
+              }
+            }
+          },
+          "options": {
+            "projection": {
+              "releaseInfo": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "i",
+            "namespace": "ns",
+            "title": "Example",
+            "releaseInfo": [
+              {
+                "appId": "app",
+                "platform": [
+                  "Windows",
+                  "Mac"
+                ]
+              },
+              {
+                "appId": "extra",
+                "platform": [
+                  "Linux"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "filter": {
+            "appName": {
+              "$in": [
+                "app"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            },
+            "skip": 1,
+            "limit": 1
+          }
+        },
+        "result": [
+          {
+            "_id": "b",
+            "appName": "app",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "filter": {
+            "appName": {
+              "$in": [
+                "app"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 3
+      }
+    ]
+  },
+  {
+    "name": "sandbox-stats",
+    "parentType": "Sandbox",
+    "field": "stats",
+    "parent": {
+      "_id": "ns"
+    },
+    "args": {},
+    "expected": {
+      "offers": 2,
+      "items": 1,
+      "assets": 2,
+      "builds": 3,
+      "achievements": 3
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "i",
+            "namespace": "ns",
+            "title": "Example",
+            "releaseInfo": [
+              {
+                "appId": "app",
+                "platform": [
+                  "Windows",
+                  "Mac"
+                ]
+              },
+              {
+                "appId": "extra",
+                "platform": [
+                  "Linux"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "filter": {
+            "sandboxId": "ns"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "ns",
+            "isBase": true,
+            "achievements": [
+              {
+                "xp": 100
+              },
+              {
+                "score": "25"
+              },
+              {}
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app",
+            "itemId": "i",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "filter": {
+            "appName": {
+              "$in": [
+                "app",
+                "extra"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 3
+      }
+    ]
+  },
+  {
+    "name": "sandbox-primary-offer",
+    "parentType": "Sandbox",
+    "field": "baseGame",
+    "parent": {
+      "_id": "ns"
+    },
+    "args": {},
+    "expected": {
+      "id": "o",
+      "namespace": "ns",
+      "title": "Game",
+      "offerType": "BASE_GAME",
+      "creationDate": "2020-01-01T00:00:00.000Z",
+      "keyImages": [],
+      "tags": [
+        {
+          "id": "t",
+          "groupName": "platform",
+          "name": "Deck"
+        }
+      ],
+      "developerDisplayName": "Studio",
+      "locale": "en-US",
+      "localeStatus": "canonical"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "filter": {
+            "namespace": {
+              "$eq": "ns"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            },
+            "isCodeRedemptionOnly": false
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "filter": {
+            "namespace": {
+              "$eq": "ns"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": true
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "o",
+          "namespace": "ns",
+          "title": "Game",
+          "offerType": "BASE_GAME",
+          "developerDisplayName": "Studio",
+          "creationDate": "2020-01-01T00:00:00.000Z",
+          "tags": [
+            {
+              "id": "t",
+              "groupName": "platform",
+              "name": "Deck"
+            }
+          ],
+          "keyImages": []
+        }
+      }
+    ]
+  },
+  {
+    "name": "sandbox-primary-item",
+    "parentType": "Sandbox",
+    "field": "baseGame",
+    "parent": {
+      "_id": "ns"
+    },
+    "args": {},
+    "expected": {
+      "id": "i",
+      "namespace": "ns",
+      "title": "Example",
+      "releaseInfo": [
+        {
+          "appId": "app",
+          "platform": [
+            "Windows",
+            "Mac"
+          ]
+        },
+        {
+          "appId": "extra",
+          "platform": [
+            "Linux"
+          ]
+        }
+      ]
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "filter": {
+            "namespace": {
+              "$eq": "ns"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            },
+            "isCodeRedemptionOnly": false
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "filter": {
+            "namespace": {
+              "$eq": "ns"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": true
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "filter": {
+            "namespace": {
+              "$eq": "ns"
+            },
+            "entitlementType": "EXECUTABLE",
+            "releaseInfo.0": {
+              "$exists": true
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "namespace": "ns",
+          "title": "Example",
+          "releaseInfo": [
+            {
+              "appId": "app",
+              "platform": [
+                "Windows",
+                "Mac"
+              ]
+            },
+            {
+              "appId": "extra",
+              "platform": [
+                "Linux"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "sandbox-achievements",
+    "parentType": "Sandbox",
+    "field": "achievements",
+    "parent": {
+      "_id": "ns"
+    },
+    "args": {},
+    "expected": [
+      {
+        "sandboxId": "ns",
+        "isBase": true,
+        "achievements": [
+          {
+            "xp": 100
+          },
+          {
+            "score": "25"
+          },
+          {}
+        ]
+      }
+    ],
+    "trace": [
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "filter": {
+            "sandboxId": {
+              "$in": [
+                "ns"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "ns",
+            "isBase": true,
+            "achievements": [
+              {
+                "xp": 100
+              },
+              {
+                "score": "25"
+              },
+              {}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "hub-cache-hit",
+    "parentType": "Query",
+    "field": "sandboxHub",
+    "parent": {},
+    "args": {
+      "id": "ns",
+      "offerLimit": 100
+    },
+    "expected": {
+      "cached": true
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "sandboxHub:ns:US:24:8:locale:en-US"
+        },
+        "result": "{\"cached\":true}"
+      }
+    ]
+  },
+  {
+    "name": "hub-missing",
+    "parentType": "Query",
+    "field": "sandboxHub",
+    "parent": {},
+    "args": {
+      "id": "missing"
+    },
+    "expected": null,
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "sandboxHub:missing:US:8:8:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "sandboxes",
+          "method": "one",
+          "filter": {
+            "_id": {
+              "$eq": "missing"
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "sandboxHub:missing:US:8:8:locale:en-US",
+          "value": null,
+          "mode": "EX",
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ]
+  },
+  {
+    "name": "hub-populated",
+    "parentType": "Query",
+    "field": "sandboxHub",
+    "parent": {},
+    "args": {
+      "id": "ns",
+      "country": "DE",
+      "locale": "es"
+    },
+    "expected": {
+      "id": "ns",
+      "namespace": "ns",
+      "title": "Game",
+      "description": "",
+      "primaryKind": "offer",
+      "primaryOffer": {
+        "id": "o",
+        "namespace": "ns",
+        "title": "Game",
+        "offerType": "BASE_GAME",
+        "developerDisplayName": "Studio",
+        "creationDate": "2020-01-01T00:00:00.000Z",
+        "tags": [
+          {
+            "id": "t",
+            "groupName": "platform",
+            "name": "Deck"
+          }
+        ],
+        "keyImages": [],
+        "locale": "es",
+        "localeStatus": "fallback",
+        "canonicalLocale": "en-US"
+      },
+      "primaryItem": null,
+      "sandbox": {
+        "_id": "ns",
+        "ageGatings": {
+          "USK": "USK 12"
+        },
+        "locale": "es"
+      },
+      "price": {
+        "offerId": "o"
+      },
+      "seller": null,
+      "developer": "Studio",
+      "publisher": null,
+      "keyImages": [],
+      "genres": [
+        {
+          "id": "t"
+        }
+      ],
+      "platforms": [
+        "Windows",
+        "Mac",
+        "Linux",
+        "Deck"
+      ],
+      "stats": {
+        "offers": 3,
+        "items": 1,
+        "assets": 2,
+        "builds": 2,
+        "achievements": 3
+      },
+      "featuredOffers": [
+        {
+          "id": "o",
+          "namespace": "ns",
+          "title": "Game",
+          "offerType": "BASE_GAME",
+          "developerDisplayName": "Studio",
+          "creationDate": "2020-01-01T00:00:00.000Z",
+          "tags": [
+            {
+              "id": "t",
+              "groupName": "platform",
+              "name": "Deck"
+            }
+          ],
+          "keyImages": [],
+          "locale": "es",
+          "localeStatus": "fallback",
+          "canonicalLocale": "en-US"
+        }
+      ],
+      "recentBuilds": [
+        {
+          "_id": "b",
+          "appName": "app",
+          "updatedAt": "2026-01-01T00:00:00.000Z"
+        }
+      ],
+      "recentChanges": [
+        {
+          "_id": "change",
+          "metadata": {
+            "contextId": "i"
+          }
+        }
+      ],
+      "ageRating": "USK 12",
+      "achievements": {
+        "sets": 1,
+        "total": 3,
+        "baseTotal": 3,
+        "xp": 125
+      },
+      "created": "2020-01-01T00:00:00.000Z"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "sandboxHub:ns:DE:8:8:locale:es"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "sandboxes",
+          "method": "one",
+          "filter": {
+            "_id": {
+              "$eq": "ns"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "ns",
+          "ageGatings": {
+            "USK": "USK 12"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "filter": {
+            "namespace": {
+              "$eq": "ns"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            },
+            "isCodeRedemptionOnly": false
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "o",
+          "namespace": "ns",
+          "title": "Game",
+          "offerType": "BASE_GAME",
+          "developerDisplayName": "Studio",
+          "creationDate": "2020-01-01T00:00:00.000Z",
+          "tags": [
+            {
+              "id": "t",
+              "groupName": "platform",
+              "name": "Deck"
+            }
+          ],
+          "keyImages": []
+        }
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "i",
+            "namespace": "ns",
+            "title": "Example",
+            "releaseInfo": [
+              {
+                "appId": "app",
+                "platform": [
+                  "Windows",
+                  "Mac"
+                ]
+              },
+              {
+                "appId": "extra",
+                "platform": [
+                  "Linux"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "filter": {
+            "sandboxId": "ns"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "ns",
+            "isBase": true,
+            "achievements": [
+              {
+                "xp": 100
+              },
+              {
+                "score": "25"
+              },
+              {}
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {
+            "limit": 24,
+            "sort": {
+              "lastModifiedDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "o",
+            "namespace": "ns",
+            "title": "Game",
+            "offerType": "BASE_GAME",
+            "developerDisplayName": "Studio",
+            "creationDate": "2020-01-01T00:00:00.000Z",
+            "tags": [
+              {
+                "id": "t",
+                "groupName": "platform",
+                "name": "Deck"
+              }
+            ],
+            "keyImages": []
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "filter": {
+            "offerId": {
+              "$eq": "o"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "offerId": "o"
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 3
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app",
+            "itemId": "i",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "filter": {
+            "appName": {
+              "$in": [
+                "app",
+                "extra"
+              ]
+            }
+          },
+          "options": {
+            "limit": 8,
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "b",
+            "appName": "app",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "filter": {
+            "metadata.contextId": {
+              "$in": [
+                "ns",
+                "o",
+                "i",
+                "app",
+                "extra"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            },
+            "limit": 8
+          }
+        },
+        "result": [
+          {
+            "_id": "change",
+            "metadata": {
+              "contextId": "i"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "many",
+          "filter": {
+            "id": {
+              "$in": [
+                "t"
+              ]
+            },
+            "groupName": "genre"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "t"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "filter": {
+            "appName": {
+              "$in": [
+                "app",
+                "extra"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o"
+              ]
+            },
+            "locale": "es"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o"
+              ]
+            },
+            "locale": "es"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "sandboxHub:ns:DE:8:8:locale:es",
+          "value": {
+            "id": "ns",
+            "namespace": "ns",
+            "title": "Game",
+            "description": "",
+            "primaryKind": "offer",
+            "primaryOffer": {
+              "id": "o",
+              "namespace": "ns",
+              "title": "Game",
+              "offerType": "BASE_GAME",
+              "developerDisplayName": "Studio",
+              "creationDate": "2020-01-01T00:00:00.000Z",
+              "tags": [
+                {
+                  "id": "t",
+                  "groupName": "platform",
+                  "name": "Deck"
+                }
+              ],
+              "keyImages": [],
+              "locale": "es",
+              "localeStatus": "fallback",
+              "canonicalLocale": "en-US"
+            },
+            "primaryItem": null,
+            "sandbox": {
+              "_id": "ns",
+              "ageGatings": {
+                "USK": "USK 12"
+              },
+              "locale": "es"
+            },
+            "price": {
+              "offerId": "o"
+            },
+            "seller": null,
+            "developer": "Studio",
+            "publisher": null,
+            "keyImages": [],
+            "genres": [
+              {
+                "id": "t"
+              }
+            ],
+            "platforms": [
+              "Windows",
+              "Mac",
+              "Linux",
+              "Deck"
+            ],
+            "stats": {
+              "offers": 3,
+              "items": 1,
+              "assets": 2,
+              "builds": 2,
+              "achievements": 3
+            },
+            "featuredOffers": [
+              {
+                "id": "o",
+                "namespace": "ns",
+                "title": "Game",
+                "offerType": "BASE_GAME",
+                "developerDisplayName": "Studio",
+                "creationDate": "2020-01-01T00:00:00.000Z",
+                "tags": [
+                  {
+                    "id": "t",
+                    "groupName": "platform",
+                    "name": "Deck"
+                  }
+                ],
+                "keyImages": [],
+                "locale": "es",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ],
+            "recentBuilds": [
+              {
+                "_id": "b",
+                "appName": "app",
+                "updatedAt": "2026-01-01T00:00:00.000Z"
+              }
+            ],
+            "recentChanges": [
+              {
+                "_id": "change",
+                "metadata": {
+                  "contextId": "i"
+                }
+              }
+            ],
+            "ageRating": "USK 12",
+            "achievements": {
+              "sets": 1,
+              "total": 3,
+              "baseTotal": 3,
+              "xp": 125
+            },
+            "created": "2020-01-01T00:00:00.000Z"
+          },
+          "mode": "EX",
+          "ttl": 60
+        },
+        "result": null
+      }
+    ]
+  },
+  {
+    "name": "build-files-filter",
+    "parentType": "Build",
+    "field": "files",
+    "parent": {
+      "hash": "manifest"
+    },
+    "args": {
+      "extension": "exe,dll",
+      "q": "game",
+      "sort": "fileSize",
+      "dir": "desc"
+    },
+    "expected": {
+      "elements": [
+        {
+          "fileName": "game.exe"
+        }
+      ],
+      "total": 1,
+      "page": 1,
+      "limit": 25
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "files",
+          "method": "many",
+          "filter": {
+            "manifestHash": "manifest",
+            "$and": [
+              {
+                "fileName": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "game",
+                      "options": "i"
+                    }
+                  }
+                }
+              },
+              {
+                "fileName": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "\\.(exe|dll)$",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "options": {
+            "sort": {
+              "fileSize": -1
+            },
+            "skip": 0,
+            "limit": 25
+          }
+        },
+        "result": [
+          {
+            "fileName": "game.exe"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "files",
+          "method": "count",
+          "filter": {
+            "manifestHash": "manifest",
+            "$and": [
+              {
+                "fileName": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "game",
+                      "options": "i"
+                    }
+                  }
+                }
+              },
+              {
+                "fileName": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "\\.(exe|dll)$",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": 1
+      }
+    ]
+  },
+  {
+    "name": "build-install-options",
+    "parentType": "Build",
+    "field": "installOptions",
+    "parent": {
+      "hash": "manifest"
+    },
+    "args": {},
+    "expected": {
+      "en": {
+        "files": 2,
+        "size": 26
+      },
+      "fr": {
+        "files": 1,
+        "size": 24
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "files",
+          "method": "many",
+          "filter": {
+            "manifestHash": "manifest",
+            "installTags": {
+              "$exists": true,
+              "$not": {
+                "$size": 0
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "installTags": [
+              "en",
+              "fr"
+            ],
+            "fileSize": 24
+          },
+          {
+            "installTags": [
+              "en"
+            ],
+            "fileSize": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "batch-assets-with-misses-and-request-cache",
+    "parentType": "Item",
+    "field": "assets",
+    "parents": [
+      {
+        "id": "b"
+      },
+      {
+        "id": "missing"
+      },
+      {
+        "id": "a"
+      },
+      {
+        "id": "a"
+      }
+    ],
+    "repeat": {
+      "id": "a"
+    },
+    "args": {},
+    "expected": [
+      [
+        [
+          {
+            "artifactId": "app",
+            "itemId": "b",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ],
+        [],
+        [
+          {
+            "artifactId": "app",
+            "itemId": "a",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ],
+        [
+          {
+            "artifactId": "app",
+            "itemId": "a",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      ],
+      [
+        {
+          "artifactId": "app",
+          "itemId": "a",
+          "platform": "Windows",
+          "updatedAt": "2026-01-01T00:00:00.000Z"
+        }
+      ]
+    ],
+    "trace": [
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "filter": {
+            "itemId": {
+              "$in": [
+                "b",
+                "missing",
+                "a"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app",
+            "itemId": "a",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          },
+          {
+            "artifactId": "app",
+            "itemId": "b",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "list-builds-with-fallback-size",
+    "query": "{builds(sortBy:null,page:2,limit:1){appName downloadSizeBytes installedSizeBytes files(sort:null,dir:null){total}}}",
+    "expected": {
+      "builds": [
+        {
+          "appName": "app",
+          "downloadSizeBytes": 152,
+          "installedSizeBytes": 0,
+          "files": {
+            "total": 4
+          }
+        }
+      ]
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "filter": {},
+          "options": {
+            "sort": {
+              "null": -1
+            },
+            "skip": 1,
+            "limit": 1
+          }
+        },
+        "result": [
+          {
+            "_id": "b",
+            "appName": "app",
+            "updatedAt": "2026-01-01T00:00:00.000Z",
+            "labelName": "Live-Windows",
+            "hash": "manifest",
+            "installedSizeBytes": 0
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "one",
+          "filter": {
+            "artifactId": "app",
+            "platform": "Windows"
+          },
+          "options": {}
+        },
+        "result": {
+          "artifactId": "app",
+          "itemId": "i",
+          "platform": "Windows",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "downloadSizeBytes": 152
+        }
+      },
+      {
+        "call": {
+          "collection": "files",
+          "method": "many",
+          "filter": {
+            "manifestHash": "manifest"
+          },
+          "options": {
+            "sort": {},
+            "skip": 0,
+            "limit": 25
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "files",
+          "method": "count",
+          "filter": {
+            "manifestHash": "manifest"
+          },
+          "options": {}
+        },
+        "result": 4
+      }
+    ]
+  },
+  {
+    "name": "list-sandboxes-and-items",
+    "query": "{sandboxes(limit:105){elements{items(page:2,limit:1){elements{id} total page limit}} total limit}}",
+    "expected": {
+      "sandboxes": {
+        "elements": [
+          {
+            "items": {
+              "elements": [
+                {
+                  "id": "i"
+                }
+              ],
+              "total": 3,
+              "page": 2,
+              "limit": 1
+            }
+          }
+        ],
+        "total": 1,
+        "limit": 100
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "namespaces",
+          "method": "many",
+          "filter": {},
+          "options": {
+            "skip": 0,
+            "limit": 100
+          }
+        },
+        "result": [
+          {
+            "_id": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "namespaces",
+          "method": "count",
+          "filter": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {
+            "sort": {
+              "lastModifiedDate": -1
+            },
+            "skip": 1,
+            "limit": 1
+          }
+        },
+        "result": [
+          {
+            "id": "i",
+            "namespace": "ns",
+            "title": "Example",
+            "releaseInfo": [
+              {
+                "appId": "app",
+                "platform": [
+                  "Windows",
+                  "Mac"
+                ]
+              },
+              {
+                "appId": "extra",
+                "platform": [
+                  "Linux"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 3
+      }
+    ]
+  },
+  {
+    "name": "project-fragment-and-alias",
+    "query": "{item(id:\"i\"){label:title ...Details}} fragment Details on Item {id}",
+    "expected": {
+      "item": {
+        "label": "Example",
+        "id": "i"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "filter": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {
+            "projection": {
+              "label": 1,
+              "id": 1,
+              "_id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "i",
+          "namespace": "ns",
+          "title": "Example",
+          "releaseInfo": [
+            {
+              "appId": "app",
+              "platform": [
+                "Windows",
+                "Mac"
+              ]
+            },
+            {
+              "appId": "extra",
+              "platform": [
+                "Linux"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "items-batch-relationships",
+    "query": "{items(limit:2){elements{ id assets{platform} builds{_id}} total}}",
+    "expected": {
+      "items": {
+        "elements": [
+          {
+            "id": "i",
+            "assets": [
+              {
+                "platform": "Windows"
+              }
+            ],
+            "builds": [
+              {
+                "_id": "b"
+              },
+              null
+            ]
+          },
+          {
+            "id": "j",
+            "assets": [],
+            "builds": [
+              null
+            ]
+          }
+        ],
+        "total": 2
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "filter": {},
+          "options": {
+            "limit": 2,
+            "skip": 0,
+            "sort": {
+              "lastModifiedDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "i",
+            "namespace": "ns",
+            "title": "Example",
+            "releaseInfo": [
+              {
+                "appId": "app",
+                "platform": [
+                  "Windows",
+                  "Mac"
+                ]
+              },
+              {
+                "appId": "extra",
+                "platform": [
+                  "Linux"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "j",
+            "releaseInfo": [
+              {
+                "appId": "missing"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "filter": {},
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "filter": {
+            "itemId": {
+              "$in": [
+                "i",
+                "j"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app",
+            "itemId": "i",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "filter": {
+            "appName": {
+              "$in": [
+                "app",
+                "extra",
+                "missing"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "b",
+            "appName": "app",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "changelog-document-union",
+    "query": "{changelog(id:\"64c000000000000000000001\"){document{__typename ... on Offer{title}}}}",
+    "expected": {
+      "changelog": {
+        "document": {
+          "__typename": "Offer",
+          "title": "Game"
+        }
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "one",
+          "filter": {
+            "_id": "64c000000000000000000001"
+          },
+          "options": {}
+        },
+        "result": {
+          "document": {
+            "id": "o",
+            "namespace": "ns",
+            "title": "Game",
+            "offerType": "BASE_GAME",
+            "developerDisplayName": "Studio",
+            "creationDate": "2020-01-01T00:00:00.000Z",
+            "tags": [
+              {
+                "id": "t",
+                "groupName": "platform",
+                "name": "Deck"
+              }
+            ],
+            "keyImages": []
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "sparse-assets-without-timestamps",
+    "query": "{sandbox(id:\"ns\"){assets{elements{platform title updatedAt}}}}",
+    "expected": {
+      "sandbox": {
+        "assets": {
+          "elements": [
+            {
+              "platform": "Windows",
+              "title": null,
+              "updatedAt": null
+            },
+            {
+              "platform": "Linux",
+              "title": null,
+              "updatedAt": "1970-01-01T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "namespaces",
+          "method": "one",
+          "filter": {
+            "_id": {
+              "$eq": "ns"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "ns"
+        }
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1,
+              "releaseInfo": 1,
+              "title": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "releaseInfo": [
+              {
+                "appId": "other",
+                "platform": [
+                  "Linux"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "artifactId": "existing",
+            "platform": "Windows"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sandbox-generated-assets",
+    "query": "{sandbox(id:\"ns\"){assets(platform:\"Linux\"){count elements{artifactId platform installedSizeBytes updatedAt}}}}",
+    "expected": {
+      "sandbox": {
+        "assets": {
+          "count": 1,
+          "elements": [
+            {
+              "artifactId": "extra",
+              "platform": "Linux",
+              "installedSizeBytes": 0,
+              "updatedAt": "1970-01-01T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "namespaces",
+          "method": "one",
+          "filter": {
+            "_id": {
+              "$eq": "ns"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "ns"
+        }
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1,
+              "releaseInfo": 1,
+              "title": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "i",
+            "namespace": "ns",
+            "title": "Example",
+            "releaseInfo": [
+              {
+                "appId": "app",
+                "platform": [
+                  "Windows",
+                  "Mac"
+                ]
+              },
+              {
+                "appId": "extra",
+                "platform": [
+                  "Linux"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "filter": {
+            "namespace": "ns"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "artifactId": "app",
+            "itemId": "i",
+            "platform": "Windows",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sandbox-preorder-union",
+    "query": "{sandbox(id:\"ns\"){baseGame{__typename ... on Offer{id title} ... on Item{title}}}}",
+    "expected": {
+      "sandbox": {
+        "baseGame": {
+          "__typename": "Offer",
+          "id": "o",
+          "title": "Game"
+        }
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "namespaces",
+          "method": "one",
+          "filter": {
+            "_id": {
+              "$eq": "ns"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "ns"
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "filter": {
+            "namespace": {
+              "$eq": "ns"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            },
+            "isCodeRedemptionOnly": false
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "filter": {
+            "namespace": {
+              "$eq": "ns"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": true
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "o",
+          "namespace": "ns",
+          "title": "Game",
+          "offerType": "BASE_GAME",
+          "developerDisplayName": "Studio",
+          "creationDate": "2020-01-01T00:00:00.000Z",
+          "tags": [
+            {
+              "id": "t",
+              "groupName": "platform",
+              "name": "Deck"
+            }
+          ],
+          "keyImages": []
+        }
+      }
+    ]
+  }
+]

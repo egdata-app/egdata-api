@@ -1,0 +1,59 @@
+[
+  {
+    "signatures": [
+      {
+        "url": "/relative",
+        "secret": "",
+        "body": "{\"nested\":{\"title\":\"tést\"}}",
+        "output": {
+          "error": "Invalid URL"
+        }
+      },
+      {
+        "url": "http://jobs.local/root?",
+        "secret": "",
+        "body": "{\"nested\":{\"title\":\"tést\"}}",
+        "output": {
+          "signature": "ad51e699bc55ae620c987a8f86eff54fa235a21ec970f9f3bc88b83053d00eaa"
+        }
+      },
+      {
+        "url": "http://jobs.local/a%20b?x=1+2#ignored",
+        "secret": "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+        "body": "{\"nested\":{\"title\":\"tést\"}}",
+        "output": {
+          "signature": "3a0a2c3051ff245515d72660d4d5c2a3f41beacb70b5452a2a727bc948bd0caa"
+        }
+      }
+    ],
+    "submissions": [
+      {
+        "name": "invalid url",
+        "baseUrl": "invalid",
+        "timeoutMs": 500,
+        "nonce": "edge_nonce-123456",
+        "output": {
+          "error": "Invalid URL"
+        }
+      },
+      {
+        "name": "timer overflow",
+        "baseUrl": "http://jobs.local",
+        "timeoutMs": 2147483648,
+        "nonce": "edge_nonce-123456",
+        "output": {
+          "error": "Job API request failed before acceptance was confirmed"
+        }
+      },
+      {
+        "name": "invalid nonce character",
+        "baseUrl": "http://jobs.local",
+        "timeoutMs": 500,
+        "nonce": "invalid!0123456789",
+        "output": {
+          "error": "Job API nonce must contain 16-128 URL-safe characters"
+        }
+      }
+    ]
+  }
+]

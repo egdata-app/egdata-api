@@ -5,6 +5,18 @@ description: History for GET /graphql
 
 `GET /graphql` — active. Recorded dates are not deployment dates.
 
+## 2026-11-18 — Persist owner review changes and include newly saved reviews in public counts
+
+Record: [persist-owner-review-edits](https://github.com/egdata-app/egdata-api/blob/main/changes/records/persist-owner-review-edits.json).
+
+- **legacy GET /graphql** (legacyGet_graphql_220e6fb1; fixed; compatible)
+  - Before: A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.
+  - After: A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.
+  - Client action: None
+  - Schema fields: Profile.reviewsCount, ProfileHighlights.reviewsCount
+
+Verification: tests/rust-legacy-account-admin-oracle.test.ts compares authenticated review edits, edition history, concurrent writes and deletion during an edit.; rust/scripts/compare-origins.mjs exercises signed-in owners against the Node and Rust HTTP origins and checks the stored review in MongoDB..
+
 ## 2026-11-13 — Fix container startup after Aikido removal
 
 Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.

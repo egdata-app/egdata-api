@@ -1,0 +1,998 @@
+[
+  {
+    "name": "legacy auth GET /auth",
+    "request": {
+      "method": "GET",
+      "path": "/auth"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /auth/refresh",
+    "request": {
+      "method": "GET",
+      "path": "/auth/refresh"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5a15342c115b8f6b9ac25616624e3e3f357c933d\""
+      },
+      "body": {
+        "error": "Missing authorization header"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /auth/v2/refresh",
+    "request": {
+      "method": "GET",
+      "path": "/auth/v2/refresh"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5a15342c115b8f6b9ac25616624e3e3f357c933d\""
+      },
+      "body": {
+        "error": "Missing authorization header"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /auth/logout",
+    "request": {
+      "method": "GET",
+      "path": "/auth/logout"
+    },
+    "trace": [],
+    "response": {
+      "status": 302,
+      "headers": {
+        "location": "https://egdata.app/"
+      },
+      "body": ""
+    }
+  },
+  {
+    "name": "legacy auth GET /auth/discord/link",
+    "request": {
+      "method": "GET",
+      "path": "/auth/discord/link"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /auth/discord/callback",
+    "request": {
+      "method": "GET",
+      "path": "/auth/discord/callback"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /offers/demo/ownership",
+    "request": {
+      "method": "GET",
+      "path": "/offers/demo/ownership"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /offers/demo/reviews/permissions",
+    "request": {
+      "method": "GET",
+      "path": "/offers/demo/reviews/permissions"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /accounts",
+    "request": {
+      "method": "GET",
+      "path": "/accounts"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5cf0d5f34bdb324e32635fcf0031b88d8338ad22\""
+      },
+      "body": {
+        "error": "Unauthorized"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /users",
+    "request": {
+      "method": "GET",
+      "path": "/users"
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6eebc8bcb3d5a5e2a06b86a762f2cee39b02a1a\""
+      },
+      "body": {
+        "message": "Hello, World!"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /users/discord",
+    "request": {
+      "method": "GET",
+      "path": "/users/discord"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"81be8ae40a6154d9d55c4caa6f0f6924cc30f7b9\""
+      },
+      "body": {
+        "error": "Authorization header is required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /users/check-epic",
+    "request": {
+      "method": "GET",
+      "path": "/users/check-epic"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"d84aa1ba4d3a2a3a4715a65adcb9b40d88b46145\""
+      },
+      "body": {
+        "error": "ID query parameter is required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /users-service",
+    "request": {
+      "method": "GET",
+      "path": "/users-service"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5cf0d5f34bdb324e32635fcf0031b88d8338ad22\""
+      },
+      "body": {
+        "error": "Unauthorized"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /push/subscribe",
+    "request": {
+      "method": "GET",
+      "path": "/push/subscribe"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"eabc3b10017cb2258be4f4869d395748082659fa\""
+      },
+      "body": {
+        "error": "API key required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /push/subscriptions",
+    "request": {
+      "method": "GET",
+      "path": "/push/subscriptions"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"eabc3b10017cb2258be4f4869d395748082659fa\""
+      },
+      "body": {
+        "error": "API key required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /push/subscriptions/demo",
+    "request": {
+      "method": "GET",
+      "path": "/push/subscriptions/demo"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"eabc3b10017cb2258be4f4869d395748082659fa\""
+      },
+      "body": {
+        "error": "API key required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /push/vapid-public-key",
+    "request": {
+      "method": "GET",
+      "path": "/push/vapid-public-key"
+    },
+    "trace": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"fe2790b6e282752c52a9b4f19b89b9d41ec73153\""
+      },
+      "body": {
+        "error": "VAPID public key not configured"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /push/topics/stats",
+    "request": {
+      "method": "GET",
+      "path": "/push/topics/stats"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"eabc3b10017cb2258be4f4869d395748082659fa\""
+      },
+      "body": {
+        "error": "API key required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /launcher/sandbox/demo",
+    "request": {
+      "method": "GET",
+      "path": "/launcher/sandbox/demo"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /launcher/sandbox/demo/items",
+    "request": {
+      "method": "GET",
+      "path": "/launcher/sandbox/demo/items"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /launcher/sandbox/demo/offers",
+    "request": {
+      "method": "GET",
+      "path": "/launcher/sandbox/demo/offers"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth GET /admin",
+    "request": {
+      "method": "GET",
+      "path": "/admin"
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5cf0d5f34bdb324e32635fcf0031b88d8338ad22\""
+      },
+      "body": {
+        "error": "Unauthorized"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /auth/avatar",
+    "request": {
+      "method": "POST",
+      "path": "/auth/avatar",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /auth/persist",
+    "request": {
+      "method": "POST",
+      "path": "/auth/persist",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /auth/v2/persist",
+    "request": {
+      "method": "POST",
+      "path": "/auth/v2/persist",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5a15342c115b8f6b9ac25616624e3e3f357c933d\""
+      },
+      "body": {
+        "error": "Missing authorization header"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /auth/v2/validate-state",
+    "request": {
+      "method": "POST",
+      "path": "/auth/v2/validate-state",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"1633674cb60e5ec44d7d7141ce311db5a8596af4\""
+      },
+      "body": {
+        "error": "Missing state parameter"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /donate/key/invalid",
+    "request": {
+      "method": "POST",
+      "path": "/donate/key/invalid",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /offers/demo/reviews",
+    "request": {
+      "method": "POST",
+      "path": "/offers/demo/reviews",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /users/find-or-create",
+    "request": {
+      "method": "POST",
+      "path": "/users/find-or-create",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"81be8ae40a6154d9d55c4caa6f0f6924cc30f7b9\""
+      },
+      "body": {
+        "error": "Authorization header is required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /users/discord",
+    "request": {
+      "method": "POST",
+      "path": "/users/discord",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"81be8ae40a6154d9d55c4caa6f0f6924cc30f7b9\""
+      },
+      "body": {
+        "error": "Authorization header is required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /users-service/playtime",
+    "request": {
+      "method": "POST",
+      "path": "/users-service/playtime",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5cf0d5f34bdb324e32635fcf0031b88d8338ad22\""
+      },
+      "body": {
+        "error": "Unauthorized"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /users-service/ownership",
+    "request": {
+      "method": "POST",
+      "path": "/users-service/ownership",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5cf0d5f34bdb324e32635fcf0031b88d8338ad22\""
+      },
+      "body": {
+        "error": "Unauthorized"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /push/subscribe",
+    "request": {
+      "method": "POST",
+      "path": "/push/subscribe",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"eabc3b10017cb2258be4f4869d395748082659fa\""
+      },
+      "body": {
+        "error": "API key required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /push/topics/subscribe",
+    "request": {
+      "method": "POST",
+      "path": "/push/topics/subscribe",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"eabc3b10017cb2258be4f4869d395748082659fa\""
+      },
+      "body": {
+        "error": "API key required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /push/topics/unsubscribe",
+    "request": {
+      "method": "POST",
+      "path": "/push/topics/unsubscribe",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"eabc3b10017cb2258be4f4869d395748082659fa\""
+      },
+      "body": {
+        "error": "API key required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /push/send",
+    "request": {
+      "method": "POST",
+      "path": "/push/send",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"8a4e40f4d5425c2a78d688d97ebb085d40ccdb33\""
+      },
+      "body": {
+        "error": "API key required for this operation"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /push/send-to-user",
+    "request": {
+      "method": "POST",
+      "path": "/push/send-to-user",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"8a4e40f4d5425c2a78d688d97ebb085d40ccdb33\""
+      },
+      "body": {
+        "error": "API key required for this operation"
+      }
+    }
+  },
+  {
+    "name": "legacy auth POST /admin/offers",
+    "request": {
+      "method": "POST",
+      "path": "/admin/offers",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5cf0d5f34bdb324e32635fcf0031b88d8338ad22\""
+      },
+      "body": {
+        "error": "Unauthorized"
+      }
+    }
+  },
+  {
+    "name": "legacy auth PATCH /auth/refresh",
+    "request": {
+      "method": "PATCH",
+      "path": "/auth/refresh",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5a15342c115b8f6b9ac25616624e3e3f357c933d\""
+      },
+      "body": {
+        "error": "Missing authorization header"
+      }
+    }
+  },
+  {
+    "name": "legacy auth PATCH /auth/refresh-admin",
+    "request": {
+      "method": "PATCH",
+      "path": "/auth/refresh-admin",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5a15342c115b8f6b9ac25616624e3e3f357c933d\""
+      },
+      "body": {
+        "error": "Missing authorization header"
+      }
+    }
+  },
+  {
+    "name": "legacy auth PATCH /offers/demo/reviews",
+    "request": {
+      "method": "PATCH",
+      "path": "/offers/demo/reviews",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth PATCH /admin/offers",
+    "request": {
+      "method": "PATCH",
+      "path": "/admin/offers",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5cf0d5f34bdb324e32635fcf0031b88d8338ad22\""
+      },
+      "body": {
+        "error": "Unauthorized"
+      }
+    }
+  },
+  {
+    "name": "legacy auth DELETE /offers/demo/reviews",
+    "request": {
+      "method": "DELETE",
+      "path": "/offers/demo/reviews",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f6e80cd96f094b6ffef19cc74f3954cf1eca38ba\""
+      },
+      "body": {
+        "error": "Missing EPIC_AUTH header or cookie"
+      }
+    }
+  },
+  {
+    "name": "legacy auth DELETE /users/epic",
+    "request": {
+      "method": "DELETE",
+      "path": "/users/epic",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"81be8ae40a6154d9d55c4caa6f0f6924cc30f7b9\""
+      },
+      "body": {
+        "error": "Authorization header is required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth DELETE /push/unsubscribe/demo",
+    "request": {
+      "method": "DELETE",
+      "path": "/push/unsubscribe/demo",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"eabc3b10017cb2258be4f4869d395748082659fa\""
+      },
+      "body": {
+        "error": "API key required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth PUT /users/epic",
+    "request": {
+      "method": "PUT",
+      "path": "/users/epic",
+      "rawBody": "{}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"81be8ae40a6154d9d55c4caa6f0f6924cc30f7b9\""
+      },
+      "body": {
+        "error": "Authorization header is required"
+      }
+    }
+  },
+  {
+    "name": "legacy auth preflight https://egdata.app",
+    "request": {
+      "method": "OPTIONS",
+      "path": "/auth",
+      "headers": {
+        "origin": "https://egdata.app",
+        "access-control-request-method": "GET"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 204,
+      "headers": {},
+      "body": ""
+    },
+    "additionalHeaders": {
+      "access-control-allow-origin": "https://egdata.app",
+      "access-control-allow-credentials": "true",
+      "access-control-allow-methods": "GET,HEAD,PUT,POST,DELETE,PATCH",
+      "access-control-allow-headers": "Content-Type,Authorization,apollographql-client-name,apollographql-client-version,apollo-require-preflight,x-api-key,x-egdata-session",
+      "access-control-max-age": "600",
+      "vary": "Origin, Access-Control-Request-Headers"
+    }
+  },
+  {
+    "name": "legacy auth preflight http://localhost:3000",
+    "request": {
+      "method": "OPTIONS",
+      "path": "/auth",
+      "headers": {
+        "origin": "http://localhost:3000",
+        "access-control-request-method": "GET"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 204,
+      "headers": {},
+      "body": ""
+    },
+    "additionalHeaders": {
+      "access-control-allow-origin": "http://localhost:3000",
+      "access-control-allow-credentials": "true",
+      "access-control-allow-methods": "GET,HEAD,PUT,POST,DELETE,PATCH",
+      "access-control-allow-headers": "Content-Type,Authorization,apollographql-client-name,apollographql-client-version,apollo-require-preflight,x-api-key,x-egdata-session",
+      "access-control-max-age": "600",
+      "vary": "Origin, Access-Control-Request-Headers"
+    }
+  },
+  {
+    "name": "legacy auth preflight https://example.invalid",
+    "request": {
+      "method": "OPTIONS",
+      "path": "/auth",
+      "headers": {
+        "origin": "https://example.invalid",
+        "access-control-request-method": "GET"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 204,
+      "headers": {},
+      "body": ""
+    },
+    "additionalHeaders": {
+      "access-control-allow-origin": null,
+      "access-control-allow-credentials": "true",
+      "access-control-allow-methods": "GET,HEAD,PUT,POST,DELETE,PATCH",
+      "access-control-allow-headers": "Content-Type,Authorization,apollographql-client-name,apollographql-client-version,apollo-require-preflight,x-api-key,x-egdata-session",
+      "access-control-max-age": "600",
+      "vary": "Origin, Access-Control-Request-Headers"
+    }
+  }
+]

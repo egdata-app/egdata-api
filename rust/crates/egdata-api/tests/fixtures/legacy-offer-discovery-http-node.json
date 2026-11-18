@@ -1,0 +1,3592 @@
+[
+  {
+    "name": "list",
+    "request": {
+      "method": "GET",
+      "path": "/offers?limit=5&page=2"
+    },
+    "additionalHeaders": {
+      "server-timing": "db;dur=0"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offers:US:2:5:locale:en-US:card"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {},
+          "options": {
+            "limit": 5,
+            "skip": 5,
+            "sort": {
+              "lastModifiedDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "keyImages": [],
+            "offerType": "DLC"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "a",
+                "b"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "region": "US",
+            "price": {
+              "discount": 330
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 34
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "offers:US:2:5:locale:en-US:card",
+          "payload": {
+            "elements": [
+              {
+                "_id": "raw-a",
+                "id": "a",
+                "namespace": "na",
+                "title": "Alpha",
+                "offerType": "BASE_GAME",
+                "keyImages": [
+                  {
+                    "type": "Thumbnail",
+                    "url": "thumb"
+                  },
+                  {
+                    "type": "OfferImageTall",
+                    "url": "tall"
+                  }
+                ],
+                "customAttributes": {},
+                "price": {
+                  "offerId": "a",
+                  "region": "US",
+                  "price": {
+                    "discount": 330
+                  }
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              },
+              {
+                "id": "b",
+                "namespace": "nb",
+                "title": "Beta",
+                "offerType": "DLC",
+                "keyImages": [],
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "page": 2,
+            "limit": 5,
+            "total": 34
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"6011d32ac8f8fda4ac033e85ad2055bd8fd6e39e\""
+      },
+      "body": {
+        "elements": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "offerType": "BASE_GAME",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "customAttributes": {},
+            "price": {
+              "offerId": "a",
+              "region": "US",
+              "price": {
+                "discount": 330
+              }
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "offerType": "DLC",
+            "keyImages": [],
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "page": 2,
+        "limit": 5,
+        "total": 34
+      }
+    }
+  },
+  {
+    "name": "list-invalid-country",
+    "request": {
+      "method": "GET",
+      "path": "/offers?country=no"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"8fa0fd9e94fd7c374a1fd5e37392568240674c91\""
+      },
+      "body": {
+        "message": "Country not found"
+      }
+    }
+  },
+  {
+    "name": "list-cache",
+    "request": {
+      "method": "GET",
+      "path": "/offers?expand=FULL&locale=es-es",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offers:EURO:1:10:locale:es-ES:full"
+        },
+        "result": {
+          "hit": true
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"f5c496c80fc33c200b94d634a1ba4ba6793a2f02\""
+      },
+      "body": {
+        "hit": true
+      }
+    }
+  },
+  {
+    "name": "event-missing",
+    "request": {
+      "method": "GET",
+      "path": "/offers/events/abc"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "event:abc:US:1:10:locale:en-US:card"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "one",
+          "query": {
+            "id": "abc",
+            "groupName": "event"
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"4fb268e272301a77bd02b095b8d1882d61452d8a\""
+      },
+      "body": {
+        "message": "Event not found"
+      }
+    }
+  },
+  {
+    "name": "event-card",
+    "request": {
+      "method": "GET",
+      "path": "/offers/events/abc"
+    },
+    "additionalHeaders": {
+      "server-timing": "db;dur=0"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "event:abc:US:1:10:locale:en-US:card"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "one",
+          "query": {
+            "id": "abc",
+            "groupName": "event"
+          },
+          "options": {}
+        },
+        "result": {
+          "name": "Spring"
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "abc"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "price"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$price",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$sort": {
+                "price.price.discount": -1
+              }
+            },
+            {
+              "$skip": 0
+            },
+            {
+              "$limit": 10
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "id": 1,
+                "namespace": 1,
+                "title": 1,
+                "seller": 1,
+                "developerDisplayName": 1,
+                "publisherDisplayName": 1,
+                "keyImages": 1,
+                "price": 1,
+                "offerType": 1,
+                "productSlug": 1,
+                "urlSlug": 1,
+                "releaseDate": 1,
+                "effectiveDate": 1,
+                "lastModifiedDate": 1,
+                "prePurchase": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": [],
+            "price": {
+              "offerId": "a",
+              "region": "US",
+              "price": {
+                "discount": 330
+              }
+            }
+          },
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "keyImages": [],
+            "offerType": "DLC"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "abc"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "event:abc:US:1:10:locale:en-US:card",
+          "payload": {
+            "elements": [
+              {
+                "_id": "raw-a",
+                "id": "a",
+                "namespace": "na",
+                "title": "Alpha",
+                "offerType": "BASE_GAME",
+                "keyImages": [
+                  {
+                    "type": "Thumbnail",
+                    "url": "thumb"
+                  },
+                  {
+                    "type": "OfferImageTall",
+                    "url": "tall"
+                  }
+                ],
+                "customAttributes": {},
+                "price": {
+                  "offerId": "a",
+                  "region": "US",
+                  "price": {
+                    "discount": 330
+                  }
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              },
+              {
+                "id": "b",
+                "namespace": "nb",
+                "title": "Beta",
+                "offerType": "DLC",
+                "keyImages": [],
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "title": "Spring",
+            "limit": 10,
+            "start": 0,
+            "page": 1,
+            "count": 2
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"ed08cb3ee52c72b2d98a4b79b827b1f152188fae\""
+      },
+      "body": {
+        "elements": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "offerType": "BASE_GAME",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "customAttributes": {},
+            "price": {
+              "offerId": "a",
+              "region": "US",
+              "price": {
+                "discount": 330
+              }
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "offerType": "DLC",
+            "keyImages": [],
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "title": "Spring",
+        "limit": 10,
+        "start": 0,
+        "page": 1,
+        "count": 2
+      }
+    }
+  },
+  {
+    "name": "event-expanded",
+    "request": {
+      "method": "GET",
+      "path": "/offers/events/abc?expand=true"
+    },
+    "additionalHeaders": {
+      "server-timing": "db;dur=0"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "event:abc:US:1:10:locale:en-US:full"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "one",
+          "query": {
+            "id": "abc",
+            "groupName": "event"
+          },
+          "options": {}
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "abc"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "price"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$price",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$sort": {
+                "price.price.discount": -1
+              }
+            },
+            {
+              "$skip": 0
+            },
+            {
+              "$limit": 10
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "id": 1,
+                "namespace": 1,
+                "title": 1,
+                "seller": 1,
+                "developerDisplayName": 1,
+                "publisherDisplayName": 1,
+                "keyImages": 1,
+                "price": 1,
+                "offerType": 1,
+                "productSlug": 1,
+                "urlSlug": 1,
+                "releaseDate": 1,
+                "effectiveDate": 1,
+                "lastModifiedDate": 1,
+                "prePurchase": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": [],
+            "price": {
+              "offerId": "a",
+              "region": "US",
+              "price": {
+                "discount": 330
+              }
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "abc"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "event:abc:US:1:10:locale:en-US:full",
+          "payload": {
+            "elements": [
+              {
+                "_id": "raw-a",
+                "id": "a",
+                "namespace": "na",
+                "title": "Alpha",
+                "keyImages": [
+                  {
+                    "type": "Thumbnail",
+                    "url": "thumb"
+                  },
+                  {
+                    "type": "OfferImageTall",
+                    "url": "tall"
+                  }
+                ],
+                "offerType": "BASE_GAME",
+                "extraField": "full only",
+                "customAttributes": [],
+                "price": {
+                  "offerId": "a",
+                  "region": "US",
+                  "price": {
+                    "discount": 330
+                  }
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "title": "",
+            "limit": 10,
+            "start": 0,
+            "page": 1,
+            "count": 1
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"2780c708a3530d27b7f45fffed6054ff6539d1e1\""
+      },
+      "body": {
+        "elements": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": [],
+            "price": {
+              "offerId": "a",
+              "region": "US",
+              "price": {
+                "discount": 330
+              }
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "title": "",
+        "limit": 10,
+        "start": 0,
+        "page": 1,
+        "count": 1
+      }
+    }
+  },
+  {
+    "name": "upcoming",
+    "request": {
+      "method": "GET",
+      "path": "/offers/upcoming?page=2"
+    },
+    "additionalHeaders": {
+      "server-timing": "db;dur=0"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "upcoming:US:2:15:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "releaseDate": {
+                  "$gt": {
+                    "$date": "2026-11-17T00:00:00.000Z"
+                  },
+                  "$ne": null,
+                  "$lt": {
+                    "$date": "2099-01-01T00:00:00.000Z"
+                  }
+                },
+                "offerType": {
+                  "$in": [
+                    "BASE_GAME",
+                    "DLC"
+                  ]
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "price"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$price",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$sort": {
+                "releaseDate": 1
+              }
+            },
+            {
+              "$skip": 15
+            },
+            {
+              "$limit": 15
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": [],
+            "price": {
+              "offerId": "a",
+              "region": "US",
+              "price": {
+                "discount": 330
+              }
+            }
+          },
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "keyImages": [],
+            "offerType": "DLC"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "effectiveDate": {
+              "$gt": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 9
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "upcoming:US:2:15:locale:en-US:card:v0.2",
+          "payload": {
+            "elements": [
+              {
+                "_id": "raw-a",
+                "id": "a",
+                "namespace": "na",
+                "title": "Alpha",
+                "offerType": "BASE_GAME",
+                "keyImages": [
+                  {
+                    "type": "Thumbnail",
+                    "url": "thumb"
+                  },
+                  {
+                    "type": "OfferImageTall",
+                    "url": "tall"
+                  }
+                ],
+                "customAttributes": {},
+                "price": {
+                  "offerId": "a",
+                  "region": "US",
+                  "price": {
+                    "discount": 330
+                  }
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              },
+              {
+                "id": "b",
+                "namespace": "nb",
+                "title": "Beta",
+                "offerType": "DLC",
+                "keyImages": [],
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "limit": 15,
+            "start": 15,
+            "page": 2,
+            "count": 9
+          },
+          "ttl": 360
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"d0d3780f74dbb55a2d71eabcd8c257d47f134394\""
+      },
+      "body": {
+        "elements": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "offerType": "BASE_GAME",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "customAttributes": {},
+            "price": {
+              "offerId": "a",
+              "region": "US",
+              "price": {
+                "discount": 330
+              }
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "offerType": "DLC",
+            "keyImages": [],
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "limit": 15,
+        "start": 15,
+        "page": 2,
+        "count": 9
+      }
+    }
+  },
+  {
+    "name": "upcoming-hit",
+    "request": {
+      "method": "GET",
+      "path": "/offers/upcoming?limit=99"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "upcoming:US:1:50:locale:en-US:card:v0.2"
+        },
+        "result": {
+          "hit": "up"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"199106a08ba5b1232decb8f0b3b36e7adab72b57\""
+      },
+      "body": {
+        "hit": "up"
+      }
+    }
+  },
+  {
+    "name": "latest",
+    "request": {
+      "method": "GET",
+      "path": "/offers/latest-released?limit=1"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "latest-released:US:1:1:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            },
+            "releaseDate": {
+              "$ne": null,
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "releaseDate": -1
+            },
+            "limit": 1,
+            "skip": 0
+          }
+        },
+        "result": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "a"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "releaseDate": {
+              "$ne": null
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 20
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "latest-released:US:1:1:locale:en-US:card:v0.2",
+          "payload": {
+            "elements": [
+              {
+                "_id": "raw-a",
+                "id": "a",
+                "namespace": "na",
+                "title": "Alpha",
+                "offerType": "BASE_GAME",
+                "keyImages": [
+                  {
+                    "type": "Thumbnail",
+                    "url": "thumb"
+                  },
+                  {
+                    "type": "OfferImageTall",
+                    "url": "tall"
+                  }
+                ],
+                "customAttributes": {},
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "limit": 1,
+            "start": 0,
+            "page": 1,
+            "count": 20
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"5b57495adefef0cf45e6cc37f59beb119cedd8a5\""
+      },
+      "body": {
+        "elements": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "offerType": "BASE_GAME",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "customAttributes": {},
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "limit": 1,
+        "start": 0,
+        "page": 1,
+        "count": 20
+      }
+    }
+  },
+  {
+    "name": "latest-bad-locale",
+    "request": {
+      "method": "GET",
+      "path": "/offers/latest-released?locale=nope"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"d541dece15b3c23193c7251cf73c06fbfeb51be8\""
+      },
+      "body": {
+        "message": "Invalid locale parameter: nope"
+      }
+    }
+  },
+  {
+    "name": "genres-empty",
+    "request": {
+      "method": "GET",
+      "path": "/offers/genres"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "tags",
+          "method": "many",
+          "query": {
+            "groupName": "genre",
+            "status": "ACTIVE"
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "genres-image",
+    "request": {
+      "method": "GET",
+      "path": "/offers/genres"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "tags",
+          "method": "many",
+          "query": {
+            "groupName": "genre",
+            "status": "ACTIVE"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "genre",
+            "name": "genre"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "genre"
+              }
+            },
+            "offerType": "BASE_GAME",
+            "releaseDate": {
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "limit": 3,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "keyImages": [],
+            "offerType": "DLC"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"f7ea171c34894b1ab6385b5081fb719476e2f5fd\""
+      },
+      "body": [
+        {
+          "genre": {
+            "id": "genre",
+            "name": "genre"
+          },
+          "offers": [
+            {
+              "id": "a",
+              "title": "Alpha",
+              "image": {
+                "type": "OfferImageTall",
+                "url": "tall"
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            {
+              "id": "b",
+              "title": "Beta",
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "genres-fallback",
+    "request": {
+      "method": "GET",
+      "path": "/offers/genres?locale=es-es"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "tags",
+          "method": "many",
+          "query": {
+            "groupName": "genre",
+            "status": "ACTIVE"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "genre"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "genre"
+              }
+            },
+            "offerType": "BASE_GAME",
+            "releaseDate": {
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "limit": 3,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "keyImages": [],
+            "offerType": "DLC"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "nb:b"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"4e1d72a0f851846d07485fbe023a9f49e0831f82\""
+      },
+      "body": [
+        {
+          "genre": {
+            "id": "genre"
+          },
+          "offers": [
+            {
+              "id": "b",
+              "title": "Beta",
+              "locale": "es-ES",
+              "localeStatus": "fallback",
+              "canonicalLocale": "en-US"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "top-wishlisted",
+    "request": {
+      "method": "GET",
+      "path": "/offers/top-wishlisted?limit=100"
+    },
+    "additionalHeaders": {
+      "server-timing": "db;dur=0"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "top-wishlisted:1:10:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "many",
+          "query": {
+            "collectionId": "top-wishlisted",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "position": 1
+            },
+            "limit": 10,
+            "skip": 0
+          }
+        },
+        "result": [
+          {
+            "offerId": "b",
+            "position": 1
+          },
+          {
+            "offerId": "a",
+            "position": 2
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "b",
+                "a"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "keyImages": [],
+            "offerType": "DLC"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 15
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "top-wishlisted:1:10:locale:en-US:card:v0.2",
+          "payload": {
+            "elements": [
+              {
+                "id": "b",
+                "namespace": "nb",
+                "title": "Beta",
+                "offerType": "DLC",
+                "keyImages": [],
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical",
+                "position": 1
+              },
+              {
+                "_id": "raw-a",
+                "id": "a",
+                "namespace": "na",
+                "title": "Alpha",
+                "offerType": "BASE_GAME",
+                "keyImages": [
+                  {
+                    "type": "Thumbnail",
+                    "url": "thumb"
+                  },
+                  {
+                    "type": "OfferImageTall",
+                    "url": "tall"
+                  }
+                ],
+                "customAttributes": {},
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical",
+                "position": 2
+              }
+            ],
+            "page": 1,
+            "limit": 10,
+            "total": 15
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"abaf2d04a2e65789f50da4881ae3a1311def500c\""
+      },
+      "body": {
+        "elements": [
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "offerType": "DLC",
+            "keyImages": [],
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical",
+            "position": 1
+          },
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "offerType": "BASE_GAME",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "customAttributes": {},
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical",
+            "position": 2
+          }
+        ],
+        "page": 1,
+        "limit": 10,
+        "total": 15
+      }
+    }
+  },
+  {
+    "name": "top-sellers-expanded",
+    "request": {
+      "method": "GET",
+      "path": "/offers/top-sellers?expand=true"
+    },
+    "additionalHeaders": {
+      "server-timing": "db;dur=0"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "top-sellers:1:10:locale:en-US:full:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "many",
+          "query": {
+            "collectionId": "top-sellers",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "position": 1
+            },
+            "limit": 10,
+            "skip": 0
+          }
+        },
+        "result": [
+          {
+            "offerId": "b",
+            "position": 1
+          },
+          {
+            "offerId": "a",
+            "position": 2
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "b",
+                "a"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "keyImages": [],
+            "offerType": "DLC"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "top-sellers",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 7
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "top-sellers:1:10:locale:en-US:full:v0.2",
+          "payload": {
+            "elements": [
+              {
+                "id": "b",
+                "namespace": "nb",
+                "title": "Beta",
+                "offerType": "DLC",
+                "keyImages": [],
+                "position": 1,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              },
+              {
+                "_id": "raw-a",
+                "id": "a",
+                "namespace": "na",
+                "title": "Alpha",
+                "offerType": "BASE_GAME",
+                "keyImages": [
+                  {
+                    "type": "Thumbnail",
+                    "url": "thumb"
+                  },
+                  {
+                    "type": "OfferImageTall",
+                    "url": "tall"
+                  }
+                ],
+                "customAttributes": {},
+                "position": 2,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "page": 1,
+            "limit": 10,
+            "total": 7
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"856919012ed4b2be2adcaff296d30e53be6883b4\""
+      },
+      "body": {
+        "elements": [
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "offerType": "DLC",
+            "keyImages": [],
+            "position": 1,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "offerType": "BASE_GAME",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "customAttributes": {},
+            "position": 2,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "page": 1,
+        "limit": 10,
+        "total": 7
+      }
+    }
+  },
+  {
+    "name": "top-empty",
+    "request": {
+      "method": "GET",
+      "path": "/offers/top-sellers?page=2"
+    },
+    "additionalHeaders": {
+      "server-timing": "db;dur=0"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "top-sellers:2:10:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "many",
+          "query": {
+            "collectionId": "top-sellers",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "position": 1
+            },
+            "limit": 10,
+            "skip": 10
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"3ed48155ed27b5fbd2f507d3f04840812b1ced48\""
+      },
+      "body": {
+        "elements": [],
+        "page": 2,
+        "limit": 10,
+        "total": 0
+      }
+    }
+  },
+  {
+    "name": "top-cache",
+    "request": {
+      "method": "GET",
+      "path": "/offers/top-sellers"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "top-sellers:1:10:locale:en-US:card:v0.2"
+        },
+        "result": {
+          "hit": "ranked"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"83b6ad0971790061d6656735f694f2b55fa6863d\""
+      },
+      "body": {
+        "hit": "ranked"
+      }
+    }
+  },
+  {
+    "name": "featured-empty",
+    "request": {
+      "method": "GET",
+      "path": "/offers/featured-discounts"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "featured-discounts:US:locale:en-US:card:v0.4"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "many",
+          "query": {
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "position": 1
+            },
+            "limit": 200
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "featured",
+    "request": {
+      "method": "GET",
+      "path": "/offers/featured-discounts"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "featured-discounts:US:locale:en-US:card:v0.4"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "many",
+          "query": {
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "position": 1
+            },
+            "limit": 200
+          }
+        },
+        "result": [
+          {
+            "offerId": "b",
+            "position": 1
+          },
+          {
+            "offerId": "a",
+            "position": 2
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "b",
+                "a"
+              ]
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "keyImages": [],
+            "offerType": "DLC"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "b",
+                "a"
+              ]
+            },
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "region": "US",
+            "price": {
+              "discount": 330
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "featured-discounts:US:locale:en-US:card:v0.4",
+          "payload": [
+            {
+              "_id": "raw-a",
+              "id": "a",
+              "namespace": "na",
+              "title": "Alpha",
+              "offerType": "BASE_GAME",
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "customAttributes": {},
+              "price": {
+                "offerId": "a",
+                "region": "US",
+                "price": {
+                  "discount": 330
+                }
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical",
+              "position": 2
+            }
+          ],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"5425490dc66212d553a558c284f4e63c5f1ae9e3\""
+      },
+      "body": [
+        {
+          "_id": "raw-a",
+          "id": "a",
+          "namespace": "na",
+          "title": "Alpha",
+          "offerType": "BASE_GAME",
+          "keyImages": [
+            {
+              "type": "Thumbnail",
+              "url": "thumb"
+            },
+            {
+              "type": "OfferImageTall",
+              "url": "tall"
+            }
+          ],
+          "customAttributes": {},
+          "price": {
+            "offerId": "a",
+            "region": "US",
+            "price": {
+              "discount": 330
+            }
+          },
+          "locale": "en-US",
+          "localeStatus": "canonical",
+          "position": 2
+        }
+      ]
+    }
+  },
+  {
+    "name": "featured-expanded",
+    "request": {
+      "method": "GET",
+      "path": "/offers/featured-discounts?expand=1"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "featured-discounts:US:locale:en-US:full:v0.4"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "many",
+          "query": {
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "position": 1
+            },
+            "limit": 200
+          }
+        },
+        "result": [
+          {
+            "offerId": "b",
+            "position": 1
+          },
+          {
+            "offerId": "a",
+            "position": 2
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "b",
+                "a"
+              ]
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "keyImages": [],
+            "offerType": "DLC"
+          },
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "b",
+                "a"
+              ]
+            },
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "region": "US",
+            "price": {
+              "discount": 330
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "featured-discounts:US:locale:en-US:full:v0.4",
+          "payload": [
+            {
+              "_id": "raw-a",
+              "id": "a",
+              "namespace": "na",
+              "title": "Alpha",
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "offerType": "BASE_GAME",
+              "extraField": "full only",
+              "customAttributes": [],
+              "price": {
+                "offerId": "a",
+                "region": "US",
+                "price": {
+                  "discount": 330
+                }
+              },
+              "position": 2,
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"c975d89f9a7162a094f15050b032bd96976c68e0\""
+      },
+      "body": [
+        {
+          "_id": "raw-a",
+          "id": "a",
+          "namespace": "na",
+          "title": "Alpha",
+          "keyImages": [
+            {
+              "type": "Thumbnail",
+              "url": "thumb"
+            },
+            {
+              "type": "OfferImageTall",
+              "url": "tall"
+            }
+          ],
+          "offerType": "BASE_GAME",
+          "extraField": "full only",
+          "customAttributes": [],
+          "price": {
+            "offerId": "a",
+            "region": "US",
+            "price": {
+              "discount": 330
+            }
+          },
+          "position": 2,
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      ]
+    }
+  },
+  {
+    "name": "achievements-empty",
+    "request": {
+      "method": "GET",
+      "path": "/offers/latest-achievements"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "latest-achievements:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            },
+            "tags.id": "19847",
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "effectiveDate": -1
+            },
+            "skip": 0,
+            "limit": 15
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": []
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": []
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "latest-achievements:US:locale:en-US:card:v0.2",
+          "payload": [],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "achievements-full",
+    "request": {
+      "method": "GET",
+      "path": "/offers/latest-achievements?expand=1"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "latest-achievements:US:locale:en-US:full:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            },
+            "tags.id": "19847",
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "effectiveDate": -1
+            },
+            "skip": 0,
+            "limit": 15
+          }
+        },
+        "result": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "keyImages": [],
+            "offerType": "DLC"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                "na",
+                "nb"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "na",
+            "totalAchievements": 22
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "a",
+                "b"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "region": "US",
+            "price": {
+              "discount": 330
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "latest-achievements:US:locale:en-US:full:v0.2",
+          "payload": [
+            {
+              "_id": "raw-a",
+              "id": "a",
+              "namespace": "na",
+              "title": "Alpha",
+              "offerType": "BASE_GAME",
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "customAttributes": {},
+              "achievements": {
+                "sandboxId": "na",
+                "totalAchievements": 22
+              },
+              "price": {
+                "offerId": "a",
+                "region": "US",
+                "price": {
+                  "discount": 330
+                }
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"d973bf3bd6b3d8d822c131a3723673a4bbb40671\""
+      },
+      "body": [
+        {
+          "_id": "raw-a",
+          "id": "a",
+          "namespace": "na",
+          "title": "Alpha",
+          "offerType": "BASE_GAME",
+          "keyImages": [
+            {
+              "type": "Thumbnail",
+              "url": "thumb"
+            },
+            {
+              "type": "OfferImageTall",
+              "url": "tall"
+            }
+          ],
+          "customAttributes": {},
+          "achievements": {
+            "sandboxId": "na",
+            "totalAchievements": 22
+          },
+          "price": {
+            "offerId": "a",
+            "region": "US",
+            "price": {
+              "discount": 330
+            }
+          },
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      ]
+    }
+  },
+  {
+    "name": "achievements-partial",
+    "request": {
+      "method": "GET",
+      "path": "/offers/latest-achievements"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "latest-achievements:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            },
+            "tags.id": "19847",
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "effectiveDate": -1
+            },
+            "skip": 0,
+            "limit": 15
+          }
+        },
+        "result": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "id": "b",
+            "namespace": "nb",
+            "title": "Beta",
+            "keyImages": [],
+            "offerType": "DLC"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                "na",
+                "nb"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "na",
+            "totalAchievements": 22
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "a",
+                "b"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "latest-achievements:US:locale:en-US:card:v0.2",
+          "payload": [
+            {
+              "_id": "raw-a",
+              "id": "a",
+              "namespace": "na",
+              "title": "Alpha",
+              "offerType": "BASE_GAME",
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "customAttributes": {},
+              "price": null,
+              "locale": "en-US",
+              "localeStatus": "canonical",
+              "achievements": {
+                "sandboxId": "na",
+                "totalAchievements": 22
+              }
+            }
+          ],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"079701611a987fd2682263078ba3359314d7ab76\""
+      },
+      "body": [
+        {
+          "_id": "raw-a",
+          "id": "a",
+          "namespace": "na",
+          "title": "Alpha",
+          "offerType": "BASE_GAME",
+          "keyImages": [
+            {
+              "type": "Thumbnail",
+              "url": "thumb"
+            },
+            {
+              "type": "OfferImageTall",
+              "url": "tall"
+            }
+          ],
+          "customAttributes": {},
+          "price": null,
+          "locale": "en-US",
+          "localeStatus": "canonical",
+          "achievements": {
+            "sandboxId": "na",
+            "totalAchievements": 22
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "achievements-next-page",
+    "request": {
+      "method": "GET",
+      "path": "/offers/latest-achievements"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "latest-achievements:US:locale:en-US:card:v0.2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            },
+            "tags.id": "19847",
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "effectiveDate": -1
+            },
+            "skip": 0,
+            "limit": 15
+          }
+        },
+        "result": [
+          {
+            "_id": "raw-a",
+            "id": "missing0",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing1",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing2",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing3",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing4",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing5",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing6",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing7",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing8",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing9",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing10",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing11",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing12",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing13",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          },
+          {
+            "_id": "raw-a",
+            "id": "missing14",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                "na",
+                "na",
+                "na",
+                "na",
+                "na",
+                "na",
+                "na",
+                "na",
+                "na",
+                "na",
+                "na",
+                "na",
+                "na",
+                "na",
+                "na"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "missing0",
+                "missing1",
+                "missing2",
+                "missing3",
+                "missing4",
+                "missing5",
+                "missing6",
+                "missing7",
+                "missing8",
+                "missing9",
+                "missing10",
+                "missing11",
+                "missing12",
+                "missing13",
+                "missing14"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            },
+            "tags.id": "19847",
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "effectiveDate": -1
+            },
+            "skip": 15,
+            "limit": 15
+          }
+        },
+        "result": [
+          {
+            "_id": "raw-a",
+            "id": "a",
+            "namespace": "na",
+            "title": "Alpha",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "offerType": "BASE_GAME",
+            "extraField": "full only",
+            "customAttributes": []
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                "na"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "na",
+            "totalAchievements": 22
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "a"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "region": "US",
+            "price": {
+              "discount": 330
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "latest-achievements:US:locale:en-US:card:v0.2",
+          "payload": [
+            {
+              "_id": "raw-a",
+              "id": "a",
+              "namespace": "na",
+              "title": "Alpha",
+              "offerType": "BASE_GAME",
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "customAttributes": {},
+              "price": {
+                "offerId": "a",
+                "region": "US",
+                "price": {
+                  "discount": 330
+                }
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical",
+              "achievements": {
+                "sandboxId": "na",
+                "totalAchievements": 22
+              }
+            }
+          ],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"4170a21e2eaecdafb89da6284a3c381f9f4bec89\""
+      },
+      "body": [
+        {
+          "_id": "raw-a",
+          "id": "a",
+          "namespace": "na",
+          "title": "Alpha",
+          "offerType": "BASE_GAME",
+          "keyImages": [
+            {
+              "type": "Thumbnail",
+              "url": "thumb"
+            },
+            {
+              "type": "OfferImageTall",
+              "url": "tall"
+            }
+          ],
+          "customAttributes": {},
+          "price": {
+            "offerId": "a",
+            "region": "US",
+            "price": {
+              "discount": 330
+            }
+          },
+          "locale": "en-US",
+          "localeStatus": "canonical",
+          "achievements": {
+            "sandboxId": "na",
+            "totalAchievements": 22
+          }
+        }
+      ]
+    }
+  }
+]

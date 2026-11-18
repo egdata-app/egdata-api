@@ -6,7 +6,7 @@ import sharedRedis from "../clients/redis.js";
 import type { AchievementsSummary } from "../types/get-user-achievements.js";
 import { db } from "../db/index.js";
 import { AchievementSet, Offer, Sandbox } from "../models/index.js";
-import { auth } from "../utils/auth.js";
+import { getLinkedEpicSession } from "../utils/auth.js";
 import consola from "consola";
 
 export interface PlayerProductAchievements {
@@ -110,8 +110,11 @@ app.get("/sitemap.xml", async (c) => {
   });
 });
 
-app.get("/me", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers });
+app.get("/me", async (c, next) => {
+  await next();
+  c.header("Cache-Control", "private, no-store");
+}, async (c) => {
+  const session = await getLinkedEpicSession(c.req.raw.headers);
 
   if (!session) {
     c.status(401);
@@ -120,22 +123,14 @@ app.get("/me", async (c) => {
     });
   }
 
-  const { user } = session;
-
-  const { email } = user;
-
-  const id = email.split("@")[0];
+  const id = session.epicAccountId;
 
   const cacheKey = `epic-me:${id}`;
 
   const cached = await client.get(cacheKey);
 
   if (cached) {
-    return c.json(JSON.parse(cached), {
-      headers: {
-        "Cache-Control": "public, max-age=60",
-      },
-    });
+    return c.json(JSON.parse(cached));
   }
 
   const profile = await epicStoreClient.getUser(id);
@@ -177,11 +172,7 @@ app.get("/me", async (c) => {
 
   await client.set(cacheKey, JSON.stringify(result), "EX", 60);
 
-  return c.json(result, {
-    headers: {
-      "Cache-Control": "public, max-age=60",
-    },
-  });
+  return c.json(result);
 });
 
 app.get("/leaderboard", async (c) => {

@@ -1,0 +1,322 @@
+[
+  {
+    "input": {},
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 6379,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": "",
+      "REDISPORT": "",
+      "REDISUSER": "",
+      "REDISPASSWORD": ""
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 6379,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "REDISHOST": " local host ",
+      "REDISPORT": "﻿+06380suffix",
+      "REDISTLS": " true "
+    },
+    "shared": {
+      "host": " local host ",
+      "port": 6380,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "REDISPORT": "0x18EB!",
+      "REDISTLS": "true",
+      "REDISPASSWORD": "  @/ pass  "
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 6379,
+      "tls": true,
+      "username": null,
+      "password": "  @/ pass  "
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "REDISPORT": "1e3"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 1,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "REDISPORT": "6379.5"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 6379,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "REDISPORT": "0"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 0,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "REDISPORT": "letters"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": "NaN",
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "REDISPORT": "-1"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": -1,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "REDISPORT": "65536"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 65536,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "REDISPORT": "0x"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": "NaN",
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "REDISPORT": "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": "Infinity",
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "REDISPORT": "-0"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 0,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "CACHE_REDIS_HOST": "﻿",
+      "CACHE_REDIS_USER": "﻿",
+      "RESPONSE_CACHE_PREFIX": "﻿ v3: ﻿"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 6379,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": null,
+      "key": "v3:test"
+    }
+  },
+  {
+    "input": {
+      "CACHE_REDIS_HOST": " ﻿cache﻿ ",
+      "CACHE_REDIS_PORT": " 06380 ",
+      "CACHE_REDIS_USER": " u ",
+      "CACHE_REDIS_PASSWORD": " p ",
+      "CACHE_REDIS_TLS": " true "
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 6379,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "dedicated": {
+        "host": "cache",
+        "port": 6380,
+        "tls": true,
+        "username": " u ",
+        "password": " p "
+      },
+      "key": "response:v2:test"
+    }
+  },
+  {
+    "input": {
+      "CACHE_REDIS_PORT": "6379"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 6379,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "error": "CACHE_REDIS_HOST is required for a dedicated response cache"
+    }
+  },
+  {
+    "input": {
+      "CACHE_REDIS_HOST": "cache",
+      "CACHE_REDIS_PORT": "+6379"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 6379,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "error": "CACHE_REDIS_PORT must be an integer between 1 and 65535"
+    }
+  },
+  {
+    "input": {
+      "CACHE_REDIS_HOST": "cache",
+      "CACHE_REDIS_PORT": "0"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 6379,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "error": "CACHE_REDIS_PORT must be an integer between 1 and 65535"
+    }
+  },
+  {
+    "input": {
+      "CACHE_REDIS_HOST": "cache",
+      "CACHE_REDIS_TLS": "yes"
+    },
+    "shared": {
+      "host": "127.0.0.1",
+      "port": 6379,
+      "tls": false,
+      "username": null,
+      "password": null
+    },
+    "cache": {
+      "error": "CACHE_REDIS_TLS must be true or false"
+    }
+  }
+]

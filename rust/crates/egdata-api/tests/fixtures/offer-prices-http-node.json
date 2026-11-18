@@ -1,0 +1,1884 @@
+[
+  {
+    "name": "offer-price-current",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price:id=\"offer-oracle\":locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.detail:country=\"US\":id=\"offer-oracle\":locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "offer-oracle"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "offer-doc",
+          "id": "offer-oracle",
+          "title": "Oracle Game",
+          "description": "Price fixture",
+          "offerType": "BASE_GAME",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [],
+          "keyImages": [],
+          "tags": [],
+          "items": []
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "US"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "price-us",
+          "offerId": "offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 1
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.detail:country=\"US\":id=\"offer-oracle\":locale=\"en-US\":region=\"US\"",
+          "payload": {
+            "offer": {
+              "_id": "offer-doc",
+              "id": "offer-oracle",
+              "namespace": null,
+              "title": "Oracle Game",
+              "description": "Price fixture",
+              "longDescription": null,
+              "offerType": "BASE_GAME",
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": [],
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": [],
+              "items": [],
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": null,
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": [],
+              "countriesWhitelist": [],
+              "refundType": null,
+              "customAttributes": null,
+              "price": {
+                "offerId": "offer-oracle",
+                "region": "US",
+                "currencyCode": "USD",
+                "precision": 2,
+                "originalPrice": 1999,
+                "discountPrice": 999,
+                "price": {
+                  "currencyCode": "USD",
+                  "originalPrice": 1999,
+                  "discountPrice": 999,
+                  "discount": 50,
+                  "basePayoutPrice": 0,
+                  "payoutCurrencyExchangeRate": 1,
+                  "precision": 2
+                },
+                "updatedAt": "2026-11-01T00:00:00.000Z"
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "localization": {
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "cacheTtl": 60
+          },
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "US"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "price-us",
+          "offerId": "offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 1
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price:id=\"offer-oracle\":locale=\"en-US\":region=\"US\"",
+          "payload": {
+            "price": {
+              "offerId": "offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 1999,
+              "discountPrice": 999,
+              "price": {
+                "currencyCode": "USD",
+                "originalPrice": 1999,
+                "discountPrice": 999,
+                "discount": 50,
+                "basePayoutPrice": 1999,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-01T00:00:00.000Z"
+            },
+            "localization": {
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"f5eb9725c0b081504dca14087a5884bbfce05de9\""
+      },
+      "body": {
+        "data": {
+          "offerId": "offer-oracle",
+          "region": "US",
+          "currencyCode": "USD",
+          "precision": 2,
+          "originalPrice": 1999,
+          "discountPrice": 999,
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50,
+            "basePayoutPrice": 1999,
+            "payoutCurrencyExchangeRate": 1,
+            "precision": 2
+          },
+          "updatedAt": "2026-11-01T00:00:00.000Z"
+        },
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      }
+    }
+  },
+  {
+    "name": "offer-price-with-historical-top-level-currency",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price:id=\"offer-oracle\":locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.detail:country=\"US\":id=\"offer-oracle\":locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "offer-oracle"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "offer-doc",
+          "id": "offer-oracle",
+          "title": "Oracle Game",
+          "description": "Price fixture",
+          "offerType": "BASE_GAME",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [],
+          "keyImages": [],
+          "tags": [],
+          "items": []
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "US"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "price-us",
+          "offerId": "offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50
+          },
+          "currencyCode": "USD"
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.detail:country=\"US\":id=\"offer-oracle\":locale=\"en-US\":region=\"US\"",
+          "payload": {
+            "offer": {
+              "_id": "offer-doc",
+              "id": "offer-oracle",
+              "namespace": null,
+              "title": "Oracle Game",
+              "description": "Price fixture",
+              "longDescription": null,
+              "offerType": "BASE_GAME",
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": [],
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": [],
+              "items": [],
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": null,
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": [],
+              "countriesWhitelist": [],
+              "refundType": null,
+              "customAttributes": null,
+              "price": {
+                "offerId": "offer-oracle",
+                "region": "US",
+                "currencyCode": "USD",
+                "precision": 2,
+                "originalPrice": 1999,
+                "discountPrice": 999,
+                "price": {
+                  "originalPrice": 1999,
+                  "discountPrice": 999,
+                  "discount": 50,
+                  "currencyCode": "USD",
+                  "precision": 2
+                },
+                "updatedAt": "2026-11-01T00:00:00.000Z"
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "localization": {
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "cacheTtl": 60
+          },
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "US"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "price-us",
+          "offerId": "offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50
+          },
+          "currencyCode": "USD"
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price:id=\"offer-oracle\":locale=\"en-US\":region=\"US\"",
+          "payload": {
+            "price": {
+              "offerId": "offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 1999,
+              "discountPrice": 999,
+              "price": {
+                "originalPrice": 1999,
+                "discountPrice": 999,
+                "discount": 50,
+                "currencyCode": "USD",
+                "precision": 2,
+                "basePayoutPrice": 1999
+              },
+              "updatedAt": "2026-11-01T00:00:00.000Z"
+            },
+            "localization": {
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"56a2b4e1d71bd4a90c7e9695bec1c743e01343de\""
+      },
+      "body": {
+        "data": {
+          "offerId": "offer-oracle",
+          "region": "US",
+          "currencyCode": "USD",
+          "precision": 2,
+          "originalPrice": 1999,
+          "discountPrice": 999,
+          "price": {
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50,
+            "currencyCode": "USD",
+            "precision": 2,
+            "basePayoutPrice": 1999
+          },
+          "updatedAt": "2026-11-01T00:00:00.000Z"
+        },
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      }
+    }
+  },
+  {
+    "name": "offer-price-beyond-i64",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price:id=\"offer-oracle\":locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.detail:country=\"US\":id=\"offer-oracle\":locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "offer-oracle"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "offer-doc",
+          "id": "offer-oracle",
+          "title": "Oracle Game",
+          "description": "Price fixture",
+          "offerType": "BASE_GAME",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [],
+          "keyImages": [],
+          "tags": [],
+          "items": []
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "US"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "price-us",
+          "offerId": "offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": 1e+25,
+            "discountPrice": 999,
+            "discount": 50,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 1
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.detail:country=\"US\":id=\"offer-oracle\":locale=\"en-US\":region=\"US\"",
+          "payload": {
+            "offer": {
+              "_id": "offer-doc",
+              "id": "offer-oracle",
+              "namespace": null,
+              "title": "Oracle Game",
+              "description": "Price fixture",
+              "longDescription": null,
+              "offerType": "BASE_GAME",
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": [],
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": [],
+              "items": [],
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": null,
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": [],
+              "countriesWhitelist": [],
+              "refundType": null,
+              "customAttributes": null,
+              "price": {
+                "offerId": "offer-oracle",
+                "region": "US",
+                "currencyCode": "USD",
+                "precision": 2,
+                "originalPrice": 1e+25,
+                "discountPrice": 999,
+                "price": {
+                  "currencyCode": "USD",
+                  "originalPrice": 1e+25,
+                  "discountPrice": 999,
+                  "discount": 50,
+                  "basePayoutPrice": 0,
+                  "payoutCurrencyExchangeRate": 1,
+                  "precision": 2
+                },
+                "updatedAt": "2026-11-01T00:00:00.000Z"
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "localization": {
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "cacheTtl": 60
+          },
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "US"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "price-us",
+          "offerId": "offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": 1e+25,
+            "discountPrice": 999,
+            "discount": 50,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 1
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price:id=\"offer-oracle\":locale=\"en-US\":region=\"US\"",
+          "payload": {
+            "price": {
+              "offerId": "offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 1e+25,
+              "discountPrice": 999,
+              "price": {
+                "currencyCode": "USD",
+                "originalPrice": 1e+25,
+                "discountPrice": 999,
+                "discount": 50,
+                "basePayoutPrice": 1e+25,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-01T00:00:00.000Z"
+            },
+            "localization": {
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"71e0c93e1969e8005950efc8ad4c11d7265c94ca\""
+      },
+      "body": {
+        "data": {
+          "offerId": "offer-oracle",
+          "region": "US",
+          "currencyCode": "USD",
+          "precision": 2,
+          "originalPrice": 1e+25,
+          "discountPrice": 999,
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": 1e+25,
+            "discountPrice": 999,
+            "discount": 50,
+            "basePayoutPrice": 1e+25,
+            "payoutCurrencyExchangeRate": 1,
+            "precision": 2
+          },
+          "updatedAt": "2026-11-01T00:00:00.000Z"
+        },
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      }
+    }
+  },
+  {
+    "name": "offer-price-current-eu",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price?country=FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price:id=\"offer-oracle\":locale=\"en-US\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.detail:country=\"FR\":id=\"offer-oracle\":locale=\"en-US\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "offer-oracle"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "offer-doc",
+          "id": "offer-oracle",
+          "title": "Oracle Game",
+          "description": "Price fixture",
+          "offerType": "BASE_GAME",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [],
+          "keyImages": [],
+          "tags": [],
+          "items": []
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "price-eu",
+          "offerId": "offer-oracle",
+          "region": "EU",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "originalPrice": 2499,
+            "discountPrice": 1249,
+            "discount": 50,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 0.91
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.detail:country=\"FR\":id=\"offer-oracle\":locale=\"en-US\":region=\"EURO\"",
+          "payload": {
+            "offer": {
+              "_id": "offer-doc",
+              "id": "offer-oracle",
+              "namespace": null,
+              "title": "Oracle Game",
+              "description": "Price fixture",
+              "longDescription": null,
+              "offerType": "BASE_GAME",
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": [],
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": [],
+              "items": [],
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": null,
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": [],
+              "countriesWhitelist": [],
+              "refundType": null,
+              "customAttributes": null,
+              "price": {
+                "offerId": "offer-oracle",
+                "region": "EU",
+                "currencyCode": "EUR",
+                "precision": 2,
+                "originalPrice": 2499,
+                "discountPrice": 1249,
+                "price": {
+                  "currencyCode": "EUR",
+                  "originalPrice": 2499,
+                  "discountPrice": 1249,
+                  "discount": 50,
+                  "basePayoutPrice": 0,
+                  "payoutCurrencyExchangeRate": 0.91,
+                  "precision": 2
+                },
+                "updatedAt": "2026-11-01T00:00:00.000Z"
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "localization": {
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "cacheTtl": 60
+          },
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "price-eu",
+          "offerId": "offer-oracle",
+          "region": "EU",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "originalPrice": 2499,
+            "discountPrice": 1249,
+            "discount": 50,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 0.91
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price:id=\"offer-oracle\":locale=\"en-US\":region=\"EURO\"",
+          "payload": {
+            "price": {
+              "offerId": "offer-oracle",
+              "region": "EU",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 2499,
+              "discountPrice": 1249,
+              "price": {
+                "currencyCode": "EUR",
+                "originalPrice": 2499,
+                "discountPrice": 1249,
+                "discount": 50,
+                "basePayoutPrice": 2274,
+                "payoutCurrencyExchangeRate": 0.91,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-01T00:00:00.000Z"
+            },
+            "localization": {
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"a292b13a39e14bc93000bcb83f83ab7006b177c0\""
+      },
+      "body": {
+        "data": {
+          "offerId": "offer-oracle",
+          "region": "EU",
+          "currencyCode": "EUR",
+          "precision": 2,
+          "originalPrice": 2499,
+          "discountPrice": 1249,
+          "price": {
+            "currencyCode": "EUR",
+            "originalPrice": 2499,
+            "discountPrice": 1249,
+            "discount": 50,
+            "basePayoutPrice": 2274,
+            "payoutCurrencyExchangeRate": 0.91,
+            "precision": 2
+          },
+          "updatedAt": "2026-11-01T00:00:00.000Z"
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      }
+    }
+  },
+  {
+    "name": "offer-price-whitelist-precedes-blacklist",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price:id=\"offer-oracle\":locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.detail:country=\"US\":id=\"offer-oracle\":locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "offer-oracle"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "offer-doc",
+          "id": "offer-oracle",
+          "title": "Oracle Game",
+          "description": "Price fixture",
+          "offerType": "BASE_GAME",
+          "countriesWhitelist": [
+            "US"
+          ],
+          "countriesBlacklist": [
+            "US"
+          ],
+          "keyImages": [],
+          "tags": [],
+          "items": []
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "US"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "price-us",
+          "offerId": "offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 1
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.detail:country=\"US\":id=\"offer-oracle\":locale=\"en-US\":region=\"US\"",
+          "payload": {
+            "offer": {
+              "_id": "offer-doc",
+              "id": "offer-oracle",
+              "namespace": null,
+              "title": "Oracle Game",
+              "description": "Price fixture",
+              "longDescription": null,
+              "offerType": "BASE_GAME",
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": [],
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": [],
+              "items": [],
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": null,
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": [
+                "US"
+              ],
+              "countriesWhitelist": [
+                "US"
+              ],
+              "refundType": null,
+              "customAttributes": null,
+              "price": {
+                "offerId": "offer-oracle",
+                "region": "US",
+                "currencyCode": "USD",
+                "precision": 2,
+                "originalPrice": 1999,
+                "discountPrice": 999,
+                "price": {
+                  "currencyCode": "USD",
+                  "originalPrice": 1999,
+                  "discountPrice": 999,
+                  "discount": 50,
+                  "basePayoutPrice": 0,
+                  "payoutCurrencyExchangeRate": 1,
+                  "precision": 2
+                },
+                "updatedAt": "2026-11-01T00:00:00.000Z"
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "localization": {
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "cacheTtl": 60
+          },
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "US"
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "price-us",
+          "offerId": "offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 1
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price:id=\"offer-oracle\":locale=\"en-US\":region=\"US\"",
+          "payload": {
+            "price": {
+              "offerId": "offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 1999,
+              "discountPrice": 999,
+              "price": {
+                "currencyCode": "USD",
+                "originalPrice": 1999,
+                "discountPrice": 999,
+                "discount": 50,
+                "basePayoutPrice": 1999,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-01T00:00:00.000Z"
+            },
+            "localization": {
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"f5eb9725c0b081504dca14087a5884bbfce05de9\""
+      },
+      "body": {
+        "data": {
+          "offerId": "offer-oracle",
+          "region": "US",
+          "currencyCode": "USD",
+          "precision": 2,
+          "originalPrice": 1999,
+          "discountPrice": 999,
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50,
+            "basePayoutPrice": 1999,
+            "payoutCurrencyExchangeRate": 1,
+            "precision": 2
+          },
+          "updatedAt": "2026-11-01T00:00:00.000Z"
+        },
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      }
+    }
+  },
+  {
+    "name": "offer-price-country-blocked",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price?country=GB",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price:id=\"offer-oracle\":locale=\"en-US\":region=\"GB\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.detail:country=\"GB\":id=\"offer-oracle\":locale=\"en-US\":region=\"GB\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "offer-oracle"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "offer-doc",
+          "id": "offer-oracle",
+          "title": "Oracle Game",
+          "description": "Price fixture",
+          "offerType": "BASE_GAME",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [
+            "GB"
+          ],
+          "keyImages": [],
+          "tags": [],
+          "items": []
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.detail:country=\"GB\":id=\"offer-oracle\":locale=\"en-US\":region=\"GB\"",
+          "payload": {
+            "offer": {
+              "_id": "offer-doc",
+              "id": "offer-oracle",
+              "namespace": null,
+              "title": "Oracle Game",
+              "description": "Price fixture",
+              "longDescription": null,
+              "offerType": "BASE_GAME",
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": [],
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": [],
+              "items": [],
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": null,
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": [
+                "GB"
+              ],
+              "countriesWhitelist": [],
+              "refundType": null,
+              "customAttributes": null,
+              "price": null,
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "localization": {
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            "cacheTtl": 60
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"b838aae81cb67fd885dc743dff95e0cec7b6bc77\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/price-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No GB price is available for this offer.",
+        "instance": "/v1/offers/offer-oracle/price",
+        "code": "PRICE_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "offer-price-fairness",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price/fairness?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-fairness:country=\"US\":id=\"offer-oracle\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1
+            }
+          }
+        },
+        "result": {
+          "_id": "offer-doc",
+          "id": "offer-oracle",
+          "title": "Oracle Game",
+          "description": "Price fixture",
+          "offerType": "BASE_GAME",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [],
+          "keyImages": [],
+          "tags": [],
+          "items": []
+        }
+      },
+      {
+        "call": {
+          "collection": "offer_country_pricing_scores",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "country": "US"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "score-id",
+          "offerId": "offer-oracle",
+          "country": "US",
+          "score": 0.75
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-fairness:country=\"US\":id=\"offer-oracle\"",
+          "payload": {
+            "_id": "score-id",
+            "offerId": "offer-oracle",
+            "country": "US",
+            "score": 0.75
+          },
+          "ttl": 300
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"34d4125df0559ea683f2c9a9155ff61289a00ded\""
+      },
+      "body": {
+        "data": {
+          "_id": "score-id",
+          "offerId": "offer-oracle",
+          "country": "US",
+          "score": 0.75
+        },
+        "meta": {
+          "country": "US"
+        }
+      }
+    }
+  },
+  {
+    "name": "offer-price-stats",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {
+          "_id": "offer-doc",
+          "id": "offer-oracle",
+          "title": "Oracle Game",
+          "description": "Price fixture",
+          "offerType": "BASE_GAME",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [],
+          "keyImages": [],
+          "tags": [],
+          "items": []
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "US"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "price-us",
+          "offerId": "offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-11-01T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 1
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "_id": "hist-discount",
+          "offerId": "offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-10-15T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": 1999,
+            "discountPrice": 1499,
+            "discount": 50,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 1
+          },
+          "date": {
+            "$date": "2026-10-15T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "_id": "hist-discount",
+          "offerId": "offer-oracle",
+          "region": "US",
+          "updatedAt": {
+            "$date": "2026-10-15T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "originalPrice": 1999,
+            "discountPrice": 1499,
+            "discount": 50,
+            "basePayoutPrice": 0,
+            "payoutCurrencyExchangeRate": 1
+          },
+          "date": {
+            "$date": "2026-10-15T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"US\"",
+          "payload": {
+            "current": {
+              "offerId": "offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 1999,
+              "discountPrice": 999,
+              "price": {
+                "currencyCode": "USD",
+                "originalPrice": 1999,
+                "discountPrice": 999,
+                "discount": 50,
+                "basePayoutPrice": 1999,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-11-01T00:00:00.000Z"
+            },
+            "lowest": {
+              "offerId": "offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 1999,
+              "discountPrice": 1499,
+              "price": {
+                "currencyCode": "USD",
+                "originalPrice": 1999,
+                "discountPrice": 1499,
+                "discount": 50,
+                "basePayoutPrice": 1999,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-10-15T00:00:00.000Z",
+              "date": "2026-10-15T00:00:00.000Z"
+            },
+            "lastDiscount": {
+              "offerId": "offer-oracle",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 1999,
+              "discountPrice": 1499,
+              "price": {
+                "currencyCode": "USD",
+                "originalPrice": 1999,
+                "discountPrice": 1499,
+                "discount": 50,
+                "basePayoutPrice": 1999,
+                "payoutCurrencyExchangeRate": 1,
+                "precision": 2
+              },
+              "updatedAt": "2026-10-15T00:00:00.000Z",
+              "date": "2026-10-15T00:00:00.000Z"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"4643e7a7f59b16d19d8dbcf96e33963e7ca72f9e\""
+      },
+      "body": {
+        "data": {
+          "current": {
+            "offerId": "offer-oracle",
+            "region": "US",
+            "currencyCode": "USD",
+            "precision": 2,
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 1999,
+              "discountPrice": 999,
+              "discount": 50,
+              "basePayoutPrice": 1999,
+              "payoutCurrencyExchangeRate": 1,
+              "precision": 2
+            },
+            "updatedAt": "2026-11-01T00:00:00.000Z"
+          },
+          "lowest": {
+            "offerId": "offer-oracle",
+            "region": "US",
+            "currencyCode": "USD",
+            "precision": 2,
+            "originalPrice": 1999,
+            "discountPrice": 1499,
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 1999,
+              "discountPrice": 1499,
+              "discount": 50,
+              "basePayoutPrice": 1999,
+              "payoutCurrencyExchangeRate": 1,
+              "precision": 2
+            },
+            "updatedAt": "2026-10-15T00:00:00.000Z",
+            "date": "2026-10-15T00:00:00.000Z"
+          },
+          "lastDiscount": {
+            "offerId": "offer-oracle",
+            "region": "US",
+            "currencyCode": "USD",
+            "precision": 2,
+            "originalPrice": 1999,
+            "discountPrice": 1499,
+            "price": {
+              "currencyCode": "USD",
+              "originalPrice": 1999,
+              "discountPrice": 1499,
+              "discount": 50,
+              "basePayoutPrice": 1999,
+              "payoutCurrencyExchangeRate": 1,
+              "precision": 2
+            },
+            "updatedAt": "2026-10-15T00:00:00.000Z",
+            "date": "2026-10-15T00:00:00.000Z"
+          }
+        },
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US"
+        }
+      }
+    }
+  },
+  {
+    "name": "offer-price-missing",
+    "request": {
+      "path": "/v1/offers/missing/price?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price:id=\"missing\":locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.detail:country=\"US\":id=\"missing\":locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "missing"
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.detail:country=\"US\":id=\"missing\":locale=\"en-US\":region=\"US\"",
+          "payload": null,
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"940669fa5d81ffb69156933c385eef008ca8bd04\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/offer-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No offer exists with this ID.",
+        "instance": "/v1/offers/missing/price",
+        "code": "OFFER_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "offer-price-fairness-missing",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price/fairness?country=US",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-fairness:country=\"US\":id=\"offer-oracle\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1
+            }
+          }
+        },
+        "result": {
+          "_id": "offer-doc",
+          "id": "offer-oracle",
+          "title": "Oracle Game",
+          "description": "Price fixture",
+          "offerType": "BASE_GAME",
+          "countriesWhitelist": [],
+          "countriesBlacklist": [],
+          "keyImages": [],
+          "tags": [],
+          "items": []
+        }
+      },
+      {
+        "call": {
+          "collection": "offer_country_pricing_scores",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "country": "US"
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ff5ae9d0985011bd001404622e042e6b1a260bcc\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/price-fairness-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No price fairness score is stored for this offer in US.",
+        "instance": "/v1/offers/offer-oracle/price/fairness",
+        "code": "PRICE_FAIRNESS_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  }
+]

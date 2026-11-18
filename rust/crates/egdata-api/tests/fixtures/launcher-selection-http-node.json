@@ -1,0 +1,3123 @@
+[
+  {
+    "name": "failure-item",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"c6943b2d7dd6e876560c91a56d27e5f36b988bdd\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "failure-asset",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"c6943b2d7dd6e876560c91a56d27e5f36b988bdd\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "failure-direct",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "addon"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"c6943b2d7dd6e876560c91a56d27e5f36b988bdd\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "failure-subitems",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "addon"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "addon"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"c6943b2d7dd6e876560c91a56d27e5f36b988bdd\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "failure-indirect",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "addon"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "addon"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "offer"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "offer"
+              ]
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"c6943b2d7dd6e876560c91a56d27e5f36b988bdd\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "failure-parent",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "addon"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "offer",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "addon"
+              },
+              {
+                "id": "base"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "addon"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "addon",
+                "base"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"c6943b2d7dd6e876560c91a56d27e5f36b988bdd\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "failure-parent-asset",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "addon"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "offer",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "addon"
+              },
+              {
+                "id": "base"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "addon"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "addon",
+                "base"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "base",
+            "namespace": "ns",
+            "entitlementType": "EXECUTABLE"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "base"
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"c6943b2d7dd6e876560c91a56d27e5f36b988bdd\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "parent-missing",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "addon"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "offer",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "addon"
+              },
+              {
+                "id": "base"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "addon"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "addon",
+                "base"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"b1b78685a53b52e7715d07b10b57870e81495b05\""
+      },
+      "body": {
+        "data": {
+          "results": [
+            {
+              "requestId": "one",
+              "status": "unsupported"
+            }
+          ]
+        },
+        "meta": {
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "parent-windows-missing",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "addon"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "offer",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "addon"
+              },
+              {
+                "id": "base"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "addon"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "addon",
+                "base"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "base",
+            "namespace": "ns",
+            "entitlementType": "EXECUTABLE"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "base"
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"b1b78685a53b52e7715d07b10b57870e81495b05\""
+      },
+      "body": {
+        "data": {
+          "results": [
+            {
+              "requestId": "one",
+              "status": "unsupported"
+            }
+          ]
+        },
+        "meta": {
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "parent-two-executables",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "addon"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "offer",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "addon"
+              },
+              {
+                "id": "base"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "addon"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "addon",
+                "base"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "base",
+            "namespace": "ns",
+            "entitlementType": "EXECUTABLE"
+          },
+          {
+            "id": "second",
+            "namespace": "ns",
+            "entitlementType": "EXECUTABLE"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"5b9d35d16104efd566f8e658b0e0bc278d772b51\""
+      },
+      "body": {
+        "data": {
+          "results": [
+            {
+              "requestId": "one",
+              "status": "ambiguous"
+            }
+          ]
+        },
+        "meta": {
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "parent-two-durable",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "addon"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "offer",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "addon"
+              },
+              {
+                "id": "base"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "addon"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "addon",
+                "base"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "base",
+            "namespace": "ns",
+            "entitlementType": "DURABLE"
+          },
+          {
+            "id": "second"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"5b9d35d16104efd566f8e658b0e0bc278d772b51\""
+      },
+      "body": {
+        "data": {
+          "results": [
+            {
+              "requestId": "one",
+              "status": "ambiguous"
+            }
+          ]
+        },
+        "meta": {
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "parent-unique-durable",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "addon"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "offer",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "addon"
+              },
+              {
+                "id": "base"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "addon"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "addon",
+                "base"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "base",
+            "namespace": "ns",
+            "entitlementType": "DURABLE"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "base"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "base",
+            "artifactId": "Base",
+            "platform": "Windows"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"edb3281bcdb773be3905db590a98ead622356100\""
+      },
+      "body": {
+        "data": {
+          "results": [
+            {
+              "requestId": "one",
+              "status": "resolved",
+              "record": {
+                "artifactId": "DLC",
+                "catalogItemId": "addon",
+                "catalogNamespace": "ns",
+                "displayName": "DLC",
+                "kind": "addon",
+                "appCategories": [
+                  "addons"
+                ],
+                "mainGame": {
+                  "artifactId": "Base",
+                  "catalogItemId": "base",
+                  "catalogNamespace": "ns"
+                },
+                "mandatoryAppFolderName": "",
+                "canRunOffline": true,
+                "requiresAuth": true,
+                "ownershipToken": false,
+                "ignoredProcessNames": []
+              }
+            }
+          ]
+        },
+        "meta": {
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "parent-two-windows",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "addon"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "offer",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "addon"
+              },
+              {
+                "id": "base"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "addon"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "addon",
+                "base"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "base",
+            "namespace": "ns",
+            "entitlementType": "EXECUTABLE"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "base"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "base",
+            "artifactId": "Base",
+            "platform": "Windows"
+          },
+          {
+            "itemId": "base",
+            "artifactId": "Base",
+            "platform": "Windows"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"5b9d35d16104efd566f8e658b0e0bc278d772b51\""
+      },
+      "body": {
+        "data": {
+          "results": [
+            {
+              "requestId": "one",
+              "status": "ambiguous"
+            }
+          ]
+        },
+        "meta": {
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "duplicate-offer-source",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "addon"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "offer",
+            "offerType": "DLC",
+            "items": [
+              {
+                "id": "addon"
+              },
+              {
+                "id": "base"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "addon"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "640000000000000000000099"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "640000000000000000000099"
+                }
+              ]
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "offer",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "addon"
+              },
+              {
+                "id": "base"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "addon",
+                "base"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          },
+          {
+            "id": "base",
+            "namespace": "ns",
+            "entitlementType": "EXECUTABLE"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "base"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "base",
+            "artifactId": "Base",
+            "platform": "Windows"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"edb3281bcdb773be3905db590a98ead622356100\""
+      },
+      "body": {
+        "data": {
+          "results": [
+            {
+              "requestId": "one",
+              "status": "resolved",
+              "record": {
+                "artifactId": "DLC",
+                "catalogItemId": "addon",
+                "catalogNamespace": "ns",
+                "displayName": "DLC",
+                "kind": "addon",
+                "appCategories": [
+                  "addons"
+                ],
+                "mainGame": {
+                  "artifactId": "Base",
+                  "catalogItemId": "base",
+                  "catalogNamespace": "ns"
+                },
+                "mandatoryAppFolderName": "",
+                "canRunOffline": true,
+                "requiresAuth": true,
+                "ownershipToken": false,
+                "ignoredProcessNames": []
+              }
+            }
+          ]
+        },
+        "meta": {
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "parent-number-and-string-ids",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": 7,
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "7"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "7"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "offer",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": 7
+              },
+              {
+                "id": "7"
+              },
+              {
+                "id": null
+              },
+              {
+                "id": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "7"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "7",
+                "7",
+                "null",
+                "false"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "7",
+            "namespace": "ns",
+            "entitlementType": "EXECUTABLE"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "7"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "base",
+            "artifactId": "Base",
+            "platform": "Windows"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"3353b8c410a5df2d45135ee082be212a7d2446be\""
+      },
+      "body": {
+        "data": {
+          "results": [
+            {
+              "requestId": "one",
+              "status": "resolved",
+              "record": {
+                "artifactId": "DLC",
+                "catalogItemId": "7",
+                "catalogNamespace": "ns",
+                "displayName": "DLC",
+                "kind": "addon",
+                "appCategories": [
+                  "addons"
+                ],
+                "mainGame": {
+                  "artifactId": "Base",
+                  "catalogItemId": "7",
+                  "catalogNamespace": "ns"
+                },
+                "mandatoryAppFolderName": "",
+                "canRunOffline": true,
+                "requiresAuth": true,
+                "ownershipToken": false,
+                "ignoredProcessNames": []
+              }
+            }
+          ]
+        },
+        "meta": {
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "parent-separate-bson-ids",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "640000000000000000000022"
+            },
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "640000000000000000000022"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": "DLC",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "640000000000000000000022"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "offer",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": {
+                  "$oid": "640000000000000000000022"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "640000000000000000000022"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "640000000000000000000022"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "640000000000000000000022"
+            },
+            "namespace": "ns",
+            "entitlementType": "EXECUTABLE"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "640000000000000000000022"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "base",
+            "artifactId": "Base",
+            "platform": "Windows"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8aaf2385d705a2ed4628c943d427be3cdaf45b57\""
+      },
+      "body": {
+        "data": {
+          "results": [
+            {
+              "requestId": "one",
+              "status": "resolved",
+              "record": {
+                "artifactId": "DLC",
+                "catalogItemId": "640000000000000000000022",
+                "catalogNamespace": "ns",
+                "displayName": "DLC",
+                "kind": "addon",
+                "appCategories": [
+                  "addons"
+                ],
+                "mainGame": {
+                  "artifactId": "Base",
+                  "catalogItemId": "640000000000000000000022",
+                  "catalogNamespace": "ns"
+                },
+                "mandatoryAppFolderName": "",
+                "canRunOffline": true,
+                "requiresAuth": true,
+                "ownershipToken": false,
+                "ignoredProcessNames": []
+              }
+            }
+          ]
+        },
+        "meta": {
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "asset-without-string-hint",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\",\"catalogHint\":{\"artifactId\":\"7\",\"catalogItemId\":\"addon\",\"catalogNamespace\":\"ns\"}}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$eq": "addon"
+            },
+            "namespace": {
+              "$eq": "ns"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "addon",
+            "namespace": "ns",
+            "entitlementType": "DURABLE",
+            "categories": [
+              "DLC"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "addon"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "addon",
+            "artifactId": 7,
+            "platform": "Windows"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"b1b78685a53b52e7715d07b10b57870e81495b05\""
+      },
+      "body": {
+        "data": {
+          "results": [
+            {
+              "requestId": "one",
+              "status": "unsupported"
+            }
+          ]
+        },
+        "meta": {
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "trim-js-whitespace",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"﻿one﻿\",\"buildAppName\":\"﻿game﻿\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "base",
+            "namespace": "ns",
+            "entitlementType": "EXECUTABLE",
+            "customAttributes": [
+              {
+                "key": "",
+                "value": "ignored"
+              },
+              {
+                "key": "FolderName",
+                "value": "﻿ Folder ﻿"
+              },
+              {
+                "key": "IgnoredProcessNames",
+                "value": "﻿ app , helper ﻿"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$eq": "base"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "itemId": "base",
+            "artifactId": "Base",
+            "platform": "Windows"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$eq": "base"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$eq": "base"
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e1cd17a1249578fd19cf1cd165e0db9efe69d6ba\""
+      },
+      "body": {
+        "data": {
+          "results": [
+            {
+              "requestId": "one",
+              "status": "resolved",
+              "record": {
+                "artifactId": "Base",
+                "catalogItemId": "base",
+                "catalogNamespace": "ns",
+                "displayName": "Base",
+                "kind": "base-game",
+                "appCategories": [
+                  "public",
+                  "games",
+                  "applications"
+                ],
+                "mainGame": null,
+                "mandatoryAppFolderName": "Folder",
+                "canRunOffline": true,
+                "requiresAuth": true,
+                "ownershipToken": false,
+                "ignoredProcessNames": [
+                  "app",
+                  "helper"
+                ]
+              }
+            }
+          ]
+        },
+        "meta": {
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "keep-non-js-whitespace",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"\",\"buildAppName\":\"app\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "app"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"217b1546c5d17d5415ac9cafd1b15d2c3868e059\""
+      },
+      "body": {
+        "data": {
+          "results": [
+            {
+              "requestId": "",
+              "status": "not-found"
+            }
+          ]
+        },
+        "meta": {
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "batch-stops-on-service-failure",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"},{\"requestId\":\"two\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"},{\"requestId\":\"three\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "releaseInfo": {
+              "$elemMatch": {
+                "appId": {
+                  "$eq": "game"
+                },
+                "platform": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "^Win",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"c6943b2d7dd6e876560c91a56d27e5f36b988bdd\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "malformed",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{",
+      "contentType": "application/json"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"086e83046421b3aedebc97303b0fb752eddbc172\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/malformed-json",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The request body is not valid JSON.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "MALFORMED_JSON",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "non-json",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{}",
+      "contentType": "text/plain"
+    },
+    "trace": [],
+    "response": {
+      "status": 415,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"a140ece7a90cc4e61a9f9085564880632125ad89\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/unsupported-media-type",
+        "title": "Unsupported Media Type",
+        "status": 415,
+        "detail": "This endpoint accepts application/json request bodies only.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "UNSUPPORTED_MEDIA_TYPE",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "strict-query",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records?extra=x",
+      "method": "POST",
+      "rawBody": "{}",
+      "contentType": "application/json"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"5ecf912c16ce347aba0f2d2111d833ed858adef3\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"extra\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "long-candidates-string",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}",
+      "contentType": "application/json"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d4f31925ebaf2b69e8deff69268a06e0a5b2bb1c\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-body",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more candidates are invalid or not supported. Each candidate must carry a unique `requestId`, a Windows platform, and bounded metadata without paths or manifest bytes.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "INVALID_BODY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "parameter": "candidates",
+            "pointer": "/candidates",
+            "code": "INVALID_TYPE",
+            "message": "Invalid input: expected array, received string"
+          },
+          {
+            "parameter": "candidates",
+            "pointer": "/candidates",
+            "code": "TOO_BIG",
+            "message": "Too big: expected string to have <=100 characters"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "oversized-request-id-array",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":[\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\",\"x\"],\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\"}]}",
+      "contentType": "application/json"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"2bcde2d660d78da9269cdb02bfeceb1289774214\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-body",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more candidates are invalid or not supported. Each candidate must carry a unique `requestId`, a Windows platform, and bounded metadata without paths or manifest bytes.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "INVALID_BODY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "parameter": "candidates",
+            "pointer": "/candidates/0/requestId",
+            "code": "INVALID_TYPE",
+            "message": "Invalid input: expected string, received array"
+          },
+          {
+            "parameter": "candidates",
+            "pointer": "/candidates/0/requestId",
+            "code": "TOO_BIG",
+            "message": "Too big: expected array to have <=128 items"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "strict-keys",
+    "request": {
+      "path": "/v1/builds/resolve-launcher-records",
+      "method": "POST",
+      "rawBody": "{\"candidates\":[{\"requestId\":\"one\",\"buildAppName\":\"game\",\"buildVersion\":\"\",\"platform\":\"Windows\",\"second\":true,\"third\":null}]}",
+      "contentType": "application/json"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"6f62a670638428f0c8c24750bfb50ecc5df80132\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-body",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more candidates are invalid or not supported. Each candidate must carry a unique `requestId`, a Windows platform, and bounded metadata without paths or manifest bytes.",
+        "instance": "/v1/builds/resolve-launcher-records",
+        "code": "INVALID_BODY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "parameter": "candidates",
+            "pointer": "/candidates/0",
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized keys: \"second\", \"third\""
+          }
+        ]
+      }
+    }
+  }
+]

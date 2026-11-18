@@ -1,0 +1,6143 @@
+[
+  {
+    "name": "root-items",
+    "request": {
+      "method": "GET",
+      "path": "/items-from-offer/game"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "items-from-offer:game"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "id": "game"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$items",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "localField": "items.id",
+                "foreignField": "id",
+                "as": "itemDetails"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$itemDetails",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$isArray": "$linkedOffers"
+                          },
+                          {
+                            "$in": [
+                              "$$offerId",
+                              "$linkedOffers"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "linkedItems"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$_id",
+                "offerItems": {
+                  "$push": "$itemDetails"
+                },
+                "linkedItems": {
+                  "$first": "$linkedItems"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "items": {
+                  "$filter": {
+                    "input": {
+                      "$concatArrays": [
+                        "$offerItems",
+                        "$linkedItems"
+                      ]
+                    },
+                    "as": "item",
+                    "cond": {
+                      "$ne": [
+                        "$$item",
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "items": [
+              {
+                "_id": "internal",
+                "id": "a",
+                "namespace": "n",
+                "title": "Demo",
+                "extra": "preserved",
+                "customAttributes": [
+                  {
+                    "key": "k",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "id": "a",
+                "other": true
+              },
+              {
+                "id": "b",
+                "customAttributes": {}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "items-from-offer:game",
+          "payload": [
+            {
+              "_id": "internal",
+              "id": "a",
+              "namespace": "n",
+              "title": "Demo",
+              "extra": "preserved",
+              "customAttributes": {
+                "k": {
+                  "type": "STRING",
+                  "value": 0
+                }
+              }
+            },
+            {
+              "id": "b",
+              "customAttributes": {}
+            }
+          ],
+          "ttl": 604800
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"3c6943cb7df98bf6ebc624df21228537341bd78d\""
+      },
+      "body": [
+        {
+          "_id": "internal",
+          "id": "a",
+          "namespace": "n",
+          "title": "Demo",
+          "extra": "preserved",
+          "customAttributes": {
+            "k": {
+              "type": "STRING",
+              "value": 0
+            }
+          }
+        },
+        {
+          "id": "b",
+          "customAttributes": {}
+        }
+      ]
+    }
+  },
+  {
+    "name": "root-items-cache",
+    "request": {
+      "method": "GET",
+      "path": "/items-from-offer/game"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "items-from-offer:game"
+        },
+        "result": [
+          {
+            "id": "cached"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"6b3697cf714a44804465bfa5a47785ec295b1fc0\""
+      },
+      "body": [
+        {
+          "id": "cached"
+        }
+      ]
+    }
+  },
+  {
+    "name": "root-base",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "internal",
+          "id": "a",
+          "namespace": "n",
+          "title": "Demo",
+          "extra": "preserved",
+          "customAttributes": [
+            {
+              "key": "k",
+              "value": 0
+            }
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"0aeaa6950dd41c4c1baef9260abe80b0f7f103ee\""
+      },
+      "body": {
+        "_id": "internal",
+        "id": "a",
+        "namespace": "n",
+        "title": "Demo",
+        "customAttributes": {
+          "k": {
+            "type": "STRING",
+            "value": 0
+          }
+        },
+        "locale": "en-US",
+        "localeStatus": "canonical"
+      }
+    }
+  },
+  {
+    "name": "root-base-pre",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n?locale=es-es"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": true
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "internal",
+          "id": "a",
+          "namespace": "n",
+          "title": "Demo",
+          "extra": "preserved",
+          "customAttributes": [
+            {
+              "key": "k",
+              "value": 0
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "n:a"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"9e848b2e2ab5660076b156e604613a32c527847b\""
+      },
+      "body": {
+        "_id": "internal",
+        "id": "a",
+        "namespace": "n",
+        "title": "Demo",
+        "customAttributes": {
+          "k": {
+            "type": "STRING",
+            "value": 0
+          }
+        },
+        "locale": "es-ES",
+        "localeStatus": "fallback",
+        "canonicalLocale": "en-US"
+      }
+    }
+  },
+  {
+    "name": "root-base-missing",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": true
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"7f7aed7df6877c71e45d39f2a3efbcbfe32f7f38\""
+      },
+      "body": {
+        "message": "Game not found"
+      }
+    }
+  },
+  {
+    "name": "root-base-internal",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/SeaQA"
+    },
+    "trace": [],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"84b0b58dd11439279c1080951d760d15a8a3a61d\""
+      },
+      "body": {
+        "error": "Internal namespace"
+      }
+    }
+  },
+  {
+    "name": "root-base-locale",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/epic?locale=nope"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"d541dece15b3c23193c7251cf73c06fbfeb51be8\""
+      },
+      "body": {
+        "message": "Invalid locale parameter: nope"
+      }
+    }
+  },
+  {
+    "name": "root-changelog",
+    "request": {
+      "method": "GET",
+      "path": "/changelog?limit=100&page=2"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {},
+          "options": {
+            "limit": 50,
+            "skip": 50,
+            "sort": {
+              "timestamp": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "id",
+            "changes": []
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"6af2ff7e9ec33bf1c3a914b7dc0e65f4ffd7c95b\""
+      },
+      "body": [
+        {
+          "_id": "id",
+          "changes": []
+        }
+      ]
+    }
+  },
+  {
+    "name": "root-ping-empty",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{}"
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e85c8250d2427549205ccf325e633df6ee9f430d\""
+      },
+      "body": {
+        "message": "pong"
+      }
+    }
+  },
+  {
+    "name": "root-ping-local",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{\"location\":\"http://localhost:5173/hello\"}"
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e85c8250d2427549205ccf325e633df6ee9f430d\""
+      },
+      "body": {
+        "message": "pong"
+      }
+    }
+  },
+  {
+    "name": "root-ping-invalid-0",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "bad"
+    },
+    "trace": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"3d3a4037a2ffc734650f64747d7a5cc563c317f6\""
+      },
+      "body": {
+        "message": "error"
+      }
+    }
+  },
+  {
+    "name": "root-ping-invalid-1",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "null"
+    },
+    "trace": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"3d3a4037a2ffc734650f64747d7a5cc563c317f6\""
+      },
+      "body": {
+        "message": "error"
+      }
+    }
+  },
+  {
+    "name": "root-ping-invalid-2",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{\"location\":4}"
+    },
+    "trace": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"3d3a4037a2ffc734650f64747d7a5cc563c317f6\""
+      },
+      "body": {
+        "message": "error"
+      }
+    }
+  },
+  {
+    "name": "root-ping-invalid-3",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{\"location\":\"page\"}"
+    },
+    "trace": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"3d3a4037a2ffc734650f64747d7a5cc563c317f6\""
+      },
+      "body": {
+        "message": "error"
+      }
+    }
+  },
+  {
+    "name": "root-ping-track",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{\"event\":\"view\",\"location\":\"https://egdata.app/offers/demo\",\"userId\":\"anonymous\",\"params\":{\"game\":\"Demo\"},\"session\":{\"id\":\"session\",\"startedAt\":1000,\"lastActiveAt\":2000}}"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "events",
+          "method": "insert",
+          "query": {
+            "event": "view",
+            "location": "https://egdata.app/offers/demo",
+            "params": {
+              "game": "Demo"
+            },
+            "userId": "anonymous",
+            "session": "session",
+            "timestamp": {
+              "$date": "1970-01-01T00:00:02.000Z"
+            },
+            "createdAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            },
+            "updatedAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            }
+          },
+          "options": {}
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "service": "ga",
+          "method": "collect",
+          "body": {
+            "client_id": "anonymous",
+            "user_id": "anonymous",
+            "events": [
+              {
+                "name": "view",
+                "params": {
+                  "page_location": "https://egdata.app/offers/demo",
+                  "game": "Demo",
+                  "session_id": "session",
+                  "timestamp_millis": 2000,
+                  "engagement_time_msec": 1000
+                }
+              }
+            ]
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e85c8250d2427549205ccf325e633df6ee9f430d\""
+      },
+      "body": {
+        "message": "pong"
+      }
+    }
+  },
+  {
+    "name": "root-ping-store-fail",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{\"event\":\"view\",\"location\":\"https://egdata.app/offers/demo\",\"userId\":\"anonymous\",\"params\":{\"game\":\"Demo\"},\"session\":{\"id\":\"session\",\"startedAt\":1000,\"lastActiveAt\":2000}}"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "events",
+          "method": "insert",
+          "query": {
+            "event": "view",
+            "location": "https://egdata.app/offers/demo",
+            "params": {
+              "game": "Demo"
+            },
+            "userId": "anonymous",
+            "session": "session",
+            "timestamp": {
+              "$date": "1970-01-01T00:00:02.000Z"
+            },
+            "createdAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            },
+            "updatedAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"3d3a4037a2ffc734650f64747d7a5cc563c317f6\""
+      },
+      "body": {
+        "message": "error"
+      }
+    }
+  },
+  {
+    "name": "multi-root",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch"
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"f6eebc8bcb3d5a5e2a06b86a762f2cee39b02a1a\""
+      },
+      "body": {
+        "message": "Hello, World!"
+      }
+    }
+  },
+  {
+    "name": "multi-offers-default",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": []
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "took": 5,
+          "hits": {
+            "hits": [
+              {
+                "_id": "search-id",
+                "_source": {
+                  "_id": "internal",
+                  "id": "a",
+                  "namespace": "n",
+                  "title": "Demo",
+                  "extra": "preserved",
+                  "customAttributes": [
+                    {
+                      "key": "k",
+                      "value": 0
+                    }
+                  ]
+                }
+              },
+              {
+                "_id": "missing"
+              }
+            ],
+            "total": {
+              "value": 420
+            }
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"55cdb30169a984124edfdf1d28bc4e9b1626d79a\""
+      },
+      "body": {
+        "hits": [
+          {
+            "_id": "search-id",
+            "id": "a",
+            "namespace": "n",
+            "title": "Demo",
+            "extra": "preserved",
+            "customAttributes": [
+              {
+                "key": "k",
+                "value": 0
+              }
+            ],
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "_id": "missing",
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "estimatedTotalHits": 420,
+        "processingTimeMs": 5,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "multi-offers-invalid-locale",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?locale=bad_tag"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"4e5fea672f51543786c6aa8a5216f7777af9a963\""
+      },
+      "body": {
+        "message": "Invalid locale parameter: bad_tag"
+      }
+    }
+  },
+  {
+    "name": "multi-offers-filters",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?query=cool&offerType=DLC&tags=one,,two&categories=games&customAttributes=a,b&seller=s&developerDisplayName=d&publisherDisplayName=p&refundType=x&isCodeRedemptionOnly=true&excludeBlockchain=true&pastGiveaways=true&priceMin=0x10&priceMax=nope&isLowestPrice=true&isLowestPriceEver=true&page=2&limit=10"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 10,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "multi_match": {
+                            "query": "cool",
+                            "fields": [
+                              "title^4",
+                              "title.synonym^3",
+                              "developerDisplayName^2",
+                              "publisherDisplayName^2",
+                              "tags.name",
+                              "description"
+                            ],
+                            "type": "best_fields",
+                            "fuzziness": "AUTO",
+                            "operator": "and"
+                          }
+                        },
+                        {
+                          "match_phrase": {
+                            "title": {
+                              "query": "cool",
+                              "boost": 10,
+                              "slop": 2
+                            }
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "term": {
+                      "offerType.keyword": "DLC"
+                    }
+                  },
+                  {
+                    "terms_set": {
+                      "tags.id.keyword": {
+                        "terms": [
+                          "one",
+                          "two"
+                        ],
+                        "minimum_should_match_script": {
+                          "source": "2"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "terms": {
+                      "categories.keyword": [
+                        "games"
+                      ]
+                    }
+                  },
+                  {
+                    "terms": {
+                      "customAttributes.keyword": [
+                        "a",
+                        "b"
+                      ]
+                    }
+                  },
+                  {
+                    "term": {
+                      "seller.id.keyword": "s"
+                    }
+                  },
+                  {
+                    "term": {
+                      "developerDisplayName.keyword": "d"
+                    }
+                  },
+                  {
+                    "term": {
+                      "publisherDisplayName.keyword": "p"
+                    }
+                  },
+                  {
+                    "term": {
+                      "refundType.keyword": "x"
+                    }
+                  },
+                  {
+                    "term": {
+                      "isCodeRedemptionOnly": true
+                    }
+                  },
+                  {
+                    "bool": {
+                      "must_not": [
+                        {
+                          "term": {
+                            "customAttributes.isBlockchainUsed": true
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "exists": {
+                      "field": "freeEntries"
+                    }
+                  },
+                  {
+                    "range": {
+                      "prices.US.price.discountPrice": {
+                        "gte": 16,
+                        "lte": null
+                      }
+                    }
+                  },
+                  {
+                    "term": {
+                      "isAtLowestPriceUS": true
+                    }
+                  },
+                  {
+                    "range": {
+                      "prices.US.price.discount": {
+                        "gt": 0
+                      }
+                    }
+                  },
+                  {
+                    "term": {
+                      "isHistoricalLowestEverUS": true
+                    }
+                  },
+                  {
+                    "range": {
+                      "prices.US.price.discount": {
+                        "gt": 0
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              },
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "took": 5,
+          "hits": {
+            "hits": [
+              {
+                "_id": "search-id",
+                "_source": {
+                  "_id": "internal",
+                  "id": "a",
+                  "namespace": "n",
+                  "title": "Demo",
+                  "extra": "preserved",
+                  "customAttributes": [
+                    {
+                      "key": "k",
+                      "value": 0
+                    }
+                  ]
+                }
+              },
+              {
+                "_id": "missing"
+              }
+            ],
+            "total": {
+              "value": 420
+            }
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"a45087ded60cbfa9694afb068c4f4945366a73e4\""
+      },
+      "body": {
+        "hits": [
+          {
+            "_id": "search-id",
+            "id": "a",
+            "namespace": "n",
+            "title": "Demo",
+            "extra": "preserved",
+            "customAttributes": [
+              {
+                "key": "k",
+                "value": 0
+              }
+            ],
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "_id": "missing",
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "estimatedTotalHits": 420,
+        "processingTimeMs": 5,
+        "query": "cool"
+      }
+    }
+  },
+  {
+    "name": "multi-sort-price",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?query=https://store.epicgames.com/en-US/p/demo&sortBy=price&sortDir=&onSale=false&isLowestPriceEver=true",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "multi_match": {
+                            "query": "demo",
+                            "fields": [
+                              "title^4",
+                              "title.synonym^3",
+                              "developerDisplayName^2",
+                              "publisherDisplayName^2",
+                              "tags.name",
+                              "description"
+                            ],
+                            "type": "best_fields",
+                            "fuzziness": "AUTO",
+                            "operator": "and"
+                          }
+                        },
+                        {
+                          "match_phrase": {
+                            "title": {
+                              "query": "demo",
+                              "boost": 10,
+                              "slop": 2
+                            }
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "term": {
+                      "isHistoricalLowestEverUS": true
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "prices.EURO.price.discountPrice": {
+                  "order": "asc"
+                }
+              },
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 4
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"6ef2dcee09c461d6ed7d8fe85c47def3856ec778\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 4,
+        "query": "demo"
+      }
+    }
+  },
+  {
+    "name": "multi-sort-priceDesc",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?query=https://store.epicgames.com/en-US/p/demo&sortBy=priceDesc&sortDir=desc&onSale=false&isLowestPriceEver=true",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "multi_match": {
+                            "query": "demo",
+                            "fields": [
+                              "title^4",
+                              "title.synonym^3",
+                              "developerDisplayName^2",
+                              "publisherDisplayName^2",
+                              "tags.name",
+                              "description"
+                            ],
+                            "type": "best_fields",
+                            "fuzziness": "AUTO",
+                            "operator": "and"
+                          }
+                        },
+                        {
+                          "match_phrase": {
+                            "title": {
+                              "query": "demo",
+                              "boost": 10,
+                              "slop": 2
+                            }
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "term": {
+                      "isHistoricalLowestEverUS": true
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "prices.EURO.price.discountPrice": {
+                  "order": "desc"
+                }
+              },
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 4
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"6ef2dcee09c461d6ed7d8fe85c47def3856ec778\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 4,
+        "query": "demo"
+      }
+    }
+  },
+  {
+    "name": "multi-sort-priceAsc",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?query=https://store.epicgames.com/en-US/p/demo&sortBy=priceAsc&sortDir=&onSale=false&isLowestPriceEver=true",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "multi_match": {
+                            "query": "demo",
+                            "fields": [
+                              "title^4",
+                              "title.synonym^3",
+                              "developerDisplayName^2",
+                              "publisherDisplayName^2",
+                              "tags.name",
+                              "description"
+                            ],
+                            "type": "best_fields",
+                            "fuzziness": "AUTO",
+                            "operator": "and"
+                          }
+                        },
+                        {
+                          "match_phrase": {
+                            "title": {
+                              "query": "demo",
+                              "boost": 10,
+                              "slop": 2
+                            }
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "term": {
+                      "isHistoricalLowestEverUS": true
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "prices.EURO.price.discountPrice": {
+                  "order": "asc"
+                }
+              },
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 4
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"6ef2dcee09c461d6ed7d8fe85c47def3856ec778\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 4,
+        "query": "demo"
+      }
+    }
+  },
+  {
+    "name": "multi-sort-discount",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?query=https://store.epicgames.com/en-US/p/demo&sortBy=discount&sortDir=desc&onSale=false&isLowestPriceEver=true",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "multi_match": {
+                            "query": "demo",
+                            "fields": [
+                              "title^4",
+                              "title.synonym^3",
+                              "developerDisplayName^2",
+                              "publisherDisplayName^2",
+                              "tags.name",
+                              "description"
+                            ],
+                            "type": "best_fields",
+                            "fuzziness": "AUTO",
+                            "operator": "and"
+                          }
+                        },
+                        {
+                          "match_phrase": {
+                            "title": {
+                              "query": "demo",
+                              "boost": 10,
+                              "slop": 2
+                            }
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "term": {
+                      "isHistoricalLowestEverUS": true
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "prices.EURO.price.discount": {
+                  "order": "desc"
+                }
+              },
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 4
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"6ef2dcee09c461d6ed7d8fe85c47def3856ec778\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 4,
+        "query": "demo"
+      }
+    }
+  },
+  {
+    "name": "multi-sort-discountPercent",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?query=https://store.epicgames.com/en-US/p/demo&sortBy=discountPercent&sortDir=&onSale=false&isLowestPriceEver=true",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "multi_match": {
+                            "query": "demo",
+                            "fields": [
+                              "title^4",
+                              "title.synonym^3",
+                              "developerDisplayName^2",
+                              "publisherDisplayName^2",
+                              "tags.name",
+                              "description"
+                            ],
+                            "type": "best_fields",
+                            "fuzziness": "AUTO",
+                            "operator": "and"
+                          }
+                        },
+                        {
+                          "match_phrase": {
+                            "title": {
+                              "query": "demo",
+                              "boost": 10,
+                              "slop": 2
+                            }
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "term": {
+                      "isHistoricalLowestEverUS": true
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "prices.EURO.appliedRules.discountSetting.discountPercentage": {
+                  "order": ""
+                }
+              },
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 4
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"6ef2dcee09c461d6ed7d8fe85c47def3856ec778\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 4,
+        "query": "demo"
+      }
+    }
+  },
+  {
+    "name": "multi-sort-upcoming",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?query=https://store.epicgames.com/en-US/p/demo&sortBy=upcoming&sortDir=desc&onSale=false&isLowestPriceEver=true",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "multi_match": {
+                            "query": "demo",
+                            "fields": [
+                              "title^4",
+                              "title.synonym^3",
+                              "developerDisplayName^2",
+                              "publisherDisplayName^2",
+                              "tags.name",
+                              "description"
+                            ],
+                            "type": "best_fields",
+                            "fuzziness": "AUTO",
+                            "operator": "and"
+                          }
+                        },
+                        {
+                          "match_phrase": {
+                            "title": {
+                              "query": "demo",
+                              "boost": 10,
+                              "slop": 2
+                            }
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "term": {
+                      "isHistoricalLowestEverUS": true
+                    }
+                  },
+                  {
+                    "range": {
+                      "releaseDate": {
+                        "gte": "2026-11-17T00:00:00.000Z"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "releaseDate": {
+                  "order": "asc"
+                }
+              },
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 4
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"6ef2dcee09c461d6ed7d8fe85c47def3856ec778\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 4,
+        "query": "demo"
+      }
+    }
+  },
+  {
+    "name": "multi-sort-giveawayDate",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?query=https://store.epicgames.com/en-US/p/demo&sortBy=giveawayDate&sortDir=&onSale=false&isLowestPriceEver=true",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "multi_match": {
+                            "query": "demo",
+                            "fields": [
+                              "title^4",
+                              "title.synonym^3",
+                              "developerDisplayName^2",
+                              "publisherDisplayName^2",
+                              "tags.name",
+                              "description"
+                            ],
+                            "type": "best_fields",
+                            "fuzziness": "AUTO",
+                            "operator": "and"
+                          }
+                        },
+                        {
+                          "match_phrase": {
+                            "title": {
+                              "query": "demo",
+                              "boost": 10,
+                              "slop": 2
+                            }
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "term": {
+                      "isHistoricalLowestEverUS": true
+                    }
+                  },
+                  {
+                    "exists": {
+                      "field": "freeEntries"
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "freeEntries.endDate": {
+                  "order": ""
+                }
+              },
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 4
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"6ef2dcee09c461d6ed7d8fe85c47def3856ec778\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 4,
+        "query": "demo"
+      }
+    }
+  },
+  {
+    "name": "multi-sort-releaseDate",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?query=https://store.epicgames.com/en-US/p/demo&sortBy=releaseDate&sortDir=desc&onSale=false&isLowestPriceEver=true",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "multi_match": {
+                            "query": "demo",
+                            "fields": [
+                              "title^4",
+                              "title.synonym^3",
+                              "developerDisplayName^2",
+                              "publisherDisplayName^2",
+                              "tags.name",
+                              "description"
+                            ],
+                            "type": "best_fields",
+                            "fuzziness": "AUTO",
+                            "operator": "and"
+                          }
+                        },
+                        {
+                          "match_phrase": {
+                            "title": {
+                              "query": "demo",
+                              "boost": 10,
+                              "slop": 2
+                            }
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "term": {
+                      "isHistoricalLowestEverUS": true
+                    }
+                  },
+                  {
+                    "range": {
+                      "releaseDate": {
+                        "lte": "2026-11-17T00:00:00.000Z"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "releaseDate": {
+                  "order": "desc"
+                }
+              },
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 4
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"6ef2dcee09c461d6ed7d8fe85c47def3856ec778\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 4,
+        "query": "demo"
+      }
+    }
+  },
+  {
+    "name": "multi-sort-custom",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?query=https://store.epicgames.com/en-US/p/demo&sortBy=custom&sortDir=&onSale=false&isLowestPriceEver=true",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "multi_match": {
+                            "query": "demo",
+                            "fields": [
+                              "title^4",
+                              "title.synonym^3",
+                              "developerDisplayName^2",
+                              "publisherDisplayName^2",
+                              "tags.name",
+                              "description"
+                            ],
+                            "type": "best_fields",
+                            "fuzziness": "AUTO",
+                            "operator": "and"
+                          }
+                        },
+                        {
+                          "match_phrase": {
+                            "title": {
+                              "query": "demo",
+                              "boost": 10,
+                              "slop": 2
+                            }
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "term": {
+                      "isHistoricalLowestEverUS": true
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "custom": {
+                  "order": ""
+                }
+              },
+              {
+                "_score": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [],
+            "total": 4
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"6ef2dcee09c461d6ed7d8fe85c47def3856ec778\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 4,
+        "query": "demo"
+      }
+    }
+  },
+  {
+    "name": "multi-offers-localized",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?locale=es-es&country=unknown&onSale=true"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "prices.US.price.discount": {
+                        "gt": 0
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "took": 5,
+          "hits": {
+            "hits": [
+              {
+                "_id": "search-id",
+                "_source": {
+                  "_id": "internal",
+                  "id": "a",
+                  "namespace": "n",
+                  "title": "Demo",
+                  "extra": "preserved",
+                  "customAttributes": [
+                    {
+                      "key": "k",
+                      "value": 0
+                    }
+                  ]
+                }
+              },
+              {
+                "_id": "missing"
+              }
+            ],
+            "total": {
+              "value": 420
+            }
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "n:a"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"782772ea75ab55fedf9d306cfcaf4369da2d75b6\""
+      },
+      "body": {
+        "hits": [
+          {
+            "_id": "search-id",
+            "id": "a",
+            "namespace": "n",
+            "title": "Demo",
+            "extra": "preserved",
+            "customAttributes": [
+              {
+                "key": "k",
+                "value": 0
+              }
+            ],
+            "locale": "es-ES",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          },
+          {
+            "_id": "missing",
+            "locale": "es-ES",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          }
+        ],
+        "estimatedTotalHits": 420,
+        "processingTimeMs": 5,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "multi-items",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/items?query=demo&type=EXECUTABLE"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "multi_match": {
+                      "query": "demo",
+                      "fields": [
+                        "title^2",
+                        "description",
+                        "id"
+                      ]
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "bool": {
+                      "must_not": {
+                        "term": {
+                          "namespace.keyword": "ue"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "term": {
+                      "entitlementType.keyword": "EXECUTABLE"
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "took": 5,
+          "hits": {
+            "hits": [
+              {
+                "_id": "search-id",
+                "_source": {
+                  "_id": "internal",
+                  "id": "a",
+                  "namespace": "n",
+                  "title": "Demo",
+                  "extra": "preserved",
+                  "customAttributes": [
+                    {
+                      "key": "k",
+                      "value": 0
+                    }
+                  ]
+                }
+              },
+              {
+                "_id": "missing"
+              }
+            ],
+            "total": {
+              "value": 420
+            }
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"d7300e3e164d97b70f6337b57631e2170a400094\""
+      },
+      "body": {
+        "hits": [
+          {
+            "_id": "search-id",
+            "id": "a",
+            "namespace": "n",
+            "title": "Demo",
+            "extra": "preserved",
+            "customAttributes": {
+              "k": {
+                "type": "STRING",
+                "value": 0
+              }
+            }
+          },
+          {
+            "_id": "missing",
+            "customAttributes": {}
+          }
+        ],
+        "estimatedTotalHits": 420,
+        "processingTimeMs": 5,
+        "query": "demo"
+      }
+    }
+  },
+  {
+    "name": "multi-items-empty",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/items"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "must_not": {
+                        "term": {
+                          "namespace.keyword": "ue"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": []
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"f5aadf9a2e0d5f1802be797fab78744908b8ab10\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 0,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "multi-items-error",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/items"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "must_not": {
+                        "term": {
+                          "namespace.keyword": "ue"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "multi-sellers-empty",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/sellers"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 0,
+            "query": {
+              "match_all": {}
+            },
+            "aggs": {
+              "sellers": {
+                "terms": {
+                  "field": "seller.id.keyword",
+                  "size": 10
+                }
+              }
+            }
+          }
+        },
+        "result": {}
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"f5aadf9a2e0d5f1802be797fab78744908b8ab10\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 0,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "multi-sellers",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/sellers?query=dev&limit=101"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 0,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "match": {
+                      "seller.name": {
+                        "query": "dev",
+                        "fuzziness": "AUTO"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "aggs": {
+              "sellers": {
+                "terms": {
+                  "field": "seller.id.keyword",
+                  "size": 100
+                }
+              }
+            }
+          }
+        },
+        "result": {
+          "aggregations": {
+            "sellers": {
+              "buckets": [
+                {
+                  "key": "s"
+                },
+                {
+                  "key": "missing"
+                },
+                {
+                  "key": "t"
+                }
+              ]
+            }
+          },
+          "took": 17
+        }
+      },
+      {
+        "call": {
+          "collection": "sellers",
+          "method": "many",
+          "query": {
+            "_id": {
+              "$in": [
+                "s",
+                "missing",
+                "t"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "t",
+            "name": "T"
+          },
+          {
+            "_id": "s",
+            "name": "S"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"51e55f3d1e65d26c5b07d7758ab6b501da87044b\""
+      },
+      "body": {
+        "hits": [
+          {
+            "_id": "s",
+            "name": "S"
+          },
+          {
+            "_id": "t",
+            "name": "T"
+          }
+        ],
+        "estimatedTotalHits": 3,
+        "processingTimeMs": 17,
+        "query": "dev"
+      }
+    }
+  },
+  {
+    "name": "ping-sparse",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{\"location\":\"event\",\"session\":{\"lastActiveAt\":null}}"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "events",
+          "method": "insert",
+          "query": {
+            "location": "event",
+            "timestamp": {
+              "$date": "1970-01-01T00:00:00.000Z"
+            },
+            "createdAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            },
+            "updatedAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            }
+          },
+          "options": {}
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "service": "ga",
+          "method": "collect",
+          "body": {
+            "events": [
+              {
+                "params": {
+                  "page_location": "event",
+                  "timestamp_millis": null,
+                  "engagement_time_msec": null
+                }
+              }
+            ]
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e85c8250d2427549205ccf325e633df6ee9f430d\""
+      },
+      "body": {
+        "message": "pong"
+      }
+    }
+  },
+  {
+    "name": "ping-no-clock",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{\"location\":\"event\",\"session\":{}}"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "events",
+          "method": "insert",
+          "query": {
+            "location": "event",
+            "timestamp": {
+              "$date": "1970-01-01T00:00:00.000Z"
+            },
+            "createdAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            },
+            "updatedAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            }
+          },
+          "options": {}
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "service": "ga",
+          "method": "collect",
+          "body": {
+            "events": [
+              {
+                "params": {
+                  "page_location": "event",
+                  "engagement_time_msec": null
+                }
+              }
+            ]
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e85c8250d2427549205ccf325e633df6ee9f430d\""
+      },
+      "body": {
+        "message": "pong"
+      }
+    }
+  },
+  {
+    "name": "ping-array-clock",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{\"location\":\"event\",\"session\":{\"lastActiveAt\":[\"2025-01-02\"]}}"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "events",
+          "method": "insert",
+          "query": {
+            "location": "event",
+            "timestamp": {
+              "$date": "2025-01-02T00:00:00.000Z"
+            },
+            "createdAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            },
+            "updatedAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            }
+          },
+          "options": {}
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "service": "ga",
+          "method": "collect",
+          "body": {
+            "events": [
+              {
+                "params": {
+                  "page_location": "event",
+                  "timestamp_millis": [
+                    "2025-01-02"
+                  ],
+                  "engagement_time_msec": null
+                }
+              }
+            ]
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e85c8250d2427549205ccf325e633df6ee9f430d\""
+      },
+      "body": {
+        "message": "pong"
+      }
+    }
+  },
+  {
+    "name": "ping-out-of-range-clock",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{\"location\":\"event\",\"session\":{\"lastActiveAt\":9000000000000000000}}"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "events",
+          "method": "insert",
+          "query": {
+            "location": "event",
+            "timestamp": {
+              "$date": "1970-01-01T00:00:00.000Z"
+            },
+            "createdAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            },
+            "updatedAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            }
+          },
+          "options": {}
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "service": "ga",
+          "method": "collect",
+          "body": {
+            "events": [
+              {
+                "params": {
+                  "page_location": "event",
+                  "timestamp_millis": 9000000000000000000,
+                  "engagement_time_msec": null
+                }
+              }
+            ]
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e85c8250d2427549205ccf325e633df6ee9f430d\""
+      },
+      "body": {
+        "message": "pong"
+      }
+    }
+  },
+  {
+    "name": "ping-string-values",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{\"location\":\"event\",\"event\":7,\"userId\":92,\"params\":\"abc\",\"session\":{\"id\":4,\"startedAt\":\"0x10\",\"lastActiveAt\":\"2025-01-02T00:00:00Z\"}}"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "events",
+          "method": "insert",
+          "query": {
+            "event": 7,
+            "location": "event",
+            "params": "abc",
+            "userId": 92,
+            "session": 4,
+            "timestamp": {
+              "$date": "2025-01-02T00:00:00.000Z"
+            },
+            "createdAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            },
+            "updatedAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            }
+          },
+          "options": {}
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "service": "ga",
+          "method": "collect",
+          "body": {
+            "client_id": 92,
+            "user_id": 92,
+            "events": [
+              {
+                "name": 7,
+                "params": {
+                  "0": "a",
+                  "1": "b",
+                  "2": "c",
+                  "page_location": "event",
+                  "session_id": 4,
+                  "timestamp_millis": "2025-01-02T00:00:00Z",
+                  "engagement_time_msec": null
+                }
+              }
+            ]
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e85c8250d2427549205ccf325e633df6ee9f430d\""
+      },
+      "body": {
+        "message": "pong"
+      }
+    }
+  },
+  {
+    "name": "ping-array-params",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{\"location\":\"event\",\"params\":[\"one\",\"two\"],\"session\":{\"id\":null,\"startedAt\":\"0b11\",\"lastActiveAt\":true}}"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "events",
+          "method": "insert",
+          "query": {
+            "location": "event",
+            "params": [
+              "one",
+              "two"
+            ],
+            "session": null,
+            "timestamp": {
+              "$date": "1970-01-01T00:00:00.001Z"
+            },
+            "createdAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            },
+            "updatedAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            }
+          },
+          "options": {}
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "service": "ga",
+          "method": "collect",
+          "body": {
+            "events": [
+              {
+                "params": {
+                  "0": "one",
+                  "1": "two",
+                  "page_location": "event",
+                  "session_id": null,
+                  "timestamp_millis": true,
+                  "engagement_time_msec": -2
+                }
+              }
+            ]
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e85c8250d2427549205ccf325e633df6ee9f430d\""
+      },
+      "body": {
+        "message": "pong"
+      }
+    }
+  },
+  {
+    "name": "ping-clock",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{\"location\":\"event\",\"session\":{\"id\":\"s\",\"startedAt\":500,\"lastActiveAt\":1234.5},\"params\":{\"page_location\":\"override\",\"session_id\":\"overridden\",\"timestamp_millis\":\"overridden\"}}"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "events",
+          "method": "insert",
+          "query": {
+            "location": "event",
+            "params": {
+              "page_location": "override",
+              "session_id": "overridden",
+              "timestamp_millis": "overridden"
+            },
+            "session": "s",
+            "timestamp": {
+              "$date": "1970-01-01T00:00:01.234Z"
+            },
+            "createdAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            },
+            "updatedAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            }
+          },
+          "options": {}
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "service": "ga",
+          "method": "collect",
+          "body": {
+            "events": [
+              {
+                "params": {
+                  "page_location": "override",
+                  "session_id": "s",
+                  "timestamp_millis": 1234.5,
+                  "engagement_time_msec": 734.5
+                }
+              }
+            ]
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e85c8250d2427549205ccf325e633df6ee9f430d\""
+      },
+      "body": {
+        "message": "pong"
+      }
+    }
+  },
+  {
+    "name": "ping-utf8-bom",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "﻿{\"event\":\"view\",\"location\":\"https://egdata.app/offers/demo\",\"userId\":\"anonymous\",\"params\":{\"game\":\"Demo\"},\"session\":{\"id\":\"session\",\"startedAt\":1000,\"lastActiveAt\":2000}}"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "events",
+          "method": "insert",
+          "query": {
+            "event": "view",
+            "location": "https://egdata.app/offers/demo",
+            "params": {
+              "game": "Demo"
+            },
+            "userId": "anonymous",
+            "session": "session",
+            "timestamp": {
+              "$date": "1970-01-01T00:00:02.000Z"
+            },
+            "createdAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            },
+            "updatedAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            }
+          },
+          "options": {}
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "service": "ga",
+          "method": "collect",
+          "body": {
+            "client_id": "anonymous",
+            "user_id": "anonymous",
+            "events": [
+              {
+                "name": "view",
+                "params": {
+                  "page_location": "https://egdata.app/offers/demo",
+                  "game": "Demo",
+                  "session_id": "session",
+                  "timestamp_millis": 2000,
+                  "engagement_time_msec": 1000
+                }
+              }
+            ]
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e85c8250d2427549205ccf325e633df6ee9f430d\""
+      },
+      "body": {
+        "message": "pong"
+      }
+    }
+  },
+  {
+    "name": "ping-ga-offline",
+    "request": {
+      "method": "POST",
+      "path": "/ping",
+      "rawBody": "{\"event\":\"view\",\"location\":\"https://egdata.app/offers/demo\",\"userId\":\"anonymous\",\"params\":{\"game\":\"Demo\"},\"session\":{\"id\":\"session\",\"startedAt\":1000,\"lastActiveAt\":2000}}"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "events",
+          "method": "insert",
+          "query": {
+            "event": "view",
+            "location": "https://egdata.app/offers/demo",
+            "params": {
+              "game": "Demo"
+            },
+            "userId": "anonymous",
+            "session": "session",
+            "timestamp": {
+              "$date": "1970-01-01T00:00:02.000Z"
+            },
+            "createdAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            },
+            "updatedAt": {
+              "$date": "2026-11-17T00:00:00.000Z"
+            }
+          },
+          "options": {}
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "service": "ga",
+          "method": "collect",
+          "body": {
+            "client_id": "anonymous",
+            "user_id": "anonymous",
+            "events": [
+              {
+                "name": "view",
+                "params": {
+                  "page_location": "https://egdata.app/offers/demo",
+                  "game": "Demo",
+                  "session_id": "session",
+                  "timestamp_millis": 2000,
+                  "engagement_time_msec": 1000
+                }
+              }
+            ]
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e85c8250d2427549205ccf325e633df6ee9f430d\""
+      },
+      "body": {
+        "message": "pong"
+      }
+    }
+  },
+  {
+    "name": "root-items-sparse",
+    "request": {
+      "method": "GET",
+      "path": "/items-from-offer/a"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "items-from-offer:a"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "id": "a"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$items",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "localField": "items.id",
+                "foreignField": "id",
+                "as": "itemDetails"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$itemDetails",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$isArray": "$linkedOffers"
+                          },
+                          {
+                            "$in": [
+                              "$$offerId",
+                              "$linkedOffers"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "linkedItems"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$_id",
+                "offerItems": {
+                  "$push": "$itemDetails"
+                },
+                "linkedItems": {
+                  "$first": "$linkedItems"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "items": {
+                  "$filter": {
+                    "input": {
+                      "$concatArrays": [
+                        "$offerItems",
+                        "$linkedItems"
+                      ]
+                    },
+                    "as": "item",
+                    "cond": {
+                      "$ne": [
+                        "$$item",
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "items": [
+              {
+                "id": "a"
+              },
+              {
+                "id": "b",
+                "customAttributes": null
+              },
+              {
+                "id": 1,
+                "customAttributes": false
+              },
+              {
+                "id": "1",
+                "customAttributes": [
+                  {
+                    "key": 17,
+                    "type": 5,
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "items-from-offer:a",
+          "payload": [
+            {
+              "id": "a"
+            },
+            {
+              "id": "b",
+              "customAttributes": null
+            },
+            {
+              "id": 1,
+              "customAttributes": false
+            },
+            {
+              "id": "1",
+              "customAttributes": {
+                "17": {
+                  "type": 5,
+                  "value": 0
+                }
+              }
+            }
+          ],
+          "ttl": 604800
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"0fe80ae0ef50f3da15f9862aec655c788320536e\""
+      },
+      "body": [
+        {
+          "id": "a"
+        },
+        {
+          "id": "b",
+          "customAttributes": null
+        },
+        {
+          "id": 1,
+          "customAttributes": false
+        },
+        {
+          "id": "1",
+          "customAttributes": {
+            "17": {
+              "type": 5,
+              "value": 0
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "root-items-flatmap-object",
+    "request": {
+      "method": "GET",
+      "path": "/items-from-offer/a"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "items-from-offer:a"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "id": "a"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$items",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "localField": "items.id",
+                "foreignField": "id",
+                "as": "itemDetails"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$itemDetails",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$isArray": "$linkedOffers"
+                          },
+                          {
+                            "$in": [
+                              "$$offerId",
+                              "$linkedOffers"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "linkedItems"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$_id",
+                "offerItems": {
+                  "$push": "$itemDetails"
+                },
+                "linkedItems": {
+                  "$first": "$linkedItems"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "items": {
+                  "$filter": {
+                    "input": {
+                      "$concatArrays": [
+                        "$offerItems",
+                        "$linkedItems"
+                      ]
+                    },
+                    "as": "item",
+                    "cond": {
+                      "$ne": [
+                        "$$item",
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "items": {
+              "id": "singleton"
+            }
+          },
+          {
+            "items": [
+              "abc",
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "items-from-offer:a",
+          "payload": [
+            {
+              "id": "singleton"
+            },
+            {
+              "0": "a",
+              "1": "b",
+              "2": "c"
+            }
+          ],
+          "ttl": 604800
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"d7efa3dad58c3c53ad674e449f6334658522f3ad\""
+      },
+      "body": [
+        {
+          "id": "singleton"
+        },
+        {
+          "0": "a",
+          "1": "b",
+          "2": "c"
+        }
+      ]
+    }
+  },
+  {
+    "name": "root-items-null-entry",
+    "request": {
+      "method": "GET",
+      "path": "/items-from-offer/a"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "items-from-offer:a"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "id": "a"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$items",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "localField": "items.id",
+                "foreignField": "id",
+                "as": "itemDetails"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$itemDetails",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$isArray": "$linkedOffers"
+                          },
+                          {
+                            "$in": [
+                              "$$offerId",
+                              "$linkedOffers"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "linkedItems"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$_id",
+                "offerItems": {
+                  "$push": "$itemDetails"
+                },
+                "linkedItems": {
+                  "$first": "$linkedItems"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "items": {
+                  "$filter": {
+                    "input": {
+                      "$concatArrays": [
+                        "$offerItems",
+                        "$linkedItems"
+                      ]
+                    },
+                    "as": "item",
+                    "cond": {
+                      "$ne": [
+                        "$$item",
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "items": [
+              null
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "root-items-null-attribute",
+    "request": {
+      "method": "GET",
+      "path": "/items-from-offer/a"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "items-from-offer:a"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "id": "a"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$items",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "localField": "items.id",
+                "foreignField": "id",
+                "as": "itemDetails"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$itemDetails",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$isArray": "$linkedOffers"
+                          },
+                          {
+                            "$in": [
+                              "$$offerId",
+                              "$linkedOffers"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "linkedItems"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$_id",
+                "offerItems": {
+                  "$push": "$itemDetails"
+                },
+                "linkedItems": {
+                  "$first": "$linkedItems"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "items": {
+                  "$filter": {
+                    "input": {
+                      "$concatArrays": [
+                        "$offerItems",
+                        "$linkedItems"
+                      ]
+                    },
+                    "as": "item",
+                    "cond": {
+                      "$ne": [
+                        "$$item",
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "items": [
+              {
+                "customAttributes": [
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "root-items-failed-offers",
+    "request": {
+      "method": "GET",
+      "path": "/items-from-offer/a"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "items-from-offer:a"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "id": "a"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$items",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "localField": "items.id",
+                "foreignField": "id",
+                "as": "itemDetails"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$itemDetails",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$isArray": "$linkedOffers"
+                          },
+                          {
+                            "$in": [
+                              "$$offerId",
+                              "$linkedOffers"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "linkedItems"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$_id",
+                "offerItems": {
+                  "$push": "$itemDetails"
+                },
+                "linkedItems": {
+                  "$first": "$linkedItems"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "items": {
+                  "$filter": {
+                    "input": {
+                      "$concatArrays": [
+                        "$offerItems",
+                        "$linkedItems"
+                      ]
+                    },
+                    "as": "item",
+                    "cond": {
+                      "$ne": [
+                        "$$item",
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "root-items-failed-cache_set",
+    "request": {
+      "method": "GET",
+      "path": "/items-from-offer/a"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "items-from-offer:a"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "id": "a"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$items",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "localField": "items.id",
+                "foreignField": "id",
+                "as": "itemDetails"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$itemDetails",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$isArray": "$linkedOffers"
+                          },
+                          {
+                            "$in": [
+                              "$$offerId",
+                              "$linkedOffers"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "linkedItems"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$_id",
+                "offerItems": {
+                  "$push": "$itemDetails"
+                },
+                "linkedItems": {
+                  "$first": "$linkedItems"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "items": {
+                  "$filter": {
+                    "input": {
+                      "$concatArrays": [
+                        "$offerItems",
+                        "$linkedItems"
+                      ]
+                    },
+                    "as": "item",
+                    "cond": {
+                      "$ne": [
+                        "$$item",
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "items-from-offer:a",
+          "payload": [],
+          "ttl": 604800
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "root-base-offer-offline",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "root-base-localization-offline",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n?locale=fr-FR"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "internal",
+          "id": "a",
+          "namespace": "n",
+          "title": "Demo",
+          "extra": "preserved",
+          "customAttributes": [
+            {
+              "key": "k",
+              "value": 0
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "n:a"
+              ]
+            },
+            "locale": "fr-FR"
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "root-changelog-store-offline",
+    "request": {
+      "method": "GET",
+      "path": "/changelog?page=1&limit=2"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {},
+          "options": {
+            "limit": 2,
+            "skip": 0,
+            "sort": {
+              "timestamp": -1
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "items-sparse-sources",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/items"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "must_not": {
+                        "term": {
+                          "namespace.keyword": "ue"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "_id": "stale",
+                  "title": "A"
+                }
+              },
+              {
+                "_id": null,
+                "_source": null
+              },
+              {
+                "_source": [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "_source": "xy"
+              }
+            ],
+            "total": {
+              "value": 0
+            }
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"e2cd9036838bb4c2f7d76adf44db18d6f92ab81b\""
+      },
+      "body": {
+        "hits": [
+          {
+            "title": "A",
+            "customAttributes": {}
+          },
+          {
+            "_id": null,
+            "customAttributes": {}
+          },
+          {
+            "0": "a",
+            "1": "b",
+            "customAttributes": {}
+          },
+          {
+            "0": "x",
+            "1": "y",
+            "customAttributes": {}
+          }
+        ],
+        "estimatedTotalHits": 0,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "items-null-hit",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/items"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "must_not": {
+                        "term": {
+                          "namespace.keyword": "ue"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              null
+            ]
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "items-no-hits-array",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/items"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "must_not": {
+                        "term": {
+                          "namespace.keyword": "ue"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {}
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "items-store-offline",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/items"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "must_not": {
+                        "term": {
+                          "namespace.keyword": "ue"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "offers-sparse-sources",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": []
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "_id": "stale",
+                  "title": "A"
+                }
+              },
+              {
+                "_id": null,
+                "_source": null
+              },
+              {
+                "_source": [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "_source": "xy"
+              }
+            ],
+            "total": {
+              "value": 0
+            }
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"c81e8f2e493eac657ee732e781c37859086cb5c6\""
+      },
+      "body": {
+        "hits": [
+          {
+            "title": "A",
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "_id": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "0": "a",
+            "1": "b",
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "0": "x",
+            "1": "y",
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "estimatedTotalHits": 0,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "offers-null-hit",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": []
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              null
+            ]
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "offers-no-hits-array",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": []
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {}
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "offers-store-offline",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": []
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "multi-items-attr-types",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/items"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "must_not": {
+                        "term": {
+                          "namespace.keyword": "ue"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "customAttributes": [
+                    {
+                      "key": 4,
+                      "type": 2,
+                      "value": 1
+                    },
+                    {
+                      "key": 0,
+                      "value": "unused"
+                    }
+                  ]
+                }
+              },
+              {
+                "_source": {
+                  "customAttributes": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"82d11d721b1ccc0be69f333c17c2cdf52f68d641\""
+      },
+      "body": {
+        "hits": [
+          {
+            "customAttributes": {
+              "4": {
+                "type": 2,
+                "value": 1
+              }
+            }
+          },
+          {
+            "customAttributes": {}
+          }
+        ],
+        "estimatedTotalHits": 0,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "multi-items-null-attr",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/items"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.items",
+          "body": {
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "must_not": {
+                        "term": {
+                          "namespace.keyword": "ue"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": [
+              {
+                "_source": {
+                  "customAttributes": [
+                    null
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "multi-offers-price-radix",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?priceMin=0x100000000000000000000&priceMax=0b110&limit=-Infinity&page=0o7"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": null,
+            "size": null,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "prices.US.price.discountPrice": {
+                        "gte": 1.2089258196146292e+24,
+                        "lte": 6
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": []
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"f5aadf9a2e0d5f1802be797fab78744908b8ab10\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 0,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "multi-offers-blank-fields",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?priceMin=%20&priceMax=inf&limit=0&page=bad&sortBy=priceAsc&sortDir=&isLowestPrice=true"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "prices.US.price.discountPrice": {
+                        "gte": 0,
+                        "lte": null
+                      }
+                    }
+                  },
+                  {
+                    "term": {
+                      "isAtLowestPriceUS": true
+                    }
+                  },
+                  {
+                    "range": {
+                      "prices.US.price.discount": {
+                        "gt": 0
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "sort": [
+              {
+                "prices.US.price.discountPrice": {
+                  "order": "asc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "hits": {
+            "hits": []
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"f5aadf9a2e0d5f1802be797fab78744908b8ab10\""
+      },
+      "body": {
+        "hits": [],
+        "estimatedTotalHits": 0,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "multi-offers-localization-offline",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/offers?locale=fr"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "from": 0,
+            "size": 10,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": []
+              }
+            },
+            "sort": [
+              {
+                "lastModifiedDate": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "result": {
+          "took": 5,
+          "hits": {
+            "hits": [
+              {
+                "_id": "search-id",
+                "_source": {
+                  "_id": "internal",
+                  "id": "a",
+                  "namespace": "n",
+                  "title": "Demo",
+                  "extra": "preserved",
+                  "customAttributes": [
+                    {
+                      "key": "k",
+                      "value": 0
+                    }
+                  ]
+                }
+              },
+              {
+                "_id": "missing"
+              }
+            ],
+            "total": {
+              "value": 420
+            }
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "n:a"
+              ]
+            },
+            "locale": "fr"
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "multi-sellers-invalid-shape",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/sellers"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 0,
+            "query": {
+              "match_all": {}
+            },
+            "aggs": {
+              "sellers": {
+                "terms": {
+                  "field": "seller.id.keyword",
+                  "size": 10
+                }
+              }
+            }
+          }
+        },
+        "result": {
+          "aggregations": {
+            "sellers": {
+              "buckets": {}
+            }
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "multi-sellers-null-bucket",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/sellers"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 0,
+            "query": {
+              "match_all": {}
+            },
+            "aggs": {
+              "sellers": {
+                "terms": {
+                  "field": "seller.id.keyword",
+                  "size": 10
+                }
+              }
+            }
+          }
+        },
+        "result": {
+          "aggregations": {
+            "sellers": {
+              "buckets": [
+                null
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "multi-sellers-id-types",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/sellers"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 0,
+            "query": {
+              "match_all": {}
+            },
+            "aggs": {
+              "sellers": {
+                "terms": {
+                  "field": "seller.id.keyword",
+                  "size": 10
+                }
+              }
+            }
+          }
+        },
+        "result": {
+          "aggregations": {
+            "sellers": {
+              "buckets": [
+                {
+                  "key": "a"
+                },
+                {
+                  "key": 17
+                },
+                {
+                  "key": "17"
+                },
+                {
+                  "key": "b"
+                },
+                {
+                  "key": "a"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "sellers",
+          "method": "many",
+          "query": {
+            "_id": {
+              "$in": [
+                "a",
+                17,
+                "17",
+                "b",
+                "a"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": 17
+          },
+          {
+            "_id": "a"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"65b44793475a5888442fd74b6c18308503921326\""
+      },
+      "body": {
+        "hits": [
+          {
+            "_id": "a"
+          },
+          {
+            "_id": 17
+          },
+          {
+            "_id": "a"
+          }
+        ],
+        "estimatedTotalHits": 5,
+        "query": ""
+      }
+    }
+  },
+  {
+    "name": "multi-sellers-id-missing",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/sellers"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 0,
+            "query": {
+              "match_all": {}
+            },
+            "aggs": {
+              "sellers": {
+                "terms": {
+                  "field": "seller.id.keyword",
+                  "size": 10
+                }
+              }
+            }
+          }
+        },
+        "result": {
+          "aggregations": {
+            "sellers": {
+              "buckets": [
+                {
+                  "key": "a"
+                },
+                {
+                  "key": 17
+                },
+                {
+                  "key": "17"
+                },
+                {
+                  "key": "b"
+                },
+                {
+                  "key": "a"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "sellers",
+          "method": "many",
+          "query": {
+            "_id": {
+              "$in": [
+                "a",
+                17,
+                "17",
+                "b",
+                "a"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "a"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "multi-sellers-db-offline",
+    "request": {
+      "method": "GET",
+      "path": "/multisearch/sellers"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "opensearch",
+          "method": "search",
+          "index": "egdata.offers",
+          "body": {
+            "size": 0,
+            "query": {
+              "match_all": {}
+            },
+            "aggs": {
+              "sellers": {
+                "terms": {
+                  "field": "seller.id.keyword",
+                  "size": 10
+                }
+              }
+            }
+          }
+        },
+        "result": {
+          "aggregations": {
+            "sellers": {
+              "buckets": [
+                {
+                  "key": "a"
+                },
+                {
+                  "key": 17
+                },
+                {
+                  "key": "17"
+                },
+                {
+                  "key": "b"
+                },
+                {
+                  "key": "a"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "sellers",
+          "method": "many",
+          "query": {
+            "_id": {
+              "$in": [
+                "a",
+                17,
+                "17",
+                "b",
+                "a"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "root-items-native-set-identity",
+    "request": {
+      "method": "GET",
+      "path": "/items-from-offer/game"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "items-from-offer:game"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "id": "game"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$items",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "localField": "items.id",
+                "foreignField": "id",
+                "as": "itemDetails"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$itemDetails",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$isArray": "$linkedOffers"
+                          },
+                          {
+                            "$in": [
+                              "$$offerId",
+                              "$linkedOffers"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "linkedItems"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$_id",
+                "offerItems": {
+                  "$push": "$itemDetails"
+                },
+                "linkedItems": {
+                  "$first": "$linkedItems"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "items": {
+                  "$filter": {
+                    "input": {
+                      "$concatArrays": [
+                        "$offerItems",
+                        "$linkedItems"
+                      ]
+                    },
+                    "as": "item",
+                    "cond": {
+                      "$ne": [
+                        "$$item",
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "items": [
+              {
+                "id": {
+                  "$oid": "507f1f77bcf86cd799439031"
+                },
+                "title": "first object"
+              },
+              {
+                "id": {
+                  "$oid": "507f1f77bcf86cd799439031"
+                },
+                "title": "second object"
+              },
+              {
+                "id": "507f1f77bcf86cd799439031",
+                "title": "string id"
+              },
+              {
+                "id": "507f1f77bcf86cd799439031",
+                "title": "duplicate string"
+              },
+              {
+                "id": 7,
+                "title": "number"
+              },
+              {
+                "id": "7",
+                "title": "number string"
+              },
+              {
+                "id": null,
+                "title": "null"
+              },
+              {
+                "title": "undefined"
+              },
+              {
+                "title": "duplicate undefined"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "items-from-offer:game",
+          "payload": [
+            {
+              "id": "507f1f77bcf86cd799439031",
+              "title": "first object"
+            },
+            {
+              "id": "507f1f77bcf86cd799439031",
+              "title": "second object"
+            },
+            {
+              "id": "507f1f77bcf86cd799439031",
+              "title": "string id"
+            },
+            {
+              "id": 7,
+              "title": "number"
+            },
+            {
+              "id": "7",
+              "title": "number string"
+            },
+            {
+              "id": null,
+              "title": "null"
+            },
+            {
+              "title": "undefined"
+            }
+          ],
+          "ttl": 604800
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"9b45ffcc818fe9f581664b0e29d5945689479477\""
+      },
+      "body": [
+        {
+          "id": "507f1f77bcf86cd799439031",
+          "title": "first object"
+        },
+        {
+          "id": "507f1f77bcf86cd799439031",
+          "title": "second object"
+        },
+        {
+          "id": "507f1f77bcf86cd799439031",
+          "title": "string id"
+        },
+        {
+          "id": 7,
+          "title": "number"
+        },
+        {
+          "id": "7",
+          "title": "number string"
+        },
+        {
+          "id": null,
+          "title": "null"
+        },
+        {
+          "title": "undefined"
+        }
+      ]
+    }
+  },
+  {
+    "name": "root-base-checked-false",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "a",
+          "namespace": "n",
+          "customAttributes": false
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5deba9175d1b0c79f5cd70203adcd865346e2569\""
+      },
+      "body": {
+        "id": "a",
+        "namespace": "n",
+        "locale": "en-US",
+        "localeStatus": "canonical"
+      }
+    }
+  },
+  {
+    "name": "root-base-fallback-checked-false",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": true
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "a",
+          "namespace": "n",
+          "customAttributes": false
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5deba9175d1b0c79f5cd70203adcd865346e2569\""
+      },
+      "body": {
+        "id": "a",
+        "namespace": "n",
+        "locale": "en-US",
+        "localeStatus": "canonical"
+      }
+    }
+  },
+  {
+    "name": "root-base-checked-legacy-object",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "a",
+          "namespace": "n",
+          "customAttributes": {
+            "dev": {
+              "value": "studio"
+            }
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"58089b7aff1b6f1558d909d53fc25d6e9b1b57b5\""
+      },
+      "body": {
+        "id": "a",
+        "namespace": "n",
+        "customAttributes": {
+          "dev": {
+            "value": "studio"
+          }
+        },
+        "locale": "en-US",
+        "localeStatus": "canonical"
+      }
+    }
+  },
+  {
+    "name": "root-base-fallback-checked-legacy-object",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": true
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "a",
+          "namespace": "n",
+          "customAttributes": {
+            "dev": {
+              "value": "studio"
+            }
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"58089b7aff1b6f1558d909d53fc25d6e9b1b57b5\""
+      },
+      "body": {
+        "id": "a",
+        "namespace": "n",
+        "customAttributes": {
+          "dev": {
+            "value": "studio"
+          }
+        },
+        "locale": "en-US",
+        "localeStatus": "canonical"
+      }
+    }
+  },
+  {
+    "name": "root-base-checked-null-entry",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "a",
+          "namespace": "n",
+          "customAttributes": [
+            null
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "root-base-fallback-checked-null-entry",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": true
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "a",
+          "namespace": "n",
+          "customAttributes": [
+            null
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "root-base-checked-numeric-key",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "a",
+          "namespace": "n",
+          "customAttributes": [
+            {
+              "key": 12,
+              "type": false,
+              "value": "t"
+            },
+            {
+              "key": "missing"
+            },
+            {
+              "key": "__proto__",
+              "value": "hidden"
+            }
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"bc6f324637d7b84998533b2af39d374bb74cae02\""
+      },
+      "body": {
+        "id": "a",
+        "namespace": "n",
+        "customAttributes": {
+          "12": {
+            "type": "STRING",
+            "value": "t"
+          },
+          "missing": {
+            "type": "STRING"
+          }
+        },
+        "locale": "en-US",
+        "localeStatus": "canonical"
+      }
+    }
+  },
+  {
+    "name": "root-base-fallback-checked-numeric-key",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": true
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "a",
+          "namespace": "n",
+          "customAttributes": [
+            {
+              "key": 12,
+              "type": false,
+              "value": "t"
+            },
+            {
+              "key": "missing"
+            },
+            {
+              "key": "__proto__",
+              "value": "hidden"
+            }
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"bc6f324637d7b84998533b2af39d374bb74cae02\""
+      },
+      "body": {
+        "id": "a",
+        "namespace": "n",
+        "customAttributes": {
+          "12": {
+            "type": "STRING",
+            "value": "t"
+          },
+          "missing": {
+            "type": "STRING"
+          }
+        },
+        "locale": "en-US",
+        "localeStatus": "canonical"
+      }
+    }
+  },
+  {
+    "name": "root-base-sparse-translated",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n?locale=es-ES"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "a",
+          "namespace": "n"
+        }
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "n:a"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "entityType": "offer",
+            "entityId": "n:a",
+            "locale": "es-ES",
+            "source": "test",
+            "data": {
+              "title": "Titulo",
+              "description": "Descripcion"
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"99750f77edf5d7dded3e3d392b8a6d55445042a7\""
+      },
+      "body": {
+        "id": "a",
+        "namespace": "n",
+        "title": "Titulo",
+        "description": "Descripcion",
+        "locale": "es-ES",
+        "localeStatus": "localized",
+        "canonicalLocale": "en-US",
+        "localization": {
+          "source": "test"
+        }
+      }
+    }
+  },
+  {
+    "name": "root-base-native-id",
+    "request": {
+      "method": "GET",
+      "path": "/base-game/n?locale=es-ES"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "namespace": {
+              "$eq": "n"
+            },
+            "offerType": "BASE_GAME",
+            "prePurchase": {
+              "$ne": true
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": {
+            "$oid": "507f1f77bcf86cd799439031"
+          },
+          "namespace": "n"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"993ece33c6d309676e20b1880640f23c0c26c100\""
+      },
+      "body": {
+        "id": "507f1f77bcf86cd799439031",
+        "namespace": "n",
+        "locale": "es-ES",
+        "localeStatus": "fallback",
+        "canonicalLocale": "en-US"
+      }
+    }
+  }
+]

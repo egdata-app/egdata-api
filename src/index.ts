@@ -1361,7 +1361,7 @@ app.post("/donate/key/:code", epic, async (c) => {
 
   consola.debug("Verifying code");
 
-  const id = session.user?.email.split("@")[0] ?? c.var.epic?.account_id;
+  const id = session.epicAccountId;
 
   // Check if the code is already in the DB
   const existingDonation = await db.db.collection("key-codes").findOne({

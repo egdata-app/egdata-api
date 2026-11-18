@@ -5,6 +5,17 @@ description: History for GET /v1/offers/{id}/reviews-summary
 
 `GET /v1/offers/{id}/reviews-summary` — active. Recorded dates are not deployment dates.
 
+## 2026-11-18 — Persist owner review changes and include newly saved reviews in public counts
+
+Record: [persist-owner-review-edits](https://github.com/egdata-app/egdata-api/blob/main/changes/records/persist-owner-review-edits.json).
+
+- **v1 GET /v1/offers/&#123;id&#125;/reviews-summary** (getOfferReviewsSummary; fixed; compatible)
+  - Before: The legacy editor sent an invalid MongoDB update, so an attempted rating or recommendation change could leave the original values in the summary. The review form could also fail to locate a valid product after the origin started.
+  - After: After a successful owner edit and cache refresh, the summary uses the saved rating, recommendation and verification status. Editing a review keeps the review count for the offer. New reviews for resolved products appear after the same cache refresh.
+  - Client action: None
+
+Verification: tests/rust-legacy-account-admin-oracle.test.ts compares authenticated review edits, edition history, concurrent writes and deletion during an edit.; rust/scripts/compare-origins.mjs exercises signed-in owners against the Node and Rust HTTP origins and checks the stored review in MongoDB..
+
 ## 2026-11-16 — Accept dashboard console session key identities on v1 endpoints
 
 Record: [console-session-v1-key-context](https://github.com/egdata-app/egdata-api/blob/main/changes/records/console-session-v1-key-context.json).

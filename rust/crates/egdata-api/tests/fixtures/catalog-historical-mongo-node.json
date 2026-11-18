@@ -1,0 +1,1892 @@
+[
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "Legacy",
+          "id": "owner",
+          "title": "Original"
+        },
+        {
+          "namespace": "Legacy",
+          "id": "owner",
+          "title": "Revised",
+          "linkedOffers": [
+            {
+              "$symbol": "linked"
+            },
+            null
+          ],
+          "releaseInfo": [
+            {
+              "appId": "shared",
+              "platform": [
+                "Windows"
+              ]
+            }
+          ]
+        },
+        {
+          "namespace": "Legacy",
+          "id": {
+            "$symbol": "symbol-id"
+          },
+          "title": "Legacy symbol",
+          "linkedOffers": [
+            {
+              "$symbol": "linked"
+            }
+          ]
+        },
+        {
+          "namespace": "Legacy",
+          "id": "linked-alone",
+          "title": "Linked only",
+          "linkedOffers": [
+            {
+              "$symbol": "linked"
+            }
+          ]
+        },
+        {
+          "namespace": "Legacy",
+          "id": "sibling",
+          "title": "Sibling"
+        },
+        {
+          "namespace": "Other",
+          "id": "sibling",
+          "title": "Other namespace"
+        },
+        {
+          "id": "sibling",
+          "title": "Namespace missing"
+        },
+        {
+          "namespace": "Legacy",
+          "id": "scoped",
+          "title": "Only this namespace is referenced"
+        },
+        {
+          "namespace": "Other",
+          "id": "scoped",
+          "title": "Exclude from the owner graph"
+        },
+        {
+          "namespace": "Legacy",
+          "id": "bad",
+          "title": {
+            "$numberInt": "4"
+          },
+          "releaseInfo": [
+            {
+              "appId": "bad",
+              "platform": [
+                "Windows"
+              ]
+            }
+          ]
+        },
+        {
+          "namespace": "Legacy",
+          "id": "bad-refs",
+          "title": "Bad references"
+        },
+        {
+          "namespace": "Legacy",
+          "id": "empty-observation",
+          "title": "Empty observation"
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "Legacy",
+          "id": "direct",
+          "title": "Initial offer",
+          "items": [
+            {
+              "id": "owner"
+            },
+            {
+              "id": "sibling"
+            },
+            {
+              "id": "scoped",
+              "namespace": "Legacy"
+            },
+            null,
+            {
+              "id": 2
+            }
+          ]
+        },
+        {
+          "namespace": "Legacy",
+          "id": "direct",
+          "title": "Updated direct offer",
+          "items": [
+            {
+              "id": "owner"
+            },
+            {
+              "id": "sibling"
+            },
+            {
+              "id": "scoped",
+              "namespace": "Legacy"
+            },
+            null,
+            {
+              "id": 2
+            }
+          ]
+        },
+        {
+          "namespace": "Legacy",
+          "id": {
+            "$symbol": "linked"
+          },
+          "title": "Offer with symbol ID"
+        },
+        {
+          "namespace": "Other",
+          "id": "linked",
+          "title": "Related ID belongs to another namespace"
+        },
+        {
+          "namespace": "Legacy",
+          "id": "broken",
+          "title": 17,
+          "items": [
+            {
+              "id": "bad-refs"
+            }
+          ]
+        },
+        {
+          "namespace": "Legacy",
+          "id": "",
+          "title": "Unusable record",
+          "items": [
+            {
+              "id": "empty-observation"
+            }
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "Legacy",
+          "artifactId": "symbol-parent",
+          "platform": "Windows",
+          "itemId": {
+            "$symbol": "symbol-id"
+          }
+        },
+        {
+          "namespace": "Legacy",
+          "artifactId": "orphan",
+          "platform": "Windows",
+          "itemId": 17
+        },
+        {
+          "namespace": "Legacy",
+          "artifactId": "duplicate",
+          "platform": "Windows",
+          "itemId": "owner",
+          "downloadSizeBytes": {
+            "$numberLong": "9007199254740993"
+          }
+        },
+        {
+          "namespace": "Legacy",
+          "artifactId": "duplicate",
+          "platform": "Windows",
+          "itemId": "owner",
+          "installedSizeBytes": {
+            "$numberDecimal": "23.1"
+          }
+        }
+      ],
+      "offersubitems": [
+        {
+          "_id": "direct",
+          "namespace": "Legacy",
+          "subItems": [
+            null,
+            {
+              "id": "owner"
+            },
+            {
+              "id": "sibling",
+              "namespace": ""
+            }
+          ]
+        },
+        {
+          "offerId": "",
+          "namespace": "Legacy",
+          "subItems": [
+            {
+              "id": "empty-observation"
+            }
+          ]
+        },
+        {
+          "offerId": "direct",
+          "namespace": "Legacy",
+          "subItems": "invalid historic relation"
+        }
+      ]
+    },
+    "cases": [
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "5c342732d6844d7d960ab272b5b4a806"
+        },
+        "status": "resolved",
+        "rootDigest": "221ac2d1ffafa59f50b57b314f32b369beb7db394fa705d807215ba4834f74dc",
+        "queryDigest": "5bbda727b9e30c8e6baed0ce74625100d8e293f49f7243b6efb240dbe36a77fb"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "1040403ae8aa4a79be5ceb8570c20ca1"
+        },
+        "status": "resolved",
+        "rootDigest": "eb101d0f47b71046d10d1b95c95b4ccb6190114f61195ff3005acddf22be4e04",
+        "queryDigest": "dfa021a218518d9e4a12a4bbf1b53f4e9c6bf62f5a170fb659420589a5eeeabb"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "9b5926e02ddc4cb8bf46575bb09671bc"
+        },
+        "status": "resolved",
+        "rootDigest": "be6d593e93c2c4d38119f488897958520a1538f1fecc671230d466418e31689a",
+        "queryDigest": "fafd0269d6b2d4030886f37351d15547bd64339e28d937b38c73db1eca427300"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "22aa590ed05943ad9e657188a68aff6d"
+        },
+        "status": "resolved",
+        "rootDigest": "7eeb7a87dfd7ddd7b45d26a45b5f6bdc07ef66453145fe506e16895d2d7142c7",
+        "queryDigest": "e1f0d12f342c2336ad25dd17280b3ddbf069b4ee40c13c4b69170e0fb061b68a"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "75cbf00e7bbb45f383367197b94e816a"
+        },
+        "status": "resolved",
+        "rootDigest": "af6e0dbd00f5b0434a20dcae0f1f52c95f7de47c0fcabbe283dd387205310627",
+        "queryDigest": "72c551c60566ebd20614e3c403cbb885c375976a89f7d6145aae31b5b2d2501f"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "f847a4e677c3417aaa59760c0eeebfa9"
+        },
+        "status": "resolved",
+        "rootDigest": "91a447584d4c15b131ab848bb14af83fd266338f0a1ca3819323394e553b365c",
+        "queryDigest": "b601b5941cf681ab174bd101240894c64e884979936bbee8d48571eab2d20488"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "42fa0d48bc8f400ba98e48c753fee239"
+        },
+        "status": "resolved",
+        "rootDigest": "31be3c1c17f21fb7cdc5a6e200d5425a6cbad864f29d8a7b8f407a80717482e0",
+        "queryDigest": "8b34c9999f1f398a65ddd6e1e219c31ed1aaef0e6befffd60cea5cd50f64471d"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "b9b526c0b6854ae091caf0466170f2bf"
+        },
+        "status": "resolved",
+        "rootDigest": "80e174b2feabe997dbdd7f695117d5f7fb38398214d15743f4762f0e99673615",
+        "queryDigest": "3b21b97eb052d7fa365361475de33d4c23ea87018348ed39502eab4b9babd78e"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "d28bdde489d144a684949b9b74386f34"
+        },
+        "status": "resolved",
+        "rootDigest": "b4d8680e542ee30a6601629a4451cbbe595c05705aef7b6462aade89fe78fe73",
+        "queryDigest": "dd7685fd81715e12b9dc6583c6a7f4f8f62b7244db78c63b71fbe1877dd685d6"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "e2c6436fd8f349198780cd6349509958"
+        },
+        "status": "resolved",
+        "rootDigest": "98e804e5c070a378594a2ac784ab42d1a13908b90fcff9f8ebf2bf3dd4a61326",
+        "queryDigest": "810110cee2c864b3d7ceedf545a30ecc3a9f825e45c11cd06048a50670ff619b"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "0d31a0b98bc04dbebf975f7e1264da94"
+        },
+        "status": "resolved",
+        "rootDigest": "3ec7b87fe8fbeb82824aa51716b7450dad966c2a602991df50ba3b032fd81ad2",
+        "queryDigest": "fa616e8ec0b6b3139075bc77cb07d55dc70dd577b36405c32fbd9161b7f069bb"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "2def63e0111c44d78272b35fc9dcb5b8"
+        },
+        "status": "resolved",
+        "rootDigest": "fadb76bd5fe5c09cfb4d8578387ff413075266a4b4602f42f5a216bcf7ec5de8",
+        "queryDigest": "178a102fe448a3e141a7e5e529d967a25c649ad7b6e5316d5c81a417a110997f"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "852b6c7e23f940db88c5e3711031ab43"
+        },
+        "status": "resolved",
+        "rootDigest": "db68bb26a9f19ba4e29a5162f28396859f6a0b6d14ab401102d88e1cd6d01f86",
+        "queryDigest": "ba0e7faece97d5356af5e76bfca3f8d96af3579e3976ff2a7fc0a0980d79371a"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "d89137ffceff480fa25fb322a0137817"
+        },
+        "status": "resolved",
+        "rootDigest": "8af4b142ba6fabef916ce760000e7bc8df761be7d89d91575e54532aed77838f",
+        "queryDigest": "a3a821f8d9b1c2821e172389ebcf65db5201a3cb9031d0c1e2196adf6269bbe2"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "c99a285d4578430c84cde1cb3708633b"
+        },
+        "status": "resolved",
+        "rootDigest": "c2cd604c77360ccb1c65481cd69fc1ed73008312d3bef043efb4b4ac59191603",
+        "queryDigest": "ea8a3b2b4d6a2c82581ae973bdee87fe820ea1ef6d68e788f421e7c2d1b43ed4"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "7a2fd19a4dc44e689f477db83f0cca3b"
+        },
+        "status": "resolved",
+        "rootDigest": "04b3426acbd92e459611f128cee5b314f72c62c2236841f7bb98a25fe9a8c33f",
+        "queryDigest": "fe55b1013c912114c212ef7080cd5f4609e01f9fd60d2e00c42fbd91f14f3412"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "4245f08eeca24317a164e17e5782dace"
+        },
+        "status": "resolved",
+        "rootDigest": "0102c9a5b57be223408b514dffbf8adf26eedc3d20a16e8f80be3a509eeb6f96",
+        "queryDigest": "3f693b9d73b830cc4a980b5098437cf1bd7c00b65a2c81f6ffebd0aa09cb7896"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "0d57c52cc5e04be48c77e72a7f2f98df"
+        },
+        "status": "resolved",
+        "rootDigest": "cb849640ab71bf3b1c1f48417b12acf7f403cc6e0a4df3b5ea7c77b53a06785b",
+        "queryDigest": "bb5002fd671dc0f787d1a1d4985d8c096ba284713bcb46d83720e507d9c6eaff"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "045d4055f27f47e39788bcd4aebd7e25"
+        },
+        "status": "resolved",
+        "rootDigest": "5c0f2b66ba485a234f1c60dbcb3dbb505fd0c1cd8725ef522a4c804b882a88b5",
+        "queryDigest": "3c877d77f9ad86b2b67fbcb9a2aef7eec6650835a215c7fd32e4195e577428ed"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "eb3fe22f7ea84684b847f50d5a703cf7"
+        },
+        "status": "resolved",
+        "rootDigest": "b2eb1314bb7aff693d34324eba12cc3482393a9567eeb87449224eced5270429",
+        "queryDigest": "5bc32d4ce6087cd354e0dc04e39d298938c5fc6d1bfdb83aa2192b6cb9e6a07b"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "16f0f6f5f52c46b4a7aff29d9d55927f"
+        },
+        "status": "resolved",
+        "rootDigest": "e98902a02ee14e161e302cc5d1c0dbe34fc5c88b2c85151046f29af11b55393b",
+        "queryDigest": "7168c761b634712e8dc6a9b20d8ffaf2bd4905ebca24bede1ebd94be72a6b626"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "bf12a3b8c97a431abaaff49b41ae7f30"
+        },
+        "status": "resolved",
+        "rootDigest": "7a393b0f30c9a4ac300d8d4cb8edad9e410027ba12b929fcba978d0ee9f816b2",
+        "queryDigest": "f2af4b043ca7e576c9d34e2c64dcff624881ef76106a7c72b6cc5baba3fac7dd"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "f722d5e3f1e84ff1b2fc2c8f032fd35e"
+        },
+        "status": "resolved",
+        "rootDigest": "4159b242e0d251dea4b33629bdade1814a4784f54f88f6ffa17037121a6ab3d0",
+        "queryDigest": "612c23e75a1009afb3b6069e8b8b6c172c59fe32439736147a8df583e582270f"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "edcc2a3ebd4b430da0f24809e4ff68d0"
+        },
+        "status": "resolved",
+        "rootDigest": "cf4ad383e3f07e44e797959bb413de5b9c17ef359115b22fd2eb9c7c0ae64ad0",
+        "queryDigest": "197c3a72a717afb05836fb181a95d3545d736e94bb667733e98c907bcd0aadef"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "ac71729cce6d4478aa9b54eef77e0a29"
+        },
+        "status": "resolved",
+        "rootDigest": "304da9e9fec9ee3983b6a1f76f6d546bfab17346b58c9735d22ec2656f21b7cd",
+        "queryDigest": "b0ea75d1d3211122caf4bdcf9f69525ec7522e856586d15dbe810c4d15cd9e72"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "c26dfb7090bb441e881f33a814ec7a90"
+        },
+        "status": "resolved",
+        "rootDigest": "6067c1deec3de3a90ff20d9378f2c8f8dc1cdcafc3fbe4a8d103aa638e872273",
+        "queryDigest": "85863dbc2d8569d885a7a6013ac16e3df6d990fa131d546a75e65c264839a330"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "accd23b295784ef4b34e3864468ff839"
+        },
+        "status": "resolved",
+        "rootDigest": "1c2652f9765f36f2f937503faf2648269fe5a3af1dbf29540412b3159b519495",
+        "queryDigest": "b7cedb88a8a637995201cbf2bf13de8163c92a3cae459b1efd355e297312ace9"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "7fadd23e9744495bbbb9bfbf5f44c629"
+        },
+        "status": "resolved",
+        "rootDigest": "71889e285ea42b73bbdd0a353a5d8ff03a99f88269f00d007e3e492aec3c5284",
+        "queryDigest": "1f70284089af3c8f133b83e05f6c9c7dae3f0cc4c2f5582da5c214d90ec95339"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "4e5f3a1188314e96971a431a102f9af2"
+        },
+        "status": "resolved",
+        "rootDigest": "9de8a5100b9d14309944376fd04a96ef1e598f69aae1dc46b9c311733f072224",
+        "queryDigest": "ce2b341a7c6bc9321149b27bdef81935f78ed583c119f395b27c696c2a11c2da"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "ce87bcfe393747929078584a0ab7d580"
+        },
+        "status": "resolved",
+        "rootDigest": "e4e9d2d68253a9df9af773256413b8c335b3cb0d20e4642443d871a270020fdc",
+        "queryDigest": "7b49774a3ac0a9ae0b493ae5ff0b55ccc99a1fbb50c6f7d6133492f66b1dde10"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "c5d07b0a53d24181beb0bfdc37fa104e"
+        },
+        "status": "resolved",
+        "rootDigest": "9bfa11816ae73ba2112a8dcf5d0caa44a8a1e7165b9eb2a87aea3095482599f0",
+        "queryDigest": "1e93e9bf9c71e66b55e462bdb8d8bbd1983ee237b09398a48e7d58702ac7941e"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "d2a050f415ce412182c0b6943120f238"
+        },
+        "status": "resolved",
+        "rootDigest": "06d3cb5bf285d0b21a46a181bd83b206d4f79de2c26d7f00594c8bced5ee9528",
+        "queryDigest": "33eccb8761c7e570dc95aaac2e250db0b5127b38de705bbd14c1e93f5a2ab287"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "7d420f550e3a47c89ac87f20586611a9"
+        },
+        "status": "resolved",
+        "rootDigest": "7fcaa5483fd1b05ee28c19acfb09fe7c76a6154c42ee54f18f4021408051e23d",
+        "queryDigest": "45159e412816c2ffc0842d0f018acc199f40dd8436bd5f1b59f4eb22e46b800f"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "fc286f0d23e947f19d15bac7ae3aee1a"
+        },
+        "status": "resolved",
+        "rootDigest": "993400da5b3806420b717af1703ed304e8142ddf993ddb9ae1f9c5d4dc0093f9",
+        "queryDigest": "28e93ff2b76dfcbb3544f3601ec682d581efd6da2b9f22749c5b855c3e1fc703"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "122fa4034457419d943afe298b7a0d0d"
+        },
+        "status": "resolved",
+        "rootDigest": "4ca5825534030f4bd8d10cb59bbdcd69aae4ac270341101f0c10668c879cfbe9",
+        "queryDigest": "c2d726e2d954d72d515c7ca1d68d6ebf83d7303abcad1714419c528597d46b35"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "1781a570eaf94176a2adbdf493285af8"
+        },
+        "status": "resolved",
+        "rootDigest": "9f114a50baf085838c817aafb4520162b83b146f9c9fd24bb21a95054426aab9",
+        "queryDigest": "e795bb9d7fa14fe684708a0874effc3dad2559a400423498ee15a53aab8f210f"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "a427d1f19f0246b7a02dc7931e1b5c42"
+        },
+        "status": "resolved",
+        "rootDigest": "af5a136ef5527b9d800ceda2fc7cd8c8c46166b23f8f6e2c82771a480e89133f",
+        "queryDigest": "09cd4b9e5f5bbabaf9f76e77b836a1041105105272b62f6738526b934fe20eee"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "ebc4a6491ed24a42831bb155d7818254"
+        },
+        "status": "resolved",
+        "rootDigest": "036f73f529c6e9285fdbf33330869410063c67efdc52c6898d0ae40ca993dfe2",
+        "queryDigest": "b8b17d14b1fbd4dc9dcdf15a27d2dc23409f90d90a085eb22aec6794cde272a8"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "6e9856389bdf4b44a3644fa69c27cfd5"
+        },
+        "status": "resolved",
+        "rootDigest": "f83387fd659c17b8a2fd7e54d2463c7877c2b6fcaf8b59123f2831d36ad9b1fa",
+        "queryDigest": "d81d647665e8a16f057c29ef921c469152946cb45626b58e0d9d734038f03c03"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "076164c95194437fb9544409a426c424"
+        },
+        "status": "resolved",
+        "rootDigest": "e98230cc154c8f5d2a666670a954b9b01def4c7b3d6ea6e1ac1d9712dc9ebef9",
+        "queryDigest": "5b92535b929fa629215cc57ba14d6188388fba191402183f76361cacc5328718"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "c5cfed23576c41f9bbd97f6fe4150374"
+        },
+        "status": "resolved",
+        "rootDigest": "f2b93d40b490abef0d6828e0b9bb22d775a7a0a4007eae8be9c3c531c2e185c1",
+        "queryDigest": "cb9b0850b50f0eca5618860efe8a2f4ea5eb54c11be0609b6bbb195a1a1af8d0"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "fd16f160d1b84c5ea482bbb14eb8da5a"
+        },
+        "status": "resolved",
+        "rootDigest": "820bc49a40909b4841d2dd1c5df3b5c9d1c6185da2f280aa8b8c37c4f1e83e8e",
+        "queryDigest": "14086a96dcc64f66a496c39edf444b950550f64355675f18e36460a5121d5e40"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "a309cf1417074bc0afc7b58cb6d5d463"
+        },
+        "status": "resolved",
+        "rootDigest": "057e4d0d4c463f393e71401ea310353ab617a0194238e05e741bca7c6e71dc5b",
+        "queryDigest": "2b4fb0a4009ac8354ca37883ef9228276cc4594ab9c36013065ea42afebdfdde"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "398f36875f2c4666968eca0b7bda95d4"
+        },
+        "status": "resolved",
+        "rootDigest": "fc6a03be003bb9afb2b3c3973098b00bcd99de09e5b4d61359e8c19fdb56389c",
+        "queryDigest": "0e61ed4a7132599d336e2d18d82f1a9dd486903d388f5dafbe68f57b9e39092e"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "388a171973f14814a4aba10485a90366"
+        },
+        "status": "resolved",
+        "rootDigest": "bcf59490a478eb7fff3c852fa48b9bf3a668eb0377f66a430226a744771c3850",
+        "queryDigest": "d19b5a32571217e9ef80473f4247e4ee499bb6c093413c3a7204c6c9e490b054"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "3d22d79ccad148b8b8391cf7f9bcc3e6"
+        },
+        "status": "resolved",
+        "rootDigest": "db1c074277b71c7fb02fff782699a09045ecd00c8b02c55580bf9b2e26648689",
+        "queryDigest": "de372bbd934970192dcb103699a66099a2fe2a61c46e2aba4d154e151e6233bc"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "e7e791ab851444e58933d259b28ab4c7"
+        },
+        "status": "resolved",
+        "rootDigest": "ad88b1b54ffdd68b75a6b65539f80612e2650cbee82999c001041401c58cec31",
+        "queryDigest": "b147e7430096fcdb72db0737725710ab8f3bc68bd9f0f6f88ca11175fd81e9d3"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "365b7fe19c65417fa61230d92ba8b223"
+        },
+        "status": "resolved",
+        "rootDigest": "9da01be4e607533e06b7670977b6b1a17c8b1560d0c667dec46541e6c8b5096f",
+        "queryDigest": "97d792ccdceab2153768ece36b41f25cf05e231c9f206d9d405c12f2604dfecd"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "b84dbf3bb7c9475692bcefb4d21851ff"
+        },
+        "status": "resolved",
+        "rootDigest": "874f3d315049261d71b5ae104cee3da2a6561c402a04b32054ddd42e59343270",
+        "queryDigest": "41180ec670012c78692cfbce06d562df552c539fba8b432fd8d0e27d26531ac8"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "8967ef4fa6c546dda4000824dfcefc8b"
+        },
+        "status": "resolved",
+        "rootDigest": "3aa70b47f0c3f9eb6a97842466d4dfa78f1efad845494f5245bc15a4f2bbe0aa",
+        "queryDigest": "3dc9b1dc610f6cfc82e03e57776fc78fbb702b751a54e3971b7058a15c18d4e4"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "57d37356ef55443ca77252c0b4eb9f98"
+        },
+        "status": "resolved",
+        "rootDigest": "b87ca5d966fc95c54c57669c58e74e13c21204340958436094af672f3e7d2ac9",
+        "queryDigest": "69b5509981d7be072dd364937b0e27458232b7c91bd9c1df85727fdb05c4c7d4"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "9c27eedb5cd1412c9cdba4182a742140"
+        },
+        "status": "resolved",
+        "rootDigest": "5dc2f542763e5fae41c4ac354d01f2eec700db789767b463875ca6bffae80aa4",
+        "queryDigest": "e510a3890e48364c27c8f5bdc52c055b1905a27af32171cf12fcd661cf1febf8"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "21df848a246b4444ad6906d778832b1c"
+        },
+        "status": "resolved",
+        "rootDigest": "16b24c6c5385fad9ab447f5bd00c294cf5835c9cb7e07a3439fd5f55e97f9497",
+        "queryDigest": "04f0bcd8c543b87c8a456489982d6e4680d7d360cd956bd18ed3ad06245493f6"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "e7d6212191c44bc5a9f83934dafa846b"
+        },
+        "status": "resolved",
+        "rootDigest": "cbbfba742425bc4202910f983edcac821ea8798862b3b9e9e75e34a68246dfeb",
+        "queryDigest": "4b13cd27b767abb14e15bf2d78300d11e086d76382d7d71687c0d3b796c3e039"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "a492dd908f4f46048d5356d730a174ab"
+        },
+        "status": "resolved",
+        "rootDigest": "184c0c6da3dbcf7ab837257c21d6c6f588c96953288d2ddb89a3e11e9a5befdb",
+        "queryDigest": "fd23d03525c57657536057c9a547cd715a5803e4175ba1631a67aa6c42c7df25"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "e49d686d1cc24d96b591fa230e75c5c3"
+        },
+        "status": "resolved",
+        "rootDigest": "f5faa614a6eb471a3e05a668c557456c50fd1b66987a1040874dbcf1b0db985a",
+        "queryDigest": "f771d8284e0065974b1e1d1706bd36b8e83cddfe4ae3a398a3450685e9eae244"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "8a36143e0f374e03bb5d140a20ca5985"
+        },
+        "status": "resolved",
+        "rootDigest": "b7cfde52398f98e5f0092529e73aacc947deaee0e1295e08764bf28569ecca08",
+        "queryDigest": "0a1f900e097ad938fe5ca9b0e9c7275c0cd14d4590320be4527d3c0d07674b1e"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "7b9de2aabbbd440ab92709678800dc9c"
+        },
+        "status": "resolved",
+        "rootDigest": "9a20c19105320ce67a3459b7db8ab5edbdc5ebcee4c84f3fab6e82e133ea4fbc",
+        "queryDigest": "b285bac7481857860c3d29e1b78cbf30df5663c6216143c5eaef75e3a32f2da3"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "67df1c0ff45e4856bd4aa91513d9cdff"
+        },
+        "status": "resolved",
+        "rootDigest": "9779b3bf8eac85ac201095e766d807d6ab85e044e4c72e5c7eb23cfb44dc0099",
+        "queryDigest": "a2772630c36c8e66d1cb6511afdf495c279f4e344ebfacc65d2846ae0879a914"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "edcd5eda782444159353ec3cc3e5980d"
+        },
+        "status": "resolved",
+        "rootDigest": "ef8776154b48ce8f10953e5ec2c27a96c0d477d6f057abf4afca40a4489067ee",
+        "queryDigest": "72c2117ed1cad05134669c8043fb2ca3566cb319bccf0a5a02284a3aaabba93b"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "0418359c3cbc4daebbc3a6eaf060c71a"
+        },
+        "status": "resolved",
+        "rootDigest": "8c24feae7bf8e9f6c4e66c1955a2ffc858fb0ee21922f976d3cf864a22d847cc",
+        "queryDigest": "935e0263c66682413db4eb6078177a5586f3545ad859e5ba772caa417c47135f"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "b4e6be743c8d4d1bbc87c819d49a876b"
+        },
+        "status": "resolved",
+        "rootDigest": "4acf90bcfc88afde45804ecc047f6f1a9ca6e50976f56cd1028216cc16038332",
+        "queryDigest": "859c032e38e7d64196beb031f76de7768abfb19d6aa1db529c84be6b3affc338"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "700e2be7675b452fbd0739b7fe8c68b6"
+        },
+        "status": "resolved",
+        "rootDigest": "38d9088930ebbf60db1ab4d65bc209dc29927afe9d2389847cf411243e84c6d7",
+        "queryDigest": "5c5b78339dc45cd4a380b12eab9f5458b49c5df26be40a1ac723b32b7bcf348a"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "f26edb776d464188b864daf3e75228c5"
+        },
+        "status": "resolved",
+        "rootDigest": "4101681d800c4f24625723c21710373bfff325b5f182314daab2b3fc16118a13",
+        "queryDigest": "445607937a5ead9692c19b336fcac4ae1bb7f8c0fbdc7734027b59e2f056d8b3"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "3625713c4fb94ea9b40b14dc5a1a2ca4"
+        },
+        "status": "resolved",
+        "rootDigest": "2cd617b1fc0db4d8d9d01f7831969578b114c6c05b14b6f6bacaaa1aabaea502",
+        "queryDigest": "8b7c249abb7096d2431c5f2bb968d97a24b97e38d0040f34bd33f7cb3ca8e6fc"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "0a5ef16df23e435d91464c48e66cd256"
+        },
+        "status": "resolved",
+        "rootDigest": "c0a5c1879b99f16256d8912c930eb873409cb950272bb59ca2399bbec2105e23",
+        "queryDigest": "685cb4aaea2b677d231983e53e82cc42fd3f738c3002f88f560566905f3278a5"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "7c393834ab8e412ea6734bd41a41fc48"
+        },
+        "status": "resolved",
+        "rootDigest": "cdb667b8652f4f2db9fb21f640ec73cdee2bf2db023fb6baaee21d0cf7e8f06c",
+        "queryDigest": "a1e0ba5f0c8e2c04fa4f352398fa89cd04c9baa102d893022a8e742c21b9574a"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "b2dbf7e8872b469c982df87d7862515d"
+        },
+        "status": "resolved",
+        "rootDigest": "9ca4f8cd9761b06150ab768ce3925a9962e9e89ad67074b062bbce03823674cb",
+        "queryDigest": "e14573e6248f9c89a76cf0ce7f35dc69afd2bd2aaa86d8c13e10be46756e97bc"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "00cb903628564e2e8f234b509c32afb5"
+        },
+        "status": "resolved",
+        "rootDigest": "73604941131af18afd746ff7ba5112fc853cb0a2c46b36cbde90846a083d402f",
+        "queryDigest": "37bb40f50e7beff1b98f3e09c938a52fba0b4774a7e0895b5ad78067561ed625"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "052685dc6f554423923ee4042f7f3ac3"
+        },
+        "status": "resolved",
+        "rootDigest": "3d981800e13c4a15931dc0302609c761aac278f722c0738d0bd948d76693e214",
+        "queryDigest": "89328ab54c3a82dd34a11b4d953f1c6969d72c27dc93280c46e4f09c1d12e6d0"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "0712d12492f845b3a215ddcad9cb67b8"
+        },
+        "status": "resolved",
+        "rootDigest": "8e84e5bdf644384423714582848f486307476c6da9a277fc6fae61ff61409677",
+        "queryDigest": "9f747ed97d98dd54ac4d91f3067ded9a69fd6a35eeeab6047db700e5053a7b7b"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "09504fe08d014cc8a98532d2cb9b9471"
+        },
+        "status": "resolved",
+        "rootDigest": "d1a1733a63e856d2b8fd30b0a3662d5d39bf6a6b0ed08e6607f0b8eebe4b2ce4",
+        "queryDigest": "5bc15dd2d661cf6db706c86bd369c6a9ce066216e4aca2057339a8c91223e92d"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "0a29e72a163244a1b35afc4fb3570135"
+        },
+        "status": "resolved",
+        "rootDigest": "1d6c920e68f7a3be6fda559c5f2d5f045c320620288f7aa93691c8a1cf0e3616",
+        "queryDigest": "6a840a6b33c548ea72a3a5a0c6ae7eec73d4ec85ca2f859c5524bb1c09cb432e"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "0c63715f2222416f8a4b2a4696593422"
+        },
+        "status": "resolved",
+        "rootDigest": "deba046ca7f86b5b0a7ccd893509a2f63fb32723d962a8238ab05c6701a61c75",
+        "queryDigest": "b2b07a809a4b1da5ad3309cebc5331f60505b575d5723966444af1f1728d98fc"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "11704563d549475197051eeeb2559148"
+        },
+        "status": "resolved",
+        "rootDigest": "19b6ee56f0bb06113df85c9cd69aa187439a19980dba56fb06e217c79176caaa",
+        "queryDigest": "33dbc3467dc8174fcaab21db052c9b5d98f58404f8f80aeffe8bcd4cb73e57a0"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "1429bc7d20a74ce1994e369449acc4e7"
+        },
+        "status": "resolved",
+        "rootDigest": "285608f9ac77fe9c2a2a497f7a890b4de1e930ea52647a3a77689ef911cea155",
+        "queryDigest": "6c6c90d576f98d3f6b00d29cc524ef2ca9662041d2b8f615b841a05b72338b11"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "17ae905a858e4800ac74ffe46855dd48"
+        },
+        "status": "resolved",
+        "rootDigest": "5d16c55b8729d7e88c53d33bb641589ddc504ccee8b9fef68101d8bc6ad7d1b3",
+        "queryDigest": "31ac6f1371a7bffeb3abc3ec0595147fbc7ee6cb4e382978d671730b788a2148"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "24c516e8aa3e4c9a9279692736a5cd99"
+        },
+        "status": "resolved",
+        "rootDigest": "b7060b577f45edb11629a54d6b6f8c8501df97b784cd928761d129ed303955e0",
+        "queryDigest": "00199601a6ce00fd0ed2a2d5d4437d00fef9ac329170b6edf3036ef49ff36585"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "266210b21f3e43d7b893bfbcd6802889"
+        },
+        "status": "resolved",
+        "rootDigest": "f7a239719034018bdf477465911a1309e11d1c3ef9ed16b009a1c085a17d11f1",
+        "queryDigest": "86de99c81caec4359c95f4287880b1fe37f0dcbd048ad958928ff035add6aea7"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "290b8cf25a1d4c9ead7fef2cf1c03c56"
+        },
+        "status": "resolved",
+        "rootDigest": "83c9562d1fa9a338a369d8e294ad64fcb4c6a9798d1d59e926b178f590b6f156",
+        "queryDigest": "156612370752bb59e8029c64e1dee4aecc5f1c62f9011f5ef3c204f79ae9e3b4"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "2a1ea8235b2c45db8e6d56108089f652"
+        },
+        "status": "resolved",
+        "rootDigest": "befd5fd0de63b2da203c6a635e2efb801d82469cbb6224f10de91abe827a6f06",
+        "queryDigest": "7c40b773e8e3b6158bb254d4d960c948eb232d9476a8fab008c4807c92c2ea70"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "2f9e9535e7cb4405b7399bf886318eea"
+        },
+        "status": "resolved",
+        "rootDigest": "6915b7ecba3e1348b7397d7c83b0feec4109ced79122944f5ed7895821edb466",
+        "queryDigest": "eb3c5f93710fd9d9cb55d0cee10ff2eee32c2ba3fd732497b490cefb7cad8ce0"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "379e48e4986a49fe9fe6511d122f11c6"
+        },
+        "status": "resolved",
+        "rootDigest": "837c5347186a32e33751bb9d285c3b39ef4ead2c1755658f41de622857cfc84b",
+        "queryDigest": "5e887892eca231df9c22ed1fc9a762641bbcf5a3ad3bf0495a152a76b99b47a8"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "3818cfeaf8d94e93a2fdaa03045bc444"
+        },
+        "status": "resolved",
+        "rootDigest": "69f5e8467f787ba06dab04a95b69b2aaf9d92f57da39485d0e35c4e61d8e38bc",
+        "queryDigest": "180f1375de51f171cf8f4ee79e54e57942647f3e858c34246c7f1322ba4eea4a"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "3889fd17f0ff4ae380a08bf7e1214ca2"
+        },
+        "status": "resolved",
+        "rootDigest": "e92456ba001eaa16955bed1475fc87106691e52b717d1c57ad21ea36aefa4067",
+        "queryDigest": "3fcf09516c31f9d3e4f190b6f39c69fa24ac8c759f03fd445c634b0034c6341d"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "38e7516a43e241da866507d0f9a13870"
+        },
+        "status": "resolved",
+        "rootDigest": "60c806f42c41555d43dffc266e0328c2b9aa9643de0c54fb5941360e9cc2df3d",
+        "queryDigest": "3d383aad377c2746dd3ad2cfe800437e030242dcd0c965fc07a5059383f4c515"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "3b54d05ffa514e1d98b7aededef74a11"
+        },
+        "status": "resolved",
+        "rootDigest": "e023fa112160310a2f7d530057fe7cbec5d34588c976dc1d292d1ff7c0b5a018",
+        "queryDigest": "9a254464660454c6040727bb402b7fe8326a7d0a7d0a93610d60d93c84dd847d"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "3e5651b831c0470799c377557098f264"
+        },
+        "status": "resolved",
+        "rootDigest": "a7c5d91d9976db86a688b4856c4891f7f9e6ce154c5c1b852298fcbcafc88e36",
+        "queryDigest": "60cf0dc5b6887f85f5a2d639c91b3706ef8e869a13dc1f501f95f1ec7a2888d9"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "40acfc2e2c49499bab28d86e26d05442"
+        },
+        "status": "resolved",
+        "rootDigest": "75699597ccaabadebc089b751175c456cb47d6899100bd75d97ba28d36138b12",
+        "queryDigest": "0341ad205397505ab38691431307976d5d5def0c9f89716fe52a8e9d972e2684"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "41c0a75e2ab5414283e2e74ac9792665"
+        },
+        "status": "resolved",
+        "rootDigest": "3410026b672b6dc0717a77d157e50100d3f89d8b0f5a250c82eb07cda051226a",
+        "queryDigest": "e79101a309104647ad4841ff89397f140589d376a2e0cf99e70d413b585e2835"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "41e85f00eadf418eb2652882819dc202"
+        },
+        "status": "resolved",
+        "rootDigest": "0cf872c30581ab47487c8603e48942b619c94011ae59390a771abb3a25cf1d72",
+        "queryDigest": "328297e5e6bd0c52f8afc55797baebdabacbfdc42846e100f6422e9898b16100"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "4b503c1ac22a441eb7086bd4674a1a12"
+        },
+        "status": "resolved",
+        "rootDigest": "a6077e636a19e358b2e5365ee3c100a65bf40f77df0153d03061464e00d31c42",
+        "queryDigest": "aa6ed79fe95b8ab893a2a3ff077a260015cabe912bc23eaf0a94e442f1db2dc9"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "4d20dc804a154f84b01033a62412e01b"
+        },
+        "status": "resolved",
+        "rootDigest": "94cde07fa195e112846cc23cba84e193e9524a620747e8ed424b624ba8a63e09",
+        "queryDigest": "de055b89659c00c9c94f798602a09620985fa10c06cfc8692005b72283ea8eca"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "4e8a1cdf982343c79f25b850be8c78bc"
+        },
+        "status": "resolved",
+        "rootDigest": "af8097b389ef80ffd6c0360aeb071179042b35c20edf655993ca273fac96a533",
+        "queryDigest": "e2358e0b7b904a45a469ef26443af854491772a19ab94dc43dbe23d6b1d075e5"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "540dde0b4dd446b5abc9c7704a961b8c"
+        },
+        "status": "resolved",
+        "rootDigest": "ecb5820d09ca056ce7f6cebd173cee769b826ad3740f27ccf352dc313df9d152",
+        "queryDigest": "46b79ae7aa1ba5fcd074114c434499a7a27cbf5e4bfb25b131aa59e1235d6bec"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "5c82351159744bedb6d11527362018a4"
+        },
+        "status": "resolved",
+        "rootDigest": "724df9b3276ab6aed473189a6702f57a3d0efdaf1aef4eb8ed7fd9bb9c818f05",
+        "queryDigest": "22812db90883adbd028d2bbd3619a52d242345991a546282f5ce632083d77694"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "5d6f6e29b4c4400490905396891306f8"
+        },
+        "status": "resolved",
+        "rootDigest": "11c0f4f80a3b6e79075edce71aa52200e4aab3f5e270edd09cb54825a9e199d2",
+        "queryDigest": "93d192d36e9b643e0d3acdb5f300f45783d749e92f882fd20fc3636810f6e15d"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "5ee58e555c6540a2b3e07875bbd5eba2"
+        },
+        "status": "resolved",
+        "rootDigest": "7affd41ea2ed8fe40b1f1598bf34b37ccd88002fc0473a35e606e9f69a1a6c4b",
+        "queryDigest": "eaf1b61f5c99ff67569824325c29490d9c83fdcd9723abc62c1254d33c8171c7"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "60f826d4b69345708662fd82b59c61a3"
+        },
+        "status": "resolved",
+        "rootDigest": "1f57e1d60f5c0bef1b3125b6875d5fd5eafb7738c15e15d7aa62046c38a5432e",
+        "queryDigest": "35a48a203ef57f764fe6ddfcbd781a2d7259a9733680dae12f57d1343316511d"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "635f46d747b54e228542132e46fc6219"
+        },
+        "status": "resolved",
+        "rootDigest": "c27641028b33016550a8b888ab96b700bbf9c2b9655f97913b140f20e6a24fb4",
+        "queryDigest": "6f9381b6183a1e714fee81afa9676fce57f791c18e74c3e97edc0e16f8ca3a8f"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "666cd40005214331867420b4ab3085f6"
+        },
+        "status": "resolved",
+        "rootDigest": "e22aa4c5eb07e9dc0a71c21e576c7334c5bcfc581fe5f66aa37105f451ce8556",
+        "queryDigest": "6ec99db61b68e9a5b919b416a11e1acb9dd54c035b2a18b55b3ff0ee88f8897c"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "6ce36633b8c645a186cb4c5625e68487"
+        },
+        "status": "resolved",
+        "rootDigest": "54b8cd7bfc7c1349db245291b39b27b3c12a7dc943d0d169c4967d98199fa3fb",
+        "queryDigest": "7011d90c3050a2e12eaf4bfcb90d9ba24aa7cdb0379af70cf4967bdb708dc0d0"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "6e8f90d95fcf4f229bb4650af562e7b1"
+        },
+        "status": "resolved",
+        "rootDigest": "bd4dff2b3408d550f4a889a51b344407fe5f35cad72b81f9c1569fe8edae6e12",
+        "queryDigest": "151c2fc0a80e655b5da1f25dc7a948b66c42cdc4b0c795b7ea611e2fd03255f3"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "7193861dad4a43aa991037644d5313ab"
+        },
+        "status": "resolved",
+        "rootDigest": "7bc61c1ced2f1e8c67d5a608a059fd3e848fe1399f79ba40a0901ea7977d2177",
+        "queryDigest": "3c9c43dca4421755c0aeceffb07d55af7533e8a8be3053690eebd6eb86559dda"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "77d6b720a9cc4d3993492a6711aab31d"
+        },
+        "status": "resolved",
+        "rootDigest": "3e3b3851e8f9c1803e712f627afdad0331590fd2b6d0f0d7f1c55465da34bd86",
+        "queryDigest": "326f14ff540f81ad7a6849144aacbe0f9cc2a10b3b13050717e2b46f00c31703"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "7a8645fba30f45b196e29fb89b9221f9"
+        },
+        "status": "resolved",
+        "rootDigest": "78ba7f9cbd273a34506223612f88a8ea94ca3996ea3753ee77aea1146865909e",
+        "queryDigest": "96dd80240535891833012a71c5795fd79f8153be807e5550f79f57969aa3d5c6"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "7ec34b38c65f4161a8ad5ecc1187ecca"
+        },
+        "status": "resolved",
+        "rootDigest": "578fff77950f115ad77c26fae16912769a0641db594306504fc480a03cccf6e7",
+        "queryDigest": "6c66a1c15b942502d9c872aa9bafacf454f4e794189f52666042cfc2d12d8384"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "7ff39e4df27f4c84aa8d18f15e7a3da5"
+        },
+        "status": "resolved",
+        "rootDigest": "bacd8c6918a8d7657ac5d64c70903a836eae6d5642d90e23b5ae3ea31278723e",
+        "queryDigest": "04fd083673936909a159bb58db8a097f4cba7d95f1be08126e7ad36d83fd419c"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "8a35d1e9bda549fabd970475de87b27b"
+        },
+        "status": "resolved",
+        "rootDigest": "d782cd8a54ad0df7beb91fc451361aee2cd491b833a6380c5e3680f8cfa1f3e7",
+        "queryDigest": "062783a383e300b8c081ac55c3785d98a84be1d40c77e9479bfec19afd896da9"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "8bf7479e063d4b33bc5fc270aece7dc1"
+        },
+        "status": "resolved",
+        "rootDigest": "134978e9c1818a79e4e1e6ecaa924bf6e9db340bd252cd34c89841e9a8be773e",
+        "queryDigest": "b0919b2b8ea77249b3297a0b8009f1c8a67a49def292647203ec2a17e4e9c3c4"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "954dc0f4e35d4fe8bf008afbe4d39b4a"
+        },
+        "status": "resolved",
+        "rootDigest": "8ca2c2ee180a39dbe71528c1f6ad291f353cdccb5f379257c9133c22839ccc0d",
+        "queryDigest": "7d7d0e7db577274190c4f9dc0a5c347d6948ad34bfb04bae4a9a59ab30df69fd"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "955e408d78274bd7958674fdac41e81a"
+        },
+        "status": "resolved",
+        "rootDigest": "289fc36aa64f36409107197d2bb37b2697f311a13d0fe5db0b08b5e0688f45e9",
+        "queryDigest": "8692602bf06a36d3d3309892d694a426f528334ef31431979d629f6fb07da314"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "9696d60e3767435aa2852c4e587612be"
+        },
+        "status": "resolved",
+        "rootDigest": "4d307d7565067951dbeb6dcf840d238aaa1382936b156b7cc70dc5743679c8e7",
+        "queryDigest": "715866bd4991b149343920844fdb94a50bfc3e0da79983107d2265d9f58b02d4"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "9703f1cc6bd64509bc7c420d1f4a71e0"
+        },
+        "status": "resolved",
+        "rootDigest": "e03e069abfdad8e0f5d96daa01dd327ce283434237776d8d09dfed3b29c77651",
+        "queryDigest": "8dd77ade27fea3e1fa4b8ed0f408d6a8d33e49a95c279422efd47022f3f0da9f"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "9adb28f33c1040cab3306827150057b3"
+        },
+        "status": "resolved",
+        "rootDigest": "0d3721b949afdbd75df06c7c065b4eb29e8216cd2223b322ab3a25da420971a5",
+        "queryDigest": "3173d745de56963ab6cf253c8fc1127f8cc4c71f54536de5a08dce0600fd63cf"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "a1a3135127dd469baf5670862770279f"
+        },
+        "status": "resolved",
+        "rootDigest": "5579435ecc1e68f13050e8aa553b6d28a108dd13e01e142d4570d5f07704285c",
+        "queryDigest": "6272987b2efeb699bc8c1170dca6f992e90778970ca7eb0530384b37242b30c6"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "ae32bca7a1cf4b8fbab9f60efa78f7be"
+        },
+        "status": "resolved",
+        "rootDigest": "2f66e9813320271db7ed84cb41fb90e228df3b38599735532c88445fe5130efb",
+        "queryDigest": "3ab31f7ba48d34e2238ea3dc070969b189edd0057062f59cb9f8f6a5337019ff"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "ae971e7e1b8d4ec1b390b796eb0f1ce8"
+        },
+        "status": "resolved",
+        "rootDigest": "66946b4500df679afc28f98cf7073e78e43a865c22df69646affad7791d0be80",
+        "queryDigest": "aded63c7305eea5803469457072af31b08c5966f483c88f6caf40435366eb86e"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "b5e70efda3454dfe9c2d6d7f6789a5f3"
+        },
+        "status": "resolved",
+        "rootDigest": "f94d66b655ef530261a12ff9d88e195e52fe00d636c2257d29190bf9e1fb67eb",
+        "queryDigest": "21ae13b56be661f875632f7c854aba84d564eebe708be045e8c4960d75893773"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "b9ba8e2b69c84e66afe1b91ab21d0ef6"
+        },
+        "status": "resolved",
+        "rootDigest": "923588c6af34670a84beeecf98ada712199c4cf4d6111cc6d0d6b1572c05c911",
+        "queryDigest": "37f8d707915e5da38c467ed3d3b70d7a30f27a5eb22e98de04e15a957370a548"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "c1afe88510c04541a10b572a5c517567"
+        },
+        "status": "resolved",
+        "rootDigest": "99e7a93af0789848789e3958031f88925384ee245703b087a57d0f93595aa506",
+        "queryDigest": "c6b002c8fe5445a9e5457c3f93131b54dd67d60e7c17a06f7edbd81a6073e5b4"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "c9853aa1b0164ea8a160c53e99fa97d4"
+        },
+        "status": "resolved",
+        "rootDigest": "b9452b03da7934b0b42f9a4926207b64868ef4ced747510de715d474478f013f",
+        "queryDigest": "1f6c36729285ac69644861f9a169fdb1f70f2331b7e3002a868caf3c73cecb1d"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "f722d5e3f1e84ff1b2fc2c8f032fd35f"
+        },
+        "status": "resolved",
+        "rootDigest": "12170cc813005f32ee53adf937379d00c809ce1473d6a1edb403b6c266f01de8",
+        "queryDigest": "11d84ff623bef74e7ba3c66c5e8c93a9c38fd35a82c301e31129614174b9f815"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "9733381c26fa48d5858207f0a5caef10"
+        },
+        "status": "resolved",
+        "rootDigest": "a61450ae828cddaea8fedf06c930cbd008fa784179157794acd30e41af83be71",
+        "queryDigest": "76d2fd0b1b07978444c5f65652ae5f0784a39bc5fa97a19c1e8bfd1f6a824640"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "f86d1ad7187c48389f853cb42a3d3871"
+        },
+        "status": "resolved",
+        "rootDigest": "b0812c2d66bd32dfd2e348abf2a0f113d397fc131a2a8a2bdebab083dde1e746",
+        "queryDigest": "f60e4656ba008b30770d3d14d7713a1155b4dff70d22627d33979ca17844ea84"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "b8807621bb7241a59c80d37d73f947fd"
+        },
+        "status": "resolved",
+        "rootDigest": "7562147c45d094d5ceed68eea4ceb4ff5be401ce26e6e3e9408c194f809a17ce",
+        "queryDigest": "7e021ca0a879cd585bd02096ecc1613246822c29dbd410a3047009fa4b0d55c1"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "3b43ee7203ba416683761091ef8ab830"
+        },
+        "status": "resolved",
+        "rootDigest": "539765f14435a85afec835aa04e89f465b8e883643ce5fafb10950baf586fd78",
+        "queryDigest": "70a4b08dac1d10c99558bfec1e2caf2b2fef6cb7bd14d300ee91d6db3b816ca1"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "16f1258a86124c26a862d55fb5b6373e"
+        },
+        "status": "resolved",
+        "rootDigest": "da1d35d491a32954a5345bad3fd17ffa6ecb37e52b6f051e0483864f66ea4943",
+        "queryDigest": "f74da54dffd09bc389fbd88273b32d3a464553c580669d3fcd0384193816987b"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "c5e8ee6fd92f4aa295d013121423d281"
+        },
+        "status": "resolved",
+        "rootDigest": "915cf196f2d9303fbbac141b30d6c58be9d7639fd8a9275b0417546d4dba7939",
+        "queryDigest": "c6860d854d285cfd8e81b1754e6f01c443a13136b34cf21c3be97cf830fe9b12"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "SeaQA",
+          "id": "28dc4a9dc0e4457ca9599188666bcb0a"
+        },
+        "status": "resolved",
+        "rootDigest": "c8b7b5e81e967cdccca0da164c5d96f80071b88b21cb3c37a94581d06925a119",
+        "queryDigest": "a30066111a97c18662306b2e62f679d97d8ae6906901f16536e0f2ab347c4e01"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "testappid",
+          "platform": "HTML5"
+        },
+        "status": "resolved",
+        "rootDigest": "6deb61315a65f7b815387110df9e5dd96a956e0e1117a65be5f896230061ee7c",
+        "queryDigest": "bcb4280ed5403dd5c7e53a2c8d197b40e74225c6cd2eb54478f0cafb7b3500a4"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "1",
+          "platform": "Mac"
+        },
+        "status": "resolved",
+        "rootDigest": "8b045409a5bcb9bc5a6c192f6b52d9c7284629ff4704b7eae18cbb73b72e69aa",
+        "queryDigest": "7251f6ac609a39df71b341ea57416f4ca4478e1ee579813051d375f00ce29f90"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "1",
+          "platform": "PS4"
+        },
+        "status": "resolved",
+        "rootDigest": "fbc07d503edff3231a67a12e9d5c804b97a0bb9117dfd884b2c8dc53926f2f89",
+        "queryDigest": "1575be88e6ee8e6c167f5c02fd538195000d2b84ffe9c3c430ab9e7a3c92109f"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "a",
+          "platform": "Mac"
+        },
+        "status": "resolved",
+        "rootDigest": "8d21f3c8fc7e2e2119b883d002bc5b811e4b05a5f8e0927cbf1a23038919de7d",
+        "queryDigest": "88a8b6801ebfd9db8b21e8d4f71ec428dca7150df28868cc6a39cff774207f0c"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "a",
+          "platform": "PS4"
+        },
+        "status": "resolved",
+        "rootDigest": "0f3fb73fcb614b588e262c9ab79c52a2845476065c854ff73cbfdb8160e37c0a",
+        "queryDigest": "7e063811f149999ffe99a3fd478aaba1b6b352979c32ca3c60ad40af7cb687b3"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "app-name",
+          "platform": "Windows"
+        },
+        "status": "resolved",
+        "rootDigest": "9bfd61d931194c362f1e73305a7f0e1a766d9626cdeb9747969580423e431473",
+        "queryDigest": "b6e756071e44318f43d12ab79694fd043dfe5ad07e8291803fccc67985b2fdf6"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "test",
+          "platform": "Windows"
+        },
+        "status": "resolved",
+        "rootDigest": "f08808f822d1bf41ed091dafa6978bcc25da1c6bc8a790b508347fa5837c2a77",
+        "queryDigest": "064ca68f8156315cc95720e540eed19646868776470633d7eab97629f514f7fa"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "1",
+          "platform": "iOS"
+        },
+        "status": "resolved",
+        "rootDigest": "68245d3f1b8bddad1eb3ee383aed9a1cb92b314bb1aaf1512d7e7dafd23f899e",
+        "queryDigest": "10b2a1e19dab43aea39dc508230b186ee1fd11d790096a1baad7db22452f85a9"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "TestTestApp11",
+          "platform": "Mac"
+        },
+        "status": "resolved",
+        "rootDigest": "e051221757d0dc4555b22b38175f15825eb0a35e12948cc6faff9a3c2229e21e",
+        "queryDigest": "fbdf71dde6e370f6cd7fb62aad64ab353e6c7ebc09238791294e56c712ccfb37"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "12",
+          "platform": "PS4"
+        },
+        "status": "resolved",
+        "rootDigest": "fc8a17e13353b560d110fa6a0d87cab22c3b233034a0a69c33a6a5fbec804570",
+        "queryDigest": "41b0dbd8c21e24e6a3eccf5eea88665bbc584612e3abc276175a713ce73778a6"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "65844713cc9b425fadffc982195f96bf",
+          "platform": "Windows"
+        },
+        "status": "resolved",
+        "rootDigest": "5bc5b67a5a8d00952b41083bdee77d6ea722dbcebe8bd1a43cdd5d33e4a268ff",
+        "queryDigest": "bd3fbb4c587133a9a020ce2652160384113f7167cd13fdbc86fde7cdd7940a36"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "eedbbc42b8d4467bb77b6f37e1f0ce63",
+          "platform": "Windows"
+        },
+        "status": "resolved",
+        "rootDigest": "d4964c40efa0f856495a58c22fcfd4ea4aa90db6eaaba443be57a5dd935cebd2",
+        "queryDigest": "91968467389e6e574d1493995f8a9269295944e4b9a403f786d5420f464a4b99"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "app",
+          "platform": "Mac"
+        },
+        "status": "resolved",
+        "rootDigest": "a93768d60d17e0a46a5e77dd1ae333af209f28d179e85f670b9a4ee6938f2684",
+        "queryDigest": "55397f1d44436eb736aa13feaefbdbf9e2ea52f13e5523fa1f1b7bf547d6519c"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "SeaQA",
+          "appId": "test",
+          "platform": "Mac"
+        },
+        "status": "resolved",
+        "rootDigest": "b4da1bffb0a4635178126a766a71299ae779196d1505063af63304d3f398efd4",
+        "queryDigest": "e6109aeacb7f24d0709a372b729caaf35bd28c74246c7747400e299a864a2911"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "Legacy",
+          "id": "owner"
+        },
+        "status": "resolved",
+        "rootDigest": "4fb3b0b912c60a9a46fb107f7424a2a4caf0f9c4ee3b9ee66c6390811345f50c",
+        "queryDigest": "657dec1d15ddc706e09a8a3a9096ad753b198f0dfae47cd5b77463eb2763a8a1"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "Legacy",
+          "id": "symbol-id"
+        },
+        "status": "resolved",
+        "rootDigest": "5285c3d2293d98554c3610bb7b6038f99915f1d236c5ed4cfeb20216234de568",
+        "queryDigest": "d0666ace429d280d9f215ca1e7d21a78e5bbfd3c6a02f50c0d659bc82dc4d2f7"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "Legacy",
+          "id": "linked-alone"
+        },
+        "status": "resolved",
+        "rootDigest": "c37ebe27d0b6dd003ec0f40c19c84aa32444f721d1f2b7d3f20268c21c7955f0",
+        "queryDigest": "8b26e356f5449c94cfc3cbc60bf967c162b15d499a241426f8a79dfe199614be"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "Legacy",
+          "id": "sibling"
+        },
+        "status": "resolved",
+        "rootDigest": "b99ba256a53f8622fd22a62e3af7ec6c43164416a15ff01e69d4fd1901f9f850",
+        "queryDigest": "63ea51a16e2bfe23e5ada3fe2df5e7cc1cb8ab31c42c97b22cc93e2ca11337f7"
+      },
+      {
+        "identifier": {
+          "type": "asset",
+          "namespace": "Legacy",
+          "artifactId": "symbol-parent",
+          "platform": "Windows"
+        },
+        "status": "resolved",
+        "rootDigest": "244002fa3e0529979e499af5fbc111df86786283ebd5763fed363a94a6073e5e",
+        "queryDigest": "a15a1ef759e5336ec18248802dbcc06e27eddfb56a33edcdad8fa6994f2202c2"
+      },
+      {
+        "identifier": {
+          "type": "asset",
+          "namespace": "Legacy",
+          "artifactId": "orphan",
+          "platform": "Windows"
+        },
+        "status": "not-found",
+        "rootDigest": "dcebdc5c871e1d96b2d9c94db0f03cef70560eb8d37553aaa1a608e2ecb2fc2b",
+        "queryDigest": "2d7e06a1aa24fce77b823737b2922d4a7c31246ba4aac73161106d301df92b6b"
+      },
+      {
+        "identifier": {
+          "type": "asset",
+          "namespace": "Legacy",
+          "artifactId": "duplicate",
+          "platform": "Windows"
+        },
+        "status": "resolved",
+        "rootDigest": "9f7484fc7bf9c8af35b8dc8375bbe5ae76f7db08b644d57d66f696f00c9c1303",
+        "queryDigest": "b550baa26886b922ee95aeb1ec93deaca38438e48d4f888bcd8617febdc1cb01"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "Legacy",
+          "appId": "shared",
+          "platform": "Windows"
+        },
+        "status": "resolved",
+        "rootDigest": "28a13e9c1646142b36aa3c0e23e5955586aec309a0a7ea3f1ef24cd52a3a7ca0",
+        "queryDigest": "fec74c8b827887ad87c0d17a2421f1a6d12da55b63b792076b9c03e8449fcab1"
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "Legacy",
+          "appId": "bad",
+          "platform": "Windows"
+        },
+        "status": "error",
+        "rootDigest": "5ea3d2fa4d9a634d9e7b5e534991f531bbcd603829dc8ed6f4d9ad2903da14d5",
+        "queryDigest": "93e96530b9e41f270de50e1f7e92cac9d4235ede60826a41c3a541bdc6c490a0"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "Legacy",
+          "id": "bad-refs"
+        },
+        "status": "error",
+        "rootDigest": "fb370e87e9c713dbc5afb50a9e2eba4a5889a059a1ff90cc098eb63fb7914015",
+        "queryDigest": "59bd523f1e449e334d0ab310af75fd5aee84a09725820d5abe2990ec4b1420d0"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "Legacy",
+          "id": "empty-observation"
+        },
+        "status": "resolved",
+        "rootDigest": "325b494246120c55c3faa0a7002c5ffae6c2a8679fd77225f697b041ae7d1de3",
+        "queryDigest": "961ba1094ec34240cc3d2e88da245457a386c710bcdae0c5ea50fc4e134a95d9"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "id": "5c342732d6844d7d960ab272b5b4a806",
+          "namespace": "SeaQA"
+        },
+        "status": "resolved",
+        "rootDigest": "221ac2d1ffafa59f50b57b314f32b369beb7db394fa705d807215ba4834f74dc",
+        "queryDigest": "5bbda727b9e30c8e6baed0ce74625100d8e293f49f7243b6efb240dbe36a77fb"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "id": "5c342732d6844d7d960ab272b5b4a806",
+          "namespace": "SeaQA"
+        },
+        "knownRoots": [
+          {
+            "rootKey": "item:seaqa:5c342732d6844d7d960ab272b5b4a806",
+            "graphHash": "05c4cd21ee7510a9288eaf83099be36f853c8d7eba34a6e04db59362c02131b3"
+          }
+        ],
+        "status": "unchanged",
+        "rootDigest": "89bcc209bd46115a1501fd1206e4ead07a083d479b44d4faf639e791bd05d9b9",
+        "queryDigest": "5bbda727b9e30c8e6baed0ce74625100d8e293f49f7243b6efb240dbe36a77fb"
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "id": "5c342732d6844d7d960ab272b5b4a806",
+          "namespace": "SeaQA"
+        },
+        "knownRecords": [
+          {
+            "recordKey": "item:seaqa:052685dc6f554423923ee4042f7f3ac3",
+            "sha256": "cce4dc2f572cb124249a8f3a9bb10a972864fb20ca3e599e2101a81a0e9b99a7"
+          },
+          {
+            "recordKey": "item:seaqa:9696d60e3767435aa2852c4e587612be",
+            "sha256": "4e6ddda927193304c66c15b24c86d1c73ffd99c3904b27097f10422533859ca6"
+          },
+          {
+            "recordKey": "offer-item:seaqa:55d109db6c2347e6a308cb26e97b4dd6:seaqa:5c342732d6844d7d960ab272b5b4a806",
+            "sha256": "4c18b5634ed9cbda428124e3b8bde71bd24d023309d6988f993a8428305b11b6"
+          },
+          {
+            "recordKey": "offer-item:seaqa:985b0d111a644835acaf7a12118e21c0:seaqa:052685dc6f554423923ee4042f7f3ac3",
+            "sha256": "d2efb57b2ea8af7b4456ac363094198b904ddb585cb1f431c83853e6820b3376"
+          },
+          {
+            "recordKey": "offer-item:seaqa:985b0d111a644835acaf7a12118e21c0:seaqa:9696d60e3767435aa2852c4e587612be",
+            "sha256": "853aa4f737e12918e036d9e60fd2afbb37b72dd4570dd654703392533920b2bb"
+          },
+          {
+            "recordKey": "offer-item:seaqa:f85b0d111a644835acaf7a12118e21c0:seaqa:5c342732d6844d7d960ab272b5b4a806",
+            "sha256": "7cdb46eb77d924f2553479a41d06aff9e0f3ee781e47d9266897971745fd2d1d"
+          },
+          {
+            "recordKey": "offer:seaqa:55d109db6c2347e6a308cb26e97b4dd6",
+            "sha256": "daa2b8e29a418b6e38b62696ad4227897e5e5e2e3564da17fbac4867501b4544"
+          },
+          {
+            "recordKey": "offer:seaqa:985b0d111a644835acaf7a12118e21c0",
+            "sha256": "e9431e24c40604c4fd5c3097868f7b234e323a0b9b9c490079523836729cbd4a"
+          },
+          {
+            "recordKey": "offer:seaqa:f85b0d111a644835acaf7a12118e21c0",
+            "sha256": "1545a95f5ee9d1be3a1bdb75dbf1a84d6fb84a818cc6c9be2f6ef6fb7ca6f758"
+          },
+          {
+            "recordKey": "release-app:seaqa:65844713cc9b425fadffc982195f96bf:windows:seaqa:9696d60e3767435aa2852c4e587612be",
+            "sha256": "2fbb30fa7475cd3671b6fda390f9f1a85c0c1323ee197b51d1c9a5194a091497"
+          }
+        ],
+        "status": "resolved",
+        "rootDigest": "9505ea213e6ab955e263ba342d8b0eb08bb709b13edebb0655420b90a4106bb6",
+        "queryDigest": "5bbda727b9e30c8e6baed0ce74625100d8e293f49f7243b6efb240dbe36a77fb"
+      }
+    ]
+  }
+]

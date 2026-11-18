@@ -1,0 +1,4106 @@
+[
+  {
+    "name": "public-profile-identity",
+    "request": {
+      "path": "/graphql?query=%7Bprofile%28id%3A%22fixture-player%22%29%7BaccountId+displayName+avatar%7Bsmall+medium+large%7D+linkedAccounts+creationDate+reviewsCount%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=60, s-maxage=60, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=60, stale-while-revalidate=600",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"182dd7730dc59c03c5b04cbbedc6ad51738a861c\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":{\"accountId\":\"fixture-player\",\"displayName\":\"Example player\",\"avatar\":{\"small\":\"db-avatar\",\"medium\":\"db-avatar\",\"large\":\"db-avatar\"},\"linkedAccounts\":{\"fixture\":\"linked\"},\"creationDate\":\"2020-06-03T20:00:00.000Z\",\"reviewsCount\":4}}}\n"
+    }
+  },
+  {
+    "name": "epic-profile-without-database-row",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){accountId displayName avatar{small medium large} linkedAccounts creationDate reviewsCount}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "epic-s",
+              "medium": "epic-m",
+              "large": "epic-l"
+            },
+            "linkedAccounts": null,
+            "creationDate": null,
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"794093250fcf26d1343808f6d5d9a6fdf90ab4a2\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":{\"accountId\":\"fixture-player\",\"displayName\":\"Example player\",\"avatar\":{\"small\":\"epic-s\",\"medium\":\"epic-m\",\"large\":\"epic-l\"},\"linkedAccounts\":null,\"creationDate\":null,\"reviewsCount\":4}}}\n"
+    }
+  },
+  {
+    "name": "missing-epic-profile",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){accountId displayName avatar{small medium large} linkedAccounts creationDate reviewsCount}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": null,
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"7c46725f67295294d02885d82b58bd52aa9978f9\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":null}}\n"
+    }
+  },
+  {
+    "name": "cached-negative-profile",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){accountId displayName avatar{small medium large} linkedAccounts creationDate reviewsCount}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": {
+          "rawCache": "null"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"7c46725f67295294d02885d82b58bd52aa9978f9\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":null}}\n"
+    }
+  },
+  {
+    "name": "cache-hit-identity",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){accountId displayName avatar{small medium large} linkedAccounts creationDate reviewsCount}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": {
+          "rawCache": "{\"accountId\":\"fixture-player\",\"displayName\":\"cached\",\"reviewsCount\":3}"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"18d960a4186a3cc3c20b2f2d08f8b9daa727cb28\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":{\"accountId\":\"fixture-player\",\"displayName\":\"cached\",\"avatar\":null,\"linkedAccounts\":null,\"creationDate\":null,\"reviewsCount\":3}}}\n"
+    }
+  },
+  {
+    "name": "all-profile-fields-share-aggregation",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){accountId displayName avatar{small medium large} linkedAccounts creationDate reviewsCount highlights{level totalXP totalGames totalAchievements totalPlatinums reviewsCount} heroGame{sandboxId title imageUrl} featuredGames{sandboxId title imageUrl completionPercent unlocked total earnedXP totalXP hasPlatinum rarestAchievements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt}} featuredAchievements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt} recentActivity{type sandboxId gameTitle achievementName achievementIconUrl occurredAt} games{elements{sandboxId title imageUrl completionPercent unlocked total earnedXP totalXP hasPlatinum rarestAchievements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt}} total page limit} achievements{elements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt} total page limit}}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:highlights:reviews:4:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:featured-achievements:8:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:activity:12:1:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "many",
+          "query": {
+            "epicAccountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "a",
+            "totalUnlocked": 1,
+            "totalXP": "70",
+            "playerAchievements": [
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "explorer",
+                  "unlockDate": "2021-03-01T00:00:00Z",
+                  "unlocked": true
+                }
+              },
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "begin",
+                  "unlockDate": null,
+                  "unlocked": false
+                }
+              }
+            ],
+            "playerAwards": [
+              {
+                "awardType": "PLATINUM",
+                "achievementSetId": "set-a",
+                "unlockedDateTime": "2021-06-01T13:00:00.000Z"
+              }
+            ]
+          },
+          {
+            "sandboxId": "b",
+            "totalUnlocked": 4,
+            "totalXP": 90,
+            "playerAchievements": [
+              {
+                "playerAchievement": {
+                  "sandboxId": "b",
+                  "achievementSetId": "set-b",
+                  "achievementName": "rare",
+                  "unlockDate": "2022-03-01T00:00:00Z",
+                  "unlocked": true
+                }
+              }
+            ]
+          },
+          {
+            "sandboxId": "a",
+            "totalUnlocked": 2,
+            "totalXP": 80,
+            "playerAwards": [
+              {
+                "awardType": "PLATINUM",
+                "achievementSetId": "set-a",
+                "unlockedDateTime": "2021-06-01T13:00:00.000Z"
+              }
+            ],
+            "playerAchievements": [
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "explorer",
+                  "unlockDate": "2021-06-01T00:00:00Z",
+                  "unlocked": false
+                }
+              },
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "begin",
+                  "unlockDate": "2021-04-01T00:00:00Z",
+                  "unlocked": true
+                }
+              }
+            ]
+          },
+          {
+            "sandboxId": "c",
+            "totalUnlocked": 1,
+            "totalXP": 15
+          },
+          {
+            "sandboxId": ""
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "namespace": {
+              "$in": [
+                "a",
+                "b",
+                "c"
+              ]
+            },
+            "offerType": "BASE_GAME",
+            "isCodeRedemptionOnly": false
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "namespace": "a",
+            "title": "Alpha",
+            "isDisplayable": false
+          },
+          {
+            "namespace": "a",
+            "title": "Zoo",
+            "isDisplayable": true
+          },
+          {
+            "namespace": "b",
+            "product": {
+              "name": "Beta"
+            },
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageWide",
+                "url": "wide"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                "a",
+                "b",
+                "c"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "a",
+            "achievementSetId": "set-a",
+            "achievements": [
+              {
+                "name": "explorer",
+                "displayName": "Explorer",
+                "description": "Travel",
+                "icon": "icon-a",
+                "xp": "25",
+                "completedPercent": 0.125
+              },
+              {
+                "name": "begin",
+                "lockedDisplayName": "Begin",
+                "lockedIconLink": "locked-icon",
+                "score": 55,
+                "completedPercent": null
+              }
+            ]
+          },
+          {
+            "sandboxId": "b",
+            "achievementSetId": "set-b",
+            "achievements": [
+              {
+                "name": "rare",
+                "unlockedDisplayName": "Rare",
+                "unlockedDescription": "Uncommon",
+                "unlockedIconLink": "rare-image",
+                "XP": "0x10",
+                "completedPercent": "0x1"
+              },
+              {
+                "name": "b-0",
+                "xp": 12
+              },
+              {
+                "name": "b-1",
+                "xp": 12
+              },
+              {
+                "name": "b-2",
+                "xp": 12
+              },
+              {
+                "name": "b-3",
+                "xp": 12
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2",
+          "payload": [
+            {
+              "sandboxId": "a",
+              "title": "Zoo",
+              "imageUrl": null,
+              "completionPercent": 100,
+              "unlocked": 2,
+              "total": 2,
+              "earnedXP": 80,
+              "totalXP": 80,
+              "hasPlatinum": true,
+              "platinumCount": 1,
+              "rarestAchievements": [
+                {
+                  "name": "begin",
+                  "displayName": "Begin",
+                  "description": null,
+                  "iconUrl": "locked-icon",
+                  "rarityPercent": 0,
+                  "xp": 55,
+                  "sandboxId": "a",
+                  "gameTitle": "Zoo",
+                  "unlockedAt": "2021-04-01T00:00:00Z"
+                },
+                {
+                  "name": "explorer",
+                  "displayName": "Explorer",
+                  "description": "Travel",
+                  "iconUrl": "icon-a",
+                  "rarityPercent": 12.5,
+                  "xp": 25,
+                  "sandboxId": "a",
+                  "gameTitle": "Zoo",
+                  "unlockedAt": "2021-06-01T00:00:00Z"
+                }
+              ]
+            },
+            {
+              "sandboxId": "b",
+              "title": "Beta",
+              "imageUrl": "wide",
+              "completionPercent": 80,
+              "unlocked": 4,
+              "total": 5,
+              "earnedXP": 90,
+              "totalXP": 64,
+              "hasPlatinum": false,
+              "platinumCount": 0,
+              "rarestAchievements": [
+                {
+                  "name": "rare",
+                  "displayName": "Rare",
+                  "description": "Uncommon",
+                  "iconUrl": "rare-image",
+                  "rarityPercent": 100,
+                  "xp": 16,
+                  "sandboxId": "b",
+                  "gameTitle": "Beta",
+                  "unlockedAt": "2022-03-01T00:00:00Z"
+                }
+              ]
+            },
+            {
+              "sandboxId": "c",
+              "title": "c",
+              "imageUrl": null,
+              "completionPercent": 0,
+              "unlocked": 1,
+              "total": 0,
+              "earnedXP": 15,
+              "totalXP": 0,
+              "hasPlatinum": false,
+              "platinumCount": 0,
+              "rarestAchievements": []
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:featured-achievements:8:v2",
+          "payload": [
+            {
+              "name": "begin",
+              "displayName": "Begin",
+              "description": null,
+              "iconUrl": "locked-icon",
+              "rarityPercent": 0,
+              "xp": 55,
+              "sandboxId": "a",
+              "gameTitle": "Zoo",
+              "unlockedAt": "2021-04-01T00:00:00Z"
+            },
+            {
+              "name": "explorer",
+              "displayName": "Explorer",
+              "description": "Travel",
+              "iconUrl": "icon-a",
+              "rarityPercent": 12.5,
+              "xp": 25,
+              "sandboxId": "a",
+              "gameTitle": "Zoo",
+              "unlockedAt": "2021-06-01T00:00:00Z"
+            },
+            {
+              "name": "rare",
+              "displayName": "Rare",
+              "description": "Uncommon",
+              "iconUrl": "rare-image",
+              "rarityPercent": 100,
+              "xp": 16,
+              "sandboxId": "b",
+              "gameTitle": "Beta",
+              "unlockedAt": "2022-03-01T00:00:00Z"
+            }
+          ],
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:activity:12:1:v2",
+          "payload": [
+            {
+              "type": "ACHIEVEMENT_UNLOCKED",
+              "sandboxId": "b",
+              "gameTitle": "Beta",
+              "achievementName": "Rare",
+              "achievementIconUrl": "rare-image",
+              "occurredAt": "2022-03-01T00:00:00Z"
+            },
+            {
+              "type": "PLATINUM_EARNED",
+              "sandboxId": "a",
+              "gameTitle": "Zoo",
+              "achievementName": null,
+              "achievementIconUrl": null,
+              "occurredAt": "2021-06-01T13:00:00.000Z"
+            },
+            {
+              "type": "ACHIEVEMENT_UNLOCKED",
+              "sandboxId": "a",
+              "gameTitle": "Zoo",
+              "achievementName": "Explorer",
+              "achievementIconUrl": "icon-a",
+              "occurredAt": "2021-06-01T00:00:00Z"
+            },
+            {
+              "type": "ACHIEVEMENT_UNLOCKED",
+              "sandboxId": "a",
+              "gameTitle": "Zoo",
+              "achievementName": "Begin",
+              "achievementIconUrl": "locked-icon",
+              "occurredAt": "2021-04-01T00:00:00Z"
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:highlights:reviews:4:v2",
+          "payload": {
+            "level": 1,
+            "totalXP": 435,
+            "totalGames": 3,
+            "totalAchievements": 7,
+            "totalPlatinums": 1,
+            "reviewsCount": 4
+          },
+          "ttl": 300
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"5c103875a9b7676e2b49dd8f4e273b23f9e042f9\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":{\"accountId\":\"fixture-player\",\"displayName\":\"Example player\",\"avatar\":{\"small\":\"db-avatar\",\"medium\":\"db-avatar\",\"large\":\"db-avatar\"},\"linkedAccounts\":{\"fixture\":\"linked\"},\"creationDate\":\"2020-06-03T20:00:00.000Z\",\"reviewsCount\":4,\"highlights\":{\"level\":1,\"totalXP\":435,\"totalGames\":3,\"totalAchievements\":7,\"totalPlatinums\":1,\"reviewsCount\":4},\"heroGame\":{\"sandboxId\":\"b\",\"title\":\"Beta\",\"imageUrl\":\"wide\"},\"featuredGames\":[{\"sandboxId\":\"a\",\"title\":\"Zoo\",\"imageUrl\":null,\"completionPercent\":100,\"unlocked\":2,\"total\":2,\"earnedXP\":80,\"totalXP\":80,\"hasPlatinum\":true,\"rarestAchievements\":[{\"name\":\"begin\",\"displayName\":\"Begin\",\"description\":null,\"iconUrl\":\"locked-icon\",\"rarityPercent\":0,\"xp\":55,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-04-01T00:00:00.000Z\"},{\"name\":\"explorer\",\"displayName\":\"Explorer\",\"description\":\"Travel\",\"iconUrl\":\"icon-a\",\"rarityPercent\":12.5,\"xp\":25,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-06-01T00:00:00.000Z\"}]},{\"sandboxId\":\"b\",\"title\":\"Beta\",\"imageUrl\":\"wide\",\"completionPercent\":80,\"unlocked\":4,\"total\":5,\"earnedXP\":90,\"totalXP\":64,\"hasPlatinum\":false,\"rarestAchievements\":[{\"name\":\"rare\",\"displayName\":\"Rare\",\"description\":\"Uncommon\",\"iconUrl\":\"rare-image\",\"rarityPercent\":100,\"xp\":16,\"sandboxId\":\"b\",\"gameTitle\":\"Beta\",\"unlockedAt\":\"2022-03-01T00:00:00.000Z\"}]},{\"sandboxId\":\"c\",\"title\":\"c\",\"imageUrl\":null,\"completionPercent\":0,\"unlocked\":1,\"total\":0,\"earnedXP\":15,\"totalXP\":0,\"hasPlatinum\":false,\"rarestAchievements\":[]}],\"featuredAchievements\":[{\"name\":\"begin\",\"displayName\":\"Begin\",\"description\":null,\"iconUrl\":\"locked-icon\",\"rarityPercent\":0,\"xp\":55,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-04-01T00:00:00.000Z\"},{\"name\":\"explorer\",\"displayName\":\"Explorer\",\"description\":\"Travel\",\"iconUrl\":\"icon-a\",\"rarityPercent\":12.5,\"xp\":25,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-06-01T00:00:00.000Z\"},{\"name\":\"rare\",\"displayName\":\"Rare\",\"description\":\"Uncommon\",\"iconUrl\":\"rare-image\",\"rarityPercent\":100,\"xp\":16,\"sandboxId\":\"b\",\"gameTitle\":\"Beta\",\"unlockedAt\":\"2022-03-01T00:00:00.000Z\"}],\"recentActivity\":[{\"type\":\"ACHIEVEMENT_UNLOCKED\",\"sandboxId\":\"b\",\"gameTitle\":\"Beta\",\"achievementName\":\"Rare\",\"achievementIconUrl\":\"rare-image\",\"occurredAt\":\"2022-03-01T00:00:00.000Z\"},{\"type\":\"PLATINUM_EARNED\",\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"achievementName\":null,\"achievementIconUrl\":null,\"occurredAt\":\"2021-06-01T13:00:00.000Z\"},{\"type\":\"ACHIEVEMENT_UNLOCKED\",\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"achievementName\":\"Explorer\",\"achievementIconUrl\":\"icon-a\",\"occurredAt\":\"2021-06-01T00:00:00.000Z\"},{\"type\":\"ACHIEVEMENT_UNLOCKED\",\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"achievementName\":\"Begin\",\"achievementIconUrl\":\"locked-icon\",\"occurredAt\":\"2021-04-01T00:00:00.000Z\"}],\"games\":{\"elements\":[{\"sandboxId\":\"a\",\"title\":\"Zoo\",\"imageUrl\":null,\"completionPercent\":100,\"unlocked\":2,\"total\":2,\"earnedXP\":80,\"totalXP\":80,\"hasPlatinum\":true,\"rarestAchievements\":[{\"name\":\"begin\",\"displayName\":\"Begin\",\"description\":null,\"iconUrl\":\"locked-icon\",\"rarityPercent\":0,\"xp\":55,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-04-01T00:00:00.000Z\"},{\"name\":\"explorer\",\"displayName\":\"Explorer\",\"description\":\"Travel\",\"iconUrl\":\"icon-a\",\"rarityPercent\":12.5,\"xp\":25,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-06-01T00:00:00.000Z\"}]},{\"sandboxId\":\"b\",\"title\":\"Beta\",\"imageUrl\":\"wide\",\"completionPercent\":80,\"unlocked\":4,\"total\":5,\"earnedXP\":90,\"totalXP\":64,\"hasPlatinum\":false,\"rarestAchievements\":[{\"name\":\"rare\",\"displayName\":\"Rare\",\"description\":\"Uncommon\",\"iconUrl\":\"rare-image\",\"rarityPercent\":100,\"xp\":16,\"sandboxId\":\"b\",\"gameTitle\":\"Beta\",\"unlockedAt\":\"2022-03-01T00:00:00.000Z\"}]},{\"sandboxId\":\"c\",\"title\":\"c\",\"imageUrl\":null,\"completionPercent\":0,\"unlocked\":1,\"total\":0,\"earnedXP\":15,\"totalXP\":0,\"hasPlatinum\":false,\"rarestAchievements\":[]}],\"total\":3,\"page\":1,\"limit\":12},\"achievements\":{\"elements\":[{\"name\":\"begin\",\"displayName\":\"Begin\",\"description\":null,\"iconUrl\":\"locked-icon\",\"rarityPercent\":0,\"xp\":55,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-04-01T00:00:00.000Z\"},{\"name\":\"explorer\",\"displayName\":\"Explorer\",\"description\":\"Travel\",\"iconUrl\":\"icon-a\",\"rarityPercent\":12.5,\"xp\":25,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-06-01T00:00:00.000Z\"},{\"name\":\"rare\",\"displayName\":\"Rare\",\"description\":\"Uncommon\",\"iconUrl\":\"rare-image\",\"rarityPercent\":100,\"xp\":16,\"sandboxId\":\"b\",\"gameTitle\":\"Beta\",\"unlockedAt\":\"2022-03-01T00:00:00.000Z\"}],\"total\":3,\"page\":1,\"limit\":25}}}}\n"
+    }
+  },
+  {
+    "name": "sort-filter-and-paginate-games",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){near:games(filter:NEAR_PLATINUM,sort:XP){elements{sandboxId title imageUrl completionPercent unlocked total earnedXP totalXP hasPlatinum rarestAchievements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt}} total page limit} alpha:games(sort:ALPHABETICAL,limit:1,page:2){elements{sandboxId title imageUrl completionPercent unlocked total earnedXP totalXP hasPlatinum rarestAchievements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt}} total page limit} completed:games(filter:COMPLETED){elements{sandboxId title imageUrl completionPercent unlocked total earnedXP totalXP hasPlatinum rarestAchievements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt}} total page limit} platinum:games(filter:PLATINUM,sort:ACHIEVEMENTS){elements{sandboxId title imageUrl completionPercent unlocked total earnedXP totalXP hasPlatinum rarestAchievements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt}} total page limit} progress:featuredGames(filter:IN_PROGRESS,limit:0){sandboxId} }}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:NEAR_PLATINUM:XP:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:ALL:ALPHABETICAL:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:COMPLETED:COMPLETION:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:PLATINUM:ACHIEVEMENTS:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:IN_PROGRESS:COMPLETION:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "many",
+          "query": {
+            "epicAccountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "a",
+            "totalUnlocked": 1,
+            "totalXP": "70",
+            "playerAchievements": [
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "explorer",
+                  "unlockDate": "2021-03-01T00:00:00Z",
+                  "unlocked": true
+                }
+              },
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "begin",
+                  "unlockDate": null,
+                  "unlocked": false
+                }
+              }
+            ],
+            "playerAwards": [
+              {
+                "awardType": "PLATINUM",
+                "achievementSetId": "set-a",
+                "unlockedDateTime": "2021-06-01T13:00:00.000Z"
+              }
+            ]
+          },
+          {
+            "sandboxId": "b",
+            "totalUnlocked": 4,
+            "totalXP": 90,
+            "playerAchievements": [
+              {
+                "playerAchievement": {
+                  "sandboxId": "b",
+                  "achievementSetId": "set-b",
+                  "achievementName": "rare",
+                  "unlockDate": "2022-03-01T00:00:00Z",
+                  "unlocked": true
+                }
+              }
+            ]
+          },
+          {
+            "sandboxId": "a",
+            "totalUnlocked": 2,
+            "totalXP": 80,
+            "playerAwards": [
+              {
+                "awardType": "PLATINUM",
+                "achievementSetId": "set-a",
+                "unlockedDateTime": "2021-06-01T13:00:00.000Z"
+              }
+            ],
+            "playerAchievements": [
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "explorer",
+                  "unlockDate": "2021-06-01T00:00:00Z",
+                  "unlocked": false
+                }
+              },
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "begin",
+                  "unlockDate": "2021-04-01T00:00:00Z",
+                  "unlocked": true
+                }
+              }
+            ]
+          },
+          {
+            "sandboxId": "c",
+            "totalUnlocked": 1,
+            "totalXP": 15
+          },
+          {
+            "sandboxId": ""
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "namespace": {
+              "$in": [
+                "a",
+                "b",
+                "c"
+              ]
+            },
+            "offerType": "BASE_GAME",
+            "isCodeRedemptionOnly": false
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "namespace": "a",
+            "title": "Alpha",
+            "isDisplayable": false
+          },
+          {
+            "namespace": "a",
+            "title": "Zoo",
+            "isDisplayable": true
+          },
+          {
+            "namespace": "b",
+            "product": {
+              "name": "Beta"
+            },
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageWide",
+                "url": "wide"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                "a",
+                "b",
+                "c"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "a",
+            "achievementSetId": "set-a",
+            "achievements": [
+              {
+                "name": "explorer",
+                "displayName": "Explorer",
+                "description": "Travel",
+                "icon": "icon-a",
+                "xp": "25",
+                "completedPercent": 0.125
+              },
+              {
+                "name": "begin",
+                "lockedDisplayName": "Begin",
+                "lockedIconLink": "locked-icon",
+                "score": 55,
+                "completedPercent": null
+              }
+            ]
+          },
+          {
+            "sandboxId": "b",
+            "achievementSetId": "set-b",
+            "achievements": [
+              {
+                "name": "rare",
+                "unlockedDisplayName": "Rare",
+                "unlockedDescription": "Uncommon",
+                "unlockedIconLink": "rare-image",
+                "XP": "0x10",
+                "completedPercent": "0x1"
+              },
+              {
+                "name": "b-0",
+                "xp": 12
+              },
+              {
+                "name": "b-1",
+                "xp": 12
+              },
+              {
+                "name": "b-2",
+                "xp": 12
+              },
+              {
+                "name": "b-3",
+                "xp": 12
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:games:NEAR_PLATINUM:XP:v2",
+          "payload": [
+            {
+              "sandboxId": "b",
+              "title": "Beta",
+              "imageUrl": "wide",
+              "completionPercent": 80,
+              "unlocked": 4,
+              "total": 5,
+              "earnedXP": 90,
+              "totalXP": 64,
+              "hasPlatinum": false,
+              "platinumCount": 0,
+              "rarestAchievements": [
+                {
+                  "name": "rare",
+                  "displayName": "Rare",
+                  "description": "Uncommon",
+                  "iconUrl": "rare-image",
+                  "rarityPercent": 100,
+                  "xp": 16,
+                  "sandboxId": "b",
+                  "gameTitle": "Beta",
+                  "unlockedAt": "2022-03-01T00:00:00Z"
+                }
+              ]
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:games:ALL:ALPHABETICAL:v2",
+          "payload": [
+            {
+              "sandboxId": "b",
+              "title": "Beta",
+              "imageUrl": "wide",
+              "completionPercent": 80,
+              "unlocked": 4,
+              "total": 5,
+              "earnedXP": 90,
+              "totalXP": 64,
+              "hasPlatinum": false,
+              "platinumCount": 0,
+              "rarestAchievements": [
+                {
+                  "name": "rare",
+                  "displayName": "Rare",
+                  "description": "Uncommon",
+                  "iconUrl": "rare-image",
+                  "rarityPercent": 100,
+                  "xp": 16,
+                  "sandboxId": "b",
+                  "gameTitle": "Beta",
+                  "unlockedAt": "2022-03-01T00:00:00Z"
+                }
+              ]
+            },
+            {
+              "sandboxId": "c",
+              "title": "c",
+              "imageUrl": null,
+              "completionPercent": 0,
+              "unlocked": 1,
+              "total": 0,
+              "earnedXP": 15,
+              "totalXP": 0,
+              "hasPlatinum": false,
+              "platinumCount": 0,
+              "rarestAchievements": []
+            },
+            {
+              "sandboxId": "a",
+              "title": "Zoo",
+              "imageUrl": null,
+              "completionPercent": 100,
+              "unlocked": 2,
+              "total": 2,
+              "earnedXP": 80,
+              "totalXP": 80,
+              "hasPlatinum": true,
+              "platinumCount": 1,
+              "rarestAchievements": [
+                {
+                  "name": "begin",
+                  "displayName": "Begin",
+                  "description": null,
+                  "iconUrl": "locked-icon",
+                  "rarityPercent": 0,
+                  "xp": 55,
+                  "sandboxId": "a",
+                  "gameTitle": "Zoo",
+                  "unlockedAt": "2021-04-01T00:00:00Z"
+                },
+                {
+                  "name": "explorer",
+                  "displayName": "Explorer",
+                  "description": "Travel",
+                  "iconUrl": "icon-a",
+                  "rarityPercent": 12.5,
+                  "xp": 25,
+                  "sandboxId": "a",
+                  "gameTitle": "Zoo",
+                  "unlockedAt": "2021-06-01T00:00:00Z"
+                }
+              ]
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:games:COMPLETED:COMPLETION:v2",
+          "payload": [
+            {
+              "sandboxId": "a",
+              "title": "Zoo",
+              "imageUrl": null,
+              "completionPercent": 100,
+              "unlocked": 2,
+              "total": 2,
+              "earnedXP": 80,
+              "totalXP": 80,
+              "hasPlatinum": true,
+              "platinumCount": 1,
+              "rarestAchievements": [
+                {
+                  "name": "begin",
+                  "displayName": "Begin",
+                  "description": null,
+                  "iconUrl": "locked-icon",
+                  "rarityPercent": 0,
+                  "xp": 55,
+                  "sandboxId": "a",
+                  "gameTitle": "Zoo",
+                  "unlockedAt": "2021-04-01T00:00:00Z"
+                },
+                {
+                  "name": "explorer",
+                  "displayName": "Explorer",
+                  "description": "Travel",
+                  "iconUrl": "icon-a",
+                  "rarityPercent": 12.5,
+                  "xp": 25,
+                  "sandboxId": "a",
+                  "gameTitle": "Zoo",
+                  "unlockedAt": "2021-06-01T00:00:00Z"
+                }
+              ]
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:games:PLATINUM:ACHIEVEMENTS:v2",
+          "payload": [
+            {
+              "sandboxId": "a",
+              "title": "Zoo",
+              "imageUrl": null,
+              "completionPercent": 100,
+              "unlocked": 2,
+              "total": 2,
+              "earnedXP": 80,
+              "totalXP": 80,
+              "hasPlatinum": true,
+              "platinumCount": 1,
+              "rarestAchievements": [
+                {
+                  "name": "begin",
+                  "displayName": "Begin",
+                  "description": null,
+                  "iconUrl": "locked-icon",
+                  "rarityPercent": 0,
+                  "xp": 55,
+                  "sandboxId": "a",
+                  "gameTitle": "Zoo",
+                  "unlockedAt": "2021-04-01T00:00:00Z"
+                },
+                {
+                  "name": "explorer",
+                  "displayName": "Explorer",
+                  "description": "Travel",
+                  "iconUrl": "icon-a",
+                  "rarityPercent": 12.5,
+                  "xp": 25,
+                  "sandboxId": "a",
+                  "gameTitle": "Zoo",
+                  "unlockedAt": "2021-06-01T00:00:00Z"
+                }
+              ]
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:games:IN_PROGRESS:COMPLETION:v2",
+          "payload": [
+            {
+              "sandboxId": "b",
+              "title": "Beta",
+              "imageUrl": "wide",
+              "completionPercent": 80,
+              "unlocked": 4,
+              "total": 5,
+              "earnedXP": 90,
+              "totalXP": 64,
+              "hasPlatinum": false,
+              "platinumCount": 0,
+              "rarestAchievements": [
+                {
+                  "name": "rare",
+                  "displayName": "Rare",
+                  "description": "Uncommon",
+                  "iconUrl": "rare-image",
+                  "rarityPercent": 100,
+                  "xp": 16,
+                  "sandboxId": "b",
+                  "gameTitle": "Beta",
+                  "unlockedAt": "2022-03-01T00:00:00Z"
+                }
+              ]
+            },
+            {
+              "sandboxId": "c",
+              "title": "c",
+              "imageUrl": null,
+              "completionPercent": 0,
+              "unlocked": 1,
+              "total": 0,
+              "earnedXP": 15,
+              "totalXP": 0,
+              "hasPlatinum": false,
+              "platinumCount": 0,
+              "rarestAchievements": []
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"b116320815543f2a3b4781d26278dfaf1e2fe3d6\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":{\"near\":{\"elements\":[{\"sandboxId\":\"b\",\"title\":\"Beta\",\"imageUrl\":\"wide\",\"completionPercent\":80,\"unlocked\":4,\"total\":5,\"earnedXP\":90,\"totalXP\":64,\"hasPlatinum\":false,\"rarestAchievements\":[{\"name\":\"rare\",\"displayName\":\"Rare\",\"description\":\"Uncommon\",\"iconUrl\":\"rare-image\",\"rarityPercent\":100,\"xp\":16,\"sandboxId\":\"b\",\"gameTitle\":\"Beta\",\"unlockedAt\":\"2022-03-01T00:00:00.000Z\"}]}],\"total\":1,\"page\":1,\"limit\":12},\"alpha\":{\"elements\":[{\"sandboxId\":\"c\",\"title\":\"c\",\"imageUrl\":null,\"completionPercent\":0,\"unlocked\":1,\"total\":0,\"earnedXP\":15,\"totalXP\":0,\"hasPlatinum\":false,\"rarestAchievements\":[]}],\"total\":3,\"page\":2,\"limit\":1},\"completed\":{\"elements\":[{\"sandboxId\":\"a\",\"title\":\"Zoo\",\"imageUrl\":null,\"completionPercent\":100,\"unlocked\":2,\"total\":2,\"earnedXP\":80,\"totalXP\":80,\"hasPlatinum\":true,\"rarestAchievements\":[{\"name\":\"begin\",\"displayName\":\"Begin\",\"description\":null,\"iconUrl\":\"locked-icon\",\"rarityPercent\":0,\"xp\":55,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-04-01T00:00:00.000Z\"},{\"name\":\"explorer\",\"displayName\":\"Explorer\",\"description\":\"Travel\",\"iconUrl\":\"icon-a\",\"rarityPercent\":12.5,\"xp\":25,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-06-01T00:00:00.000Z\"}]}],\"total\":1,\"page\":1,\"limit\":12},\"platinum\":{\"elements\":[{\"sandboxId\":\"a\",\"title\":\"Zoo\",\"imageUrl\":null,\"completionPercent\":100,\"unlocked\":2,\"total\":2,\"earnedXP\":80,\"totalXP\":80,\"hasPlatinum\":true,\"rarestAchievements\":[{\"name\":\"begin\",\"displayName\":\"Begin\",\"description\":null,\"iconUrl\":\"locked-icon\",\"rarityPercent\":0,\"xp\":55,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-04-01T00:00:00.000Z\"},{\"name\":\"explorer\",\"displayName\":\"Explorer\",\"description\":\"Travel\",\"iconUrl\":\"icon-a\",\"rarityPercent\":12.5,\"xp\":25,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-06-01T00:00:00.000Z\"}]}],\"total\":1,\"page\":1,\"limit\":12},\"progress\":[{\"sandboxId\":\"b\"}]}}}\n"
+    }
+  },
+  {
+    "name": "paged-achievements-and-activity",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){achievements(limit:1,page:2){elements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt} total page limit} recentActivity(limit:1,page:2){type sandboxId gameTitle achievementName achievementIconUrl occurredAt}}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "many",
+          "query": {
+            "epicAccountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "a",
+            "totalUnlocked": 1,
+            "totalXP": "70",
+            "playerAchievements": [
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "explorer",
+                  "unlockDate": "2021-03-01T00:00:00Z",
+                  "unlocked": true
+                }
+              },
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "begin",
+                  "unlockDate": null,
+                  "unlocked": false
+                }
+              }
+            ],
+            "playerAwards": [
+              {
+                "awardType": "PLATINUM",
+                "achievementSetId": "set-a",
+                "unlockedDateTime": "2021-06-01T13:00:00.000Z"
+              }
+            ]
+          },
+          {
+            "sandboxId": "b",
+            "totalUnlocked": 4,
+            "totalXP": 90,
+            "playerAchievements": [
+              {
+                "playerAchievement": {
+                  "sandboxId": "b",
+                  "achievementSetId": "set-b",
+                  "achievementName": "rare",
+                  "unlockDate": "2022-03-01T00:00:00Z",
+                  "unlocked": true
+                }
+              }
+            ]
+          },
+          {
+            "sandboxId": "a",
+            "totalUnlocked": 2,
+            "totalXP": 80,
+            "playerAwards": [
+              {
+                "awardType": "PLATINUM",
+                "achievementSetId": "set-a",
+                "unlockedDateTime": "2021-06-01T13:00:00.000Z"
+              }
+            ],
+            "playerAchievements": [
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "explorer",
+                  "unlockDate": "2021-06-01T00:00:00Z",
+                  "unlocked": false
+                }
+              },
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "begin",
+                  "unlockDate": "2021-04-01T00:00:00Z",
+                  "unlocked": true
+                }
+              }
+            ]
+          },
+          {
+            "sandboxId": "c",
+            "totalUnlocked": 1,
+            "totalXP": 15
+          },
+          {
+            "sandboxId": ""
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:activity:1:2:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "namespace": {
+              "$in": [
+                "a",
+                "b",
+                "c"
+              ]
+            },
+            "offerType": "BASE_GAME",
+            "isCodeRedemptionOnly": false
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "namespace": "a",
+            "title": "Alpha",
+            "isDisplayable": false
+          },
+          {
+            "namespace": "a",
+            "title": "Zoo",
+            "isDisplayable": true
+          },
+          {
+            "namespace": "b",
+            "product": {
+              "name": "Beta"
+            },
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageWide",
+                "url": "wide"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                "a",
+                "b",
+                "c"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "a",
+            "achievementSetId": "set-a",
+            "achievements": [
+              {
+                "name": "explorer",
+                "displayName": "Explorer",
+                "description": "Travel",
+                "icon": "icon-a",
+                "xp": "25",
+                "completedPercent": 0.125
+              },
+              {
+                "name": "begin",
+                "lockedDisplayName": "Begin",
+                "lockedIconLink": "locked-icon",
+                "score": 55,
+                "completedPercent": null
+              }
+            ]
+          },
+          {
+            "sandboxId": "b",
+            "achievementSetId": "set-b",
+            "achievements": [
+              {
+                "name": "rare",
+                "unlockedDisplayName": "Rare",
+                "unlockedDescription": "Uncommon",
+                "unlockedIconLink": "rare-image",
+                "XP": "0x10",
+                "completedPercent": "0x1"
+              },
+              {
+                "name": "b-0",
+                "xp": 12
+              },
+              {
+                "name": "b-1",
+                "xp": 12
+              },
+              {
+                "name": "b-2",
+                "xp": 12
+              },
+              {
+                "name": "b-3",
+                "xp": 12
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:activity:1:2:v2",
+          "payload": [
+            {
+              "type": "PLATINUM_EARNED",
+              "sandboxId": "a",
+              "gameTitle": "Zoo",
+              "achievementName": null,
+              "achievementIconUrl": null,
+              "occurredAt": "2021-06-01T13:00:00.000Z"
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"8c2abb0a61fddbd03e2811d308b87d1b1bc7de58\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":{\"achievements\":{\"elements\":[{\"name\":\"explorer\",\"displayName\":\"Explorer\",\"description\":\"Travel\",\"iconUrl\":\"icon-a\",\"rarityPercent\":12.5,\"xp\":25,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-06-01T00:00:00.000Z\"}],\"total\":3,\"page\":2,\"limit\":1},\"recentActivity\":[{\"type\":\"PLATINUM_EARNED\",\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"achievementName\":null,\"achievementIconUrl\":null,\"occurredAt\":\"2021-06-01T13:00:00.000Z\"}]}}}\n"
+    }
+  },
+  {
+    "name": "empty-achievement-history",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){highlights{level totalXP totalGames totalAchievements totalPlatinums reviewsCount} heroGame{title} games{elements{sandboxId title imageUrl completionPercent unlocked total earnedXP totalXP hasPlatinum rarestAchievements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt}} total page limit} recentActivity{type sandboxId gameTitle achievementName achievementIconUrl occurredAt}}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:highlights:reviews:4:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:activity:12:1:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "many",
+          "query": {
+            "epicAccountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2",
+          "payload": [],
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:activity:12:1:v2",
+          "payload": [],
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:highlights:reviews:4:v2",
+          "payload": {
+            "level": 0,
+            "totalXP": 0,
+            "totalGames": 0,
+            "totalAchievements": 0,
+            "totalPlatinums": 0,
+            "reviewsCount": 4
+          },
+          "ttl": 300
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"89020fef2d29a9b78f024ee4bdfa579af37a2561\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":{\"highlights\":{\"level\":0,\"totalXP\":0,\"totalGames\":0,\"totalAchievements\":0,\"totalPlatinums\":0,\"reviewsCount\":4},\"heroGame\":null,\"games\":{\"elements\":[],\"total\":0,\"page\":1,\"limit\":12},\"recentActivity\":[]}}}\n"
+    }
+  },
+  {
+    "name": "matching-cache-hits",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){highlights{level totalXP totalGames totalAchievements totalPlatinums reviewsCount} games{elements{sandboxId title imageUrl completionPercent unlocked total earnedXP totalXP hasPlatinum rarestAchievements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt}} total page limit} featuredAchievements(limit:1){name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt} recentActivity(limit:2){type sandboxId gameTitle achievementName achievementIconUrl occurredAt}}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:highlights:reviews:4:v2"
+        },
+        "result": {
+          "rawCache": "{\"level\":10,\"totalXP\":2500,\"totalGames\":1,\"totalAchievements\":7,\"totalPlatinums\":1,\"reviewsCount\":4}"
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2"
+        },
+        "result": {
+          "rawCache": "[]"
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:featured-achievements:1:v2"
+        },
+        "result": {
+          "rawCache": "[]"
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:activity:2:1:v2"
+        },
+        "result": {
+          "rawCache": "[]"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"8022865cf3a5cde6da0ff0f688b12f300c5ca014\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":{\"highlights\":{\"level\":10,\"totalXP\":2500,\"totalGames\":1,\"totalAchievements\":7,\"totalPlatinums\":1,\"reviewsCount\":4},\"games\":{\"elements\":[],\"total\":0,\"page\":1,\"limit\":12},\"featuredAchievements\":[],\"recentActivity\":[]}}}\n"
+    }
+  },
+  {
+    "name": "concurrent-sibling-aliases-memoize",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){a:games{elements{sandboxId title imageUrl completionPercent unlocked total earnedXP totalXP hasPlatinum rarestAchievements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt}} total page limit} b:games{elements{sandboxId title imageUrl completionPercent unlocked total earnedXP totalXP hasPlatinum rarestAchievements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt}} total page limit} c:featuredGames(limit:1){sandboxId} d:heroGame{sandboxId}}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "many",
+          "query": {
+            "epicAccountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "a",
+            "totalUnlocked": 1,
+            "totalXP": "70",
+            "playerAchievements": [
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "explorer",
+                  "unlockDate": "2021-03-01T00:00:00Z",
+                  "unlocked": true
+                }
+              },
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "begin",
+                  "unlockDate": null,
+                  "unlocked": false
+                }
+              }
+            ],
+            "playerAwards": [
+              {
+                "awardType": "PLATINUM",
+                "achievementSetId": "set-a",
+                "unlockedDateTime": "2021-06-01T13:00:00.000Z"
+              }
+            ]
+          },
+          {
+            "sandboxId": "b",
+            "totalUnlocked": 4,
+            "totalXP": 90,
+            "playerAchievements": [
+              {
+                "playerAchievement": {
+                  "sandboxId": "b",
+                  "achievementSetId": "set-b",
+                  "achievementName": "rare",
+                  "unlockDate": "2022-03-01T00:00:00Z",
+                  "unlocked": true
+                }
+              }
+            ]
+          },
+          {
+            "sandboxId": "a",
+            "totalUnlocked": 2,
+            "totalXP": 80,
+            "playerAwards": [
+              {
+                "awardType": "PLATINUM",
+                "achievementSetId": "set-a",
+                "unlockedDateTime": "2021-06-01T13:00:00.000Z"
+              }
+            ],
+            "playerAchievements": [
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "explorer",
+                  "unlockDate": "2021-06-01T00:00:00Z",
+                  "unlocked": false
+                }
+              },
+              {
+                "playerAchievement": {
+                  "sandboxId": "a",
+                  "achievementSetId": "set-a",
+                  "achievementName": "begin",
+                  "unlockDate": "2021-04-01T00:00:00Z",
+                  "unlocked": true
+                }
+              }
+            ]
+          },
+          {
+            "sandboxId": "c",
+            "totalUnlocked": 1,
+            "totalXP": 15
+          },
+          {
+            "sandboxId": ""
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "namespace": {
+              "$in": [
+                "a",
+                "b",
+                "c"
+              ]
+            },
+            "offerType": "BASE_GAME",
+            "isCodeRedemptionOnly": false
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "namespace": "a",
+            "title": "Alpha",
+            "isDisplayable": false
+          },
+          {
+            "namespace": "a",
+            "title": "Zoo",
+            "isDisplayable": true
+          },
+          {
+            "namespace": "b",
+            "product": {
+              "name": "Beta"
+            },
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageWide",
+                "url": "wide"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                "a",
+                "b",
+                "c"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "a",
+            "achievementSetId": "set-a",
+            "achievements": [
+              {
+                "name": "explorer",
+                "displayName": "Explorer",
+                "description": "Travel",
+                "icon": "icon-a",
+                "xp": "25",
+                "completedPercent": 0.125
+              },
+              {
+                "name": "begin",
+                "lockedDisplayName": "Begin",
+                "lockedIconLink": "locked-icon",
+                "score": 55,
+                "completedPercent": null
+              }
+            ]
+          },
+          {
+            "sandboxId": "b",
+            "achievementSetId": "set-b",
+            "achievements": [
+              {
+                "name": "rare",
+                "unlockedDisplayName": "Rare",
+                "unlockedDescription": "Uncommon",
+                "unlockedIconLink": "rare-image",
+                "XP": "0x10",
+                "completedPercent": "0x1"
+              },
+              {
+                "name": "b-0",
+                "xp": 12
+              },
+              {
+                "name": "b-1",
+                "xp": 12
+              },
+              {
+                "name": "b-2",
+                "xp": 12
+              },
+              {
+                "name": "b-3",
+                "xp": 12
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2",
+          "payload": [
+            {
+              "sandboxId": "a",
+              "title": "Zoo",
+              "imageUrl": null,
+              "completionPercent": 100,
+              "unlocked": 2,
+              "total": 2,
+              "earnedXP": 80,
+              "totalXP": 80,
+              "hasPlatinum": true,
+              "platinumCount": 1,
+              "rarestAchievements": [
+                {
+                  "name": "begin",
+                  "displayName": "Begin",
+                  "description": null,
+                  "iconUrl": "locked-icon",
+                  "rarityPercent": 0,
+                  "xp": 55,
+                  "sandboxId": "a",
+                  "gameTitle": "Zoo",
+                  "unlockedAt": "2021-04-01T00:00:00Z"
+                },
+                {
+                  "name": "explorer",
+                  "displayName": "Explorer",
+                  "description": "Travel",
+                  "iconUrl": "icon-a",
+                  "rarityPercent": 12.5,
+                  "xp": 25,
+                  "sandboxId": "a",
+                  "gameTitle": "Zoo",
+                  "unlockedAt": "2021-06-01T00:00:00Z"
+                }
+              ]
+            },
+            {
+              "sandboxId": "b",
+              "title": "Beta",
+              "imageUrl": "wide",
+              "completionPercent": 80,
+              "unlocked": 4,
+              "total": 5,
+              "earnedXP": 90,
+              "totalXP": 64,
+              "hasPlatinum": false,
+              "platinumCount": 0,
+              "rarestAchievements": [
+                {
+                  "name": "rare",
+                  "displayName": "Rare",
+                  "description": "Uncommon",
+                  "iconUrl": "rare-image",
+                  "rarityPercent": 100,
+                  "xp": 16,
+                  "sandboxId": "b",
+                  "gameTitle": "Beta",
+                  "unlockedAt": "2022-03-01T00:00:00Z"
+                }
+              ]
+            },
+            {
+              "sandboxId": "c",
+              "title": "c",
+              "imageUrl": null,
+              "completionPercent": 0,
+              "unlocked": 1,
+              "total": 0,
+              "earnedXP": 15,
+              "totalXP": 0,
+              "hasPlatinum": false,
+              "platinumCount": 0,
+              "rarestAchievements": []
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"b7cd9e053f26ce2ba4ac9623fd7083e5b395fc46\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":{\"a\":{\"elements\":[{\"sandboxId\":\"a\",\"title\":\"Zoo\",\"imageUrl\":null,\"completionPercent\":100,\"unlocked\":2,\"total\":2,\"earnedXP\":80,\"totalXP\":80,\"hasPlatinum\":true,\"rarestAchievements\":[{\"name\":\"begin\",\"displayName\":\"Begin\",\"description\":null,\"iconUrl\":\"locked-icon\",\"rarityPercent\":0,\"xp\":55,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-04-01T00:00:00.000Z\"},{\"name\":\"explorer\",\"displayName\":\"Explorer\",\"description\":\"Travel\",\"iconUrl\":\"icon-a\",\"rarityPercent\":12.5,\"xp\":25,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-06-01T00:00:00.000Z\"}]},{\"sandboxId\":\"b\",\"title\":\"Beta\",\"imageUrl\":\"wide\",\"completionPercent\":80,\"unlocked\":4,\"total\":5,\"earnedXP\":90,\"totalXP\":64,\"hasPlatinum\":false,\"rarestAchievements\":[{\"name\":\"rare\",\"displayName\":\"Rare\",\"description\":\"Uncommon\",\"iconUrl\":\"rare-image\",\"rarityPercent\":100,\"xp\":16,\"sandboxId\":\"b\",\"gameTitle\":\"Beta\",\"unlockedAt\":\"2022-03-01T00:00:00.000Z\"}]},{\"sandboxId\":\"c\",\"title\":\"c\",\"imageUrl\":null,\"completionPercent\":0,\"unlocked\":1,\"total\":0,\"earnedXP\":15,\"totalXP\":0,\"hasPlatinum\":false,\"rarestAchievements\":[]}],\"total\":3,\"page\":1,\"limit\":12},\"b\":{\"elements\":[{\"sandboxId\":\"a\",\"title\":\"Zoo\",\"imageUrl\":null,\"completionPercent\":100,\"unlocked\":2,\"total\":2,\"earnedXP\":80,\"totalXP\":80,\"hasPlatinum\":true,\"rarestAchievements\":[{\"name\":\"begin\",\"displayName\":\"Begin\",\"description\":null,\"iconUrl\":\"locked-icon\",\"rarityPercent\":0,\"xp\":55,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-04-01T00:00:00.000Z\"},{\"name\":\"explorer\",\"displayName\":\"Explorer\",\"description\":\"Travel\",\"iconUrl\":\"icon-a\",\"rarityPercent\":12.5,\"xp\":25,\"sandboxId\":\"a\",\"gameTitle\":\"Zoo\",\"unlockedAt\":\"2021-06-01T00:00:00.000Z\"}]},{\"sandboxId\":\"b\",\"title\":\"Beta\",\"imageUrl\":\"wide\",\"completionPercent\":80,\"unlocked\":4,\"total\":5,\"earnedXP\":90,\"totalXP\":64,\"hasPlatinum\":false,\"rarestAchievements\":[{\"name\":\"rare\",\"displayName\":\"Rare\",\"description\":\"Uncommon\",\"iconUrl\":\"rare-image\",\"rarityPercent\":100,\"xp\":16,\"sandboxId\":\"b\",\"gameTitle\":\"Beta\",\"unlockedAt\":\"2022-03-01T00:00:00.000Z\"}]},{\"sandboxId\":\"c\",\"title\":\"c\",\"imageUrl\":null,\"completionPercent\":0,\"unlocked\":1,\"total\":0,\"earnedXP\":15,\"totalXP\":0,\"hasPlatinum\":false,\"rarestAchievements\":[]}],\"total\":3,\"page\":1,\"limit\":12},\"c\":[{\"sandboxId\":\"a\"}],\"d\":{\"sandboxId\":\"b\"}}}}\n"
+    }
+  },
+  {
+    "name": "legacy-hero-cache-order",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){heroGame{sandboxId title}}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2"
+        },
+        "result": {
+          "rawCache": "[{\"sandboxId\":\"old-a\",\"title\":\"Alpha\",\"imageUrl\":\"alpha\",\"earnedXP\":30,\"unlocked\":1,\"completionPercent\":10},{\"sandboxId\":\"old-b\",\"title\":\"Beta\",\"imageUrl\":\"beta\",\"earnedXP\":60,\"unlocked\":8,\"completionPercent\":90}]"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"4de2a23cba2a45d1d728a6726cf7a69ff9ba4360\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":{\"heroGame\":{\"sandboxId\":\"old-b\",\"title\":\"Beta\"}}}}\n"
+    }
+  },
+  {
+    "name": "legacy-games-without-platinum-count",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){highlights{level totalXP totalGames totalAchievements totalPlatinums reviewsCount}}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:highlights:reviews:4:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2"
+        },
+        "result": {
+          "rawCache": "[{\"earnedXP\":24,\"unlocked\":2,\"hasPlatinum\":true},{\"earnedXP\":3,\"unlocked\":1,\"hasPlatinum\":false}]"
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:highlights:reviews:4:v2",
+          "payload": {
+            "level": 1,
+            "totalXP": 277,
+            "totalGames": 2,
+            "totalAchievements": 3,
+            "totalPlatinums": 1,
+            "reviewsCount": 4
+          },
+          "ttl": 300
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"7d0dc589653ad1990ed115d781d56f785961156d\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":{\"highlights\":{\"level\":1,\"totalXP\":277,\"totalGames\":2,\"totalAchievements\":3,\"totalPlatinums\":1,\"reviewsCount\":4}}}}\n"
+    }
+  },
+  {
+    "name": "identity-cache-keeps-accounts-separate",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{one:profile(id:\"fixture-player\"){accountId} same:profile(id:\"fixture-player\"){displayName} other:profile(id:\"fixture-other\"){accountId}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-other:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-other"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-other"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-other"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-other:identity:v2",
+          "payload": {
+            "accountId": "fixture-other",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"b7af5ef0311eb444e6f3fc47e47fbeed94e7c57b\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"one\":{\"accountId\":\"fixture-player\"},\"same\":{\"displayName\":\"Example player\"},\"other\":{\"accountId\":\"fixture-other\"}}}\n"
+    }
+  },
+  {
+    "name": "identity-read-fails",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){accountId displayName avatar{small medium large} linkedAccounts creationDate reviewsCount}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"588ad832c40ec7ee87f22aeaf8ec1a40339a24b1\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"fixture read failed\",\"locations\":[{\"line\":1,\"column\":2}],\"path\":[\"profile\"],\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\"}}],\"data\":{\"profile\":null}}\n"
+    }
+  },
+  {
+    "name": "identity-write-fails",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){accountId displayName avatar{small medium large} linkedAccounts creationDate reviewsCount}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"588ad832c40ec7ee87f22aeaf8ec1a40339a24b1\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"fixture read failed\",\"locations\":[{\"line\":1,\"column\":2}],\"path\":[\"profile\"],\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\"}}],\"data\":{\"profile\":null}}\n"
+    }
+  },
+  {
+    "name": "epic-lookup-fails",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){accountId displayName avatar{small medium large} linkedAccounts creationDate reviewsCount}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"588ad832c40ec7ee87f22aeaf8ec1a40339a24b1\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"fixture read failed\",\"locations\":[{\"line\":1,\"column\":2}],\"path\":[\"profile\"],\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\"}}],\"data\":{\"profile\":null}}\n"
+    }
+  },
+  {
+    "name": "child-read-fails-once",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){accountId a:games{elements{sandboxId title imageUrl completionPercent unlocked total earnedXP totalXP hasPlatinum rarestAchievements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt}} total page limit} b:heroGame{title}}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "many",
+          "query": {
+            "epicAccountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"2f47d8b8eb892207e0cb4509e3995d7bf20604ef\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"fixture read failed\",\"locations\":[{\"line\":1,\"column\":41}],\"path\":[\"profile\",\"a\"],\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\"}},{\"message\":\"fixture read failed\",\"locations\":[{\"line\":1,\"column\":269}],\"path\":[\"profile\",\"b\"],\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\"}}],\"data\":{\"profile\":{\"accountId\":\"fixture-player\",\"a\":null,\"b\":null}}}\n"
+    }
+  },
+  {
+    "name": "review-count-read-fails",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){accountId displayName avatar{small medium large} linkedAccounts creationDate reviewsCount}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"588ad832c40ec7ee87f22aeaf8ec1a40339a24b1\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"fixture read failed\",\"locations\":[{\"line\":1,\"column\":2}],\"path\":[\"profile\"],\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\"}}],\"data\":{\"profile\":null}}\n"
+    }
+  },
+  {
+    "name": "aggregation-failure-highlights",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){highlights{totalGames}}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:highlights:reviews:4:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "many",
+          "query": {
+            "epicAccountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"45056d1bde7d3529c477d6c10aee0dcb9e835c7a\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"fixture read failed\",\"locations\":[{\"line\":1,\"column\":31}],\"path\":[\"profile\",\"highlights\"],\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\"}}],\"data\":{\"profile\":{\"highlights\":null}}}\n"
+    }
+  },
+  {
+    "name": "aggregation-failure-featuredAchievements",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){featuredAchievements{name}}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:featured-achievements:8:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "many",
+          "query": {
+            "epicAccountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"148de328e6663272b596d91dc50091dbf89794d3\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"fixture read failed\",\"locations\":[{\"line\":1,\"column\":31}],\"path\":[\"profile\",\"featuredAchievements\"],\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\"}}],\"data\":{\"profile\":{\"featuredAchievements\":null}}}\n"
+    }
+  },
+  {
+    "name": "aggregation-failure-recentActivity",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){recentActivity{type}}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:activity:12:1:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "many",
+          "query": {
+            "epicAccountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"36551a9847c10f96f88d6d6d704d1e4372bff1cb\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"fixture read failed\",\"locations\":[{\"line\":1,\"column\":31}],\"path\":[\"profile\",\"recentActivity\"],\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\"}}],\"data\":{\"profile\":{\"recentActivity\":null}}}\n"
+    }
+  },
+  {
+    "name": "historical-sandbox-identifiers",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){games{elements{sandboxId title imageUrl completionPercent unlocked total earnedXP totalXP hasPlatinum rarestAchievements{name displayName description iconUrl rarityPercent xp sandboxId gameTitle unlockedAt}} total page limit}}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "many",
+          "query": {
+            "epicAccountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": [
+              "legacy",
+              2
+            ],
+            "totalXP": 6
+          },
+          {
+            "sandboxId": 3,
+            "totalXP": 9
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "namespace": {
+              "$in": [
+                "legacy,2",
+                "3"
+              ]
+            },
+            "offerType": "BASE_GAME",
+            "isCodeRedemptionOnly": false
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "namespace": "legacy,2",
+            "title": "Archive",
+            "isDisplayable": true,
+            "lastModifiedDate": "2020-03-01",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "old"
+              }
+            ]
+          },
+          {
+            "namespace": "legacy,2",
+            "title": "Archive",
+            "isDisplayable": true,
+            "lastModifiedDate": "2021-03-01",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "new"
+              }
+            ]
+          },
+          {
+            "namespace": "legacy,2",
+            "title": "Zulu",
+            "isDisplayable": true
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                "legacy,2",
+                "3"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "sandboxId": "a",
+            "achievementSetId": "set-a",
+            "achievements": [
+              {
+                "name": "explorer",
+                "displayName": "Explorer",
+                "description": "Travel",
+                "icon": "icon-a",
+                "xp": "25",
+                "completedPercent": 0.125
+              },
+              {
+                "name": "begin",
+                "lockedDisplayName": "Begin",
+                "lockedIconLink": "locked-icon",
+                "score": 55,
+                "completedPercent": null
+              }
+            ]
+          },
+          {
+            "sandboxId": "b",
+            "achievementSetId": "set-b",
+            "achievements": [
+              {
+                "name": "rare",
+                "unlockedDisplayName": "Rare",
+                "unlockedDescription": "Uncommon",
+                "unlockedIconLink": "rare-image",
+                "XP": "0x10",
+                "completedPercent": "0x1"
+              },
+              {
+                "name": "b-0",
+                "xp": 12
+              },
+              {
+                "name": "b-1",
+                "xp": 12
+              },
+              {
+                "name": "b-2",
+                "xp": 12
+              },
+              {
+                "name": "b-3",
+                "xp": 12
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2",
+          "payload": [
+            {
+              "sandboxId": "3",
+              "title": "3",
+              "imageUrl": null,
+              "completionPercent": 0,
+              "unlocked": 0,
+              "total": 0,
+              "earnedXP": 9,
+              "totalXP": 0,
+              "hasPlatinum": false,
+              "platinumCount": 0,
+              "rarestAchievements": []
+            },
+            {
+              "sandboxId": "legacy,2",
+              "title": "Archive",
+              "imageUrl": "new",
+              "completionPercent": 0,
+              "unlocked": 0,
+              "total": 0,
+              "earnedXP": 6,
+              "totalXP": 0,
+              "hasPlatinum": false,
+              "platinumCount": 0,
+              "rarestAchievements": []
+            }
+          ],
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"aa90052c2501ad8af82008dc68abf8e61ec9f697\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":{\"games\":{\"elements\":[{\"sandboxId\":\"3\",\"title\":\"3\",\"imageUrl\":null,\"completionPercent\":0,\"unlocked\":0,\"total\":0,\"earnedXP\":9,\"totalXP\":0,\"hasPlatinum\":false,\"rarestAchievements\":[]},{\"sandboxId\":\"legacy,2\",\"title\":\"Archive\",\"imageUrl\":\"new\",\"completionPercent\":0,\"unlocked\":0,\"total\":0,\"earnedXP\":6,\"totalXP\":0,\"hasPlatinum\":false,\"rarestAchievements\":[]}],\"total\":2,\"page\":1,\"limit\":12}}}}\n"
+    }
+  },
+  {
+    "name": "cached-hero-art-and-completion-tie",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "{profile(id:\"fixture-player\"){heroGame{sandboxId}}}"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:identity:v2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "fixture-player"
+        },
+        "result": {
+          "displayName": "Example player",
+          "avatar": {
+            "small": "epic-s",
+            "medium": "epic-m",
+            "large": "epic-l"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "one",
+          "query": {
+            "accountId": {
+              "$eq": "fixture-player"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "avatarUrl": {
+            "variants": [
+              "db-avatar"
+            ]
+          },
+          "linkedAccounts": {
+            "fixture": "linked"
+          },
+          "creationDate": "2020-06-03T20:00:00.000Z"
+        }
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "userId": "fixture-player"
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "graphql:profile:fixture-player:identity:v2",
+          "payload": {
+            "accountId": "fixture-player",
+            "displayName": "Example player",
+            "avatar": {
+              "small": "db-avatar",
+              "medium": "db-avatar",
+              "large": "db-avatar"
+            },
+            "linkedAccounts": {
+              "fixture": "linked"
+            },
+            "creationDate": "2020-06-03T20:00:00.000Z",
+            "reviewsCount": 4
+          },
+          "ttl": 3600
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "graphql:profile:fixture-player:games:ALL:COMPLETION:v2"
+        },
+        "result": {
+          "rawCache": "[{\"sandboxId\":\"a\",\"title\":\"First\",\"imageUrl\":\"first\",\"earnedXP\":15,\"unlocked\":1,\"completionPercent\":0},{\"sandboxId\":\"b\",\"title\":\"Second\",\"imageUrl\":\"second\",\"earnedXP\":15,\"unlocked\":2,\"completionPercent\":0}]"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"bf2f1070dc8707bcda1f1614f32ec0f1062831d6\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"profile\":{\"heroGame\":{\"sandboxId\":\"b\"}}}}\n"
+    }
+  }
+]

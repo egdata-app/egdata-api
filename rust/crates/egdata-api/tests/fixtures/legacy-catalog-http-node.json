@@ -1,0 +1,6605 @@
+[
+  {
+    "name": "asset",
+    "request": {
+      "method": "GET",
+      "path": "/assets/app"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "assets",
+          "method": "one",
+          "query": {
+            "artifactId": {
+              "$eq": "app"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "artifactId": "app",
+          "itemId": "i",
+          "platform": "Windows",
+          "downloadSizeBytes": 0,
+          "installedSizeBytes": 224
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"8510c49a4a3a143739d3f678da7c034dfc278c27\""
+      },
+      "body": {
+        "artifactId": "app",
+        "itemId": "i",
+        "platform": "Windows",
+        "downloadSizeBytes": 0,
+        "installedSizeBytes": 224
+      }
+    }
+  },
+  {
+    "name": "asset-missing",
+    "request": {
+      "method": "GET",
+      "path": "/assets/missing"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "assets",
+          "method": "one",
+          "query": {
+            "artifactId": {
+              "$eq": "missing"
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"6ee06387bfc074c4afbb3932cca0cf36ad53c8a7\""
+      },
+      "body": {
+        "error": "Asset not found"
+      }
+    }
+  },
+  {
+    "name": "list-items",
+    "request": {
+      "method": "GET",
+      "path": "/items?page=2&limit=12junk"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {},
+          "options": {
+            "limit": 12,
+            "skip": 12,
+            "sort": {
+              "lastModifiedDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "i",
+            "title": "Item",
+            "customAttributes": [
+              {
+                "key": "Z",
+                "value": "1"
+              },
+              {
+                "key": "A",
+                "type": "BOOL",
+                "value": false
+              }
+            ],
+            "releaseInfo": [
+              {
+                "appId": "app"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 123
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"21fbea08141ad4f70a1016ff24da41f2e64ff1ec\""
+      },
+      "body": {
+        "elements": [
+          {
+            "id": "i",
+            "title": "Item",
+            "customAttributes": [
+              {
+                "key": "Z",
+                "value": "1"
+              },
+              {
+                "key": "A",
+                "type": "BOOL",
+                "value": false
+              }
+            ],
+            "releaseInfo": [
+              {
+                "appId": "app"
+              }
+            ]
+          }
+        ],
+        "page": 2,
+        "limit": 12,
+        "total": 123
+      }
+    }
+  },
+  {
+    "name": "item",
+    "request": {
+      "method": "GET",
+      "path": "/items/i"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$eq": "i"
+                }
+              },
+              {
+                "id": {
+                  "$eq": "i"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "customAttributes": [
+            {
+              "key": "Z",
+              "value": "1"
+            },
+            {
+              "key": "A",
+              "type": "BOOL",
+              "value": false
+            }
+          ],
+          "releaseInfo": [
+            {
+              "appId": "app"
+            }
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"217db402da91379a7c737a22f14d69e49b018270\""
+      },
+      "body": {
+        "id": "i",
+        "title": "Item",
+        "customAttributes": {
+          "Z": {
+            "type": "STRING",
+            "value": "1"
+          },
+          "A": {
+            "type": "BOOL",
+            "value": false
+          }
+        },
+        "releaseInfo": [
+          {
+            "appId": "app"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "item-missing",
+    "request": {
+      "method": "GET",
+      "path": "/items/i"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$eq": "i"
+                }
+              },
+              {
+                "id": {
+                  "$eq": "i"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"3aa440107074f66ebddcb919a6f2a83146a2076b\""
+      },
+      "body": {
+        "message": "Item not found"
+      }
+    }
+  },
+  {
+    "name": "item-assets",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/assets"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": "i"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app",
+            "itemId": "i",
+            "platform": "Windows",
+            "downloadSizeBytes": 0,
+            "installedSizeBytes": 224
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"814da0c62bb44b6f588bebe323f5d690f385c28b\""
+      },
+      "body": [
+        {
+          "artifactId": "app",
+          "itemId": "i",
+          "platform": "Windows",
+          "downloadSizeBytes": 0,
+          "installedSizeBytes": 224
+        }
+      ]
+    }
+  },
+  {
+    "name": "item-builds",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/builds"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "customAttributes": [
+            {
+              "key": "Z",
+              "value": "1"
+            },
+            {
+              "key": "A",
+              "type": "BOOL",
+              "value": false
+            }
+          ],
+          "releaseInfo": [
+            {
+              "appId": "app"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "query": {
+            "appName": {
+              "$in": [
+                "app"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "appName": "app",
+            "buildVersion": "test",
+            "labelName": "Live-Windows",
+            "hash": "sha",
+            "updatedAt": {
+              "$date": "2026-11-17T20:02:01.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "one",
+          "query": {
+            "artifactId": {
+              "$eq": "app"
+            },
+            "platform": {
+              "$eq": "Windows"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "artifactId": "app",
+          "itemId": "i",
+          "platform": "Windows",
+          "downloadSizeBytes": 0,
+          "installedSizeBytes": 224
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"e608cf59a5bce1160dca27f7c09edbf8c67808b5\""
+      },
+      "body": [
+        {
+          "id": "65ba00000000000000000001",
+          "_id": "65ba00000000000000000001",
+          "appName": "app",
+          "buildVersion": "test",
+          "labelName": "Live-Windows",
+          "platform": "Windows",
+          "hash": "sha",
+          "firstSeenAt": null,
+          "lastSeenAt": "2026-11-17T20:02:01.000Z",
+          "createdAt": null,
+          "updatedAt": "2026-11-17T20:02:01.000Z",
+          "downloadSizeBytes": 0,
+          "installedSizeBytes": 224,
+          "technologies": [],
+          "manifest": {
+            "status": "legacy_unverified",
+            "canonicalHash": null,
+            "sourceHash": "sha",
+            "parserVersion": null,
+            "processedAt": null,
+            "fileCount": null,
+            "fileBytes": null,
+            "errorCode": null
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "item-builds-missing",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/builds"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"386099ee6a419aae8e994341f305b8ef8c1f6a91\""
+      },
+      "body": {
+        "error": "Item not found"
+      }
+    }
+  },
+  {
+    "name": "item-offer",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "o"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "o"
+              ]
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "id": "o",
+            "namespace": "n",
+            "title": "Main",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "offer:item:i:locale:en-US",
+          "payload": {
+            "_id": "65ba00000000000000000001",
+            "id": "o",
+            "namespace": "n",
+            "title": "Main",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"78e521bf9d5373c5bb6715bc31f1553615af3f64\""
+      },
+      "body": {
+        "_id": "65ba00000000000000000001",
+        "id": "o",
+        "namespace": "n",
+        "title": "Main",
+        "offerType": "BASE_GAME",
+        "items": [
+          {
+            "id": "i"
+          }
+        ],
+        "locale": "en-US",
+        "localeStatus": "canonical"
+      }
+    }
+  },
+  {
+    "name": "item-offer-hit",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:en-US"
+        },
+        "result": {
+          "title": "cached"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"4f7b67e9e6996d98f2504abc8b461a953b199c13\""
+      },
+      "body": {
+        "title": "cached"
+      }
+    }
+  },
+  {
+    "name": "item-offer-missing",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/offer"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "offer:item:i:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": "i"
+          },
+          "options": {
+            "projection": {
+              "_id": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            },
+            "offerType": "BASE_GAME"
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"f9220d7b7d6902a43a6727bb8ee166245ec6c59a\""
+      },
+      "body": {
+        "error": "No offer found"
+      }
+    }
+  },
+  {
+    "name": "item-changelog",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/changelog?page=2&limit=2"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:i:2:2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "i",
+          "title": "Item",
+          "customAttributes": [
+            {
+              "key": "Z",
+              "value": "1"
+            },
+            {
+              "key": "A",
+              "type": "BOOL",
+              "value": false
+            }
+          ],
+          "releaseInfo": [
+            {
+              "appId": "app"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": "i"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "app",
+            "itemId": "i",
+            "platform": "Windows",
+            "downloadSizeBytes": 0,
+            "installedSizeBytes": 224
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "many",
+          "query": {
+            "appName": {
+              "$in": [
+                "app"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "appName": "app",
+            "buildVersion": "test",
+            "labelName": "Live-Windows",
+            "hash": "sha",
+            "updatedAt": {
+              "$date": "2026-11-17T20:02:01.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "metadata.contextId": {
+                  "$in": [
+                    "i",
+                    "app",
+                    "65ba00000000000000000001"
+                  ]
+                }
+              }
+            },
+            {
+              "$sort": {
+                "timestamp": -1
+              }
+            },
+            {
+              "$skip": 2
+            },
+            {
+              "$limit": 2
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$id",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "itemDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "assets",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$artifactId",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "assetDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "builds",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          {
+                            "$toString": "$_id"
+                          },
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "buildDoc"
+              }
+            },
+            {
+              "$addFields": {
+                "document": {
+                  "$switch": {
+                    "branches": [
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "item"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$itemDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "asset"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$assetDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "build"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$buildDoc",
+                            0
+                          ]
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 1,
+                "metadata": 1,
+                "timestamp": 1,
+                "document": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "document": {
+              "id": "i",
+              "title": "Item",
+              "customAttributes": [
+                {
+                  "key": "Z",
+                  "value": "1"
+                },
+                {
+                  "key": "A",
+                  "type": "BOOL",
+                  "value": false
+                }
+              ],
+              "releaseInfo": [
+                {
+                  "appId": "app"
+                }
+              ]
+            },
+            "timestamp": {
+              "$date": "2026-11-17T20:02:01.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "changelog:i:2:2",
+          "payload": [
+            {
+              "_id": "65ba00000000000000000001",
+              "document": {
+                "id": "i",
+                "title": "Item",
+                "customAttributes": [
+                  {
+                    "key": "Z",
+                    "value": "1"
+                  },
+                  {
+                    "key": "A",
+                    "type": "BOOL",
+                    "value": false
+                  }
+                ],
+                "releaseInfo": [
+                  {
+                    "appId": "app"
+                  }
+                ]
+              },
+              "timestamp": "2026-11-17T20:02:01.000Z"
+            }
+          ],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"19c4de7a8bad99b312f4f2493a78833e337d3445\""
+      },
+      "body": [
+        {
+          "_id": "65ba00000000000000000001",
+          "document": {
+            "id": "i",
+            "title": "Item",
+            "customAttributes": [
+              {
+                "key": "Z",
+                "value": "1"
+              },
+              {
+                "key": "A",
+                "type": "BOOL",
+                "value": false
+              }
+            ],
+            "releaseInfo": [
+              {
+                "appId": "app"
+              }
+            ]
+          },
+          "timestamp": "2026-11-17T20:02:01.000Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "item-changelog-hit",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:i:1:10"
+        },
+        "result": [
+          {
+            "_id": "cached"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"20ab88a88530b2199da5f9d7195c19385280b3e3\""
+      },
+      "body": [
+        {
+          "_id": "cached"
+        }
+      ]
+    }
+  },
+  {
+    "name": "item-changelog-missing",
+    "request": {
+      "method": "GET",
+      "path": "/items/i/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:i:1:10"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"3aa440107074f66ebddcb919a6f2a83146a2076b\""
+      },
+      "body": {
+        "message": "Item not found"
+      }
+    }
+  },
+  {
+    "name": "sitemap-index",
+    "request": {
+      "method": "GET",
+      "path": "/items/sitemap.xml"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1300
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml",
+        "cache-control": "public, max-age=86400, stale-while-revalidate=604800",
+        "etag": "\"0db923dc1eb4dde6c38b95d9142db26208473b55\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <sitemap><loc>https://api.egdata.app/items/sitemap.xml?page=1</loc></sitemap><sitemap><loc>https://api.egdata.app/items/sitemap.xml?page=2</loc></sitemap>\n</sitemapindex>"
+    }
+  },
+  {
+    "name": "sitemap-page",
+    "request": {
+      "method": "GET",
+      "path": "/items/sitemap.xml?page=2"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {},
+          "options": {
+            "limit": 1000,
+            "skip": 1000,
+            "sort": {
+              "lastModifiedDate": -1
+            },
+            "projection": {
+              "id": 1,
+              "lastModifiedDate": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "i",
+            "lastModifiedDate": {
+              "$date": "2026-11-17T20:02:01.000Z"
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml",
+        "cache-control": "public, max-age=86400, stale-while-revalidate=604800",
+        "etag": "\"d4bd20d7ea99186dd92a3184b085e402044bfc01\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url>\n        <loc>https://egdata.app/items/i</loc>\n        <lastmod>2026-11-17T20:02:01.000Z</lastmod>\n      </url>\n      \n      \n</urlset>"
+    }
+  },
+  {
+    "name": "bulk",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk",
+      "body": {
+        "items": [
+          "i",
+          null,
+          1
+        ]
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "i",
+            "title": "Item",
+            "customAttributes": [
+              {
+                "key": "Z",
+                "value": "1"
+              },
+              {
+                "key": "A",
+                "type": "BOOL",
+                "value": false
+              }
+            ],
+            "releaseInfo": [
+              {
+                "appId": "app"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"4fd6226eadb3059475d2839f3bbf4b4dfb2f41ff\""
+      },
+      "body": [
+        {
+          "id": "i",
+          "title": "Item",
+          "customAttributes": {
+            "Z": {
+              "type": "STRING",
+              "value": "1"
+            },
+            "A": {
+              "type": "BOOL",
+              "value": false
+            }
+          },
+          "releaseInfo": [
+            {
+              "appId": "app"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "bulk-empty",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "body": {
+        "items": [
+          false,
+          "  "
+        ]
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f\""
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "bulk-linked-offers",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk/offers",
+      "body": {
+        "items": [
+          " i ",
+          "missing",
+          "i"
+        ]
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "items.id": {
+              "$in": [
+                "i",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "id": "secondary",
+            "namespace": "n",
+            "title": "Main",
+            "offerType": "DLC",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "subItems.id": {
+              "$in": [
+                "i",
+                "missing",
+                "i"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "o",
+            "subItems": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "o"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "id": "o",
+            "namespace": "n",
+            "title": "Main",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"40a249c8b5e8be040d7e1bed7eb6106e7fb407b5\""
+      },
+      "body": {
+        "i": {
+          "_id": "65ba00000000000000000001",
+          "id": "o",
+          "namespace": "n",
+          "title": "Main",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        },
+        "missing": null
+      }
+    }
+  },
+  {
+    "name": "sellers",
+    "request": {
+      "method": "GET",
+      "path": "/sellers"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "distinct",
+          "query": {},
+          "options": {
+            "field": "seller"
+          }
+        },
+        "result": [
+          {
+            "name": "Z",
+            "id": "z"
+          },
+          {
+            "name": "A",
+            "id": "a"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"6f9a6693069becdf9d0bc58615eb214c551a2445\""
+      },
+      "body": [
+        {
+          "name": "Z",
+          "id": "z"
+        },
+        {
+          "name": "A",
+          "id": "a"
+        }
+      ]
+    }
+  },
+  {
+    "name": "seller-invalid-country",
+    "request": {
+      "method": "GET",
+      "path": "/sellers/s?country=unknown"
+    },
+    "trace": [],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"8fa0fd9e94fd7c374a1fd5e37392568240674c91\""
+      },
+      "body": {
+        "message": "Country not found"
+      }
+    }
+  },
+  {
+    "name": "seller-invalid-locale",
+    "request": {
+      "method": "GET",
+      "path": "/sellers/s?locale=%3F"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"5aa59a31b3d23cf731c1c077da6cf3de8f868e20\""
+      },
+      "body": {
+        "message": "Invalid locale parameter: ?"
+      }
+    }
+  },
+  {
+    "name": "seller-offers-hit",
+    "request": {
+      "method": "GET",
+      "path": "/sellers/s?offerType=DLC",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "sellers:s:EURO:1:0:DLC::locale:en-US"
+        },
+        "result": [
+          {
+            "_id": "65ba00000000000000000001",
+            "id": "o",
+            "namespace": "n",
+            "title": "Main",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"ca0afe29e8b73d8e103715ea3a9078bfcee23536\""
+      },
+      "body": [
+        {
+          "_id": "65ba00000000000000000001",
+          "id": "o",
+          "namespace": "n",
+          "title": "Main",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "seller-offers",
+    "request": {
+      "method": "GET",
+      "path": "/sellers/s?page=2&ignoredSandboxes=n1,n2"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "sellers:s:US:2:0:undefined:n1,n2:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "seller.id": "s",
+            "namespace": {
+              "$nin": [
+                "n1",
+                "n2"
+              ]
+            }
+          },
+          "options": {
+            "skip": 1,
+            "sort": {
+              "lastModifiedDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "id": "o",
+            "namespace": "n",
+            "title": "Main",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          },
+          {
+            "id": "o2",
+            "title": "unpriced"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "o",
+                "o2"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "o",
+            "region": "US",
+            "price": 1
+          },
+          {
+            "offerId": "o",
+            "region": "US",
+            "price": 2
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "sellers:s:US:2:0:undefined:n1,n2:locale:en-US",
+          "payload": [
+            {
+              "_id": "65ba00000000000000000001",
+              "id": "o",
+              "namespace": "n",
+              "title": "Main",
+              "offerType": "BASE_GAME",
+              "items": [
+                {
+                  "id": "i"
+                }
+              ],
+              "price": {
+                "offerId": "o",
+                "region": "US",
+                "price": 1
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            },
+            {
+              "id": "o2",
+              "title": "unpriced",
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"ade5d1e9f38993c253d897a90d0dcd59ba341550\""
+      },
+      "body": [
+        {
+          "_id": "65ba00000000000000000001",
+          "id": "o",
+          "namespace": "n",
+          "title": "Main",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "price": {
+            "offerId": "o",
+            "region": "US",
+            "price": 1
+          },
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        },
+        {
+          "id": "o2",
+          "title": "unpriced",
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      ]
+    }
+  },
+  {
+    "name": "seller-cover",
+    "request": {
+      "method": "GET",
+      "path": "/sellers/s/cover"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "sellers:s:cover:US:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "many",
+          "query": {
+            "collectionId": "top-sellers",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "o"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "o"
+              ]
+            },
+            "seller.id": "s"
+          },
+          "options": {
+            "sort": {
+              "lastModifiedDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "id": "o",
+            "namespace": "n",
+            "title": "Main",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "o"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "o",
+            "region": "US",
+            "price": 1
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "sellers:s:cover:US:locale:en-US",
+          "payload": [
+            {
+              "_id": "65ba00000000000000000001",
+              "id": "o",
+              "namespace": "n",
+              "title": "Main",
+              "offerType": "BASE_GAME",
+              "items": [
+                {
+                  "id": "i"
+                }
+              ],
+              "price": {
+                "offerId": "o",
+                "region": "US",
+                "price": 1
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"bb2c0124cfa9e2f4a783a205a615b8284a0506f3\""
+      },
+      "body": [
+        {
+          "_id": "65ba00000000000000000001",
+          "id": "o",
+          "namespace": "n",
+          "title": "Main",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "i"
+            }
+          ],
+          "price": {
+            "offerId": "o",
+            "region": "US",
+            "price": 1
+          },
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      ]
+    }
+  },
+  {
+    "name": "seller-cover-fallback",
+    "request": {
+      "method": "GET",
+      "path": "/sellers/s/cover"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "sellers:s:cover:US:locale:en-US"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "many",
+          "query": {
+            "collectionId": "top-sellers",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            },
+            "seller.id": "s"
+          },
+          "options": {
+            "sort": {
+              "lastModifiedDate": -1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "seller.id": "s"
+          },
+          "options": {
+            "limit": 5,
+            "sort": {
+              "lastModifiedDate": -1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": []
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "sellers:s:cover:US:locale:en-US",
+          "payload": [],
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "seller-stats",
+    "request": {
+      "method": "GET",
+      "path": "/sellers/s/stats"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "sellers:s:stats:v1.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "sellers",
+          "method": "one",
+          "query": {
+            "_id": "s"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "s",
+          "name": "Seller"
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "seller.id": "s"
+          },
+          "options": {}
+        },
+        "result": 40
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "developerId": "s"
+          },
+          "options": {}
+        },
+        "result": 52
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "seller.id": "s",
+                "offerType": "BASE_GAME"
+              }
+            },
+            {
+              "$sort": {
+                "lastModifiedDate": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$namespace",
+                "offer": {
+                  "$first": "$$ROOT"
+                }
+              }
+            },
+            {
+              "$replaceRoot": {
+                "newRoot": "$offer"
+              }
+            },
+            {
+              "$count": "count"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "count": 8
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "aggregate",
+          "query": [
+            {
+              "$lookup": {
+                "from": "offers",
+                "localField": "id",
+                "foreignField": "id",
+                "as": "offer"
+              }
+            },
+            {
+              "$unwind": "$offer"
+            },
+            {
+              "$match": {
+                "offer.seller.id": "s"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$id"
+              }
+            },
+            {
+              "$count": "count"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "count": 1
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "mobile-freebies",
+          "method": "aggregate",
+          "query": [
+            {
+              "$lookup": {
+                "from": "offers",
+                "localField": "offerId",
+                "foreignField": "id",
+                "as": "offer"
+              }
+            },
+            {
+              "$unwind": "$offer"
+            },
+            {
+              "$match": {
+                "offer.seller.id": "s"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId"
+              }
+            },
+            {
+              "$count": "count"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "count": 2
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "sellers:s:stats:v1.1",
+          "payload": {
+            "offers": 40,
+            "items": 52,
+            "games": 8,
+            "freegames": 3,
+            "seller": {
+              "_id": "s",
+              "name": "Seller"
+            }
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"de27e105ff112d0a338a443d8ab75fb09d29ad7d\""
+      },
+      "body": {
+        "offers": 40,
+        "items": 52,
+        "games": 8,
+        "freegames": 3,
+        "seller": {
+          "_id": "s",
+          "name": "Seller"
+        }
+      }
+    }
+  },
+  {
+    "name": "seller-stats-missing",
+    "request": {
+      "method": "GET",
+      "path": "/sellers/s/stats"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "sellers:s:stats:v1.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "sellers",
+          "method": "one",
+          "query": {
+            "_id": "s"
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"85446a9209f098e92e1cb4f4828ce9eeb44239a1\""
+      },
+      "body": {
+        "message": "Seller not found"
+      }
+    }
+  },
+  {
+    "name": "franchise-missing",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/series"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:series:US:1:20:locale:en-US:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "series"
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"8809f3967fa069cc9055a323db16a15b2f106c0a\""
+      },
+      "body": {
+        "message": "Franchise not found"
+      }
+    }
+  },
+  {
+    "name": "franchise-empty",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/series"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:series:US:1:20:locale:en-US:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "series"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "series",
+          "offers": []
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"947541b8455f8ccc1215fc993d6bc7564241c304\""
+      },
+      "body": {
+        "id": "series",
+        "elements": [],
+        "stats": {
+          "totalTimeHastily": 0,
+          "totalTimeNormally": 0,
+          "totalTimeCompletely": 0,
+          "totalAchievements": 0,
+          "totalXp": 0,
+          "gamesCount": 0
+        },
+        "page": 1,
+        "limit": 20,
+        "total": 0
+      }
+    }
+  },
+  {
+    "name": "franchise-populated",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/series?expand=full"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:series:US:1:20:locale:en-US:full:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "series"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "series",
+          "name": "Series",
+          "offers": [
+            "o"
+          ],
+          "lastUpdated": {
+            "$date": "2026-11-17T20:02:01.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "o"
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000001"
+            },
+            "id": "o",
+            "namespace": "n",
+            "title": "Main",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                "o"
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "namespace": "n"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "o"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "o",
+            "region": "US",
+            "price": 1
+          },
+          {
+            "offerId": "o",
+            "region": "US",
+            "price": 3
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                "n"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "achievements": [
+              {
+                "xp": 10
+              },
+              {
+                "xp": 5
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "igdbs",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                "o"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "igdbId": 10,
+            "timeToBeat": {
+              "normally": 12
+            }
+          },
+          {
+            "igdbId": 10,
+            "timeToBeat": {
+              "normally": 100
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "franchises:series:US:1:20:locale:en-US:full:v0.1",
+          "payload": {
+            "id": "series",
+            "name": "Series",
+            "lastUpdated": "2026-11-17T20:02:01.000Z",
+            "elements": [
+              {
+                "_id": "65ba00000000000000000001",
+                "id": "o",
+                "namespace": "n",
+                "title": "Main",
+                "offerType": "BASE_GAME",
+                "items": [
+                  {
+                    "id": "i"
+                  }
+                ],
+                "price": {
+                  "offerId": "o",
+                  "region": "US",
+                  "price": 3
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "stats": {
+              "totalTimeHastily": 0,
+              "totalTimeNormally": 12,
+              "totalTimeCompletely": 0,
+              "totalAchievements": 2,
+              "totalXp": 15,
+              "gamesCount": 1
+            },
+            "page": 1,
+            "limit": 20,
+            "total": 1
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"7fafb3e8ed993d6eb55762e63703fdc9d1ceefca\""
+      },
+      "body": {
+        "id": "series",
+        "name": "Series",
+        "lastUpdated": "2026-11-17T20:02:01.000Z",
+        "elements": [
+          {
+            "_id": "65ba00000000000000000001",
+            "id": "o",
+            "namespace": "n",
+            "title": "Main",
+            "offerType": "BASE_GAME",
+            "items": [
+              {
+                "id": "i"
+              }
+            ],
+            "price": {
+              "offerId": "o",
+              "region": "US",
+              "price": 3
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "stats": {
+          "totalTimeHastily": 0,
+          "totalTimeNormally": 12,
+          "totalTimeCompletely": 0,
+          "totalAchievements": 2,
+          "totalXp": 15,
+          "gamesCount": 1
+        },
+        "page": 1,
+        "limit": 20,
+        "total": 1
+      }
+    }
+  },
+  {
+    "name": "franchise-hit",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/series?expand=1"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:series:US:1:20:locale:en-US:full:v0.1"
+        },
+        "result": {
+          "elements": []
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"bdccbf12cdfb5caa9eb56b86f90bad4141913de9\""
+      },
+      "body": {
+        "elements": []
+      }
+    }
+  },
+  {
+    "name": "item-regen",
+    "request": {
+      "method": "PUT",
+      "path": "/items/regen/i"
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "job",
+          "method": "submit",
+          "jobType": "item-regen",
+          "payload": {
+            "id": "i"
+          },
+          "requestId": null
+        },
+        "result": {
+          "jobId": "job-1",
+          "workflowId": "workflow-1",
+          "statusUrl": "/jobs/job-1",
+          "deduplicated": false
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"87474eccd7161142f893978a74fd2f488eb27652\""
+      },
+      "body": {
+        "message": "Item regen requested"
+      }
+    }
+  },
+  {
+    "name": "item-bulk-regen",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk-regen",
+      "body": {
+        "items": [
+          "a",
+          "b",
+          "a"
+        ]
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "service": "job",
+          "method": "submitBatch",
+          "jobType": "item-regen",
+          "payloads": [
+            {
+              "id": "a"
+            },
+            {
+              "id": "b"
+            },
+            {
+              "id": "a"
+            }
+          ],
+          "requestId": null
+        },
+        "result": [
+          {
+            "jobId": "job-1",
+            "workflowId": "workflow-1",
+            "statusUrl": "/jobs/job-1",
+            "deduplicated": false
+          },
+          {
+            "jobId": "job-1",
+            "workflowId": "workflow-1",
+            "statusUrl": "/jobs/job-1",
+            "deduplicated": false
+          },
+          {
+            "jobId": "job-1",
+            "workflowId": "workflow-1",
+            "statusUrl": "/jobs/job-1",
+            "deduplicated": false
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"87474eccd7161142f893978a74fd2f488eb27652\""
+      },
+      "body": {
+        "message": "Item regen requested"
+      }
+    }
+  },
+  {
+    "name": "item-bulk-regen-invalid",
+    "request": {
+      "method": "POST",
+      "path": "/items/bulk-regen",
+      "body": {},
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-typed-card",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/507f1f77bcf86cd799439091?locale=es-ES"
+    },
+    "additionalHeaders": {
+      "server-timing": "db;dur=0"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$oid": "507f1f77bcf86cd799439091"
+                }
+              },
+              {
+                "_id": {
+                  "$eq": "507f1f77bcf86cd799439091"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": {
+            "$oid": "507f1f77bcf86cd799439091"
+          },
+          "offers": [
+            {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "507f1f77bcf86cd799439091",
+            7,
+            "7",
+            null
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "namespace": "ns",
+            "title": "ObjectId"
+          },
+          {
+            "id": "507f1f77bcf86cd799439091",
+            "namespace": "ns"
+          },
+          {
+            "id": 7,
+            "namespace": "ns",
+            "title": "Number"
+          },
+          {
+            "id": "7",
+            "namespace": "ns",
+            "title": "String"
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": "7"
+          },
+          {
+            "namespace": false
+          },
+          {
+            "namespace": null
+          },
+          {
+            "namespace": ""
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "q": "object"
+          },
+          {
+            "offerId": "507f1f77bcf86cd799439091",
+            "q": "first"
+          },
+          {
+            "offerId": "507f1f77bcf86cd799439091",
+            "q": "last"
+          },
+          {
+            "offerId": 7,
+            "q": "number"
+          },
+          {
+            "offerId": "7",
+            "q": "string"
+          },
+          {
+            "q": "missing"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:507f1f77bcf86cd799439091",
+                "ns:7"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "entityType": "offer",
+            "entityId": "ns:507f1f77bcf86cd799439091",
+            "locale": "es-ES",
+            "source": "fixture",
+            "data": {
+              "title": "Traducido",
+              "description": "Descripcion"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                7,
+                "7",
+                "ns"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "achievements": [
+              {
+                "xp": 10
+              },
+              {
+                "xp": "2"
+              },
+              {
+                "xp": [
+                  4,
+                  5
+                ]
+              }
+            ]
+          },
+          {
+            "achievements": [
+              {
+                "xp": true
+              },
+              {
+                "xp": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "igdbs",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "igdbId": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "timeToBeat": {
+              "hastily": 9,
+              "normally": "5"
+            }
+          },
+          {
+            "igdbId": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "timeToBeat": {
+              "hastily": true,
+              "normally": [
+                3
+              ]
+            }
+          },
+          {
+            "igdbId": 7,
+            "timeToBeat": 0
+          },
+          {
+            "igdbId": 7,
+            "timeToBeat": {
+              "hastily": "3",
+              "completely": 9
+            }
+          },
+          {
+            "igdbId": 7,
+            "timeToBeat": {
+              "hastily": 999
+            }
+          },
+          {
+            "igdbId": "7",
+            "timeToBeat": {
+              "hastily": {
+                "old": true
+              }
+            }
+          },
+          {
+            "igdbId": 0,
+            "timeToBeat": {
+              "normally": 999
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:card:v0.1",
+          "payload": {
+            "id": "507f1f77bcf86cd799439091",
+            "elements": [
+              {
+                "id": "507f1f77bcf86cd799439091",
+                "namespace": "ns",
+                "title": "ObjectId",
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              },
+              {
+                "id": "507f1f77bcf86cd799439091",
+                "namespace": "ns",
+                "title": "Traducido",
+                "description": "Descripcion",
+                "price": {
+                  "offerId": "507f1f77bcf86cd799439091",
+                  "q": "last"
+                },
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "source": "fixture"
+                }
+              },
+              {
+                "id": 7,
+                "namespace": "ns",
+                "title": "Number",
+                "price": {
+                  "offerId": 7,
+                  "q": "number"
+                },
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              },
+              {
+                "id": "7",
+                "namespace": "ns",
+                "title": "String",
+                "price": {
+                  "offerId": "7",
+                  "q": "string"
+                },
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              },
+              {
+                "namespace": "ns",
+                "price": {
+                  "q": "missing"
+                },
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ],
+            "stats": {
+              "totalTimeHastily": "103[object Object]",
+              "totalTimeNormally": "05300",
+              "totalTimeCompletely": 9,
+              "totalAchievements": 5,
+              "totalXp": "01024,51",
+              "gamesCount": 4
+            },
+            "page": 1,
+            "limit": 20,
+            "total": 5
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"10022c2fe7eab2ccc2a968599efb6f0bb645e7da\""
+      },
+      "body": {
+        "id": "507f1f77bcf86cd799439091",
+        "elements": [
+          {
+            "id": "507f1f77bcf86cd799439091",
+            "namespace": "ns",
+            "title": "ObjectId",
+            "price": null,
+            "locale": "es-ES",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          },
+          {
+            "id": "507f1f77bcf86cd799439091",
+            "namespace": "ns",
+            "title": "Traducido",
+            "description": "Descripcion",
+            "price": {
+              "offerId": "507f1f77bcf86cd799439091",
+              "q": "last"
+            },
+            "locale": "es-ES",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "fixture"
+            }
+          },
+          {
+            "id": 7,
+            "namespace": "ns",
+            "title": "Number",
+            "price": {
+              "offerId": 7,
+              "q": "number"
+            },
+            "locale": "es-ES",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          },
+          {
+            "id": "7",
+            "namespace": "ns",
+            "title": "String",
+            "price": {
+              "offerId": "7",
+              "q": "string"
+            },
+            "locale": "es-ES",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          },
+          {
+            "namespace": "ns",
+            "price": {
+              "q": "missing"
+            },
+            "locale": "es-ES",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          }
+        ],
+        "stats": {
+          "totalTimeHastily": "103[object Object]",
+          "totalTimeNormally": "05300",
+          "totalTimeCompletely": 9,
+          "totalAchievements": 5,
+          "totalXp": "01024,51",
+          "gamesCount": 4
+        },
+        "page": 1,
+        "limit": 20,
+        "total": 5
+      }
+    }
+  },
+  {
+    "name": "franchise-historical-typed-full",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/507f1f77bcf86cd799439091?locale=es-ES&expand=%EF%BB%BFfull%EF%BB%BF"
+    },
+    "additionalHeaders": {
+      "server-timing": "db;dur=0"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:full:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$oid": "507f1f77bcf86cd799439091"
+                }
+              },
+              {
+                "_id": {
+                  "$eq": "507f1f77bcf86cd799439091"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": {
+            "$oid": "507f1f77bcf86cd799439091"
+          },
+          "offers": [
+            {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "507f1f77bcf86cd799439091",
+            7,
+            "7",
+            null
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "namespace": "ns",
+            "title": "ObjectId"
+          },
+          {
+            "id": "507f1f77bcf86cd799439091",
+            "namespace": "ns"
+          },
+          {
+            "id": 7,
+            "namespace": "ns",
+            "title": "Number"
+          },
+          {
+            "id": "7",
+            "namespace": "ns",
+            "title": "String"
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": "7"
+          },
+          {
+            "namespace": false
+          },
+          {
+            "namespace": null
+          },
+          {
+            "namespace": ""
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "q": "object"
+          },
+          {
+            "offerId": "507f1f77bcf86cd799439091",
+            "q": "first"
+          },
+          {
+            "offerId": "507f1f77bcf86cd799439091",
+            "q": "last"
+          },
+          {
+            "offerId": 7,
+            "q": "number"
+          },
+          {
+            "offerId": "7",
+            "q": "string"
+          },
+          {
+            "q": "missing"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:507f1f77bcf86cd799439091",
+                "ns:7"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "entityType": "offer",
+            "entityId": "ns:507f1f77bcf86cd799439091",
+            "locale": "es-ES",
+            "source": "fixture",
+            "data": {
+              "title": "Traducido",
+              "description": "Descripcion"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                7,
+                "7",
+                "ns"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "achievements": [
+              {
+                "xp": 10
+              },
+              {
+                "xp": "2"
+              },
+              {
+                "xp": [
+                  4,
+                  5
+                ]
+              }
+            ]
+          },
+          {
+            "achievements": [
+              {
+                "xp": true
+              },
+              {
+                "xp": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "igdbs",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "igdbId": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "timeToBeat": {
+              "hastily": 9,
+              "normally": "5"
+            }
+          },
+          {
+            "igdbId": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "timeToBeat": {
+              "hastily": true,
+              "normally": [
+                3
+              ]
+            }
+          },
+          {
+            "igdbId": 7,
+            "timeToBeat": 0
+          },
+          {
+            "igdbId": 7,
+            "timeToBeat": {
+              "hastily": "3",
+              "completely": 9
+            }
+          },
+          {
+            "igdbId": 7,
+            "timeToBeat": {
+              "hastily": 999
+            }
+          },
+          {
+            "igdbId": "7",
+            "timeToBeat": {
+              "hastily": {
+                "old": true
+              }
+            }
+          },
+          {
+            "igdbId": 0,
+            "timeToBeat": {
+              "normally": 999
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:full:v0.1",
+          "payload": {
+            "id": "507f1f77bcf86cd799439091",
+            "elements": [
+              {
+                "id": "507f1f77bcf86cd799439091",
+                "namespace": "ns",
+                "title": "ObjectId",
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              },
+              {
+                "id": "507f1f77bcf86cd799439091",
+                "namespace": "ns",
+                "title": "Traducido",
+                "description": "Descripcion",
+                "price": {
+                  "offerId": "507f1f77bcf86cd799439091",
+                  "q": "last"
+                },
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "source": "fixture"
+                }
+              },
+              {
+                "id": 7,
+                "namespace": "ns",
+                "title": "Number",
+                "price": {
+                  "offerId": 7,
+                  "q": "number"
+                },
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              },
+              {
+                "id": "7",
+                "namespace": "ns",
+                "title": "String",
+                "price": {
+                  "offerId": "7",
+                  "q": "string"
+                },
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              },
+              {
+                "namespace": "ns",
+                "price": {
+                  "q": "missing"
+                },
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ],
+            "stats": {
+              "totalTimeHastily": "103[object Object]",
+              "totalTimeNormally": "05300",
+              "totalTimeCompletely": 9,
+              "totalAchievements": 5,
+              "totalXp": "01024,51",
+              "gamesCount": 4
+            },
+            "page": 1,
+            "limit": 20,
+            "total": 5
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"10022c2fe7eab2ccc2a968599efb6f0bb645e7da\""
+      },
+      "body": {
+        "id": "507f1f77bcf86cd799439091",
+        "elements": [
+          {
+            "id": "507f1f77bcf86cd799439091",
+            "namespace": "ns",
+            "title": "ObjectId",
+            "price": null,
+            "locale": "es-ES",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          },
+          {
+            "id": "507f1f77bcf86cd799439091",
+            "namespace": "ns",
+            "title": "Traducido",
+            "description": "Descripcion",
+            "price": {
+              "offerId": "507f1f77bcf86cd799439091",
+              "q": "last"
+            },
+            "locale": "es-ES",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "fixture"
+            }
+          },
+          {
+            "id": 7,
+            "namespace": "ns",
+            "title": "Number",
+            "price": {
+              "offerId": 7,
+              "q": "number"
+            },
+            "locale": "es-ES",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          },
+          {
+            "id": "7",
+            "namespace": "ns",
+            "title": "String",
+            "price": {
+              "offerId": "7",
+              "q": "string"
+            },
+            "locale": "es-ES",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          },
+          {
+            "namespace": "ns",
+            "price": {
+              "q": "missing"
+            },
+            "locale": "es-ES",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          }
+        ],
+        "stats": {
+          "totalTimeHastily": "103[object Object]",
+          "totalTimeNormally": "05300",
+          "totalTimeCompletely": 9,
+          "totalAchievements": 5,
+          "totalXp": "01024,51",
+          "gamesCount": 4
+        },
+        "page": 1,
+        "limit": 20,
+        "total": 5
+      }
+    }
+  },
+  {
+    "name": "franchise-historical-service-failure-0",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/507f1f77bcf86cd799439091?locale=es-ES"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:card:v0.1"
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-service-failure-1",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/507f1f77bcf86cd799439091?locale=es-ES"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$oid": "507f1f77bcf86cd799439091"
+                }
+              },
+              {
+                "_id": {
+                  "$eq": "507f1f77bcf86cd799439091"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-service-failure-2",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/507f1f77bcf86cd799439091?locale=es-ES"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$oid": "507f1f77bcf86cd799439091"
+                }
+              },
+              {
+                "_id": {
+                  "$eq": "507f1f77bcf86cd799439091"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": {
+            "$oid": "507f1f77bcf86cd799439091"
+          },
+          "offers": [
+            {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "507f1f77bcf86cd799439091",
+            7,
+            "7",
+            null
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-service-failure-3",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/507f1f77bcf86cd799439091?locale=es-ES"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$oid": "507f1f77bcf86cd799439091"
+                }
+              },
+              {
+                "_id": {
+                  "$eq": "507f1f77bcf86cd799439091"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": {
+            "$oid": "507f1f77bcf86cd799439091"
+          },
+          "offers": [
+            {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "507f1f77bcf86cd799439091",
+            7,
+            "7",
+            null
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "namespace": "ns",
+            "title": "ObjectId"
+          },
+          {
+            "id": "507f1f77bcf86cd799439091",
+            "namespace": "ns"
+          },
+          {
+            "id": 7,
+            "namespace": "ns",
+            "title": "Number"
+          },
+          {
+            "id": "7",
+            "namespace": "ns",
+            "title": "String"
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-service-failure-4",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/507f1f77bcf86cd799439091?locale=es-ES"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$oid": "507f1f77bcf86cd799439091"
+                }
+              },
+              {
+                "_id": {
+                  "$eq": "507f1f77bcf86cd799439091"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": {
+            "$oid": "507f1f77bcf86cd799439091"
+          },
+          "offers": [
+            {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "507f1f77bcf86cd799439091",
+            7,
+            "7",
+            null
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "namespace": "ns",
+            "title": "ObjectId"
+          },
+          {
+            "id": "507f1f77bcf86cd799439091",
+            "namespace": "ns"
+          },
+          {
+            "id": 7,
+            "namespace": "ns",
+            "title": "Number"
+          },
+          {
+            "id": "7",
+            "namespace": "ns",
+            "title": "String"
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": "7"
+          },
+          {
+            "namespace": false
+          },
+          {
+            "namespace": null
+          },
+          {
+            "namespace": ""
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-service-failure-5",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/507f1f77bcf86cd799439091?locale=es-ES"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$oid": "507f1f77bcf86cd799439091"
+                }
+              },
+              {
+                "_id": {
+                  "$eq": "507f1f77bcf86cd799439091"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": {
+            "$oid": "507f1f77bcf86cd799439091"
+          },
+          "offers": [
+            {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "507f1f77bcf86cd799439091",
+            7,
+            "7",
+            null
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "namespace": "ns",
+            "title": "ObjectId"
+          },
+          {
+            "id": "507f1f77bcf86cd799439091",
+            "namespace": "ns"
+          },
+          {
+            "id": 7,
+            "namespace": "ns",
+            "title": "Number"
+          },
+          {
+            "id": "7",
+            "namespace": "ns",
+            "title": "String"
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": "7"
+          },
+          {
+            "namespace": false
+          },
+          {
+            "namespace": null
+          },
+          {
+            "namespace": ""
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "q": "object"
+          },
+          {
+            "offerId": "507f1f77bcf86cd799439091",
+            "q": "first"
+          },
+          {
+            "offerId": "507f1f77bcf86cd799439091",
+            "q": "last"
+          },
+          {
+            "offerId": 7,
+            "q": "number"
+          },
+          {
+            "offerId": "7",
+            "q": "string"
+          },
+          {
+            "q": "missing"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:507f1f77bcf86cd799439091",
+                "ns:7"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-service-failure-6",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/507f1f77bcf86cd799439091?locale=es-ES"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$oid": "507f1f77bcf86cd799439091"
+                }
+              },
+              {
+                "_id": {
+                  "$eq": "507f1f77bcf86cd799439091"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": {
+            "$oid": "507f1f77bcf86cd799439091"
+          },
+          "offers": [
+            {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "507f1f77bcf86cd799439091",
+            7,
+            "7",
+            null
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "namespace": "ns",
+            "title": "ObjectId"
+          },
+          {
+            "id": "507f1f77bcf86cd799439091",
+            "namespace": "ns"
+          },
+          {
+            "id": 7,
+            "namespace": "ns",
+            "title": "Number"
+          },
+          {
+            "id": "7",
+            "namespace": "ns",
+            "title": "String"
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": "7"
+          },
+          {
+            "namespace": false
+          },
+          {
+            "namespace": null
+          },
+          {
+            "namespace": ""
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "q": "object"
+          },
+          {
+            "offerId": "507f1f77bcf86cd799439091",
+            "q": "first"
+          },
+          {
+            "offerId": "507f1f77bcf86cd799439091",
+            "q": "last"
+          },
+          {
+            "offerId": 7,
+            "q": "number"
+          },
+          {
+            "offerId": "7",
+            "q": "string"
+          },
+          {
+            "q": "missing"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:507f1f77bcf86cd799439091",
+                "ns:7"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "entityType": "offer",
+            "entityId": "ns:507f1f77bcf86cd799439091",
+            "locale": "es-ES",
+            "source": "fixture",
+            "data": {
+              "title": "Traducido",
+              "description": "Descripcion"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                7,
+                "7",
+                "ns"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-service-failure-7",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/507f1f77bcf86cd799439091?locale=es-ES"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$oid": "507f1f77bcf86cd799439091"
+                }
+              },
+              {
+                "_id": {
+                  "$eq": "507f1f77bcf86cd799439091"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": {
+            "$oid": "507f1f77bcf86cd799439091"
+          },
+          "offers": [
+            {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "507f1f77bcf86cd799439091",
+            7,
+            "7",
+            null
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "namespace": "ns",
+            "title": "ObjectId"
+          },
+          {
+            "id": "507f1f77bcf86cd799439091",
+            "namespace": "ns"
+          },
+          {
+            "id": 7,
+            "namespace": "ns",
+            "title": "Number"
+          },
+          {
+            "id": "7",
+            "namespace": "ns",
+            "title": "String"
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": "7"
+          },
+          {
+            "namespace": false
+          },
+          {
+            "namespace": null
+          },
+          {
+            "namespace": ""
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "q": "object"
+          },
+          {
+            "offerId": "507f1f77bcf86cd799439091",
+            "q": "first"
+          },
+          {
+            "offerId": "507f1f77bcf86cd799439091",
+            "q": "last"
+          },
+          {
+            "offerId": 7,
+            "q": "number"
+          },
+          {
+            "offerId": "7",
+            "q": "string"
+          },
+          {
+            "q": "missing"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:507f1f77bcf86cd799439091",
+                "ns:7"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "entityType": "offer",
+            "entityId": "ns:507f1f77bcf86cd799439091",
+            "locale": "es-ES",
+            "source": "fixture",
+            "data": {
+              "title": "Traducido",
+              "description": "Descripcion"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                7,
+                "7",
+                "ns"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "achievements": [
+              {
+                "xp": 10
+              },
+              {
+                "xp": "2"
+              },
+              {
+                "xp": [
+                  4,
+                  5
+                ]
+              }
+            ]
+          },
+          {
+            "achievements": [
+              {
+                "xp": true
+              },
+              {
+                "xp": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "igdbs",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-service-failure-8",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/507f1f77bcf86cd799439091?locale=es-ES"
+    },
+    "additionalHeaders": {
+      "server-timing": null
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "$or": [
+              {
+                "_id": {
+                  "$oid": "507f1f77bcf86cd799439091"
+                }
+              },
+              {
+                "_id": {
+                  "$eq": "507f1f77bcf86cd799439091"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": {
+            "$oid": "507f1f77bcf86cd799439091"
+          },
+          "offers": [
+            {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "507f1f77bcf86cd799439091",
+            7,
+            "7",
+            null
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "namespace": "ns",
+            "title": "ObjectId"
+          },
+          {
+            "id": "507f1f77bcf86cd799439091",
+            "namespace": "ns"
+          },
+          {
+            "id": 7,
+            "namespace": "ns",
+            "title": "Number"
+          },
+          {
+            "id": "7",
+            "namespace": "ns",
+            "title": "String"
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": {
+              "$oid": "507f1f77bcf86cd799439091"
+            }
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": "7"
+          },
+          {
+            "namespace": false
+          },
+          {
+            "namespace": null
+          },
+          {
+            "namespace": ""
+          },
+          {
+            "namespace": "ns"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "q": "object"
+          },
+          {
+            "offerId": "507f1f77bcf86cd799439091",
+            "q": "first"
+          },
+          {
+            "offerId": "507f1f77bcf86cd799439091",
+            "q": "last"
+          },
+          {
+            "offerId": 7,
+            "q": "number"
+          },
+          {
+            "offerId": "7",
+            "q": "string"
+          },
+          {
+            "q": "missing"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "egs_localizations",
+          "method": "many",
+          "query": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:507f1f77bcf86cd799439091",
+                "ns:7"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "entityType": "offer",
+            "entityId": "ns:507f1f77bcf86cd799439091",
+            "locale": "es-ES",
+            "source": "fixture",
+            "data": {
+              "title": "Traducido",
+              "description": "Descripcion"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                7,
+                "7",
+                "ns"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "achievements": [
+              {
+                "xp": 10
+              },
+              {
+                "xp": "2"
+              },
+              {
+                "xp": [
+                  4,
+                  5
+                ]
+              }
+            ]
+          },
+          {
+            "achievements": [
+              {
+                "xp": true
+              },
+              {
+                "xp": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "igdbs",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                {
+                  "$oid": "507f1f77bcf86cd799439091"
+                },
+                "507f1f77bcf86cd799439091",
+                7,
+                "7",
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "igdbId": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "timeToBeat": {
+              "hastily": 9,
+              "normally": "5"
+            }
+          },
+          {
+            "igdbId": {
+              "$oid": "507f1f77bcf86cd799439091"
+            },
+            "timeToBeat": {
+              "hastily": true,
+              "normally": [
+                3
+              ]
+            }
+          },
+          {
+            "igdbId": 7,
+            "timeToBeat": 0
+          },
+          {
+            "igdbId": 7,
+            "timeToBeat": {
+              "hastily": "3",
+              "completely": 9
+            }
+          },
+          {
+            "igdbId": 7,
+            "timeToBeat": {
+              "hastily": 999
+            }
+          },
+          {
+            "igdbId": "7",
+            "timeToBeat": {
+              "hastily": {
+                "old": true
+              }
+            }
+          },
+          {
+            "igdbId": 0,
+            "timeToBeat": {
+              "normally": 999
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "franchises:507f1f77bcf86cd799439091:US:1:20:locale:es-ES:card:v0.1",
+          "payload": {
+            "id": "507f1f77bcf86cd799439091",
+            "elements": [
+              {
+                "id": "507f1f77bcf86cd799439091",
+                "namespace": "ns",
+                "title": "ObjectId",
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              },
+              {
+                "id": "507f1f77bcf86cd799439091",
+                "namespace": "ns",
+                "title": "Traducido",
+                "description": "Descripcion",
+                "price": {
+                  "offerId": "507f1f77bcf86cd799439091",
+                  "q": "last"
+                },
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "source": "fixture"
+                }
+              },
+              {
+                "id": 7,
+                "namespace": "ns",
+                "title": "Number",
+                "price": {
+                  "offerId": 7,
+                  "q": "number"
+                },
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              },
+              {
+                "id": "7",
+                "namespace": "ns",
+                "title": "String",
+                "price": {
+                  "offerId": "7",
+                  "q": "string"
+                },
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              },
+              {
+                "namespace": "ns",
+                "price": {
+                  "q": "missing"
+                },
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ],
+            "stats": {
+              "totalTimeHastily": "103[object Object]",
+              "totalTimeNormally": "05300",
+              "totalTimeCompletely": 9,
+              "totalAchievements": 5,
+              "totalXp": "01024,51",
+              "gamesCount": 4
+            },
+            "page": 1,
+            "limit": 20,
+            "total": 5
+          },
+          "ttl": 60
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-namespace-count",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/f"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:f:US:1:20:locale:en-US:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "f"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "f",
+          "offers": [
+            7
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                7
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": 7,
+            "customAttributes": [
+              {
+                "key": 4,
+                "value": "v"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                7
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": "7"
+          },
+          {
+            "namespace": "7"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                7
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                7,
+                "7"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "result": [
+          {}
+        ]
+      },
+      {
+        "call": {
+          "collection": "igdbs",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                7
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "franchises:f:US:1:20:locale:en-US:card:v0.1",
+          "payload": {
+            "id": "f",
+            "elements": [
+              {
+                "id": 7,
+                "customAttributes": {
+                  "4": {
+                    "type": "STRING",
+                    "value": "v"
+                  }
+                },
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "stats": {
+              "totalTimeHastily": 0,
+              "totalTimeNormally": 0,
+              "totalTimeCompletely": 0,
+              "totalAchievements": 0,
+              "totalXp": 0,
+              "gamesCount": 2
+            },
+            "page": 1,
+            "limit": 20,
+            "total": 1
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"74be47aac8db5e53fa57021e39c13be17da47380\""
+      },
+      "body": {
+        "id": "f",
+        "elements": [
+          {
+            "id": 7,
+            "customAttributes": {
+              "4": {
+                "type": "STRING",
+                "value": "v"
+              }
+            },
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "stats": {
+          "totalTimeHastily": 0,
+          "totalTimeNormally": 0,
+          "totalTimeCompletely": 0,
+          "totalAchievements": 0,
+          "totalXp": 0,
+          "gamesCount": 2
+        },
+        "page": 1,
+        "limit": 20,
+        "total": 1
+      }
+    }
+  },
+  {
+    "name": "franchise-historical-malformed-achievements-null",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/f"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:f:US:1:20:locale:en-US:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "f"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "f",
+          "offers": [
+            7
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                7
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": 7,
+            "customAttributes": [
+              {
+                "key": 4,
+                "value": "v"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                7
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": "7"
+          },
+          {
+            "namespace": "7"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                7
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                7,
+                "7"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "achievements": [
+              null
+            ]
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-malformed-achievements-string",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/f"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:f:US:1:20:locale:en-US:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "f"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "f",
+          "offers": [
+            7
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                7
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": 7,
+            "customAttributes": [
+              {
+                "key": 4,
+                "value": "v"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                7
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": "7"
+          },
+          {
+            "namespace": "7"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                7
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "achievementsets",
+          "method": "many",
+          "query": {
+            "sandboxId": {
+              "$in": [
+                7,
+                "7"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "achievements": "legacy"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-malformed-attribute",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/f"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:f:US:1:20:locale:en-US:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "f"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "f",
+          "offers": [
+            7
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                7
+              ]
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": 7,
+            "customAttributes": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": [
+                7
+              ]
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "namespace": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "namespace": 7
+          },
+          {
+            "namespace": "7"
+          },
+          {
+            "namespace": "7"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": [
+                7
+              ]
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-malformed-membership-string",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/f"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:f:US:1:20:locale:en-US:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "f"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "f",
+          "offers": "abcdef"
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": "abcdef"
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-malformed-membership-object",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/f"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:f:US:1:20:locale:en-US:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "f"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "f",
+          "offers": {
+            "length": 2
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": {
+                "length": 2
+              }
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-malformed-membership-number",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/f"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:f:US:1:20:locale:en-US:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "f"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "f",
+          "offers": 4
+        }
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": 4
+            }
+          },
+          "options": {
+            "limit": 20,
+            "skip": 0,
+            "sort": {
+              "releaseDate": -1
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "franchise-historical-empty-false",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/f"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:f:US:1:20:locale:en-US:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "f"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "f",
+          "offers": false
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"0891b63e4578414bc31e3c6d2aec37efe5782dd7\""
+      },
+      "body": {
+        "id": "f",
+        "elements": [],
+        "stats": {
+          "totalTimeHastily": 0,
+          "totalTimeNormally": 0,
+          "totalTimeCompletely": 0,
+          "totalAchievements": 0,
+          "totalXp": 0,
+          "gamesCount": 0
+        },
+        "page": 1,
+        "limit": 20,
+        "total": 0
+      }
+    }
+  },
+  {
+    "name": "franchise-historical-empty-null",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/f"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:f:US:1:20:locale:en-US:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "f"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "f",
+          "offers": null
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"0891b63e4578414bc31e3c6d2aec37efe5782dd7\""
+      },
+      "body": {
+        "id": "f",
+        "elements": [],
+        "stats": {
+          "totalTimeHastily": 0,
+          "totalTimeNormally": 0,
+          "totalTimeCompletely": 0,
+          "totalAchievements": 0,
+          "totalXp": 0,
+          "gamesCount": 0
+        },
+        "page": 1,
+        "limit": 20,
+        "total": 0
+      }
+    }
+  },
+  {
+    "name": "franchise-historical-empty-[]",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/f"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:f:US:1:20:locale:en-US:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "f"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "f",
+          "offers": []
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"0891b63e4578414bc31e3c6d2aec37efe5782dd7\""
+      },
+      "body": {
+        "id": "f",
+        "elements": [],
+        "stats": {
+          "totalTimeHastily": 0,
+          "totalTimeNormally": 0,
+          "totalTimeCompletely": 0,
+          "totalAchievements": 0,
+          "totalXp": 0,
+          "gamesCount": 0
+        },
+        "page": 1,
+        "limit": 20,
+        "total": 0
+      }
+    }
+  },
+  {
+    "name": "franchise-historical-empty-{\"length\":0}",
+    "request": {
+      "method": "GET",
+      "path": "/franchises/f"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "franchises:f:US:1:20:locale:en-US:card:v0.1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "franchises",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$eq": "f"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "f",
+          "offers": {
+            "length": 0
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"0891b63e4578414bc31e3c6d2aec37efe5782dd7\""
+      },
+      "body": {
+        "id": "f",
+        "elements": [],
+        "stats": {
+          "totalTimeHastily": 0,
+          "totalTimeNormally": 0,
+          "totalTimeCompletely": 0,
+          "totalAchievements": 0,
+          "totalXp": 0,
+          "gamesCount": 0
+        },
+        "page": 1,
+        "limit": 20,
+        "total": 0
+      }
+    }
+  }
+]

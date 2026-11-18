@@ -1,0 +1,153 @@
+[
+  {
+    "input": {},
+    "output": {
+      "error": "JOB_API_BASE_URL is required for job submission"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "http://jobs.example/queue/"
+    },
+    "output": {
+      "error": "JOB_API_KEY_ID is required for job submission"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "http://jobs.example/queue/",
+      "JOB_API_KEY_ID": "a"
+    },
+    "output": {
+      "error": "JOB_API_SECRET is required for job submission"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "http://jobs.example/queue/",
+      "JOB_API_KEY_ID": "api-0._",
+      "JOB_API_SECRET": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "output": {
+      "baseUrl": "http://jobs.example/queue",
+      "keyId": "api-0._",
+      "secret": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "relative/path",
+      "JOB_API_KEY_ID": "api-0._",
+      "JOB_API_SECRET": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "output": {
+      "error": "JOB_API_BASE_URL must be an absolute URL"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "file:///queue",
+      "JOB_API_KEY_ID": "api-0._",
+      "JOB_API_SECRET": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "output": {
+      "error": "JOB_API_BASE_URL must be an HTTP(S) URL without credentials, query, or fragment"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "http://jobs.example/queue/",
+      "JOB_API_KEY_ID": "api-0._",
+      "JOB_API_SECRET": "ééééééééééééééé"
+    },
+    "output": {
+      "error": "JOB_API_SECRET must contain at least 32 bytes"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "http://jobs.example/queue?x=1",
+      "JOB_API_KEY_ID": "api-0._",
+      "JOB_API_SECRET": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "output": {
+      "error": "JOB_API_BASE_URL must be an HTTP(S) URL without credentials, query, or fragment"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "http://jobs.example/queue#x",
+      "JOB_API_KEY_ID": "api-0._",
+      "JOB_API_SECRET": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "output": {
+      "error": "JOB_API_BASE_URL must be an HTTP(S) URL without credentials, query, or fragment"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "http://jobs.example/queue?#",
+      "JOB_API_KEY_ID": "api-0._",
+      "JOB_API_SECRET": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "output": {
+      "baseUrl": "http://jobs.example/queue?#",
+      "keyId": "api-0._",
+      "secret": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "http://:password@jobs.example/",
+      "JOB_API_KEY_ID": "api-0._",
+      "JOB_API_SECRET": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "output": {
+      "error": "JOB_API_BASE_URL must be an HTTP(S) URL without credentials, query, or fragment"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "http://jobs.example/queue/",
+      "JOB_API_KEY_ID": "a?",
+      "JOB_API_SECRET": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "output": {
+      "error": "JOB_API_KEY_ID must match [A-Za-z0-9][A-Za-z0-9._-]{0,63}"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "http://jobs.example/queue/",
+      "JOB_API_KEY_ID": "﻿api_1﻿",
+      "JOB_API_SECRET": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "output": {
+      "baseUrl": "http://jobs.example/queue",
+      "keyId": "api_1",
+      "secret": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "http://jobs.example/queue/",
+      "JOB_API_KEY_ID": "api-0._",
+      "JOB_API_SECRET": "﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿"
+    },
+    "output": {
+      "error": "JOB_API_SECRET is required for job submission"
+    }
+  },
+  {
+    "input": {
+      "JOB_API_BASE_URL": "http://jobs.example/queue/",
+      "JOB_API_KEY_ID": "api-0._",
+      "JOB_API_SECRET": "éééééééééééééééé"
+    },
+    "output": {
+      "baseUrl": "http://jobs.example/queue",
+      "keyId": "api-0._",
+      "secret": "éééééééééééééééé"
+    }
+  }
+]

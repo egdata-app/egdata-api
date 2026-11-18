@@ -8,11 +8,7 @@ export class DB {
   constructor() {}
 
   async connect() {
-    consola.info("Connecting to MongoDB", {
-      url: process.env["MONGO_URL"],
-      ca: process.env["MONGO_CA"]?.substring(0, 100),
-      cert: process.env["MONGO_CERT"]?.substring(0, 100),
-    });
+    consola.info("Connecting to MongoDB with X.509 authentication");
 
     if (!process.env["MONGO_URL"]) {
       throw new Error("MONGO_URL is required");
@@ -26,8 +22,10 @@ export class DB {
       throw new Error("MONGO_CERT is required");
     }
 
+    const host = process.env.MONGO_URL;
+    const uri = /^mongodb(?:\+srv)?:\/\//.test(host) ? host : `mongodb+srv://${host}/egdata`;
     this.client = new MongoClient(
-      `mongodb+srv://${process.env["MONGO_URL"]}/egdata`,
+      uri,
       {
         tls: true,
         authMechanism: "MONGODB-X509",

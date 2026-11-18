@@ -1,0 +1,489 @@
+[
+  {
+    "name": "scalar-coercion",
+    "request": {
+      "path": "/graphql?query=%7Bbuild%28id%3A%2264c000000000000000000001%22%29%7BappName+createdAt+updatedAt+downloadSizeBytes+installedSizeBytes%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "builds",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$oid": "64c000000000000000000001"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "appName": 42,
+          "createdAt": "2024-03-02T01:02:03.456789+01:00",
+          "updatedAt": 0,
+          "downloadSizeBytes": "123.5",
+          "installedSizeBytes": true,
+          "metadata": {
+            "installationPoolId": false
+          },
+          "technologies": [
+            {
+              "technology": "one"
+            },
+            null,
+            {
+              "technology": 7
+            }
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=3600",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"4f12d91aaddfb7e9b6109f5aaef956a5470e8047\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"build\":{\"appName\":\"42\",\"createdAt\":\"2024-03-02T00:02:03.456Z\",\"updatedAt\":\"1970-01-01T00:00:00.000Z\",\"downloadSizeBytes\":123.5,\"installedSizeBytes\":1}}}\n"
+    }
+  },
+  {
+    "name": "nested-cache-hint",
+    "request": {
+      "path": "/graphql?query=%7Bbuild%28id%3A%2264c000000000000000000001%22%29%7Bmetadata%7BinstallationPoolId%7D%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "builds",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$oid": "64c000000000000000000001"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "appName": 42,
+          "createdAt": "2024-03-02T01:02:03.456789+01:00",
+          "updatedAt": 0,
+          "downloadSizeBytes": "123.5",
+          "installedSizeBytes": true,
+          "metadata": {
+            "installationPoolId": false
+          },
+          "technologies": [
+            {
+              "technology": "one"
+            },
+            null,
+            {
+              "technology": 7
+            }
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=60, s-maxage=60, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=60, stale-while-revalidate=600",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"ce19b3c6f70a40c3b3c513d3cb9d92c7aabc4143\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"build\":{\"metadata\":{\"installationPoolId\":\"false\"}}}}\n"
+    }
+  },
+  {
+    "name": "nullable-list-elements",
+    "request": {
+      "path": "/graphql?query=%7Bbuild%28id%3A%2264c000000000000000000001%22%29%7Btechnologies%7Btechnology+__typename%7D%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "builds",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$oid": "64c000000000000000000001"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "appName": 42,
+          "createdAt": "2024-03-02T01:02:03.456789+01:00",
+          "updatedAt": 0,
+          "downloadSizeBytes": "123.5",
+          "installedSizeBytes": true,
+          "metadata": {
+            "installationPoolId": false
+          },
+          "technologies": [
+            {
+              "technology": "one"
+            },
+            null,
+            {
+              "technology": 7
+            }
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=60, s-maxage=60, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=60, stale-while-revalidate=600",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"f37252c7b87bdf5e20a3756ba0e7561017fafc81\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"build\":{\"technologies\":[{\"technology\":\"one\",\"__typename\":\"Technology\"},null,{\"technology\":\"7\",\"__typename\":\"Technology\"}]}}}\n"
+    }
+  },
+  {
+    "name": "coerce-id-selection-alias",
+    "request": {
+      "path": "/graphql?query=%7Bitem%28id%3A123%29%7Bvalue%3Atitle+__typename+endOfSupport%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "123"
+            }
+          },
+          "options": {
+            "projection": {
+              "value": 1,
+              "endOfSupport": 1,
+              "id": 1,
+              "_id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "123",
+          "title": "Selected",
+          "endOfSupport": 1,
+          "requiresSecureAccount": "invalid"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=300, s-maxage=300, stale-while-revalidate=3000",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3000",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"b320481bc2b885f2ad916cd8c0a25a0b6670fa2c\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"item\":{\"value\":\"Selected\",\"__typename\":\"Item\",\"endOfSupport\":true}}}\n"
+    }
+  },
+  {
+    "name": "partial-field-error",
+    "request": {
+      "path": "/graphql?query=%7Bitem%28id%3A%22123%22%29%7Bid+requiresSecureAccount+endOfSupport%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "123"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "requiresSecureAccount": 1,
+              "endOfSupport": 1,
+              "_id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "123",
+          "title": "Selected",
+          "endOfSupport": 1,
+          "requiresSecureAccount": "invalid"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"70f6438fb751eac4161ccd28caeb658c08d99056\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Boolean cannot represent a non boolean value: \\\"invalid\\\"\",\"locations\":[{\"line\":1,\"column\":20}],\"path\":[\"item\",\"requiresSecureAccount\"],\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\"}}],\"data\":{\"item\":{\"id\":\"123\",\"requiresSecureAccount\":null,\"endOfSupport\":true}}}\n"
+    }
+  },
+  {
+    "name": "invalid-date-error",
+    "request": {
+      "path": "/graphql?query=%7Bchangelog%28id%3A%2264c000000000000000000001%22%29%7B_id+timestamp%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$oid": "64c000000000000000000001"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": 88,
+          "timestamp": "invalid",
+          "document": {
+            "entitlementName": "test",
+            "id": "item",
+            "title": "Title"
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"2e9eb1f643eeb806fd679caec49e41df01f088d6\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"DateTime cannot represent an invalid date-time-string invalid.\",\"locations\":[{\"line\":1,\"column\":47}],\"path\":[\"changelog\",\"timestamp\"],\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\"}}],\"data\":{\"changelog\":{\"_id\":\"88\",\"timestamp\":null}}}\n"
+    }
+  },
+  {
+    "name": "union-item",
+    "request": {
+      "path": "/graphql?query=%7Bchangelog%28id%3A%2264c000000000000000000001%22%29%7Bdocument%7B__typename+...+on+Item%7Bid+title%7D%7D%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$oid": "64c000000000000000000001"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": 88,
+          "timestamp": "invalid",
+          "document": {
+            "entitlementName": "test",
+            "id": "item",
+            "title": "Title"
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=60, s-maxage=60, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=60, stale-while-revalidate=600",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"331ccffea66e67ea301822d8b26de91118e267e1\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"changelog\":{\"document\":{\"__typename\":\"Item\",\"id\":\"item\",\"title\":\"Title\"}}}}\n"
+    }
+  },
+  {
+    "name": "union-asset",
+    "request": {
+      "path": "/graphql?query=%7Bchangelog%28id%3A%2264c000000000000000000002%22%29%7Bdocument%7B__typename+...+on+Asset%7BartifactId+title%7D%7D%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$oid": "64c000000000000000000002"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": 88,
+          "timestamp": "invalid",
+          "document": {
+            "artifactId": "artifact",
+            "title": "Asset"
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=60, s-maxage=60, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=60, stale-while-revalidate=600",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"7d561677a00a49af57f1930f937f2f3232a10a58\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"changelog\":{\"document\":{\"__typename\":\"Asset\",\"artifactId\":\"artifact\",\"title\":\"Asset\"}}}}\n"
+    }
+  },
+  {
+    "name": "union-invalid",
+    "request": {
+      "path": "/graphql?query=%7Bchangelog%28id%3A%2264c000000000000000000003%22%29%7B_id+document%7B__typename%7D%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "one",
+          "query": {
+            "_id": {
+              "$oid": "64c000000000000000000003"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": 88,
+          "timestamp": "invalid",
+          "document": {
+            "kind": "unknown"
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"9957ed2ab9e5bb300c803356c15853e1db83effb\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"errors\":[{\"message\":\"Abstract type \\\"ChangelogDocument\\\" must resolve to an Object type at runtime for field \\\"Changelog.document\\\". Either the \\\"ChangelogDocument\\\" type should provide a \\\"resolveType\\\" function or each possible type should provide an \\\"isTypeOf\\\" function.\",\"locations\":[{\"line\":1,\"column\":47}],\"path\":[\"changelog\",\"document\"],\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\"}}],\"data\":{\"changelog\":{\"_id\":\"88\",\"document\":null}}}\n"
+    }
+  },
+  {
+    "name": "aliased-type-info",
+    "request": {
+      "path": "/graphql?query=%7Bschema%3A__schema%7Broot%3AqueryType%7Bname+fields%7Bname%7D%7D%7D+scope%3A__type%28name%3A%22CacheControlScope%22%29%7Bkind+enumValues%7Bname%7D%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"0e778f150e1a1c6f8a3c9f2aa680884dae04ce68\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"schema\":{\"root\":{\"name\":\"Query\",\"fields\":[{\"name\":\"offer\"},{\"name\":\"offers\"},{\"name\":\"upcoming\"},{\"name\":\"latestReleased\"},{\"name\":\"topSellers\"},{\"name\":\"topWishlisted\"},{\"name\":\"featuredDiscounts\"},{\"name\":\"item\"},{\"name\":\"items\"},{\"name\":\"sandbox\"},{\"name\":\"sandboxHub\"},{\"name\":\"sandboxes\"},{\"name\":\"profile\"},{\"name\":\"build\"},{\"name\":\"builds\"},{\"name\":\"changelog\"},{\"name\":\"events\"},{\"name\":\"event\"},{\"name\":\"genres\"},{\"name\":\"latestAchievements\"}]}},\"scope\":{\"kind\":\"ENUM\",\"enumValues\":[{\"name\":\"PUBLIC\"},{\"name\":\"PRIVATE\"}]}}}\n"
+    }
+  },
+  {
+    "name": "directive-fragments",
+    "request": {
+      "path": "/graphql",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "query": "query Q($type:String!,$show:Boolean=false){ wanted:__type(name:$type){...Meta} __schema { directives { n:name args{name ...Arg} } } } fragment Meta on __Type { kind name description @include(if:$show) } fragment Arg on __InputValue { __typename type { kind name }}",
+        "variables": {
+          "type": "DateTime"
+        }
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"be59f4938da72fbd16a1fab67e5f1144ed3aaa94\"",
+        "vary": "Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"wanted\":{\"kind\":\"SCALAR\",\"name\":\"DateTime\"},\"__schema\":{\"directives\":[{\"n\":\"cacheControl\",\"args\":[{\"name\":\"maxAge\",\"__typename\":\"__InputValue\",\"type\":{\"kind\":\"SCALAR\",\"name\":\"Int\"}},{\"name\":\"scope\",\"__typename\":\"__InputValue\",\"type\":{\"kind\":\"ENUM\",\"name\":\"CacheControlScope\"}},{\"name\":\"inheritMaxAge\",\"__typename\":\"__InputValue\",\"type\":{\"kind\":\"SCALAR\",\"name\":\"Boolean\"}}]},{\"n\":\"include\",\"args\":[{\"name\":\"if\",\"__typename\":\"__InputValue\",\"type\":{\"kind\":\"NON_NULL\",\"name\":null}}]},{\"n\":\"skip\",\"args\":[{\"name\":\"if\",\"__typename\":\"__InputValue\",\"type\":{\"kind\":\"NON_NULL\",\"name\":null}}]},{\"n\":\"deprecated\",\"args\":[{\"name\":\"reason\",\"__typename\":\"__InputValue\",\"type\":{\"kind\":\"SCALAR\",\"name\":\"String\"}}]},{\"n\":\"specifiedBy\",\"args\":[{\"name\":\"url\",\"__typename\":\"__InputValue\",\"type\":{\"kind\":\"NON_NULL\",\"name\":null}}]},{\"n\":\"oneOf\",\"args\":[]}]}}}\n"
+    }
+  },
+  {
+    "name": "merged-introspection-selection",
+    "request": {
+      "path": "/graphql?query=%7Bx%3A__type%28name%3A%22CacheControlScope%22%29%7Bvalues%3AenumValues%7Bname%7D%7D+x%3A__type%28name%3A%22CacheControlScope%22%29%7Bvalues%3AenumValues%7B__typename%7D%7D%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"f8a20bb78ca18961279ee15efd9ea23fd5a3700f\"",
+        "vary": "Accept-Encoding, Origin",
+        "x-route-template": "/graphql"
+      },
+      "body": "{\"data\":{\"x\":{\"values\":[{\"name\":\"PUBLIC\",\"__typename\":\"__EnumValue\"},{\"name\":\"PRIVATE\",\"__typename\":\"__EnumValue\"}]}}}\n"
+    }
+  }
+]
