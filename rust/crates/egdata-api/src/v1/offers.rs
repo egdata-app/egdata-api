@@ -1,6 +1,7 @@
 //! Offer listing, discovery, detail and read-only bulk operations.
 //! Parity source: `src/v1/routes/offers.ts` and `src/v1/services/offers.ts`.
 
+use super::catalog_list::{PageRead, counted_page};
 use super::{
     RouteGroup,
     helpers::{
@@ -320,6 +321,7 @@ pub(super) fn pagination(
     binding: &CursorBinding,
     has_more: bool,
     tuple: CursorSortTuple,
+    total: Value,
 ) -> Result<Value, ProblemError> {
     let next = if has_more {
         Some(encode_cursor_with(
@@ -331,7 +333,9 @@ pub(super) fn pagination(
     } else {
         None
     };
-    Ok(json!(page_meta(binding.limit, has_more, next)))
+    Ok(json!(
+        page_meta(binding.limit, has_more, next).with_total(total)
+    ))
 }
 
 pub(super) fn scalar(value: &Value) -> CursorSortValue {
@@ -392,11 +396,14 @@ async fn list(
             ListKind::Upcoming => doc! {"releaseDate":{"$gt":now,"$ne":Bson::Null,"$lt":bson::DateTime::parse_rfc3339_str("2099-01-01T00:00:00Z").expect("fixed timestamp")},"offerType":{"$in":["BASE_GAME","DLC"]}},
             ListKind::Released => doc! {"effectiveDate":{"$lte":now},"offerType":{"$in":["BASE_GAME","DLC"]},"releaseDate":{"$ne":Bson::Null,"$lte":now}},
         };
+        let base = filter.clone();
         if let Some(last) = decode(state,&page,&binding)? {
             let tuple: Vec<_> = last.iter().enumerate().map(|(i,v)| if i==0 {cursor_date_bson(v)} else {cursor_scalar_bson(v)}).collect();
             filter.extend(mongo_keyset_filter(&sort,&tuple)?);
         }
-        let rows = state.mongo.find_many("offers",filter,MongoFindOptions{sort:Some(mongo_sort_spec(&sort)),limit:Some(i64::from(page.limit)+1),..Default::default()}).await.map_err(|_|internal_error())?;
+        let count_parts = if matches!(kind,ListKind::All) {vec![("filters",json!({}))]} else {vec![]};
+        let (rows,total) = counted_page(state,operation,&count_parts,60,"offers",Some(base),
+            PageRead::Find(filter,MongoFindOptions{sort:Some(mongo_sort_spec(&sort)),limit:Some(i64::from(page.limit)+1),..Default::default()})).await?;
         let trimmed = trim_page(rows,page.limit as usize);
         let prices = super::system::regional_offer_prices(state, &trimmed.items, &region.region).await?;
         let (offers, locale_meta) = super::system::serialize_priced_offers(state,&trimmed.items,&prices,&region.locale).await?;
@@ -407,7 +414,7 @@ async fn list(
             let id = if matches!(kind, ListKind::All) {scalar(&row["id"])} else {offer_identifier(&row).into()};
             tuple = vec![scalar(&json!(date)), id];
         }
-        let mut result = json!({"pagination":pagination(state,&binding,trimmed.has_more,tuple)?});
+        let mut result = json!({"pagination":pagination(state,&binding,trimmed.has_more,tuple,total)?});
         if matches!(kind,ListKind::All) {
             result["offers"] = Value::Array(offers);
             result["localization"] = locale_meta;
@@ -585,12 +592,13 @@ async fn event(
             pipeline.push(doc!{"$match":filter});
         }
         pipeline.push(doc!{"$sort":{"sortDiscount":-1,"id":1}});pipeline.push(doc!{"$limit":i64::from(page.limit)+1});
-        let rows=state.mongo.aggregate("offers",pipeline).await.map(docs_to_json).map_err(|_|internal_error())?;
+        let (rows,total)=counted_page(state,"offers.event",&[("id",json!(event_id))],60,"offers",Some(doc!{"tags":{"$elemMatch":{"id":event_id}}}),PageRead::Aggregate(pipeline)).await?;
+        let rows=docs_to_json(rows);
         let trimmed=trim_page(rows,page.limit as usize);
         let price_map=trimmed.items.iter().map(|row|(id(row,"id"),row["price"].clone())).collect();
         let localized=localized_with_prices(state,&trimmed.items,&price_map,&region.locale).await?;
         let tuple=trimmed.items.last().map(|row|vec![scalar(&row["sortDiscount"]),id(row,"id").into()]).unwrap_or_default();
-        Ok(json!({"elements":serialized(&localized),"pagination":pagination(state,&binding,trimmed.has_more,tuple)?,"title":doc_to_json(event).get("name").filter(|v|!v.is_null()).map(js_string).unwrap_or_default()}))
+        Ok(json!({"elements":serialized(&localized),"pagination":pagination(state,&binding,trimmed.has_more,tuple,total)?,"title":doc_to_json(event).get("name").filter(|v|!v.is_null()).map(js_string).unwrap_or_default()}))
     }).await?;
     let mut meta = regional_meta(region);
     copy_field(&result, &mut meta, "title");
@@ -653,8 +661,10 @@ async fn top(
     ]);
     let result=cached(state,&operation,parts,300,||async {
         let mut filter=doc!{"collectionId":collection,"position":{"$gt":0}};
+        let base=filter.clone();
         if let Some(last)=decode(state,&page,&binding)? {filter.extend(mongo_keyset_filter(&sort,&last.iter().map(cursor_scalar_bson).collect::<Vec<_>>())?);}
-        let positions=find(state,"game_positions",filter,MongoFindOptions{limit:Some(i64::from(page.limit)+1),sort:Some(mongo_sort_spec(&sort)),..Default::default()}).await?;
+        let (positions,total)=counted_page(state,&operation,&[],300,"game_positions",Some(base),PageRead::Find(filter,MongoFindOptions{limit:Some(i64::from(page.limit)+1),sort:Some(mongo_sort_spec(&sort)),..Default::default()})).await?;
+        let positions=docs_to_json(positions);
         let trimmed=trim_page(positions,page.limit as usize);
         let ids:Vec<_>=trimmed.items.iter().map(|row|id(row,"offerId")).collect();
         let offers=find(state,"offers",doc!{"id":{"$in":ids}},MongoFindOptions::default()).await?;
@@ -664,7 +674,7 @@ async fn top(
         let localized=localize_offers(state,&rows,&region.locale).await?;
         let elements:Vec<_>=localized.iter().map(|row|{let mut value=serialize_offer(row,None,true);value["position"]=positions.get(&id(row,"id")).cloned().unwrap_or(Value::Null);value}).collect();
         let tuple=trimmed.items.last().map(|row|vec![scalar(&row["position"]),id(row,"offerId").into()]).unwrap_or_default();
-        Ok(json!({"elements":elements,"pagination":pagination(state,&binding,trimmed.has_more,tuple)?}))
+        Ok(json!({"elements":elements,"pagination":pagination(state,&binding,trimmed.has_more,tuple,total)?}))
     }).await?;
     let mut meta = json!({"locale": region.locale});
     copy_field(&result, &mut meta, "pagination");

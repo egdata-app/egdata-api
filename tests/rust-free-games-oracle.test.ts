@@ -12,6 +12,7 @@ import FreeGamesRoute from "../src/v1/routes/free-games.js";
 const mocks = vi.hoisted(() => ({
   collection: vi.fn(),
   freeGamesFind: vi.fn(),
+  freeGamesCount: vi.fn(),
   offerFind: vi.fn(),
   offerFindOne: vi.fn(),
   itemFind: vi.fn(),
@@ -31,7 +32,7 @@ vi.mock("../src/clients/opensearch.js", () => ({
   opensearch: { search: mocks.search },
 }));
 vi.mock("../src/models/index.js", () => ({
-  FreeGames: { find: mocks.freeGamesFind },
+  FreeGames: { find: mocks.freeGamesFind, countDocuments: mocks.freeGamesCount },
   Offer: { find: mocks.offerFind, findOne: mocks.offerFindOne },
   Item: { find: mocks.itemFind },
   PriceEngine: { find: mocks.priceFind, findOne: mocks.priceFindOne },
@@ -200,6 +201,7 @@ function configure() {
         ),
     });
   }
+  mocks.freeGamesCount.mockImplementation((query: Filter) => read("freegames","count",query,{},historyRows.length));
   mocks.freeGamesFind.mockImplementation(
     model("freegames", "many", (filter) =>
       filter.endDate?.$gte

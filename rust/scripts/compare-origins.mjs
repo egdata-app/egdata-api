@@ -736,15 +736,16 @@ async function compareItemCursors(nodeOrigin, rustOrigin, services) {
       return response.json();
     }
     const origins = [nodeOrigin, rustOrigin];
-    for (const [path, field, firstId, lastId, tieBreaker] of [
-      ["/v1/items?limit=1", "id", oid.toHexString(), item, null],
-      ["/v1/items/" + item + "/changelog?limit=1", "_id", "51.25", "older-fixture-change", "51.25"],
+    for (const [path, field, firstId, lastId, tieBreaker, total] of [
+      ["/v1/items?limit=1", "id", oid.toHexString(), item, null, await db.collection("items").countDocuments({})],
+      ["/v1/items/" + item + "/changelog?limit=1", "_id", "51.25", "older-fixture-change", "51.25", 2],
     ]) {
       const initial = await Promise.all(origins.map((origin) => page(origin, path)));
       assert.deepEqual(initial[0].data, initial[1].data);
       const tokens = initial.map((response) => {
         assert.equal(response.data[0][field], firstId);
         assert.equal(response.meta.pagination.hasMore, true);
+        assert.equal(response.meta.pagination.total, total, path);
         const token = response.meta.pagination.nextCursor;
         const payload = JSON.parse(Buffer.from(token.split(".")[0], "base64url").toString());
         assert.deepEqual(payload.last, [first.toISOString(), tieBreaker]);
@@ -753,9 +754,10 @@ async function compareItemCursors(nodeOrigin, rustOrigin, services) {
       const next = await Promise.all(origins.map((origin, i) =>
         page(origin, path + "&cursor=" + encodeURIComponent(tokens[1 - i]))));
       assert.deepEqual(next[0].data, next[1].data);
+      for (const response of next) assert.equal(response.meta.pagination.total, total, path);
       assert.equal(next[0].data[0][field], lastId);
     }
-    console.log("Both packaged origins continued each other's signed item and changelog cursors with native ObjectId and Decimal128 records.");
+    console.log("Both packaged origins continued each other's signed item and changelog cursors and returned the complete MongoDB count on each page.");
   } finally {
     await mongo.close();
   }
@@ -1018,6 +1020,7 @@ export async function compareOrigins(
     );
     await compareStoredMedia("http://127.0.0.1:" + port, rustOrigin);
     await compareHydration("http://127.0.0.1:" + port, rustOrigin);
+    await compareItemCursors("http://127.0.0.1:" + port, rustOrigin, services);
     const cases = [
       "/v1/health",
       "/v1/countries",
@@ -1255,7 +1258,6 @@ export async function compareOrigins(
       ],
       rustDir,
     );
-    await compareItemCursors("http://127.0.0.1:" + port, rustOrigin, services);
     await compareStoredRatings("http://127.0.0.1:" + port, rustOrigin, services);
     await compareLegacyPagination("http://127.0.0.1:" + port, rustOrigin, services);
     await compareStoredGiveaways("http://127.0.0.1:" + port, rustOrigin, services);

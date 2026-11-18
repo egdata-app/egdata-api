@@ -53,3 +53,16 @@ export const v1CacheKey = (
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, value]) => `${key}=${JSON.stringify(value)}`)
     .join(":")}`;
+
+/**
+ * Caches a collection's total item count independently of `limit` and `cursor`
+ * so forward cursor pagination and varying page sizes reuse the same count.
+ */
+export async function cachedTotal(
+  operation: string,
+  parts: Record<string, unknown>,
+  ttlSeconds: number,
+  loader: () => Promise<number>,
+): Promise<number> {
+  return cached(v1CacheKey(`${operation}.total`, parts), ttlSeconds, loader);
+}

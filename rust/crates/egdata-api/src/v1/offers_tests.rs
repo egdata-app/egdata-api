@@ -102,8 +102,14 @@ impl MongoStorePort for Store {
         }
         Ok(self.rows.get(c).cloned().unwrap_or_default())
     }
-    async fn count_documents(&self, _: &str, _: Document) -> Result<u64, CoreError> {
-        panic!("unexpected count")
+    async fn count_documents(&self, collection: &str, _: Document) -> Result<u64, CoreError> {
+        if self.failures.contains(collection) {
+            return Err(CoreError::Internal("private database error".into()));
+        }
+        Ok(self
+            .rows
+            .get(collection)
+            .map_or(0, |rows| rows.len() as u64))
     }
     async fn distinct(&self, _: &str, _: &str, _: Document) -> Result<Vec<Bson>, CoreError> {
         panic!("unexpected distinct")
@@ -358,8 +364,14 @@ async fn list_trims_before_hydration_binds_cursors_and_reuses_node_cache_shape()
     let (_, cached) = call(router.clone(), "/v1/offers?limit=1", None).await;
     assert_eq!(cached["data"], body["data"]);
     assert_eq!(store.finds.lock().unwrap().len(), before);
-    let payload: Value =
-        serde_json::from_str(store.cache.lock().unwrap().values().next().unwrap()).unwrap();
+    let payload: Value = {
+        let cache = store.cache.lock().unwrap();
+        cache
+            .values()
+            .map(|value| serde_json::from_str::<Value>(value).unwrap())
+            .find(|value| value.get("offers").is_some())
+            .expect("page cache payload")
+    };
     assert!(payload.get("offers").is_some());
     assert_eq!(payload["cacheTtl"], 60);
     assert!(payload.get("elements").is_none());

@@ -1430,6 +1430,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.items:limit=1:sandboxId=\"ns\"",
           "payload": {
@@ -1460,7 +1487,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuaXRlbXMiLCJmaWx0ZXJzIjp7InNhbmRib3hJZCI6Im5zIiwiZW50aXRsZW1lbnRUeXBlIjpudWxsLCJzdGF0dXMiOm51bGwsInBsYXRmb3JtcyI6bnVsbCwidGl0bGUiOm51bGx9LCJmaWx0ZXJIYXNoIjoiYTA5ZWE5ZTA2MDg5M2FiYzllODI5NTY3YzJhNzFhZGQwNjc4MzE0MzA0MmI2YTZhNzljZWJiOTcyYmUwOTc5ZSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCwiaXRlbSJdfQ.PRIJhgaqi8S3kfQVj8VTxhm6oMHTjAzScVi1vNJ0Uts"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuaXRlbXMiLCJmaWx0ZXJzIjp7InNhbmRib3hJZCI6Im5zIiwiZW50aXRsZW1lbnRUeXBlIjpudWxsLCJzdGF0dXMiOm51bGwsInBsYXRmb3JtcyI6bnVsbCwidGl0bGUiOm51bGx9LCJmaWx0ZXJIYXNoIjoiYTA5ZWE5ZTA2MDg5M2FiYzllODI5NTY3YzJhNzFhZGQwNjc4MzE0MzA0MmI2YTZhNzljZWJiOTcyYmUwOTc5ZSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCwiaXRlbSJdfQ.PRIJhgaqi8S3kfQVj8VTxhm6oMHTjAzScVi1vNJ0Uts",
+              "total": 2
             }
           },
           "ttl": 60
@@ -1477,7 +1505,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"8d93096b52c2090de91d5df0558e9500366d3f7c\""
+        "etag": "\"c59ae37571f1910d5d2617b0d3e0f02d805192e4\""
       },
       "body": {
         "data": [
@@ -1509,7 +1537,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuaXRlbXMiLCJmaWx0ZXJzIjp7InNhbmRib3hJZCI6Im5zIiwiZW50aXRsZW1lbnRUeXBlIjpudWxsLCJzdGF0dXMiOm51bGwsInBsYXRmb3JtcyI6bnVsbCwidGl0bGUiOm51bGx9LCJmaWx0ZXJIYXNoIjoiYTA5ZWE5ZTA2MDg5M2FiYzllODI5NTY3YzJhNzFhZGQwNjc4MzE0MzA0MmI2YTZhNzljZWJiOTcyYmUwOTc5ZSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCwiaXRlbSJdfQ.PRIJhgaqi8S3kfQVj8VTxhm6oMHTjAzScVi1vNJ0Uts"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuaXRlbXMiLCJmaWx0ZXJzIjp7InNhbmRib3hJZCI6Im5zIiwiZW50aXRsZW1lbnRUeXBlIjpudWxsLCJzdGF0dXMiOm51bGwsInBsYXRmb3JtcyI6bnVsbCwidGl0bGUiOm51bGx9LCJmaWx0ZXJIYXNoIjoiYTA5ZWE5ZTA2MDg5M2FiYzllODI5NTY3YzJhNzFhZGQwNjc4MzE0MzA0MmI2YTZhNzljZWJiOTcyYmUwOTc5ZSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCwiaXRlbSJdfQ.PRIJhgaqi8S3kfQVj8VTxhm6oMHTjAzScVi1vNJ0Uts",
+            "total": 2
           }
         }
       }
@@ -1613,6 +1642,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.items:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuaXRlbXMiLCJmaWx0ZXJzIjp7InNhbmRib3hJZCI6Im5zIiwiZW50aXRsZW1lbnRUeXBlIjpudWxsLCJzdGF0dXMiOm51bGwsInBsYXRmb3JtcyI6bnVsbCwidGl0bGUiOm51bGx9LCJmaWx0ZXJIYXNoIjoiYTA5ZWE5ZTA2MDg5M2FiYzllODI5NTY3YzJhNzFhZGQwNjc4MzE0MzA0MmI2YTZhNzljZWJiOTcyYmUwOTc5ZSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCwiaXRlbSJdfQ.PRIJhgaqi8S3kfQVj8VTxhm6oMHTjAzScVi1vNJ0Uts\":limit=1:sandboxId=\"ns\"",
           "payload": {
@@ -1643,7 +1699,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -1660,7 +1717,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"8e79f1de67438f29f1f9ea91ed1e11b08a97fb4a\""
+        "etag": "\"bac5dc1aa9333e6e4ce14bbe5f1911a1515a07c8\""
       },
       "body": {
         "data": [
@@ -1692,7 +1749,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -1776,6 +1834,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.offers.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.offers.total:sandboxId=\"ns\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -1839,7 +1924,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMub2ZmZXJzIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyIsIm9mZmVyVHlwZSI6bnVsbCwidGl0bGUiOm51bGx9LCJmaWx0ZXJIYXNoIjoiNjAzYjU5NjNhY2ZiNjE2NTUyNThhMzBjZWI5YTEzNTdmNDQwYjBjYTk4OGQ2YWM2YWE5OGI0MzU4NzcyZThhMiIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTAxVDAwOjAwOjAwLjAwMFoiLCJvZmZlciJdfQ.39DFzg1ReJbFdwuP8RR-2O0HFh8ZqC_IqBE9USaqzTU"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMub2ZmZXJzIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyIsIm9mZmVyVHlwZSI6bnVsbCwidGl0bGUiOm51bGx9LCJmaWx0ZXJIYXNoIjoiNjAzYjU5NjNhY2ZiNjE2NTUyNThhMzBjZWI5YTEzNTdmNDQwYjBjYTk4OGQ2YWM2YWE5OGI0MzU4NzcyZThhMiIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTAxVDAwOjAwOjAwLjAwMFoiLCJvZmZlciJdfQ.39DFzg1ReJbFdwuP8RR-2O0HFh8ZqC_IqBE9USaqzTU",
+              "total": 2
             },
             "localization": {
               "locale": "en-US",
@@ -1860,7 +1946,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"011804248d15dcbfd94a02312dfbaf219497abc2\""
+        "etag": "\"bcc5630668cf9a0139bc228ec7e0e74ecd188b01\""
       },
       "body": {
         "data": [
@@ -1913,7 +1999,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMub2ZmZXJzIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyIsIm9mZmVyVHlwZSI6bnVsbCwidGl0bGUiOm51bGx9LCJmaWx0ZXJIYXNoIjoiNjAzYjU5NjNhY2ZiNjE2NTUyNThhMzBjZWI5YTEzNTdmNDQwYjBjYTk4OGQ2YWM2YWE5OGI0MzU4NzcyZThhMiIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTAxVDAwOjAwOjAwLjAwMFoiLCJvZmZlciJdfQ.39DFzg1ReJbFdwuP8RR-2O0HFh8ZqC_IqBE9USaqzTU"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMub2ZmZXJzIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyIsIm9mZmVyVHlwZSI6bnVsbCwidGl0bGUiOm51bGx9LCJmaWx0ZXJIYXNoIjoiNjAzYjU5NjNhY2ZiNjE2NTUyNThhMzBjZWI5YTEzNTdmNDQwYjBjYTk4OGQ2YWM2YWE5OGI0MzU4NzcyZThhMiIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTAxVDAwOjAwOjAwLjAwMFoiLCJvZmZlciJdfQ.39DFzg1ReJbFdwuP8RR-2O0HFh8ZqC_IqBE9USaqzTU",
+            "total": 2
           }
         }
       }
@@ -2020,6 +2107,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.offers.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.offers.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.offers:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMub2ZmZXJzIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyIsIm9mZmVyVHlwZSI6bnVsbCwidGl0bGUiOm51bGx9LCJmaWx0ZXJIYXNoIjoiNjAzYjU5NjNhY2ZiNjE2NTUyNThhMzBjZWI5YTEzNTdmNDQwYjBjYTk4OGQ2YWM2YWE5OGI0MzU4NzcyZThhMiIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTAxVDAwOjAwOjAwLjAwMFoiLCJvZmZlciJdfQ.39DFzg1ReJbFdwuP8RR-2O0HFh8ZqC_IqBE9USaqzTU\":limit=1:locale=\"en-US\":region=\"US\":sandboxId=\"ns\"",
           "payload": {
@@ -2027,7 +2141,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "localization": {}
           },
@@ -2045,7 +2160,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"00b0daa91ab52a86bc586da1c211a74d7b4f9391\""
+        "etag": "\"966bd73e7e515d047152a9cc2d4c604b384d05d3\""
       },
       "body": {
         "data": [],
@@ -2057,7 +2172,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -2187,7 +2303,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"fadf905c6030bad3acb3885acb241161562e2541\""
+        "etag": "\"ae7fb2158af6fae591ed0c8608bfcb8f1105bf2f\""
       },
       "body": {
         "data": [
@@ -2208,7 +2324,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuYXNzZXRzIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyIsInBsYXRmb3JtcyI6bnVsbH0sImZpbHRlckhhc2giOiI1ODYzOGY4NjY4YWZjYTA1OGJmODhlODg2ODgxNjE4NjA5MTEwNjk3ZjUwODhlNDgzODk1ZGI2NWZhOGQ3NGJkIiwib3JkZXJpbmciOiJ1cGRhdGVkQXQ6ZGVzYyxhcnRpZmFjdElkOmFzYyxwbGF0Zm9ybTphc2MiLCJjb3VudHJ5IjoiIiwibG9jYWxlIjoiIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIxOTcwLTAxLTAxVDAwOjAwOjAwLjAwMFoiLCJBcHAiLCJNYWMiXX0.MyyKPdiXxYNZsLrDYNtPFzIEH9K3oQc2kPsy66-K-Ls"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuYXNzZXRzIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyIsInBsYXRmb3JtcyI6bnVsbH0sImZpbHRlckhhc2giOiI1ODYzOGY4NjY4YWZjYTA1OGJmODhlODg2ODgxNjE4NjA5MTEwNjk3ZjUwODhlNDgzODk1ZGI2NWZhOGQ3NGJkIiwib3JkZXJpbmciOiJ1cGRhdGVkQXQ6ZGVzYyxhcnRpZmFjdElkOmFzYyxwbGF0Zm9ybTphc2MiLCJjb3VudHJ5IjoiIiwibG9jYWxlIjoiIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIxOTcwLTAxLTAxVDAwOjAwOjAwLjAwMFoiLCJBcHAiLCJNYWMiXX0.MyyKPdiXxYNZsLrDYNtPFzIEH9K3oQc2kPsy66-K-Ls",
+            "total": 2
           }
         }
       }
@@ -2338,7 +2455,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0cfc565d6f3c853c0ca5437d3e311158f588cfa5\""
+        "etag": "\"59487ca6f03f77d3db0084f40292b3e684a2173e\""
       },
       "body": {
         "data": [
@@ -2359,7 +2476,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 2
           }
         }
       }
@@ -2475,6 +2593,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "query": {
+            "appName": {
+              "$in": [
+                "App"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.builds:limit=1:sandboxId=\"ns\"",
           "payload": {
@@ -2509,7 +2658,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuYnVpbGRzIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyIsInBsYXRmb3JtcyI6bnVsbH0sImZpbHRlckhhc2giOiI1ODYzOGY4NjY4YWZjYTA1OGJmODhlODg2ODgxNjE4NjA5MTEwNjk3ZjUwODhlNDgzODk1ZGI2NWZhOGQ3NGJkIiwib3JkZXJpbmciOiJ1cGRhdGVkQXQ6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMDNUMDA6MDA6MDAuMDAwWiIsIjYxNWYxZjc3YmNmODZjZDc5OTQzOTAxMSJdfQ.tceeoOIh9byZgUhpNH8PUo9Uf99uCJEqV8teI0lR8s0"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuYnVpbGRzIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyIsInBsYXRmb3JtcyI6bnVsbH0sImZpbHRlckhhc2giOiI1ODYzOGY4NjY4YWZjYTA1OGJmODhlODg2ODgxNjE4NjA5MTEwNjk3ZjUwODhlNDgzODk1ZGI2NWZhOGQ3NGJkIiwib3JkZXJpbmciOiJ1cGRhdGVkQXQ6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMDNUMDA6MDA6MDAuMDAwWiIsIjYxNWYxZjc3YmNmODZjZDc5OTQzOTAxMSJdfQ.tceeoOIh9byZgUhpNH8PUo9Uf99uCJEqV8teI0lR8s0",
+              "total": 2
             }
           },
           "ttl": 60
@@ -2526,7 +2676,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c717e49e9bb5dd787118a5093d937cd1be043a67\""
+        "etag": "\"b76e7238addbcada60e2a49083a0ea8e15739239\""
       },
       "body": {
         "data": [
@@ -2562,7 +2712,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuYnVpbGRzIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyIsInBsYXRmb3JtcyI6bnVsbH0sImZpbHRlckhhc2giOiI1ODYzOGY4NjY4YWZjYTA1OGJmODhlODg2ODgxNjE4NjA5MTEwNjk3ZjUwODhlNDgzODk1ZGI2NWZhOGQ3NGJkIiwib3JkZXJpbmciOiJ1cGRhdGVkQXQ6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMDNUMDA6MDA6MDAuMDAwWiIsIjYxNWYxZjc3YmNmODZjZDc5OTQzOTAxMSJdfQ.tceeoOIh9byZgUhpNH8PUo9Uf99uCJEqV8teI0lR8s0"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuYnVpbGRzIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyIsInBsYXRmb3JtcyI6bnVsbH0sImZpbHRlckhhc2giOiI1ODYzOGY4NjY4YWZjYTA1OGJmODhlODg2ODgxNjE4NjA5MTEwNjk3ZjUwODhlNDgzODk1ZGI2NWZhOGQ3NGJkIiwib3JkZXJpbmciOiJ1cGRhdGVkQXQ6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMDNUMDA6MDA6MDAuMDAwWiIsIjYxNWYxZjc3YmNmODZjZDc5OTQzOTAxMSJdfQ.tceeoOIh9byZgUhpNH8PUo9Uf99uCJEqV8teI0lR8s0",
+            "total": 2
           }
         }
       }
@@ -2705,6 +2856,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "query": {
+            "appName": {
+              "$in": [
+                "App"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.builds:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuYnVpbGRzIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyIsInBsYXRmb3JtcyI6bnVsbH0sImZpbHRlckhhc2giOiI1ODYzOGY4NjY4YWZjYTA1OGJmODhlODg2ODgxNjE4NjA5MTEwNjk3ZjUwODhlNDgzODk1ZGI2NWZhOGQ3NGJkIiwib3JkZXJpbmciOiJ1cGRhdGVkQXQ6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMDNUMDA6MDA6MDAuMDAwWiIsIjYxNWYxZjc3YmNmODZjZDc5OTQzOTAxMSJdfQ.tceeoOIh9byZgUhpNH8PUo9Uf99uCJEqV8teI0lR8s0\":limit=1:sandboxId=\"ns\"",
           "payload": {
@@ -2712,7 +2894,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -2729,7 +2912,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0b7e0b2de58fa404fd383ecdb64d29e2f9041286\""
+        "etag": "\"9b2fc461d7c6f719eea8135d061ce52f624b4991\""
       },
       "body": {
         "data": [],
@@ -2738,7 +2921,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3007,6 +3191,41 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "ns",
+                "offer",
+                "item",
+                "artifact",
+                "615f1f77bcf86cd799439011"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "one",
           "query": {
@@ -3065,7 +3284,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuY2hhbmdlbG9nIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyJ9LCJmaWx0ZXJIYXNoIjoiMDUzODdmYmUyNWRmNDNkOWMzZTgzZmNjYmZlYTlmNWY2ZmE3OWRkMTBmNDM3ZmU3NGYyMzk0NGU0MjVhNWY4ZiIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiIiwibG9jYWxlIjoiIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTAzVDAwOjAwOjAwLjAwMFoiLCI2MTVmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.a0DaZ8xXsqZMAvFLOay--8A0LykMXyV2uknWzDHqyPU"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuY2hhbmdlbG9nIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyJ9LCJmaWx0ZXJIYXNoIjoiMDUzODdmYmUyNWRmNDNkOWMzZTgzZmNjYmZlYTlmNWY2ZmE3OWRkMTBmNDM3ZmU3NGYyMzk0NGU0MjVhNWY4ZiIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiIiwibG9jYWxlIjoiIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTAzVDAwOjAwOjAwLjAwMFoiLCI2MTVmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.a0DaZ8xXsqZMAvFLOay--8A0LykMXyV2uknWzDHqyPU",
+              "total": 2
             }
           },
           "ttl": 60
@@ -3082,7 +3302,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"fe2cca40be96117b7444db5061c8fcb45d612417\""
+        "etag": "\"58662c1c2dbca5a0379d4c24b54e7165b38e1664\""
       },
       "body": {
         "data": {
@@ -3112,7 +3332,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuY2hhbmdlbG9nIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyJ9LCJmaWx0ZXJIYXNoIjoiMDUzODdmYmUyNWRmNDNkOWMzZTgzZmNjYmZlYTlmNWY2ZmE3OWRkMTBmNDM3ZmU3NGYyMzk0NGU0MjVhNWY4ZiIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiIiwibG9jYWxlIjoiIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTAzVDAwOjAwOjAwLjAwMFoiLCI2MTVmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.a0DaZ8xXsqZMAvFLOay--8A0LykMXyV2uknWzDHqyPU"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuY2hhbmdlbG9nIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyJ9LCJmaWx0ZXJIYXNoIjoiMDUzODdmYmUyNWRmNDNkOWMzZTgzZmNjYmZlYTlmNWY2ZmE3OWRkMTBmNDM3ZmU3NGYyMzk0NGU0MjVhNWY4ZiIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiIiwibG9jYWxlIjoiIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTAzVDAwOjAwOjAwLjAwMFoiLCI2MTVmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.a0DaZ8xXsqZMAvFLOay--8A0LykMXyV2uknWzDHqyPU",
+            "total": 2
           }
         }
       }
@@ -3364,6 +3585,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "ns",
+                "item"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.changelog:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuY2hhbmdlbG9nIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyJ9LCJmaWx0ZXJIYXNoIjoiMDUzODdmYmUyNWRmNDNkOWMzZTgzZmNjYmZlYTlmNWY2ZmE3OWRkMTBmNDM3ZmU3NGYyMzk0NGU0MjVhNWY4ZiIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiIiwibG9jYWxlIjoiIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTAzVDAwOjAwOjAwLjAwMFoiLCI2MTVmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.a0DaZ8xXsqZMAvFLOay--8A0LykMXyV2uknWzDHqyPU\":limit=1:sandboxId=\"ns\"",
           "payload": {
@@ -3371,7 +3624,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -3388,7 +3642,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"aa105556c37e9ec06cee47f430b8d3996c90d08d\""
+        "etag": "\"ce5fca12157bb9f61025917fc63962ad6ae0b342\""
       },
       "body": {
         "data": {
@@ -3399,7 +3653,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3443,6 +3698,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "namespaces",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.list:limit=1",
           "payload": {
@@ -3455,7 +3735,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiX2lkOmFzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIm5zIl19.4IrIbGlGOTlh4C7qjX_7s6xedahxNfBPJ5vcW9SsgWM"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiX2lkOmFzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIm5zIl19.4IrIbGlGOTlh4C7qjX_7s6xedahxNfBPJ5vcW9SsgWM",
+              "total": 0
             }
           },
           "ttl": 60
@@ -3472,7 +3753,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"4974149bffd30c4592a6fe61be7e725a6f84e047\""
+        "etag": "\"f4528117dd8fafaa17577e905a27bb92b7b90bbf\""
       },
       "body": {
         "data": [
@@ -3486,7 +3767,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiX2lkOmFzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIm5zIl19.4IrIbGlGOTlh4C7qjX_7s6xedahxNfBPJ5vcW9SsgWM"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiX2lkOmFzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIm5zIl19.4IrIbGlGOTlh4C7qjX_7s6xedahxNfBPJ5vcW9SsgWM",
+            "total": 0
           }
         }
       }
@@ -3533,6 +3815,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "namespaces",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.list:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiX2lkOmFzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIm5zIl19.4IrIbGlGOTlh4C7qjX_7s6xedahxNfBPJ5vcW9SsgWM\":limit=1",
           "payload": {
@@ -3540,7 +3847,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -3557,7 +3865,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0b7e0b2de58fa404fd383ecdb64d29e2f9041286\""
+        "etag": "\"9b2fc461d7c6f719eea8135d061ce52f624b4991\""
       },
       "body": {
         "data": [],
@@ -3566,7 +3874,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3726,6 +4035,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "ns"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "items",
           "method": "one",
           "query": {
@@ -3789,7 +4129,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -3806,7 +4147,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ada3ac9265f7cf19903191906314b97758958f04\""
+        "etag": "\"047ca1679c4536153be1da76d7ec3cacf8272a2c\""
       },
       "body": {
         "data": {
@@ -3840,7 +4181,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -4000,6 +4342,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "ns"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "assets",
           "method": "one",
           "query": {
@@ -4049,7 +4422,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -4066,7 +4440,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1fac61d7ec84800a3fabeb755798f6a3c4660b9d\""
+        "etag": "\"b3516d9a96c1aa0c2a7c830332bf49971d08081e\""
       },
       "body": {
         "data": {
@@ -4089,7 +4463,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -4249,6 +4624,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "ns"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "builds",
           "method": "one",
           "query": {
@@ -4310,7 +4716,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -4327,7 +4734,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"6cc122d5e5da2a2740c3e668b95df64d5a032f19\""
+        "etag": "\"fe4233650de789e0be3e7f36b47f8f99304d7489\""
       },
       "body": {
         "data": {
@@ -4354,7 +4761,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -4514,6 +4922,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "ns"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "builds",
           "method": "one",
           "query": {
@@ -4566,7 +5005,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -4583,7 +5023,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"4ade60108c58df36b1029d719255b992655477a5\""
+        "etag": "\"513ded56f50aa076740aa4325f7cec3ac709af28\""
       },
       "body": {
         "data": {
@@ -4610,7 +5050,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -4770,6 +5211,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "ns"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.changelog:limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -4787,7 +5259,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -4804,7 +5277,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b01b90f6f1182e3ebc6b58b3e0e1e37a135400c8\""
+        "etag": "\"23d607e10e82064f6346d6b7fdb0933494df2044\""
       },
       "body": {
         "data": {
@@ -4825,7 +5298,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -4985,6 +5459,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "ns"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.changelog:limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -5002,7 +5507,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -5019,7 +5525,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"08898cf8a0ab085da5d579c58fb394188b6c62ad\""
+        "etag": "\"4226b8c81347745edbcbe2fb957503f81f645210\""
       },
       "body": {
         "data": {
@@ -5040,7 +5546,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -5137,6 +5644,37 @@
             "appName": "App"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "query": {
+            "appName": {
+              "$in": [
+                "App"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -5230,6 +5768,22 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.builds:limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -5237,7 +5791,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -5254,7 +5809,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"aea586c2a29654df322d1304db3441a054a02434\""
+        "etag": "\"f57d5d7faaf5c52580eaf903ae40b9204bf87797\""
       },
       "body": {
         "data": [],
@@ -5263,7 +5818,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -5982,6 +6538,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.items:limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -6012,7 +6595,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -6029,7 +6613,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"5834d485404134a486fb62653fe195e8f4eed5ce\""
+        "etag": "\"f619948a930829f56b322707055b325fad164077\""
       },
       "body": {
         "data": [
@@ -6061,7 +6645,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -6571,6 +7156,57 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:entitlementType=[\"GAME\"]:platforms=[\"Mac\",\"Windows\"]:sandboxId=\"ns\":status=[\"LIVE\"]:title=\"a[b\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns",
+            "entitlementType": {
+              "$in": [
+                "GAME"
+              ]
+            },
+            "status": {
+              "$in": [
+                "LIVE"
+              ]
+            },
+            "releaseInfo": {
+              "$elemMatch": {
+                "platform": {
+                  "$in": [
+                    "Mac",
+                    "Windows"
+                  ]
+                }
+              }
+            },
+            "title": {
+              "$regex": "a\\[b",
+              "$options": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:entitlementType=[\"GAME\"]:platforms=[\"Mac\",\"Windows\"]:sandboxId=\"ns\":status=[\"LIVE\"]:title=\"a[b\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.items:entitlementType=[\"GAME\"]:limit=20:platforms=[\"Mac\",\"Windows\"]:sandboxId=\"ns\":status=[\"LIVE\"]:title=\"a[b\"",
           "payload": {
@@ -6601,7 +7237,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -6618,7 +7255,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"5834d485404134a486fb62653fe195e8f4eed5ce\""
+        "etag": "\"f619948a930829f56b322707055b325fad164077\""
       },
       "body": {
         "data": [
@@ -6650,7 +7287,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -6731,6 +7369,42 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.offers.total:offerType=[\"BASE_GAME\"]:sandboxId=\"ns\":title=\"a[b\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "namespace": "ns",
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            },
+            "title": {
+              "$regex": "a\\[b",
+              "$options": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.offers.total:offerType=[\"BASE_GAME\"]:sandboxId=\"ns\":title=\"a[b\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -6794,7 +7468,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             },
             "localization": {
               "locale": "en-US",
@@ -6815,7 +7490,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"131f7dcafa78901557b125ab37fa054f72937308\""
+        "etag": "\"0115303bcde2daaeb8c3f42203d4e3d6e423098b\""
       },
       "body": {
         "data": [
@@ -6868,7 +7543,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -6982,6 +7658,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.builds.total:platforms=[\"Windows\"]:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "query": {
+            "appName": {
+              "$in": [
+                "App"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.builds.total:platforms=[\"Windows\"]:sandboxId=\"ns\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.builds:limit=20:platforms=[\"Windows\"]:sandboxId=\"ns\"",
           "payload": {
@@ -7016,7 +7723,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -7033,7 +7741,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c7551e995f9788b9705c6aac0bab7b44711b181e\""
+        "etag": "\"1fa2a5fd88f1c8244153aad18ccc8cdc394378f7\""
       },
       "body": {
         "data": [
@@ -7069,7 +7777,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -7513,6 +8222,33 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -7586,6 +8322,33 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:sandboxes.offers.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.offers.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -7672,6 +8435,33 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:sandboxes.offers.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.offers.total:sandboxId=\"ns\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -7774,6 +8564,33 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:sandboxes.offers.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.offers.total:sandboxId=\"ns\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -8579,6 +9396,22 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -8740,6 +9573,37 @@
           "options": {}
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "ns"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -10012,6 +10876,22 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:sandboxes.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "namespaces",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "error": true
       }
     ],
     "response": {
@@ -10646,6 +11526,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "ns"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.changelog:limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -10660,7 +11571,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -10677,7 +11589,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3d38563a5feb629c8c34c5381c0d539598574d66\""
+        "etag": "\"94c3b3467f9779c73fe00342bd389da42600c248\""
       },
       "body": {
         "data": {
@@ -10695,7 +11607,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -10735,6 +11648,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "namespaces",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.list:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiX2lkOmFzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MjAsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W119.ick6PHnzbd-N9GZ2XB-g7b4SVjj2H7FKKo7-0ueuw94\":limit=20",
           "payload": {
@@ -10742,7 +11680,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -10759,7 +11698,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"aea586c2a29654df322d1304db3441a054a02434\""
+        "etag": "\"f57d5d7faaf5c52580eaf903ae40b9204bf87797\""
       },
       "body": {
         "data": [],
@@ -10768,7 +11707,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -10845,6 +11785,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.items:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuaXRlbXMiLCJmaWx0ZXJzIjp7InNhbmRib3hJZCI6Im5zIiwiZW50aXRsZW1lbnRUeXBlIjpudWxsLCJzdGF0dXMiOm51bGwsInBsYXRmb3JtcyI6bnVsbCwidGl0bGUiOm51bGx9LCJmaWx0ZXJIYXNoIjoiYTA5ZWE5ZTA2MDg5M2FiYzllODI5NTY3YzJhNzFhZGQwNjc4MzE0MzA0MmI2YTZhNzljZWJiOTcyYmUwOTc5ZSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MjAsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzE3OTQ4NzM2MDAwMDBdfQ.-8K3EhIXW1FJ3tO20ccfwQQR9ZsLrBo1oIPA9Vp6i2s\":limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -10852,7 +11819,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -10869,7 +11837,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"aea586c2a29654df322d1304db3441a054a02434\""
+        "etag": "\"f57d5d7faaf5c52580eaf903ae40b9204bf87797\""
       },
       "body": {
         "data": [],
@@ -10878,7 +11846,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -10984,6 +11953,22 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.builds:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuYnVpbGRzIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyIsInBsYXRmb3JtcyI6bnVsbH0sImZpbHRlckhhc2giOiI1ODYzOGY4NjY4YWZjYTA1OGJmODhlODg2ODgxNjE4NjA5MTEwNjk3ZjUwODhlNDgzODk1ZGI2NWZhOGQ3NGJkIiwib3JkZXJpbmciOiJ1cGRhdGVkQXQ6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiIiLCJsb2NhbGUiOiIiLCJsaW1pdCI6MjAsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJpbnZhbGlkLWRhdGUiLCJsZWdhY3kiLCJleHRyYSJdfQ.eh-aWeMMMFNZTU2ENymaSwcY0EOllODhXdfQTvLGXY4\":limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -10991,7 +11976,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -11008,7 +11994,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"aea586c2a29654df322d1304db3441a054a02434\""
+        "etag": "\"f57d5d7faaf5c52580eaf903ae40b9204bf87797\""
       },
       "body": {
         "data": [],
@@ -11017,7 +12003,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -11194,6 +12181,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "ns"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.changelog:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzYW5kYm94ZXMuY2hhbmdlbG9nIiwiZmlsdGVycyI6eyJzYW5kYm94SWQiOiJucyJ9LCJmaWx0ZXJIYXNoIjoiMDUzODdmYmUyNWRmNDNkOWMzZTgzZmNjYmZlYTlmNWY2ZmE3OWRkMTBmNDM3ZmU3NGYyMzk0NGU0MjVhNWY4ZiIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiIiwibG9jYWxlIjoiIiwibGltaXQiOjIwLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLDRdfQ.sOlHfVhwHAiTiQ6xK6s5u4jbxyrfFbXR7xAGNo9FH08\":limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -11201,7 +12219,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -11218,7 +12237,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"dca2e7b5de0acee28852890954f0421f9b2c1c09\""
+        "etag": "\"b1d21ea33b24dbb0edd33585c3e440f498b7ac13\""
       },
       "body": {
         "data": {
@@ -11229,7 +12248,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -11473,6 +12493,31 @@
             "name": "Sandbox"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:sandboxes.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "namespaces",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.list.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -11576,6 +12621,33 @@
             ]
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -11903,6 +12975,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "ns"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.changelog.total:sandboxId=\"ns\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "one",
           "query": {
@@ -12035,6 +13138,22 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.builds.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {

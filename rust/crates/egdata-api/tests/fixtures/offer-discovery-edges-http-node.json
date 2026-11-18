@@ -2111,6 +2111,31 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -2172,6 +2197,31 @@
             "tags": []
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -2249,6 +2299,31 @@
             "tags": []
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -2703,6 +2778,37 @@
           "options": {}
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.event.total:id=\"e\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "e"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.event.total:id=\"e\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -2846,6 +2952,37 @@
             "tags": []
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.event.total:id=\"e\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "e"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.event.total:id=\"e\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -3129,6 +3266,36 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.top-sellers.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "top-sellers",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.top-sellers.total:",
+          "payload": 0,
+          "ttl": 300
+        },
+        "result": null
       }
     ],
     "response": {
@@ -3190,6 +3357,36 @@
             "position": 2
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.top-wishlisted.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "top-wishlisted",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.top-wishlisted.total:",
+          "payload": 0,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -3266,6 +3463,36 @@
             "position": 2
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.top-sellers.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "top-sellers",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.top-sellers.total:",
+          "payload": 0,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -3489,6 +3716,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 0,
+          "ttl": 60
+        },
+        "error": true
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -3589,7 +3841,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "localization": {
               "locale": "fr-FR",
@@ -3616,7 +3869,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"6fc905c68bb34644514999727176f2756e0da980\""
+        "etag": "\"2d628e24264393bf17d59dbfa437ae8f3db8aab9\""
       },
       "body": {
         "data": [
@@ -3680,7 +3933,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3724,6 +3978,31 @@
             "tags": []
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -3805,7 +4084,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "localization": {
               "locale": "fr-FR",
@@ -3828,7 +4108,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"373da875321ab020f41653b6e09937247fee74d7\""
+        "etag": "\"1048e38b8f7c8d1d47f6b69e0ccb84bb8a80210e\""
       },
       "body": {
         "data": [
@@ -3879,7 +4159,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -4957,6 +5238,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.event.total:id=\"e\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "e"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.event.total:id=\"e\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offers.event:id=\"e\":limit=20:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -4964,7 +5276,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "27"
           },
@@ -4982,7 +5295,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"eefb50ad2f8a7288524d3296fc437a529e845c11\""
+        "etag": "\"4a985aac64e2d3f7150129be6def08585ecb8319\""
       },
       "body": {
         "data": [],
@@ -4994,7 +5307,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -5720,6 +6034,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -5867,6 +6206,36 @@
             "position": 1
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.top-wishlisted.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "top-wishlisted",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.top-wishlisted.total:",
+          "payload": 0,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -6039,6 +6408,37 @@
             "tags": []
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.event.total:id=\"e\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "e"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.event.total:id=\"e\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -6304,6 +6704,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -6391,6 +6816,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -6451,7 +6901,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIrMjc1NzYwLTA5LTEzVDAwOjAwOjAwLjAwMFoiLCJhIl19.pcME1tnpuKkZU2xFXS8gcsAocjjjGP4dC-thR433Mtw"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIrMjc1NzYwLTA5LTEzVDAwOjAwOjAwLjAwMFoiLCJhIl19.pcME1tnpuKkZU2xFXS8gcsAocjjjGP4dC-thR433Mtw",
+              "total": 0
             },
             "localization": {
               "locale": "en-US",
@@ -6473,7 +6924,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"f562d622d63aeab15044fe02faa78be88f63eac5\""
+        "etag": "\"04baf520c72b1f30bf112e8a073c7569c89fdd38\""
       },
       "body": {
         "data": [
@@ -6522,7 +6973,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIrMjc1NzYwLTA5LTEzVDAwOjAwOjAwLjAwMFoiLCJhIl19.pcME1tnpuKkZU2xFXS8gcsAocjjjGP4dC-thR433Mtw"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIrMjc1NzYwLTA5LTEzVDAwOjAwOjAwLjAwMFoiLCJhIl19.pcME1tnpuKkZU2xFXS8gcsAocjjjGP4dC-thR433Mtw",
+            "total": 0
           }
         }
       }
@@ -6576,6 +7028,31 @@
             "tags": []
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -6639,7 +7116,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsImEiXX0.ZYBKY2Y6VkWTahAid-5gKn-H-jgR8NZK-2_thAQ1KzQ"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsImEiXX0.ZYBKY2Y6VkWTahAid-5gKn-H-jgR8NZK-2_thAQ1KzQ",
+              "total": 0
             },
             "localization": {
               "locale": "en-US",
@@ -6661,7 +7139,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"11884858531e7038a40063e7047ebabe9cf21d21\""
+        "etag": "\"d426b53105eeda2be387cb3bec7fabad5a7c478e\""
       },
       "body": {
         "data": [
@@ -6710,7 +7188,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsImEiXX0.ZYBKY2Y6VkWTahAid-5gKn-H-jgR8NZK-2_thAQ1KzQ"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsImEiXX0.ZYBKY2Y6VkWTahAid-5gKn-H-jgR8NZK-2_thAQ1KzQ",
+            "total": 0
           }
         }
       }
@@ -6755,6 +7234,31 @@
             "lastModifiedDate": "unknown"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -6818,7 +7322,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "localization": {
               "locale": "en-US",
@@ -6840,7 +7345,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"a2e7cefe82c10ddd79f182fbaccdada8b144044c\""
+        "etag": "\"1907c6ae621e7118a27b6ff353768a6a92d34488\""
       },
       "body": {
         "data": [
@@ -6889,7 +7394,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -6957,6 +7463,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -7017,7 +7548,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTEwLTAxVDAwOjAwOjAwLjAwMFoiLCJhIl19.V8BnKfRIztOdN2FQfaN6rikLMPyBFDNfA3Gv1176iVg"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTEwLTAxVDAwOjAwOjAwLjAwMFoiLCJhIl19.V8BnKfRIztOdN2FQfaN6rikLMPyBFDNfA3Gv1176iVg",
+              "total": 0
             },
             "localization": {
               "locale": "en-US",
@@ -7039,7 +7571,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"33d8b86a63302263baa24cba4ea8a88fecf16523\""
+        "etag": "\"56f85c92a0e4e0e4f4bddf9477887e74ee6d2bdb\""
       },
       "body": {
         "data": [
@@ -7088,7 +7620,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTEwLTAxVDAwOjAwOjAwLjAwMFoiLCJhIl19.V8BnKfRIztOdN2FQfaN6rikLMPyBFDNfA3Gv1176iVg"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGlzdCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTEwLTAxVDAwOjAwOjAwLjAwMFoiLCJhIl19.V8BnKfRIztOdN2FQfaN6rikLMPyBFDNfA3Gv1176iVg",
+            "total": 0
           }
         }
       }
@@ -7168,6 +7701,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -7189,7 +7747,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "localization": {},
             "cacheTtl": 60
@@ -7208,7 +7767,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ee2846f09827735b7722feedd8239540d3d4c1a9\""
+        "etag": "\"e39cd8d76abbfb717bbfd422fdeea532b3d71724\""
       },
       "body": {
         "data": [],
@@ -7219,7 +7778,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -7303,6 +7863,47 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.upcoming.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "releaseDate": {
+              "$gt": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              },
+              "$ne": null,
+              "$lt": {
+                "$date": "2099-01-01T00:00:00.000Z"
+              }
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.upcoming.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -7363,7 +7964,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudXBjb21pbmciLCJmaWx0ZXJzIjp7fSwiZmlsdGVySGFzaCI6IjQ0MTM2ZmEzNTViMzY3OGExMTQ2YWQxNmY3ZTg2NDllOTRmYjRmYzIxZmU3N2U4MzEwYzA2MGY2MWNhYWZmOGEiLCJvcmRlcmluZyI6InJlbGVhc2VEYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMC0wMVQwMDowMDowMC4wMDBaIiwiYSJdfQ.anVCUTwXHooblyftAw_2GPKYg9cMKemHxb6NG7UZcHs"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudXBjb21pbmciLCJmaWx0ZXJzIjp7fSwiZmlsdGVySGFzaCI6IjQ0MTM2ZmEzNTViMzY3OGExMTQ2YWQxNmY3ZTg2NDllOTRmYjRmYzIxZmU3N2U4MzEwYzA2MGY2MWNhYWZmOGEiLCJvcmRlcmluZyI6InJlbGVhc2VEYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMC0wMVQwMDowMDowMC4wMDBaIiwiYSJdfQ.anVCUTwXHooblyftAw_2GPKYg9cMKemHxb6NG7UZcHs",
+              "total": 0
             }
           },
           "ttl": 60
@@ -7380,7 +7982,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"8c4fa5ea5ce56d0741aaf8c4f5befe61d0dd1419\""
+        "etag": "\"b2c36487bcb055ec7b30b8aeebc5532c3e43a73f\""
       },
       "body": {
         "data": [
@@ -7428,7 +8030,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudXBjb21pbmciLCJmaWx0ZXJzIjp7fSwiZmlsdGVySGFzaCI6IjQ0MTM2ZmEzNTViMzY3OGExMTQ2YWQxNmY3ZTg2NDllOTRmYjRmYzIxZmU3N2U4MzEwYzA2MGY2MWNhYWZmOGEiLCJvcmRlcmluZyI6InJlbGVhc2VEYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMC0wMVQwMDowMDowMC4wMDBaIiwiYSJdfQ.anVCUTwXHooblyftAw_2GPKYg9cMKemHxb6NG7UZcHs"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudXBjb21pbmciLCJmaWx0ZXJzIjp7fSwiZmlsdGVySGFzaCI6IjQ0MTM2ZmEzNTViMzY3OGExMTQ2YWQxNmY3ZTg2NDllOTRmYjRmYzIxZmU3N2U4MzEwYzA2MGY2MWNhYWZmOGEiLCJvcmRlcmluZyI6InJlbGVhc2VEYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMC0wMVQwMDowMDowMC4wMDBaIiwiYSJdfQ.anVCUTwXHooblyftAw_2GPKYg9cMKemHxb6NG7UZcHs",
+            "total": 0
           }
         }
       }
@@ -7523,6 +8126,47 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.upcoming.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "releaseDate": {
+              "$gt": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              },
+              "$ne": null,
+              "$lt": {
+                "$date": "2099-01-01T00:00:00.000Z"
+              }
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.upcoming.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -7544,7 +8188,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -7561,7 +8206,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ee2846f09827735b7722feedd8239540d3d4c1a9\""
+        "etag": "\"e39cd8d76abbfb717bbfd422fdeea532b3d71724\""
       },
       "body": {
         "data": [],
@@ -7572,7 +8217,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -7658,6 +8304,49 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.latest-released.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            },
+            "releaseDate": {
+              "$ne": null,
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.latest-released.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -7718,7 +8407,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGF0ZXN0LXJlbGVhc2VkIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJyZWxlYXNlRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTEwLTAxVDAwOjAwOjAwLjAwMFoiLCJhIl19.S4TuyjoZZ0T_mJtspRjR40fK9Kpt5sGUO2Qk9gE9zgo"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGF0ZXN0LXJlbGVhc2VkIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJyZWxlYXNlRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTEwLTAxVDAwOjAwOjAwLjAwMFoiLCJhIl19.S4TuyjoZZ0T_mJtspRjR40fK9Kpt5sGUO2Qk9gE9zgo",
+              "total": 0
             }
           },
           "ttl": 60
@@ -7735,7 +8425,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"20d1be52f0bc0b178dc6fc5cfc21e085a8f64384\""
+        "etag": "\"cf4d3f022887e6938867d4394fec90a1ec4c516c\""
       },
       "body": {
         "data": [
@@ -7783,7 +8473,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGF0ZXN0LXJlbGVhc2VkIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJyZWxlYXNlRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTEwLTAxVDAwOjAwOjAwLjAwMFoiLCJhIl19.S4TuyjoZZ0T_mJtspRjR40fK9Kpt5sGUO2Qk9gE9zgo"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMubGF0ZXN0LXJlbGVhc2VkIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJyZWxlYXNlRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTEwLTAxVDAwOjAwOjAwLjAwMFoiLCJhIl19.S4TuyjoZZ0T_mJtspRjR40fK9Kpt5sGUO2Qk9gE9zgo",
+            "total": 0
           }
         }
       }
@@ -7880,6 +8571,49 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.latest-released.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            },
+            "releaseDate": {
+              "$ne": null,
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.latest-released.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -7901,7 +8635,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -7918,7 +8653,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ee2846f09827735b7722feedd8239540d3d4c1a9\""
+        "etag": "\"e39cd8d76abbfb717bbfd422fdeea532b3d71724\""
       },
       "body": {
         "data": [],
@@ -7929,7 +8664,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -7977,6 +8713,36 @@
             "position": 2
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.top-wishlisted.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "top-wishlisted",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.top-wishlisted.total:",
+          "payload": 0,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -8050,7 +8816,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudG9wLXdpc2hsaXN0ZWQiLCJmaWx0ZXJzIjp7ImNvbGxlY3Rpb25JZCI6InRvcC13aXNobGlzdGVkIn0sImZpbHRlckhhc2giOiI2MTQyMDBkOGE5ZTQ5MjRhZWExZWU4ZTBlY2EzN2VjZGQxNGE2ZGU1OWU5YWE2Y2ZmZjllOGU1ODQzZmQ3MmJkIiwib3JkZXJpbmciOiJwb3NpdGlvbjphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJhIl19.Y0MauMjEzISkG2HmXWyEYYH5RXNdwOAxPd3vhQ7NTHs"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudG9wLXdpc2hsaXN0ZWQiLCJmaWx0ZXJzIjp7ImNvbGxlY3Rpb25JZCI6InRvcC13aXNobGlzdGVkIn0sImZpbHRlckhhc2giOiI2MTQyMDBkOGE5ZTQ5MjRhZWExZWU4ZTBlY2EzN2VjZGQxNGE2ZGU1OWU5YWE2Y2ZmZjllOGU1ODQzZmQ3MmJkIiwib3JkZXJpbmciOiJwb3NpdGlvbjphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJhIl19.Y0MauMjEzISkG2HmXWyEYYH5RXNdwOAxPd3vhQ7NTHs",
+              "total": 0
             }
           },
           "ttl": 300
@@ -8067,7 +8834,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"7b4989db6cb2bf72fdd93e985314b4aec0908352\""
+        "etag": "\"1c4c251cd996d62245f502fcc6899e7b63e62e6f\""
       },
       "body": {
         "data": [
@@ -8114,7 +8881,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudG9wLXdpc2hsaXN0ZWQiLCJmaWx0ZXJzIjp7ImNvbGxlY3Rpb25JZCI6InRvcC13aXNobGlzdGVkIn0sImZpbHRlckhhc2giOiI2MTQyMDBkOGE5ZTQ5MjRhZWExZWU4ZTBlY2EzN2VjZGQxNGE2ZGU1OWU5YWE2Y2ZmZjllOGU1ODQzZmQ3MmJkIiwib3JkZXJpbmciOiJwb3NpdGlvbjphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJhIl19.Y0MauMjEzISkG2HmXWyEYYH5RXNdwOAxPd3vhQ7NTHs"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudG9wLXdpc2hsaXN0ZWQiLCJmaWx0ZXJzIjp7ImNvbGxlY3Rpb25JZCI6InRvcC13aXNobGlzdGVkIn0sImZpbHRlckhhc2giOiI2MTQyMDBkOGE5ZTQ5MjRhZWExZWU4ZTBlY2EzN2VjZGQxNGE2ZGU1OWU5YWE2Y2ZmZjllOGU1ODQzZmQ3MmJkIiwib3JkZXJpbmciOiJwb3NpdGlvbjphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJhIl19.Y0MauMjEzISkG2HmXWyEYYH5RXNdwOAxPd3vhQ7NTHs",
+            "total": 0
           }
         }
       }
@@ -8192,6 +8960,36 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.top-wishlisted.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "top-wishlisted",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.top-wishlisted.total:",
+          "payload": 0,
+          "ttl": 300
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -8212,7 +9010,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 300
@@ -8229,7 +9028,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"76c5c8495d9e966e7dabb80015d5a7f4983c9155\""
+        "etag": "\"7af917437fd20979d988d2c08cc2b25bc5c2f535\""
       },
       "body": {
         "data": [],
@@ -8238,7 +9037,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -8387,6 +9187,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.event.total:id=\"e\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "e"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.event.total:id=\"e\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offers.event:id=\"e\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -8446,7 +9277,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMuZXZlbnQiLCJmaWx0ZXJzIjp7ImV2ZW50IjoiZSJ9LCJmaWx0ZXJIYXNoIjoiMWJjMjVkOTM5ZGRhZmZiOWI2MzUyMzAxY2YzN2IzNmQ3MDM2ZDAxM2FjNmQwYWE5OGJjZmU4ZGZjNjg4NTJjNSIsIm9yZGVyaW5nIjoicHJpY2UuZGlzY291bnQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszNSwiYSJdfQ.jjEjeXipzM0YIPXAI4u3JMDzp1qfFPPe9V_Qz17A55g"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMuZXZlbnQiLCJmaWx0ZXJzIjp7ImV2ZW50IjoiZSJ9LCJmaWx0ZXJIYXNoIjoiMWJjMjVkOTM5ZGRhZmZiOWI2MzUyMzAxY2YzN2IzNmQ3MDM2ZDAxM2FjNmQwYWE5OGJjZmU4ZGZjNjg4NTJjNSIsIm9yZGVyaW5nIjoicHJpY2UuZGlzY291bnQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszNSwiYSJdfQ.jjEjeXipzM0YIPXAI4u3JMDzp1qfFPPe9V_Qz17A55g",
+              "total": 0
             },
             "title": ""
           },
@@ -8464,7 +9296,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"aa00d7d5cc4136cf4341a1dc7c15987cf9deb45d\""
+        "etag": "\"7d54c9b8dfdbeff19dd5f8898f00503c8335b32c\""
       },
       "body": {
         "data": [
@@ -8528,7 +9360,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMuZXZlbnQiLCJmaWx0ZXJzIjp7ImV2ZW50IjoiZSJ9LCJmaWx0ZXJIYXNoIjoiMWJjMjVkOTM5ZGRhZmZiOWI2MzUyMzAxY2YzN2IzNmQ3MDM2ZDAxM2FjNmQwYWE5OGJjZmU4ZGZjNjg4NTJjNSIsIm9yZGVyaW5nIjoicHJpY2UuZGlzY291bnQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszNSwiYSJdfQ.jjEjeXipzM0YIPXAI4u3JMDzp1qfFPPe9V_Qz17A55g"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMuZXZlbnQiLCJmaWx0ZXJzIjp7ImV2ZW50IjoiZSJ9LCJmaWx0ZXJIYXNoIjoiMWJjMjVkOTM5ZGRhZmZiOWI2MzUyMzAxY2YzN2IzNmQ3MDM2ZDAxM2FjNmQwYWE5OGJjZmU4ZGZjNjg4NTJjNSIsIm9yZGVyaW5nIjoicHJpY2UuZGlzY291bnQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszNSwiYSJdfQ.jjEjeXipzM0YIPXAI4u3JMDzp1qfFPPe9V_Qz17A55g",
+            "total": 0
           }
         }
       }
@@ -8667,6 +9500,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.event.total:id=\"e\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "e"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.event.total:id=\"e\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offers.event:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMuZXZlbnQiLCJmaWx0ZXJzIjp7ImV2ZW50IjoiZSJ9LCJmaWx0ZXJIYXNoIjoiMWJjMjVkOTM5ZGRhZmZiOWI2MzUyMzAxY2YzN2IzNmQ3MDM2ZDAxM2FjNmQwYWE5OGJjZmU4ZGZjNjg4NTJjNSIsIm9yZGVyaW5nIjoicHJpY2UuZGlzY291bnQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszNSwiYSJdfQ.jjEjeXipzM0YIPXAI4u3JMDzp1qfFPPe9V_Qz17A55g\":id=\"e\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -8674,7 +9538,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": ""
           },
@@ -8692,7 +9557,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d1fd4f31522b7431fa1485915f1e69f71a512893\""
+        "etag": "\"d7ce028cafd6691a0e9973d6d57b82b175183db7\""
       },
       "body": {
         "data": [],
@@ -8704,7 +9569,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -8842,6 +9708,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.event.total:id=\"e\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "e"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.event.total:id=\"e\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offers.event:id=\"e\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -8886,7 +9783,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMuZXZlbnQiLCJmaWx0ZXJzIjp7ImV2ZW50IjoiZSJ9LCJmaWx0ZXJIYXNoIjoiMWJjMjVkOTM5ZGRhZmZiOWI2MzUyMzAxY2YzN2IzNmQ3MDM2ZDAxM2FjNmQwYWE5OGJjZmU4ZGZjNjg4NTJjNSIsIm9yZGVyaW5nIjoicHJpY2UuZGlzY291bnQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJhIl19.MoHU1rCvVTFmoT3N8z5DdPR5zVLl4lX1924DujVAnX4"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMuZXZlbnQiLCJmaWx0ZXJzIjp7ImV2ZW50IjoiZSJ9LCJmaWx0ZXJIYXNoIjoiMWJjMjVkOTM5ZGRhZmZiOWI2MzUyMzAxY2YzN2IzNmQ3MDM2ZDAxM2FjNmQwYWE5OGJjZmU4ZGZjNjg4NTJjNSIsIm9yZGVyaW5nIjoicHJpY2UuZGlzY291bnQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJhIl19.MoHU1rCvVTFmoT3N8z5DdPR5zVLl4lX1924DujVAnX4",
+              "total": 0
             },
             "title": ""
           },
@@ -8904,7 +9802,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"cd9972322bb1709620b9b9418d7c45e0bb2e3904\""
+        "etag": "\"e51e29338ec13dca38290fb67eeb8a1348faf2e8\""
       },
       "body": {
         "data": [
@@ -8953,7 +9851,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMuZXZlbnQiLCJmaWx0ZXJzIjp7ImV2ZW50IjoiZSJ9LCJmaWx0ZXJIYXNoIjoiMWJjMjVkOTM5ZGRhZmZiOWI2MzUyMzAxY2YzN2IzNmQ3MDM2ZDAxM2FjNmQwYWE5OGJjZmU4ZGZjNjg4NTJjNSIsIm9yZGVyaW5nIjoicHJpY2UuZGlzY291bnQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJhIl19.MoHU1rCvVTFmoT3N8z5DdPR5zVLl4lX1924DujVAnX4"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMuZXZlbnQiLCJmaWx0ZXJzIjp7ImV2ZW50IjoiZSJ9LCJmaWx0ZXJIYXNoIjoiMWJjMjVkOTM5ZGRhZmZiOWI2MzUyMzAxY2YzN2IzNmQ3MDM2ZDAxM2FjNmQwYWE5OGJjZmU4ZGZjNjg4NTJjNSIsIm9yZGVyaW5nIjoicHJpY2UuZGlzY291bnQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJhIl19.MoHU1rCvVTFmoT3N8z5DdPR5zVLl4lX1924DujVAnX4",
+            "total": 0
           }
         }
       }
@@ -9080,6 +9979,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.event.total:id=\"e\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "e"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.event.total:id=\"e\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offers.event:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMuZXZlbnQiLCJmaWx0ZXJzIjp7ImV2ZW50IjoiZSJ9LCJmaWx0ZXJIYXNoIjoiMWJjMjVkOTM5ZGRhZmZiOWI2MzUyMzAxY2YzN2IzNmQ3MDM2ZDAxM2FjNmQwYWE5OGJjZmU4ZGZjNjg4NTJjNSIsIm9yZGVyaW5nIjoicHJpY2UuZGlzY291bnQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJhIl19.MoHU1rCvVTFmoT3N8z5DdPR5zVLl4lX1924DujVAnX4\":id=\"e\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -9087,7 +10017,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": ""
           },
@@ -9105,7 +10036,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d1fd4f31522b7431fa1485915f1e69f71a512893\""
+        "etag": "\"d7ce028cafd6691a0e9973d6d57b82b175183db7\""
       },
       "body": {
         "data": [],
@@ -9117,7 +10048,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -11858,6 +12790,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -11937,6 +12894,36 @@
             "position": 1
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.top-wishlisted.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "top-wishlisted",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.top-wishlisted.total:",
+          "payload": 0,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -12117,6 +13104,37 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.event.total:id=\"e\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "e"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.event.total:id=\"e\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {

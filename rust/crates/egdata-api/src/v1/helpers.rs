@@ -126,6 +126,25 @@ pub async fn v1_cache_set(
     let _ = cache.set(key, &node_json(value), ttl_seconds).await;
 }
 
+pub(super) async fn cached_total(
+    state: &crate::state::AppState,
+    operation: &str,
+    parts: &[(&str, Value)],
+    ttl: u64,
+    loader: impl Future<Output = Result<Value, ProblemError>>,
+) -> Result<Value, ProblemError> {
+    let key = v1_cache_key(
+        &format!("{operation}.total"),
+        &parts.iter().cloned().collect(),
+    );
+    if let Some(hit) = v1_cache_get(state.cache.as_ref(), &key).await {
+        return Ok(hit);
+    }
+    let total = loader.await?;
+    v1_cache_set(state.cache.as_ref(), &key, &total, ttl).await;
+    Ok(total)
+}
+
 // Hono getPath applies decodeURI, preserving reserved delimiters and encoded
 // percent signs. Invalid UTF-8 runs remain encoded (its tryDecode fallback).
 fn hono_instance_path(path: &str) -> String {

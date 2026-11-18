@@ -222,7 +222,7 @@ async fn offers(State(s): State<AppState>, Path(seller): Path<String>, req: Requ
     keyparts.insert("locale", json!(rp.locale));
     keyparts.insert("limit", json!(p.limit));
     keyparts.insert("cursor", json!(p.cursor));
-    keyparts.insert("filters", cache_filters);
+    keyparts.insert("filters", cache_filters.clone());
     let key = v1_cache_key("sellers.offers", &keyparts);
     let cached = v1_cache_get(s.cache.as_ref(), &key).await;
     let cache_miss = cached.is_none();
@@ -239,6 +239,7 @@ async fn offers(State(s): State<AppState>, Path(seller): Path<String>, req: Requ
                 doc! {"$nin":ignored.into_iter().map(Bson::String).collect::<Vec<_>>()},
             );
         }
+        let base = filter.clone();
         if let Some(cursor) = p.cursor.as_deref() {
             let last = match decode_for(&s, cursor, &bind) {
                 Ok(v) => v,
@@ -250,21 +251,26 @@ async fn offers(State(s): State<AppState>, Path(seller): Path<String>, req: Requ
             };
             filter = doc! {"$and":[filter,f]};
         }
-        let rows = match s
-            .mongo
-            .find_many(
-                "offers",
+        let (rows, total) = match counted_page(
+            &s,
+            "sellers.offers",
+            &[("id", json!(seller)), ("filters", cache_filters)],
+            OFFER_TTL,
+            "offers",
+            Some(base),
+            PageRead::Find(
                 filter,
                 MongoFindOptions {
                     sort: Some(mongo_sort_spec(&*ITEM_SORT)),
-                    limit: Some(p.limit as i64 + 1),
+                    limit: Some(i64::from(p.limit) + 1),
                     ..Default::default()
                 },
-            )
-            .await
+            ),
+        )
+        .await
         {
-            Ok(v) => v,
-            Err(_) => return internal(&uri, rid),
+            Ok(result) => result,
+            Err(e) => return error(e, &uri, rid),
         };
         let (page, more) = page_result(rows, p.limit);
         let (output, localization) = match priced_offers(&s, &page, &rp.region, &rp.locale).await {
@@ -289,7 +295,7 @@ async fn offers(State(s): State<AppState>, Path(seller): Path<String>, req: Requ
         } else {
             None
         };
-        json!({"offers":output,"pagination":page_meta(p.limit,more,next),"localization":localization})
+        json!({"offers":output,"pagination":page_meta(p.limit,more,next).with_total(total),"localization":localization})
     };
     if cache_miss {
         v1_cache_set(s.cache.as_ref(), &key, &result, OFFER_TTL).await;

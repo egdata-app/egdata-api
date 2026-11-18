@@ -87,21 +87,26 @@ async fn list(State(s): State<AppState>, req: Request) -> Response {
                 Err(e) => return error(e, &uri, id),
             }
         }
-        let rows = match s
-            .mongo
-            .find_many(
-                "items",
+        let (rows, total) = match counted_page(
+            &s,
+            "items.list",
+            &[],
+            60,
+            "items",
+            Some(doc! {}),
+            PageRead::Find(
                 filter,
                 MongoFindOptions {
                     sort: Some(mongo_sort_spec(&*ITEM_SORT)),
-                    limit: Some(p.limit as i64 + 1),
+                    limit: Some(i64::from(p.limit) + 1),
                     ..Default::default()
                 },
-            )
-            .await
+            ),
+        )
+        .await
         {
-            Ok(r) => r,
-            Err(_) => return internal(&uri, id),
+            Ok(result) => result,
+            Err(e) => return error(e, &uri, id),
         };
         let (rows, more) = page_result(rows, p.limit);
         let data: Vec<_> = rows.iter().map(stored_item).collect();
@@ -117,7 +122,7 @@ async fn list(State(s): State<AppState>, req: Request) -> Response {
         } else {
             None
         };
-        json!({"data":data,"pagination":page_meta(p.limit,more,next)})
+        json!({"data":data,"pagination":page_meta(p.limit,more,next).with_total(total)})
     };
     if cached.is_none() {
         v1_cache_set(s.cache.as_ref(), &key, &result, 60).await;
@@ -355,7 +360,7 @@ async fn changelog(State(s): State<AppState>, Path(idv): Path<String>, req: Requ
         Ok(v) => v,
         Err(_) => return internal(&uri, rid),
     };
-    let mut ctx = vec![Bson::String(idv)];
+    let mut ctx = vec![Bson::String(idv.clone())];
     let mut aids = Vec::new();
     for a in &assets {
         if let Some(x) = stored_text(a.get("artifactId")) {
@@ -404,6 +409,7 @@ async fn changelog(State(s): State<AppState>, Path(idv): Path<String>, req: Requ
         Err(e) => return error(e, &uri, rid),
     };
     let mut matchdoc = doc! {"metadata.contextId":{"$in":ctx}};
+    let base = matchdoc.clone();
     if let Some(t) = last {
         // The changelog route destructures two cursor fields before building its keyset.
         let fields = [
@@ -416,7 +422,7 @@ async fn changelog(State(s): State<AppState>, Path(idv): Path<String>, req: Requ
             .expect("two changelog sort fields and cursor values");
         matchdoc = doc! {"$and":[matchdoc,f]};
     }
-    let mut pipeline = vec![
+    let pipeline = vec![
         doc! {"$match":matchdoc},
         doc! {"$sort":mongo_sort_spec(&*CHANGELOG_SORT)},
         doc! {"$limit":i64::from(p.limit)+1},
@@ -426,13 +432,19 @@ async fn changelog(State(s): State<AppState>, Path(idv): Path<String>, req: Requ
         doc! {"$addFields":{"document":{"$switch":{"branches":[{"case":{"$eq":["$metadata.contextType","item"]},"then":{"$arrayElemAt":["$itemDoc",0]}},{"case":{"$eq":["$metadata.contextType","asset"]},"then":{"$arrayElemAt":["$assetDoc",0]}},{"case":{"$eq":["$metadata.contextType","build"]},"then":{"$arrayElemAt":["$buildDoc",0]}}],"default":Bson::Null}}}},
         doc! {"$project":{"_id":1,"metadata":1,"timestamp":1,"document":1}},
     ];
-    let rows = match s
-        .mongo
-        .aggregate("changelogs_v2", std::mem::take(&mut pipeline))
-        .await
+    let (rows, total) = match counted_page(
+        &s,
+        "items.changelog",
+        &[("id", json!(idv))],
+        60,
+        "changelogs_v2",
+        Some(base),
+        PageRead::Aggregate(pipeline),
+    )
+    .await
     {
-        Ok(v) => v,
-        Err(_) => return internal(&uri, rid),
+        Ok(result) => result,
+        Err(e) => return error(e, &uri, rid),
     };
     let (rows, more) = page_result(rows, p.limit);
     let next = if let Some(d) = rows.last().filter(|_| more) {
@@ -450,7 +462,8 @@ async fn changelog(State(s): State<AppState>, Path(idv): Path<String>, req: Requ
     } else {
         None
     };
-    let cached = json!({"data":json_docs(rows),"pagination":page_meta(p.limit,more,next)});
+    let cached =
+        json!({"data":json_docs(rows),"pagination":page_meta(p.limit,more,next).with_total(total)});
     v1_cache_set(s.cache.as_ref(), &cache_key, &cached, 60).await;
     item_page_response(&req, &uri, rid, cached)
 }
@@ -1162,8 +1175,11 @@ mod tests {
                 .cloned()
                 .unwrap_or_default())
         }
-        async fn count_documents(&self, _: &str, _: Document) -> Result<u64, CoreError> {
-            Ok(0)
+        async fn count_documents(&self, collection: &str, _: Document) -> Result<u64, CoreError> {
+            Ok(self
+                .collection_docs
+                .get(collection)
+                .map_or(0, |rows| rows.len() as u64))
         }
         async fn distinct(&self, _: &str, _: &str, _: Document) -> Result<Vec<Bson>, CoreError> {
             Ok(vec![])
@@ -1667,9 +1683,11 @@ mod tests {
             }
             if let Some(write) = input.get("cacheWrite") {
                 if write.is_null() {
+                    // The independent total cache still fills when the page aggregate fails.
+                    let expected = usize::from(name.ends_with("history-aggregate-outage"));
                     assert_eq!(
                         *mongo.cache_sets.lock().unwrap(),
-                        0,
+                        expected,
                         "{name} unexpected cache write"
                     );
                 } else {

@@ -104,13 +104,22 @@ export function recordMongoReads(
         query: unknown,
         options: unknown,
       ) => {
-        const key = `${collection}.${method}`;
+        const methodKey = `${collection}.${method}`;
+        const totalKey = `${collection}.aggregateTotal`;
+        const groupedCount = method === "aggregate" && Array.isArray(query) &&
+          query.at(-1)?.$count === "total";
+        const key = groupedCount && (Object.hasOwn(seed, totalKey) || sequences.has(totalKey))
+          ? totalKey
+          : methodKey;
         const sequence = sequences.get(key);
+        const rows = seed[collection];
         const result = sequence?.length
           ? sequence.shift()
           : Object.hasOwn(seed, key)
             ? seed[key]
-            : (seed[collection] ??
+            : method === "count" && Array.isArray(rows)
+              ? rows.length
+              : (rows ??
               (method === "one" ? null : method === "count" ? 0 : []));
         const call = {
           collection,
@@ -136,8 +145,11 @@ export function recordMongoReads(
         trace.push({ call: { method: "get", key }, error: true });
         throw new Error("Redis unavailable");
       }
-      trace.push({ call: { method: "get", key }, result: hit ?? null });
-      return hit === undefined ? null : JSON.stringify(hit);
+      const value = key.includes(".total:") && Object.hasOwn(seed, "__totalCachePayload")
+        ? seed.__totalCachePayload
+        : hit;
+      trace.push({ call: { method: "get", key }, result: value ?? null });
+      return value === undefined ? null : JSON.stringify(value);
     });
     mock.set.mockImplementation(
       async (key: string, payload: string, _ex: string, ttl: number) => {

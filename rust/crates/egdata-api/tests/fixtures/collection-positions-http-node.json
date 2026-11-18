@@ -1,5 +1,399 @@
 [
   {
+    "name": "current-matching-total",
+    "request": {
+      "path": "/v1/collections/ranked?limit=1",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "collections_v2",
+          "method": "one",
+          "query": {
+            "_id": "ranked"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "ranked",
+          "name": [
+            "Weekly",
+            7
+          ],
+          "updatedAt": {
+            "$date": "2025-07-18T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions:limit=1:locale=\"en-US\":region=\"US\":slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "many",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "limit": 2,
+            "sort": {
+              "position": 1,
+              "offerId": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 37
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 37,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": []
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions:limit=1:locale=\"en-US\":region=\"US\":slug=\"ranked\"",
+          "payload": {
+            "data": [],
+            "pagination": {
+              "limit": 1,
+              "hasMore": false,
+              "nextCursor": null,
+              "total": 37
+            },
+            "title": "Weekly,7",
+            "updatedAt": "2025-07-18T00:00:00.000Z"
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"372b8a9c7ab2daef1ec84f8ebb41317511563f2f\""
+      },
+      "body": {
+        "data": [],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "title": "Weekly,7",
+          "updatedAt": "2025-07-18T00:00:00.000Z",
+          "pagination": {
+            "limit": 1,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 37
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "current-cached-zero-total",
+    "request": {
+      "path": "/v1/collections/ranked",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "collections_v2",
+          "method": "one",
+          "query": {
+            "_id": "ranked"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "ranked",
+          "name": [
+            "Weekly",
+            7
+          ],
+          "updatedAt": {
+            "$date": "2025-07-18T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions:limit=20:locale=\"en-US\":region=\"US\":slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "many",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "limit": 21,
+            "sort": {
+              "position": 1,
+              "offerId": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": []
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions:limit=20:locale=\"en-US\":region=\"US\":slug=\"ranked\"",
+          "payload": {
+            "data": [],
+            "pagination": {
+              "limit": 20,
+              "hasMore": false,
+              "nextCursor": null,
+              "total": 0
+            },
+            "title": "Weekly,7",
+            "updatedAt": "2025-07-18T00:00:00.000Z"
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ff666578a87186987fd191f3c18aadca27256eb0\""
+      },
+      "body": {
+        "data": [],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "title": "Weekly,7",
+          "updatedAt": "2025-07-18T00:00:00.000Z",
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 0
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "current-count-outage",
+    "request": {
+      "path": "/v1/collections/ranked",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "collections_v2",
+          "method": "one",
+          "query": {
+            "_id": "ranked"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "ranked",
+          "name": [
+            "Weekly",
+            7
+          ],
+          "updatedAt": {
+            "$date": "2025-07-18T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions:limit=20:locale=\"en-US\":region=\"US\":slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "many",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "limit": 21,
+            "sort": {
+              "position": 1,
+              "offerId": 1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ad0a34c282dac9c6b834dc4e59a63e426f96499d\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/collections/ranked",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
     "name": "current-integer",
     "request": {
       "path": "/v1/collections/ranked?limit=1&locale=fr",
@@ -75,6 +469,36 @@
             "position": 9
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -231,7 +655,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCIxNyJdfQ.WwucID9Qw-PhYgb87nQindoeRm43Fb3Ig2r3T46MIIg"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCIxNyJdfQ.WwucID9Qw-PhYgb87nQindoeRm43Fb3Ig2r3T46MIIg",
+              "total": 2
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z"
@@ -250,7 +675,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1a7eca5fa65bcb604e4077cb755fc09bfdcab41f\""
+        "etag": "\"fd02b226d8ec484fdaf2cd3b582dd75ce5861d51\""
       },
       "body": {
         "data": [
@@ -351,7 +776,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCIxNyJdfQ.WwucID9Qw-PhYgb87nQindoeRm43Fb3Ig2r3T46MIIg"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCIxNyJdfQ.WwucID9Qw-PhYgb87nQindoeRm43Fb3Ig2r3T46MIIg",
+            "total": 2
           }
         }
       }
@@ -449,6 +875,36 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -483,7 +939,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z"
@@ -502,7 +959,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1006c9b0e5c8a441cc0309ae89da5e09e7ef8c04\""
+        "etag": "\"e1812182f6389231f89fde6b8d3e2ce6c437160f\""
       },
       "body": {
         "data": [],
@@ -515,7 +972,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -603,6 +1061,36 @@
             "position": 9
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -822,7 +1310,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszNDkuOCwiMzQ5LjgiXX0.7KP8eFSuIh22O7FUAgwZtNKTp5O6hYaF3CASB5H-TUM"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszNDkuOCwiMzQ5LjgiXX0.7KP8eFSuIh22O7FUAgwZtNKTp5O6hYaF3CASB5H-TUM",
+              "total": 2
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z"
@@ -841,7 +1330,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c486b49fbb02c47aef79a2633b991f4b03214da8\""
+        "etag": "\"d9a7c01bb3cd9680eef338cc907940862853e6df\""
       },
       "body": {
         "data": [
@@ -1001,7 +1490,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszNDkuOCwiMzQ5LjgiXX0.7KP8eFSuIh22O7FUAgwZtNKTp5O6hYaF3CASB5H-TUM"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszNDkuOCwiMzQ5LjgiXX0.7KP8eFSuIh22O7FUAgwZtNKTp5O6hYaF3CASB5H-TUM",
+            "total": 2
           }
         }
       }
@@ -1099,6 +1589,36 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -1133,7 +1653,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z"
@@ -1152,7 +1673,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1006c9b0e5c8a441cc0309ae89da5e09e7ef8c04\""
+        "etag": "\"e1812182f6389231f89fde6b8d3e2ce6c437160f\""
       },
       "body": {
         "data": [],
@@ -1165,7 +1686,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -1249,6 +1771,36 @@
             "position": 9
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -1409,7 +1961,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.kGnxkk43BHH5J-UJZTNBquJZf-nOjWZqgMj_-h4MSlE"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.kGnxkk43BHH5J-UJZTNBquJZf-nOjWZqgMj_-h4MSlE",
+              "total": 2
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z"
@@ -1428,7 +1981,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"177233fffd8744919e7ee08063185ab08641cbce\""
+        "etag": "\"406124d1abf65bd7e474617de6a325f0781c6016\""
       },
       "body": {
         "data": [
@@ -1529,7 +2082,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.kGnxkk43BHH5J-UJZTNBquJZf-nOjWZqgMj_-h4MSlE"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.kGnxkk43BHH5J-UJZTNBquJZf-nOjWZqgMj_-h4MSlE",
+            "total": 2
           }
         }
       }
@@ -1627,6 +2181,36 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -1661,7 +2245,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z"
@@ -1680,7 +2265,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1006c9b0e5c8a441cc0309ae89da5e09e7ef8c04\""
+        "etag": "\"e1812182f6389231f89fde6b8d3e2ce6c437160f\""
       },
       "body": {
         "data": [],
@@ -1693,7 +2278,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -1772,6 +2358,36 @@
             "position": 9
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -1925,7 +2541,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJ1bmRlZmluZWQiXX0.b-V64p20fkBbnIt_PYldpepBn1UBrBqNrE1GXz4C_dQ"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJ1bmRlZmluZWQiXX0.b-V64p20fkBbnIt_PYldpepBn1UBrBqNrE1GXz4C_dQ",
+              "total": 2
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z"
@@ -1944,7 +2561,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"231731a576c1c5ca09ab729abb5b6d683e96c41d\""
+        "etag": "\"6bf94f9155e7093402ea0a15da35052a455c3266\""
       },
       "body": {
         "data": [
@@ -2042,7 +2659,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJ1bmRlZmluZWQiXX0.b-V64p20fkBbnIt_PYldpepBn1UBrBqNrE1GXz4C_dQ"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJ1bmRlZmluZWQiXX0.b-V64p20fkBbnIt_PYldpepBn1UBrBqNrE1GXz4C_dQ",
+            "total": 2
           }
         }
       }
@@ -2128,6 +2746,36 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -2162,7 +2810,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z"
@@ -2181,7 +2830,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1006c9b0e5c8a441cc0309ae89da5e09e7ef8c04\""
+        "etag": "\"e1812182f6389231f89fde6b8d3e2ce6c437160f\""
       },
       "body": {
         "data": [],
@@ -2194,7 +2843,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -2280,6 +2930,36 @@
             "position": 9
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -2448,7 +3128,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJnYW1lLCwzIl19.4DYvMBOkk0KHnWvzRESI1b6iMOJr7MbuLnLsVooIiv0"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJnYW1lLCwzIl19.4DYvMBOkk0KHnWvzRESI1b6iMOJr7MbuLnLsVooIiv0",
+              "total": 2
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z"
@@ -2467,7 +3148,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"cafedaccfa2c971fde246c8536a0bffc55231bab\""
+        "etag": "\"dd81ef288a73dd2c32d6d37530a7fc4858a5b400\""
       },
       "body": {
         "data": [
@@ -2572,7 +3253,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJnYW1lLCwzIl19.4DYvMBOkk0KHnWvzRESI1b6iMOJr7MbuLnLsVooIiv0"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJnYW1lLCwzIl19.4DYvMBOkk0KHnWvzRESI1b6iMOJr7MbuLnLsVooIiv0",
+            "total": 2
           }
         }
       }
@@ -2670,6 +3352,36 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -2704,7 +3416,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z"
@@ -2723,7 +3436,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1006c9b0e5c8a441cc0309ae89da5e09e7ef8c04\""
+        "etag": "\"e1812182f6389231f89fde6b8d3e2ce6c437160f\""
       },
       "body": {
         "data": [],
@@ -2736,7 +3449,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3031,6 +3745,36 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -3147,6 +3891,36 @@
             "position": 1
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -3269,6 +4043,36 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -3352,6 +4156,36 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -3444,7 +4278,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z"
@@ -3463,7 +4298,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"8f2e6fd3f65bd431d611862e0c994788c47c7895\""
+        "etag": "\"58233c403ddb1bbc0a26f954f570410ce116d54d\""
       },
       "body": {
         "data": [
@@ -3523,7 +4358,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -3593,6 +4429,36 @@
             "position": 2
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -3700,6 +4566,27 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "error": true
       }
     ],
     "response": {
@@ -3781,6 +4668,36 @@
             "position": 1
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -3896,6 +4813,36 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -4005,6 +4952,36 @@
             "position": 1
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -4138,6 +5115,36 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -4244,6 +5251,36 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "error": true
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -4329,7 +5366,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             },
             "title": "",
             "updatedAt": null
@@ -4348,7 +5386,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"90db82209cc6f207ab8a0553e6934c744b68441d\""
+        "etag": "\"b1da59bd1915dbf3a530db09c820fe3497f3d032\""
       },
       "body": {
         "data": [
@@ -4404,9 +5442,701 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
+      }
+    }
+  },
+  {
+    "name": "week-matching-total",
+    "request": {
+      "path": "/v1/collections/ranked/2025W29?limit=1",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "collections_v2",
+          "method": "one",
+          "query": {
+            "_id": "ranked"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "ranked",
+          "name": [
+            "Weekly",
+            7
+          ],
+          "updatedAt": {
+            "$date": "2025-07-18T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week:limit=1:locale=\"en-US\":region=\"US\":slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "position": 1,
+                "offerId": 1
+              }
+            },
+            {
+              "$limit": 2
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "total": 37
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 37,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": []
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week:limit=1:locale=\"en-US\":region=\"US\":slug=\"ranked\":week=\"2025W29\"",
+          "payload": {
+            "data": [],
+            "pagination": {
+              "limit": 1,
+              "hasMore": false,
+              "nextCursor": null,
+              "total": 37
+            },
+            "title": "Weekly,7",
+            "updatedAt": "2025-07-18T00:00:00.000Z",
+            "start": "2025-07-14T00:00:00.000Z",
+            "end": "2025-07-21T00:00:00.000Z"
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"149621d4e24410207e688cc2d28d9ab8e23dcb18\""
+      },
+      "body": {
+        "data": [],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "title": "Weekly,7",
+          "updatedAt": "2025-07-18T00:00:00.000Z",
+          "start": "2025-07-14T00:00:00.000Z",
+          "end": "2025-07-21T00:00:00.000Z",
+          "pagination": {
+            "limit": 1,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 37
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "week-cached-zero-total",
+    "request": {
+      "path": "/v1/collections/ranked/2025W29",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "collections_v2",
+          "method": "one",
+          "query": {
+            "_id": "ranked"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "ranked",
+          "name": [
+            "Weekly",
+            7
+          ],
+          "updatedAt": {
+            "$date": "2025-07-18T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week:limit=20:locale=\"en-US\":region=\"US\":slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "position": 1,
+                "offerId": 1
+              }
+            },
+            {
+              "$limit": 21
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {
+            "id": {
+              "$in": []
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "many",
+          "query": {
+            "offerId": {
+              "$in": []
+            },
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week:limit=20:locale=\"en-US\":region=\"US\":slug=\"ranked\":week=\"2025W29\"",
+          "payload": {
+            "data": [],
+            "pagination": {
+              "limit": 20,
+              "hasMore": false,
+              "nextCursor": null,
+              "total": 0
+            },
+            "title": "Weekly,7",
+            "updatedAt": "2025-07-18T00:00:00.000Z",
+            "start": "2025-07-14T00:00:00.000Z",
+            "end": "2025-07-21T00:00:00.000Z"
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8d79bd5b4c54d1fed7a74dcf1a52e661e1f77596\""
+      },
+      "body": {
+        "data": [],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "title": "Weekly,7",
+          "updatedAt": "2025-07-18T00:00:00.000Z",
+          "start": "2025-07-14T00:00:00.000Z",
+          "end": "2025-07-21T00:00:00.000Z",
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 0
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "week-count-outage",
+    "request": {
+      "path": "/v1/collections/ranked/2025W29",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "collections_v2",
+          "method": "one",
+          "query": {
+            "_id": "ranked"
+          },
+          "options": {}
+        },
+        "result": {
+          "_id": "ranked",
+          "name": [
+            "Weekly",
+            7
+          ],
+          "updatedAt": {
+            "$date": "2025-07-18T00:00:00.000Z"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week:limit=20:locale=\"en-US\":region=\"US\":slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "position": 1,
+                "offerId": 1
+              }
+            },
+            {
+              "$limit": 21
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"fbc8b01afb573b3f51146fc9e5c8fec1ca8b092e\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/collections/ranked/2025W29",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
       }
     }
   },
@@ -4543,6 +6273,116 @@
             "position": 9
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": 17,
+            "position": "2",
+            "previous": {
+              "$numberDecimal": "349.8"
+            },
+            "timestamp": {
+              "$date": "2025-07-15T00:00:00.000Z"
+            },
+            "positions": [
+              {
+                "position": "2",
+                "date": "2025-07-15",
+                "metadata": {
+                  "source": "archive"
+                }
+              }
+            ]
+          },
+          {
+            "position": 9
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -4698,7 +6538,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCIxNyJdfQ.Yj2WEGAvY43ObpZsr-plr5wYRe8gLPQFHMhkq8tK0i4"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCIxNyJdfQ.Yj2WEGAvY43ObpZsr-plr5wYRe8gLPQFHMhkq8tK0i4",
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z",
@@ -4719,7 +6560,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"bb9b60172373c6d1fd405ceb6141ced8b1228893\""
+        "etag": "\"82a1803192cf5e1b6092f20feb48c49aa55b49c0\""
       },
       "body": {
         "data": [
@@ -4821,7 +6662,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCIxNyJdfQ.Yj2WEGAvY43ObpZsr-plr5wYRe8gLPQFHMhkq8tK0i4"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCIxNyJdfQ.Yj2WEGAvY43ObpZsr-plr5wYRe8gLPQFHMhkq8tK0i4",
+            "total": 0
           }
         }
       }
@@ -4980,6 +6822,93 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -5014,7 +6943,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z",
@@ -5035,7 +6965,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"fd180400f861a6575310bc7c2ae7f3312929ab15\""
+        "etag": "\"51d6dbe39acb961e65a3ee8cbc7b94358187971b\""
       },
       "body": {
         "data": [],
@@ -5050,7 +6980,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -5195,6 +7126,122 @@
             "position": 9
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": {
+              "$numberDecimal": "349.8"
+            },
+            "position": {
+              "$numberDecimal": "349.8"
+            },
+            "previous": {
+              "$numberDecimal": "349.8"
+            },
+            "timestamp": {
+              "$date": "2025-07-15T00:00:00.000Z"
+            },
+            "positions": [
+              {
+                "position": {
+                  "$numberDecimal": "349.8"
+                },
+                "date": "2025-07-15",
+                "metadata": {
+                  "source": "archive"
+                }
+              }
+            ]
+          },
+          {
+            "position": 9
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -5413,7 +7460,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszNDkuOCwiMzQ5LjgiXX0.pqPCUkNMWpHJhZd0MPrDTkePovFIOX3zxk5O1_8ePVo"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszNDkuOCwiMzQ5LjgiXX0.pqPCUkNMWpHJhZd0MPrDTkePovFIOX3zxk5O1_8ePVo",
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z",
@@ -5434,7 +7482,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"6c7aad0fb333fb1b2a2f7d4efa56a2af662a9398\""
+        "etag": "\"86c320e22b74cdc514fa60a8565ce81692b75bf8\""
       },
       "body": {
         "data": [
@@ -5595,7 +7643,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszNDkuOCwiMzQ5LjgiXX0.pqPCUkNMWpHJhZd0MPrDTkePovFIOX3zxk5O1_8ePVo"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszNDkuOCwiMzQ5LjgiXX0.pqPCUkNMWpHJhZd0MPrDTkePovFIOX3zxk5O1_8ePVo",
+            "total": 0
           }
         }
       }
@@ -5754,6 +7803,93 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -5788,7 +7924,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z",
@@ -5809,7 +7946,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"fd180400f861a6575310bc7c2ae7f3312929ab15\""
+        "etag": "\"51d6dbe39acb961e65a3ee8cbc7b94358187971b\""
       },
       "body": {
         "data": [],
@@ -5824,7 +7961,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -5965,6 +8103,118 @@
             "position": 9
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": {
+              "$oid": "507f1f77bcf86cd799439011"
+            },
+            "position": null,
+            "previous": {
+              "$numberDecimal": "349.8"
+            },
+            "timestamp": {
+              "$date": "2025-07-15T00:00:00.000Z"
+            },
+            "positions": [
+              {
+                "position": null,
+                "date": "2025-07-15",
+                "metadata": {
+                  "source": "archive"
+                }
+              }
+            ]
+          },
+          {
+            "position": 9
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -6124,7 +8374,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.wDKc6uhZcHz6nJPy36LqG0O4DGvjco9IqCp-P6O95Qc"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.wDKc6uhZcHz6nJPy36LqG0O4DGvjco9IqCp-P6O95Qc",
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z",
@@ -6145,7 +8396,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3bd3e87e2b79bb34704fffa52b446c841111e1f1\""
+        "etag": "\"29b41a71495f02d44f60b015f96129a931fd7129\""
       },
       "body": {
         "data": [
@@ -6247,7 +8498,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.wDKc6uhZcHz6nJPy36LqG0O4DGvjco9IqCp-P6O95Qc"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.wDKc6uhZcHz6nJPy36LqG0O4DGvjco9IqCp-P6O95Qc",
+            "total": 0
           }
         }
       }
@@ -6406,6 +8658,93 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -6440,7 +8779,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z",
@@ -6461,7 +8801,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"fd180400f861a6575310bc7c2ae7f3312929ab15\""
+        "etag": "\"51d6dbe39acb961e65a3ee8cbc7b94358187971b\""
       },
       "body": {
         "data": [],
@@ -6476,7 +8816,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -6612,6 +8953,113 @@
             "position": 9
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "previous": {
+              "$numberDecimal": "349.8"
+            },
+            "timestamp": {
+              "$date": "2025-07-15T00:00:00.000Z"
+            },
+            "positions": [
+              {
+                "date": "2025-07-15",
+                "metadata": {
+                  "source": "archive"
+                }
+              }
+            ]
+          },
+          {
+            "position": 9
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -6766,7 +9214,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJ1bmRlZmluZWQiXX0.w1lS_F8PCBoywgAC36d6f7xe8U2hgS2BTni1Okib7dU"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJ1bmRlZmluZWQiXX0.w1lS_F8PCBoywgAC36d6f7xe8U2hgS2BTni1Okib7dU",
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z",
@@ -6787,7 +9236,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"6ac264874c0c9df2c88e28e2bbe84d4af8f8304b\""
+        "etag": "\"5f0ec225c0d57fc6f8e448e1c178ca44462f8a50\""
       },
       "body": {
         "data": [
@@ -6888,7 +9337,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJ1bmRlZmluZWQiXX0.w1lS_F8PCBoywgAC36d6f7xe8U2hgS2BTni1Okib7dU"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJ1bmRlZmluZWQiXX0.w1lS_F8PCBoywgAC36d6f7xe8U2hgS2BTni1Okib7dU",
+            "total": 0
           }
         }
       }
@@ -7035,6 +9485,93 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -7069,7 +9606,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z",
@@ -7090,7 +9628,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"fd180400f861a6575310bc7c2ae7f3312929ab15\""
+        "etag": "\"51d6dbe39acb961e65a3ee8cbc7b94358187971b\""
       },
       "body": {
         "data": [],
@@ -7105,7 +9643,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -7248,6 +9787,120 @@
             "position": 9
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": [
+              "game",
+              null,
+              3
+            ],
+            "position": true,
+            "previous": {
+              "$numberDecimal": "349.8"
+            },
+            "timestamp": {
+              "$date": "2025-07-15T00:00:00.000Z"
+            },
+            "positions": [
+              {
+                "position": true,
+                "date": "2025-07-15",
+                "metadata": {
+                  "source": "archive"
+                }
+              }
+            ]
+          },
+          {
+            "position": 9
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -7415,7 +10068,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJnYW1lLCwzIl19.MTJV-y0urymQafOUup5XwGG_RltW8VeQUYmCDv2go6U"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJnYW1lLCwzIl19.MTJV-y0urymQafOUup5XwGG_RltW8VeQUYmCDv2go6U",
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z",
@@ -7436,7 +10090,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"30b1fb1cbb19eb2c98ad7de546a4ac60d2a6e5e4\""
+        "etag": "\"8149993e5bf20205354eeff757e1a1845cb16419\""
       },
       "body": {
         "data": [
@@ -7542,7 +10196,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJnYW1lLCwzIl19.MTJV-y0urymQafOUup5XwGG_RltW8VeQUYmCDv2go6U"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjVXMjkifSwiZmlsdGVySGFzaCI6IjA0ODBjYjg4NTRlMDgyODRhMmVlYjUwMWYzZGMxYTQ3ZTExMWM1YjQwYmE4ZmUwNTQyY2E4N2U5NzUzZWU4YjMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJnYW1lLCwzIl19.MTJV-y0urymQafOUup5XwGG_RltW8VeQUYmCDv2go6U",
+            "total": 0
           }
         }
       }
@@ -7701,6 +10356,93 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -7735,7 +10477,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z",
@@ -7756,7 +10499,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"fd180400f861a6575310bc7c2ae7f3312929ab15\""
+        "etag": "\"51d6dbe39acb961e65a3ee8cbc7b94358187971b\""
       },
       "body": {
         "data": [],
@@ -7771,7 +10514,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -8125,6 +10869,98 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "position": 1
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -8298,6 +11134,98 @@
             "position": 1
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "position": 1
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -8477,6 +11405,99 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": {
+              "toString": "historical value"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -8620,6 +11641,100 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "position": {
+              "toString": false
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -8711,7 +11826,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Weekly,7",
             "updatedAt": "2025-07-18T00:00:00.000Z",
@@ -8732,7 +11848,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"89203c93ca533256b7e7bb4dd59200591287c623\""
+        "etag": "\"f5ebf3d42ed6b53a5f8b1ff2939745c818ec0713\""
       },
       "body": {
         "data": [
@@ -8796,7 +11912,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -8923,6 +12040,104 @@
             "position": 2
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "position": {
+              "toString": false
+            }
+          },
+          {
+            "offerId": "b",
+            "position": 2
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -9087,6 +12302,84 @@
           "options": {}
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "error": true
       }
     ],
     "response": {
@@ -9225,6 +12518,98 @@
             "position": 1
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "position": 1
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -9397,6 +12782,98 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "position": 1
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -9563,6 +13040,98 @@
             "position": 1
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "position": 1
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -9753,6 +13322,98 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "position": 1
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -9916,6 +13577,98 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\""
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2025-07-14T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2025-07-21T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "a",
+            "position": 1
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2025W29\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "error": true
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -10003,7 +13756,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "",
             "updatedAt": null,
@@ -10024,7 +13778,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"bdc17d9fec7d2df54477dea2288e2453bf90e26e\""
+        "etag": "\"6a337114e0893e4a7bd2cf24af3780154edf73ec\""
       },
       "body": {
         "data": [
@@ -10084,7 +13838,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }

@@ -1400,7 +1400,7 @@ async fn get_franchise_by_slug(
                     "gamesCount": 0,
                 }
             },
-            "pagination": page_meta(pg.limit, false, None),
+            "pagination": page_meta(pg.limit, false, None).with_total(0),
         })
     } else {
         let mut filters = BTreeMap::new();
@@ -1508,6 +1508,7 @@ async fn get_franchise_by_slug(
             .collect();
 
         let mut ns_set = HashSet::new();
+        let total = all_offers_basic.len();
         for doc in all_offers_basic {
             let val = doc_to_json(doc);
             if let Some(ns) = val
@@ -1614,7 +1615,7 @@ async fn get_franchise_by_slug(
                     "gamesCount": games_count,
                 }
             },
-            "pagination": page_meta(pg.limit, trimmed.has_more, next_cursor),
+            "pagination": page_meta(pg.limit, trimmed.has_more, next_cursor).with_total(total),
         })
     };
 

@@ -17,6 +17,19 @@ it("records ranked collection joins, cursor values and historical cache entries"
     ["current", "/v1/collections/ranked"],
     ["week", "/v1/collections/ranked/2025W29"],
   ]) {
+    const countKey = name === "week" ? "game_positions.aggregateTotal" : "game_positions.count";
+    const countResult = name === "week" ? [{ total: 37 }] : 37;
+    const count = await record(name + "-matching-total", path + "?limit=1", 200, {
+      collections_v2: collection, [countKey]: countResult,
+    });
+    expect(count.meta.pagination.total).toBe(37);
+    const warmCount = await record(name + "-cached-zero-total", path, 200, {
+      collections_v2: collection, [countKey]: "FAIL", __totalCachePayload: 0,
+    });
+    expect(warmCount.meta.pagination.total).toBe(0);
+    await record(name + "-count-outage", path, 500, {
+      collections_v2: collection, [countKey]: "FAIL",
+    });
     for (const [kind, id, rank] of [
       ["integer", 17, "2"],
       ["decimal", decimal, decimal],

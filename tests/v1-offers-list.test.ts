@@ -4,13 +4,17 @@ import { listOffers } from "../src/v1/services/offers.js";
 
 const mocks = vi.hoisted(() => ({
   offerFind: vi.fn(),
+  offerCountDocuments: vi.fn(),
   priceFind: vi.fn(),
   cacheGet: vi.fn(),
   cacheSet: vi.fn(),
 }));
 
 vi.mock("../src/models/index.js", () => ({
-  Offer: { find: mocks.offerFind },
+  Offer: {
+    find: mocks.offerFind,
+    countDocuments: mocks.offerCountDocuments,
+  },
   PriceEngine: { find: mocks.priceFind },
 }));
 
@@ -36,12 +40,13 @@ describe("v1 offer list keyset pagination", () => {
       "test-cursor-secret-that-is-at-least-32-chars";
     mocks.cacheGet.mockReset().mockResolvedValue(null);
     mocks.cacheSet.mockReset().mockResolvedValue("OK");
+    mocks.offerCountDocuments.mockReset().mockResolvedValue(3);
     mocks.priceFind.mockReset().mockReturnValue({
       lean: vi.fn(async () => []),
     });
   });
 
-  it("returns a forward page and advances with the opaque cursor", async () => {
+  it("returns a forward page with total and advances with the opaque cursor", async () => {
     const rows = [
       offer("offer-3", "2026-05-01T00:00:00.000Z"),
       offer("offer-2", "2026-04-30T00:00:00.000Z"),
@@ -60,7 +65,11 @@ describe("v1 offer list keyset pagination", () => {
     });
     expect(first.offers).toHaveLength(2);
     expect(first.offers[0].id).toBe("offer-3");
-    expect(first.pagination).toMatchObject({ limit: 2, hasMore: true });
+    expect(first.pagination).toMatchObject({
+      limit: 2,
+      hasMore: true,
+      total: 3,
+    });
     expect(first.pagination.nextCursor).toBeTruthy();
 
     const firstFilter = mocks.offerFind.mock.calls[0][0];
@@ -80,6 +89,7 @@ describe("v1 offer list keyset pagination", () => {
     expect(second.offers.map((entry) => entry.id)).toEqual(["offer-1"]);
     expect(second.pagination.hasMore).toBe(false);
     expect(second.pagination.nextCursor).toBeNull();
+    expect(second.pagination.total).toBe(3);
     expect(mocks.offerFind.mock.calls[1][0]).toEqual({
       $or: [
         { lastModifiedDate: { $lt: new Date("2026-04-30T00:00:00.000Z") } },
@@ -135,5 +145,50 @@ describe("v1 offer list keyset pagination", () => {
       expect(error).toBeInstanceOf(ProblemError);
       expect((error as ProblemError).code).toBe("CURSOR_MISMATCH");
     }
+  });
+
+  it("reuses cached total counts across cursors and limit changes", async () => {
+    const cache = new Map<string, string>();
+    mocks.cacheGet.mockImplementation(
+      async (key: string) => cache.get(key) ?? null,
+    );
+    mocks.cacheSet.mockImplementation(async (key: string, value: string) => {
+      cache.set(key, value);
+      return "OK";
+    });
+    mocks.offerCountDocuments.mockResolvedValue(42);
+    mocks.offerFind.mockReturnValue({
+      lean: vi.fn(async () => [
+        offer("a", "2026-05-01T00:00:00.000Z"),
+        offer("b", "2026-04-30T00:00:00.000Z"),
+      ]),
+    });
+
+    const first = await listOffers({
+      country: "US",
+      region: "US",
+      locale: "en-US",
+      limit: 1,
+      cursor: null,
+    });
+    const second = await listOffers({
+      country: "US",
+      region: "US",
+      locale: "en-US",
+      limit: 1,
+      cursor: first.pagination.nextCursor,
+    });
+    const differentLimit = await listOffers({
+      country: "US",
+      region: "US",
+      locale: "en-US",
+      limit: 10,
+      cursor: null,
+    });
+
+    expect(first.pagination.total).toBe(42);
+    expect(second.pagination.total).toBe(42);
+    expect(differentLimit.pagination.total).toBe(42);
+    expect(mocks.offerCountDocuments).toHaveBeenCalledTimes(1);
   });
 });

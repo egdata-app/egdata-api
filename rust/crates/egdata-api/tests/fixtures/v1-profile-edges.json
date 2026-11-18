@@ -1170,6 +1170,89 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$gt": [
+                    {
+                      "$size": "$playerAwards"
+                    },
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.games:id=\"p\":limit=1:platinum=true:sort=\"alphabetical\"",
           "payload": {
@@ -1187,7 +1270,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhbHBoYWJldGljYWwiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiIyNzE0YTNiYWYzYmE3Y2NlYjgxYmNlNWY2ZjYzOTcyNzJiMjVlYTBiNmQyN2ZiZTEwYzI4ZWYyZDJmZDg3ZTRiIiwib3JkZXJpbmciOiJwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsieiIsInoiXX0.aTywlCCnQ4PDZ1Ay0tMe14DXHWsXf12MT5QtKGAQSPs"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhbHBoYWJldGljYWwiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiIyNzE0YTNiYWYzYmE3Y2NlYjgxYmNlNWY2ZjYzOTcyNzJiMjVlYTBiNmQyN2ZiZTEwYzI4ZWYyZDJmZDg3ZTRiIiwib3JkZXJpbmciOiJwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsieiIsInoiXX0.aTywlCCnQ4PDZ1Ay0tMe14DXHWsXf12MT5QtKGAQSPs",
+              "total": 0
             }
           },
           "ttl": 60
@@ -1204,7 +1288,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"edc9e8b0777b86bd54a6dfa72456cc548c049d33\""
+        "etag": "\"da7acc44916b4cea63d6da43bb00173db7b4fc07\""
       },
       "body": {
         "data": {
@@ -1224,7 +1308,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhbHBoYWJldGljYWwiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiIyNzE0YTNiYWYzYmE3Y2NlYjgxYmNlNWY2ZjYzOTcyNzJiMjVlYTBiNmQyN2ZiZTEwYzI4ZWYyZDJmZDg3ZTRiIiwib3JkZXJpbmciOiJwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsieiIsInoiXX0.aTywlCCnQ4PDZ1Ay0tMe14DXHWsXf12MT5QtKGAQSPs"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhbHBoYWJldGljYWwiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiIyNzE0YTNiYWYzYmE3Y2NlYjgxYmNlNWY2ZjYzOTcyNzJiMjVlYTBiNmQyN2ZiZTEwYzI4ZWYyZDJmZDg3ZTRiIiwib3JkZXJpbmciOiJwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsieiIsInoiXX0.aTywlCCnQ4PDZ1Ay0tMe14DXHWsXf12MT5QtKGAQSPs",
+            "total": 0
           }
         }
       }
@@ -1518,6 +1603,13 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true"
+        },
+        "result": 0
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.games:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhbHBoYWJldGljYWwiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiIyNzE0YTNiYWYzYmE3Y2NlYjgxYmNlNWY2ZjYzOTcyNzJiMjVlYTBiNmQyN2ZiZTEwYzI4ZWYyZDJmZDg3ZTRiIiwib3JkZXJpbmciOiJwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsieiIsInoiXX0.aTywlCCnQ4PDZ1Ay0tMe14DXHWsXf12MT5QtKGAQSPs\":id=\"p\":limit=1:platinum=true:sort=\"alphabetical\"",
           "payload": {
@@ -1525,7 +1617,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -1542,7 +1635,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"39149109a9f3570ec4dc6e982ba3294849e24570\""
+        "etag": "\"d177df5a3cfb14da8acfe9af1d7b742785e3db1f\""
       },
       "body": {
         "data": {
@@ -1552,7 +1645,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -1585,7 +1679,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhbHBoYWJldGljYWwiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiIyNzE0YTNiYWYzYmE3Y2NlYjgxYmNlNWY2ZjYzOTcyNzJiMjVlYTBiNmQyN2ZiZTEwYzI4ZWYyZDJmZDg3ZTRiIiwib3JkZXJpbmciOiJwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsieiIsInoiXX0.aTywlCCnQ4PDZ1Ay0tMe14DXHWsXf12MT5QtKGAQSPs"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhbHBoYWJldGljYWwiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiIyNzE0YTNiYWYzYmE3Y2NlYjgxYmNlNWY2ZjYzOTcyNzJiMjVlYTBiNmQyN2ZiZTEwYzI4ZWYyZDJmZDg3ZTRiIiwib3JkZXJpbmciOiJwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsieiIsInoiXX0.aTywlCCnQ4PDZ1Ay0tMe14DXHWsXf12MT5QtKGAQSPs",
+            "total": 0
           }
         }
       }
@@ -1599,7 +1694,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"edc9e8b0777b86bd54a6dfa72456cc548c049d33\""
+        "etag": "\"da7acc44916b4cea63d6da43bb00173db7b4fc07\""
       },
       "body": {
         "data": {
@@ -1619,7 +1714,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhbHBoYWJldGljYWwiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiIyNzE0YTNiYWYzYmE3Y2NlYjgxYmNlNWY2ZjYzOTcyNzJiMjVlYTBiNmQyN2ZiZTEwYzI4ZWYyZDJmZDg3ZTRiIiwib3JkZXJpbmciOiJwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsieiIsInoiXX0.aTywlCCnQ4PDZ1Ay0tMe14DXHWsXf12MT5QtKGAQSPs"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhbHBoYWJldGljYWwiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiIyNzE0YTNiYWYzYmE3Y2NlYjgxYmNlNWY2ZjYzOTcyNzJiMjVlYTBiNmQyN2ZiZTEwYzI4ZWYyZDJmZDg3ZTRiIiwib3JkZXJpbmciOiJwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsieiIsInoiXX0.aTywlCCnQ4PDZ1Ay0tMe14DXHWsXf12MT5QtKGAQSPs",
+            "total": 0
           }
         }
       }
@@ -1923,6 +2019,89 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$gt": [
+                    {
+                      "$size": "$playerAwards"
+                    },
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.games:id=\"p\":limit=1:platinum=true:sort=\"xp\"",
           "payload": {
@@ -1940,7 +2119,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJ4cCIsInBsYXRpbnVtIjp0cnVlfSwiZmlsdGVySGFzaCI6IjMxODExMzc4OWVhMTk3NTBmYTNjNTU4NjBhYTRkYTdiYjNmNzQ5NzQyMmNmNTA2YzUxZDQ1YmVhMjJiZDFmYWUiLCJvcmRlcmluZyI6InRvdGFsWFA6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOls4LCJ6IiwieiJdfQ.VH8b61JjEvv0-XUAk73ZBvUDcqryvTKnLEMowtgi9UU"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJ4cCIsInBsYXRpbnVtIjp0cnVlfSwiZmlsdGVySGFzaCI6IjMxODExMzc4OWVhMTk3NTBmYTNjNTU4NjBhYTRkYTdiYjNmNzQ5NzQyMmNmNTA2YzUxZDQ1YmVhMjJiZDFmYWUiLCJvcmRlcmluZyI6InRvdGFsWFA6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOls4LCJ6IiwieiJdfQ.VH8b61JjEvv0-XUAk73ZBvUDcqryvTKnLEMowtgi9UU",
+              "total": 0
             }
           },
           "ttl": 60
@@ -1957,7 +2137,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1335fe030175958f28bf5c2411eaf23f058f1394\""
+        "etag": "\"b96a615cb9ebc38e9bcad78a496749e0377a3723\""
       },
       "body": {
         "data": {
@@ -1977,7 +2157,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJ4cCIsInBsYXRpbnVtIjp0cnVlfSwiZmlsdGVySGFzaCI6IjMxODExMzc4OWVhMTk3NTBmYTNjNTU4NjBhYTRkYTdiYjNmNzQ5NzQyMmNmNTA2YzUxZDQ1YmVhMjJiZDFmYWUiLCJvcmRlcmluZyI6InRvdGFsWFA6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOls4LCJ6IiwieiJdfQ.VH8b61JjEvv0-XUAk73ZBvUDcqryvTKnLEMowtgi9UU"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJ4cCIsInBsYXRpbnVtIjp0cnVlfSwiZmlsdGVySGFzaCI6IjMxODExMzc4OWVhMTk3NTBmYTNjNTU4NjBhYTRkYTdiYjNmNzQ5NzQyMmNmNTA2YzUxZDQ1YmVhMjJiZDFmYWUiLCJvcmRlcmluZyI6InRvdGFsWFA6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOls4LCJ6IiwieiJdfQ.VH8b61JjEvv0-XUAk73ZBvUDcqryvTKnLEMowtgi9UU",
+            "total": 0
           }
         }
       }
@@ -2290,6 +2471,13 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true"
+        },
+        "result": 0
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.games:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJ4cCIsInBsYXRpbnVtIjp0cnVlfSwiZmlsdGVySGFzaCI6IjMxODExMzc4OWVhMTk3NTBmYTNjNTU4NjBhYTRkYTdiYjNmNzQ5NzQyMmNmNTA2YzUxZDQ1YmVhMjJiZDFmYWUiLCJvcmRlcmluZyI6InRvdGFsWFA6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOls4LCJ6IiwieiJdfQ.VH8b61JjEvv0-XUAk73ZBvUDcqryvTKnLEMowtgi9UU\":id=\"p\":limit=1:platinum=true:sort=\"xp\"",
           "payload": {
@@ -2297,7 +2485,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -2314,7 +2503,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"39149109a9f3570ec4dc6e982ba3294849e24570\""
+        "etag": "\"d177df5a3cfb14da8acfe9af1d7b742785e3db1f\""
       },
       "body": {
         "data": {
@@ -2324,7 +2513,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -2357,7 +2547,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJ4cCIsInBsYXRpbnVtIjp0cnVlfSwiZmlsdGVySGFzaCI6IjMxODExMzc4OWVhMTk3NTBmYTNjNTU4NjBhYTRkYTdiYjNmNzQ5NzQyMmNmNTA2YzUxZDQ1YmVhMjJiZDFmYWUiLCJvcmRlcmluZyI6InRvdGFsWFA6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOls4LCJ6IiwieiJdfQ.VH8b61JjEvv0-XUAk73ZBvUDcqryvTKnLEMowtgi9UU"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJ4cCIsInBsYXRpbnVtIjp0cnVlfSwiZmlsdGVySGFzaCI6IjMxODExMzc4OWVhMTk3NTBmYTNjNTU4NjBhYTRkYTdiYjNmNzQ5NzQyMmNmNTA2YzUxZDQ1YmVhMjJiZDFmYWUiLCJvcmRlcmluZyI6InRvdGFsWFA6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOls4LCJ6IiwieiJdfQ.VH8b61JjEvv0-XUAk73ZBvUDcqryvTKnLEMowtgi9UU",
+            "total": 0
           }
         }
       }
@@ -2371,7 +2562,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1335fe030175958f28bf5c2411eaf23f058f1394\""
+        "etag": "\"b96a615cb9ebc38e9bcad78a496749e0377a3723\""
       },
       "body": {
         "data": {
@@ -2391,7 +2582,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJ4cCIsInBsYXRpbnVtIjp0cnVlfSwiZmlsdGVySGFzaCI6IjMxODExMzc4OWVhMTk3NTBmYTNjNTU4NjBhYTRkYTdiYjNmNzQ5NzQyMmNmNTA2YzUxZDQ1YmVhMjJiZDFmYWUiLCJvcmRlcmluZyI6InRvdGFsWFA6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOls4LCJ6IiwieiJdfQ.VH8b61JjEvv0-XUAk73ZBvUDcqryvTKnLEMowtgi9UU"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJ4cCIsInBsYXRpbnVtIjp0cnVlfSwiZmlsdGVySGFzaCI6IjMxODExMzc4OWVhMTk3NTBmYTNjNTU4NjBhYTRkYTdiYjNmNzQ5NzQyMmNmNTA2YzUxZDQ1YmVhMjJiZDFmYWUiLCJvcmRlcmluZyI6InRvdGFsWFA6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOls4LCJ6IiwieiJdfQ.VH8b61JjEvv0-XUAk73ZBvUDcqryvTKnLEMowtgi9UU",
+            "total": 0
           }
         }
       }
@@ -2695,6 +2887,89 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$gt": [
+                    {
+                      "$size": "$playerAwards"
+                    },
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.games:id=\"p\":limit=1:platinum=true:sort=\"achievements\"",
           "payload": {
@@ -2712,7 +2987,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhY2hpZXZlbWVudHMiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiI3MWY5NWZiOTJlNjQ0MTJhNWJlOWExOWY1ZjA4MmFmZmFhODU0NTNmYjRmMDE4NDkwNTliNjI3NjQ3M2E1YWQyIiwib3JkZXJpbmciOiJ0b3RhbFVubG9ja2VkOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMSwieiIsInoiXX0.U6gq01u_QfoJZOvrP5RGVZHXy9BVr7ZFgq2UoUcz08E"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhY2hpZXZlbWVudHMiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiI3MWY5NWZiOTJlNjQ0MTJhNWJlOWExOWY1ZjA4MmFmZmFhODU0NTNmYjRmMDE4NDkwNTliNjI3NjQ3M2E1YWQyIiwib3JkZXJpbmciOiJ0b3RhbFVubG9ja2VkOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMSwieiIsInoiXX0.U6gq01u_QfoJZOvrP5RGVZHXy9BVr7ZFgq2UoUcz08E",
+              "total": 0
             }
           },
           "ttl": 60
@@ -2729,7 +3005,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"00e565a5a8013aef2ba9f61ad5e1c7f5aa5afc3a\""
+        "etag": "\"865f6d7def8b018e5996ba6322a62a586a09ec8e\""
       },
       "body": {
         "data": {
@@ -2749,7 +3025,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhY2hpZXZlbWVudHMiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiI3MWY5NWZiOTJlNjQ0MTJhNWJlOWExOWY1ZjA4MmFmZmFhODU0NTNmYjRmMDE4NDkwNTliNjI3NjQ3M2E1YWQyIiwib3JkZXJpbmciOiJ0b3RhbFVubG9ja2VkOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMSwieiIsInoiXX0.U6gq01u_QfoJZOvrP5RGVZHXy9BVr7ZFgq2UoUcz08E"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhY2hpZXZlbWVudHMiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiI3MWY5NWZiOTJlNjQ0MTJhNWJlOWExOWY1ZjA4MmFmZmFhODU0NTNmYjRmMDE4NDkwNTliNjI3NjQ3M2E1YWQyIiwib3JkZXJpbmciOiJ0b3RhbFVubG9ja2VkOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMSwieiIsInoiXX0.U6gq01u_QfoJZOvrP5RGVZHXy9BVr7ZFgq2UoUcz08E",
+            "total": 0
           }
         }
       }
@@ -3062,6 +3339,13 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true"
+        },
+        "result": 0
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.games:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhY2hpZXZlbWVudHMiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiI3MWY5NWZiOTJlNjQ0MTJhNWJlOWExOWY1ZjA4MmFmZmFhODU0NTNmYjRmMDE4NDkwNTliNjI3NjQ3M2E1YWQyIiwib3JkZXJpbmciOiJ0b3RhbFVubG9ja2VkOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMSwieiIsInoiXX0.U6gq01u_QfoJZOvrP5RGVZHXy9BVr7ZFgq2UoUcz08E\":id=\"p\":limit=1:platinum=true:sort=\"achievements\"",
           "payload": {
@@ -3069,7 +3353,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -3086,7 +3371,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"39149109a9f3570ec4dc6e982ba3294849e24570\""
+        "etag": "\"d177df5a3cfb14da8acfe9af1d7b742785e3db1f\""
       },
       "body": {
         "data": {
@@ -3096,7 +3381,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3129,7 +3415,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhY2hpZXZlbWVudHMiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiI3MWY5NWZiOTJlNjQ0MTJhNWJlOWExOWY1ZjA4MmFmZmFhODU0NTNmYjRmMDE4NDkwNTliNjI3NjQ3M2E1YWQyIiwib3JkZXJpbmciOiJ0b3RhbFVubG9ja2VkOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMSwieiIsInoiXX0.U6gq01u_QfoJZOvrP5RGVZHXy9BVr7ZFgq2UoUcz08E"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhY2hpZXZlbWVudHMiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiI3MWY5NWZiOTJlNjQ0MTJhNWJlOWExOWY1ZjA4MmFmZmFhODU0NTNmYjRmMDE4NDkwNTliNjI3NjQ3M2E1YWQyIiwib3JkZXJpbmciOiJ0b3RhbFVubG9ja2VkOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMSwieiIsInoiXX0.U6gq01u_QfoJZOvrP5RGVZHXy9BVr7ZFgq2UoUcz08E",
+            "total": 0
           }
         }
       }
@@ -3143,7 +3430,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"00e565a5a8013aef2ba9f61ad5e1c7f5aa5afc3a\""
+        "etag": "\"865f6d7def8b018e5996ba6322a62a586a09ec8e\""
       },
       "body": {
         "data": {
@@ -3163,7 +3450,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhY2hpZXZlbWVudHMiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiI3MWY5NWZiOTJlNjQ0MTJhNWJlOWExOWY1ZjA4MmFmZmFhODU0NTNmYjRmMDE4NDkwNTliNjI3NjQ3M2E1YWQyIiwib3JkZXJpbmciOiJ0b3RhbFVubG9ja2VkOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMSwieiIsInoiXX0.U6gq01u_QfoJZOvrP5RGVZHXy9BVr7ZFgq2UoUcz08E"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJhY2hpZXZlbWVudHMiLCJwbGF0aW51bSI6dHJ1ZX0sImZpbHRlckhhc2giOiI3MWY5NWZiOTJlNjQ0MTJhNWJlOWExOWY1ZjA4MmFmZmFhODU0NTNmYjRmMDE4NDkwNTliNjI3NjQ3M2E1YWQyIiwib3JkZXJpbmciOiJ0b3RhbFVubG9ja2VkOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMSwieiIsInoiXX0.U6gq01u_QfoJZOvrP5RGVZHXy9BVr7ZFgq2UoUcz08E",
+            "total": 0
           }
         }
       }
@@ -3467,6 +3755,89 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$gt": [
+                    {
+                      "$size": "$playerAwards"
+                    },
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.games:id=\"p\":limit=1:platinum=true:sort=\"completion\"",
           "payload": {
@@ -3484,7 +3855,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOnRydWV9LCJmaWx0ZXJIYXNoIjoiMjcyYWIzZWM5OWQ5Njc5M2IyYzgwNzYzZDhhMTYzNGMzZjZhY2NmZjM2MjlhZjcwZmYxZjBkYzMzYzA3MGI2NCIsIm9yZGVyaW5nIjoiY29tcGxldGlvblBlcmNlbnRhZ2U6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLjEsInoiLCJ6Il19.oaMOaRci9cEqVRDtSqYnChxUY1Iv5dXVds0KMr1rahI"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOnRydWV9LCJmaWx0ZXJIYXNoIjoiMjcyYWIzZWM5OWQ5Njc5M2IyYzgwNzYzZDhhMTYzNGMzZjZhY2NmZjM2MjlhZjcwZmYxZjBkYzMzYzA3MGI2NCIsIm9yZGVyaW5nIjoiY29tcGxldGlvblBlcmNlbnRhZ2U6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLjEsInoiLCJ6Il19.oaMOaRci9cEqVRDtSqYnChxUY1Iv5dXVds0KMr1rahI",
+              "total": 0
             }
           },
           "ttl": 60
@@ -3501,7 +3873,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0b6d40b23dca65a9a44dd658851d1cc596e26801\""
+        "etag": "\"592be73a18a6c6d466b3ae85b0b448fb1b1820c5\""
       },
       "body": {
         "data": {
@@ -3521,7 +3893,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOnRydWV9LCJmaWx0ZXJIYXNoIjoiMjcyYWIzZWM5OWQ5Njc5M2IyYzgwNzYzZDhhMTYzNGMzZjZhY2NmZjM2MjlhZjcwZmYxZjBkYzMzYzA3MGI2NCIsIm9yZGVyaW5nIjoiY29tcGxldGlvblBlcmNlbnRhZ2U6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLjEsInoiLCJ6Il19.oaMOaRci9cEqVRDtSqYnChxUY1Iv5dXVds0KMr1rahI"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOnRydWV9LCJmaWx0ZXJIYXNoIjoiMjcyYWIzZWM5OWQ5Njc5M2IyYzgwNzYzZDhhMTYzNGMzZjZhY2NmZjM2MjlhZjcwZmYxZjBkYzMzYzA3MGI2NCIsIm9yZGVyaW5nIjoiY29tcGxldGlvblBlcmNlbnRhZ2U6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLjEsInoiLCJ6Il19.oaMOaRci9cEqVRDtSqYnChxUY1Iv5dXVds0KMr1rahI",
+            "total": 0
           }
         }
       }
@@ -3834,6 +4207,13 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true"
+        },
+        "result": 0
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.games:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOnRydWV9LCJmaWx0ZXJIYXNoIjoiMjcyYWIzZWM5OWQ5Njc5M2IyYzgwNzYzZDhhMTYzNGMzZjZhY2NmZjM2MjlhZjcwZmYxZjBkYzMzYzA3MGI2NCIsIm9yZGVyaW5nIjoiY29tcGxldGlvblBlcmNlbnRhZ2U6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLjEsInoiLCJ6Il19.oaMOaRci9cEqVRDtSqYnChxUY1Iv5dXVds0KMr1rahI\":id=\"p\":limit=1:platinum=true:sort=\"completion\"",
           "payload": {
@@ -3841,7 +4221,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -3858,7 +4239,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"39149109a9f3570ec4dc6e982ba3294849e24570\""
+        "etag": "\"d177df5a3cfb14da8acfe9af1d7b742785e3db1f\""
       },
       "body": {
         "data": {
@@ -3868,7 +4249,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3901,7 +4283,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOnRydWV9LCJmaWx0ZXJIYXNoIjoiMjcyYWIzZWM5OWQ5Njc5M2IyYzgwNzYzZDhhMTYzNGMzZjZhY2NmZjM2MjlhZjcwZmYxZjBkYzMzYzA3MGI2NCIsIm9yZGVyaW5nIjoiY29tcGxldGlvblBlcmNlbnRhZ2U6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLjEsInoiLCJ6Il19.oaMOaRci9cEqVRDtSqYnChxUY1Iv5dXVds0KMr1rahI"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOnRydWV9LCJmaWx0ZXJIYXNoIjoiMjcyYWIzZWM5OWQ5Njc5M2IyYzgwNzYzZDhhMTYzNGMzZjZhY2NmZjM2MjlhZjcwZmYxZjBkYzMzYzA3MGI2NCIsIm9yZGVyaW5nIjoiY29tcGxldGlvblBlcmNlbnRhZ2U6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLjEsInoiLCJ6Il19.oaMOaRci9cEqVRDtSqYnChxUY1Iv5dXVds0KMr1rahI",
+            "total": 0
           }
         }
       }
@@ -3915,7 +4298,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0b6d40b23dca65a9a44dd658851d1cc596e26801\""
+        "etag": "\"592be73a18a6c6d466b3ae85b0b448fb1b1820c5\""
       },
       "body": {
         "data": {
@@ -3935,7 +4318,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOnRydWV9LCJmaWx0ZXJIYXNoIjoiMjcyYWIzZWM5OWQ5Njc5M2IyYzgwNzYzZDhhMTYzNGMzZjZhY2NmZjM2MjlhZjcwZmYxZjBkYzMzYzA3MGI2NCIsIm9yZGVyaW5nIjoiY29tcGxldGlvblBlcmNlbnRhZ2U6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLjEsInoiLCJ6Il19.oaMOaRci9cEqVRDtSqYnChxUY1Iv5dXVds0KMr1rahI"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOnRydWV9LCJmaWx0ZXJIYXNoIjoiMjcyYWIzZWM5OWQ5Njc5M2IyYzgwNzYzZDhhMTYzNGMzZjZhY2NmZjM2MjlhZjcwZmYxZjBkYzMzYzA3MGI2NCIsIm9yZGVyaW5nIjoiY29tcGxldGlvblBlcmNlbnRhZ2U6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLjEsInoiLCJ6Il19.oaMOaRci9cEqVRDtSqYnChxUY1Iv5dXVds0KMr1rahI",
+            "total": 0
           }
         }
       }
@@ -4149,6 +4533,42 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.leaderboard.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$group": {
+                "_id": "$epicAccountId"
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.leaderboard.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.leaderboard:limit=20",
           "payload": {
@@ -4156,7 +4576,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -4173,7 +4594,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"318c919cc2f232950a59a9702a083288ef6a9a4b\""
+        "etag": "\"0a0f86dfffc8b34d218d6f632af99cc27adca2a9\""
       },
       "body": {
         "data": [],
@@ -4181,7 +4602,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -4204,7 +4626,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -4218,7 +4641,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"318c919cc2f232950a59a9702a083288ef6a9a4b\""
+        "etag": "\"0a0f86dfffc8b34d218d6f632af99cc27adca2a9\""
       },
       "body": {
         "data": [],
@@ -4226,7 +4649,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -4509,7 +4933,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InAifSwiZmlsdGVySGFzaCI6ImRiZGIwNDQ3NjJmNWNmNzVkN2I2NGM4YzY3ZjA0NjFjZThkOGEzMGU2NTY3Y2YxZGQ3NDk1ZmM3ZjYwZDViOGIiLCJvcmRlcmluZyI6InVubG9ja0RhdGU6ZGVzYyxzYW5kYm94SWQ6YXNjLGFjaGlldmVtZW50TmFtZTphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMS0wNC0wMVQwMDowMDowMC4wMDBaIiwieiIsImhlbGxvIl19.r5HrwgxyXmi3yccyCqCjtKnFzob-aaZJdhpcbUICWnM"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InAifSwiZmlsdGVySGFzaCI6ImRiZGIwNDQ3NjJmNWNmNzVkN2I2NGM4YzY3ZjA0NjFjZThkOGEzMGU2NTY3Y2YxZGQ3NDk1ZmM3ZjYwZDViOGIiLCJvcmRlcmluZyI6InVubG9ja0RhdGU6ZGVzYyxzYW5kYm94SWQ6YXNjLGFjaGlldmVtZW50TmFtZTphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMS0wNC0wMVQwMDowMDowMC4wMDBaIiwieiIsImhlbGxvIl19.r5HrwgxyXmi3yccyCqCjtKnFzob-aaZJdhpcbUICWnM",
+              "total": 2
             }
           },
           "ttl": 3600
@@ -4526,7 +4951,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"888212ceaf1fea5e471806cd930a93bb266f4f78\""
+        "etag": "\"cb8c67464483435f03460918a740fc6027a082ae\""
       },
       "body": {
         "data": {
@@ -4550,7 +4975,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InAifSwiZmlsdGVySGFzaCI6ImRiZGIwNDQ3NjJmNWNmNzVkN2I2NGM4YzY3ZjA0NjFjZThkOGEzMGU2NTY3Y2YxZGQ3NDk1ZmM3ZjYwZDViOGIiLCJvcmRlcmluZyI6InVubG9ja0RhdGU6ZGVzYyxzYW5kYm94SWQ6YXNjLGFjaGlldmVtZW50TmFtZTphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMS0wNC0wMVQwMDowMDowMC4wMDBaIiwieiIsImhlbGxvIl19.r5HrwgxyXmi3yccyCqCjtKnFzob-aaZJdhpcbUICWnM"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InAifSwiZmlsdGVySGFzaCI6ImRiZGIwNDQ3NjJmNWNmNzVkN2I2NGM4YzY3ZjA0NjFjZThkOGEzMGU2NTY3Y2YxZGQ3NDk1ZmM3ZjYwZDViOGIiLCJvcmRlcmluZyI6InVubG9ja0RhdGU6ZGVzYyxzYW5kYm94SWQ6YXNjLGFjaGlldmVtZW50TmFtZTphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMS0wNC0wMVQwMDowMDowMC4wMDBaIiwieiIsImhlbGxvIl19.r5HrwgxyXmi3yccyCqCjtKnFzob-aaZJdhpcbUICWnM",
+            "total": 2
           }
         }
       }
@@ -4770,7 +5196,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 2
             }
           },
           "ttl": 3600
@@ -4787,7 +5214,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"e390000f93ce3655a9814bc016280e150a104428\""
+        "etag": "\"e09ba9bddd572d72f61d7eac7154c2d970e1c5fb\""
       },
       "body": {
         "data": {
@@ -4798,7 +5225,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 2
           }
         }
       }
@@ -4835,7 +5263,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InAifSwiZmlsdGVySGFzaCI6ImRiZGIwNDQ3NjJmNWNmNzVkN2I2NGM4YzY3ZjA0NjFjZThkOGEzMGU2NTY3Y2YxZGQ3NDk1ZmM3ZjYwZDViOGIiLCJvcmRlcmluZyI6InVubG9ja0RhdGU6ZGVzYyxzYW5kYm94SWQ6YXNjLGFjaGlldmVtZW50TmFtZTphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMS0wNC0wMVQwMDowMDowMC4wMDBaIiwieiIsImhlbGxvIl19.r5HrwgxyXmi3yccyCqCjtKnFzob-aaZJdhpcbUICWnM"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InAifSwiZmlsdGVySGFzaCI6ImRiZGIwNDQ3NjJmNWNmNzVkN2I2NGM4YzY3ZjA0NjFjZThkOGEzMGU2NTY3Y2YxZGQ3NDk1ZmM3ZjYwZDViOGIiLCJvcmRlcmluZyI6InVubG9ja0RhdGU6ZGVzYyxzYW5kYm94SWQ6YXNjLGFjaGlldmVtZW50TmFtZTphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMS0wNC0wMVQwMDowMDowMC4wMDBaIiwieiIsImhlbGxvIl19.r5HrwgxyXmi3yccyCqCjtKnFzob-aaZJdhpcbUICWnM",
+            "total": 2
           }
         }
       }
@@ -4849,7 +5278,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"888212ceaf1fea5e471806cd930a93bb266f4f78\""
+        "etag": "\"cb8c67464483435f03460918a740fc6027a082ae\""
       },
       "body": {
         "data": {
@@ -4873,7 +5302,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InAifSwiZmlsdGVySGFzaCI6ImRiZGIwNDQ3NjJmNWNmNzVkN2I2NGM4YzY3ZjA0NjFjZThkOGEzMGU2NTY3Y2YxZGQ3NDk1ZmM3ZjYwZDViOGIiLCJvcmRlcmluZyI6InVubG9ja0RhdGU6ZGVzYyxzYW5kYm94SWQ6YXNjLGFjaGlldmVtZW50TmFtZTphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMS0wNC0wMVQwMDowMDowMC4wMDBaIiwieiIsImhlbGxvIl19.r5HrwgxyXmi3yccyCqCjtKnFzob-aaZJdhpcbUICWnM"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InAifSwiZmlsdGVySGFzaCI6ImRiZGIwNDQ3NjJmNWNmNzVkN2I2NGM4YzY3ZjA0NjFjZThkOGEzMGU2NTY3Y2YxZGQ3NDk1ZmM3ZjYwZDViOGIiLCJvcmRlcmluZyI6InVubG9ja0RhdGU6ZGVzYyxzYW5kYm94SWQ6YXNjLGFjaGlldmVtZW50TmFtZTphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMS0wNC0wMVQwMDowMDowMC4wMDBaIiwieiIsImhlbGxvIl19.r5HrwgxyXmi3yccyCqCjtKnFzob-aaZJdhpcbUICWnM",
+            "total": 2
           }
         }
       }
@@ -7518,7 +7948,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 3600
@@ -7535,7 +7966,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"471277d1e45f31cc94cc25426496f8df3ef352e2\""
+        "etag": "\"76381ff8ba40d2ce5cdde2746b5268db83e304cf\""
       },
       "body": {
         "data": {
@@ -7552,7 +7983,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -7913,6 +8345,42 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.leaderboard.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$group": {
+                "_id": "$epicAccountId"
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.leaderboard.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.leaderboard:limit=1",
           "payload": {
@@ -7925,7 +8393,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCxudWxsXX0.M1dXK2uUf4K62ehareufi4KZd1AyamSqgKokXJtAbR8"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCxudWxsXX0.M1dXK2uUf4K62ehareufi4KZd1AyamSqgKokXJtAbR8",
+              "total": 0
             }
           },
           "ttl": 60
@@ -7942,7 +8411,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"19b39a40000422f5ef5eb6c3b364b2a95a870598\""
+        "etag": "\"a3cf8f252ba33d1920f3f151a5365c92aea53766\""
       },
       "body": {
         "data": [
@@ -7955,7 +8424,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCxudWxsXX0.M1dXK2uUf4K62ehareufi4KZd1AyamSqgKokXJtAbR8"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCxudWxsXX0.M1dXK2uUf4K62ehareufi4KZd1AyamSqgKokXJtAbR8",
+            "total": 0
           }
         }
       }
@@ -8192,6 +8662,42 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.leaderboard.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$group": {
+                "_id": "$epicAccountId"
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.leaderboard.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.leaderboard:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCxudWxsXX0.M1dXK2uUf4K62ehareufi4KZd1AyamSqgKokXJtAbR8\":limit=1",
           "payload": {
@@ -8199,7 +8705,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -8216,7 +8723,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0abce40006125ef975512b2ed71814e93a15a82d\""
+        "etag": "\"7f9d0a5d0bce149f4f0c6b951597574a6a04b9ed\""
       },
       "body": {
         "data": [],
@@ -8224,7 +8731,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -9003,7 +9511,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 2
             }
           },
           "ttl": 3600
@@ -9020,7 +9529,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"2f4b39bee9d00cccc93478e00c35a6e355436d1c\""
+        "etag": "\"61d4cf8d7ff64039110e48721070befab302d381\""
       },
       "body": {
         "data": {
@@ -9050,7 +9559,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 2
           }
         }
       }
@@ -9730,6 +10240,77 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=false"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=false",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.games:id=\"p\":limit=1:platinum=false:sort=\"xp\"",
           "payload": {
@@ -9741,7 +10322,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJ4cCIsInBsYXRpbnVtIjpmYWxzZX0sImZpbHRlckhhc2giOiJlNDg5Y2ZhMzY3ZTk0ODdlNzM4MWNhNWM0ZTM4ZTkzNWQ1OGZkNDI4Mjc0NWJkOWFmNmE3MDYxOWVhYWYwN2JhIiwib3JkZXJpbmciOiJ0b3RhbFhQOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCxudWxsLG51bGxdfQ.r9vhHzylV1X5_S1Mlfzdtm_9tugsxMJ_5P4mSRae5iA"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJ4cCIsInBsYXRpbnVtIjpmYWxzZX0sImZpbHRlckhhc2giOiJlNDg5Y2ZhMzY3ZTk0ODdlNzM4MWNhNWM0ZTM4ZTkzNWQ1OGZkNDI4Mjc0NWJkOWFmNmE3MDYxOWVhYWYwN2JhIiwib3JkZXJpbmciOiJ0b3RhbFhQOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCxudWxsLG51bGxdfQ.r9vhHzylV1X5_S1Mlfzdtm_9tugsxMJ_5P4mSRae5iA",
+              "total": 0
             }
           },
           "ttl": 60
@@ -9758,7 +10340,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0e539c72c87aeeb00907f3525e5a5e9a8456aefa\""
+        "etag": "\"9dcbe278246d50aecdbdc3e39e50a466f2ddf0ca\""
       },
       "body": {
         "data": {
@@ -9772,7 +10354,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJ4cCIsInBsYXRpbnVtIjpmYWxzZX0sImZpbHRlckhhc2giOiJlNDg5Y2ZhMzY3ZTk0ODdlNzM4MWNhNWM0ZTM4ZTkzNWQ1OGZkNDI4Mjc0NWJkOWFmNmE3MDYxOWVhYWYwN2JhIiwib3JkZXJpbmciOiJ0b3RhbFhQOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCxudWxsLG51bGxdfQ.r9vhHzylV1X5_S1Mlfzdtm_9tugsxMJ_5P4mSRae5iA"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJ4cCIsInBsYXRpbnVtIjpmYWxzZX0sImZpbHRlckhhc2giOiJlNDg5Y2ZhMzY3ZTk0ODdlNzM4MWNhNWM0ZTM4ZTkzNWQ1OGZkNDI4Mjc0NWJkOWFmNmE3MDYxOWVhYWYwN2JhIiwib3JkZXJpbmciOiJ0b3RhbFhQOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCxudWxsLG51bGxdfQ.r9vhHzylV1X5_S1Mlfzdtm_9tugsxMJ_5P4mSRae5iA",
+            "total": 0
           }
         }
       }
@@ -10466,6 +11049,42 @@
             "accountId": "next"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.leaderboard.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$group": {
+                "_id": "$epicAccountId"
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.leaderboard.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -11033,6 +11652,77 @@
             "completionPercentage": 0
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=false"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=false",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -11401,6 +12091,42 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.leaderboard.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$group": {
+                "_id": "$epicAccountId"
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.leaderboard.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -12374,6 +13100,42 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.leaderboard.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$group": {
+                "_id": "$epicAccountId"
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.leaderboard.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.leaderboard:limit=2",
           "payload": {
@@ -12404,7 +13166,8 @@
             "pagination": {
               "limit": 2,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MiwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMiwiYWNjb3VudC0yIl19.ZKLaa2cXctEs0qj-SwBArjCHa-G71kreMwZ6PUsXbnc"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MiwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMiwiYWNjb3VudC0yIl19.ZKLaa2cXctEs0qj-SwBArjCHa-G71kreMwZ6PUsXbnc",
+              "total": 0
             }
           },
           "ttl": 60
@@ -12421,7 +13184,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"8b6c98f4eaf69e1e32546f497aab2104d1242ea8\""
+        "etag": "\"394838e33c84be8197c4cffc93a1adbe28849f9a\""
       },
       "body": {
         "data": [
@@ -12452,7 +13215,8 @@
           "pagination": {
             "limit": 2,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MiwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMiwiYWNjb3VudC0yIl19.ZKLaa2cXctEs0qj-SwBArjCHa-G71kreMwZ6PUsXbnc"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MiwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMiwiYWNjb3VudC0yIl19.ZKLaa2cXctEs0qj-SwBArjCHa-G71kreMwZ6PUsXbnc",
+            "total": 0
           }
         }
       }
@@ -12708,7 +13472,8 @@
             "pagination": {
               "limit": 2,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 3600
@@ -12725,7 +13490,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"434dec20626ccf959e58d101a1d840f9a4e60b0b\""
+        "etag": "\"e714267951286d50a15a6686646097e6341b921b\""
       },
       "body": {
         "data": {
@@ -12736,7 +13501,8 @@
           "pagination": {
             "limit": 2,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -13014,7 +13780,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InBsYXllci0xIn0sImZpbHRlckhhc2giOiI4NTQ0ZDEwYzQxZDUwMGE3NjU1Zjg5OTVkMTg1NTc3ODFmYjY1ODJkY2NmODE3M2ZmMmE4Y2M2OGU2MmNmNDc0Iiwib3JkZXJpbmciOiJ1bmxvY2tEYXRlOmRlc2Msc2FuZGJveElkOmFzYyxhY2hpZXZlbWVudE5hbWU6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTZUMDA6MDA6MDAuMDAwWiIsInNhbmRib3gtMCIsIkFjaGlldmVtZW50IDAiXX0.Q5c4LHB6KHH-YKEwdhh7PifHOO_ELWIKIxRsr3AFBaQ"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InBsYXllci0xIn0sImZpbHRlckhhc2giOiI4NTQ0ZDEwYzQxZDUwMGE3NjU1Zjg5OTVkMTg1NTc3ODFmYjY1ODJkY2NmODE3M2ZmMmE4Y2M2OGU2MmNmNDc0Iiwib3JkZXJpbmciOiJ1bmxvY2tEYXRlOmRlc2Msc2FuZGJveElkOmFzYyxhY2hpZXZlbWVudE5hbWU6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTZUMDA6MDA6MDAuMDAwWiIsInNhbmRib3gtMCIsIkFjaGlldmVtZW50IDAiXX0.Q5c4LHB6KHH-YKEwdhh7PifHOO_ELWIKIxRsr3AFBaQ",
+              "total": 2
             }
           },
           "ttl": 3600
@@ -13031,7 +13798,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"36d94372f7a08e6cc07d0120563cede9646fe5eb\""
+        "etag": "\"98b2fd93048818be250f79e3e405fc7578af75b0\""
       },
       "body": {
         "data": {
@@ -13052,7 +13819,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InBsYXllci0xIn0sImZpbHRlckhhc2giOiI4NTQ0ZDEwYzQxZDUwMGE3NjU1Zjg5OTVkMTg1NTc3ODFmYjY1ODJkY2NmODE3M2ZmMmE4Y2M2OGU2MmNmNDc0Iiwib3JkZXJpbmciOiJ1bmxvY2tEYXRlOmRlc2Msc2FuZGJveElkOmFzYyxhY2hpZXZlbWVudE5hbWU6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTZUMDA6MDA6MDAuMDAwWiIsInNhbmRib3gtMCIsIkFjaGlldmVtZW50IDAiXX0.Q5c4LHB6KHH-YKEwdhh7PifHOO_ELWIKIxRsr3AFBaQ"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InBsYXllci0xIn0sImZpbHRlckhhc2giOiI4NTQ0ZDEwYzQxZDUwMGE3NjU1Zjg5OTVkMTg1NTc3ODFmYjY1ODJkY2NmODE3M2ZmMmE4Y2M2OGU2MmNmNDc0Iiwib3JkZXJpbmciOiJ1bmxvY2tEYXRlOmRlc2Msc2FuZGJveElkOmFzYyxhY2hpZXZlbWVudE5hbWU6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTZUMDA6MDA6MDAuMDAwWiIsInNhbmRib3gtMCIsIkFjaGlldmVtZW50IDAiXX0.Q5c4LHB6KHH-YKEwdhh7PifHOO_ELWIKIxRsr3AFBaQ",
+            "total": 2
           }
         }
       }
@@ -14862,6 +15630,77 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"player-2\":platinum=false"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "player-2"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games.total:id=\"player-2\":platinum=false",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.games:id=\"player-2\":limit=2:platinum=false:sort=\"completion\"",
           "payload": {
@@ -14910,7 +15749,8 @@
             "pagination": {
               "limit": 2,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicGxheWVyLTIiLCJzb3J0IjoiY29tcGxldGlvbiIsInBsYXRpbnVtIjpmYWxzZX0sImZpbHRlckhhc2giOiIyOTQwMzY2NTEzMTBjNDZiNDI5M2Q5YjhjYjc0MmJhYWJmMTk4ZGZiNjE0MDdhMDVlZjJmZTMxNWRmZWQyMGY0Iiwib3JkZXJpbmciOiJjb21wbGV0aW9uUGVyY2VudGFnZTpkZXNjLHByb2R1Y3QubmFtZTphc2Msc2FuZGJveElkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjIsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzAuOCwiR2FtZSAxIiwic2FuZGJveC0xIl19.u-qKsUB4M9UYnS21DIoDTjgaB89QmJAqIkyhVIoKSH0"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicGxheWVyLTIiLCJzb3J0IjoiY29tcGxldGlvbiIsInBsYXRpbnVtIjpmYWxzZX0sImZpbHRlckhhc2giOiIyOTQwMzY2NTEzMTBjNDZiNDI5M2Q5YjhjYjc0MmJhYWJmMTk4ZGZiNjE0MDdhMDVlZjJmZTMxNWRmZWQyMGY0Iiwib3JkZXJpbmciOiJjb21wbGV0aW9uUGVyY2VudGFnZTpkZXNjLHByb2R1Y3QubmFtZTphc2Msc2FuZGJveElkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjIsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzAuOCwiR2FtZSAxIiwic2FuZGJveC0xIl19.u-qKsUB4M9UYnS21DIoDTjgaB89QmJAqIkyhVIoKSH0",
+              "total": 0
             }
           },
           "ttl": 60
@@ -14927,7 +15767,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ea00b9d630021dff36a356dad59a034352f40eda\""
+        "etag": "\"8f981b979d2d8493b396658aa567d8307ac40c5f\""
       },
       "body": {
         "data": {
@@ -14978,7 +15818,8 @@
           "pagination": {
             "limit": 2,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicGxheWVyLTIiLCJzb3J0IjoiY29tcGxldGlvbiIsInBsYXRpbnVtIjpmYWxzZX0sImZpbHRlckhhc2giOiIyOTQwMzY2NTEzMTBjNDZiNDI5M2Q5YjhjYjc0MmJhYWJmMTk4ZGZiNjE0MDdhMDVlZjJmZTMxNWRmZWQyMGY0Iiwib3JkZXJpbmciOiJjb21wbGV0aW9uUGVyY2VudGFnZTpkZXNjLHByb2R1Y3QubmFtZTphc2Msc2FuZGJveElkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjIsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzAuOCwiR2FtZSAxIiwic2FuZGJveC0xIl19.u-qKsUB4M9UYnS21DIoDTjgaB89QmJAqIkyhVIoKSH0"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicGxheWVyLTIiLCJzb3J0IjoiY29tcGxldGlvbiIsInBsYXRpbnVtIjpmYWxzZX0sImZpbHRlckhhc2giOiIyOTQwMzY2NTEzMTBjNDZiNDI5M2Q5YjhjYjc0MmJhYWJmMTk4ZGZiNjE0MDdhMDVlZjJmZTMxNWRmZWQyMGY0Iiwib3JkZXJpbmciOiJjb21wbGV0aW9uUGVyY2VudGFnZTpkZXNjLHByb2R1Y3QubmFtZTphc2Msc2FuZGJveElkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjIsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzAuOCwiR2FtZSAxIiwic2FuZGJveC0xIl19.u-qKsUB4M9UYnS21DIoDTjgaB89QmJAqIkyhVIoKSH0",
+            "total": 0
           }
         }
       }
@@ -15387,6 +16228,42 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.leaderboard.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$group": {
+                "_id": "$epicAccountId"
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.leaderboard.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.leaderboard:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MiwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMiwiYWNjb3VudC0yIl19.ZKLaa2cXctEs0qj-SwBArjCHa-G71kreMwZ6PUsXbnc\":limit=2",
           "payload": {
@@ -15404,7 +16281,8 @@
             "pagination": {
               "limit": 2,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -15421,7 +16299,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d3af74d4e8d482803285e5f732eac7ea3a58b5ad\""
+        "etag": "\"5abc9dbedd90b8d0e71440bebbe252b26cbe2541\""
       },
       "body": {
         "data": [
@@ -15439,7 +16317,8 @@
           "pagination": {
             "limit": 2,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -15791,6 +16670,77 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"player-2\":platinum=false"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "player-2"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games.total:id=\"player-2\":platinum=false",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:profiles.games:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicGxheWVyLTIiLCJzb3J0IjoiY29tcGxldGlvbiIsInBsYXRpbnVtIjpmYWxzZX0sImZpbHRlckhhc2giOiIyOTQwMzY2NTEzMTBjNDZiNDI5M2Q5YjhjYjc0MmJhYWJmMTk4ZGZiNjE0MDdhMDVlZjJmZTMxNWRmZWQyMGY0Iiwib3JkZXJpbmciOiJjb21wbGV0aW9uUGVyY2VudGFnZTpkZXNjLHByb2R1Y3QubmFtZTphc2Msc2FuZGJveElkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjIsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzAuOCwiR2FtZSAxIiwic2FuZGJveC0xIl19.u-qKsUB4M9UYnS21DIoDTjgaB89QmJAqIkyhVIoKSH0\":id=\"player-2\":limit=2:platinum=false:sort=\"completion\"",
           "payload": {
@@ -15819,7 +16769,8 @@
             "pagination": {
               "limit": 2,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -15836,7 +16787,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"6eae9456538509db7f3bc9bf013bf65abadd8ff8\""
+        "etag": "\"04e54dab2c755b583b40957df3ca73df4b545a0c\""
       },
       "body": {
         "data": {
@@ -15867,11 +16818,1884 @@
           "pagination": {
             "limit": 2,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
     },
     "cursorSecret": "egdata-v1-local-cursor-secret-do-not-use-in-production"
+  },
+  {
+    "name": "v1 profile leaderboard total across page sizes",
+    "request": {
+      "path": "/v1/profiles/leaderboard?limit=1",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.leaderboard:limit=1"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$project": {
+                "epicAccountId": 1,
+                "sandboxId": 1,
+                "totalXP": 1,
+                "totalUnlocked": 1,
+                "playerAwards": 1
+              }
+            },
+            {
+              "$group": {
+                "_id": {
+                  "player": "$epicAccountId",
+                  "sandbox": "$sandboxId"
+                },
+                "xpForSandbox": {
+                  "$max": "$totalXP"
+                },
+                "unlockedForSandbox": {
+                  "$max": "$totalUnlocked"
+                },
+                "awardsForSandbox_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "awardsForSandbox": {
+                  "$reduce": {
+                    "input": "$awardsForSandbox_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "awardsForSandbox_arr": 0
+              }
+            },
+            {
+              "$group": {
+                "_id": "$_id.player",
+                "xpEarned": {
+                  "$sum": "$xpForSandbox"
+                },
+                "achievementsWon": {
+                  "$sum": "$unlockedForSandbox"
+                },
+                "awards_arr": {
+                  "$push": "$awardsForSandbox"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "awards": {
+                  "$reduce": {
+                    "input": "$awards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                },
+                "awardsEarned": {
+                  "$size": {
+                    "$reduce": {
+                      "input": "$awards_arr",
+                      "initialValue": [],
+                      "in": {
+                        "$setUnion": [
+                          "$$value",
+                          "$$this"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "awards_arr": 0
+              }
+            },
+            {
+              "$addFields": {
+                "awardsByType": {
+                  "$arrayToObject": {
+                    "$map": {
+                      "input": {
+                        "$setUnion": {
+                          "$map": {
+                            "input": "$awards",
+                            "as": "a",
+                            "in": "$$a.awardType"
+                          }
+                        }
+                      },
+                      "as": "type",
+                      "in": {
+                        "k": "$$type",
+                        "v": {
+                          "$size": {
+                            "$filter": {
+                              "input": "$awards",
+                              "as": "a",
+                              "cond": {
+                                "$eq": [
+                                  "$$a.awardType",
+                                  "$$type"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "epic",
+                "localField": "_id",
+                "foreignField": "accountId",
+                "as": "player"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$player",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$setWindowFields": {
+                "sortBy": {
+                  "xpEarned": -1
+                },
+                "output": {
+                  "rank": {
+                    "$rank": {}
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "rank": 1,
+                "accountId": "$_id",
+                "displayName": "$player.displayName",
+                "xpEarned": 1,
+                "achievementsWon": 1,
+                "awardsEarned": 1,
+                "awardsByType": 1
+              }
+            },
+            {
+              "$sort": {
+                "rank": 1,
+                "accountId": 1
+              }
+            },
+            {
+              "$limit": 2
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "rank": "old",
+            "accountId": null
+          },
+          {
+            "rank": 2,
+            "accountId": "next"
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.leaderboard.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$group": {
+                "_id": "$epicAccountId"
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "total": 83
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.leaderboard.total:",
+          "payload": 83,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.leaderboard:limit=1",
+          "payload": {
+            "entries": [
+              {
+                "rank": "old",
+                "accountId": null
+              }
+            ],
+            "pagination": {
+              "limit": 1,
+              "hasMore": true,
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCxudWxsXX0.M1dXK2uUf4K62ehareufi4KZd1AyamSqgKokXJtAbR8",
+              "total": 83
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8bea456c6fe32825fd3c23eeab7a31d1808d777b\""
+      },
+      "body": {
+        "data": [
+          {
+            "rank": "old",
+            "accountId": null
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCxudWxsXX0.M1dXK2uUf4K62ehareufi4KZd1AyamSqgKokXJtAbR8",
+            "total": 83
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "v1 profile leaderboard total reused",
+    "request": {
+      "path": "/v1/profiles/leaderboard?limit=2",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.leaderboard:limit=2"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$project": {
+                "epicAccountId": 1,
+                "sandboxId": 1,
+                "totalXP": 1,
+                "totalUnlocked": 1,
+                "playerAwards": 1
+              }
+            },
+            {
+              "$group": {
+                "_id": {
+                  "player": "$epicAccountId",
+                  "sandbox": "$sandboxId"
+                },
+                "xpForSandbox": {
+                  "$max": "$totalXP"
+                },
+                "unlockedForSandbox": {
+                  "$max": "$totalUnlocked"
+                },
+                "awardsForSandbox_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "awardsForSandbox": {
+                  "$reduce": {
+                    "input": "$awardsForSandbox_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "awardsForSandbox_arr": 0
+              }
+            },
+            {
+              "$group": {
+                "_id": "$_id.player",
+                "xpEarned": {
+                  "$sum": "$xpForSandbox"
+                },
+                "achievementsWon": {
+                  "$sum": "$unlockedForSandbox"
+                },
+                "awards_arr": {
+                  "$push": "$awardsForSandbox"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "awards": {
+                  "$reduce": {
+                    "input": "$awards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                },
+                "awardsEarned": {
+                  "$size": {
+                    "$reduce": {
+                      "input": "$awards_arr",
+                      "initialValue": [],
+                      "in": {
+                        "$setUnion": [
+                          "$$value",
+                          "$$this"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "awards_arr": 0
+              }
+            },
+            {
+              "$addFields": {
+                "awardsByType": {
+                  "$arrayToObject": {
+                    "$map": {
+                      "input": {
+                        "$setUnion": {
+                          "$map": {
+                            "input": "$awards",
+                            "as": "a",
+                            "in": "$$a.awardType"
+                          }
+                        }
+                      },
+                      "as": "type",
+                      "in": {
+                        "k": "$$type",
+                        "v": {
+                          "$size": {
+                            "$filter": {
+                              "input": "$awards",
+                              "as": "a",
+                              "cond": {
+                                "$eq": [
+                                  "$$a.awardType",
+                                  "$$type"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "epic",
+                "localField": "_id",
+                "foreignField": "accountId",
+                "as": "player"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$player",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$setWindowFields": {
+                "sortBy": {
+                  "xpEarned": -1
+                },
+                "output": {
+                  "rank": {
+                    "$rank": {}
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "rank": 1,
+                "accountId": "$_id",
+                "displayName": "$player.displayName",
+                "xpEarned": 1,
+                "achievementsWon": 1,
+                "awardsEarned": 1,
+                "awardsByType": 1
+              }
+            },
+            {
+              "$sort": {
+                "rank": 1,
+                "accountId": 1
+              }
+            },
+            {
+              "$limit": 3
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "rank": "old",
+            "accountId": null
+          },
+          {
+            "rank": 2,
+            "accountId": "next"
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.leaderboard.total:"
+        },
+        "result": 83
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.leaderboard:limit=2",
+          "payload": {
+            "entries": [
+              {
+                "rank": "old",
+                "accountId": null
+              },
+              {
+                "rank": 2,
+                "accountId": "next"
+              }
+            ],
+            "pagination": {
+              "limit": 2,
+              "hasMore": false,
+              "nextCursor": null,
+              "total": 83
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"4957a642e93ad33b12933a5c99a6108ae3ad3d46\""
+      },
+      "body": {
+        "data": [
+          {
+            "rank": "old",
+            "accountId": null
+          },
+          {
+            "rank": 2,
+            "accountId": "next"
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "limit": 2,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 83
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "v1 profile games platinum total",
+    "request": {
+      "path": "/v1/profiles/p/games?platinum=true&limit=1",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games:id=\"p\":limit=1:platinum=true:sort=\"completion\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.identity:id=\"p\":ttl=60"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "epicUser",
+          "id": "p"
+        },
+        "result": {
+          "accountId": "p",
+          "displayName": "Fixture"
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.identity:id=\"p\":ttl=60",
+          "payload": {
+            "accountId": "p",
+            "displayName": "Fixture"
+          },
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$gt": [
+                    {
+                      "$size": "$playerAwards"
+                    },
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "offers",
+                "let": {
+                  "sbx": "$_id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$namespace",
+                              "$$sbx"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$offerType",
+                              "BASE_GAME"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$isCodeRedemptionOnly",
+                              false
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "isDisplayable": -1,
+                      "title": 1,
+                      "lastModifiedDate": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  },
+                  {
+                    "$project": {
+                      "_id": 0,
+                      "id": 1,
+                      "namespace": 1,
+                      "keyImages": 1,
+                      "title": 1,
+                      "productSlug": 1
+                    }
+                  }
+                ],
+                "as": "offer"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$offer",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "achievementsets",
+                "localField": "_id",
+                "foreignField": "sandboxId",
+                "as": "achievementSets"
+              }
+            },
+            {
+              "$addFields": {
+                "totalAchievements": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$size": {
+                          "$ifNull": [
+                            "$$s.achievements",
+                            []
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "totalProductXP": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$reduce": {
+                          "input": {
+                            "$ifNull": [
+                              "$$s.achievements",
+                              []
+                            ]
+                          },
+                          "initialValue": 0,
+                          "in": {
+                            "$add": [
+                              "$$value",
+                              "$$this.xp"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "productAchievements": {
+                  "totalAchievements": "$totalAchievements",
+                  "totalProductXP": "$totalProductXP"
+                },
+                "completionPercentage": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$totalAchievements",
+                        0
+                      ]
+                    },
+                    0,
+                    {
+                      "$divide": [
+                        "$totalUnlocked",
+                        "$totalAchievements"
+                      ]
+                    }
+                  ]
+                },
+                "baseOfferForSandbox": {
+                  "id": "$offer.id",
+                  "namespace": "$offer.namespace",
+                  "keyImages": "$offer.keyImages"
+                },
+                "product": {
+                  "name": "$offer.title",
+                  "slug": "$offer.productSlug"
+                },
+                "sandboxId": "$_id"
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offer": 0,
+                "achievementSets": 0,
+                "totalAchievements": 0,
+                "totalProductXP": 0
+              }
+            },
+            {
+              "$sort": {
+                "completionPercentage": -1,
+                "product.name": 1,
+                "sandboxId": 1
+              }
+            },
+            {
+              "$limit": 2
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "sandboxId": "z",
+            "product": {
+              "name": "z"
+            },
+            "totalXP": 8,
+            "totalUnlocked": 1,
+            "completionPercentage": 0.1
+          },
+          {
+            "sandboxId": "a",
+            "product": {
+              "name": "a"
+            },
+            "totalXP": 7,
+            "totalUnlocked": 0,
+            "completionPercentage": 0
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$gt": [
+                    {
+                      "$size": "$playerAwards"
+                    },
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "total": 17
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true",
+          "payload": 17,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games:id=\"p\":limit=1:platinum=true:sort=\"completion\"",
+          "payload": {
+            "achievements": [
+              {
+                "sandboxId": "z",
+                "product": {
+                  "name": "z"
+                },
+                "totalXP": 8,
+                "totalUnlocked": 1,
+                "completionPercentage": 0.1
+              }
+            ],
+            "pagination": {
+              "limit": 1,
+              "hasMore": true,
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOnRydWV9LCJmaWx0ZXJIYXNoIjoiMjcyYWIzZWM5OWQ5Njc5M2IyYzgwNzYzZDhhMTYzNGMzZjZhY2NmZjM2MjlhZjcwZmYxZjBkYzMzYzA3MGI2NCIsIm9yZGVyaW5nIjoiY29tcGxldGlvblBlcmNlbnRhZ2U6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLjEsInoiLCJ6Il19.oaMOaRci9cEqVRDtSqYnChxUY1Iv5dXVds0KMr1rahI",
+              "total": 17
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"31c8bb1d21a488998aef671fcb4957b74ddc11ba\""
+      },
+      "body": {
+        "data": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            }
+          ]
+        },
+        "meta": {
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOnRydWV9LCJmaWx0ZXJIYXNoIjoiMjcyYWIzZWM5OWQ5Njc5M2IyYzgwNzYzZDhhMTYzNGMzZjZhY2NmZjM2MjlhZjcwZmYxZjBkYzMzYzA3MGI2NCIsIm9yZGVyaW5nIjoiY29tcGxldGlvblBlcmNlbnRhZ2U6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLjEsInoiLCJ6Il19.oaMOaRci9cEqVRDtSqYnChxUY1Iv5dXVds0KMr1rahI",
+            "total": 17
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "v1 profile games total reused across sorts",
+    "request": {
+      "path": "/v1/profiles/p/games?platinum=true&sort=alphabetical&limit=2",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games:id=\"p\":limit=2:platinum=true:sort=\"alphabetical\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.identity:id=\"p\":ttl=60"
+        },
+        "result": {
+          "accountId": "p",
+          "displayName": "Fixture"
+        }
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$gt": [
+                    {
+                      "$size": "$playerAwards"
+                    },
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "offers",
+                "let": {
+                  "sbx": "$_id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$namespace",
+                              "$$sbx"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$offerType",
+                              "BASE_GAME"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$isCodeRedemptionOnly",
+                              false
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "isDisplayable": -1,
+                      "title": 1,
+                      "lastModifiedDate": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  },
+                  {
+                    "$project": {
+                      "_id": 0,
+                      "id": 1,
+                      "namespace": 1,
+                      "keyImages": 1,
+                      "title": 1,
+                      "productSlug": 1
+                    }
+                  }
+                ],
+                "as": "offer"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$offer",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "achievementsets",
+                "localField": "_id",
+                "foreignField": "sandboxId",
+                "as": "achievementSets"
+              }
+            },
+            {
+              "$addFields": {
+                "totalAchievements": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$size": {
+                          "$ifNull": [
+                            "$$s.achievements",
+                            []
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "totalProductXP": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$reduce": {
+                          "input": {
+                            "$ifNull": [
+                              "$$s.achievements",
+                              []
+                            ]
+                          },
+                          "initialValue": 0,
+                          "in": {
+                            "$add": [
+                              "$$value",
+                              "$$this.xp"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "productAchievements": {
+                  "totalAchievements": "$totalAchievements",
+                  "totalProductXP": "$totalProductXP"
+                },
+                "completionPercentage": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$totalAchievements",
+                        0
+                      ]
+                    },
+                    0,
+                    {
+                      "$divide": [
+                        "$totalUnlocked",
+                        "$totalAchievements"
+                      ]
+                    }
+                  ]
+                },
+                "baseOfferForSandbox": {
+                  "id": "$offer.id",
+                  "namespace": "$offer.namespace",
+                  "keyImages": "$offer.keyImages"
+                },
+                "product": {
+                  "name": "$offer.title",
+                  "slug": "$offer.productSlug"
+                },
+                "sandboxId": "$_id"
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offer": 0,
+                "achievementSets": 0,
+                "totalAchievements": 0,
+                "totalProductXP": 0
+              }
+            },
+            {
+              "$sort": {
+                "product.name": 1,
+                "sandboxId": 1
+              }
+            },
+            {
+              "$limit": 3
+            }
+          ],
+          "options": {
+            "allowDiskUse": true,
+            "collation": {
+              "locale": "en",
+              "strength": 2
+            }
+          }
+        },
+        "result": [
+          {
+            "sandboxId": "z",
+            "product": {
+              "name": "z"
+            },
+            "totalXP": 8,
+            "totalUnlocked": 1,
+            "completionPercentage": 0.1
+          },
+          {
+            "sandboxId": "a",
+            "product": {
+              "name": "a"
+            },
+            "totalXP": 7,
+            "totalUnlocked": 0,
+            "completionPercentage": 0
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=true"
+        },
+        "result": 17
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games:id=\"p\":limit=2:platinum=true:sort=\"alphabetical\"",
+          "payload": {
+            "achievements": [
+              {
+                "sandboxId": "z",
+                "product": {
+                  "name": "z"
+                },
+                "totalXP": 8,
+                "totalUnlocked": 1,
+                "completionPercentage": 0.1
+              },
+              {
+                "sandboxId": "a",
+                "product": {
+                  "name": "a"
+                },
+                "totalXP": 7,
+                "totalUnlocked": 0,
+                "completionPercentage": 0
+              }
+            ],
+            "pagination": {
+              "limit": 2,
+              "hasMore": false,
+              "nextCursor": null,
+              "total": 17
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8eaae81f54cbbbf6dd85e269831373de6ad99e37\""
+      },
+      "body": {
+        "data": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            },
+            {
+              "sandboxId": "a",
+              "product": {
+                "name": "a"
+              },
+              "totalXP": 7,
+              "totalUnlocked": 0,
+              "completionPercentage": 0
+            }
+          ]
+        },
+        "meta": {
+          "pagination": {
+            "limit": 2,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 17
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "v1 profile games total changes with platinum filter",
+    "request": {
+      "path": "/v1/profiles/p/games?limit=2",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games:id=\"p\":limit=2:platinum=false:sort=\"completion\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.identity:id=\"p\":ttl=60"
+        },
+        "result": {
+          "accountId": "p",
+          "displayName": "Fixture"
+        }
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$lookup": {
+                "from": "offers",
+                "let": {
+                  "sbx": "$_id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$namespace",
+                              "$$sbx"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$offerType",
+                              "BASE_GAME"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$isCodeRedemptionOnly",
+                              false
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "isDisplayable": -1,
+                      "title": 1,
+                      "lastModifiedDate": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  },
+                  {
+                    "$project": {
+                      "_id": 0,
+                      "id": 1,
+                      "namespace": 1,
+                      "keyImages": 1,
+                      "title": 1,
+                      "productSlug": 1
+                    }
+                  }
+                ],
+                "as": "offer"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$offer",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "achievementsets",
+                "localField": "_id",
+                "foreignField": "sandboxId",
+                "as": "achievementSets"
+              }
+            },
+            {
+              "$addFields": {
+                "totalAchievements": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$size": {
+                          "$ifNull": [
+                            "$$s.achievements",
+                            []
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "totalProductXP": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$reduce": {
+                          "input": {
+                            "$ifNull": [
+                              "$$s.achievements",
+                              []
+                            ]
+                          },
+                          "initialValue": 0,
+                          "in": {
+                            "$add": [
+                              "$$value",
+                              "$$this.xp"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "productAchievements": {
+                  "totalAchievements": "$totalAchievements",
+                  "totalProductXP": "$totalProductXP"
+                },
+                "completionPercentage": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$totalAchievements",
+                        0
+                      ]
+                    },
+                    0,
+                    {
+                      "$divide": [
+                        "$totalUnlocked",
+                        "$totalAchievements"
+                      ]
+                    }
+                  ]
+                },
+                "baseOfferForSandbox": {
+                  "id": "$offer.id",
+                  "namespace": "$offer.namespace",
+                  "keyImages": "$offer.keyImages"
+                },
+                "product": {
+                  "name": "$offer.title",
+                  "slug": "$offer.productSlug"
+                },
+                "sandboxId": "$_id"
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offer": 0,
+                "achievementSets": 0,
+                "totalAchievements": 0,
+                "totalProductXP": 0
+              }
+            },
+            {
+              "$sort": {
+                "completionPercentage": -1,
+                "product.name": 1,
+                "sandboxId": 1
+              }
+            },
+            {
+              "$limit": 3
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "sandboxId": "z",
+            "product": {
+              "name": "z"
+            },
+            "totalXP": 8,
+            "totalUnlocked": 1,
+            "completionPercentage": 0.1
+          },
+          {
+            "sandboxId": "a",
+            "product": {
+              "name": "a"
+            },
+            "totalXP": 7,
+            "totalUnlocked": 0,
+            "completionPercentage": 0
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=false"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "total": 91
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games.total:id=\"p\":platinum=false",
+          "payload": 91,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games:id=\"p\":limit=2:platinum=false:sort=\"completion\"",
+          "payload": {
+            "achievements": [
+              {
+                "sandboxId": "z",
+                "product": {
+                  "name": "z"
+                },
+                "totalXP": 8,
+                "totalUnlocked": 1,
+                "completionPercentage": 0.1
+              },
+              {
+                "sandboxId": "a",
+                "product": {
+                  "name": "a"
+                },
+                "totalXP": 7,
+                "totalUnlocked": 0,
+                "completionPercentage": 0
+              }
+            ],
+            "pagination": {
+              "limit": 2,
+              "hasMore": false,
+              "nextCursor": null,
+              "total": 91
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d1ea5e26a6c2b5e2769b3dedea955fe44ea08c19\""
+      },
+      "body": {
+        "data": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            },
+            {
+              "sandboxId": "a",
+              "product": {
+                "name": "a"
+              },
+              "totalXP": 7,
+              "totalUnlocked": 0,
+              "completionPercentage": 0
+            }
+          ]
+        },
+        "meta": {
+          "pagination": {
+            "limit": 2,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 91
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "v1 profile old leaderboard page remains readable",
+    "request": {
+      "path": "/v1/profiles/leaderboard?limit=3",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.leaderboard:limit=3"
+        },
+        "result": {
+          "entries": [],
+          "pagination": {
+            "limit": 3,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"21723afe68a79c07d3f059b30adb80777c60cf7f\""
+      },
+      "body": {
+        "data": [],
+        "meta": {
+          "pagination": {
+            "limit": 3,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
   }
 ]

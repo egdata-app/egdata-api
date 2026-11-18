@@ -24,6 +24,61 @@ use egdata_core::{
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, HashMap, HashSet};
 
+#[allow(clippy::large_enum_variant)] // Built once per request and immediately moved into a spawned read.
+pub(super) enum PageRead {
+    Find(Document, MongoFindOptions),
+    Aggregate(Vec<Document>),
+}
+
+/// Run the page and its independently cached count like Promise.all. Dropping
+/// the other JoinHandle on error lets an already-started read or cache fill finish.
+pub(super) async fn counted_page(
+    state: &AppState,
+    operation: &str,
+    parts: &[(&str, Value)],
+    ttl: u64,
+    collection: &'static str,
+    base_filter: Option<Document>,
+    read: PageRead,
+) -> Result<(Vec<Document>, Value), ProblemError> {
+    let mongo = state.mongo.clone();
+    let page = tokio::spawn(async move {
+        match read {
+            PageRead::Find(filter, options) => mongo.find_many(collection, filter, options).await,
+            PageRead::Aggregate(pipeline) => mongo.aggregate(collection, pipeline).await,
+        }
+        .map_err(|_| super::system::internal_error())
+    });
+    let state = state.clone();
+    let operation = operation.to_owned();
+    let parts: Vec<_> = parts
+        .iter()
+        .map(|(key, value)| (key.to_string(), value.clone()))
+        .collect();
+    let count = tokio::spawn(async move {
+        let parts: Vec<_> = parts
+            .iter()
+            .map(|(key, value)| (key.as_str(), value.clone()))
+            .collect();
+        if let Some(filter) = base_filter {
+            super::counts::documents(&state, &operation, &parts, ttl, collection, filter).await
+        } else {
+            super::helpers::cached_total(
+                &state,
+                &operation,
+                &parts,
+                ttl,
+                std::future::ready(Ok(json!(0))),
+            )
+            .await
+        }
+    });
+    tokio::try_join!(
+        async { page.await.map_err(|_| super::system::internal_error())? },
+        async { count.await.map_err(|_| super::system::internal_error())? }
+    )
+}
+
 const OFFER_ORDERING: &str = "lastModifiedDate:desc,id:asc";
 fn item_sort() -> [MongoSortField; 2] {
     [
@@ -297,7 +352,14 @@ mod tests {
         }
         async fn count_documents(&self, c: &str, f: Document) -> Result<u64, CoreError> {
             self.count_calls.lock().unwrap().push((c.into(), f));
-            Ok(0)
+            Ok(match c {
+                "items" | "offers" | "builds" => self
+                    .many_by_collection
+                    .get(c)
+                    .map_or(0, |rows| rows.len() as u64),
+                "changelogs_v2" => self.aggregate_docs.len() as u64,
+                _ => 0,
+            })
         }
         async fn distinct(&self, c: &str, f: &str, d: Document) -> Result<Vec<Bson>, CoreError> {
             self.distinct_calls

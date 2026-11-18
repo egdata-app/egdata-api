@@ -84,7 +84,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"50f7ca32b9a54d684143086f7b8392d5ad32418d\""
+        "etag": "\"387e2f2614092e6540bc675ef7a06d470a35af4e\""
       },
       "body": {
         "data": [
@@ -148,7 +148,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -161,7 +162,7 @@
       "path": "/v1/offers?country=US"
     },
     "input": {
-      "cachePayload": "{\"offers\":[{\"_id\":null,\"id\":\"oracle-game\",\"namespace\":\"ns-oracle\",\"title\":\"Oracle Game\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-01-02T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":[],\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":[],\"items\":[],\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":{\"offerId\":\"oracle-game\",\"region\":\"US\",\"currencyCode\":\"USD\",\"precision\":2,\"originalPrice\":1999,\"discountPrice\":999,\"price\":{\"originalPrice\":1999,\"discountPrice\":999,\"discount\":50,\"currencyCode\":\"USD\",\"precision\":2},\"updatedAt\":null},\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null},\"localization\":{\"locale\":\"en-US\",\"localeStatus\":\"canonical\"},\"cacheTtl\":60}"
+      "cachePayload": "{\"offers\":[{\"_id\":null,\"id\":\"oracle-game\",\"namespace\":\"ns-oracle\",\"title\":\"Oracle Game\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-01-02T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":[],\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":[],\"items\":[],\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":{\"offerId\":\"oracle-game\",\"region\":\"US\",\"currencyCode\":\"USD\",\"precision\":2,\"originalPrice\":1999,\"discountPrice\":999,\"price\":{\"originalPrice\":1999,\"discountPrice\":999,\"discount\":50,\"currencyCode\":\"USD\",\"precision\":2},\"updatedAt\":null},\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":1},\"localization\":{\"locale\":\"en-US\",\"localeStatus\":\"canonical\"},\"cacheTtl\":60}"
     },
     "response": {
       "status": 200,
@@ -172,7 +173,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"50f7ca32b9a54d684143086f7b8392d5ad32418d\""
+        "etag": "\"387e2f2614092e6540bc675ef7a06d470a35af4e\""
       },
       "body": {
         "data": [
@@ -236,7 +237,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -285,7 +287,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"50f7ca32b9a54d684143086f7b8392d5ad32418d\""
+        "etag": "\"387e2f2614092e6540bc675ef7a06d470a35af4e\""
       },
       "body": {
         "data": [
@@ -349,7 +351,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -700,7 +703,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3577290f212c524e9ef8c7685d6a99b083017b7e\""
+        "etag": "\"7e3e5b266a4083df71afe4528cfdf83421a54ab5\""
       },
       "body": {
         "data": [
@@ -748,7 +751,8 @@
           "pagination": {
             "limit": 7,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -807,7 +811,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"2941ecab6bd0ccc8c3fdffe2c39389e5d7a0bc15\""
+        "etag": "\"65e4f144e4df88939811ba4c0a01cd65d8d21641\""
       },
       "body": {
         "data": [
@@ -891,7 +895,8 @@
           "pagination": {
             "limit": 5,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 2
           }
         }
       }
@@ -1034,7 +1039,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b22523e98bd7461923bc89255e0158387723fb0e\""
+        "etag": "\"178158331ee99303ba027b2d201e109131f91d46\""
       },
       "body": {
         "data": [
@@ -1082,7 +1087,8 @@
           "pagination": {
             "limit": 6,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -1134,7 +1140,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"117764f750aaeea4ad2c905672fa5379f3069019\""
+        "etag": "\"61ecd3f49639526e250c3b015b3d6cf007514144\""
       },
       "body": {
         "data": [
@@ -1198,7 +1204,8 @@
           "pagination": {
             "limit": 4,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -1528,7 +1535,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b30c3f44709e90b734fc9490af44ba6b7c669c4d\""
+        "etag": "\"c0fc6084c400f2a6bc6b41ed6a2ce81d0b2a8320\""
       },
       "body": {
         "data": [
@@ -1575,7 +1582,8 @@
           "pagination": {
             "limit": 10,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -1625,7 +1633,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"5df3cfee1bc304bda45ce2278a4fc1687aef25a9\""
+        "etag": "\"f5da97b7144591f0f9aa24f8fa700460f935faad\""
       },
       "body": {
         "data": [
@@ -1673,7 +1681,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudXBjb21pbmciLCJmaWx0ZXJzIjp7fSwiZmlsdGVySGFzaCI6IjQ0MTM2ZmEzNTViMzY3OGExMTQ2YWQxNmY3ZTg2NDllOTRmYjRmYzIxZmU3N2U4MzEwYzA2MGY2MWNhYWZmOGEiLCJvcmRlcmluZyI6InJlbGVhc2VEYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjA5OC0wMS0wMVQwMDowMDowMC4wMDBaIiwiY3Vyc29yLWEiXX0.YJCQTyWoxN9DL6wF2LnQsB00FypsqOm18G0VpmoBXZs"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudXBjb21pbmciLCJmaWx0ZXJzIjp7fSwiZmlsdGVySGFzaCI6IjQ0MTM2ZmEzNTViMzY3OGExMTQ2YWQxNmY3ZTg2NDllOTRmYjRmYzIxZmU3N2U4MzEwYzA2MGY2MWNhYWZmOGEiLCJvcmRlcmluZyI6InJlbGVhc2VEYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjA5OC0wMS0wMVQwMDowMDowMC4wMDBaIiwiY3Vyc29yLWEiXX0.YJCQTyWoxN9DL6wF2LnQsB00FypsqOm18G0VpmoBXZs",
+            "total": 2
           }
         }
       }
@@ -1712,7 +1721,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d9d82892ae6131ac7aa8bc8647adff7374939285\""
+        "etag": "\"d88d85fccc94ff7c311b0ca66e05aee3c5c3e5cd\""
       },
       "body": {
         "data": [
@@ -1760,7 +1769,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }

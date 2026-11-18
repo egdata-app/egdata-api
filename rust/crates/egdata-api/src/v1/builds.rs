@@ -333,16 +333,18 @@ async fn list_builds(State(state): State<AppState>, request: Request) -> Respons
         },
         None => None,
     };
-    let rows = match build_list_rows(
-        &state,
-        sort_by,
-        &sort_fields,
-        last.as_deref(),
-        pagination.limit,
-    )
-    .await
-    {
-        Ok(rows) => rows,
+    let (rows, total) = tokio::join!(
+        build_list_rows(
+            &state,
+            sort_by,
+            &sort_fields,
+            last.as_deref(),
+            pagination.limit,
+        ),
+        super::counts::documents(&state, "builds.list", &[], LIST_TTL, "builds", doc! {})
+    );
+    let (rows, total) = match rows.and_then(|rows| total.map(|total| (rows, total))) {
+        Ok(pair) => pair,
         Err(error) => return fail(&request, &error),
     };
     let page = trim_page(rows, pagination.limit as usize);
@@ -412,7 +414,7 @@ async fn list_builds(State(state): State<AppState>, request: Request) -> Respons
     } else {
         None
     };
-    let pagination_meta = page_meta(pagination.limit, page.has_more, next_cursor);
+    let pagination_meta = page_meta(pagination.limit, page.has_more, next_cursor).with_total(total);
     let result = json!({"data": data, "pagination": pagination_meta});
     v1_cache_set(state.cache.as_ref(), &key, &result, LIST_TTL).await;
     let meta = json!({
@@ -762,6 +764,11 @@ async fn build_files(
         );
         clauses.push(doc! {"fileName": {"$regex": pattern, "$options": "i"}});
     }
+    let base = if clauses.len() == 1 {
+        filter.clone()
+    } else {
+        doc! {"$and":clauses.clone()}
+    };
     if let Some(tuple) = &last {
         let bson_tuple: Vec<Bson> = tuple.iter().map(cursor_bson).collect();
         let cursor_filter = match mongo_keyset_filter(&sort_fields, &bson_tuple) {
@@ -774,9 +781,20 @@ async fn build_files(
         filter = doc! {"$and": clauses};
     }
     let sort_doc = mongo_sort_spec(&sort_fields);
-    let rows = match state
-        .mongo
-        .find_many(
+    let parts = [
+        ("id", json!(id)),
+        ("q", json!(search)),
+        (
+            "extensions",
+            if extensions.is_empty() {
+                Value::Null
+            } else {
+                json!(extensions)
+            },
+        ),
+    ];
+    let (rows, total) = tokio::join!(
+        state.mongo.find_many(
             "files",
             filter,
             MongoFindOptions {
@@ -784,13 +802,16 @@ async fn build_files(
                 limit: Some(i64::from(pagination.limit + 1)),
                 ..Default::default()
             },
-        )
-        .await
-    {
+        ),
+        super::counts::documents(&state, "builds.files", &parts, SNAPSHOT_TTL, "files", base)
+    );
+    let rows = match rows {
         Ok(rows) => rows,
-        Err(_) => {
-            return fail(&request, &super::system::internal_error());
-        }
+        Err(_) => return fail(&request, &super::system::internal_error()),
+    };
+    let total = match total {
+        Ok(total) => total,
+        Err(error) => return fail(&request, &error),
     };
     let page = trim_page(rows, pagination.limit as usize);
     let last_row = page.items.last();
@@ -828,7 +849,7 @@ async fn build_files(
         .cloned()
         .map(|row| bson_to_serialized_json(&Bson::Document(row)))
         .collect();
-    let pagination_meta = page_meta(pagination.limit, page.has_more, next_cursor);
+    let pagination_meta = page_meta(pagination.limit, page.has_more, next_cursor).with_total(total);
     let cached = json!({"data": data, "pagination": pagination_meta});
     v1_cache_set(state.cache.as_ref(), &cache_key, &cached, 300).await;
     json_success(
@@ -909,6 +930,7 @@ async fn build_history(
             doc! {"platform": {"$exists": false}, "labelName": {"$regex": format!("-{platform}$"), "$options": "i"}},
         ]);
     }
+    let base = filter.clone();
     let mut conditions = vec![filter];
     if let Some(tuple) = &last {
         let bson_tuple = [
@@ -928,9 +950,9 @@ async fn build_history(
     } else {
         doc! {"$and": conditions}
     };
-    let rows = match state
-        .mongo
-        .find_many(
+    let parts = [("id", json!(id)), ("scope", json!(scope))];
+    let (rows, total, previous) = tokio::join!(
+        state.mongo.find_many(
             "builds",
             filter,
             MongoFindOptions {
@@ -938,13 +960,17 @@ async fn build_history(
                 limit: Some(i64::from(pagination.limit + 1)),
                 ..Default::default()
             },
-        )
-        .await
-    {
+        ),
+        super::counts::documents(&state, "builds.history", &parts, LIST_TTL, "builds", base),
+        previous_comparable_build_id(&state, &build, effective_build_platform(&build),)
+    );
+    let rows = match rows {
         Ok(rows) => rows,
-        Err(_) => {
-            return fail(&request, &super::system::internal_error());
-        }
+        Err(_) => return fail(&request, &super::system::internal_error()),
+    };
+    let total = match total {
+        Ok(total) => total,
+        Err(error) => return fail(&request, &error),
     };
     let page = trim_page(rows, pagination.limit as usize);
     let last_row = page.items.last().map(bson_doc_to_js_json);
@@ -987,17 +1013,11 @@ async fn build_history(
     } else {
         None
     };
-    let previous = match previous_comparable_build_id(
-        &state,
-        &build,
-        effective_build_platform(&build),
-    )
-    .await
-    {
+    let previous = match previous {
         Ok(previous) => previous,
         Err(error) => return fail(&request, &error),
     };
-    let pagination_meta = page_meta(pagination.limit, page.has_more, next_cursor);
+    let pagination_meta = page_meta(pagination.limit, page.has_more, next_cursor).with_total(total);
     let cached_value =
         json!({"data": data, "pagination": pagination_meta, "previousComparableBuildId": previous});
     v1_cache_set(state.cache.as_ref(), &cache_key, &cached_value, LIST_TTL).await;
@@ -1148,6 +1168,8 @@ async fn build_tree(
     let mut pipeline = tree_group_pipeline(stored::snapshot_filter(&build), &path, |prefix| {
         Bson::String(format!("^{}", regex::escape(prefix)))
     });
+    let mut base = pipeline.clone();
+    base.push(doc! {"$project":{"_id":1}});
     if let Some(tuple) = &last {
         let fields = [
             MongoSortField::new("_id.type", SortDirection::Asc, NullsOrder::First),
@@ -1163,11 +1185,18 @@ async fn build_tree(
     pipeline.push(doc! {"$sort": {"_id.type": 1, "_id.name": 1}});
     pipeline.push(doc! {"$limit": i64::from(pagination.limit + 1)});
     pipeline.push(tree_projection());
-    let rows = match state.mongo.aggregate("files", pipeline).await {
+    let parts = [("id", json!(id)), ("path", json!(path))];
+    let (rows, total) = tokio::join!(
+        state.mongo.aggregate("files", pipeline),
+        super::counts::aggregate(&state, "builds.tree", &parts, SNAPSHOT_TTL, "files", base)
+    );
+    let rows = match rows {
         Ok(rows) => rows,
-        Err(_) => {
-            return fail(&request, &super::system::internal_error());
-        }
+        Err(_) => return fail(&request, &super::system::internal_error()),
+    };
+    let total = match total {
+        Ok(total) => total,
+        Err(error) => return fail(&request, &error),
     };
     let page = trim_page(rows, pagination.limit as usize);
     let nodes: Vec<_> = page
@@ -1204,7 +1233,7 @@ async fn build_tree(
     } else {
         None
     };
-    let cached = json!({"nodes": nodes, "pagination": page_meta(pagination.limit, page.has_more, next_cursor)});
+    let cached = json!({"nodes": nodes, "pagination": page_meta(pagination.limit, page.has_more, next_cursor).with_total(total)});
     v1_cache_set(state.cache.as_ref(), &cache_key, &cached, 300).await;
     json_success(
         method(&request),
@@ -1637,6 +1666,7 @@ where
             }) {
                 return;
             }
+            filtered_count += 1;
             if let Some(cursor) = filters.after_path {
                 let order = change.path.as_bytes().cmp(cursor.as_bytes());
                 if (filters.direction == BuildComparisonDirection::Asc
@@ -1647,7 +1677,6 @@ where
                     return;
                 }
             }
-            filtered_count += 1;
             if filtered_count <= filters.offset {
                 return;
             }
@@ -2008,7 +2037,8 @@ async fn compare_builds(
     } else {
         None
     };
-    let pagination_value = page_meta(pagination.limit, comparison.has_more, next_cursor);
+    let pagination_value = page_meta(pagination.limit, comparison.has_more, next_cursor)
+        .with_total(comparison.filtered_count);
     let mut cached = json!({"data": data, "pagination": pagination_value});
     v1_cache_set(state.cache.as_ref(), &cache_key, &cached, SNAPSHOT_TTL).await;
     json_success(
@@ -2077,7 +2107,8 @@ async fn build_items(
         },
         None => None,
     };
-    let mut clauses = vec![doc! {"releaseInfo.appId":build.get("appName").unwrap_or(&Bson::Null)}];
+    let base = doc! {"releaseInfo.appId":build.get("appName").unwrap_or(&Bson::Null)};
+    let mut clauses = vec![base.clone()];
     if let Some(tuple) = &last {
         let value = tuple.first().map_or(Bson::Null, cursor_bson);
         clauses.push(fixed_keyset(
@@ -2094,9 +2125,9 @@ async fn build_items(
     } else {
         doc! {"$and": clauses}
     };
-    let rows = match state
-        .mongo
-        .find_many(
+    let parts = [("id", json!(id))];
+    let (rows, total) = tokio::join!(
+        state.mongo.find_many(
             "items",
             filter,
             MongoFindOptions {
@@ -2104,13 +2135,16 @@ async fn build_items(
                 limit: Some(i64::from(pagination.limit + 1)),
                 ..Default::default()
             },
-        )
-        .await
-    {
+        ),
+        super::counts::documents(&state, "builds.items", &parts, LIST_TTL, "items", base)
+    );
+    let rows = match rows {
         Ok(rows) => rows,
-        Err(_) => {
-            return fail(&request, &super::system::internal_error());
-        }
+        Err(_) => return fail(&request, &super::system::internal_error()),
+    };
+    let total = match total {
+        Ok(total) => total,
+        Err(error) => return fail(&request, &error),
     };
     let page = trim_page(rows, pagination.limit as usize);
     let last_row = page.items.last();
@@ -2137,7 +2171,7 @@ async fn build_items(
     } else {
         None
     };
-    let cached = json!({"data": data, "pagination": page_meta(pagination.limit, page.has_more, next_cursor)});
+    let cached = json!({"data": data, "pagination": page_meta(pagination.limit, page.has_more, next_cursor).with_total(total)});
     v1_cache_set(state.cache.as_ref(), &cache_key, &cached, LIST_TTL).await;
     json_success(
         method(&request),
@@ -2887,13 +2921,21 @@ mod tests {
         assert_eq!(second.status(), StatusCode::OK);
         {
             let pipeline_rows = pipelines.lock().unwrap();
-            assert_eq!(pipeline_rows.len(), 2);
+            let page_pipelines: Vec<_> = pipeline_rows
+                .iter()
+                .filter(|pipeline| {
+                    pipeline
+                        .last()
+                        .is_none_or(|stage| stage.get_str("$count") != Ok("total"))
+                })
+                .collect();
+            assert_eq!(page_pipelines.len(), 2);
             assert!(
-                pipeline_rows[1][4].contains_key("$match"),
+                page_pipelines[1][4].contains_key("$match"),
                 "keyset match must run after grouping"
             );
             assert!(
-                pipeline_rows[1]
+                page_pipelines[1]
                     .iter()
                     .any(|stage| stage.contains_key("$project")),
                 "tree file fields are explicitly projected"
@@ -3204,6 +3246,7 @@ mod reads_node_oracle_tests {
     #[derive(Default)]
     struct ReadStore {
         build: Option<Document>,
+        total: Option<u64>,
         filters: Arc<std::sync::Mutex<Vec<Value>>>,
         base_snapshot: Option<Document>,
         base_files: Vec<Document>,
@@ -3372,6 +3415,16 @@ mod reads_node_oracle_tests {
             collection: &str,
             pipeline: Vec<Document>,
         ) -> Result<Vec<Document>, CoreError> {
+            if pipeline
+                .last()
+                .is_some_and(|stage| stage.get_str("$count") == Ok("total"))
+            {
+                self.filters.lock().unwrap().push(json!(
+                    pipeline.iter().map(bson_doc_to_js_json).collect::<Vec<_>>()
+                ));
+                let total = self.total.unwrap_or(self.tree.len() as u64);
+                return Ok(vec![doc! {"total":total as i64}]);
+            }
             if self.fail_collection.as_deref() == Some(collection) {
                 return Err(CoreError::Internal(
                     "private snapshot database failure".into(),
@@ -3408,8 +3461,21 @@ mod reads_node_oracle_tests {
                 self.tree.clone()
             })
         }
-        async fn count_documents(&self, _: &str, _: Document) -> Result<u64, CoreError> {
-            Ok(0)
+        async fn count_documents(&self, name: &str, filter: Document) -> Result<u64, CoreError> {
+            self.filters
+                .lock()
+                .unwrap()
+                .push(bson_doc_to_js_json(&filter));
+            if self.fail_stage.as_deref() == Some("count") {
+                return Err(CoreError::Internal("fixture count".into()));
+            }
+            let count = match name {
+                "files" => self.files.len(),
+                "items" => self.item_rows.len(),
+                _ if filter.contains_key("appName") => self.history.len(),
+                _ => self.list_rows.len() + self.null_rows.len(),
+            };
+            Ok(self.total.unwrap_or(count as u64))
         }
         async fn distinct(&self, _: &str, _: &str, _: Document) -> Result<Vec<Bson>, CoreError> {
             Ok(vec![])
@@ -3531,6 +3597,7 @@ mod reads_node_oracle_tests {
                 .unwrap();
             let filters = Arc::new(std::sync::Mutex::new(Vec::new()));
             let store = ReadStore {
+                total: input["total"].as_u64(),
                 filters: filters.clone(),
                 build,
                 base_snapshot: input.get("baseSnapshot").map(build_document),

@@ -39,6 +39,11 @@ vi.mock("../src/db/index.js", () => ({
   db: {
     db: {
       collection: (name: string) => ({
+        countDocuments: async (filter: Record<string, unknown>) => {
+          state.filters.push(filter);
+          if (state.input.failStage === "count") throw new Error("private count failure");
+          return state.input.total ?? (name === "files" ? (state.input.fileRows?.length ?? 0) : filter.appName ? (state.input.historyRows?.length ?? 0) : (state.input.listRows?.length ?? 0) + (state.input.nullRows?.length ?? 0));
+        },
         findOne: async (filter: Record<string, any>) => {
           if (state.input.databaseError && name === state.input.errorCollection)
             throw new Error("private build database error");
@@ -65,10 +70,30 @@ vi.mock("../src/db/index.js", () => ({
           options?: { projection?: Record<string, number> },
         ) => {
           if (state.input.databaseError && name === state.input.errorCollection)
-            throw new Error("private snapshot database error");
+            return {
+              sort() {
+                return this;
+              },
+              limit() {
+                return this;
+              },
+              toArray: async () => {
+                throw new Error("private snapshot database error");
+              },
+            };
           if (name === "builds") {
             if (state.input.failStage === "history-page")
-              throw new Error("private listing error");
+              return {
+                sort() {
+                  return this;
+                },
+                limit() {
+                  return this;
+                },
+                toArray: async () => {
+                  throw new Error("private listing error");
+                },
+              };
             if (filter.manifestId || filter._id?.$ne) return query([]);
             if (filter.createdAt?.$ne === null)
               return query(state.input.listRows ?? []);
@@ -128,9 +153,17 @@ vi.mock("../src/db/index.js", () => ({
           return query([]);
         },
         aggregate: (pipeline: Array<Record<string, unknown>>) => {
+          if (pipeline.at(-1)?.$count === "total") {
+            state.filters.push(pipeline);
+            return {toArray: async () => [{total:state.input.total ?? state.input.treeRows?.length ?? 0}]};
+          }
           if (name === "files") state.filters.push(pipeline[0]?.$match);
           if (state.input.databaseError && name === state.input.errorCollection)
-            throw new Error("private snapshot database error");
+            return {
+              toArray: async () => {
+                throw new Error("private snapshot database error");
+              },
+            };
           return {
             toArray: async () =>
               (pipeline.some(stage => stage.$unwind === "$installTags") ? state.input.installOptionRows : state.input.treeRows) ?? [],
@@ -153,10 +186,19 @@ vi.mock("../src/models/index.js", () => ({
   },
   Offer: { find: async () => state.input.launcherOffers ?? [] },
   Item: {
+    countDocuments: async (filter:Record<string,unknown>) => {
+      state.filters.push(filter);
+      if (state.input.failStage === "count") throw new Error("private count failure");
+      return state.input.total ?? state.input.itemRows?.length ?? 0;
+    },
     find: (filter: Record<string, any>) => {
       state.filters.push(filter);
       if (state.input.errorCollection === "items")
-        throw new Error("private item failure");
+        return Object.assign([], {
+          lean: async () => {
+            throw new Error("private item failure");
+          },
+        });
       const rows =
         typeof filter["releaseInfo.appId"] === "string"
           ? (state.input.itemRows ?? [])
@@ -792,12 +834,25 @@ describe("registered build history and snapshot Node oracle", () => {
       ],
     ];
     for (const [name, path, input] of warmCases) {
-      const cold = await record(name + "-cold", path, input);
+      const pageable = ["list", "history", "files", "tree", "items"].includes(name);
+      const cold = await record(name + "-cold", path, { ...input, total: 41 });
       expect(cold.status).toBe(200);
       const cached = Object.fromEntries(state.writes);
-      expect(Object.keys(cached)).toHaveLength(1);
+      const totals = Object.entries(cached).filter(([key]) => key.includes(".total:"));
+      expect(Object.keys(cached)).toHaveLength(pageable ? 2 : 1);
+      expect(totals).toHaveLength(pageable ? 1 : 0);
+      if (pageable) {
+        expect(cold.body.meta.pagination.total).toBe(41);
+        const warmTotal = await record(name + "-warm-total", path, {
+          ...input, failStage: "count", cached: Object.fromEntries(totals),
+        });
+        expect(warmTotal.body.meta.pagination.total).toBe(41);
+        expect(state.writes.has(totals[0][0])).toBe(false);
+      }
       await record(name + "-warm", path, { build: historyBuild, cached });
     }
+    const failedTotal = await record("list-count-outage", "/v1/builds", { failStage: "count" });
+    expect(failedTotal.status).toBe(500);
     await record("history-observed", snapshotPath + "/history", {
       build: { ...historyBuild, previousObservedBuildId: baseSnapshot._id },
       observed: baseSnapshot,
@@ -1400,7 +1455,8 @@ describe("registered build history and snapshot Node oracle", () => {
       });
       expect(response.status).toBe(status);
     }
-    expect(cases).toHaveLength(180 + historicalComparisons.length);
+    // Five pageable warm cases add a cached-total read; list adds a count-outage case.
+    expect(cases).toHaveLength(180 + historicalComparisons.length + 6);
 
     await assertOracle("build-reads-http-node", cases);
   });

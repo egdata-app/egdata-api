@@ -188,6 +188,16 @@
           {
             "$limit": 3
           }
+        ],
+        [
+          {
+            "$group": {
+              "_id": "$epicAccountId"
+            }
+          },
+          {
+            "$count": "total"
+          }
         ]
       ],
       "mongoAggregateResults": [
@@ -246,7 +256,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"8b6c98f4eaf69e1e32546f497aab2104d1242ea8\""
+        "etag": "\"394838e33c84be8197c4cffc93a1adbe28849f9a\""
       },
       "body": {
         "data": [
@@ -277,7 +287,8 @@
           "pagination": {
             "limit": 2,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MiwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMiwiYWNjb3VudC0yIl19.ZKLaa2cXctEs0qj-SwBArjCHa-G71kreMwZ6PUsXbnc"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MiwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMiwiYWNjb3VudC0yIl19.ZKLaa2cXctEs0qj-SwBArjCHa-G71kreMwZ6PUsXbnc",
+            "total": 0
           }
         }
       }
@@ -503,7 +514,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"434dec20626ccf959e58d101a1d840f9a4e60b0b\""
+        "etag": "\"e714267951286d50a15a6686646097e6341b921b\""
       },
       "body": {
         "data": {
@@ -514,7 +525,8 @@
           "pagination": {
             "limit": 2,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -750,7 +762,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"36d94372f7a08e6cc07d0120563cede9646fe5eb\""
+        "etag": "\"98b2fd93048818be250f79e3e405fc7578af75b0\""
       },
       "body": {
         "data": {
@@ -771,7 +783,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InBsYXllci0xIn0sImZpbHRlckhhc2giOiI4NTQ0ZDEwYzQxZDUwMGE3NjU1Zjg5OTVkMTg1NTc3ODFmYjY1ODJkY2NmODE3M2ZmMmE4Y2M2OGU2MmNmNDc0Iiwib3JkZXJpbmciOiJ1bmxvY2tEYXRlOmRlc2Msc2FuZGJveElkOmFzYyxhY2hpZXZlbWVudE5hbWU6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTZUMDA6MDA6MDAuMDAwWiIsInNhbmRib3gtMCIsIkFjaGlldmVtZW50IDAiXX0.Q5c4LHB6KHH-YKEwdhh7PifHOO_ELWIKIxRsr3AFBaQ"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InBsYXllci0xIn0sImZpbHRlckhhc2giOiI4NTQ0ZDEwYzQxZDUwMGE3NjU1Zjg5OTVkMTg1NTc3ODFmYjY1ODJkY2NmODE3M2ZmMmE4Y2M2OGU2MmNmNDc0Iiwib3JkZXJpbmciOiJ1bmxvY2tEYXRlOmRlc2Msc2FuZGJveElkOmFzYyxhY2hpZXZlbWVudE5hbWU6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTZUMDA6MDA6MDAuMDAwWiIsInNhbmRib3gtMCIsIkFjaGlldmVtZW50IDAiXX0.Q5c4LHB6KHH-YKEwdhh7PifHOO_ELWIKIxRsr3AFBaQ",
+            "total": 2
           }
         }
       }
@@ -2087,6 +2100,51 @@
           {
             "$limit": 3
           }
+        ],
+        [
+          {
+            "$match": {
+              "epicAccountId": "player-2"
+            }
+          },
+          {
+            "$group": {
+              "_id": "$sandboxId",
+              "totalUnlocked": {
+                "$max": "$totalUnlocked"
+              },
+              "totalXP": {
+                "$max": "$totalXP"
+              },
+              "playerAwards_arr": {
+                "$push": "$playerAwards"
+              }
+            }
+          },
+          {
+            "$addFields": {
+              "playerAwards": {
+                "$reduce": {
+                  "input": "$playerAwards_arr",
+                  "initialValue": [],
+                  "in": {
+                    "$setUnion": [
+                      "$$value",
+                      "$$this"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$project": {
+              "playerAwards_arr": 0
+            }
+          },
+          {
+            "$count": "total"
+          }
         ]
       ],
       "mongoAggregateResults": [
@@ -2182,7 +2240,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ea00b9d630021dff36a356dad59a034352f40eda\""
+        "etag": "\"8f981b979d2d8493b396658aa567d8307ac40c5f\""
       },
       "body": {
         "data": {
@@ -2233,7 +2291,8 @@
           "pagination": {
             "limit": 2,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicGxheWVyLTIiLCJzb3J0IjoiY29tcGxldGlvbiIsInBsYXRpbnVtIjpmYWxzZX0sImZpbHRlckhhc2giOiIyOTQwMzY2NTEzMTBjNDZiNDI5M2Q5YjhjYjc0MmJhYWJmMTk4ZGZiNjE0MDdhMDVlZjJmZTMxNWRmZWQyMGY0Iiwib3JkZXJpbmciOiJjb21wbGV0aW9uUGVyY2VudGFnZTpkZXNjLHByb2R1Y3QubmFtZTphc2Msc2FuZGJveElkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjIsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzAuOCwiR2FtZSAxIiwic2FuZGJveC0xIl19.u-qKsUB4M9UYnS21DIoDTjgaB89QmJAqIkyhVIoKSH0"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicGxheWVyLTIiLCJzb3J0IjoiY29tcGxldGlvbiIsInBsYXRpbnVtIjpmYWxzZX0sImZpbHRlckhhc2giOiIyOTQwMzY2NTEzMTBjNDZiNDI5M2Q5YjhjYjc0MmJhYWJmMTk4ZGZiNjE0MDdhMDVlZjJmZTMxNWRmZWQyMGY0Iiwib3JkZXJpbmciOiJjb21wbGV0aW9uUGVyY2VudGFnZTpkZXNjLHByb2R1Y3QubmFtZTphc2Msc2FuZGJveElkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjIsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzAuOCwiR2FtZSAxIiwic2FuZGJveC0xIl19.u-qKsUB4M9UYnS21DIoDTjgaB89QmJAqIkyhVIoKSH0",
+            "total": 0
           }
         }
       }
@@ -2605,6 +2664,16 @@
           {
             "$limit": 3
           }
+        ],
+        [
+          {
+            "$group": {
+              "_id": "$epicAccountId"
+            }
+          },
+          {
+            "$count": "total"
+          }
         ]
       ],
       "mongoAggregateResults": [
@@ -2634,7 +2703,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d3af74d4e8d482803285e5f732eac7ea3a58b5ad\""
+        "etag": "\"5abc9dbedd90b8d0e71440bebbe252b26cbe2541\""
       },
       "body": {
         "data": [
@@ -2652,7 +2721,8 @@
           "pagination": {
             "limit": 2,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -2924,6 +2994,51 @@
           {
             "$limit": 3
           }
+        ],
+        [
+          {
+            "$match": {
+              "epicAccountId": "player-2"
+            }
+          },
+          {
+            "$group": {
+              "_id": "$sandboxId",
+              "totalUnlocked": {
+                "$max": "$totalUnlocked"
+              },
+              "totalXP": {
+                "$max": "$totalXP"
+              },
+              "playerAwards_arr": {
+                "$push": "$playerAwards"
+              }
+            }
+          },
+          {
+            "$addFields": {
+              "playerAwards": {
+                "$reduce": {
+                  "input": "$playerAwards_arr",
+                  "initialValue": [],
+                  "in": {
+                    "$setUnion": [
+                      "$$value",
+                      "$$this"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$project": {
+              "playerAwards_arr": 0
+            }
+          },
+          {
+            "$count": "total"
+          }
         ]
       ],
       "mongoAggregateResults": [
@@ -2974,7 +3089,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"6eae9456538509db7f3bc9bf013bf65abadd8ff8\""
+        "etag": "\"04e54dab2c755b583b40957df3ca73df4b545a0c\""
       },
       "body": {
         "data": {
@@ -3005,7 +3120,8 @@
           "pagination": {
             "limit": 2,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }

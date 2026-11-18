@@ -219,6 +219,7 @@ pub(crate) async fn build_state_for_listener(
             .map_err(|_| anyhow::anyhow!("Invalid catalog collation locale"))?;
 
     let state = AppState {
+        ssr_telemetry: Arc::new(crate::v1::ssr_telemetry::SsrTelemetry::from_env(env)),
         now: chrono::Utc::now,
         new_object_id: bson::oid::ObjectId::new,
         config: api,

@@ -13,6 +13,8 @@ const mocks = vi.hoisted(() => ({
   offerFind: vi.fn(),
   offerFindOne: vi.fn(),
   offerAggregate: vi.fn(),
+  offerCount: vi.fn(),
+  gamePositionCount: vi.fn(),
   priceFind: vi.fn(),
   priceFindOne: vi.fn(),
   localizations: vi.fn(),
@@ -22,11 +24,15 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("../src/models/index.js", () => ({
   AchievementSet: { find: mocks.achievementFind },
-  GamePosition: { find: mocks.gamePositionFind },
+  GamePosition: {
+    find: mocks.gamePositionFind,
+    countDocuments: mocks.gamePositionCount,
+  },
   Offer: {
     find: mocks.offerFind,
     findOne: mocks.offerFindOne,
     aggregate: mocks.offerAggregate,
+    countDocuments: mocks.offerCount,
   },
   PriceEngine: { find: mocks.priceFind, findOne: mocks.priceFindOne },
   TagModel: { find: mocks.find, findOne: mocks.tagFindOne },
@@ -86,6 +92,8 @@ describe("registered v1 offer Node oracle", () => {
     mocks.offerFind.mockReset().mockReturnValue({ lean: async () => [] });
     mocks.offerFindOne.mockReset().mockReturnValue({ lean: async () => null });
     mocks.offerAggregate.mockReset().mockReturnValue({ exec: async () => [] });
+    mocks.offerCount.mockReset().mockResolvedValue(1);
+    mocks.gamePositionCount.mockReset().mockResolvedValue(1);
     mocks.localizations.mockReset().mockReturnValue([]);
     mocks.priceFind.mockReset().mockReturnValue({ lean: async () => [] });
     mocks.priceFindOne.mockReset().mockReturnValue({ lean: async () => null });
@@ -301,6 +309,7 @@ describe("registered v1 offer Node oracle", () => {
       { collectionId: "top-sellers", offerId: "ranked-one", position: 2 },
     ];
     mocks.gamePositionFind.mockReturnValue({ lean: async () => positions });
+    mocks.gamePositionCount.mockResolvedValue(positions.length);
     mocks.offerFind.mockReturnValue({ lean: async () => rankedOffers });
     const topRequest = {
       method: "GET",
@@ -513,6 +522,7 @@ describe("registered v1 offer Node oracle", () => {
       offerType: "BASE_GAME",
     };
     mocks.gamePositionFind.mockReturnValue({ lean: async () => wishPositions });
+    mocks.gamePositionCount.mockResolvedValue(wishPositions.length);
     mocks.offerFind.mockReturnValue({ lean: async () => [wishOffer] });
     const wishRequest = {
       method: "GET",
@@ -544,6 +554,7 @@ describe("registered v1 offer Node oracle", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-11-17T18:00:00.000Z"));
     mocks.offerFind.mockReturnValue({ lean: async () => cursorOffers });
+    mocks.offerCount.mockResolvedValue(cursorOffers.length);
     mocks.priceFind.mockReturnValue({ lean: async () => [] });
     const cursorFirstRequest = {
       method: "GET",
@@ -561,6 +572,7 @@ describe("registered v1 offer Node oracle", () => {
     const nextCursor = cursorFirstResponse.body.meta.pagination
       .nextCursor as string;
     mocks.offerFind.mockReturnValue({ lean: async () => [cursorOffers[1]] });
+    mocks.offerCount.mockResolvedValue(1);
     const cursorNextRequest = {
       method: "GET",
       path: `/v1/offers/upcoming?limit=1&cursor=${encodeURIComponent(nextCursor)}`,

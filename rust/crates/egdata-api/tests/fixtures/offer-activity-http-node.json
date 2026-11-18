@@ -308,6 +308,45 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.changelog.total:field=\"title\":id=\"game-a\":query=\"car\":type=\"UPDATE\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "game-a",
+                "item-a",
+                "sub",
+                "artifact"
+              ]
+            },
+            "$text": {
+              "$search": "car"
+            },
+            "metadata.changes.changeType": "UPDATE",
+            "metadata.changes.field": "title"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.changelog.total:field=\"title\":id=\"game-a\":query=\"car\":type=\"UPDATE\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.changelog:field=\"title\":id=\"game-a\":limit=1:query=\"car\":type=\"UPDATE\"",
           "payload": {
@@ -327,7 +366,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLmNoYW5nZWxvZyIsImZpbHRlcnMiOnsib2ZmZXJJZCI6ImdhbWUtYSIsInF1ZXJ5IjoiY2FyIiwidHlwZSI6IlVQREFURSIsImZpZWxkIjoidGl0bGUifSwiZmlsdGVySGFzaCI6IjJkMzZjMzA1ZDBkZGM1NGMyNzMzY2NkNGQ5YzExMTQ3MjRiYTFmOGZhNTAwYzY4YjgzYmI2NTU5OGM5NDE5NTMiLCJvcmRlcmluZyI6InRpbWVzdGFtcDpkZXNjLF9pZDpkZXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTVUMDI6MDA6MDAuMDAwWiIsIm9pZDo2NGMwMDAwMDAwMDAwMDAwMDAwMDAwMDEiXX0.-nkI3IN6eHUBF-Qh938DiFjtTuqFMsikLx3D9XS4AGE"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLmNoYW5nZWxvZyIsImZpbHRlcnMiOnsib2ZmZXJJZCI6ImdhbWUtYSIsInF1ZXJ5IjoiY2FyIiwidHlwZSI6IlVQREFURSIsImZpZWxkIjoidGl0bGUifSwiZmlsdGVySGFzaCI6IjJkMzZjMzA1ZDBkZGM1NGMyNzMzY2NkNGQ5YzExMTQ3MjRiYTFmOGZhNTAwYzY4YjgzYmI2NTU5OGM5NDE5NTMiLCJvcmRlcmluZyI6InRpbWVzdGFtcDpkZXNjLF9pZDpkZXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTVUMDI6MDA6MDAuMDAwWiIsIm9pZDo2NGMwMDAwMDAwMDAwMDAwMDAwMDAwMDEiXX0.-nkI3IN6eHUBF-Qh938DiFjtTuqFMsikLx3D9XS4AGE",
+              "total": 2
             }
           },
           "ttl": 60
@@ -344,7 +384,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"256a92c06984f4c7e08c77a9b8ed08a369a9af82\""
+        "etag": "\"753fc3173712a44ab4c15e1c1a3cc00ab027c113\""
       },
       "body": {
         "data": [
@@ -364,7 +404,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLmNoYW5nZWxvZyIsImZpbHRlcnMiOnsib2ZmZXJJZCI6ImdhbWUtYSIsInF1ZXJ5IjoiY2FyIiwidHlwZSI6IlVQREFURSIsImZpZWxkIjoidGl0bGUifSwiZmlsdGVySGFzaCI6IjJkMzZjMzA1ZDBkZGM1NGMyNzMzY2NkNGQ5YzExMTQ3MjRiYTFmOGZhNTAwYzY4YjgzYmI2NTU5OGM5NDE5NTMiLCJvcmRlcmluZyI6InRpbWVzdGFtcDpkZXNjLF9pZDpkZXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTVUMDI6MDA6MDAuMDAwWiIsIm9pZDo2NGMwMDAwMDAwMDAwMDAwMDAwMDAwMDEiXX0.-nkI3IN6eHUBF-Qh938DiFjtTuqFMsikLx3D9XS4AGE"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLmNoYW5nZWxvZyIsImZpbHRlcnMiOnsib2ZmZXJJZCI6ImdhbWUtYSIsInF1ZXJ5IjoiY2FyIiwidHlwZSI6IlVQREFURSIsImZpZWxkIjoidGl0bGUifSwiZmlsdGVySGFzaCI6IjJkMzZjMzA1ZDBkZGM1NGMyNzMzY2NkNGQ5YzExMTQ3MjRiYTFmOGZhNTAwYzY4YjgzYmI2NTU5OGM5NDE5NTMiLCJvcmRlcmluZyI6InRpbWVzdGFtcDpkZXNjLF9pZDpkZXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTVUMDI6MDA6MDAuMDAwWiIsIm9pZDo2NGMwMDAwMDAwMDAwMDAwMDAwMDAwMDEiXX0.-nkI3IN6eHUBF-Qh938DiFjtTuqFMsikLx3D9XS4AGE",
+            "total": 2
           }
         }
       }
@@ -694,6 +735,45 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.changelog.total:field=\"title\":id=\"game-a\":query=\"car\":type=\"UPDATE\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "game-a",
+                "item-a",
+                "sub",
+                "artifact"
+              ]
+            },
+            "$text": {
+              "$search": "car"
+            },
+            "metadata.changes.changeType": "UPDATE",
+            "metadata.changes.field": "title"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.changelog.total:field=\"title\":id=\"game-a\":query=\"car\":type=\"UPDATE\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.changelog:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLmNoYW5nZWxvZyIsImZpbHRlcnMiOnsib2ZmZXJJZCI6ImdhbWUtYSIsInF1ZXJ5IjoiY2FyIiwidHlwZSI6IlVQREFURSIsImZpZWxkIjoidGl0bGUifSwiZmlsdGVySGFzaCI6IjJkMzZjMzA1ZDBkZGM1NGMyNzMzY2NkNGQ5YzExMTQ3MjRiYTFmOGZhNTAwYzY4YjgzYmI2NTU5OGM5NDE5NTMiLCJvcmRlcmluZyI6InRpbWVzdGFtcDpkZXNjLF9pZDpkZXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTVUMDI6MDA6MDAuMDAwWiIsIm9pZDo2NGMwMDAwMDAwMDAwMDAwMDAwMDAwMDEiXX0.-nkI3IN6eHUBF-Qh938DiFjtTuqFMsikLx3D9XS4AGE\":field=\"title\":id=\"game-a\":limit=1:query=\"car\":type=\"UPDATE\"",
           "payload": {
@@ -701,7 +781,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -718,7 +799,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0abce40006125ef975512b2ed71814e93a15a82d\""
+        "etag": "\"7f9d0a5d0bce149f4f0c6b951597574a6a04b9ed\""
       },
       "body": {
         "data": [],
@@ -726,7 +807,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -1454,6 +1536,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.reviews.total:id=\"game-a\":verified=false"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "id": "game-a",
+            "verified": false
+          },
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.reviews.total:id=\"game-a\":verified=false",
+          "payload": 4,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "epic",
           "method": "many",
           "query": {
@@ -1514,7 +1624,8 @@
             "pagination": {
               "limit": 3,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnJldmlld3MiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJ2ZXJpZmllZCI6ZmFsc2V9LCJmaWx0ZXJIYXNoIjoiZmM1NDFmMWZhMWEyY2EyMGNjZjI3ZTA3ZDYwY2U3ZDcyNTliMGY1NTg4YjkyNTJiN2NlZmJkYmFiNGQ4ZTBiMSIsIm9yZGVyaW5nIjoiY3JlYXRlZEF0OmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjozLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xNVQwMjowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.MnXYQexK6Vl4P009LooP3w3TNxLxsc8907JoQcZ2zHU"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnJldmlld3MiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJ2ZXJpZmllZCI6ZmFsc2V9LCJmaWx0ZXJIYXNoIjoiZmM1NDFmMWZhMWEyY2EyMGNjZjI3ZTA3ZDYwY2U3ZDcyNTliMGY1NTg4YjkyNTJiN2NlZmJkYmFiNGQ4ZTBiMSIsIm9yZGVyaW5nIjoiY3JlYXRlZEF0OmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjozLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xNVQwMjowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.MnXYQexK6Vl4P009LooP3w3TNxLxsc8907JoQcZ2zHU",
+              "total": 4
             }
           },
           "ttl": 60
@@ -1531,7 +1642,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3bcec98ea2f8fb58aa056aecf1893da6c49d8f15\""
+        "etag": "\"c9fdbcbaa2fc744f570a50b915c9117470f07307\""
       },
       "body": {
         "data": [
@@ -1571,7 +1682,8 @@
           "pagination": {
             "limit": 3,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnJldmlld3MiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJ2ZXJpZmllZCI6ZmFsc2V9LCJmaWx0ZXJIYXNoIjoiZmM1NDFmMWZhMWEyY2EyMGNjZjI3ZTA3ZDYwY2U3ZDcyNTliMGY1NTg4YjkyNTJiN2NlZmJkYmFiNGQ4ZTBiMSIsIm9yZGVyaW5nIjoiY3JlYXRlZEF0OmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjozLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xNVQwMjowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.MnXYQexK6Vl4P009LooP3w3TNxLxsc8907JoQcZ2zHU"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnJldmlld3MiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJ2ZXJpZmllZCI6ZmFsc2V9LCJmaWx0ZXJIYXNoIjoiZmM1NDFmMWZhMWEyY2EyMGNjZjI3ZTA3ZDYwY2U3ZDcyNTliMGY1NTg4YjkyNTJiN2NlZmJkYmFiNGQ4ZTBiMSIsIm9yZGVyaW5nIjoiY3JlYXRlZEF0OmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjozLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xNVQwMjowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.MnXYQexK6Vl4P009LooP3w3TNxLxsc8907JoQcZ2zHU",
+            "total": 4
           }
         }
       }
@@ -1655,6 +1767,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.reviews.total:id=\"game-a\":verified=false"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "id": "game-a",
+            "verified": false
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.reviews.total:id=\"game-a\":verified=false",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.reviews:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnJldmlld3MiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJ2ZXJpZmllZCI6ZmFsc2V9LCJmaWx0ZXJIYXNoIjoiZmM1NDFmMWZhMWEyY2EyMGNjZjI3ZTA3ZDYwY2U3ZDcyNTliMGY1NTg4YjkyNTJiN2NlZmJkYmFiNGQ4ZTBiMSIsIm9yZGVyaW5nIjoiY3JlYXRlZEF0OmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjozLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xNVQwMjowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.MnXYQexK6Vl4P009LooP3w3TNxLxsc8907JoQcZ2zHU\":id=\"game-a\":limit=3:verified=false",
           "payload": {
@@ -1662,7 +1802,8 @@
             "pagination": {
               "limit": 3,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -1679,7 +1820,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ce8d175aff171ea6c4fa15d4def60dc4f1df0163\""
+        "etag": "\"6b094b5aa4ff23120961981059fdd33d85bc521e\""
       },
       "body": {
         "data": [],
@@ -1688,7 +1829,8 @@
           "pagination": {
             "limit": 3,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -1732,6 +1874,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.reviews.total:id=\"game-a\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "id": "game-a"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.reviews.total:id=\"game-a\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.reviews:id=\"game-a\":limit=20",
           "payload": {
@@ -1745,7 +1914,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -1762,7 +1932,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"7247915b5afb00fe834460f7cd477ff0700454f2\""
+        "etag": "\"7f70e0310bcdc0bc8b4948a95341405a1ed428d9\""
       },
       "body": {
         "data": [
@@ -1776,7 +1946,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -1880,6 +2051,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.reviews.total:id=\"game-a\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "id": "game-a"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.reviews.total:id=\"game-a\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.reviews:id=\"game-a\":limit=20",
           "payload": {
@@ -1887,7 +2085,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -1904,7 +2103,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"318c919cc2f232950a59a9702a083288ef6a9a4b\""
+        "etag": "\"0a0f86dfffc8b34d218d6f632af99cc27adca2a9\""
       },
       "body": {
         "data": [],
@@ -1912,7 +2111,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }

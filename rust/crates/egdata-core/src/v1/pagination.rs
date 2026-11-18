@@ -88,6 +88,15 @@ pub struct PageMeta {
     pub limit: u32,
     pub has_more: bool,
     pub next_cursor: Option<String>,
+    #[serde(default)]
+    pub total: serde_json::Value,
+}
+
+impl PageMeta {
+    pub fn with_total(mut self, total: impl Into<serde_json::Value>) -> Self {
+        self.total = total.into();
+        self
+    }
 }
 
 /// Constructs a `PageMeta` struct.
@@ -96,6 +105,7 @@ pub fn page_meta(limit: u32, has_more: bool, next_cursor: Option<String>) -> Pag
         limit,
         has_more,
         next_cursor,
+        total: serde_json::Value::Null,
     }
 }
 
@@ -300,6 +310,8 @@ mod tests {
         assert_eq!(json["limit"], 15);
         assert_eq!(json["hasMore"], true);
         assert_eq!(json["nextCursor"], "next");
+        assert_eq!(json.get("total"), Some(&serde_json::Value::Null));
+        assert_eq!(meta.with_total(0).total, 0);
 
         let trimmed = trim_page(vec![1, 2, 3], 2);
         assert_eq!(trimmed.items, vec![1, 2]);

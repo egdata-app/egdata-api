@@ -41,7 +41,7 @@ fn request_id_regex() -> &'static Regex {
 
 fn key_id_regex() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
-    RE.get_or_init(|| Regex::new(r"^key_[A-Za-z0-9_-]{4,80}$").expect("valid regex"))
+    RE.get_or_init(|| Regex::new(r"^(?:key|console)_[A-Za-z0-9_-]{4,80}$").expect("valid regex"))
 }
 
 fn cache_control_private_regex() -> &'static Regex {

@@ -15,7 +15,11 @@ import {
   consoleSessionRoutes,
   revokeConsoleLogin,
 } from "./console-sessions.js";
-import { generateApiKeySecret, sha256Hex } from "./crypto.js";
+import {
+  generateApiKeySecret,
+  sha256Hex,
+  timingSafeStringEqual,
+} from "./crypto.js";
 import {
   createProject,
   insertApiKey,
@@ -38,7 +42,11 @@ import { deliverDeveloperMail } from "./developer-mail.js";
 import { ingestMailEvent } from "./developer-mail-events.js";
 import { developerStatus } from "./developer-status.js";
 import { sendLimitIncreaseRequestEmail } from "./email.js";
-import { ingestUsage, usageEventSchema } from "./endpoint-alerts.js";
+import {
+  ingestUsage,
+  type UsageEvent,
+  usageEventSchema,
+} from "./endpoint-alerts.js";
 import {
   clearDashboardSessionCookie,
   handleEpicOAuthCallback,
@@ -57,6 +65,11 @@ import { readAccountMonthlyQuota } from "./project-quota.js";
 import { purgeDeletedProjects } from "./project-retention.js";
 import { handleEdgeApiProxy } from "./proxy.js";
 import {
+  applyDashboardSeoHtml,
+  ROBOTS_TXT,
+  resolveDashboardSeo,
+} from "./seo.js";
+import {
   type AllowedHttpMethod,
   API_SCOPES,
   type ApiScope,
@@ -65,6 +78,7 @@ import {
   type EpicSessionUser,
   HTTP_METHODS,
 } from "./types.js";
+import { resolveWebOwnerEpicId } from "./v1.js";
 
 type AppContext = {
   Bindings: DashboardEnv;
@@ -550,21 +564,77 @@ dashboardApi.post("/analytics/simulate", async (c) => {
   }
 
   const routes = [
-    "/offers/{id}",
-    "/search/v2/search",
-    "/free-games",
-    "/offers/top-sellers",
-    "/items/{id}",
-    "/graphql",
+    {
+      route: "/v1/offers/{id}",
+      method: "GET",
+      operationId: "getOffer",
+      policy: "",
+    },
+    {
+      route: "/v1/search/v2",
+      method: "POST",
+      operationId: "searchV2",
+      policy: "search",
+    },
+    {
+      route: "/v1/free-games",
+      method: "GET",
+      operationId: "getFreeGames",
+      policy: "",
+    },
+    {
+      route: "/v1/offers/top-sellers",
+      method: "GET",
+      operationId: "getTopSellers",
+      policy: "",
+    },
+    {
+      route: "/v1/items/{id}",
+      method: "GET",
+      operationId: "getItem",
+      policy: "",
+    },
+    {
+      route: "/v1/catalog/hydrate",
+      method: "POST",
+      operationId: "hydrateCatalog",
+      policy: "bulk",
+    },
+    { route: "/offers/{id}", method: "GET", operationId: "", policy: "" },
   ];
   const statuses = [
-    { status: 200, cache: "HIT", outcome: "ok" },
-    { status: 200, cache: "HIT", outcome: "ok" },
-    { status: 200, cache: "HIT", outcome: "ok" },
-    { status: 200, cache: "MISS", outcome: "ok" },
-    { status: 304, cache: "REVALIDATED", outcome: "ok" },
-    { status: 429, cache: "EDGE_BLOCK", outcome: "rate_limited" },
-    { status: 403, cache: "EDGE_BLOCK", outcome: "origin_denied" },
+    { status: 200, cache: "HIT", outcome: "ok", errorCode: "", policy: "" },
+    { status: 200, cache: "HIT", outcome: "ok", errorCode: "", policy: "" },
+    { status: 200, cache: "HIT", outcome: "ok", errorCode: "", policy: "" },
+    { status: 200, cache: "MISS", outcome: "ok", errorCode: "", policy: "" },
+    {
+      status: 304,
+      cache: "REVALIDATED",
+      outcome: "ok",
+      errorCode: "",
+      policy: "",
+    },
+    {
+      status: 429,
+      cache: "EDGE_BLOCK",
+      outcome: "rate_limited",
+      errorCode: "RATE_LIMITED",
+      policy: "rpm",
+    },
+    {
+      status: 403,
+      cache: "EDGE_BLOCK",
+      outcome: "origin_denied",
+      errorCode: "ORIGIN_DENIED",
+      policy: "key_policy",
+    },
+    {
+      status: 500,
+      cache: "MISS",
+      outcome: "ok",
+      errorCode: "HTTP_500",
+      policy: "",
+    },
   ];
   const origins = [
     "https://egdata.app",
@@ -577,27 +647,56 @@ dashboardApi.post("/analytics/simulate", async (c) => {
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6) Chrome/131.0",
     "PriceBot/1.4 (+https://tracker.example.dev)",
   ];
+  const countries = ["US", "ES", "DE", "GB", "JP"];
+  const nowMs = Date.now();
 
-  for (let i = 0; i < 36; i++) {
+  for (let i = 0; i < 48; i++) {
     const pick = statuses[i % statuses.length];
-    recordApiTelemetry(c.env, {
-      ownerEpicId: user.epicAccountId,
-      keyId: sampleKey.id,
-      projectId: sampleKey.projectId,
-      routeTemplate: routes[i % routes.length],
-      method: "GET",
-      statusCode: pick.status,
-      cacheStatus: pick.cache,
-      limitOutcome: pick.outcome,
-      origin: origins[i % origins.length],
-      clientIp: ips[i % ips.length],
-      userAgent: uas[i % uas.length],
-      country: i % 2 === 0 ? "US" : "ES",
-      latencyMs: pick.cache === "HIT" ? 2 + (i % 5) : 38 + (i % 40),
-    });
+    const target = routes[i % routes.length];
+    const latency =
+      pick.cache === "HIT"
+        ? 3 + (i % 7)
+        : pick.cache === "EDGE_BLOCK"
+          ? 2 + (i % 4)
+          : 48 + ((i * 37) % 420);
+    const ts = new Date(
+      nowMs - (i % 12) * 3600_000 - (i % 5) * 60_000,
+    ).toISOString();
+    recordApiTelemetry(
+      c.env,
+      {
+        ownerEpicId: user.epicAccountId,
+        keyId: sampleKey.id,
+        projectId: sampleKey.projectId,
+        routeTemplate: target.route,
+        method: target.method,
+        statusCode: pick.status,
+        cacheStatus: pick.cache,
+        limitOutcome: pick.outcome,
+        origin: origins[i % origins.length],
+        clientIp: ips[i % ips.length],
+        userAgent: uas[i % uas.length],
+        country: countries[i % countries.length],
+        latencyMs: latency,
+        operationId: target.operationId,
+        policyFamily: pick.policy || target.policy,
+        errorCode: pick.errorCode,
+        upstreamLatencyMs:
+          pick.cache === "HIT" || pick.cache === "EDGE_BLOCK"
+            ? 0
+            : Math.max(10, latency - 4),
+        responseBytes:
+          pick.cache === "EDGE_BLOCK"
+            ? 180
+            : target.policy === "bulk"
+              ? 48_500 + (i % 10) * 1024
+              : 2_400 + (i % 15) * 320,
+      },
+      ts,
+    );
   }
 
-  return c.json({ ok: true, generated: 36 });
+  return c.json({ ok: true, generated: 48 });
 });
 
 // ---------------------------------------------------------
@@ -716,6 +815,136 @@ rootApp.route("/_dashboard/api", dashboardApi);
 
 export { ApiKeyRateLimiter } from "./rate-limiter.js";
 
+export async function handleInternalTelemetry(
+  request: Request,
+  env: DashboardEnv,
+  _ctx: ExecutionContext,
+): Promise<Response> {
+  if (request.method !== "POST") {
+    return new Response("Method Not Allowed", { status: 405 });
+  }
+
+  const authHeader =
+    request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
+  const workerHeader = request.headers.get("x-egdata-worker-token") ?? "";
+  const token = authHeader || workerHeader;
+
+  if (
+    !env.ORIGIN_AUTH_TOKEN ||
+    !token ||
+    !(await timingSafeStringEqual(token, env.ORIGIN_AUTH_TOKEN))
+  ) {
+    return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const reader = request.body?.getReader();
+  if (!reader) return new Response("Body required", { status: 400 });
+
+  let size = 0;
+  let text = "";
+  const decoder = new TextDecoder();
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > 512_000) {
+      await reader.cancel();
+      return new Response("Payload Too Large", { status: 413 });
+    }
+    text += decoder.decode(value, { stream: true });
+  }
+  text += decoder.decode();
+
+  let body: { events?: unknown };
+  try {
+    body = JSON.parse(text || "null");
+  } catch {
+    return new Response("Invalid JSON", { status: 400 });
+  }
+
+  if (!body || !Array.isArray(body.events)) {
+    return new Response("Invalid body: events array required", { status: 400 });
+  }
+
+  if (body.events.length > 2000) {
+    return new Response("Too many events (max 2000)", { status: 400 });
+  }
+
+  const fallbackOwner = await resolveWebOwnerEpicId(env);
+  const nowMs = Date.now();
+  const usageEventsMap = new Map<string, UsageEvent>();
+
+  for (const event of body.events) {
+    if (!event || typeof event !== "object") continue;
+    const e = event as Record<string, any>;
+    const ownerEpicId = e.ownerEpicId || fallbackOwner;
+    const keyId = e.keyId || env.WEB_SSR_KEY_ID || "key_egdata_web_ssr";
+    const projectId = e.projectId || env.WEB_PROJECT_ID || "prj_egdata_web";
+    const ts = typeof e.timestamp === "number" ? e.timestamp : nowMs;
+    const timestampIso = new Date(ts).toISOString();
+
+    recordApiTelemetry(
+      env,
+      {
+        ownerEpicId,
+        keyId,
+        projectId,
+        routeTemplate: String(e.routeTemplate || ""),
+        method: String(e.method || "GET"),
+        statusCode: typeof e.statusCode === "number" ? e.statusCode : 200,
+        cacheStatus: String(e.cacheStatus || "SSR_DIRECT"),
+        limitOutcome: String(e.limitOutcome || "allowed"),
+        origin: "(direct)",
+        clientIp: "",
+        userAgent: "ssr",
+        country: typeof e.country === "string" ? e.country : "XX",
+        latencyMs: typeof e.latencyMs === "number" ? e.latencyMs : 0,
+        operationId: e.operationId ? String(e.operationId) : undefined,
+        policyFamily: String(e.policyFamily || "ssr"),
+        errorCode: String(e.errorCode || ""),
+        upstreamLatencyMs:
+          typeof e.upstreamMs === "number"
+            ? e.upstreamMs
+            : typeof e.latencyMs === "number"
+              ? e.latencyMs
+              : 0,
+        responseBytes:
+          typeof e.responseBytes === "number" ? e.responseBytes : 0,
+      },
+      timestampIso,
+    );
+
+    if (e.operationId && keyId && projectId) {
+      const usageDate = timestampIso.slice(0, 10);
+      const mapKey = `${keyId}:${e.operationId}:${usageDate}`;
+      const existing = usageEventsMap.get(mapKey);
+      if (!existing || ts < existing.firstUsedAt) {
+        usageEventsMap.set(mapKey, {
+          projectId,
+          keyId,
+          operationId: String(e.operationId),
+          usageDate,
+          firstUsedAt: ts,
+        });
+      }
+    }
+  }
+
+  const usageEvents = Array.from(usageEventsMap.values());
+  if (usageEvents.length > 0 && env.DB) {
+    try {
+      await ingestUsage(env.DB, usageEvents, nowMs);
+    } catch (err) {
+      console.error("Failed to ingest SSR usage events into D1", err);
+    }
+  }
+
+  return Response.json({ ok: true, ingested: body.events.length });
+}
+
 export default {
   async queue(batch: MessageBatch<unknown>, env: DashboardEnv) {
     if (batch.queue === "egdata-developer-email-events") {
@@ -822,12 +1051,30 @@ export default {
       return consoleProxy.fetch(request, env, ctx);
     }
 
+    if (url.pathname === "/_internal/telemetry") {
+      return handleInternalTelemetry(request, env, ctx);
+    }
+
     // The API hostname owns every path, including /proxy and /_dashboard/api.
     if (
       env.API_PROXY_HOST &&
       url.hostname.toLowerCase() === env.API_PROXY_HOST.toLowerCase()
     ) {
       return handleEdgeApiProxy(request, env, ctx);
+    }
+
+    if (
+      url.pathname === "/robots.txt" &&
+      ["GET", "HEAD"].includes(request.method)
+    ) {
+      return new Response(request.method === "HEAD" ? null : ROBOTS_TXT, {
+        status: 200,
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "Cache-Control": "public, max-age=3600",
+          "X-Content-Type-Options": "nosniff",
+        },
+      });
     }
 
     if (url.pathname === "/_internal/change-records") {
@@ -926,6 +1173,45 @@ export default {
           ? "no-referrer"
           : "strict-origin-when-cross-origin",
       );
+
+      const contentType = headers.get("content-type")?.toLowerCase() ?? "";
+      if (contentType.includes("text/html")) {
+        const canonicalOrigin = (env.DASHBOARD_ORIGIN || url.origin).replace(
+          /\/+$/,
+          "",
+        );
+        const seo = resolveDashboardSeo(url.pathname, canonicalOrigin);
+        if (seo.robots === "noindex, nofollow") {
+          headers.set("X-Robots-Tag", "noindex, nofollow");
+        }
+        const isNullBodyStatus =
+          response.status === 101 ||
+          response.status === 204 ||
+          response.status === 205 ||
+          response.status === 304;
+        if (request.method === "HEAD" || isNullBodyStatus) {
+          if (request.method === "HEAD") {
+            headers.delete("Content-Length");
+          }
+          return new Response(null, {
+            status: response.status,
+            statusText: response.statusText,
+            headers,
+          });
+        }
+        const html = applyDashboardSeoHtml(
+          await response.text(),
+          url.pathname,
+          canonicalOrigin,
+        );
+        headers.delete("Content-Length");
+        return new Response(html, {
+          status: response.status,
+          statusText: response.statusText,
+          headers,
+        });
+      }
+
       return new Response(response.body, {
         status: response.status,
         statusText: response.statusText,

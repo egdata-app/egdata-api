@@ -21,6 +21,12 @@ vi.mock("../src/clients/epic.js", () => ({
   epicStoreClient: { getUser: mocks.getUser },
 }));
 vi.mock("../src/v1/cache.js", () => ({
+  cachedTotal: async (
+    _operation: string,
+    _parts: unknown,
+    _ttl: number,
+    fn: () => unknown,
+  ) => fn(),
   cached: async (_key: string, _ttl: number, fn: () => unknown) => fn(),
   v1CacheKey: (op: string, parts: Record<string, unknown>) =>
     `${op}:${JSON.stringify(parts)}`,

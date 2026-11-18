@@ -45,11 +45,12 @@ const problemSchema: OpenAPIV3.SchemaObject = {
 
 const paginationSchema: OpenAPIV3.SchemaObject = {
   type: "object",
-  required: ["limit", "hasMore", "nextCursor"],
+  required: ["limit", "hasMore", "nextCursor", "total"],
   properties: {
     limit: { type: "integer", minimum: 1, maximum: 100 },
     hasMore: { type: "boolean" },
     nextCursor: { type: "string", nullable: true },
+    total: { type: "integer", minimum: 0, nullable: true },
   },
 };
 

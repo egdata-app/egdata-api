@@ -8,6 +8,7 @@ import { loadSeaQaOffers } from "./fixtures/seaqa.js";
 vi.mock("../src/models/index.js", async () => {
   const { db } = await import("../src/db/index.js");
   const model = (name: string) => ({
+    countDocuments: (filter: Record<string, unknown>) => db.db.collection(name).countDocuments(filter),
     find: (filter: Record<string, unknown>, _: unknown, opts = {}) => ({
       lean: () => db.db.collection(name).find(filter, opts).toArray(),
     }),
@@ -76,6 +77,7 @@ it("records promotion boundaries, data failures, regional prices, and cache beha
     ["current-mobile", "", { "mobile-freebies.many": "FAIL" }],
     ["mobile-source", "/mobile", { "mobile-freebies.many": "FAIL" }],
     ["history-games", "/history", { "freegames.many": "FAIL" }],
+    ["history-count", "/history", { "freegames.count": "FAIL" }],
     [
       "history-offers",
       "/history",

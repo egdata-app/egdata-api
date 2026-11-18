@@ -323,6 +323,9 @@ pub fn test_app_state_with_rate_limit(
 ) -> AppState {
     let stub = Arc::new(StubPorts);
     AppState {
+        ssr_telemetry: Arc::new(crate::v1::ssr_telemetry::SsrTelemetry::from_env(
+            &Default::default(),
+        )),
         now: chrono::Utc::now,
         new_object_id: bson::oid::ObjectId::new,
         config: Arc::new(config),

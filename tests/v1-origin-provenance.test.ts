@@ -7,7 +7,8 @@ const originalRequired = process.env.V1_WORKER_AUTH_REQUIRED;
 afterEach(() => {
   if (originalToken === undefined) delete process.env.V1_WORKER_TOKEN;
   else process.env.V1_WORKER_TOKEN = originalToken;
-  if (originalRequired === undefined) delete process.env.V1_WORKER_AUTH_REQUIRED;
+  if (originalRequired === undefined)
+    delete process.env.V1_WORKER_AUTH_REQUIRED;
   else process.env.V1_WORKER_AUTH_REQUIRED = originalRequired;
 });
 
@@ -27,9 +28,12 @@ describe("v1 origin Worker provenance", () => {
       "x-egdata-key-tier": "free",
     };
 
-    const missing = await app.request("https://origin-api.egdata.app/v1/countries", {
-      headers,
-    });
+    const missing = await app.request(
+      "https://origin-api.egdata.app/v1/countries",
+      {
+        headers,
+      },
+    );
     expect(missing.status).toBe(403);
     expect((await missing.json()).code).toBe("UNTRUSTED_WORKER");
 
@@ -38,27 +42,50 @@ describe("v1 origin Worker provenance", () => {
     });
     expect(wrong.status).toBe(403);
 
-    const accepted = await app.request("https://some-other-vm.example/v1/countries", {
-      headers: {
-        ...headers,
-        "x-egdata-worker-token": "worker-token-that-is-long-enough",
-        "x-egdata-request-id": "req_from_worker_123",
+    const accepted = await app.request(
+      "https://some-other-vm.example/v1/countries",
+      {
+        headers: {
+          ...headers,
+          "x-egdata-worker-token": "worker-token-that-is-long-enough",
+          "x-egdata-request-id": "req_from_worker_123",
+        },
       },
-    });
+    );
     expect(accepted.status).toBe(200);
     expect(accepted.headers.get("x-request-id")).toBe("req_from_worker_123");
+
+    const consoleAccepted = await app.request(
+      "https://origin-api.egdata.app/v1/countries",
+      {
+        headers: {
+          "x-egdata-key-id": "console_prj_a1b2c3d4e5f60718293a",
+          "x-egdata-key-tier": "free",
+          "x-egdata-key-project": "prj_a1b2c3d4e5f60718293a",
+          "x-egdata-worker-token": "worker-token-that-is-long-enough",
+          "x-egdata-request-id": "req_caae8deca8a944fc97e52ab444b33838",
+        },
+      },
+    );
+    expect(consoleAccepted.status).toBe(200);
+    expect(consoleAccepted.headers.get("x-request-id")).toBe(
+      "req_caae8deca8a944fc97e52ab444b33838",
+    );
   });
 
   it("fails closed when provenance is required but the origin has no token", async () => {
     delete process.env.V1_WORKER_TOKEN;
     process.env.V1_WORKER_AUTH_REQUIRED = "true";
     const app = await importRouter();
-    const response = await app.request("https://unknown-vm.example/v1/countries", {
-      headers: {
-        "x-egdata-key-id": "key_provenance_1",
-        "x-egdata-key-tier": "free",
+    const response = await app.request(
+      "https://unknown-vm.example/v1/countries",
+      {
+        headers: {
+          "x-egdata-key-id": "key_provenance_1",
+          "x-egdata-key-tier": "free",
+        },
       },
-    });
+    );
     expect(response.status).toBe(503);
     expect((await response.json()).code).toBe("WORKER_AUTH_NOT_CONFIGURED");
   });

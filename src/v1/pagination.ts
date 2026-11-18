@@ -49,14 +49,35 @@ export type PageMeta = {
   limit: number;
   hasMore: boolean;
   nextCursor: string | null;
+  total: number | null;
 };
 
 export function pageMeta(
   limit: number,
   hasMore: boolean,
   nextCursor: string | null,
+  total: number | null = null,
 ): PageMeta {
-  return { limit, hasMore, nextCursor };
+  return { limit, hasMore, nextCursor, total };
+}
+
+/**
+ * Extracts a numeric hit total from an OpenSearch `hits.total` field.
+ */
+export function openSearchTotalHits(total: unknown): number | null {
+  if (typeof total === "number" && Number.isFinite(total)) {
+    return total;
+  }
+  if (
+    total &&
+    typeof total === "object" &&
+    "value" in total &&
+    typeof (total as { value?: unknown }).value === "number" &&
+    Number.isFinite((total as { value: number }).value)
+  ) {
+    return (total as { value: number }).value;
+  }
+  return null;
 }
 
 /**

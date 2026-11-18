@@ -754,6 +754,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -788,7 +813,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -805,7 +831,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3b31d5862e27e4004860709047cfc3809264f18e\""
+        "etag": "\"a25823f200bce17c6e23f75e3eed2c008ec1c7f8\""
       },
       "body": {
         "data": [],
@@ -816,7 +842,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -853,6 +880,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "error": true
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -887,7 +939,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -904,7 +957,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3b31d5862e27e4004860709047cfc3809264f18e\""
+        "etag": "\"a25823f200bce17c6e23f75e3eed2c008ec1c7f8\""
       },
       "body": {
         "data": [],
@@ -915,7 +968,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -1587,6 +1641,98 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"a52266dd506df4a8f6251fd573b0a83a0c10f68c\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/free-games/history",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "v1 free games outage history-count",
+    "request": {
+      "path": "/v1/free-games/history",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history:limit=20:locale=\"en-US\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "many",
+          "query": {},
+          "options": {
+            "limit": 21,
+            "sort": {
+              "endDate": -1,
+              "id": -1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "error": true
       }
     ],
     "response": {
@@ -1648,6 +1794,31 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -1740,6 +1911,31 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -4643,6 +4839,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -4697,7 +4918,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 2
             }
           },
           "ttl": 60
@@ -4714,7 +4936,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"bbdd565a66bd3894f11060a92ee88a4fb444e455\""
+        "etag": "\"abfbd4e1761da2f85892b4d6f794205ea76e6bf2\""
       },
       "body": {
         "data": [
@@ -4739,7 +4961,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 2
           }
         }
       }
@@ -4784,6 +5007,31 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -4832,7 +5080,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLG51bGxdfQ.Dkn21BLJUDDcrxb4-AUPFj0GTr8QwBl1yq1Z5qoJz7o"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLG51bGxdfQ.Dkn21BLJUDDcrxb4-AUPFj0GTr8QwBl1yq1Z5qoJz7o",
+              "total": 2
             }
           },
           "ttl": 60
@@ -4849,7 +5098,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"96d256af6e7edadb0bb8cd4c0377c41eeb30d15d\""
+        "etag": "\"d5443897d6d162a86a124d688397e7bdc9cbd46a\""
       },
       "body": {
         "data": [
@@ -4867,7 +5116,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLG51bGxdfQ.Dkn21BLJUDDcrxb4-AUPFj0GTr8QwBl1yq1Z5qoJz7o"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLG51bGxdfQ.Dkn21BLJUDDcrxb4-AUPFj0GTr8QwBl1yq1Z5qoJz7o",
+            "total": 2
           }
         }
       }
@@ -4908,6 +5158,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -4942,7 +5217,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -4959,7 +5235,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ee2846f09827735b7722feedd8239540d3d4c1a9\""
+        "etag": "\"e39cd8d76abbfb717bbfd422fdeea532b3d71724\""
       },
       "body": {
         "data": [],
@@ -4970,7 +5246,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -5273,6 +5550,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 3
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 3,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -5496,7 +5798,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 3
             }
           },
           "ttl": 60
@@ -5513,7 +5816,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"cf43643adb6ec7e4abfae209f6b6ae5af7cb719c\""
+        "etag": "\"ca3bcb37d0ab955be768900db2c3873c08d7e451\""
       },
       "body": {
         "data": [
@@ -5669,7 +5972,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 3
           }
         }
       }
@@ -5720,6 +6024,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -5767,7 +6096,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMC0wMlQwMDowMDowMC4wMDBaIiwiNDEiXX0.j1uUj05_E1jkrutmgunEp8WY1RBOEG6AmzL8VuZ9GNk"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMC0wMlQwMDowMDowMC4wMDBaIiwiNDEiXX0.j1uUj05_E1jkrutmgunEp8WY1RBOEG6AmzL8VuZ9GNk",
+              "total": 2
             }
           },
           "ttl": 60
@@ -5784,7 +6114,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1244ed3e5c4373a548c71eb1db01bd712fec67a5\""
+        "etag": "\"5467b37fef93eb2b119bb659a0417d86f6612e34\""
       },
       "body": {
         "data": [
@@ -5804,7 +6134,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMC0wMlQwMDowMDowMC4wMDBaIiwiNDEiXX0.j1uUj05_E1jkrutmgunEp8WY1RBOEG6AmzL8VuZ9GNk"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMC0wMlQwMDowMDowMC4wMDBaIiwiNDEiXX0.j1uUj05_E1jkrutmgunEp8WY1RBOEG6AmzL8VuZ9GNk",
+            "total": 2
           }
         }
       }
@@ -5855,6 +6186,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -5902,7 +6258,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMy0xMS0xNFQyMjoxMzoyMC4wMDBaIiwiNDEiXX0.nDix1r9x-iJimNAaxmZr0IslLk-i9lqDRIpaMXmXsuw"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMy0xMS0xNFQyMjoxMzoyMC4wMDBaIiwiNDEiXX0.nDix1r9x-iJimNAaxmZr0IslLk-i9lqDRIpaMXmXsuw",
+              "total": 2
             }
           },
           "ttl": 60
@@ -5919,7 +6276,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"8d7c53a697484ff53d00d819c205b1504255b49c\""
+        "etag": "\"9ee17b543f1471639f7ce58577b4236c7ee9479a\""
       },
       "body": {
         "data": [
@@ -5939,7 +6296,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMy0xMS0xNFQyMjoxMzoyMC4wMDBaIiwiNDEiXX0.nDix1r9x-iJimNAaxmZr0IslLk-i9lqDRIpaMXmXsuw"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMy0xMS0xNFQyMjoxMzoyMC4wMDBaIiwiNDEiXX0.nDix1r9x-iJimNAaxmZr0IslLk-i9lqDRIpaMXmXsuw",
+            "total": 2
           }
         }
       }
@@ -5990,6 +6348,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -6037,7 +6420,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDFaIiwiNDEiXX0.SFgHJQ1yMt6sO28L9BDVYdmBCy78LA4EF5H8MZHYiRE"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDFaIiwiNDEiXX0.SFgHJQ1yMt6sO28L9BDVYdmBCy78LA4EF5H8MZHYiRE",
+              "total": 2
             }
           },
           "ttl": 60
@@ -6054,7 +6438,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"29f3125bf363f3839455cc2f27102179eb7a23cb\""
+        "etag": "\"1280278e90ce33219a0a6730cc4947caf94462a5\""
       },
       "body": {
         "data": [
@@ -6074,7 +6458,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDFaIiwiNDEiXX0.SFgHJQ1yMt6sO28L9BDVYdmBCy78LA4EF5H8MZHYiRE"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDFaIiwiNDEiXX0.SFgHJQ1yMt6sO28L9BDVYdmBCy78LA4EF5H8MZHYiRE",
+            "total": 2
           }
         }
       }
@@ -6122,6 +6507,31 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -6217,6 +6627,31 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -6509,7 +6944,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 2
             }
           },
           "ttl": 60
@@ -6526,7 +6962,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"a9725bc3341023fde0237daf0f902e84bd140a3a\""
+        "etag": "\"05ae0cb7557329e7ae0abbd87086b1e9403e627d\""
       },
       "body": {
         "data": [
@@ -6676,7 +7112,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 2
           }
         }
       }
@@ -6721,6 +7158,31 @@
             "id": "null"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 4,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -7010,7 +7472,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 4
             }
           },
           "ttl": 60
@@ -7027,7 +7490,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"80d9c04e5ec35941ebc5542b5dfd6b9dd43f7830\""
+        "etag": "\"aa4494a11afef7c589bf2d3fb8c462dd40415944\""
       },
       "body": {
         "data": [
@@ -7250,7 +7713,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 4
           }
         }
       }
@@ -9264,6 +9728,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -10162,6 +10651,31 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -11702,6 +12216,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 4
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 4,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -12076,7 +12615,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 4
             }
           },
           "ttl": 60
@@ -12093,7 +12633,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ff0e93a2670e8f636762d95c89d918af7f4becea\""
+        "etag": "\"8c75c42b24faa6ae20c406b3b87edb7cf6634663\""
       },
       "body": {
         "data": [
@@ -12375,7 +12915,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 4
           }
         }
       }
@@ -12451,6 +12992,31 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -12557,7 +13123,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xN1QwMDowMDowMC4wMDBaIiwiNzI4LjUwIl19.W_PLtuPhNbn5eXFPSxb9cLlLbSPTNGy340PhbqLXIxM"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xN1QwMDowMDowMC4wMDBaIiwiNzI4LjUwIl19.W_PLtuPhNbn5eXFPSxb9cLlLbSPTNGy340PhbqLXIxM",
+              "total": 2
             }
           },
           "ttl": 60
@@ -12574,7 +13141,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"421354c46c835ee630aee248b6787538ef857810\""
+        "etag": "\"294a00e43e42ab6c841233aadf4dd521c2533879\""
       },
       "body": {
         "data": [
@@ -12650,7 +13217,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xN1QwMDowMDowMC4wMDBaIiwiNzI4LjUwIl19.W_PLtuPhNbn5eXFPSxb9cLlLbSPTNGy340PhbqLXIxM"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmVlR2FtZXMuaGlzdG9yeSIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoiZW5kRGF0ZTpkZXNjLGlkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xN1QwMDowMDowMC4wMDBaIiwiNzI4LjUwIl19.W_PLtuPhNbn5eXFPSxb9cLlLbSPTNGy340PhbqLXIxM",
+            "total": 2
           }
         }
       }
@@ -12841,6 +13409,31 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -12902,6 +13495,31 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -13000,6 +13618,31 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -14075,6 +14718,31 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:free-games.history.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:free-games.history.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {

@@ -130,6 +130,11 @@ export interface DashboardEnv
     | "STRIPE_PRICE_ID_SCALE"
     | "STRIPE_PORTAL_CONFIGURATION_ID"
     | "STRIPE_MODE"
+    | "WEB_EPHEMERAL_KEY_SECRET"
+    | "WEB_OWNER_EPIC_ID"
+    | "WEB_PROJECT_ID"
+    | "WEB_BROWSER_KEY_ID"
+    | "WEB_SSR_KEY_ID"
   > {
   FLAGS?: Pick<Flagship, "getBooleanValue">;
   EPIC_CLIENT_ID?: string;
@@ -142,6 +147,11 @@ export interface DashboardEnv
   RUST_SHADOW_ORIGIN?: string;
   RUST_SHADOW_TOKEN?: string;
   ENABLE_DEV_AUTH?: string;
+  WEB_EPHEMERAL_KEY_SECRET?: string;
+  WEB_OWNER_EPIC_ID?: string;
+  WEB_PROJECT_ID?: string;
+  WEB_BROWSER_KEY_ID?: string;
+  WEB_SSR_KEY_ID?: string;
   /** One SQLite-backed quota object per environment and account ID. Binding name retained for deployment compatibility. */
   API_KEY_RATE_LIMITER: DurableObjectNamespace<
     import("./rate-limiter.js").ApiKeyRateLimiter

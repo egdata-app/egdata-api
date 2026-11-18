@@ -2306,6 +2306,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -2426,7 +2459,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyNi0xMi0wMVQwMDowMDowMC4wMDBaIiwib2ZmZXItYSJdfQ.Q_r2r-hUv9XztqOe0wH95uBqP1Dno0Sc3xxFDzC75Mc"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyNi0xMi0wMVQwMDowMDowMC4wMDBaIiwib2ZmZXItYSJdfQ.Q_r2r-hUv9XztqOe0wH95uBqP1Dno0Sc3xxFDzC75Mc",
+              "total": 2
             },
             "localeMeta": {
               "locale": "en-US",
@@ -2447,7 +2481,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"9d935e122526bfcbd4c1c18c8366684734467d7e\""
+        "etag": "\"c59ced9489ff74288e1caada1b8a7d7484c7857c\""
       },
       "body": {
         "data": [
@@ -2516,7 +2550,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyNi0xMi0wMVQwMDowMDowMC4wMDBaIiwib2ZmZXItYSJdfQ.Q_r2r-hUv9XztqOe0wH95uBqP1Dno0Sc3xxFDzC75Mc"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyNi0xMi0wMVQwMDowMDowMC4wMDBaIiwib2ZmZXItYSJdfQ.Q_r2r-hUv9XztqOe0wH95uBqP1Dno0Sc3xxFDzC75Mc",
+            "total": 2
           }
         }
       }
@@ -2616,6 +2651,39 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -2719,7 +2787,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             },
             "localeMeta": {
               "locale": "en-US",
@@ -2740,7 +2809,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0878e8788b8c256cfff057651cff2cd60edb6ed1\""
+        "etag": "\"da5e3fff2da34d1f48343e134d29ae65949394c8\""
       },
       "body": {
         "data": [
@@ -2809,7 +2878,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -2902,6 +2972,44 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -3041,7 +3149,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -3058,7 +3167,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"5e6bef34f127bd4ab1877c4663d5c19e394ed38b\""
+        "etag": "\"81284daf5ea3487b26fb5fa5dc65331faf73cf92\""
       },
       "body": {
         "data": [
@@ -3130,7 +3239,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -3192,6 +3302,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "one",
           "query": {
@@ -3251,7 +3393,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -3268,7 +3411,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"73d9ee67c6e83753edffe7c1ad141949a992391c\""
+        "etag": "\"35e34da392da12ea1347056f56453cea3a2d5532\""
       },
       "body": {
         "data": [
@@ -3300,7 +3443,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -3362,6 +3506,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "one",
           "query": {
@@ -3421,7 +3597,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -3438,7 +3615,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"73d9ee67c6e83753edffe7c1ad141949a992391c\""
+        "etag": "\"35e34da392da12ea1347056f56453cea3a2d5532\""
       },
       "body": {
         "data": [
@@ -3470,7 +3647,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -4177,6 +4355,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -4197,7 +4408,8 @@
             "pagination": {
               "limit": 30,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "localeMeta": {}
           },
@@ -4215,7 +4427,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"385f5e18180a6df4a3fdfb6a9f6822c7cf9ca0b3\""
+        "etag": "\"1a9e12041420f86789f61d1579b9f0e140aedf96\""
       },
       "body": {
         "data": [],
@@ -4226,7 +4438,8 @@
           "pagination": {
             "limit": 30,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -4305,6 +4518,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.active-sales:limit=50:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -4312,7 +4563,8 @@
             "pagination": {
               "limit": 50,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -4329,7 +4581,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"9298b49ab1a1dc584d1550aa4801b01f5318a5d7\""
+        "etag": "\"7fcdd4b84128cdedf68a6e04d796c3dd07c69e00\""
       },
       "body": {
         "data": [],
@@ -4340,7 +4592,8 @@
           "pagination": {
             "limit": 50,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -4413,6 +4666,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.changelog:limit=50",
           "payload": {
@@ -4420,7 +4705,8 @@
             "pagination": {
               "limit": 50,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -4437,7 +4723,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"057c72dc295f99eb6c4798c724c8aeab246a0b9e\""
+        "etag": "\"79dcf3ece65b957bdfc64047057043a79d25f2b2\""
       },
       "body": {
         "data": [],
@@ -4445,7 +4731,8 @@
           "pagination": {
             "limit": 50,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -6514,6 +6801,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -6562,7 +6887,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0wMVQwMDowMDowMC4wMDBaIiwyXX0.aeaEH8_8m39RIW39a_0ygkUZ37A0XpYkV73giOpcEu8"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0wMVQwMDowMDowMC4wMDBaIiwyXX0.aeaEH8_8m39RIW39a_0ygkUZ37A0XpYkV73giOpcEu8",
+              "total": 2
             }
           },
           "ttl": 60
@@ -6579,7 +6905,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"f1184d019362c1d7cfef0638ae7753cf6e9a687b\""
+        "etag": "\"c90e14d8fba75bed7f80f2b2488bd5f13aa380d9\""
       },
       "body": {
         "data": [
@@ -6597,7 +6923,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0wMVQwMDowMDowMC4wMDBaIiwyXX0.aeaEH8_8m39RIW39a_0ygkUZ37A0XpYkV73giOpcEu8"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0wMVQwMDowMDowMC4wMDBaIiwyXX0.aeaEH8_8m39RIW39a_0ygkUZ37A0XpYkV73giOpcEu8",
+            "total": 2
           }
         }
       }
@@ -6689,6 +7016,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.active-sales:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0wMVQwMDowMDowMC4wMDBaIiwyXX0.aeaEH8_8m39RIW39a_0ygkUZ37A0XpYkV73giOpcEu8\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -6696,7 +7061,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -6713,7 +7079,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ee2846f09827735b7722feedd8239540d3d4c1a9\""
+        "etag": "\"e39cd8d76abbfb717bbfd422fdeea532b3d71724\""
       },
       "body": {
         "data": [],
@@ -6724,7 +7090,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -6783,6 +7150,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -6831,7 +7236,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLDNdfQ.eJHvrn0S8CsR2L88Bora5MIS8K1KvuQIIbt5dRXkUpg"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLDNdfQ.eJHvrn0S8CsR2L88Bora5MIS8K1KvuQIIbt5dRXkUpg",
+              "total": 2
             }
           },
           "ttl": 60
@@ -6848,7 +7254,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c0893e9ff5941ddcd2c3b7cb0ee7f2c6ae71472f\""
+        "etag": "\"d5b51d3977815b61b4b75089c4dd1fe509671939\""
       },
       "body": {
         "data": [
@@ -6866,7 +7272,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLDNdfQ.eJHvrn0S8CsR2L88Bora5MIS8K1KvuQIIbt5dRXkUpg"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLDNdfQ.eJHvrn0S8CsR2L88Bora5MIS8K1KvuQIIbt5dRXkUpg",
+            "total": 2
           }
         }
       }
@@ -6940,6 +7347,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.active-sales:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLDNdfQ.eJHvrn0S8CsR2L88Bora5MIS8K1KvuQIIbt5dRXkUpg\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -6947,7 +7392,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -6964,7 +7410,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ee2846f09827735b7722feedd8239540d3d4c1a9\""
+        "etag": "\"e39cd8d76abbfb717bbfd422fdeea532b3d71724\""
       },
       "body": {
         "data": [],
@@ -6975,7 +7421,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -7033,6 +7480,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -7081,7 +7566,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLCJsZWdhY3ktdGFnIl19.YNn9RcbjhR60KwBi79sL-Gz27Q3pjgtWwvXzuk2hZyw"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLCJsZWdhY3ktdGFnIl19.YNn9RcbjhR60KwBi79sL-Gz27Q3pjgtWwvXzuk2hZyw",
+              "total": 2
             }
           },
           "ttl": 60
@@ -7098,7 +7584,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ef6e00715a5ac214a11a652774e49a0280833fb5\""
+        "etag": "\"c6a47289eb4431b28b4c278517e8f2ed678bd8e1\""
       },
       "body": {
         "data": [
@@ -7116,7 +7602,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLCJsZWdhY3ktdGFnIl19.YNn9RcbjhR60KwBi79sL-Gz27Q3pjgtWwvXzuk2hZyw"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLCJsZWdhY3ktdGFnIl19.YNn9RcbjhR60KwBi79sL-Gz27Q3pjgtWwvXzuk2hZyw",
+            "total": 2
           }
         }
       }
@@ -7190,6 +7677,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.active-sales:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLCJsZWdhY3ktdGFnIl19.YNn9RcbjhR60KwBi79sL-Gz27Q3pjgtWwvXzuk2hZyw\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -7197,7 +7722,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -7214,7 +7740,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ee2846f09827735b7722feedd8239540d3d4c1a9\""
+        "etag": "\"e39cd8d76abbfb717bbfd422fdeea532b3d71724\""
       },
       "body": {
         "data": [],
@@ -7225,7 +7751,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -7280,6 +7807,44 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -7423,7 +7988,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -7440,7 +8006,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b9177bc2dec70b2535e1a4b458877843df635cf0\""
+        "etag": "\"daa3af8b3a5a8008955e284cd4aa02b019724421\""
       },
       "body": {
         "data": [
@@ -7513,7 +8079,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -7568,6 +8135,44 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -7715,7 +8320,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -7732,7 +8338,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1abcb668668ec07b1de1ccfa83f48377f703407c\""
+        "etag": "\"a53d202ea9723e74f4fb760100b6496e3864e8c7\""
       },
       "body": {
         "data": [
@@ -7807,7 +8413,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -7862,6 +8469,44 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -8003,7 +8648,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -8020,7 +8666,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d018013a4f395f8cdd1389fca056fbc6ea6f5c31\""
+        "etag": "\"3fea079796856314e0cb799dbd9fbe0372240810\""
       },
       "body": {
         "data": [
@@ -8092,7 +8738,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -8147,6 +8794,44 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -8260,7 +8945,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -8277,7 +8963,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"918ba753fd0a8b139eb5853392ae690a84041a73\""
+        "etag": "\"da568af41558ec36c729deb53d293a85c6613f90\""
       },
       "body": {
         "data": [
@@ -8334,7 +9020,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -9219,6 +9906,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "one",
           "query": {
@@ -9264,7 +9983,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIyMDI2LTEwLTAzVDAwOjAwOjAwLjAwMFoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.UGU0VI_eaIqg7l5i-meo3IHDuUx1GlDc0mjR7W0SeNs"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIyMDI2LTEwLTAzVDAwOjAwOjAwLjAwMFoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.UGU0VI_eaIqg7l5i-meo3IHDuUx1GlDc0mjR7W0SeNs",
+              "total": 2
             }
           },
           "ttl": 60
@@ -9281,7 +10001,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"fc80f0e63ee2b2d1207d794b17a203e7fc522962\""
+        "etag": "\"5d8df9e46353362cf31cc30b2bd4a384ddde7c19\""
       },
       "body": {
         "data": [
@@ -9306,7 +10026,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIyMDI2LTEwLTAzVDAwOjAwOjAwLjAwMFoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.UGU0VI_eaIqg7l5i-meo3IHDuUx1GlDc0mjR7W0SeNs"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIyMDI2LTEwLTAzVDAwOjAwOjAwLjAwMFoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.UGU0VI_eaIqg7l5i-meo3IHDuUx1GlDc0mjR7W0SeNs",
+            "total": 2
           }
         }
       }
@@ -9394,6 +10115,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.changelog:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIyMDI2LTEwLTAzVDAwOjAwOjAwLjAwMFoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.UGU0VI_eaIqg7l5i-meo3IHDuUx1GlDc0mjR7W0SeNs\":limit=1",
           "payload": {
@@ -9401,7 +10154,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -9418,7 +10172,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0abce40006125ef975512b2ed71814e93a15a82d\""
+        "etag": "\"7f9d0a5d0bce149f4f0c6b951597574a6a04b9ed\""
       },
       "body": {
         "data": [],
@@ -9426,7 +10180,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -9491,6 +10246,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.changelog:limit=1",
           "payload": {
@@ -9505,7 +10292,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6W251bGwsImxlZ2FjeS1pZCJdfQ.FJuypaOLeqL8aNJpeMENdny3ULXrBo-vKLOQrf0FOq0"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6W251bGwsImxlZ2FjeS1pZCJdfQ.FJuypaOLeqL8aNJpeMENdny3ULXrBo-vKLOQrf0FOq0",
+              "total": 2
             }
           },
           "ttl": 60
@@ -9522,7 +10310,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3d535ee79784fa04216f462f20b0fc294eec30b7\""
+        "etag": "\"cb20b00185fac54bf769f800b4304d23fd81aa33\""
       },
       "body": {
         "data": [
@@ -9537,7 +10325,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6W251bGwsImxlZ2FjeS1pZCJdfQ.FJuypaOLeqL8aNJpeMENdny3ULXrBo-vKLOQrf0FOq0"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6W251bGwsImxlZ2FjeS1pZCJdfQ.FJuypaOLeqL8aNJpeMENdny3ULXrBo-vKLOQrf0FOq0",
+            "total": 2
           }
         }
       }
@@ -9605,6 +10394,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.changelog:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6W251bGwsImxlZ2FjeS1pZCJdfQ.FJuypaOLeqL8aNJpeMENdny3ULXrBo-vKLOQrf0FOq0\":limit=1",
           "payload": {
@@ -9612,7 +10433,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -9629,7 +10451,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0abce40006125ef975512b2ed71814e93a15a82d\""
+        "etag": "\"7f9d0a5d0bce149f4f0c6b951597574a6a04b9ed\""
       },
       "body": {
         "data": [],
@@ -9637,7 +10459,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -10505,6 +11328,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -10576,6 +11432,39 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -10640,6 +11529,44 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -10712,6 +11639,44 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -10804,6 +11769,44 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -11366,6 +12369,38 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -12079,6 +13114,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -12201,6 +13269,44 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -12812,6 +13918,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -12834,7 +13973,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLCJtaXNzaW5nIl19.tH4fde8SzB3TeiU9iquRrf-ZgP9WzReZ16zqvnglp5s"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLCJtaXNzaW5nIl19.tH4fde8SzB3TeiU9iquRrf-ZgP9WzReZ16zqvnglp5s",
+              "total": 2
             },
             "localeMeta": {}
           },
@@ -12852,7 +13992,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"f1264554fd460037243cf7d1eda062b1f1f52021\""
+        "etag": "\"a44bfc60632ad20106ca8e9a4f86efba494df796\""
       },
       "body": {
         "data": [],
@@ -12863,7 +14003,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLCJtaXNzaW5nIl19.tH4fde8SzB3TeiU9iquRrf-ZgP9WzReZ16zqvnglp5s"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLCJtaXNzaW5nIl19.tH4fde8SzB3TeiU9iquRrf-ZgP9WzReZ16zqvnglp5s",
+            "total": 2
           }
         }
       }
@@ -12925,6 +14066,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -12973,7 +14152,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0wMVQwMDowMDowMC4wMDBaIiw0LjVdfQ.lo4BXabll6h43jIoI-cds_teWq-jZYZcxD5Kb714lu8"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0wMVQwMDowMDowMC4wMDBaIiw0LjVdfQ.lo4BXabll6h43jIoI-cds_teWq-jZYZcxD5Kb714lu8",
+              "total": 2
             }
           },
           "ttl": 60
@@ -12990,7 +14170,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"922f0432a07204207658bf3a6770d7f6c18b20bd\""
+        "etag": "\"35308a7c0ecd45d2723d7e0b68019bb5e31d98c3\""
       },
       "body": {
         "data": [
@@ -13008,7 +14188,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0wMVQwMDowMDowMC4wMDBaIiw0LjVdfQ.lo4BXabll6h43jIoI-cds_teWq-jZYZcxD5Kb714lu8"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0wMVQwMDowMDowMC4wMDBaIiw0LjVdfQ.lo4BXabll6h43jIoI-cds_teWq-jZYZcxD5Kb714lu8",
+            "total": 2
           }
         }
       }
@@ -13082,6 +14263,39 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -13174,6 +14388,44 @@
             "name": "Winter Sale"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -13302,6 +14554,38 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -13469,6 +14753,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -13495,7 +14812,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             },
             "localeMeta": {}
           },
@@ -13513,7 +14831,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3b31d5862e27e4004860709047cfc3809264f18e\""
+        "etag": "\"50526e41512da51e0eff174b6f1451f8961f3007\""
       },
       "body": {
         "data": [],
@@ -13524,7 +14842,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -13626,6 +14945,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -13674,7 +15031,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -13691,7 +15049,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"06f629cf3cfdb26f36ee837aff45b4a015719019\""
+        "etag": "\"3b83391cbfaf44ca2e3436a11534b642d057fff3\""
       },
       "body": {
         "data": [
@@ -13709,7 +15067,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -16775,6 +18134,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 6
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 6,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -17108,7 +18500,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 6
             },
             "localeMeta": {
               "locale": "en-US",
@@ -17129,7 +18522,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1e8109bbd1732b3aff37ff35d4c53b44aa22e084\""
+        "etag": "\"5075ab121b00b0af4fb8f308161c066a2e21e434\""
       },
       "body": {
         "data": [
@@ -17427,7 +18820,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 6
           }
         }
       }
@@ -17473,6 +18867,39 @@
             "offerId": "a"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -17563,6 +18990,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -17593,7 +19053,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             },
             "localeMeta": {}
           },
@@ -17611,7 +19072,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3b31d5862e27e4004860709047cfc3809264f18e\""
+        "etag": "\"50526e41512da51e0eff174b6f1451f8961f3007\""
       },
       "body": {
         "data": [],
@@ -17622,7 +19083,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -17674,6 +19136,44 @@
             "name": "Deals"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -17933,7 +19433,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -17950,7 +19451,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"f51fa2eed1aaf5e260bea9177d03edee4ddefd24\""
+        "etag": "\"f2d6e7a9900b18ffb907fdedaceb35d6d32a5f2c\""
       },
       "body": {
         "data": [
@@ -18112,7 +19613,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -18164,6 +19666,44 @@
             "name": "Deals"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -18283,6 +19823,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -18384,7 +19962,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -18401,7 +19980,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"84bd98a7f653b4f6b090215a6fd78ac3418db9da\""
+        "etag": "\"5b303e35abb170e9c33406e19008d83a45d2cc5a\""
       },
       "body": {
         "data": [
@@ -18456,7 +20035,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -20782,6 +22362,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -21286,7 +22904,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 2
             }
           },
           "ttl": 60
@@ -21303,7 +22922,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"31ea00de1a9b4bf13ad44100ee7337b525765fa7\""
+        "etag": "\"972bdd2cca426c0d6ba9d3ea8a7572884f5ac7ca\""
       },
       "body": {
         "data": [
@@ -21615,7 +23234,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 2
           }
         }
       }
@@ -21669,6 +23289,44 @@
             "id": 2
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -21780,6 +23438,44 @@
             "id": 2
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -25989,6 +27685,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -26120,7 +27849,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 2
             },
             "localeMeta": {
               "locale": "fr-FR",
@@ -26146,7 +27876,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"01a223baad6a26c2449fb1c2a38a130c652b0521\""
+        "etag": "\"50a70be573f09c99b29bf899988a0998ba958e99\""
       },
       "body": {
         "data": [
@@ -26221,7 +27951,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 2
           }
         }
       }
@@ -26278,6 +28009,39 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -26408,7 +28172,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 2
             },
             "localeMeta": {
               "locale": "fr-FR",
@@ -26434,7 +28199,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"359529a0a102621757483d73c927a16c96e0a1db\""
+        "etag": "\"7401ec89ed4625eceb24a8ab4f33d6b2680c0473\""
       },
       "body": {
         "data": [
@@ -26509,7 +28274,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 2
           }
         }
       }
@@ -26566,6 +28332,39 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -26698,7 +28497,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 2
             },
             "localeMeta": {
               "locale": "fr-FR",
@@ -26724,7 +28524,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"359529a0a102621757483d73c927a16c96e0a1db\""
+        "etag": "\"7401ec89ed4625eceb24a8ab4f33d6b2680c0473\""
       },
       "body": {
         "data": [
@@ -26799,7 +28599,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 2
           }
         }
       }
@@ -26856,6 +28657,39 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -27730,6 +29564,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -27979,7 +29851,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -27996,7 +29869,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c2cd095603e74f9ea243498e5c1317ba91d9057e\""
+        "etag": "\"f766359de65f100bef17b1ac35024db9cdf252ef\""
       },
       "body": {
         "data": [
@@ -28146,7 +30019,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -28197,6 +30071,44 @@
             "id": "29899"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -28445,7 +30357,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -28462,7 +30375,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"2f308b5ac1459e011997e80ffad0a7bef5c892c7\""
+        "etag": "\"490a649741df94f73a5ece2691579a7846059592\""
       },
       "body": {
         "data": [
@@ -28612,7 +30525,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -28663,6 +30577,44 @@
             "id": "29899"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -28913,7 +30865,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -28930,7 +30883,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"2f308b5ac1459e011997e80ffad0a7bef5c892c7\""
+        "etag": "\"490a649741df94f73a5ece2691579a7846059592\""
       },
       "body": {
         "data": [
@@ -29080,7 +31033,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -29131,6 +31085,44 @@
             "id": "29899"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -29314,6 +31306,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -29336,7 +31361,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDJaIiwib2ZmZXItYSJdfQ.PD9O5B32i630JLvdTe6uhN9CcxQybwZgitG1qmedTpc"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDJaIiwib2ZmZXItYSJdfQ.PD9O5B32i630JLvdTe6uhN9CcxQybwZgitG1qmedTpc",
+              "total": 2
             },
             "localeMeta": {}
           },
@@ -29354,7 +31380,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"efbcfec950c43ea3dac2cdcbf84669a58e1f994b\""
+        "etag": "\"98f12241a8c017ff975c00f8c61ba7841beefc1f\""
       },
       "body": {
         "data": [],
@@ -29365,7 +31391,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDJaIiwib2ZmZXItYSJdfQ.PD9O5B32i630JLvdTe6uhN9CcxQybwZgitG1qmedTpc"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDJaIiwib2ZmZXItYSJdfQ.PD9O5B32i630JLvdTe6uhN9CcxQybwZgitG1qmedTpc",
+            "total": 2
           }
         }
       }
@@ -29425,6 +31452,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -29473,7 +31538,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDJaIiwyXX0.cQSmoSdaJB43ibXeD-jFrwWfj5EZoP5Te1hskqwIZ9c"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDJaIiwyXX0.cQSmoSdaJB43ibXeD-jFrwWfj5EZoP5Te1hskqwIZ9c",
+              "total": 2
             }
           },
           "ttl": 60
@@ -29490,7 +31556,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"149eb7ee5249b001dc33538352b75c02ddaebb75\""
+        "etag": "\"39650d301c00d8fde2e0720eeefedd37e6fafadf\""
       },
       "body": {
         "data": [
@@ -29508,7 +31574,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDJaIiwyXX0.cQSmoSdaJB43ibXeD-jFrwWfj5EZoP5Te1hskqwIZ9c"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDJaIiwyXX0.cQSmoSdaJB43ibXeD-jFrwWfj5EZoP5Te1hskqwIZ9c",
+            "total": 2
           }
         }
       }
@@ -29585,6 +31652,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "one",
           "query": {
@@ -29630,7 +31729,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIxOTcwLTAxLTAxVDAwOjAwOjAwLjAwMloiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.H5LG0s2kiqUWjpQ1K_Wcpu-YNHyGFWFH2mR7CaR2OM8"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIxOTcwLTAxLTAxVDAwOjAwOjAwLjAwMloiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.H5LG0s2kiqUWjpQ1K_Wcpu-YNHyGFWFH2mR7CaR2OM8",
+              "total": 2
             }
           },
           "ttl": 60
@@ -29647,7 +31747,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"052d06b06ac9085f5a5e534e484b296ae4efec2c\""
+        "etag": "\"a3590c19fbe8dd40f64983f007000c53fd5aec9c\""
       },
       "body": {
         "data": [
@@ -29672,7 +31772,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIxOTcwLTAxLTAxVDAwOjAwOjAwLjAwMloiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.H5LG0s2kiqUWjpQ1K_Wcpu-YNHyGFWFH2mR7CaR2OM8"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIxOTcwLTAxLTAxVDAwOjAwOjAwLjAwMloiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.H5LG0s2kiqUWjpQ1K_Wcpu-YNHyGFWFH2mR7CaR2OM8",
+            "total": 2
           }
         }
       }
@@ -29746,6 +31847,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -29768,7 +31902,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDFaIiwib2ZmZXItYSJdfQ.zFNVXgKrWzXVE2RTWWRMQVUZPlpMtL9Uobaw3xg1u_E"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDFaIiwib2ZmZXItYSJdfQ.zFNVXgKrWzXVE2RTWWRMQVUZPlpMtL9Uobaw3xg1u_E",
+              "total": 2
             },
             "localeMeta": {}
           },
@@ -29786,7 +31921,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0486913c5134c9834fe72c806c75ff350cad63b8\""
+        "etag": "\"8744332882bd4d43733bd9673302ada24ed4718e\""
       },
       "body": {
         "data": [],
@@ -29797,7 +31932,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDFaIiwib2ZmZXItYSJdfQ.zFNVXgKrWzXVE2RTWWRMQVUZPlpMtL9Uobaw3xg1u_E"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDFaIiwib2ZmZXItYSJdfQ.zFNVXgKrWzXVE2RTWWRMQVUZPlpMtL9Uobaw3xg1u_E",
+            "total": 2
           }
         }
       }
@@ -29857,6 +31993,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -29905,7 +32079,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDFaIiwyXX0.fEhZGZR1SRN9GfQYllHEsEmeWGnu-S2quZYB9z_4eBE"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDFaIiwyXX0.fEhZGZR1SRN9GfQYllHEsEmeWGnu-S2quZYB9z_4eBE",
+              "total": 2
             }
           },
           "ttl": 60
@@ -29922,7 +32097,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d1ec2347c60d1dbda75d60218b46fb28ef44db35\""
+        "etag": "\"81d42ba3dcbf7505b401b019a540b6eff5dfaac9\""
       },
       "body": {
         "data": [
@@ -29940,7 +32115,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDFaIiwyXX0.fEhZGZR1SRN9GfQYllHEsEmeWGnu-S2quZYB9z_4eBE"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMTk3MC0wMS0wMVQwMDowMDowMC4wMDFaIiwyXX0.fEhZGZR1SRN9GfQYllHEsEmeWGnu-S2quZYB9z_4eBE",
+            "total": 2
           }
         }
       }
@@ -30017,6 +32193,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "one",
           "query": {
@@ -30062,7 +32270,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIxOTcwLTAxLTAxVDAwOjAwOjAwLjAwMVoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.NXaVeIpTDwTgQw-e60CXnuO0yj28lCr7DB3paFmt7-k"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIxOTcwLTAxLTAxVDAwOjAwOjAwLjAwMVoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.NXaVeIpTDwTgQw-e60CXnuO0yj28lCr7DB3paFmt7-k",
+              "total": 2
             }
           },
           "ttl": 60
@@ -30079,7 +32288,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1e8b36425dad8a720c4a311d37f5704ccd72f4d9\""
+        "etag": "\"8b1170b8a85237aa1a6f8f5194f59af1a35a9338\""
       },
       "body": {
         "data": [
@@ -30104,7 +32313,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIxOTcwLTAxLTAxVDAwOjAwOjAwLjAwMVoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.NXaVeIpTDwTgQw-e60CXnuO0yj28lCr7DB3paFmt7-k"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIxOTcwLTAxLTAxVDAwOjAwOjAwLjAwMVoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.NXaVeIpTDwTgQw-e60CXnuO0yj28lCr7DB3paFmt7-k",
+            "total": 2
           }
         }
       }
@@ -30178,6 +32388,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -30200,7 +32443,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLCJvZmZlci1hIl19.gmlXVJ7uwKKgVq0oAcdJmcqnMoxBrfx51MvFFj8AaEU"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLCJvZmZlci1hIl19.gmlXVJ7uwKKgVq0oAcdJmcqnMoxBrfx51MvFFj8AaEU",
+              "total": 2
             },
             "localeMeta": {}
           },
@@ -30218,7 +32462,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"14ffbcc3143c8192f6fd385acd070d5b65d68df7\""
+        "etag": "\"63838b5acf1d039d67e08ccc951bf1800967137e\""
       },
       "body": {
         "data": [],
@@ -30229,7 +32473,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLCJvZmZlci1hIl19.gmlXVJ7uwKKgVq0oAcdJmcqnMoxBrfx51MvFFj8AaEU"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLCJvZmZlci1hIl19.gmlXVJ7uwKKgVq0oAcdJmcqnMoxBrfx51MvFFj8AaEU",
+            "total": 2
           }
         }
       }
@@ -30289,6 +32534,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -30337,7 +32620,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLDJdfQ.xtRb9_qqapdQ6_RxY1zTbPlf942Y4iOdqxoNce-0F_w"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLDJdfQ.xtRb9_qqapdQ6_RxY1zTbPlf942Y4iOdqxoNce-0F_w",
+              "total": 2
             }
           },
           "ttl": 60
@@ -30354,7 +32638,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b9dd59a0ad37a4611ce0c87885d713418c49d7a3\""
+        "etag": "\"a50fb011dc39a0f899284df20ab00e43673c7a29\""
       },
       "body": {
         "data": [
@@ -30372,7 +32656,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLDJdfQ.xtRb9_qqapdQ6_RxY1zTbPlf942Y4iOdqxoNce-0F_w"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOltudWxsLDJdfQ.xtRb9_qqapdQ6_RxY1zTbPlf942Y4iOdqxoNce-0F_w",
+            "total": 2
           }
         }
       }
@@ -30449,6 +32734,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "one",
           "query": {
@@ -30494,7 +32811,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6W251bGwsIjUwN2YxZjc3YmNmODZjZDc5OTQzOTAxMSJdfQ.v5uVbOLFj_fvdXXqxlsIXD1OtOjeoAytPDSRLuTIT8w"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6W251bGwsIjUwN2YxZjc3YmNmODZjZDc5OTQzOTAxMSJdfQ.v5uVbOLFj_fvdXXqxlsIXD1OtOjeoAytPDSRLuTIT8w",
+              "total": 2
             }
           },
           "ttl": 60
@@ -30511,7 +32829,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"44e0b19648d788e6d3b0b561017000b158305661\""
+        "etag": "\"e8442c737de9e9774e8cdec246f65e9b1473baab\""
       },
       "body": {
         "data": [
@@ -30536,7 +32854,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6W251bGwsIjUwN2YxZjc3YmNmODZjZDc5OTQzOTAxMSJdfQ.v5uVbOLFj_fvdXXqxlsIXD1OtOjeoAytPDSRLuTIT8w"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6W251bGwsIjUwN2YxZjc3YmNmODZjZDc5OTQzOTAxMSJdfQ.v5uVbOLFj_fvdXXqxlsIXD1OtOjeoAytPDSRLuTIT8w",
+            "total": 2
           }
         }
       }
@@ -30610,6 +32929,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -30632,7 +32984,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wMS0wMVQwMDowMDowMC4wMDBaIiwib2ZmZXItYSJdfQ.U6NsuRYyrpKQs57a06G0qIK3pzlR68_FQWJiutFg_I8"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wMS0wMVQwMDowMDowMC4wMDBaIiwib2ZmZXItYSJdfQ.U6NsuRYyrpKQs57a06G0qIK3pzlR68_FQWJiutFg_I8",
+              "total": 2
             },
             "localeMeta": {}
           },
@@ -30650,7 +33003,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"90652768f35a4535f505654da58aec9f4bce6da3\""
+        "etag": "\"fce6d8f023b5e8de5b52ddb368ff3e3a92a645f8\""
       },
       "body": {
         "data": [],
@@ -30661,7 +33014,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wMS0wMVQwMDowMDowMC4wMDBaIiwib2ZmZXItYSJdfQ.U6NsuRYyrpKQs57a06G0qIK3pzlR68_FQWJiutFg_I8"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wMS0wMVQwMDowMDowMC4wMDBaIiwib2ZmZXItYSJdfQ.U6NsuRYyrpKQs57a06G0qIK3pzlR68_FQWJiutFg_I8",
+            "total": 2
           }
         }
       }
@@ -30721,6 +33075,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -30769,7 +33161,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wMS0wMVQwMDowMDowMC4wMDBaIiwyXX0.0K6wQ5KNIG4L6cRwX2ioaxZ_yvS-8jbqeUZEGof9VkQ"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wMS0wMVQwMDowMDowMC4wMDBaIiwyXX0.0K6wQ5KNIG4L6cRwX2ioaxZ_yvS-8jbqeUZEGof9VkQ",
+              "total": 2
             }
           },
           "ttl": 60
@@ -30786,7 +33179,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"740230ba55e04411aeb3969ca817060f1f2c0930\""
+        "etag": "\"32421b57466dac798dfd570bf20d34242ed7a8d2\""
       },
       "body": {
         "data": [
@@ -30804,7 +33197,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wMS0wMVQwMDowMDowMC4wMDBaIiwyXX0.0K6wQ5KNIG4L6cRwX2ioaxZ_yvS-8jbqeUZEGof9VkQ"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wMS0wMVQwMDowMDowMC4wMDBaIiwyXX0.0K6wQ5KNIG4L6cRwX2ioaxZ_yvS-8jbqeUZEGof9VkQ",
+            "total": 2
           }
         }
       }
@@ -30881,6 +33275,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "one",
           "query": {
@@ -30926,7 +33352,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIyMDIwLTAxLTAxVDAwOjAwOjAwLjAwMFoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.DecDNOxzOP_x8pBGWMLfw-omkvXJhGc2M5PvANBIOSQ"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIyMDIwLTAxLTAxVDAwOjAwOjAwLjAwMFoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.DecDNOxzOP_x8pBGWMLfw-omkvXJhGc2M5PvANBIOSQ",
+              "total": 2
             }
           },
           "ttl": 60
@@ -30943,7 +33370,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ab54d7d43cc45eb47643a500f5362c79036642d0\""
+        "etag": "\"9e46aacfb9e97378a7e6904a5ab1b38bab932d4b\""
       },
       "body": {
         "data": [
@@ -30968,7 +33395,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIyMDIwLTAxLTAxVDAwOjAwOjAwLjAwMFoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.DecDNOxzOP_x8pBGWMLfw-omkvXJhGc2M5PvANBIOSQ"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIyMDIwLTAxLTAxVDAwOjAwOjAwLjAwMFoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.DecDNOxzOP_x8pBGWMLfw-omkvXJhGc2M5PvANBIOSQ",
+            "total": 2
           }
         }
       }
@@ -31042,6 +33470,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -31064,7 +33525,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wOC0wMVQwMDowMDowMC4wMDBaIiwib2ZmZXItYSJdfQ._dCend_3jqIfZP27hpn_biKt3PrTp158a55629_s0Rg"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wOC0wMVQwMDowMDowMC4wMDBaIiwib2ZmZXItYSJdfQ._dCend_3jqIfZP27hpn_biKt3PrTp158a55629_s0Rg",
+              "total": 2
             },
             "localeMeta": {}
           },
@@ -31082,7 +33544,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"9b6747cb05bfdfd3f27a71fd3df6ffecf955962e\""
+        "etag": "\"7a2a07ec94cb7f93d617a90edaa878c030b6c7dc\""
       },
       "body": {
         "data": [],
@@ -31093,7 +33555,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wOC0wMVQwMDowMDowMC4wMDBaIiwib2ZmZXItYSJdfQ._dCend_3jqIfZP27hpn_biKt3PrTp158a55629_s0Rg"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLnNhbGVzIiwiZmlsdGVycyI6e30sImZpbHRlckhhc2giOiI0NDEzNmZhMzU1YjM2NzhhMTE0NmFkMTZmN2U4NjQ5ZTk0ZmI0ZmMyMWZlNzdlODMxMGMwNjBmNjFjYWFmZjhhIiwib3JkZXJpbmciOiJhcHBsaWVkUnVsZXMuZW5kRGF0ZTphc2Msb2ZmZXJJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wOC0wMVQwMDowMDowMC4wMDBaIiwib2ZmZXItYSJdfQ._dCend_3jqIfZP27hpn_biKt3PrTp158a55629_s0Rg",
+            "total": 2
           }
         }
       }
@@ -31153,6 +33616,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -31201,7 +33702,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wOC0wMVQwMDowMDowMC4wMDBaIiwyXX0.U719CDEiDsv5TLyNpTSy11DgCJRJJqKUjJ1-svfGAEg"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wOC0wMVQwMDowMDowMC4wMDBaIiwyXX0.U719CDEiDsv5TLyNpTSy11DgCJRJJqKUjJ1-svfGAEg",
+              "total": 2
             }
           },
           "ttl": 60
@@ -31218,7 +33720,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0277c664f7ddbd8be43e28134be2f16c3189bb55\""
+        "etag": "\"97f0f860ff6860ba8ed560699467022b1cb81c50\""
       },
       "body": {
         "data": [
@@ -31236,7 +33738,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wOC0wMVQwMDowMDowMC4wMDBaIiwyXX0.U719CDEiDsv5TLyNpTSy11DgCJRJJqKUjJ1-svfGAEg"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmFjdGl2ZS1zYWxlcyIsImZpbHRlcnMiOnsiZ3JvdXAiOiJhY3RpdmUtc2FsZXMifSwiZmlsdGVySGFzaCI6IjI2YjlhNWZlYjk5ZDUyODJjYmQyOWFkZmVjZGE5M2IyNzhlMjU3Y2Y4MWQ0OTFkMjNmYWQxNzQxMWRkNmZjOWYiLCJvcmRlcmluZyI6InVwZGF0ZWQ6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjAyMC0wOC0wMVQwMDowMDowMC4wMDBaIiwyXX0.U719CDEiDsv5TLyNpTSy11DgCJRJJqKUjJ1-svfGAEg",
+            "total": 2
           }
         }
       }
@@ -31313,6 +33816,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "one",
           "query": {
@@ -31358,7 +33893,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIyMDIwLTA4LTAxVDAwOjAwOjAwLjAwMFoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.EpVa2cnPXEOGz1fhxQe-9WrS2bfcoeoox20tFigpLx8"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIyMDIwLTA4LTAxVDAwOjAwOjAwLjAwMFoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.EpVa2cnPXEOGz1fhxQe-9WrS2bfcoeoox20tFigpLx8",
+              "total": 2
             }
           },
           "ttl": 60
@@ -31375,7 +33911,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b3b1e700a511599004ce6110872d042d4c558268\""
+        "etag": "\"a72ed0f5aed0aaaa1d701785519541f6b0d2365c\""
       },
       "body": {
         "data": [
@@ -31400,7 +33936,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIyMDIwLTA4LTAxVDAwOjAwOjAwLjAwMFoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.EpVa2cnPXEOGz1fhxQe-9WrS2bfcoeoox20tFigpLx8"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjYXRhbG9nLmNoYW5nZWxvZyIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoidGltZXN0YW1wOmRlc2MsX2lkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDkzODQwMDAwMCwibGFzdCI6WyIyMDIwLTA4LTAxVDAwOjAwOjAwLjAwMFoiLCI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiXX0.EpVa2cnPXEOGz1fhxQe-9WrS2bfcoeoox20tFigpLx8",
+            "total": 2
           }
         }
       }
@@ -31471,6 +34008,39 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -31560,6 +34130,44 @@
             "name": "Winter Sale"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -31688,6 +34296,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "one",
           "query": {
@@ -31774,6 +34414,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.changelog:limit=20",
           "payload": {
@@ -31792,7 +34464,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -31809,7 +34482,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"11de94c64f4c762252946d9118ab733ca9903a4f\""
+        "etag": "\"620817d9f00e6ed9154d176d9903e43099ee0854\""
       },
       "body": {
         "data": [
@@ -31828,7 +34501,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -31943,6 +34617,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.changelog:limit=20",
           "payload": {
@@ -31959,7 +34665,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -31976,7 +34683,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"16178a8afe1273e7ddf59d462f644ed86c20aa5c\""
+        "etag": "\"7b93e2664df9bf70e4bee136f376a29f0620adb9\""
       },
       "body": {
         "data": [
@@ -31993,7 +34700,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -32109,6 +34817,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "assets",
           "method": "one",
           "query": {
@@ -32157,7 +34897,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -32174,7 +34915,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d8352dd565efc6c64a5892d7e825a4d0d44d27a1\""
+        "etag": "\"f39a6ab6ddced379efad1abe1c951538fd14dbc2\""
       },
       "body": {
         "data": [
@@ -32193,7 +34934,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -32343,6 +35085,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "builds",
           "method": "one",
           "query": {
@@ -32389,7 +35163,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -32406,7 +35181,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"469372d2a689355dc7bf66a9ab40880b9ca8985c\""
+        "etag": "\"d0b93c6ace1eb4ba3d785e7418ff4539534926e8\""
       },
       "body": {
         "data": [
@@ -32423,7 +35198,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -32571,6 +35347,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "one",
           "query": {
@@ -32616,7 +35424,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -32633,7 +35442,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"153cea2d765b4cf4d9799826864294a44a343177\""
+        "etag": "\"baf0ef51fb40c6943d34573790018ddbfbbc51af\""
       },
       "body": {
         "data": [
@@ -32654,7 +35463,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -33324,6 +36134,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -33365,7 +36208,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "localeMeta": {}
           },
@@ -33383,7 +36227,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3b31d5862e27e4004860709047cfc3809264f18e\""
+        "etag": "\"a25823f200bce17c6e23f75e3eed2c008ec1c7f8\""
       },
       "body": {
         "data": [],
@@ -33394,7 +36238,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -33444,6 +36289,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.active-sales:limit=20:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -33451,7 +36334,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -33468,7 +36352,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3b31d5862e27e4004860709047cfc3809264f18e\""
+        "etag": "\"a25823f200bce17c6e23f75e3eed2c008ec1c7f8\""
       },
       "body": {
         "data": [],
@@ -33479,7 +36363,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -33523,6 +36408,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.changelog:limit=20",
           "payload": {
@@ -33530,7 +36447,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -33547,7 +36465,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"318c919cc2f232950a59a9702a083288ef6a9a4b\""
+        "etag": "\"0a0f86dfffc8b34d218d6f632af99cc27adca2a9\""
       },
       "body": {
         "data": [],
@@ -33555,7 +36473,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -34303,6 +37222,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.sales.total:region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "US",
+            "price.discount": {
+              "$gt": 0
+            },
+            "appliedRules.endDate": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.sales.total:region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "error": true
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -34344,7 +37296,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "localeMeta": {}
           },
@@ -34362,7 +37315,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3b31d5862e27e4004860709047cfc3809264f18e\""
+        "etag": "\"a25823f200bce17c6e23f75e3eed2c008ec1c7f8\""
       },
       "body": {
         "data": [],
@@ -34373,7 +37326,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -34423,6 +37377,44 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.active-sales.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {
+            "name": {
+              "$regex": "(Sale|Savings|Promotion|Deals)",
+              "$options": "i"
+            },
+            "referenceCount": {
+              "$gt": 0
+            },
+            "id": {
+              "$nin": [
+                33639
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.active-sales.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "error": true
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.active-sales:limit=20:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -34430,7 +37422,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -34447,7 +37440,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3b31d5862e27e4004860709047cfc3809264f18e\""
+        "etag": "\"a25823f200bce17c6e23f75e3eed2c008ec1c7f8\""
       },
       "body": {
         "data": [],
@@ -34458,7 +37451,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -34502,6 +37496,38 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:catalog.changelog.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextType": {
+              "$nin": [
+                "file",
+                "achievements"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:catalog.changelog.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "error": true
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:catalog.changelog:limit=20",
           "payload": {
@@ -34509,7 +37535,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -34526,7 +37553,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"318c919cc2f232950a59a9702a083288ef6a9a4b\""
+        "etag": "\"0a0f86dfffc8b34d218d6f632af99cc27adca2a9\""
       },
       "body": {
         "data": [],
@@ -34534,7 +37561,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }

@@ -1,4 +1,5 @@
 //! Grouped price history and keyset pagination for a single pricing region.
+use super::catalog_list::{PageRead, counted_page};
 use super::{
     helpers::parse_strict_query_uri, offer_prices::require, offer_prices::serialize_stored_price,
     offers, system::internal_error,
@@ -284,29 +285,38 @@ pub(super) async fn history(state: &AppState, uri: &Uri, id: &str) -> Result<Val
     let load = || async {
         require(state, id, Some(doc! {"id":1})).await?;
         let mut filter = history_filter(id, Bson::String(region.clone()), since);
+        let base = filter.clone();
         if let Some(keyset) = date_keyset(state, &page, &binding, "date")? {
             filter.extend(keyset);
         }
-        let rows = state
-            .mongo
-            .find_many(
-                "pricev2_historical",
+        let (rows, total) = counted_page(
+            state,
+            HISTORY,
+            &[
+                ("id", json!(id)),
+                ("region", json!(region)),
+                ("since", json!(since_iso)),
+            ],
+            60,
+            "pricev2_historical",
+            Some(base),
+            PageRead::Find(
                 filter,
                 MongoFindOptions {
                     sort: Some(doc! {"date":-1,"_id":-1}),
                     limit: Some(i64::from(page.limit) + 1),
                     ..Default::default()
                 },
-            )
-            .await
-            .map_err(|_| internal_error())?;
+            ),
+        )
+        .await?;
         let (rows, last) = trimmed_date_page(rows, binding.limit, "date");
         let elements = rows
             .into_iter()
             .map(serialize_stored_price)
             .collect::<Result<Vec<_>, _>>()?;
         let pagination = date_page_meta(state, &binding, last, &["offerId", "region", "since"])?;
-        Ok(json!({"elements":elements,"pagination":pagination}))
+        Ok(json!({"elements":elements,"pagination":pagination.with_total(total)}))
     };
     let payload = offers::cached(state, HISTORY, parts, 60, load).await?;
     let mut envelope = json!({});

@@ -321,6 +321,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:items.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:items.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:items.list:limit=20",
           "payload": {
@@ -383,7 +408,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -400,7 +426,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d66ebe1a5283606ebb5f4b4c60da1477957b501a\""
+        "etag": "\"f544b67cc5a018013a01a205405193747105bf4c\""
       },
       "body": {
         "data": [
@@ -464,7 +490,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -850,6 +877,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.items:limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -912,7 +966,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -929,7 +984,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d66ebe1a5283606ebb5f4b4c60da1477957b501a\""
+        "etag": "\"f544b67cc5a018013a01a205405193747105bf4c\""
       },
       "body": {
         "data": [
@@ -993,7 +1048,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -1417,6 +1473,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "releaseInfo.appId": "game"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:builds.items:id=\"507f1f77bcf86cd799439011\":limit=20",
           "payload": {
@@ -1479,7 +1562,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -1496,7 +1580,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d66ebe1a5283606ebb5f4b4c60da1477957b501a\""
+        "etag": "\"f544b67cc5a018013a01a205405193747105bf4c\""
       },
       "body": {
         "data": [
@@ -1560,7 +1644,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -1605,6 +1690,31 @@
             "hash": "test-hash"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:builds.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -1774,7 +1884,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -1791,7 +1902,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"e0fdd5ee8e4a56c40b234142a170324462eb29d7\""
+        "etag": "\"f09a21e926ae7bb311cb3d299f474b0b74eb0a21\""
       },
       "body": {
         "data": [
@@ -1883,7 +1994,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -2334,6 +2446,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:items.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:items.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:items.list:limit=20",
           "payload": {
@@ -2377,7 +2514,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -2394,7 +2532,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"a5ecb7bc0a859c9f203738e9f35dc757b262fb4b\""
+        "etag": "\"96ae7bf6ca1d8eaf335b858cc75053f353fdd16a\""
       },
       "body": {
         "data": [
@@ -2439,7 +2577,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -2711,6 +2850,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.items:limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -2754,7 +2920,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -2771,7 +2938,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"a5ecb7bc0a859c9f203738e9f35dc757b262fb4b\""
+        "etag": "\"96ae7bf6ca1d8eaf335b858cc75053f353fdd16a\""
       },
       "body": {
         "data": [
@@ -2816,7 +2983,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3126,6 +3294,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "releaseInfo.appId": "game"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:builds.items:id=\"507f1f77bcf86cd799439011\":limit=20",
           "payload": {
@@ -3169,7 +3364,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -3186,7 +3382,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"a5ecb7bc0a859c9f203738e9f35dc757b262fb4b\""
+        "etag": "\"96ae7bf6ca1d8eaf335b858cc75053f353fdd16a\""
       },
       "body": {
         "data": [
@@ -3231,7 +3427,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3276,6 +3473,31 @@
             "hash": "test-hash"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:builds.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -3388,7 +3610,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -3405,7 +3628,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1308316294e8897d6fb181119ff6cdeadfcaa00b\""
+        "etag": "\"00081aa3c3783c69e3f7218af06585d3dc919cf6\""
       },
       "body": {
         "data": [
@@ -3478,7 +3701,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3847,6 +4071,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:items.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:items.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:items.list:limit=20",
           "payload": {
@@ -3887,7 +4136,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -3904,7 +4154,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"2af6bdc4ecc448df62467fec3291bd5fb035b19b\""
+        "etag": "\"924d00d1243806d0c3cdded11855be00acf407f8\""
       },
       "body": {
         "data": [
@@ -3946,7 +4196,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -4212,6 +4463,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.items:limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -4252,7 +4530,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -4269,7 +4548,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"2af6bdc4ecc448df62467fec3291bd5fb035b19b\""
+        "etag": "\"924d00d1243806d0c3cdded11855be00acf407f8\""
       },
       "body": {
         "data": [
@@ -4311,7 +4590,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -4615,6 +4895,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "releaseInfo.appId": "game"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:builds.items:id=\"507f1f77bcf86cd799439011\":limit=20",
           "payload": {
@@ -4655,7 +4962,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -4672,7 +4980,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"2af6bdc4ecc448df62467fec3291bd5fb035b19b\""
+        "etag": "\"924d00d1243806d0c3cdded11855be00acf407f8\""
       },
       "body": {
         "data": [
@@ -4714,7 +5022,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -4759,6 +5068,31 @@
             "hash": "test-hash"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:builds.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -4868,7 +5202,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -4885,7 +5220,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"67a2de34c0e8dc2684f67b9dea687683a3d57d63\""
+        "etag": "\"1cb912be0e52bc6226e87f07c6b1276a72415629\""
       },
       "body": {
         "data": [
@@ -4955,7 +5290,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -5402,6 +5738,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:items.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:items.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:items.list:limit=20",
           "payload": {
@@ -5459,7 +5820,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -5476,7 +5838,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"4e0a5340b885766945b1782e1b2749462d8994a8\""
+        "etag": "\"f1687d2e89a4fad016a517abf4d9c84e5f90b16a\""
       },
       "body": {
         "data": [
@@ -5535,7 +5897,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -5885,6 +6248,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.items:limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -5942,7 +6332,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -5959,7 +6350,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"4e0a5340b885766945b1782e1b2749462d8994a8\""
+        "etag": "\"f1687d2e89a4fad016a517abf4d9c84e5f90b16a\""
       },
       "body": {
         "data": [
@@ -6018,7 +6409,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -6406,6 +6798,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "releaseInfo.appId": "game"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:builds.items:id=\"507f1f77bcf86cd799439011\":limit=20",
           "payload": {
@@ -6463,7 +6882,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -6480,7 +6900,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"4e0a5340b885766945b1782e1b2749462d8994a8\""
+        "etag": "\"f1687d2e89a4fad016a517abf4d9c84e5f90b16a\""
       },
       "body": {
         "data": [
@@ -6539,7 +6959,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -6584,6 +7005,31 @@
             "hash": "test-hash"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:builds.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -6735,7 +7181,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -6752,7 +7199,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"218c2613a327e95e9f32a216ba52aa9cecf0bd6d\""
+        "etag": "\"b5d0ce26441c36b036abb14ad591d707c077e369\""
       },
       "body": {
         "data": [
@@ -6839,7 +7286,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -7261,6 +7709,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:items.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:items.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:items.list:limit=20",
           "payload": {
@@ -7302,7 +7775,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -7319,7 +7793,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c8d8a5b6834a291d5c11663e28622d0d1216fc3c\""
+        "etag": "\"c7b293a0e8ab65289d36da30541755586b1222bf\""
       },
       "body": {
         "data": [
@@ -7362,7 +7836,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -7628,6 +8103,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.items:limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -7669,7 +8171,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -7686,7 +8189,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c8d8a5b6834a291d5c11663e28622d0d1216fc3c\""
+        "etag": "\"c7b293a0e8ab65289d36da30541755586b1222bf\""
       },
       "body": {
         "data": [
@@ -7729,7 +8232,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -8033,6 +8537,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "releaseInfo.appId": "game"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:builds.items:id=\"507f1f77bcf86cd799439011\":limit=20",
           "payload": {
@@ -8074,7 +8605,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -8091,7 +8623,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c8d8a5b6834a291d5c11663e28622d0d1216fc3c\""
+        "etag": "\"c7b293a0e8ab65289d36da30541755586b1222bf\""
       },
       "body": {
         "data": [
@@ -8134,7 +8666,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -8179,6 +8712,31 @@
             "hash": "test-hash"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:builds.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -8288,7 +8846,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -8305,7 +8864,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"9d78d2df190a6e1696e1a3576a6918b0d87c199a\""
+        "etag": "\"c33e8d62bd529aef41003f2831f87cd557eba638\""
       },
       "body": {
         "data": [
@@ -8376,7 +8935,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -8764,6 +9324,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:items.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:items.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:items.list:limit=20",
           "payload": {
@@ -8819,7 +9404,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -8836,7 +9422,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"e0b208e445c8a987166016678ae310f5c74f2d8a\""
+        "etag": "\"cd19fa43a5261dc7d90f1b0b5f15c15cf64ac000\""
       },
       "body": {
         "data": [
@@ -8893,7 +9479,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -9183,6 +9770,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.items:limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -9238,7 +9852,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -9255,7 +9870,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"e0b208e445c8a987166016678ae310f5c74f2d8a\""
+        "etag": "\"cd19fa43a5261dc7d90f1b0b5f15c15cf64ac000\""
       },
       "body": {
         "data": [
@@ -9312,7 +9927,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -9640,6 +10256,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "releaseInfo.appId": "game"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:builds.items:id=\"507f1f77bcf86cd799439011\":limit=20",
           "payload": {
@@ -9695,7 +10338,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -9712,7 +10356,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"e0b208e445c8a987166016678ae310f5c74f2d8a\""
+        "etag": "\"cd19fa43a5261dc7d90f1b0b5f15c15cf64ac000\""
       },
       "body": {
         "data": [
@@ -9769,7 +10413,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -9814,6 +10459,31 @@
             "hash": "test-hash"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:builds.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -9935,7 +10605,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -9952,7 +10623,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8c40da349c6380c0c5c6c6a3c6030f206609d86\""
+        "etag": "\"543906aeac1bfe2119cf19e270971852ce32bd09\""
       },
       "body": {
         "data": [
@@ -10037,7 +10708,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -10381,6 +11053,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:items.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:items.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:items.list:limit=20",
           "payload": {
@@ -10411,7 +11108,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -10428,7 +11126,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"7da393e14fa6a7ed595b2e1ecec157943b8f13c8\""
+        "etag": "\"32b1e87cf8c7c8491753f575975094eeb6b3437c\""
       },
       "body": {
         "data": [
@@ -10460,7 +11158,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -10680,6 +11379,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "namespace": "ns"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.items.total:sandboxId=\"ns\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:sandboxes.items:limit=20:sandboxId=\"ns\"",
           "payload": {
@@ -10710,7 +11436,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -10727,7 +11454,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"7da393e14fa6a7ed595b2e1ecec157943b8f13c8\""
+        "etag": "\"32b1e87cf8c7c8491753f575975094eeb6b3437c\""
       },
       "body": {
         "data": [
@@ -10759,7 +11486,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -11017,6 +11745,33 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "releaseInfo.appId": "game"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.items.total:id=\"507f1f77bcf86cd799439011\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:builds.items:id=\"507f1f77bcf86cd799439011\":limit=20",
           "payload": {
@@ -11047,7 +11802,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -11064,7 +11820,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"7da393e14fa6a7ed595b2e1ecec157943b8f13c8\""
+        "etag": "\"32b1e87cf8c7c8491753f575975094eeb6b3437c\""
       },
       "body": {
         "data": [
@@ -11096,7 +11852,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -11141,6 +11898,31 @@
             "hash": "test-hash"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:builds.list.total:"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "builds",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:builds.list.total:",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -11227,7 +12009,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -11244,7 +12027,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"57664db9dff91c0cfb7f88a7c4f9b03f6f74fc5b\""
+        "etag": "\"83c5bf0c59092e5556216ac879307d4f2dbf092b\""
       },
       "body": {
         "data": [
@@ -11304,7 +12087,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }

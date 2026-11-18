@@ -177,7 +177,8 @@
         "required": [
           "limit",
           "hasMore",
-          "nextCursor"
+          "nextCursor",
+          "total"
         ],
         "properties": {
           "limit": {
@@ -190,6 +191,11 @@
           },
           "nextCursor": {
             "type": "string",
+            "nullable": true
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
             "nullable": true
           }
         }

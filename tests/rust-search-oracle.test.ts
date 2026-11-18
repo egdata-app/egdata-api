@@ -16,6 +16,7 @@ const mocks = vi.hoisted(() => ({
   aggregate: vi.fn(),
   findTags: vi.fn(),
   findChangelog: vi.fn(),
+  countChangelog: vi.fn(),
   cacheGet: vi.fn(),
   savedQueryGet: vi.fn(),
   cacheSet: vi.fn(),
@@ -48,7 +49,7 @@ vi.mock("../src/clients/vectorize.js", async (importOriginal) => ({
 vi.mock("../src/models/index.js", () => ({
   Offer: { find: mocks.findOffers, aggregate: mocks.aggregate },
   Seller: { find: mocks.findSellers },
-  Changelog: { find: mocks.findChangelog },
+  Changelog: { find: mocks.findChangelog, countDocuments: mocks.countChangelog },
   TagModel: { find: mocks.findTags },
 }));
 
@@ -84,6 +85,7 @@ describe("Rust search HTTP Node oracle", () => {
     mocks.aggregate.mockReset();
     mocks.findTags.mockReset();
     mocks.findChangelog.mockReset();
+    mocks.countChangelog.mockReset().mockResolvedValue(23);
     mocks.cacheGet.mockReset().mockResolvedValue(null);
     mocks.savedQueryGet.mockReset().mockResolvedValue(null);
     mocks.cacheSet.mockReset().mockResolvedValue("OK");
@@ -110,6 +112,7 @@ describe("Rust search HTTP Node oracle", () => {
       const savedReadsBefore = mocks.savedQueryGet.mock.calls.length;
       const aggregateCallsBefore = mocks.aggregate.mock.calls.length;
       const tagsCallsBefore = mocks.findTags.mock.calls.length;
+      const countCallsBefore = mocks.countChangelog.mock.calls.length;
       const changelogCallsBefore = mocks.findChangelog.mock.calls.length;
       const offerCallsBefore = mocks.findOffers.mock.calls.length;
       const sellerCallsBefore = mocks.findSellers.mock.calls.length;
@@ -181,6 +184,8 @@ describe("Rust search HTTP Node oracle", () => {
         mocks.aggregate.mock.calls.length > aggregateCallsBefore;
       if (mocks.findTags.mock.calls.length > tagsCallsBefore)
         actualInput.tagsFindQuery = mocks.findTags.mock.calls.at(-1)?.[0];
+      if (mocks.countChangelog.mock.calls.length > countCallsBefore)
+        actualInput.changelogCountFilter = mocks.countChangelog.mock.calls.at(-1)?.[0];
       if (mocks.findChangelog.mock.calls.length > changelogCallsBefore) {
         const [filter, ...options] = mocks.findChangelog.mock.calls.at(-1)!;
         actualInput.changelogFindArgs = [
@@ -2253,6 +2258,41 @@ describe("Rust search HTTP Node oracle", () => {
     } finally {
       vi.unstubAllEnvs();
     }
+    for (const [name, path, total] of [
+      ["native-number", "/v1/search", 301],
+      [
+        "native-object",
+        "/v1/multisearch/offers?query=offers",
+        { value: 123, relation: "gte" },
+      ],
+      ["zero", "/v1/multisearch/items?query=items", 0],
+      ["malformed", "/v1/search/changelog?query=change", { value: "99" }],
+    ] as const) {
+      const opensearchResponse = { took: 1, hits: { hits: [], total } };
+      mocks.search.mockResolvedValueOnce({ body: opensearchResponse });
+      await record("pagination-total-" + name, "GET", path, undefined, {
+        opensearchResponse,
+      });
+    }
+    const totalKey = 'v1:search.changelog.total:id="existing":type="offer"';
+    mocks.cacheGet.mockResolvedValueOnce(null).mockResolvedValueOnce("2048");
+    mocks.findChangelog.mockReturnValueOnce({ lean: async () => [] });
+    await record(
+      "recent-changelog-independent-cached-total",
+      "GET",
+      "/v1/search/changelog?type=offer&id=existing&limit=3",
+      undefined,
+      { cacheEntries: { [totalKey]: "2048" }, mongoRows: [] },
+    );
+    mocks.findChangelog.mockReturnValueOnce({ lean: async () => [] });
+    mocks.countChangelog.mockRejectedValueOnce(new Error("unavailable"));
+    await record(
+      "recent-changelog-count-unavailable",
+      "GET",
+      "/v1/search/changelog?limit=2",
+      undefined,
+      { countUnavailable: true, mongoRows: [] },
+    );
     assertOracle("search-http-node", cases);
     vi.useRealTimers();
   });

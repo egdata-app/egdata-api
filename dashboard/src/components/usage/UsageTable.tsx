@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Download, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Filter, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { SortDescriptor } from "react-aria-components";
 import {
@@ -25,12 +25,16 @@ import {
   Tabs,
 } from "../ui/TableAndTabs";
 import { TextField } from "../ui/TextField";
-import { UsageError } from "./UsageShared";
+import { outcomeLabels, UsageError } from "./UsageShared";
 
 const tabs: { id: UsageDimension; label: string }[] = [
   { id: "endpoints", label: "Endpoints" },
   { id: "projects", label: "Applications" },
   { id: "keys", label: "API keys" },
+  { id: "statusCodes", label: "Status codes" },
+  { id: "limitOutcomes", label: "Access checks" },
+  { id: "cacheStatuses", label: "Cache results" },
+  { id: "policies", label: "Policies" },
   { id: "origins", label: "Origin presence" },
   { id: "ips", label: "Countries" },
   { id: "userAgents", label: "Client categories" },
@@ -38,11 +42,13 @@ const tabs: { id: UsageDimension; label: string }[] = [
 const sortable: { id: UsageSort; label: string }[] = [
   { id: "requests", label: "Requests" },
   { id: "cacheHitRate", label: "Cache hit %" },
+  { id: "errors", label: "Errors" },
   { id: "errorRate", label: "Error %" },
   { id: "rateLimited", label: "429s" },
   { id: "blockedPolicy", label: "Denied" },
   { id: "avgLatencyMs", label: "Avg time" },
   { id: "p95LatencyMs", label: "p95 time" },
+  { id: "p99LatencyMs", label: "p99 time" },
 ];
 
 export function UsageTable({
@@ -60,6 +66,7 @@ export function UsageTable({
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
   const [method, setMethod] = useState("");
+  const [minRequests, setMinRequests] = useState(0);
   const [offset, setOffset] = useState(0);
   const [pageSize, setPageSize] = useState(25);
   const [sort, setSort] = useState<SortDescriptor>({
@@ -74,6 +81,7 @@ export function UsageTable({
     dimension,
     query,
     method,
+    minRequests,
     sort,
   });
   useEffect(() => {
@@ -94,6 +102,7 @@ export function UsageTable({
   const params = {
     ...filters,
     method: filters.method || method || undefined,
+    minRequests: minRequests > 0 ? minRequests : undefined,
     dimension,
     search: query,
     sort: sort.column as UsageSort,
@@ -142,13 +151,25 @@ export function UsageTable({
       if (exportController.current === controller) setExporting(false);
     }
   }
+  const formatRowLabel = (row: UsageRow) => {
+    if (dimension === "origins" && row.label === "(direct)") {
+      return "No origin provided";
+    }
+    if (dimension === "limitOutcomes") {
+      return outcomeLabels[row.label] ?? row.label;
+    }
+    if (dimension === "ips" && row.label === "XX") {
+      return "Unknown / Local";
+    }
+    return row.label;
+  };
   const contents = (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-3 items-end justify-between">
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3 items-end">
           <TextField
             aria-label={`Search ${dimension}`}
-            placeholder={`Search ${dimension === "projects" ? "app name or ID" : dimension === "keys" ? "key name or ID" : dimension}…`}
+            placeholder={`Search ${dimension === "projects" ? "app name or ID" : dimension === "keys" ? "key name or ID" : tabs.find((t) => t.id === dimension)?.label.toLowerCase() ?? dimension}…`}
             value={search}
             onChange={setSearch}
             className="w-64"
@@ -161,7 +182,7 @@ export function UsageTable({
                 setMethod(key === "all" ? "" : String(key));
                 setOffset(0);
               }}
-              className="w-40"
+              className="w-36"
             >
               {[
                 "all",
@@ -179,27 +200,43 @@ export function UsageTable({
               ))}
             </Select>
           )}
-        </div>
-        <Button
-          variant="secondary"
-          isDisabled={exporting || !result.data || result.loading}
-          onPress={() => void exportAll()}
-        >
-          <Download className="w-4 h-4" />
-          {exporting ? "Exporting…" : "Export CSV"}
-        </Button>
-        {exporting && (
-          <Button
-            variant="quiet"
-            onPress={() => {
-              exportController.current?.abort();
-              setExporting(false);
+          <Select
+            aria-label="Minimum requests"
+            selectedKey={String(minRequests)}
+            onSelectionChange={(key) => {
+              setMinRequests(Number(key));
+              setOffset(0);
             }}
+            className="w-40"
           >
-            <X className="w-3 h-3" />
-            Cancel export
+            <SelectItem id="0">All volumes</SelectItem>
+            <SelectItem id="10">≥ 10 requests</SelectItem>
+            <SelectItem id="100">≥ 100 requests</SelectItem>
+            <SelectItem id="1000">≥ 1,000 requests</SelectItem>
+          </Select>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="secondary"
+            isDisabled={exporting || !result.data || result.loading}
+            onPress={() => void exportAll()}
+          >
+            <Download className="w-4 h-4" />
+            {exporting ? "Exporting…" : "Export CSV"}
           </Button>
-        )}
+          {exporting && (
+            <Button
+              variant="quiet"
+              onPress={() => {
+                exportController.current?.abort();
+                setExporting(false);
+              }}
+            >
+              <X className="w-3 h-3" />
+              Cancel export
+            </Button>
+          )}
+        </div>
       </div>
       <UsageError
         message={result.error ?? exportError}
@@ -216,7 +253,7 @@ export function UsageTable({
           }}
         >
           <TableHeader>
-            <Column id="label" isRowHeader>
+            <Column id="label" isRowHeader allowsSorting>
               {tabs.find((t) => t.id === dimension)?.label}
             </Column>
             {sortable.map((col) => (
@@ -233,7 +270,7 @@ export function UsageTable({
                   ? "Loading breakdown…"
                   : result.error
                     ? "Usage could not be loaded."
-                    : "No requests match these filters. Try a wider range or clear the search."}
+                    : "No requests match these filters. Try a wider range, lower the min-requests threshold, or clear the search."}
               </div>
             )}
           >
@@ -241,30 +278,35 @@ export function UsageTable({
               <Row id={row.id}>
                 <Cell>
                   <div className="min-w-48 max-w-80">
-                    {["endpoints", "projects", "keys"].includes(dimension) ? (
-                      <Button
-                        variant="quiet"
-                        className="!p-0 !min-h-0 text-left max-w-full"
-                        onPress={() => onDrilldown(dimension, row)}
-                      >
-                        {row.method && <Tag tone="accent">{row.method}</Tag>}
-                        <span
-                          className="truncate font-mono text-xs"
-                          title={row.label}
-                        >
-                          {row.label}
-                        </span>
-                      </Button>
-                    ) : (
+                    <Button
+                      variant="quiet"
+                      className="!p-0 !min-h-0 text-left max-w-full group/btn"
+                      onPress={() => onDrilldown(dimension, row)}
+                    >
+                      {row.method && <Tag tone="accent">{row.method}</Tag>}
                       <span
-                        className="block truncate font-mono text-xs"
+                        className="truncate font-mono text-xs group-hover/btn:text-epic-accent transition-colors"
                         title={row.label}
                       >
-                        {row.label === "(direct)"
-                          ? "No origin provided"
-                          : row.label}
+                        {formatRowLabel(row)}
                       </span>
-                    )}
+                      {!["endpoints", "projects", "keys"].includes(dimension) && (
+                        <Filter className="w-3 h-3 text-epic-text-muted opacity-0 group-hover/btn:opacity-100 shrink-0" />
+                      )}
+                    </Button>
+                    {dimension === "endpoints" &&
+                      (row.operationId || row.expensive) && (
+                        <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                          {row.operationId && (
+                            <span className="text-[10px] font-mono text-epic-text-muted">
+                              {row.operationId}
+                            </span>
+                          )}
+                          {row.expensive && (
+                            <Tag tone="warning">{row.expensive}</Tag>
+                          )}
+                        </div>
+                      )}
                     {row.detail && dimension !== "endpoints" && (
                       <span
                         className="block text-[11px] text-epic-text-muted truncate mt-1"
@@ -297,6 +339,11 @@ export function UsageTable({
                 <Cell
                   className={`font-mono text-xs ${row.errors ? "text-epic-danger" : "text-epic-text-muted"}`}
                 >
+                  {row.errors.toLocaleString()}
+                </Cell>
+                <Cell
+                  className={`font-mono text-xs ${row.errors ? "text-epic-danger" : "text-epic-text-muted"}`}
+                >
                   {row.errorRate}%
                 </Cell>
                 <Cell
@@ -308,10 +355,16 @@ export function UsageTable({
                   {row.blockedPolicy.toLocaleString()}
                 </Cell>
                 <Cell className="font-mono text-xs whitespace-nowrap">
-                  {row.avgLatencyMs} ms
+                  <div>{row.avgLatencyMs} ms</div>
+                  <div className="text-[10px] text-epic-text-muted">
+                    p50 {row.p50LatencyMs} ms
+                  </div>
                 </Cell>
                 <Cell className="font-mono text-xs whitespace-nowrap text-epic-accent">
                   {row.p95LatencyMs} ms
+                </Cell>
+                <Cell className="font-mono text-xs whitespace-nowrap text-epic-text-muted">
+                  {row.p99LatencyMs} ms
                 </Cell>
               </Row>
             )}
@@ -325,7 +378,8 @@ export function UsageTable({
             : result.data?.rows.length
               ? `Rows ${offset + 1}–${offset + result.data.rows.length}`
               : "0 rows"}{" "}
-          · Share of selected scope · 429s are included in error %
+          · Share of selected scope · 429s are included in error % · Click a
+          row to drill down or filter
         </span>
         <div className="flex items-center gap-2">
           <Select

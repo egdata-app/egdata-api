@@ -1,4 +1,5 @@
 //! Changelog and community reviews for a single offer.
+use super::catalog_list::{PageRead, counted_page};
 use super::{
     RouteGroup,
     helpers::{parse_strict_query_uri, parse_validated_query, read_response},
@@ -166,17 +167,17 @@ async fn changelog(state: &AppState, uri: &Uri, id: &str) -> Result<(Value, Valu
         let ids=std::iter::once(id.to_owned()).chain(items.iter().map(|r|string_field(r,"id")))
             .chain(assets.iter().map(|r|string_field(r,"artifactId"))).collect::<Vec<_>>();
         let mut criteria=doc!{"metadata.contextId":{"$in":ids}};
-        if let Some(value)=search {criteria.insert("$text",doc!{"$search":value});}
-        if let Some(value)=kind {criteria.insert("metadata.changes.changeType",value);}
-        if let Some(value)=field {criteria.insert("metadata.changes.field",value);}
-        let mut pipeline=vec![doc!{"$match":criteria}];
+        if let Some(value)=&search {criteria.insert("$text",doc!{"$search":value});}
+        if let Some(value)=&kind {criteria.insert("metadata.changes.changeType",value);}
+        if let Some(value)=&field {criteria.insert("metadata.changes.field",value);}
+        let mut pipeline=vec![doc!{"$match":&criteria}];
         if let Some(keyset)=date_keyset(state,&page,&binding,"timestamp")? {pipeline.push(doc!{"$match":keyset});}
         pipeline.push(doc!{"$sort":{"timestamp":-1,"_id":-1}});
         pipeline.push(doc!{"$limit":i64::from(page.limit)+1});
         changelog_joins(&mut pipeline);
-        let rows=state.mongo.aggregate("changelogs_v2",pipeline).await.map_err(|_|internal_error())?;
+        let (rows,total)=counted_page(state,CHANGELOG,&[("id",json!(id)),("query",json!(search)),("type",json!(kind)),("field",json!(field))],60,"changelogs_v2",Some(criteria),PageRead::Aggregate(pipeline)).await?;
         let (rows,pagination)=date_page(state,rows,&binding,"timestamp",&["offerId","query","type","field"])?;
-        Ok(json!({"elements":rows.into_iter().map(doc_to_json).collect::<Vec<_>>(),"pagination":pagination}))
+        Ok(json!({"elements":rows.into_iter().map(doc_to_json).collect::<Vec<_>>(),"pagination":pagination.with_total(total)}))
     }).await?;
     Ok((
         response["elements"].clone(),
@@ -307,22 +308,27 @@ async fn reviews(state: &AppState, uri: &Uri, id: &str) -> Result<(Value, Value)
     ]);
     let response = cached(state, REVIEWS, key, 60, || async {
         let mut filter = verified_filter(id, verified);
+        let base = filter.clone();
         if let Some(keyset) = date_keyset(state, &page, &binding, "createdAt")? {
             filter.extend(keyset);
         }
-        let rows = state
-            .mongo
-            .find_many(
-                "reviews",
+        let (rows, total) = counted_page(
+            state,
+            REVIEWS,
+            &[("id", json!(id)), ("verified", json!(verified))],
+            60,
+            "reviews",
+            Some(base),
+            PageRead::Find(
                 filter,
                 MongoFindOptions {
                     sort: Some(doc! {"createdAt":-1,"_id":-1}),
                     limit: Some(i64::from(page.limit) + 1),
                     ..Default::default()
                 },
-            )
-            .await
-            .map_err(|_| internal_error())?;
+            ),
+        )
+        .await?;
         let (rows, pagination) =
             date_page(state, rows, &binding, "createdAt", &["offerId", "verified"])?;
         let mut elements: Vec<_> = rows.into_iter().map(doc_to_json).collect();
@@ -357,7 +363,7 @@ async fn reviews(state: &AppState, uri: &Uri, id: &str) -> Result<(Value, Value)
                 .cloned()
                 .unwrap_or(Value::Null);
         }
-        Ok(json!({"elements":elements,"pagination":pagination}))
+        Ok(json!({"elements":elements,"pagination":pagination.with_total(total)}))
     })
     .await?;
     let mut meta = verified_meta(verified);

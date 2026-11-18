@@ -7,6 +7,7 @@ import type { V1Variables } from "../src/v1/request-context.js";
 const mocks = vi.hoisted(() => ({
   offerDistinct: vi.fn(),
   offerFind: vi.fn(),
+  offerCount: vi.fn(),
   priceFind: vi.fn(),
   localizations: vi.fn(),
   cacheGet: vi.fn(),
@@ -17,7 +18,11 @@ vi.mock("../src/models/index.js", () => ({
   AchievementSet: {},
   GamePosition: {},
   Item: {},
-  Offer: { distinct: mocks.offerDistinct, find: mocks.offerFind },
+  Offer: {
+    distinct: mocks.offerDistinct,
+    find: mocks.offerFind,
+    countDocuments: mocks.offerCount,
+  },
   PriceEngine: { find: mocks.priceFind },
   Seller: {},
   TagModel: {},
@@ -70,6 +75,7 @@ describe("registered v1 seller read Node oracle", () => {
   it("records seller directory and offer read responses", async () => {
     mocks.cacheGet.mockResolvedValue(null);
     mocks.cacheSet.mockResolvedValue("OK");
+    mocks.offerCount.mockResolvedValue(0);
     mocks.localizations.mockReturnValue([]);
     const directoryRows = [
       { id: "seller-b", name: "Beta Studio", slug: "beta", externalId: 2 },
@@ -161,6 +167,7 @@ describe("registered v1 seller read Node oracle", () => {
       mongoFilters.push({ collection: "pricev2", filter });
       return query(prices);
     });
+    mocks.offerCount.mockResolvedValue(offers.length);
     const offersRequest = {
       method: "GET",
       path: "/v1/sellers/seller-a?country=US&locale=en-US&offerType=BASE_GAME&ignoredSandboxes=ns-old&limit=10",
@@ -175,6 +182,7 @@ describe("registered v1 seller read Node oracle", () => {
     });
 
     mocks.offerFind.mockReturnValue(query([]));
+    mocks.offerCount.mockResolvedValue(0);
     const emptyRequest = { method: "GET", path: "/v1/sellers/seller-missing" };
     cases.push({
       name: "seller-offers-missing-seller-empty",

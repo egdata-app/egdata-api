@@ -1,82 +1,9 @@
-import { guideDocs, loadGuideSource } from "./guides";
+import { allDocs, DOC_CATEGORY_ORDER, findDoc, groupDocs } from "./entries";
+import { loadGuideSource } from "./guides";
 import { fieldIssueDocs, problemDocs, streamResultDocs } from "./problems";
-import type { DocCategory, DocEntry } from "./types";
+import type { DocEntry } from "./types";
 
-const problemIndex: DocEntry = {
-  slug: "problems",
-  kind: "index",
-  title: "Problem details reference",
-  description:
-    "Every stable v1 problem code with its HTTP status, meaning, and recovery steps.",
-  category: "Errors",
-  order: 2,
-};
-
-const fieldIssueIndex: DocEntry = {
-  slug: "field-issues",
-  kind: "index",
-  title: "Field issue codes",
-  description:
-    "Error codes found in the `errors` array of an RFC 9457 problem response.",
-  category: "Errors",
-  order: 3,
-};
-
-export const allDocs: DocEntry[] = [
-  ...guideDocs,
-  problemIndex,
-  fieldIssueIndex,
-  ...problemDocs,
-  ...streamResultDocs,
-  ...fieldIssueDocs,
-];
-
-const bySlug = new Map(allDocs.map((entry) => [entry.slug, entry]));
-
-/** Common shorthand links that predate the stable type slugs. */
-const aliases = new Map([
-  ["invalid-key", "invalid-api-key"],
-  ["missing-key", "missing-api-key"],
-]);
-
-export function findDoc(slug: string | undefined): DocEntry | undefined {
-  if (!slug) return undefined;
-  const key = slug.toLowerCase();
-  return bySlug.get(aliases.get(key) ?? key);
-}
-
-export const DOC_CATEGORY_ORDER: DocCategory[] = [
-  "Start here",
-  "Find data",
-  "Request essentials",
-  "Track changes",
-  "Advanced",
-  "Errors",
-  "Credentials",
-  "Permissions",
-  "Request validation",
-  "Pagination",
-  "Resource lookup",
-  "Payload and protocol",
-  "Quota and service",
-  "Stream results",
-  "Field issues",
-];
-
-export function groupDocs(entries: DocEntry[]): Array<{
-  category: DocCategory;
-  entries: DocEntry[];
-}> {
-  return DOC_CATEGORY_ORDER.map((category) => ({
-    category,
-    entries: entries
-      .filter((entry) => entry.category === category)
-      .sort(
-        (a, b) =>
-          (a.order ?? 100) - (b.order ?? 100) || a.title.localeCompare(b.title),
-      ),
-  })).filter((group) => group.entries.length > 0);
-}
+export { DOC_CATEGORY_ORDER, allDocs, findDoc, groupDocs };
 
 function escapeTableCell(value: string): string {
   return value.replaceAll("|", "\\|").replaceAll("\n", " ");

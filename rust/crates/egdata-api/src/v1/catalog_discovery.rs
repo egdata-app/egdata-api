@@ -1,5 +1,6 @@
 //! Remaining registered catalog discovery and changelog routes.
 
+use super::catalog_list::{PageRead, counted_page};
 use super::{
     RouteGroup,
     helpers::{
@@ -556,6 +557,7 @@ fn page_cursor(
     has_more: bool,
     date: Option<&Value>,
     id: CursorSortValue,
+    total: Value,
 ) -> Result<Value, ProblemError> {
     let token = has_more
         .then(|| {
@@ -570,7 +572,10 @@ fn page_cursor(
             )
         })
         .transpose()?;
-    Ok(serde_json::to_value(page_meta(binding.limit, has_more, token)).unwrap_or(Value::Null))
+    Ok(
+        serde_json::to_value(page_meta(binding.limit, has_more, token).with_total(total))
+            .unwrap_or(Value::Null),
+    )
 }
 
 fn parse_cursor(
@@ -643,6 +648,7 @@ async fn sales(State(state): State<AppState>, request: Request) -> Response {
         sort("offerId", SortDirection::Asc),
     ];
     let mut filter = doc! {"region":&region.region,"price.discount":{"$gt":0},"appliedRules.endDate":{"$ne":Bson::Null}};
+    let base = filter.clone();
     if let Some(tuple) = cursor {
         let vals: Vec<_> = tuple
             .iter()
@@ -654,21 +660,26 @@ async fn sales(State(state): State<AppState>, request: Request) -> Response {
             Err(e) => return fail(&request, &e),
         };
     }
-    let prices = match state
-        .mongo
-        .find_many(
-            "pricev2",
+    let (prices, total) = match counted_page(
+        &state,
+        "catalog.sales",
+        &[("region", json!(region.region))],
+        60,
+        "pricev2",
+        Some(base),
+        PageRead::Find(
             filter,
             MongoFindOptions {
                 limit: Some(i64::from(bind.limit + 1)),
                 sort: Some(mongo_sort_spec(&fields)),
                 ..Default::default()
             },
-        )
-        .await
+        ),
+    )
+    .await
     {
-        Ok(v) => v,
-        Err(_) => return fail(&request, &internal_error()),
+        Ok(result) => result,
+        Err(e) => return fail(&request, &e),
     };
     let page = trim_page(prices, bind.limit as usize);
     let ids: Vec<_> = page
@@ -717,6 +728,7 @@ async fn sales(State(state): State<AppState>, request: Request) -> Response {
         page.has_more,
         last.pointer("/appliedRules/endDate"),
         identifier_text(last.get("offerId")).into(),
+        total,
     ) {
         Ok(v) => v,
         Err(e) => return fail(&request, &e),
@@ -811,6 +823,7 @@ async fn active_sales(State(state): State<AppState>, request: Request) -> Respon
         sort("id", SortDirection::Asc),
     ];
     let mut filter = doc! {"name":{"$regex":"(Sale|Savings|Promotion|Deals)","$options":"i"},"referenceCount":{"$gt":0},"id":{"$nin":[33639]}};
+    let base = filter.clone();
     if let Some(tuple) = cursor {
         let vals: Vec<_> = tuple
             .iter()
@@ -822,21 +835,26 @@ async fn active_sales(State(state): State<AppState>, request: Request) -> Respon
             Err(e) => return fail(&request, &e),
         }
     }
-    let tags = match state
-        .mongo
-        .find_many(
-            "tags",
+    let (tags, total) = match counted_page(
+        &state,
+        "catalog.active-sales",
+        &[],
+        60,
+        "tags",
+        Some(base),
+        PageRead::Find(
             filter,
             MongoFindOptions {
                 limit: Some(i64::from(bind.limit + 1)),
                 sort: Some(mongo_sort_spec(&fields)),
                 ..Default::default()
             },
-        )
-        .await
+        ),
+    )
+    .await
     {
-        Ok(tags) => tags,
-        Err(_) => return fail(&request, &internal_error()),
+        Ok(result) => result,
+        Err(e) => return fail(&request, &e),
     };
     let page = trim_page(tags, bind.limit as usize);
     let elements = futures::future::join_all(
@@ -858,7 +876,14 @@ async fn active_sales(State(state): State<AppState>, request: Request) -> Respon
         Some(Value::Number(n)) => CursorSortValue::Number(n.clone()),
         id => identifier_text(id).into(),
     };
-    let meta = match page_cursor(&state, &bind, page.has_more, last.get("updated"), last_id) {
+    let meta = match page_cursor(
+        &state,
+        &bind,
+        page.has_more,
+        last.get("updated"),
+        last_id,
+        total,
+    ) {
         Ok(v) => v,
         Err(e) => return fail(&request, &e),
     };
@@ -946,6 +971,7 @@ async fn changelog(State(state): State<AppState>, request: Request) -> Response 
         sort("_id", SortDirection::Asc),
     ];
     let mut filter = doc! {"metadata.contextType":{"$nin":["file","achievements"]}};
+    let base = filter.clone();
     if let Some(tuple) = cursor {
         let vals: Vec<_> = tuple
             .iter()
@@ -957,21 +983,26 @@ async fn changelog(State(state): State<AppState>, request: Request) -> Response 
             Err(e) => return fail(&request, &e),
         }
     }
-    let rows = match state
-        .mongo
-        .find_many(
-            "changelogs_v2",
+    let (rows, total) = match counted_page(
+        &state,
+        "catalog.changelog",
+        &[],
+        60,
+        "changelogs_v2",
+        Some(base),
+        PageRead::Find(
             filter,
             MongoFindOptions {
                 limit: Some(i64::from(bind.limit + 1)),
                 sort: Some(mongo_sort_spec(&fields)),
                 ..Default::default()
             },
-        )
-        .await
+        ),
+    )
+    .await
     {
-        Ok(v) => v,
-        Err(_) => return fail(&request, &internal_error()),
+        Ok(result) => result,
+        Err(e) => return fail(&request, &e),
     };
     let page = trim_page(rows, bind.limit as usize);
     let elements = futures::future::join_all(
@@ -991,6 +1022,7 @@ async fn changelog(State(state): State<AppState>, request: Request) -> Response 
         page.has_more,
         last.get("timestamp"),
         identifier_text(last.get("_id")).into(),
+        total,
     ) {
         Ok(v) => v,
         Err(e) => return fail(&request, &e),
@@ -1016,7 +1048,7 @@ async fn changelist_detail(
     {
         Ok(Some(row)) => {
             // The detail resolver reads context from serializeValue(change.toObject()).
-            let plain = serialize_value(&egdata_infra::bson_json::bson_doc_to_js_json(&row));
+            let plain = serialized_change(&row);
             let context_doc = bson::to_document(&plain).expect("serialized changelog is an object");
             let context =
                 crate::legacy::resolve_changelog_context_safely(&state, &context_doc).await;
@@ -1037,10 +1069,20 @@ async fn changelist_detail(
 
 async fn change_with_context(state: &AppState, row: &Document) -> Value {
     let context = crate::legacy::resolve_changelog_context_safely(state, row).await;
-    enriched_change(
-        serialize_value(&egdata_infra::bson_json::bson_doc_to_js_json(row)),
-        context,
-    )
+    enriched_change(serialized_change(row), context)
+}
+
+fn serialized_change(row: &Document) -> Value {
+    let mut plain = serialize_value(&egdata_infra::bson_json::bson_doc_to_js_json(row));
+    // Decimal128 ids arrive as `$numberDecimal` objects but Node's
+    // serializeValue returns the Decimal128's numeric string.
+    if let Some(id) = row
+        .get("_id")
+        .and_then(egdata_core::v1::serialization::stored_identifier)
+    {
+        plain["_id"] = json!(id);
+    }
+    plain
 }
 
 fn enriched_change(mut row: Value, context: Value) -> Value {
@@ -1069,6 +1111,19 @@ mod oracle_tests {
     use crate::{middleware::test_support::test_app_state, state::ApiConfig};
     use std::sync::Arc;
     use tower::ServiceExt;
+
+    #[test]
+    fn decimal_changelog_ids_serialize_as_numeric_strings() {
+        let row = doc! {
+            "_id": "51.25".parse::<bson::Decimal128>().unwrap(),
+            "timestamp": bson::DateTime::from_millis(0),
+            "metadata": {"contextType":"item","contextId":"item-a"},
+        };
+        let change = serialized_change(&row);
+        assert_eq!(change["_id"], "51.25");
+        assert_eq!(change["timestamp"], "1970-01-01T00:00:00.000Z");
+        assert_eq!(change["metadata"]["contextId"], "item-a");
+    }
 
     fn fixture_now() -> chrono::DateTime<chrono::Utc> {
         chrono::DateTime::parse_from_rfc3339("2026-11-17T18:00:00.000Z")

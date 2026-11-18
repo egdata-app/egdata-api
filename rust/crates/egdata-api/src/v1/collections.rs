@@ -76,13 +76,8 @@ fn parse_week(raw: &str) -> Result<Week<'_>, ProblemError> {
     })
 }
 
-fn week_pipeline(
-    id: &bson::Bson,
-    week: &Week<'_>,
-    keyset: Option<Document>,
-    limit: i64,
-) -> Vec<Document> {
-    let mut pipeline = vec![
+fn week_pipeline(id: &bson::Bson, week: &Week<'_>) -> Vec<Document> {
+    vec![
         doc! {"$match":{"collectionId":id.clone()}},
         doc! {"$unwind":"$positions"},
         doc! {"$match":{"positions.date":{"$gte":bson::DateTime::from_chrono(week.start),"$lt":bson::DateTime::from_chrono(week.end)},"positions.position":{"$gt":0}}},
@@ -90,15 +85,7 @@ fn week_pipeline(
         doc! {"$group":{"_id":"$offerId","positions":{"$push":"$positions"},"latest":{"$first":"$positions"},"previous":{"$first":"$previous"}}},
         doc! {"$project":{"_id":0,"offerId":"$_id","positions":1,"position":"$latest.position","previous":1}},
         doc! {"$match":{"position":{"$gt":0}}},
-    ];
-    if let Some(filter) = keyset {
-        pipeline.push(doc! {"$match":filter});
-    }
-    pipeline.extend([
-        doc! {"$sort":{"position":1,"offerId":1}},
-        doc! {"$limit":limit},
-    ]);
-    pipeline
+    ]
 }
 
 async fn collection(
@@ -163,31 +150,43 @@ async fn collection(
             .transpose()?;
         let limit = i64::from(page.limit) + 1;
         let id = collection.get("_id").ok_or_else(internal_error)?;
-        let rows = if let Some(ref week) = week {
-            state
-                .mongo
-                .aggregate("game_positions", week_pipeline(id, week, keyset, limit))
-                .await
-                .map_err(|_| internal_error())?
+        let (rows, total) = if let Some(ref week) = week {
+            let base = week_pipeline(id, week);
+            let mut pipeline = base.clone();
+            if let Some(filter) = keyset {
+                pipeline.push(doc! {"$match":filter});
+            }
+            pipeline.extend([
+                doc! {"$sort":{"position":1,"offerId":1}},
+                doc! {"$limit":limit},
+            ]);
+            let parts = [("slug", json!(slug)), ("week", json!(week.label))];
+            tokio::join!(
+                state.mongo.aggregate("game_positions", pipeline),
+                super::counts::aggregate(state, operation, &parts, 60, "game_positions", base)
+            )
         } else {
-            let mut filter = doc! {"collectionId":id.clone(),"position":{"$gt":0}};
+            let base = doc! {"collectionId":id.clone(),"position":{"$gt":0}};
+            let mut filter = base.clone();
             if let Some(keyset) = keyset {
                 filter.extend(keyset);
             }
-            state
-                .mongo
-                .find_many(
+            let parts = [("slug", json!(slug))];
+            tokio::join!(
+                state.mongo.find_many(
                     "game_positions",
                     filter,
                     MongoFindOptions {
                         sort: Some(mongo_sort_spec(&sort)),
                         limit: Some(limit),
                         ..Default::default()
-                    },
-                )
-                .await
-                .map_err(|_| internal_error())?
+                    }
+                ),
+                super::counts::documents(state, operation, &parts, 60, "game_positions", base)
+            )
         };
+        let rows = rows.map_err(|_| internal_error())?;
+        let total = total?;
         let positions = trim_page(rows, page.limit as usize);
         let ids = positions
             .items
@@ -261,7 +260,7 @@ async fn collection(
         } else {
             vec![]
         };
-        let pagination = offers::pagination(state, &binding, positions.has_more, tuple)?;
+        let pagination = offers::pagination(state, &binding, positions.has_more, tuple, total)?;
         let title = nullish_string(collection.get("name"))?;
         let updated_at = collection
             .get("updatedAt")

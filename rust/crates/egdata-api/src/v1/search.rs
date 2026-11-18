@@ -152,6 +152,20 @@ fn cached_page(uri: &Uri, id: &str, cache: &Value, data_key: &str, meta: Value) 
     super::helpers::json_envelope_response(&axum::http::Method::GET, uri.path(), id, envelope)
 }
 
+fn search_pagination(
+    body: &Value,
+    limit: u32,
+    has_more: bool,
+    next: Option<String>,
+) -> egdata_core::v1::PageMeta {
+    let raw = &body["hits"]["total"];
+    let total = raw
+        .as_number()
+        .or_else(|| raw["value"].as_number())
+        .cloned();
+    egdata_core::v1::page_meta(limit, has_more, next).with_total(json!(total))
+}
+
 fn search_result_meta(body: &Value) -> Value {
     json!({"tookMs":body.get("took").filter(|v| !v.is_null()).cloned().unwrap_or(json!(0)), "timedOut":js_truthy(&body["timed_out"])})
 }
@@ -859,7 +873,7 @@ async fn search_v2_offers(
         aggs["publisher"] = json!({"terms":{"field":"publisherDisplayName.keyword","size":1000}});
         aggs["seller"] = json!({"terms":{"field":"seller.name.keyword","size":1000}});
     }
-    let mut request = json!({"size":limit+1,"track_total_hits":false,"query":{"bool":{"must":must,"filter":filter}},"sort":sorts});
+    let mut request = json!({"size":limit+1,"track_total_hits":true,"query":{"bool":{"must":must,"filter":filter}},"sort":sorts});
     if facets != "none" {
         request["aggregations"] = aggs;
     }
@@ -933,7 +947,7 @@ async fn search_v2_offers(
         "locale": rp.locale,
         "facets": response.get("aggregations").filter(|v| !v.is_null()).map(serialize_json_value).unwrap_or(json!({})),
         "result": search_result_meta(&response),
-        "pagination": {"limit": limit, "hasMore": has_more, "nextCursor": next}
+        "pagination": search_pagination(&response,limit,has_more,next)
     });
     let offers = json!(cards);
     v1_cache_set(
@@ -1684,6 +1698,7 @@ async fn search_changelog(
         if let Some(context_id) = q.get("id").filter(|v| !v.is_empty()) {
             filter.insert("metadata.contextId", context_id);
         }
+        let base_filter = filter.clone();
         if let Some(last) = after.as_ref() {
             let fields = [
                 MongoSortField::new("timestamp", SortDirection::Desc, NullsOrder::Last),
@@ -1711,19 +1726,13 @@ async fn search_changelog(
                 filter.extend(keyset);
             }
         }
-        let rows = state
-            .mongo
-            .find_many(
-                "changelogs_v2",
-                filter,
-                MongoFindOptions {
-                    sort: Some(bson::doc! {"timestamp":-1,"_id":1}),
-                    limit: Some(i64::from(limit) + 1),
-                    ..Default::default()
-                },
-            )
-            .await
-            .map_err(|_| fail(internal_error(), &uri, id.clone()))?;
+        let count_parts = [("id", json!(q.get("id"))), ("type", json!(q.get("type")))];
+        let (rows, total) = tokio::join!(biased;
+            state.mongo.find_many("changelogs_v2", filter, MongoFindOptions {sort:Some(bson::doc!{"timestamp":-1,"_id":1}), limit:Some(i64::from(limit)+1),..Default::default()}),
+            super::counts::documents(&state,"search.changelog",&count_parts,60,"changelogs_v2",base_filter)
+        );
+        let rows = rows.map_err(|_| fail(internal_error(), &uri, id.clone()))?;
+        let total = total.map_err(|e| fail(e, &uri, id.clone()))?;
         let more = rows.len() > limit as usize;
         let items = rows.into_iter().take(limit as usize).collect::<Vec<_>>();
         let next = if let Some(row) = items.last().filter(|_| more) {
@@ -1776,7 +1785,7 @@ async fn search_changelog(
             .into_iter()
             .map(|row| egdata_core::v1::bson_to_serialized_json(&bson::Bson::Document(row)))
             .collect::<Vec<_>>();
-        let pagination = json!({"limit":limit,"hasMore":more,"nextCursor":next});
+        let pagination = egdata_core::v1::page_meta(limit, more, next).with_total(total);
         v1_cache_set(
             state.cache.as_ref(),
             &cache_key,
@@ -1809,7 +1818,7 @@ async fn search_changelog(
     if let Some(v) = q.get("id").filter(|v| !v.is_empty()) {
         filter.push(json!({"term":{"metadata.contextId.keyword":v}}));
     }
-    let mut body = json!({"size":limit+1,"track_total_hits":false,"query":{"bool":{"must_not":filter,"must":must}},"sort":[{"timestamp":{"order":"desc","missing":"_last"}},{"metadata.contextId.keyword":{"order":"asc","missing":"_last"}},{"metadata.contextType.keyword":{"order":"asc","missing":"_last"}}]});
+    let mut body = json!({"size":limit+1,"track_total_hits":true,"query":{"bool":{"must_not":filter,"must":must}},"sort":[{"timestamp":{"order":"desc","missing":"_last"}},{"metadata.contextId.keyword":{"order":"asc","missing":"_last"}},{"metadata.contextType.keyword":{"order":"asc","missing":"_last"}}]});
     if let Some(after) = after {
         body["search_after"] = json!(after);
     }
@@ -1856,7 +1865,7 @@ async fn search_changelog(
         &id,
         json!(data),
         Some(
-            json!({"pagination":{"limit":limit,"hasMore":has_more,"nextCursor":next},"query":q.get("query"),"result":search_result_meta(&result)}),
+            json!({"pagination":search_pagination(&result,limit,has_more,next),"query":q.get("query"),"result":search_result_meta(&result)}),
         ),
     ))
 }
@@ -1999,7 +2008,7 @@ async fn multisearch_offers(
         sorts.push(json!({"_score":{"order":"desc"}}));
     }
     sorts.push(json!({"id.keyword":{"order":"asc","missing":"_last"}}));
-    let mut body = json!({"size":limit+1,"track_total_hits":false,"query":{"bool":{"must":query,"filter":filters}},"sort":sorts});
+    let mut body = json!({"size":limit+1,"track_total_hits":true,"query":{"bool":{"must":query,"filter":filters}},"sort":sorts});
     if let Some(after) = search_after {
         body["search_after"] = json!(after);
     }
@@ -2040,7 +2049,7 @@ async fn multisearch_offers(
         .iter()
         .map(|offer| serialize_json_offer(offer, None, true))
         .collect();
-    let pagination_meta = json!({"limit":limit,"hasMore":has_more,"nextCursor":next});
+    let pagination_meta = search_pagination(&result, limit, has_more, next);
     let result_meta = search_result_meta(&result);
     v1_cache_set(
         state.cache.as_ref(),
@@ -2124,7 +2133,7 @@ async fn multisearch_items(
     if let Some(t) = q.get("type").filter(|v| !v.is_empty()) {
         filter.push(json!({"term":{"entitlementType.keyword":t}}));
     }
-    let mut body = json!({"size":limit+1,"track_total_hits":false,"query":{"bool":{"must":must,"filter":filter}},"sort":[{"lastModifiedDate":{"order":"desc","missing":"_last"}},{"id.keyword":{"order":"asc","missing":"_last"}}]});
+    let mut body = json!({"size":limit+1,"track_total_hits":true,"query":{"bool":{"must":must,"filter":filter}},"sort":[{"lastModifiedDate":{"order":"desc","missing":"_last"}},{"id.keyword":{"order":"asc","missing":"_last"}}]});
     if let Some(after) = after {
         body["search_after"] = json!(after);
     }
@@ -2162,16 +2171,21 @@ async fn multisearch_items(
         })
         .collect::<Result<_, _>>()
         .map_err(|e| fail(e, &uri, id.clone()))?;
+    let pagination_meta = search_pagination(&result, limit, has_more, next);
     let result_meta = search_result_meta(&result);
-    v1_cache_set(state.cache.as_ref(), &cache_key, &json!({"hits":data,"pagination":{"limit":limit,"hasMore":has_more,"nextCursor":next},"result":result_meta}), 60).await;
+    v1_cache_set(
+        state.cache.as_ref(),
+        &cache_key,
+        &json!({"hits":data,"pagination":pagination_meta,"result":result_meta}),
+        60,
+    )
+    .await;
     Ok(json_success(
         &axum::http::Method::GET,
         uri.path(),
         &id,
         json!(data),
-        Some(
-            json!({"result":result_meta,"pagination":{"limit":limit,"hasMore":has_more,"nextCursor":next}}),
-        ),
+        Some(json!({"result":result_meta,"pagination":pagination_meta})),
     ))
 }
 
@@ -2477,6 +2491,8 @@ mod tests {
         finds: RecordedFinds,
         rows: Vec<Document>,
         fail_finds: bool,
+        fail_count: bool,
+        changelog_counts: std::sync::Arc<tokio::sync::Mutex<Vec<Document>>>,
         fail_aggregate: bool,
         localized: Vec<Document>,
         fail_localization: bool,
@@ -2535,10 +2551,19 @@ mod tests {
                 bson::doc! {"total":[{"total":2}],"tagCounts":[{"_id":"tag1","count":2}],"offerTypeCounts":[{"_id":"BASE_GAME","count":2}],"developer":[],"publisher":[],"priceRange":[{"minPrice":1,"maxPrice":99,"currency":"EUR"}]},
             ])
         }
-        async fn count_documents(&self, _: &str, _: Document) -> Result<u64, CoreError> {
-            Err(CoreError::Internal(
-                "unexpected search store operation".into(),
-            ))
+        async fn count_documents(
+            &self,
+            collection: &str,
+            filter: Document,
+        ) -> Result<u64, CoreError> {
+            if collection != "changelogs_v2" {
+                return Err(CoreError::Internal("unexpected search count".into()));
+            }
+            self.changelog_counts.lock().await.push(filter);
+            if self.fail_count {
+                return Err(CoreError::Internal("count unavailable".into()));
+            }
+            Ok(23)
         }
         async fn distinct(&self, _: &str, _: &str, _: Document) -> Result<Vec<Bson>, CoreError> {
             Err(CoreError::Internal(
@@ -2763,7 +2788,9 @@ mod tests {
                         .collect::<Result<Vec<_>, _>>()
                         .unwrap()
                 });
+            let changelog_counts = std::sync::Arc::default();
             state.mongo = std::sync::Arc::new(AggregateRecorder {
+                changelog_counts: std::sync::Arc::clone(&changelog_counts),
                 aggregates: aggregate_calls.clone(),
                 finds: find_calls.clone(),
                 rows: mongo_rows
@@ -2772,6 +2799,7 @@ mod tests {
                     .collect::<Result<Vec<_>, _>>()
                     .unwrap(),
                 fail_finds: input["mongoError"] == "unavailable",
+                fail_count: input["countUnavailable"] == true,
                 fail_localization: input["failLocalization"] == true,
                 localized: input["localizationRows"]
                     .as_array()
@@ -2830,6 +2858,15 @@ mod tests {
                     );
                 }
             }
+            assert_eq!(
+                changelog_counts.lock().await.as_slice(),
+                input
+                    .get("changelogCountFilter")
+                    .cloned()
+                    .map(|v| bson::to_document(&v).unwrap())
+                    .as_slice(),
+                "{name} count filter"
+            );
             if let Some(args) = input.get("changelogFindArgs") {
                 let finds = find_calls.lock().await;
                 let (_, query, options) = finds
@@ -3393,7 +3430,7 @@ mod tests {
             query,
             &json!({
                 "size": 21,
-                "track_total_hits": false,
+                "track_total_hits": true,
                 "query": {"bool": {
                     "must": [{"bool": {"should": [
                         {"multi_match": {

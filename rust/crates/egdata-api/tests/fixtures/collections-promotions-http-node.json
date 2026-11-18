@@ -70,6 +70,36 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 3
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 3,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -226,7 +256,8 @@
             "pagination": {
               "limit": 2,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoyLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCJtaXNzaW5nIl19.Y2Rmu89ZUSLYcC8TuTM8lFX_o3oz2Sre4cH8G25NzTY"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoyLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCJtaXNzaW5nIl19.Y2Rmu89ZUSLYcC8TuTM8lFX_o3oz2Sre4cH8G25NzTY",
+              "total": 3
             },
             "title": "Ranked",
             "updatedAt": "2026-02-02T00:00:00.000Z"
@@ -245,7 +276,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"8bd3197d8e093483dee2cdf544dd64fb6514d124\""
+        "etag": "\"4524daef5b5b8e9de50576782232512109d161d7\""
       },
       "body": {
         "data": [
@@ -330,7 +361,8 @@
           "pagination": {
             "limit": 2,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoyLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCJtaXNzaW5nIl19.Y2Rmu89ZUSLYcC8TuTM8lFX_o3oz2Sre4cH8G25NzTY"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy5wb3NpdGlvbnMiLCJmaWx0ZXJzIjp7InNsdWciOiJyYW5rZWQifSwiZmlsdGVySGFzaCI6ImVmYzQwZTI1NzIwMDkxNTU2YTYzZDUyYjljYjI2NWU0ZmFjZGUxMjRhZTk2NDA0YWE0NmRkNGU2MTNhYzQyMzEiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoyLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCJtaXNzaW5nIl19.Y2Rmu89ZUSLYcC8TuTM8lFX_o3oz2Sre4cH8G25NzTY",
+            "total": 3
           }
         }
       }
@@ -423,6 +455,36 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.positions.total:slug=\"ranked\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "count",
+          "query": {
+            "collectionId": "ranked",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.positions.total:slug=\"ranked\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -457,7 +519,8 @@
             "pagination": {
               "limit": 2,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Ranked",
             "updatedAt": "2026-02-02T00:00:00.000Z"
@@ -476,7 +539,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c8067be91d3cc15353b63135cffd6213d2495ebf\""
+        "etag": "\"378a23dee4ee6fb0f5c7b50e28836860ef9e60fe\""
       },
       "body": {
         "data": [],
@@ -489,7 +552,8 @@
           "pagination": {
             "limit": 2,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -620,6 +684,113 @@
             "position": 3
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2020W53\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2020-12-28T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2021-01-04T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "offerId": "game-a",
+            "position": 1,
+            "previous": 4,
+            "positions": [
+              {
+                "position": 1,
+                "date": "2021-01-02T00:00:00.000Z"
+              }
+            ]
+          },
+          {
+            "offerId": "missing",
+            "position": 2
+          },
+          {
+            "offerId": "game-z",
+            "position": 3
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2020W53\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -779,7 +950,8 @@
             "pagination": {
               "limit": 2,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjBXNTMifSwiZmlsdGVySGFzaCI6IjhjZjhhYTk4MzRmZTNjMDFiOWNlZjNhNTI5MGVhNmQ5YzlmZTNmOTQ4YmFkOGI5M2I2Y2RkMWJhYjdmOTUzNmMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoyLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCJtaXNzaW5nIl19.XtWc8bh8lpmn-Q4aYAja_uyPVr_k3iU2AYHys9V4wnU"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjBXNTMifSwiZmlsdGVySGFzaCI6IjhjZjhhYTk4MzRmZTNjMDFiOWNlZjNhNTI5MGVhNmQ5YzlmZTNmOTQ4YmFkOGI5M2I2Y2RkMWJhYjdmOTUzNmMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoyLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCJtaXNzaW5nIl19.XtWc8bh8lpmn-Q4aYAja_uyPVr_k3iU2AYHys9V4wnU",
+              "total": 0
             },
             "title": "Ranked",
             "updatedAt": "2026-02-02T00:00:00.000Z",
@@ -800,7 +972,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b9f757a28dc7397f25e010f7541644f7ec48613f\""
+        "etag": "\"11bff684db701cf43249459399d0d873b6c04b55\""
       },
       "body": {
         "data": [
@@ -887,7 +1059,8 @@
           "pagination": {
             "limit": 2,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjBXNTMifSwiZmlsdGVySGFzaCI6IjhjZjhhYTk4MzRmZTNjMDFiOWNlZjNhNTI5MGVhNmQ5YzlmZTNmOTQ4YmFkOGI5M2I2Y2RkMWJhYjdmOTUzNmMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoyLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCJtaXNzaW5nIl19.XtWc8bh8lpmn-Q4aYAja_uyPVr_k3iU2AYHys9V4wnU"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJjb2xsZWN0aW9ucy53ZWVrIiwiZmlsdGVycyI6eyJzbHVnIjoicmFua2VkIiwid2VlayI6IjIwMjBXNTMifSwiZmlsdGVySGFzaCI6IjhjZjhhYTk4MzRmZTNjMDFiOWNlZjNhNTI5MGVhNmQ5YzlmZTNmOTQ4YmFkOGI5M2I2Y2RkMWJhYjdmOTUzNmMiLCJvcmRlcmluZyI6InBvc2l0aW9uOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoyLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsyLCJtaXNzaW5nIl19.XtWc8bh8lpmn-Q4aYAja_uyPVr_k3iU2AYHys9V4wnU",
+            "total": 0
           }
         }
       }
@@ -1041,6 +1214,93 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2020W53\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "2020-12-28T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "2021-01-04T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"2020W53\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -1075,7 +1335,8 @@
             "pagination": {
               "limit": 2,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Ranked",
             "updatedAt": "2026-02-02T00:00:00.000Z",
@@ -1096,7 +1357,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d2a1288dd6248785bee089fd1cceb6905a65d945\""
+        "etag": "\"7ca08874d0b3c4845f06b8ee6dfc744e68d12eb9\""
       },
       "body": {
         "data": [],
@@ -1111,7 +1372,8 @@
           "pagination": {
             "limit": 2,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -1225,6 +1487,93 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"9999W52\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "game_positions",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "collectionId": "ranked"
+              }
+            },
+            {
+              "$unwind": "$positions"
+            },
+            {
+              "$match": {
+                "positions.date": {
+                  "$gte": {
+                    "$date": "9999-12-27T00:00:00.000Z"
+                  },
+                  "$lt": {
+                    "$date": "+010000-01-03T00:00:00.000Z"
+                  }
+                },
+                "positions.position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$sort": {
+                "positions.date": -1
+              }
+            },
+            {
+              "$group": {
+                "_id": "$offerId",
+                "positions": {
+                  "$push": "$positions"
+                },
+                "latest": {
+                  "$first": "$positions"
+                },
+                "previous": {
+                  "$first": "$previous"
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offerId": "$_id",
+                "positions": 1,
+                "position": "$latest.position",
+                "previous": 1
+              }
+            },
+            {
+              "$match": {
+                "position": {
+                  "$gt": 0
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:collections.week.total:slug=\"ranked\":week=\"9999W52\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "offers",
           "method": "many",
           "query": {
@@ -1259,7 +1608,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Ranked",
             "updatedAt": "2026-02-02T00:00:00.000Z",
@@ -1280,7 +1630,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"6d0444d1725a461e9b6086ff41bc15172dab7902\""
+        "etag": "\"a8711fc5e47db087b11e2cbd71676e53514e0b0c\""
       },
       "body": {
         "data": [],
@@ -1295,7 +1645,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -2136,6 +2487,41 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":q=\"[foo].*\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            },
+            "title": {
+              "$regex": "\\[foo\\]\\.\\*",
+              "$options": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": 29
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":q=\"[foo].*\":sortBy=\"default\"",
+          "payload": 29,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -2217,7 +2603,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOiJbZm9vXS4qIn0sImZpbHRlckhhc2giOiJmYWQxMzNkNDQ4YmMwNmFmZTZjM2NiYmMwZDlkMWVjMWQzMmE0NjY5ZmVlZGU2OWVlNjE2MmFiYjY0N2IzMmE1Iiwib3JkZXJpbmciOiJsYXN0TW9kaWZpZWREYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wMS0wMlQwMzowNDowNS4wMDBaIiwiZ2FtZS1hIl19.6ayLPmqNgJXlidhmX9VRoa0C8ufPAOcSznsAIH9UefU"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOiJbZm9vXS4qIn0sImZpbHRlckhhc2giOiJmYWQxMzNkNDQ4YmMwNmFmZTZjM2NiYmMwZDlkMWVjMWQzMmE0NjY5ZmVlZGU2OWVlNjE2MmFiYjY0N2IzMmE1Iiwib3JkZXJpbmciOiJsYXN0TW9kaWZpZWREYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wMS0wMlQwMzowNDowNS4wMDBaIiwiZ2FtZS1hIl19.6ayLPmqNgJXlidhmX9VRoa0C8ufPAOcSznsAIH9UefU",
+              "total": 29
             },
             "title": "Winter sale",
             "start": 0
@@ -2236,7 +2623,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b2308b881c09af4cb10540764319b1906cd12610\""
+        "etag": "\"7fa6cb3e1e05aba7907cd68a4d678d254f4b7bb9\""
       },
       "body": {
         "data": [
@@ -2298,7 +2685,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOiJbZm9vXS4qIn0sImZpbHRlckhhc2giOiJmYWQxMzNkNDQ4YmMwNmFmZTZjM2NiYmMwZDlkMWVjMWQzMmE0NjY5ZmVlZGU2OWVlNjE2MmFiYjY0N2IzMmE1Iiwib3JkZXJpbmciOiJsYXN0TW9kaWZpZWREYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wMS0wMlQwMzowNDowNS4wMDBaIiwiZ2FtZS1hIl19.6ayLPmqNgJXlidhmX9VRoa0C8ufPAOcSznsAIH9UefU"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOiJbZm9vXS4qIn0sImZpbHRlckhhc2giOiJmYWQxMzNkNDQ4YmMwNmFmZTZjM2NiYmMwZDlkMWVjMWQzMmE0NjY5ZmVlZGU2OWVlNjE2MmFiYjY0N2IzMmE1Iiwib3JkZXJpbmciOiJsYXN0TW9kaWZpZWREYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wMS0wMlQwMzowNDowNS4wMDBaIiwiZ2FtZS1hIl19.6ayLPmqNgJXlidhmX9VRoa0C8ufPAOcSznsAIH9UefU",
+            "total": 29
           }
         }
       }
@@ -2399,6 +2787,41 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":q=\"[foo].*\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            },
+            "title": {
+              "$regex": "\\[foo\\]\\.\\*",
+              "$options": "i"
+            }
+          },
+          "options": {}
+        },
+        "result": 29
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":q=\"[foo].*\":sortBy=\"default\"",
+          "payload": 29,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -2420,7 +2843,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 29
             },
             "title": "Winter sale",
             "start": null
@@ -2439,7 +2863,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"55dc755dcb20115471427f4b464d6846f674d946\""
       },
       "body": {
         "data": [],
@@ -2452,7 +2876,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 29
           }
         }
       }
@@ -2518,6 +2943,37 @@
             "id": "game-b"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 29
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 29,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -2602,7 +3058,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidXBjb21pbmc6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLCJnYW1lLWEiXX0.WsNcHI-TWR5qIAONbFF2w0BO0XKffu0yTUX9cpzOI10"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidXBjb21pbmc6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLCJnYW1lLWEiXX0.WsNcHI-TWR5qIAONbFF2w0BO0XKffu0yTUX9cpzOI10",
+              "total": 29
             },
             "title": "Winter sale",
             "start": 0
@@ -2621,7 +3078,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"6758eb1f1d63885f35e3422d615124f369b4aa52\""
+        "etag": "\"fc1222beab6a7f1e3d84bf8318e9ffe2825091e9\""
       },
       "body": {
         "data": [
@@ -2683,7 +3140,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidXBjb21pbmc6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLCJnYW1lLWEiXX0.WsNcHI-TWR5qIAONbFF2w0BO0XKffu0yTUX9cpzOI10"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidXBjb21pbmc6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLCJnYW1lLWEiXX0.WsNcHI-TWR5qIAONbFF2w0BO0XKffu0yTUX9cpzOI10",
+            "total": 29
           }
         }
       }
@@ -2777,6 +3235,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 29
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 29,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -2798,7 +3287,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 29
             },
             "title": "Winter sale",
             "start": null
@@ -2817,7 +3307,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"55dc755dcb20115471427f4b464d6846f674d946\""
       },
       "body": {
         "data": [],
@@ -2830,7 +3320,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 29
           }
         }
       }
@@ -2983,6 +3474,116 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "total": 29
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 29,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -3064,7 +3665,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6YXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzIyMiwiZ2FtZS1hIl19.gO9kmoXXhgWnmv3xiH5KFg_0nXCt1jaJuYnDrK6v7po"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6YXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzIyMiwiZ2FtZS1hIl19.gO9kmoXXhgWnmv3xiH5KFg_0nXCt1jaJuYnDrK6v7po",
+              "total": 29
             },
             "title": "Winter sale",
             "start": 0
@@ -3083,7 +3685,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"49d4d3143924421fc158468514e0133606e59bfd\""
+        "etag": "\"ddceb6b9bc4652ac86d5bee8761e30fdb4c907be\""
       },
       "body": {
         "data": [
@@ -3145,7 +3747,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6YXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzIyMiwiZ2FtZS1hIl19.gO9kmoXXhgWnmv3xiH5KFg_0nXCt1jaJuYnDrK6v7po"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6YXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzIyMiwiZ2FtZS1hIl19.gO9kmoXXhgWnmv3xiH5KFg_0nXCt1jaJuYnDrK6v7po",
+            "total": 29
           }
         }
       }
@@ -3355,6 +3958,116 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "total": 29
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 29,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -3376,7 +4089,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 29
             },
             "title": "Winter sale",
             "start": null
@@ -3395,7 +4109,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"55dc755dcb20115471427f4b464d6846f674d946\""
       },
       "body": {
         "data": [],
@@ -3408,7 +4122,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 29
           }
         }
       }
@@ -3554,6 +4269,116 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "total": 29
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 29,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -3635,7 +4460,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJnYW1lLWEiXX0.TkF0r9gEGgJkr9q0HFBMAPFefhk6xXYX1PMZQ1-lHbY"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJnYW1lLWEiXX0.TkF0r9gEGgJkr9q0HFBMAPFefhk6xXYX1PMZQ1-lHbY",
+              "total": 29
             },
             "title": "Winter sale",
             "start": 0
@@ -3654,7 +4480,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"51e9cb12110dc9184990911b8839d40a70a9f307\""
+        "etag": "\"f64ed5512a60b0f0ace9e2864bf57dd986b0c301\""
       },
       "body": {
         "data": [
@@ -3716,7 +4542,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJnYW1lLWEiXX0.TkF0r9gEGgJkr9q0HFBMAPFefhk6xXYX1PMZQ1-lHbY"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCJnYW1lLWEiXX0.TkF0r9gEGgJkr9q0HFBMAPFefhk6xXYX1PMZQ1-lHbY",
+            "total": 29
           }
         }
       }
@@ -3896,6 +4723,116 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "total": 29
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 29,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -3917,7 +4854,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 29
             },
             "title": "Winter sale",
             "start": null
@@ -3936,7 +4874,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"55dc755dcb20115471427f4b464d6846f674d946\""
       },
       "body": {
         "data": [],
@@ -3949,7 +4887,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 29
           }
         }
       }
@@ -4990,6 +5929,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -5071,7 +6041,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             },
             "title": "Winter sale",
             "start": 0
@@ -5090,7 +6061,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0ab9d26e20b5e9f95a641e48ef90f72efd321fe7\""
+        "etag": "\"f81fea98dd2a53be631cf1ff805bdca067c23043\""
       },
       "body": {
         "data": [
@@ -5152,7 +6123,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -5396,6 +6368,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -5482,7 +6485,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             },
             "title": "Winter sale",
             "start": 0
@@ -5501,7 +6505,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"5bd319e2f9a524c5bf7c4a0a734a12a5ee39a18b\""
+        "etag": "\"f613296447c0f6b0eee310f46f5fdd1869123ca1\""
       },
       "body": {
         "data": [
@@ -5568,7 +6572,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -5712,6 +6717,37 @@
             ]
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -5982,6 +7018,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -6065,7 +7132,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             },
             "title": "Winter sale",
             "start": 0
@@ -6084,7 +7152,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"16e2acee97c6c087559c156f226cc6c8ae7e0640\""
+        "etag": "\"6e6ed598dd22e2eac0080a8282867a6d8518bb7c\""
       },
       "body": {
         "data": [
@@ -6148,7 +7216,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -6221,6 +7290,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -6305,7 +7405,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzQyLCIxNyJdfQ.eUYKl6MkhNYvJyI3tMa-JjXlyfAJexfvOG5qbHB_A5U"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzQyLCIxNyJdfQ.eUYKl6MkhNYvJyI3tMa-JjXlyfAJexfvOG5qbHB_A5U",
+              "total": 2
             },
             "title": "Event,2026",
             "start": 0
@@ -6324,7 +7425,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"69513d245b7ce619af1a106d3eaae458a03d04cf\""
+        "etag": "\"3ec73dcdd87c5c7100a92519c7b05b5543113dfc\""
       },
       "body": {
         "data": [
@@ -6386,7 +7487,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzQyLCIxNyJdfQ.eUYKl6MkhNYvJyI3tMa-JjXlyfAJexfvOG5qbHB_A5U"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzQyLCIxNyJdfQ.eUYKl6MkhNYvJyI3tMa-JjXlyfAJexfvOG5qbHB_A5U",
+            "total": 2
           }
         }
       }
@@ -6480,6 +7582,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -6501,7 +7634,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -6520,7 +7654,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -6533,7 +7667,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -6610,6 +7745,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -6696,7 +7862,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicmVsZWFzZURhdGU6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNS0wNy0wMVQwMDowMDowMC4wMDBaIiwiNTA3ZjFmNzdiY2Y4NmNkNzk5NDM5MDExIl19.Q_BcfFMa9ORrBh15Cc-qvqdROCW9RwaJs8QCrivYVW8"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicmVsZWFzZURhdGU6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNS0wNy0wMVQwMDowMDowMC4wMDBaIiwiNTA3ZjFmNzdiY2Y4NmNkNzk5NDM5MDExIl19.Q_BcfFMa9ORrBh15Cc-qvqdROCW9RwaJs8QCrivYVW8",
+              "total": 2
             },
             "title": "[object Object]",
             "start": 0
@@ -6715,7 +7882,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"fc17d0b2793d43a9ad4fd37a96bb49ea6f627225\""
+        "etag": "\"fb4001e12df301299f2dbc6e538d30ebfc9ea567\""
       },
       "body": {
         "data": [
@@ -6777,7 +7944,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicmVsZWFzZURhdGU6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNS0wNy0wMVQwMDowMDowMC4wMDBaIiwiNTA3ZjFmNzdiY2Y4NmNkNzk5NDM5MDExIl19.Q_BcfFMa9ORrBh15Cc-qvqdROCW9RwaJs8QCrivYVW8"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicmVsZWFzZURhdGU6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNS0wNy0wMVQwMDowMDowMC4wMDBaIiwiNTA3ZjFmNzdiY2Y4NmNkNzk5NDM5MDExIl19.Q_BcfFMa9ORrBh15Cc-qvqdROCW9RwaJs8QCrivYVW8",
+            "total": 2
           }
         }
       }
@@ -6877,6 +8045,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -6898,7 +8097,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -6917,7 +8117,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -6930,7 +8130,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -7001,6 +8202,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -7085,7 +8317,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoiZWZmZWN0aXZlRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTAyLTAzVDAwOjAwOjAwLjAwMFoiLCJudWxsIl19.Mt--k0LkGU8kR7eesuefBU195AyrsNVWXlZGbNE-k6o"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoiZWZmZWN0aXZlRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTAyLTAzVDAwOjAwOjAwLjAwMFoiLCJudWxsIl19.Mt--k0LkGU8kR7eesuefBU195AyrsNVWXlZGbNE-k6o",
+              "total": 2
             },
             "title": "false",
             "start": 0
@@ -7104,7 +8337,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"51f9e709dbf84c554972329c51970cc70d8b4068\""
+        "etag": "\"066f01d2cfcbc2f76e8ff825842373210a18dc94\""
       },
       "body": {
         "data": [
@@ -7166,7 +8399,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoiZWZmZWN0aXZlRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTAyLTAzVDAwOjAwOjAwLjAwMFoiLCJudWxsIl19.Mt--k0LkGU8kR7eesuefBU195AyrsNVWXlZGbNE-k6o"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoiZWZmZWN0aXZlRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTAyLTAzVDAwOjAwOjAwLjAwMFoiLCJudWxsIl19.Mt--k0LkGU8kR7eesuefBU195AyrsNVWXlZGbNE-k6o",
+            "total": 2
           }
         }
       }
@@ -7266,6 +8500,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -7287,7 +8552,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -7306,7 +8572,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -7319,7 +8585,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -7389,6 +8656,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -7472,7 +8770,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoiY3JlYXRpb25EYXRlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCwidW5kZWZpbmVkIl19.yE-rIf-2jeEAGiIKVO2emt6fQpA2n84xfyctrJjjm68"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoiY3JlYXRpb25EYXRlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCwidW5kZWZpbmVkIl19.yE-rIf-2jeEAGiIKVO2emt6fQpA2n84xfyctrJjjm68",
+              "total": 2
             },
             "title": "5",
             "start": 0
@@ -7491,7 +8790,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ae696fa4c1a6bcb6b1a4677a06e7da6895e20250\""
+        "etag": "\"7e7cade85ce8d9416660ca3a9c9408197cb67406\""
       },
       "body": {
         "data": [
@@ -7553,7 +8852,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoiY3JlYXRpb25EYXRlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCwidW5kZWZpbmVkIl19.yE-rIf-2jeEAGiIKVO2emt6fQpA2n84xfyctrJjjm68"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoiY3JlYXRpb25EYXRlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbbnVsbCwidW5kZWZpbmVkIl19.yE-rIf-2jeEAGiIKVO2emt6fQpA2n84xfyctrJjjm68",
+            "total": 2
           }
         }
       }
@@ -7635,6 +8935,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -7656,7 +8987,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -7675,7 +9007,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -7688,7 +9020,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -7759,6 +9092,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -7843,7 +9207,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidmlld2FibGVEYXRlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbInRydWUiLCJ0YXJnZXQiXX0.scb3dGbHTU2WgYtehAh5_Mfl0LDCG_CYIVxJi0j1Ja0"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidmlld2FibGVEYXRlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbInRydWUiLCJ0YXJnZXQiXX0.scb3dGbHTU2WgYtehAh5_Mfl0LDCG_CYIVxJi0j1Ja0",
+              "total": 2
             },
             "title": "17",
             "start": 0
@@ -7862,7 +9227,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"df324d4b4dc1b1a7594d7b4d9d51d6f982b495bb\""
+        "etag": "\"8e08e0983e7570414b929abe9588bdba4b5b1a4f\""
       },
       "body": {
         "data": [
@@ -7924,7 +9289,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidmlld2FibGVEYXRlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbInRydWUiLCJ0YXJnZXQiXX0.scb3dGbHTU2WgYtehAh5_Mfl0LDCG_CYIVxJi0j1Ja0"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidmlld2FibGVEYXRlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbInRydWUiLCJ0YXJnZXQiXX0.scb3dGbHTU2WgYtehAh5_Mfl0LDCG_CYIVxJi0j1Ja0",
+            "total": 2
           }
         }
       }
@@ -8024,6 +9390,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -8045,7 +9442,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -8064,7 +9462,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -8077,7 +9475,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -8150,6 +9549,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -8236,7 +9666,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicGNSZWxlYXNlRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJbb2JqZWN0IE9iamVjdF0iLCJvYmplY3QiXX0.n8Y-A8rGpnsTtrwU0rIeYVJs4AQDoHn9557CH-sRJ_Y"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicGNSZWxlYXNlRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJbb2JqZWN0IE9iamVjdF0iLCJvYmplY3QiXX0.n8Y-A8rGpnsTtrwU0rIeYVJs4AQDoHn9557CH-sRJ_Y",
+              "total": 2
             },
             "title": "test",
             "start": 0
@@ -8255,7 +9686,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b7a9e651b6e1947323fec035425315f2b137299c\""
+        "etag": "\"1c7e0146929f87c332932dd7ec626bc4174b445d\""
       },
       "body": {
         "data": [
@@ -8319,7 +9750,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicGNSZWxlYXNlRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJbb2JqZWN0IE9iamVjdF0iLCJvYmplY3QiXX0.n8Y-A8rGpnsTtrwU0rIeYVJs4AQDoHn9557CH-sRJ_Y"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicGNSZWxlYXNlRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJbb2JqZWN0IE9iamVjdF0iLCJvYmplY3QiXX0.n8Y-A8rGpnsTtrwU0rIeYVJs4AQDoHn9557CH-sRJ_Y",
+            "total": 2
           }
         }
       }
@@ -8419,6 +9851,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -8440,7 +9903,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -8459,7 +9923,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -8472,7 +9936,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -8542,6 +10007,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -8626,7 +10122,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidXBjb21pbmc6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCIyMiJdfQ.tLJEQOgKpyUmyi_1QOkjvxJcbu7oncPeQYjDEDa-t4s"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidXBjb21pbmc6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCIyMiJdfQ.tLJEQOgKpyUmyi_1QOkjvxJcbu7oncPeQYjDEDa-t4s",
+              "total": 2
             },
             "title": "event",
             "start": 0
@@ -8645,7 +10142,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"a44bdd6e552a92092a4f2074e7fa0d7b220523ae\""
+        "etag": "\"0d3af20298322e5b4940d2fe63ca203ebedf8674\""
       },
       "body": {
         "data": [
@@ -8707,7 +10204,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidXBjb21pbmc6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCIyMiJdfQ.tLJEQOgKpyUmyi_1QOkjvxJcbu7oncPeQYjDEDa-t4s"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidXBjb21pbmc6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltudWxsLCIyMiJdfQ.tLJEQOgKpyUmyi_1QOkjvxJcbu7oncPeQYjDEDa-t4s",
+            "total": 2
           }
         }
       }
@@ -8789,6 +10287,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -8810,7 +10339,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -8829,7 +10359,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -8842,7 +10372,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -8912,6 +10443,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -8996,7 +10558,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidXBjb21pbmc6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJ5ZXMiXX0.wutdBWGW68wij5wWrnr3zMbjTd4qcuFBQEVEqQfFlo8"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidXBjb21pbmc6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJ5ZXMiXX0.wutdBWGW68wij5wWrnr3zMbjTd4qcuFBQEVEqQfFlo8",
+              "total": 2
             },
             "title": "event",
             "start": 0
@@ -9015,7 +10578,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3d2050a9bca89cde74b9cf32f8927d94da36bc14\""
+        "etag": "\"bb3f3bbe8899f60bdb9b1571a4e98af6eaaba4ce\""
       },
       "body": {
         "data": [
@@ -9077,7 +10640,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidXBjb21pbmc6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJ5ZXMiXX0.wutdBWGW68wij5wWrnr3zMbjTd4qcuFBQEVEqQfFlo8"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoidXBjb21pbmc6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsxLCJ5ZXMiXX0.wutdBWGW68wij5wWrnr3zMbjTd4qcuFBQEVEqQfFlo8",
+            "total": 2
           }
         }
       }
@@ -9171,6 +10735,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -9192,7 +10787,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -9211,7 +10807,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -9224,7 +10820,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -9385,6 +10982,139 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "id": 42,
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false,
+            "_priceSort": {
+              "$numberDecimal": "349.8"
+            },
+            "priceDoc": {
+              "offerId": 42,
+              "price": {
+                "currencyCode": "USD",
+                "discountPrice": {
+                  "$numberDecimal": "349.8"
+                }
+              }
+            }
+          },
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -9466,7 +11196,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlt7IiRudW1iZXJEZWNpbWFsIjoiMzQ5LjgifSwiNDIiXX0.s-oxMEWDr6AudRG35wS5AX8QL4NyAdzGDDKX2AwEq7w"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlt7IiRudW1iZXJEZWNpbWFsIjoiMzQ5LjgifSwiNDIiXX0.s-oxMEWDr6AudRG35wS5AX8QL4NyAdzGDDKX2AwEq7w",
+              "total": 0
             },
             "title": "event",
             "start": 0
@@ -9485,7 +11216,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"5950baf4201088ad3a50825e0ec8c35915cd7bf9\""
+        "etag": "\"7d105ff7c568359000999bf182520bf0455f9ced\""
       },
       "body": {
         "data": [
@@ -9547,7 +11278,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlt7IiRudW1iZXJEZWNpbWFsIjoiMzQ5LjgifSwiNDIiXX0.s-oxMEWDr6AudRG35wS5AX8QL4NyAdzGDDKX2AwEq7w"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlt7IiRudW1iZXJEZWNpbWFsIjoiMzQ5LjgifSwiNDIiXX0.s-oxMEWDr6AudRG35wS5AX8QL4NyAdzGDDKX2AwEq7w",
+            "total": 0
           }
         }
       }
@@ -9763,6 +11495,112 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -9784,7 +11622,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -9803,7 +11642,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -9816,7 +11655,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -9978,6 +11818,140 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "price",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false,
+            "_priceSort": [
+              1,
+              2
+            ],
+            "priceDoc": {
+              "offerId": "price",
+              "price": {
+                "currencyCode": "USD",
+                "discountPrice": {
+                  "$numberDecimal": "349.8"
+                }
+              }
+            }
+          },
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -10059,7 +12033,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltbMSwyXSwicHJpY2UiXX0.35BvWkxgB0gnc1grFQq7TTd5vpFh2xkHAqHGnC3IQFM"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltbMSwyXSwicHJpY2UiXX0.35BvWkxgB0gnc1grFQq7TTd5vpFh2xkHAqHGnC3IQFM",
+              "total": 0
             },
             "title": "event",
             "start": 0
@@ -10078,7 +12053,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1174ca2ab768044ce5e33cb937d3e8e7b133d7fa\""
+        "etag": "\"18120d6e073bfe34bdb794b4f53e28e2e36f46a9\""
       },
       "body": {
         "data": [
@@ -10140,7 +12115,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltbMSwyXSwicHJpY2UiXX0.35BvWkxgB0gnc1grFQq7TTd5vpFh2xkHAqHGnC3IQFM"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOltbMSwyXSwicHJpY2UiXX0.35BvWkxgB0gnc1grFQq7TTd5vpFh2xkHAqHGnC3IQFM",
+            "total": 0
           }
         }
       }
@@ -10359,6 +12335,112 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -10380,7 +12462,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -10399,7 +12482,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -10412,7 +12495,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -10571,6 +12655,137 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "bool",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false,
+            "_priceSort": true,
+            "priceDoc": {
+              "offerId": "bool",
+              "price": {
+                "currencyCode": "USD",
+                "discountPrice": {
+                  "$numberDecimal": "349.8"
+                }
+              }
+            }
+          },
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -10652,7 +12867,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlt0cnVlLCJib29sIl19.VFMvcLPQ83Dq27NMhUkoAEVORcprCYLV3cjgnlG6lRw"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlt0cnVlLCJib29sIl19.VFMvcLPQ83Dq27NMhUkoAEVORcprCYLV3cjgnlG6lRw",
+              "total": 0
             },
             "title": "event",
             "start": 0
@@ -10671,7 +12887,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"58f351b3e79a2b946068b63254df78b2be480121\""
+        "etag": "\"a3a7f01f81e1ea4cac3c42b4fedf7316c6c1ab6f\""
       },
       "body": {
         "data": [
@@ -10733,7 +12949,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlt0cnVlLCJib29sIl19.VFMvcLPQ83Dq27NMhUkoAEVORcprCYLV3cjgnlG6lRw"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlt0cnVlLCJib29sIl19.VFMvcLPQ83Dq27NMhUkoAEVORcprCYLV3cjgnlG6lRw",
+            "total": 0
           }
         }
       }
@@ -10943,6 +13160,112 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -10964,7 +13287,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -10983,7 +13307,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -10996,7 +13320,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -11157,6 +13482,139 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "long",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false,
+            "_priceSort": {
+              "$numberLong": "9007199254740997"
+            },
+            "priceDoc": {
+              "offerId": "long",
+              "price": {
+                "currencyCode": "USD",
+                "discountPrice": {
+                  "$numberDecimal": "349.8"
+                }
+              }
+            }
+          },
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -11238,7 +13696,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlt7ImhpZ2giOjIwOTcxNTIsImxvdyI6NSwidW5zaWduZWQiOmZhbHNlfSwibG9uZyJdfQ.CuVl4LPh7KLSgvNxJSftGJcz5-P73wweaOzYLd5FcDk"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlt7ImhpZ2giOjIwOTcxNTIsImxvdyI6NSwidW5zaWduZWQiOmZhbHNlfSwibG9uZyJdfQ.CuVl4LPh7KLSgvNxJSftGJcz5-P73wweaOzYLd5FcDk",
+              "total": 0
             },
             "title": "event",
             "start": 0
@@ -11257,7 +13716,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b99e841ebc7023c8704a99478551bccbf4579615\""
+        "etag": "\"adecf0f9ea06eb41f3276cd08804d0f63e83c55f\""
       },
       "body": {
         "data": [
@@ -11319,7 +13778,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlt7ImhpZ2giOjIwOTcxNTIsImxvdyI6NSwidW5zaWduZWQiOmZhbHNlfSwibG9uZyJdfQ.CuVl4LPh7KLSgvNxJSftGJcz5-P73wweaOzYLd5FcDk"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoicHJpY2U6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlt7ImhpZ2giOjIwOTcxNTIsImxvdyI6NSwidW5zaWduZWQiOmZhbHNlfSwibG9uZyJdfQ.CuVl4LPh7KLSgvNxJSftGJcz5-P73wweaOzYLd5FcDk",
+            "total": 0
           }
         }
       }
@@ -11541,6 +14001,112 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -11562,7 +14128,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -11581,7 +14148,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -11594,7 +14161,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -11742,6 +14310,28 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "error": true
       }
     ],
     "response": {
@@ -11822,6 +14412,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -11987,6 +14608,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -12438,6 +15090,103 @@
           "options": {}
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "error": true
       }
     ],
     "response": {
@@ -12532,6 +15281,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -12592,7 +15372,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTAxLTAyVDAzOjA0OjA1LjAwMFoiLCJnYW1lLCwzIl19.XA6DcW0qN3SizEsDNLRo7b0JrXBcPGxBOGo0i8kkt54"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTAxLTAyVDAzOjA0OjA1LjAwMFoiLCJnYW1lLCwzIl19.XA6DcW0qN3SizEsDNLRo7b0JrXBcPGxBOGo0i8kkt54",
+              "total": 2
             },
             "title": "Winter sale",
             "start": 0
@@ -12611,7 +15392,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ae43d9e7535b84e2668dc8cb9f4503c4764be3e9\""
+        "etag": "\"7cc09784605373b4783a08c9ccd841b2edca43e2\""
       },
       "body": {
         "data": [
@@ -12661,7 +15442,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTAxLTAyVDAzOjA0OjA1LjAwMFoiLCJnYW1lLCwzIl19.XA6DcW0qN3SizEsDNLRo7b0JrXBcPGxBOGo0i8kkt54"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTAxLTAyVDAzOjA0OjA1LjAwMFoiLCJnYW1lLCwzIl19.XA6DcW0qN3SizEsDNLRo7b0JrXBcPGxBOGo0i8kkt54",
+            "total": 2
           }
         }
       }
@@ -12761,6 +15543,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -12782,7 +15595,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -12801,7 +15615,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -12814,7 +15628,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -12887,6 +15702,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -12947,7 +15793,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJ1bmtub3duIiwiZ2FtZS1hIl19.T6ZFNUbNugj52VmyhyO9k8iw2kWE0nJCcMqehiaV3K4"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJ1bmtub3duIiwiZ2FtZS1hIl19.T6ZFNUbNugj52VmyhyO9k8iw2kWE0nJCcMqehiaV3K4",
+              "total": 2
             },
             "title": "Winter sale",
             "start": 0
@@ -12966,7 +15813,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"cc886de38d38719a37a4a67280959a669abde53b\""
+        "etag": "\"73285a48991aa9f1bd68e789aba81df58a5e7858\""
       },
       "body": {
         "data": [
@@ -13016,7 +15863,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJ1bmtub3duIiwiZ2FtZS1hIl19.T6ZFNUbNugj52VmyhyO9k8iw2kWE0nJCcMqehiaV3K4"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJ1bmtub3duIiwiZ2FtZS1hIl19.T6ZFNUbNugj52VmyhyO9k8iw2kWE0nJCcMqehiaV3K4",
+            "total": 2
           }
         }
       }
@@ -13116,6 +15964,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -13137,7 +16016,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -13156,7 +16036,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -13169,7 +16049,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -13242,6 +16123,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -13302,7 +16214,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzEuMjUsImdhbWUtYSJdfQ._8apjk1dsEbI4Kx-0RaPt_1bDZjtj3s4QcuhliDC0CE"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzEuMjUsImdhbWUtYSJdfQ._8apjk1dsEbI4Kx-0RaPt_1bDZjtj3s4QcuhliDC0CE",
+              "total": 2
             },
             "title": "Winter sale",
             "start": 0
@@ -13321,7 +16234,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"97be955847d05191eda5a376d1a5f59e1d1a7086\""
+        "etag": "\"8ff0f745a4fa33ebd6c41bdd920a3a1111debc17\""
       },
       "body": {
         "data": [
@@ -13371,7 +16284,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzEuMjUsImdhbWUtYSJdfQ._8apjk1dsEbI4Kx-0RaPt_1bDZjtj3s4QcuhliDC0CE"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzEuMjUsImdhbWUtYSJdfQ._8apjk1dsEbI4Kx-0RaPt_1bDZjtj3s4QcuhliDC0CE",
+            "total": 2
           }
         }
       }
@@ -13465,6 +16379,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -13486,7 +16431,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": null
@@ -13505,7 +16451,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b8cb6a1767fe0bdc13a16df4dd909753bb492769\""
+        "etag": "\"40441b02830295c6bfa7eaaa2b466c5de93b0318\""
       },
       "body": {
         "data": [],
@@ -13518,7 +16464,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -13658,6 +16605,121 @@
             "priceDoc": "old"
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false,
+            "priceDoc": "old"
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -13834,6 +16896,121 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false,
+            "priceDoc": false
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -14007,6 +17184,121 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false,
+            "priceDoc": []
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -14073,7 +17365,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": 0
@@ -14092,7 +17385,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"e7b062779ddf6af24083edfee7c303d9d9253e91\""
+        "etag": "\"bf45bd372f8d434cb48364eb1a7fd5fdd99cf0a6\""
       },
       "body": {
         "data": [
@@ -14148,7 +17441,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -14293,6 +17587,123 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false,
+            "priceDoc": {
+              "$numberDecimal": "4"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -14377,7 +17788,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": 0
@@ -14396,7 +17808,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"7082554c5bd17ac83a3b0ca370f2ddd25947e730\""
+        "etag": "\"6c9ad0d1ea7b9bbfa4ea06eebbd370f7b741d4c7\""
       },
       "body": {
         "data": [
@@ -14470,7 +17882,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -14535,6 +17948,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -14615,6 +18059,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -14719,6 +18194,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -14827,6 +18333,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -14920,6 +18457,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -15104,6 +18672,121 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false,
+            "priceDoc": 7
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -15209,6 +18892,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -15269,7 +18983,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzQyLCJnYW1lLWEiXX0.tI8_KgSGwPdm2KxjIOfdSTTyJo1o9WgR-BOE4Iy7_oI"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzQyLCJnYW1lLWEiXX0.tI8_KgSGwPdm2KxjIOfdSTTyJo1o9WgR-BOE4Iy7_oI",
+              "total": 2
             },
             "title": "Winter sale",
             "start": 0
@@ -15288,7 +19003,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c28f553706171cf9560c26b4030ff68603f181bb\""
+        "etag": "\"fd51d66a0273936b165b4cc3852972c098ccbca2\""
       },
       "body": {
         "data": [
@@ -15338,7 +19053,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzQyLCJnYW1lLWEiXX0.tI8_KgSGwPdm2KxjIOfdSTTyJo1o9WgR-BOE4Iy7_oI"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzQyLCJnYW1lLWEiXX0.tI8_KgSGwPdm2KxjIOfdSTTyJo1o9WgR-BOE4Iy7_oI",
+            "total": 2
           }
         }
       }
@@ -15413,6 +19129,37 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -15473,7 +19220,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJoaXN0b3JpYyIsImdhbWUtYSJdfQ.Nxv_4gK4pQgXbQYmGLbx5zP9SHjr9pYIINCn-Nk7sxE"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJoaXN0b3JpYyIsImdhbWUtYSJdfQ.Nxv_4gK4pQgXbQYmGLbx5zP9SHjr9pYIINCn-Nk7sxE",
+              "total": 2
             },
             "title": "Winter sale",
             "start": 0
@@ -15492,7 +19240,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"4222923128d0bc0b639e8fee085d1ad331dd20c3\""
+        "etag": "\"ebeeabee64d8702f3192c459852473ffd309cb17\""
       },
       "body": {
         "data": [
@@ -15542,7 +19290,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJoaXN0b3JpYyIsImdhbWUtYSJdfQ.Nxv_4gK4pQgXbQYmGLbx5zP9SHjr9pYIINCn-Nk7sxE"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9tb3Rpb25zLm9mZmVycyIsImZpbHRlcnMiOnsiaWQiOiJldmVudCIsInEiOm51bGx9LCJmaWx0ZXJIYXNoIjoiOTRkOTEzYmJhOGM3MzhjNTUyOWMzYzIyZDkzOGNmYTg1NzY0NDg0YzAwYzVjZDMzYTZkOWYyOTM0MmNmOTlhMCIsIm9yZGVyaW5nIjoibGFzdE1vZGlmaWVkRGF0ZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJoaXN0b3JpYyIsImdhbWUtYSJdfQ.Nxv_4gK4pQgXbQYmGLbx5zP9SHjr9pYIINCn-Nk7sxE",
+            "total": 2
           }
         }
       }
@@ -15691,6 +19440,128 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false,
+            "priceDoc": 42
+          },
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -16036,6 +19907,124 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false,
+            "priceDoc": [
+              1,
+              "test"
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -16104,7 +20093,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": 0
@@ -16123,7 +20113,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"dbbf17214e6c98d364a70de2c4cfc6494fa68c5e\""
+        "etag": "\"dd4465c8c737510a04cc635b06b67df21ff9cb2a\""
       },
       "body": {
         "data": [
@@ -16181,7 +20171,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -16326,6 +20317,123 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false,
+            "priceDoc": {
+              "$oid": "507f1f77bcf86cd799439011"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -16406,7 +20514,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": 0
@@ -16425,7 +20534,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"12b80a804f170bfd0f6a7dae14cbfc534060c0d4\""
+        "etag": "\"a1e32b160d20c626836ef08110b54e9c4af13668\""
       },
       "body": {
         "data": [
@@ -16495,7 +20604,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -16640,6 +20750,123 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": "event"
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "US"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "priceDoc"
+              }
+            },
+            {
+              "$unwind": "$priceDoc"
+            },
+            {
+              "$addFields": {
+                "_priceSort": {
+                  "$ifNull": [
+                    "$priceDoc.price.discountPrice",
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "_priceNull": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$_priceSort",
+                        null
+                      ]
+                    },
+                    1,
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "game-a",
+            "namespace": "ns-a",
+            "title": "Game A",
+            "lastModifiedDate": "2026-01-02T03:04:05.000Z",
+            "upcoming": false,
+            "priceDoc": {
+              "$date": "1970-01-01T00:00:00.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":region=\"US\":sortBy=\"price\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -16706,7 +20933,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             },
             "title": "Winter sale",
             "start": 0
@@ -16725,7 +20953,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"e7b062779ddf6af24083edfee7c303d9d9253e91\""
+        "etag": "\"bf45bd372f8d434cb48364eb1a7fd5fdd99cf0a6\""
       },
       "body": {
         "data": [
@@ -16781,7 +21009,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -16849,6 +21078,37 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -16931,7 +21191,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             },
             "title": "Winter sale",
             "start": 0
@@ -16950,7 +21211,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"32b5ccd3e3165f4229d8e89cba6f39d5a86ccc9a\""
+        "etag": "\"833158dd187177ab477ef15dbafad87db34b25ac\""
       },
       "body": {
         "data": [
@@ -17012,7 +21273,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -17317,6 +21579,37 @@
             "upcoming": false
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "tags": {
+              "$elemMatch": {
+                "id": "event"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:promotions.offers.total:id=\"event\":sortBy=\"default\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {

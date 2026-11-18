@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { v1CacheKey } from "../src/v1/cache.js";
 import { encodeCursor, type CursorBinding } from "../src/v1/cursor.js";
 import { Hono } from "hono";
 import { expect, it, vi } from "vitest";
@@ -682,6 +683,53 @@ it("compares profile cache, storage, projection and pagination at the service bo
         "egdata-v1-local-cursor-secret-do-not-use-in-production";
       expect(entry.response, item.name).toEqual(item.response);
     }
+    vi.stubEnv(
+      "V1_CURSOR_SECRET",
+      "deterministic-collection-cursor-secret-for-oracle",
+    );
+    await record("leaderboard total across page sizes", "leaderboard?limit=1", {
+      "player-achievements.aggregate": [board, [{ total: 83 }]],
+    });
+    await record(
+      "leaderboard total reused",
+      "leaderboard?limit=2",
+      { "player-achievements.aggregate": [board] },
+      200,
+      true,
+    );
+    await record("games platinum total", "p/games?platinum=true&limit=1", {
+      "player-achievements.aggregate": [games, [{ total: 17 }]],
+    });
+    await record(
+      "games total reused across sorts",
+      "p/games?platinum=true&sort=alphabetical&limit=2",
+      { "player-achievements.aggregate": [games] },
+      200,
+      true,
+    );
+    await record(
+      "games total changes with platinum filter",
+      "p/games?limit=2",
+      { "player-achievements.aggregate": [games, [{ total: 91 }]] },
+      200,
+      true,
+    );
+    driver.cache.clear();
+    driver.cache.set(
+      "v1:" + v1CacheKey("profiles.leaderboard", { limit: 3, cursor: null }),
+      JSON.stringify({
+        entries: [],
+        pagination: { limit: 3, hasMore: false, nextCursor: null },
+      }),
+    );
+    const old = await record(
+      "old leaderboard page remains readable",
+      "leaderboard?limit=3",
+      {},
+      200,
+      true,
+    );
+    expect(old.meta?.pagination).not.toHaveProperty("total");
     assertOracle("v1-profile-edges", cases);
   } finally {
     vi.useRealTimers();

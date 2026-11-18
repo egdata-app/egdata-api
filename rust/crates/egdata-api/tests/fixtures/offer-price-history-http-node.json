@@ -565,6 +565,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2024-03-01T00:00:00.000Z\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2024-03-01T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2024-03-01T00:00:00.000Z\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=20:locale=\"en-US\":region=\"US\":since=\"2024-03-01T00:00:00.000Z\"",
           "payload": {
@@ -572,7 +605,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -589,7 +623,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"8c5aeeff1fec771cb8db8c462796b3aab5893caa\""
+        "etag": "\"b3d2fea06f921acbd31a85b940ff1558e4904c6f\""
       },
       "body": {
         "data": [],
@@ -600,7 +634,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -753,6 +788,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-05-31T11:00:00.000Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"fr\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
           "payload": {
@@ -775,7 +843,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.aqmH9eaht51oZr7u1TmeeK1SxPbmenAg1YdXdoHuRfk"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.aqmH9eaht51oZr7u1TmeeK1SxPbmenAg1YdXdoHuRfk",
+              "total": 2
             }
           },
           "ttl": 60
@@ -792,7 +861,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"f89cd56d91229230c4c53da08989d0c62afd2e65\""
+        "etag": "\"8abfe1353d4624c8d4ee05603f41d5e38af69b28\""
       },
       "body": {
         "data": [
@@ -818,7 +887,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.aqmH9eaht51oZr7u1TmeeK1SxPbmenAg1YdXdoHuRfk"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.aqmH9eaht51oZr7u1TmeeK1SxPbmenAg1YdXdoHuRfk",
+            "total": 2
           }
         }
       }
@@ -926,6 +996,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-05-31T11:00:00.000Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.aqmH9eaht51oZr7u1TmeeK1SxPbmenAg1YdXdoHuRfk\":id=\"game-a\":limit=1:locale=\"fr\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
           "payload": {
@@ -933,7 +1036,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -950,7 +1054,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ae4ddfba99ccaf4dd6b2aaaa256c24c128538562\""
+        "etag": "\"bf9e7bc6ca828021a39eec8ce96caac5de7107e4\""
       },
       "body": {
         "data": [],
@@ -961,7 +1065,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -1056,6 +1161,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-05-31T11:00:00.000Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"fr\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
           "payload": {
@@ -1078,7 +1216,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwiNjRjMDAwMDAwMDAwMDAwMDAwMDAwMDAxIl19.SG8gjRDSU7Us8neB0wDNXQJUtFdNM9cLkx86ADDDXGI"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwiNjRjMDAwMDAwMDAwMDAwMDAwMDAwMDAxIl19.SG8gjRDSU7Us8neB0wDNXQJUtFdNM9cLkx86ADDDXGI",
+              "total": 2
             }
           },
           "ttl": 60
@@ -1095,7 +1234,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"6a804eb28aded2c4579065d287a0a26ad4cac499\""
+        "etag": "\"4ac77dad82b455de456c9db7bf7b34a25e3c8318\""
       },
       "body": {
         "data": [
@@ -1121,7 +1260,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwiNjRjMDAwMDAwMDAwMDAwMDAwMDAwMDAxIl19.SG8gjRDSU7Us8neB0wDNXQJUtFdNM9cLkx86ADDDXGI"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwiNjRjMDAwMDAwMDAwMDAwMDAwMDAwMDAxIl19.SG8gjRDSU7Us8neB0wDNXQJUtFdNM9cLkx86ADDDXGI",
+            "total": 2
           }
         }
       }
@@ -1227,6 +1367,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-05-31T11:00:00.000Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwiNjRjMDAwMDAwMDAwMDAwMDAwMDAwMDAxIl19.SG8gjRDSU7Us8neB0wDNXQJUtFdNM9cLkx86ADDDXGI\":id=\"game-a\":limit=1:locale=\"fr\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
           "payload": {
@@ -1234,7 +1407,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -1251,7 +1425,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ae4ddfba99ccaf4dd6b2aaaa256c24c128538562\""
+        "etag": "\"bf9e7bc6ca828021a39eec8ce96caac5de7107e4\""
       },
       "body": {
         "data": [],
@@ -1262,7 +1436,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -1357,6 +1532,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-05-31T11:00:00.000Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"fr\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
           "payload": {
@@ -1379,7 +1587,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwxNV19.pX2_lZ2pkbEbCkfIjW18VgLL9U_EapndloN68j_o2JY"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwxNV19.pX2_lZ2pkbEbCkfIjW18VgLL9U_EapndloN68j_o2JY",
+              "total": 2
             }
           },
           "ttl": 60
@@ -1396,7 +1605,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"59b2e40f882d694271f1f2cf9fd3621b6d3d1e6e\""
+        "etag": "\"cc1478d363637e3a2d939543cf92a4cd981fb15f\""
       },
       "body": {
         "data": [
@@ -1422,7 +1631,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwxNV19.pX2_lZ2pkbEbCkfIjW18VgLL9U_EapndloN68j_o2JY"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwxNV19.pX2_lZ2pkbEbCkfIjW18VgLL9U_EapndloN68j_o2JY",
+            "total": 2
           }
         }
       }
@@ -1528,6 +1738,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-05-31T11:00:00.000Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwxNV19.pX2_lZ2pkbEbCkfIjW18VgLL9U_EapndloN68j_o2JY\":id=\"game-a\":limit=1:locale=\"fr\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
           "payload": {
@@ -1535,7 +1778,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -1552,7 +1796,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ae4ddfba99ccaf4dd6b2aaaa256c24c128538562\""
+        "etag": "\"bf9e7bc6ca828021a39eec8ce96caac5de7107e4\""
       },
       "body": {
         "data": [],
@@ -1563,7 +1807,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -1661,6 +1906,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-05-31T11:00:00.000Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"fr\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
           "payload": {
@@ -1683,7 +1961,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwiW29iamVjdCBPYmplY3RdIl19.rjPdYxR3CesFM69eg1qoauguRDejaKQTHJ87x-W0_aA"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwiW29iamVjdCBPYmplY3RdIl19.rjPdYxR3CesFM69eg1qoauguRDejaKQTHJ87x-W0_aA",
+              "total": 2
             }
           },
           "ttl": 60
@@ -1700,7 +1979,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"f0e48db57e80b05108e72c6793262c4d0e77740e\""
+        "etag": "\"a35547a9c89deebeeaac6be78c3d7e347317e237\""
       },
       "body": {
         "data": [
@@ -1726,7 +2005,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwiW29iamVjdCBPYmplY3RdIl19.rjPdYxR3CesFM69eg1qoauguRDejaKQTHJ87x-W0_aA"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwiW29iamVjdCBPYmplY3RdIl19.rjPdYxR3CesFM69eg1qoauguRDejaKQTHJ87x-W0_aA",
+            "total": 2
           }
         }
       }
@@ -1832,6 +2112,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-05-31T11:00:00.000Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjoiMjAyNi0wNS0zMVQxMTowMDowMC4wMDBaIn0sImZpbHRlckhhc2giOiI1MmEzOWUyZjY1ZmYzZThkMTQ1NjhhNGQwYjI0N2I0MDA3YjU0YmFhZWNjYTlkMzFhZTJlNGFlY2VkMzZmODQ5Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJmciIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0wNi0wMVQwMzowMDowMC4wMDBaIiwiW29iamVjdCBPYmplY3RdIl19.rjPdYxR3CesFM69eg1qoauguRDejaKQTHJ87x-W0_aA\":id=\"game-a\":limit=1:locale=\"fr\":region=\"US\":since=\"2026-05-31T11:00:00.000Z\"",
           "payload": {
@@ -1839,7 +2152,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -1856,7 +2170,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ae4ddfba99ccaf4dd6b2aaaa256c24c128538562\""
+        "etag": "\"bf9e7bc6ca828021a39eec8ce96caac5de7107e4\""
       },
       "body": {
         "data": [],
@@ -1867,7 +2181,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -2481,6 +2796,34 @@
           }
         },
         "error": true
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -2572,6 +2915,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "error": true
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=20:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -2594,7 +2965,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -2611,7 +2983,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"6cc94d8c77ff5ecc57e7e9ed0336dda43ec108c7\""
+        "etag": "\"0e57b450aaa467df700e7886ab7346a372c36e3c\""
       },
       "body": {
         "data": [
@@ -2637,7 +3009,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -2707,6 +3080,34 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -2783,6 +3184,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "EURO"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"EURO\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=20:locale=\"en-US\":region=\"EURO\"",
           "payload": {
@@ -2790,7 +3219,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -2807,7 +3237,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c8cdae0cdb170533947301f6daaf644b1b4d351b\""
+        "etag": "\"8e2c20b4bd0a9bc7df3ec97ee239ac31a9ed576b\""
       },
       "body": {
         "data": [],
@@ -2818,7 +3248,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3016,6 +3447,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2023-03-01T00:00:00.000Z\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2023-03-01T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2023-03-01T00:00:00.000Z\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=20:locale=\"en-US\":region=\"US\":since=\"2023-03-01T00:00:00.000Z\"",
           "payload": {
@@ -3023,7 +3487,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -3040,7 +3505,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"09e264f8ca072887afd8c4c91777fca9fc820af7\""
+        "etag": "\"d2d5b6a526683eefe6230864ac8f87438df2eb9a\""
       },
       "body": {
         "data": [],
@@ -3051,7 +3516,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3115,6 +3581,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2024-05-01T15:35:03.400Z\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2024-05-01T15:35:03.400Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2024-05-01T15:35:03.400Z\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=20:locale=\"en-US\":region=\"US\":since=\"2024-05-01T15:35:03.400Z\"",
           "payload": {
@@ -3122,7 +3621,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -3139,7 +3639,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b231988de82ed795b2be2a660026479c8077d0ff\""
+        "etag": "\"07b878237c03fb9538eace12577fed3e578dbae5\""
       },
       "body": {
         "data": [],
@@ -3150,7 +3650,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3214,6 +3715,39 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2024-04-01T12:05:03.040Z\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2024-04-01T12:05:03.040Z"
+              }
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\":since=\"2024-04-01T12:05:03.040Z\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=20:locale=\"en-US\":region=\"US\":since=\"2024-04-01T12:05:03.040Z\"",
           "payload": {
@@ -3221,7 +3755,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -3238,7 +3773,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"5312035480fe648156496a0dc878eccfbcf8219d\""
+        "etag": "\"c8311e500e9d072e16edc0595a778e3d60e5635d\""
       },
       "body": {
         "data": [],
@@ -3249,7 +3784,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3742,6 +4278,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzEyMyxudWxsXX0.B_j43gVSn3k7u592PPerEtlYg8wURqbHNy1RFBtJd4U\":id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -3749,7 +4313,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -3766,7 +4331,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1f8d7ad97f77405eb7bd781db234dbd4e91207b6\""
+        "etag": "\"f2fed6435690ab1673ac788e5efe18647414ff4e\""
       },
       "body": {
         "data": [],
@@ -3777,7 +4342,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -3863,6 +4429,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -3884,7 +4478,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsbnVsbF19._1dGZYv1xFodO5OymHPr7OOvjIpEz-_y6iEOw-7xpRQ"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsbnVsbF19._1dGZYv1xFodO5OymHPr7OOvjIpEz-_y6iEOw-7xpRQ",
+              "total": 2
             }
           },
           "ttl": 60
@@ -3901,7 +4496,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"bf8d196e9f4c13bfcbd391189828b86c3fdf825e\""
+        "etag": "\"52817827f18a55197b0e585d187df2e4a1a0d0f9\""
       },
       "body": {
         "data": [
@@ -3926,7 +4521,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsbnVsbF19._1dGZYv1xFodO5OymHPr7OOvjIpEz-_y6iEOw-7xpRQ"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsbnVsbF19._1dGZYv1xFodO5OymHPr7OOvjIpEz-_y6iEOw-7xpRQ",
+            "total": 2
           }
         }
       }
@@ -3988,6 +4584,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsbnVsbF19._1dGZYv1xFodO5OymHPr7OOvjIpEz-_y6iEOw-7xpRQ\":id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -3995,7 +4619,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -4012,7 +4637,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1f8d7ad97f77405eb7bd781db234dbd4e91207b6\""
+        "etag": "\"f2fed6435690ab1673ac788e5efe18647414ff4e\""
       },
       "body": {
         "data": [],
@@ -4023,7 +4648,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -4111,6 +4737,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -4133,7 +4787,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsbnVsbF19._1dGZYv1xFodO5OymHPr7OOvjIpEz-_y6iEOw-7xpRQ"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsbnVsbF19._1dGZYv1xFodO5OymHPr7OOvjIpEz-_y6iEOw-7xpRQ",
+              "total": 2
             }
           },
           "ttl": 60
@@ -4150,7 +4805,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3b11cd6c1d7acb6069f83a9ab9867f6fcd1521a5\""
+        "etag": "\"0a59618c77d23e85857a3fb59805be4ed8c31756\""
       },
       "body": {
         "data": [
@@ -4176,7 +4831,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsbnVsbF19._1dGZYv1xFodO5OymHPr7OOvjIpEz-_y6iEOw-7xpRQ"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsbnVsbF19._1dGZYv1xFodO5OymHPr7OOvjIpEz-_y6iEOw-7xpRQ",
+            "total": 2
           }
         }
       }
@@ -4238,6 +4894,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsbnVsbF19._1dGZYv1xFodO5OymHPr7OOvjIpEz-_y6iEOw-7xpRQ\":id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -4245,7 +4929,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -4262,7 +4947,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1f8d7ad97f77405eb7bd781db234dbd4e91207b6\""
+        "etag": "\"f2fed6435690ab1673ac788e5efe18647414ff4e\""
       },
       "body": {
         "data": [],
@@ -4273,7 +4958,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -4361,6 +5047,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -4383,7 +5097,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJ1cHN0cmVhbSB1bmtub3duIiwib2lkOm5vdC1hbi1vYmplY3RpZCJdfQ.sY8LB3YP87fcwDAGwmor7m0ZulW_gAqIJTWrsPJnb4g"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJ1cHN0cmVhbSB1bmtub3duIiwib2lkOm5vdC1hbi1vYmplY3RpZCJdfQ.sY8LB3YP87fcwDAGwmor7m0ZulW_gAqIJTWrsPJnb4g",
+              "total": 2
             }
           },
           "ttl": 60
@@ -4400,7 +5115,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"150bc7e220c9222223e58449d1e47cc3acce03ad\""
+        "etag": "\"ec4a269ef64c367fd7a940fff5f5da0520084826\""
       },
       "body": {
         "data": [
@@ -4426,7 +5141,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJ1cHN0cmVhbSB1bmtub3duIiwib2lkOm5vdC1hbi1vYmplY3RpZCJdfQ.sY8LB3YP87fcwDAGwmor7m0ZulW_gAqIJTWrsPJnb4g"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJ1cHN0cmVhbSB1bmtub3duIiwib2lkOm5vdC1hbi1vYmplY3RpZCJdfQ.sY8LB3YP87fcwDAGwmor7m0ZulW_gAqIJTWrsPJnb4g",
+            "total": 2
           }
         }
       }
@@ -4509,6 +5225,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyJ1cHN0cmVhbSB1bmtub3duIiwib2lkOm5vdC1hbi1vYmplY3RpZCJdfQ.sY8LB3YP87fcwDAGwmor7m0ZulW_gAqIJTWrsPJnb4g\":id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -4516,7 +5260,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -4533,7 +5278,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1f8d7ad97f77405eb7bd781db234dbd4e91207b6\""
+        "etag": "\"f2fed6435690ab1673ac788e5efe18647414ff4e\""
       },
       "body": {
         "data": [],
@@ -4544,7 +5289,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -4632,6 +5378,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -4654,7 +5428,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI0LTAzLTAxVDEyOjA1OjAxLjA0MFoiLCJsZWdhY3kiXX0.gnJNBelAAumftSZRdXbc9WMNaLP_0c236gAIZyvPMwk"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI0LTAzLTAxVDEyOjA1OjAxLjA0MFoiLCJsZWdhY3kiXX0.gnJNBelAAumftSZRdXbc9WMNaLP_0c236gAIZyvPMwk",
+              "total": 2
             }
           },
           "ttl": 60
@@ -4671,7 +5446,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"2fdf86028faf9cac82d6c9f0cff958ad0611026f\""
+        "etag": "\"7a5fc19e96a7f9ff7ccacdf9076d4612f6861ba8\""
       },
       "body": {
         "data": [
@@ -4697,7 +5472,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI0LTAzLTAxVDEyOjA1OjAxLjA0MFoiLCJsZWdhY3kiXX0.gnJNBelAAumftSZRdXbc9WMNaLP_0c236gAIZyvPMwk"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI0LTAzLTAxVDEyOjA1OjAxLjA0MFoiLCJsZWdhY3kiXX0.gnJNBelAAumftSZRdXbc9WMNaLP_0c236gAIZyvPMwk",
+            "total": 2
           }
         }
       }
@@ -4798,6 +5574,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI0LTAzLTAxVDEyOjA1OjAxLjA0MFoiLCJsZWdhY3kiXX0.gnJNBelAAumftSZRdXbc9WMNaLP_0c236gAIZyvPMwk\":id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -4805,7 +5609,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -4822,7 +5627,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1f8d7ad97f77405eb7bd781db234dbd4e91207b6\""
+        "etag": "\"f2fed6435690ab1673ac788e5efe18647414ff4e\""
       },
       "body": {
         "data": [],
@@ -4833,7 +5638,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -4921,6 +5727,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -4943,7 +5777,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDIzLTA2LTIwVDEwOjAwOjAwLjAwMFoiLCJsZWdhY3kiXX0.dJ7F-vCfn0xprmu3IeUBGuiUzZOJqwF6ehP5dPfKgPU"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDIzLTA2LTIwVDEwOjAwOjAwLjAwMFoiLCJsZWdhY3kiXX0.dJ7F-vCfn0xprmu3IeUBGuiUzZOJqwF6ehP5dPfKgPU",
+              "total": 2
             }
           },
           "ttl": 60
@@ -4960,7 +5795,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3f773a37e235bfa9b1ad36a6c8221906bc839e1f\""
+        "etag": "\"96ff837fefe82b8b4b718523bb8e3539933c8e6e\""
       },
       "body": {
         "data": [
@@ -4986,7 +5821,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDIzLTA2LTIwVDEwOjAwOjAwLjAwMFoiLCJsZWdhY3kiXX0.dJ7F-vCfn0xprmu3IeUBGuiUzZOJqwF6ehP5dPfKgPU"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDIzLTA2LTIwVDEwOjAwOjAwLjAwMFoiLCJsZWdhY3kiXX0.dJ7F-vCfn0xprmu3IeUBGuiUzZOJqwF6ehP5dPfKgPU",
+            "total": 2
           }
         }
       }
@@ -5087,6 +5923,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDIzLTA2LTIwVDEwOjAwOjAwLjAwMFoiLCJsZWdhY3kiXX0.dJ7F-vCfn0xprmu3IeUBGuiUzZOJqwF6ehP5dPfKgPU\":id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -5094,7 +5958,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -5111,7 +5976,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1f8d7ad97f77405eb7bd781db234dbd4e91207b6\""
+        "etag": "\"f2fed6435690ab1673ac788e5efe18647414ff4e\""
       },
       "body": {
         "data": [],
@@ -5122,7 +5987,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -5210,6 +6076,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -5232,7 +6126,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI0LTA1LTMxVDIxOjU5OjU5LjAwMFoiLCJzdG9yZSJdfQ.UBdJRS9_DYTkq9CQ2lDkDY4fd7TAuocZQ5eDhnTM6oo"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI0LTA1LTMxVDIxOjU5OjU5LjAwMFoiLCJzdG9yZSJdfQ.UBdJRS9_DYTkq9CQ2lDkDY4fd7TAuocZQ5eDhnTM6oo",
+              "total": 2
             }
           },
           "ttl": 60
@@ -5249,7 +6144,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1a37f55b2a40ae52a5afbc07274600618f7133c9\""
+        "etag": "\"abbf364d42fa5d70679737fa7f7e0d6eabd1c6da\""
       },
       "body": {
         "data": [
@@ -5275,7 +6170,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI0LTA1LTMxVDIxOjU5OjU5LjAwMFoiLCJzdG9yZSJdfQ.UBdJRS9_DYTkq9CQ2lDkDY4fd7TAuocZQ5eDhnTM6oo"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI0LTA1LTMxVDIxOjU5OjU5LjAwMFoiLCJzdG9yZSJdfQ.UBdJRS9_DYTkq9CQ2lDkDY4fd7TAuocZQ5eDhnTM6oo",
+            "total": 2
           }
         }
       }
@@ -5376,6 +6272,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI0LTA1LTMxVDIxOjU5OjU5LjAwMFoiLCJzdG9yZSJdfQ.UBdJRS9_DYTkq9CQ2lDkDY4fd7TAuocZQ5eDhnTM6oo\":id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -5383,7 +6307,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -5400,7 +6325,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1f8d7ad97f77405eb7bd781db234dbd4e91207b6\""
+        "etag": "\"f2fed6435690ab1673ac788e5efe18647414ff4e\""
       },
       "body": {
         "data": [],
@@ -5411,7 +6336,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -5503,6 +6429,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -5525,7 +6479,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCI5MjIzMzcyMDM2ODU0Nzc1ODA3Il19.LAKBA71hfMuv4jLIHrp0fsHqaxsnpT4DkUqALSTNo3s"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCI5MjIzMzcyMDM2ODU0Nzc1ODA3Il19.LAKBA71hfMuv4jLIHrp0fsHqaxsnpT4DkUqALSTNo3s",
+              "total": 2
             }
           },
           "ttl": 60
@@ -5542,7 +6497,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"15f7e041ef0ccf44ea18729f0d2eb098e1f7cbc8\""
+        "etag": "\"98e64f10057a0ba852672d1a2e8f37063784f88f\""
       },
       "body": {
         "data": [
@@ -5568,7 +6523,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCI5MjIzMzcyMDM2ODU0Nzc1ODA3Il19.LAKBA71hfMuv4jLIHrp0fsHqaxsnpT4DkUqALSTNo3s"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCI5MjIzMzcyMDM2ODU0Nzc1ODA3Il19.LAKBA71hfMuv4jLIHrp0fsHqaxsnpT4DkUqALSTNo3s",
+            "total": 2
           }
         }
       }
@@ -5669,6 +6625,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCI5MjIzMzcyMDM2ODU0Nzc1ODA3Il19.LAKBA71hfMuv4jLIHrp0fsHqaxsnpT4DkUqALSTNo3s\":id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -5676,7 +6660,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -5693,7 +6678,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1f8d7ad97f77405eb7bd781db234dbd4e91207b6\""
+        "etag": "\"f2fed6435690ab1673ac788e5efe18647414ff4e\""
       },
       "body": {
         "data": [],
@@ -5704,7 +6689,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -5794,6 +6780,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -5816,7 +6830,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLDEuMjVdfQ.ffrntzKYqkkrSYJ3YLnQ1qwiKpEhzAnGGorX5rJmgOw"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLDEuMjVdfQ.ffrntzKYqkkrSYJ3YLnQ1qwiKpEhzAnGGorX5rJmgOw",
+              "total": 2
             }
           },
           "ttl": 60
@@ -5833,7 +6848,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ff4691bac13f66f721ef2806922bb5e10a639cf4\""
+        "etag": "\"321d10d20d7fa4b0670a282a4747c0720118f3f7\""
       },
       "body": {
         "data": [
@@ -5859,7 +6874,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLDEuMjVdfQ.ffrntzKYqkkrSYJ3YLnQ1qwiKpEhzAnGGorX5rJmgOw"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLDEuMjVdfQ.ffrntzKYqkkrSYJ3YLnQ1qwiKpEhzAnGGorX5rJmgOw",
+            "total": 2
           }
         }
       }
@@ -5960,6 +6976,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLDEuMjVdfQ.ffrntzKYqkkrSYJ3YLnQ1qwiKpEhzAnGGorX5rJmgOw\":id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -5967,7 +7011,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -5984,7 +7029,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1f8d7ad97f77405eb7bd781db234dbd4e91207b6\""
+        "etag": "\"f2fed6435690ab1673ac788e5efe18647414ff4e\""
       },
       "body": {
         "data": [],
@@ -5995,7 +7040,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -6087,6 +7133,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -6109,7 +7183,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCIxMDIuMDAiXX0.TG25lMor6V3KuWzoEjaLx5boothRz8vRrgr2Pa44juM"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCIxMDIuMDAiXX0.TG25lMor6V3KuWzoEjaLx5boothRz8vRrgr2Pa44juM",
+              "total": 2
             }
           },
           "ttl": 60
@@ -6126,7 +7201,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"934883ced5fd4b17c110e7c1e4fe1e228fd69c88\""
+        "etag": "\"29ec930db2e6adbd387dfe2cbab43232ae440973\""
       },
       "body": {
         "data": [
@@ -6152,7 +7227,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCIxMDIuMDAiXX0.TG25lMor6V3KuWzoEjaLx5boothRz8vRrgr2Pa44juM"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCIxMDIuMDAiXX0.TG25lMor6V3KuWzoEjaLx5boothRz8vRrgr2Pa44juM",
+            "total": 2
           }
         }
       }
@@ -6253,6 +7329,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCIxMDIuMDAiXX0.TG25lMor6V3KuWzoEjaLx5boothRz8vRrgr2Pa44juM\":id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -6260,7 +7364,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -6277,7 +7382,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1f8d7ad97f77405eb7bd781db234dbd4e91207b6\""
+        "etag": "\"f2fed6435690ab1673ac788e5efe18647414ff4e\""
       },
       "body": {
         "data": [],
@@ -6288,7 +7393,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -6378,6 +7484,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -6400,7 +7534,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsImxlZ2FjeS1yZWNvcmQiXX0._ChB9ZaS0hBAgMkn4YK4VQItI0yteY9DE_WYWdr7vs0"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsImxlZ2FjeS1yZWNvcmQiXX0._ChB9ZaS0hBAgMkn4YK4VQItI0yteY9DE_WYWdr7vs0",
+              "total": 2
             }
           },
           "ttl": 60
@@ -6417,7 +7552,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"4260c1d7963b4a444c975b958fa3b557662ab49b\""
+        "etag": "\"ef1da0b22149b901bbfe14351c35620a995a0621\""
       },
       "body": {
         "data": [
@@ -6443,7 +7578,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsImxlZ2FjeS1yZWNvcmQiXX0._ChB9ZaS0hBAgMkn4YK4VQItI0yteY9DE_WYWdr7vs0"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsImxlZ2FjeS1yZWNvcmQiXX0._ChB9ZaS0hBAgMkn4YK4VQItI0yteY9DE_WYWdr7vs0",
+            "total": 2
           }
         }
       }
@@ -6526,6 +7662,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W251bGwsImxlZ2FjeS1yZWNvcmQiXX0._ChB9ZaS0hBAgMkn4YK4VQItI0yteY9DE_WYWdr7vs0\":id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -6533,7 +7697,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -6550,7 +7715,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1f8d7ad97f77405eb7bd781db234dbd4e91207b6\""
+        "etag": "\"f2fed6435690ab1673ac788e5efe18647414ff4e\""
       },
       "body": {
         "data": [],
@@ -6561,7 +7726,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -6654,6 +7820,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -6676,7 +7870,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": true,
-              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCJzaG9wLDUiXX0.mqDuvc-tm1UTrR7sZOfBsqiT1PwJVV0s-mJwnJA8TZU"
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCJzaG9wLDUiXX0.mqDuvc-tm1UTrR7sZOfBsqiT1PwJVV0s-mJwnJA8TZU",
+              "total": 2
             }
           },
           "ttl": 60
@@ -6693,7 +7888,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"7c46092797c57dbe05501bdedd83b0e75b4b21cc\""
+        "etag": "\"232667a47542611b162919ddf6ad860d6bbba4dd\""
       },
       "body": {
         "data": [
@@ -6719,7 +7914,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": true,
-            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCJzaG9wLDUiXX0.mqDuvc-tm1UTrR7sZOfBsqiT1PwJVV0s-mJwnJA8TZU"
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCJzaG9wLDUiXX0.mqDuvc-tm1UTrR7sZOfBsqiT1PwJVV0s-mJwnJA8TZU",
+            "total": 2
           }
         }
       }
@@ -6820,6 +8016,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 0,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJyZWdpb24iOiJVUyIsInNpbmNlIjpudWxsfSwiZmlsdGVySGFzaCI6IjVmY2ZlYjZkNDMyODgzZTNhZWEwMTIwMmIwM2UwNGU2NDMyYjI2YjQxM2MxMmZkZThkZDQxYTcyMzFmYzAwMWQiLCJvcmRlcmluZyI6ImRhdGU6ZGVzYyxfaWQ6ZGVzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTA2LTAxVDAzOjAwOjAwLjAwMFoiLCJzaG9wLDUiXX0.mqDuvc-tm1UTrR7sZOfBsqiT1PwJVV0s-mJwnJA8TZU\":id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -6827,7 +8051,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 0
             }
           },
           "ttl": 60
@@ -6844,7 +8069,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1f8d7ad97f77405eb7bd781db234dbd4e91207b6\""
+        "etag": "\"f2fed6435690ab1673ac788e5efe18647414ff4e\""
       },
       "body": {
         "data": [],
@@ -6855,7 +8080,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 0
           }
         }
       }
@@ -7211,6 +8437,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -7246,7 +8500,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -7263,7 +8518,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"8b1c4711c1cb6acdbe83e379468b617e44a81578\""
+        "etag": "\"509728d4db532520f0640ac2584de559be81c912\""
       },
       "body": {
         "data": [
@@ -7302,7 +8557,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -7376,6 +8632,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -7397,7 +8681,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -7414,7 +8699,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ef52dafbb479e56d2eeb1ce19fd2e22b54449cfa\""
+        "etag": "\"fb5617b9ea4f7ced92bbd70e81287e12e3972fb0\""
       },
       "body": {
         "data": [
@@ -7439,7 +8724,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -7519,6 +8805,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -7544,7 +8858,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -7561,7 +8876,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"85a86c39c1e1ee8024a6225ffe0138db8cf18e91\""
+        "etag": "\"8c951b536ce65769c3bf8400e772b2f0e48bea88\""
       },
       "body": {
         "data": [
@@ -7590,7 +8905,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -7664,6 +8980,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -7684,7 +9028,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -7701,7 +9046,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"85062d5cf0c036c7c73a2996de14fc2e3eb9be70\""
+        "etag": "\"2e919fe244214c37898c316b59c79823a2cbc9e6\""
       },
       "body": {
         "data": [
@@ -7725,7 +9070,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -7799,6 +9145,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -7837,7 +9211,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -7854,7 +9229,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"5bd9eed14c5f76f53a0f3a287765f83997cb3e9d\""
+        "etag": "\"8f6791cc3d95039b6b4c1278e86b17b2599a34bd\""
       },
       "body": {
         "data": [
@@ -7896,7 +9271,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -7970,6 +9346,34 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "method": "set",
           "key": "v1:offer-details.price-history:id=\"game-a\":limit=1:locale=\"en-US\":region=\"US\"",
           "payload": {
@@ -7993,7 +9397,8 @@
             "pagination": {
               "limit": 1,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             }
           },
           "ttl": 60
@@ -8010,7 +9415,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"a950fe7fe24d59e1cabc76520bc4f34df4aef6d4\""
+        "etag": "\"3ce14d49e3e7e759dffb179dd292d9104016af06\""
       },
       "body": {
         "data": [
@@ -8037,7 +9442,8 @@
           "pagination": {
             "limit": 1,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -8122,6 +9528,34 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {
@@ -8224,6 +9658,34 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "count",
+          "query": {
+            "offerId": "game-a",
+            "region": "US"
+          },
+          "options": {}
+        },
+        "result": 2
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.total:id=\"game-a\":region=\"US\"",
+          "payload": 2,
+          "ttl": 60
+        },
+        "result": null
       }
     ],
     "response": {

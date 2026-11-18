@@ -103,20 +103,21 @@ fn search_filter(id: &str, q: Option<&str>) -> Document {
     filter
 }
 
-fn price_pipeline(
-    filter: Document,
-    region: &str,
-    direction: SortDirection,
-    last: Option<&[Value]>,
-    limit: i64,
-) -> Vec<Document> {
-    let mut pipeline = vec![
+fn price_base(filter: Document, region: &str) -> Vec<Document> {
+    vec![
         doc! {"$match":filter},
         doc! {"$lookup":{"from":"pricev2","let":{"offerId":"$id"},"pipeline":[{"$match":{"$expr":{"$and":[{"$eq":["$offerId","$$offerId"]},{"$eq":["$region",region]}]}}},{"$sort":{"updatedAt":-1}},{"$limit":1}],"as":"priceDoc"}},
         doc! {"$unwind":"$priceDoc"},
         doc! {"$addFields":{"_priceSort":{"$ifNull":["$priceDoc.price.discountPrice",Bson::Null]}}},
         doc! {"$addFields":{"_priceNull":{"$cond":[{"$eq":["$_priceSort",Bson::Null]},1,0]}}},
-    ];
+    ]
+}
+fn price_pipeline(
+    mut pipeline: Vec<Document>,
+    direction: SortDirection,
+    last: Option<&[Value]>,
+    limit: i64,
+) -> Vec<Document> {
     let sort = [
         MongoSortField::new("_priceNull", SortDirection::Asc, NullsOrder::Last),
         MongoSortField::new("_priceSort", direction, NullsOrder::Last),
@@ -264,14 +265,19 @@ async fn promotion(state: &AppState, uri: &Uri, raw: &str) -> Result<Value, Prob
             .transpose()?;
         let limit = i64::from(page.limit) + 1;
         let mut filter = search_filter(&id, q);
-        let rows = if field == "price" {
-            let pipeline =
-                price_pipeline(filter, &region.region, direction, last.as_deref(), limit);
-            state
-                .mongo
-                .aggregate("offers", pipeline)
-                .await
-                .map_err(|_| internal_error())?
+        let (rows, total) = if field == "price" {
+            let base = price_base(filter, &region.region);
+            let pipeline = price_pipeline(base.clone(), direction, last.as_deref(), limit);
+            let parts = [
+                ("id", json!(id)),
+                ("q", json!(q)),
+                ("region", json!(region.region)),
+                ("sortBy", json!("price")),
+            ];
+            tokio::join!(
+                state.mongo.aggregate("offers", pipeline),
+                super::counts::aggregate(state, "promotions.offers", &parts, 60, "offers", base)
+            )
         } else {
             let nulls = if dir == "asc" {
                 NullsOrder::First
@@ -282,6 +288,7 @@ async fn promotion(state: &AppState, uri: &Uri, raw: &str) -> Result<Value, Prob
                 MongoSortField::new(field, direction, nulls),
                 MongoSortField::new("id", SortDirection::Asc, NullsOrder::Last),
             ];
+            let base = filter.clone();
             if let Some(last) = &last {
                 let first = match last.first() {
                     None | Some(Value::Null) => Bson::Null,
@@ -301,9 +308,13 @@ async fn promotion(state: &AppState, uri: &Uri, raw: &str) -> Result<Value, Prob
                     .expect("two promotion sort fields and cursor values"),
                 );
             }
-            state
-                .mongo
-                .find_many(
+            let parts = [
+                ("id", json!(id)),
+                ("q", json!(q)),
+                ("sortBy", json!("default")),
+            ];
+            tokio::join!(
+                state.mongo.find_many(
                     "offers",
                     filter,
                     MongoFindOptions {
@@ -311,10 +322,12 @@ async fn promotion(state: &AppState, uri: &Uri, raw: &str) -> Result<Value, Prob
                         limit: Some(limit),
                         ..Default::default()
                     },
-                )
-                .await
-                .map_err(|_| internal_error())?
+                ),
+                super::counts::documents(state, "promotions.offers", &parts, 60, "offers", base)
+            )
         };
+        let rows = rows.map_err(|_| internal_error())?;
+        let total = total?;
         let rows = trim_page(rows, page.limit as usize);
         let keys = rows
             .items
@@ -410,7 +423,7 @@ async fn promotion(state: &AppState, uri: &Uri, raw: &str) -> Result<Value, Prob
             .transpose()?
             .unwrap_or_default();
         Ok(
-            json!({"data":data,"pagination":page_meta(page.limit,rows.has_more,next),"title":title,"start":page.cursor.is_none().then_some(0)}),
+            json!({"data":data,"pagination":page_meta(page.limit,rows.has_more,next).with_total(total),"title":title,"start":page.cursor.is_none().then_some(0)}),
         )
     };
     let payload = offers::cached(state, "promotions.offers", parts, 60, load_page).await?;

@@ -177,14 +177,17 @@ it("records collection and promotion responses, Mongo reads and Redis cache beha
     ],
   ] as const) {
     const path = page + "?limit=1&" + query;
-    const body = await record("promotion-" + name, path, 200, rows);
+    const count = name.startsWith("price") ? { "offers.aggregateTotal": [{ total: 29 }] } : { "offers.count": 29 };
+    const body = await record("promotion-" + name, path, 200, { ...rows, ...count });
+    expect(body.meta.pagination.total).toBe(29);
     expect(body.meta.pagination.nextCursor).toEqual(expect.any(String));
-    await record(
+    const next = await record(
       "promotion-" + name + "-continue",
       path + "&cursor=" + body.meta.pagination.nextCursor,
       200,
-      { tags: event },
+      { tags: event, ...count },
     );
+    expect(next.meta.pagination.total).toBe(29);
   }
   await record(
     "promotion-invalid-query",

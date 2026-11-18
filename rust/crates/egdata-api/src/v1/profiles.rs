@@ -189,6 +189,27 @@ pub(crate) fn leaderboard_stages() -> Vec<Value> {
     ]
 }
 
+async fn profile_page(
+    state: &AppState,
+    operation: &str,
+    parts: &[(&str, Value)],
+    ttl: u64,
+    page: Vec<Document>,
+    options: MongoAggregateOptions,
+    mut count: Vec<Document>,
+) -> Result<(Vec<Document>, Value), ProblemError> {
+    count.push(doc! {"$count":"total"});
+    let (rows, total) = tokio::join!(biased;
+        state.mongo.aggregate_with_options("player-achievements",page,options),
+        super::helpers::cached_total(state,operation,parts,ttl,async {
+            let counts=state.mongo.aggregate_with_options("player-achievements",count,disk_aggregation()).await.map_err(|_|super::system::internal_error())?;
+            let value=counts.first().and_then(|d|d.get("total")).map(egdata_infra::bson_json::bson_to_js_json).unwrap_or(Value::Null);
+            Ok(json!(number(&value)))
+        })
+    );
+    Ok((rows.map_err(|_| super::system::internal_error())?, total?))
+}
+
 async fn leaderboard(
     State(s): State<AppState>,
     headers: HeaderMap,
@@ -228,11 +249,17 @@ async fn leaderboard(
         }
         stages.push(json!({"$sort":{"rank":1,"accountId":1}}));
         stages.push(json!({"$limit":limit+1}));
-        let rows = s
-            .mongo
-            .aggregate_with_options("player-achievements", pipeline(stages), disk_aggregation())
-            .await
-            .map_err(|_| fail(super::system::internal_error(), &uri, id.clone()))?;
+        let (rows, total) = profile_page(
+            &s,
+            "profiles.leaderboard",
+            &[],
+            PROFILE_TTL,
+            pipeline(stages),
+            disk_aggregation(),
+            vec![doc! {"$group":{"_id":"$epicAccountId"}}],
+        )
+        .await
+        .map_err(|e| fail(e, &uri, id.clone()))?;
         let page = trim_page(
             rows.into_iter().map(doc_json).collect::<Vec<_>>(),
             limit as usize,
@@ -258,7 +285,7 @@ async fn leaderboard(
         } else {
             None
         };
-        let v = json!({"entries":entries,"pagination":{"limit":limit,"hasMore":page.has_more,"nextCursor":next}});
+        let v = json!({"entries":entries,"pagination":egdata_core::v1::page_meta(limit,page.has_more,next).with_total(total)});
         v1_cache_set(s.cache.as_ref(), &key, &v, PROFILE_TTL).await;
         v
     };
@@ -672,7 +699,7 @@ async fn achievements(
         } else {
             None
         };
-        let v = json!({"achievements":achievements,"count":count,"pagination":{"limit":limit,"hasMore":has_more,"nextCursor":next}});
+        let v = json!({"achievements":achievements,"count":count,"pagination":egdata_core::v1::page_meta(limit,has_more,next).with_total(count.clone())});
         v1_cache_set(s.cache.as_ref(), &key, &v, ACHIEVEMENTS_TTL).await;
         v
     };
@@ -951,13 +978,7 @@ fn games_sort_fields(sort: &str) -> Vec<MongoSortField> {
     fields
 }
 
-fn games_pipeline(
-    id: &str,
-    platinum: bool,
-    sort: &str,
-    last: Option<Vec<Value>>,
-    limit: u32,
-) -> Result<Vec<Document>, ProblemError> {
+fn games_base(id: &str, platinum: bool) -> Vec<Value> {
     let mut stages = vec![
         json!({"$match":{"epicAccountId":id}}),
         json!({"$group":{"_id":"$sandboxId","totalUnlocked":{"$max":"$totalUnlocked"},"totalXP":{"$max":"$totalXP"},"playerAwards_arr":{"$push":"$playerAwards"}}}),
@@ -967,6 +988,17 @@ fn games_pipeline(
     if platinum {
         stages.push(json!({"$match":{"$expr":{"$gt":[{"$size":"$playerAwards"},0]}}}));
     }
+    stages
+}
+
+fn games_pipeline(
+    id: &str,
+    platinum: bool,
+    sort: &str,
+    last: Option<Vec<Value>>,
+    limit: u32,
+) -> Result<Vec<Document>, ProblemError> {
+    let mut stages = games_base(id, platinum);
     stages.extend([
         json!({"$lookup":{"from":"offers","let":{"sbx":"$_id"},"pipeline":[{"$match":{"$expr":{"$and":[{"$eq":["$namespace","$$sbx"]},{"$eq":["$offerType","BASE_GAME"]},{"$eq":["$isCodeRedemptionOnly",false]}]}}},{"$sort":{"isDisplayable":-1,"title":1,"lastModifiedDate":-1}},{"$limit":1},{"$project":{"_id":0,"id":1,"namespace":1,"keyImages":1,"title":1,"productSlug":1}}],"as":"offer"}}),
         json!({"$unwind":{"path":"$offer","preserveNullAndEmptyArrays":true}}),
@@ -1072,19 +1104,22 @@ async fn games(
             .map(|c| cursor_values(&s, &binding, c))
             .transpose()
             .map_err(|e| fail(e, &uri, rid.clone()))?;
-        let rows = s
-            .mongo
-            .aggregate_with_options(
-                "player-achievements",
-                games_pipeline(&id, platinum, &sort, last, limit)
-                    .map_err(|e| fail(e, &uri, rid.clone()))?,
-                MongoAggregateOptions {
-                    collation: (sort == "alphabetical").then(|| doc! {"locale":"en","strength":2}),
-                    ..disk_aggregation()
-                },
-            )
-            .await
-            .map_err(|_| fail(super::system::internal_error(), &uri, rid.clone()))?;
+        let page_stages = games_pipeline(&id, platinum, &sort, last, limit)
+            .map_err(|e| fail(e, &uri, rid.clone()))?;
+        let (rows, total) = profile_page(
+            &s,
+            "profiles.games",
+            &[("id", json!(id)), ("platinum", json!(platinum))],
+            GAMES_TTL,
+            page_stages,
+            MongoAggregateOptions {
+                collation: (sort == "alphabetical").then(|| doc! {"locale":"en","strength":2}),
+                ..disk_aggregation()
+            },
+            pipeline(games_base(&id, platinum)),
+        )
+        .await
+        .map_err(|e| fail(e, &uri, rid.clone()))?;
         let page = trim_page(docs_json(rows), limit as usize);
         let items = page.items;
         let next = if page.has_more {
@@ -1113,7 +1148,7 @@ async fn games(
         } else {
             None
         };
-        let v = json!({"achievements":items,"pagination":{"limit":limit,"hasMore":page.has_more,"nextCursor":next}});
+        let v = json!({"achievements":items,"pagination":egdata_core::v1::page_meta(limit,page.has_more,next).with_total(total)});
         v1_cache_set(s.cache.as_ref(), &key, &v, GAMES_TTL).await;
         v
     };

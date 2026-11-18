@@ -7,6 +7,7 @@ pub mod catalog_discovery;
 pub mod catalog_list;
 pub(crate) mod collation;
 pub mod collections;
+pub(crate) mod counts;
 pub mod free_games;
 pub mod helpers;
 mod item_serialization;
@@ -26,6 +27,7 @@ pub(crate) mod oracle_test_support;
 pub mod profiles;
 pub mod promotions;
 pub mod search;
+pub(crate) mod ssr_telemetry;
 pub mod system;
 
 use crate::{
@@ -176,6 +178,10 @@ pub fn router(state: &AppState) -> Router<AppState> {
         .layer(middleware::from_fn(preflight))
         .layer(middleware::from_fn(v1_cache_policy))
         .layer(middleware::from_fn(response_etag))
+        .layer(middleware::from_fn_with_state(
+            state.clone(),
+            ssr_telemetry::record,
+        ))
         .layer(middleware::from_fn_with_state(state.clone(), v1_context))
 }
 

@@ -54,7 +54,11 @@ vi.mock("../src/models/index.js", () => ({
   Build: { find: mocks.buildFind, countDocuments: mocks.countDocuments },
   PriceEngine: { find: mocks.priceFind, findOne: mocks.priceFindOne },
   Sandbox: { findOne: mocks.sandboxFindOne },
-  Namespace: { findOne: mocks.namespaceFindOne, find: mocks.namespaceFind },
+  Namespace: {
+    findOne: mocks.namespaceFindOne,
+    find: mocks.namespaceFind,
+    countDocuments: mocks.countDocuments,
+  },
   AchievementSet: { find: mocks.achievementFind },
 }));
 
@@ -158,6 +162,12 @@ describe("registered catalog reads Node HTTP oracle", () => {
       init: RequestInit = {},
     ) => {
       vi.clearAllMocks();
+      mocks.itemCount.mockResolvedValue(
+        Array.isArray(input.items) ? input.items.length : input.item ? 1 : 0,
+      );
+      mocks.offerCount.mockResolvedValue(
+        Array.isArray(input.offers) ? input.offers.length : input.offer ? 1 : 0,
+      );
       mocks.cacheGet.mockResolvedValue(
         Object.hasOwn(input, "cachePayload")
           ? JSON.stringify(input.cachePayload)
@@ -681,6 +691,7 @@ describe("registered catalog reads Node HTTP oracle", () => {
     mocks.assetFind.mockReturnValue(query(assets));
     mocks.collection.mockImplementation((name: string) => ({
       find: () => ({ toArray: async () => builds }),
+      countDocuments: async () => historyRows.length,
       aggregate: (pipeline: unknown[]) => {
         historyInput.pipeline = pipeline;
         return { toArray: async () => historyRows };
@@ -866,6 +877,8 @@ describe("registered catalog reads Node HTTP oracle", () => {
     mocks.itemFindOne.mockReturnValue({ lean: async () => itemDoc });
     mocks.assetFind.mockReturnValue(query([]));
     const historyRead = (input: Record<string, unknown>) => ({
+      countDocuments: async () =>
+        (input.historyRows as unknown[] | undefined)?.length ?? 0,
       aggregate: (stages: unknown[]) => {
         input.pipeline = stages;
         return { toArray: async () => input.historyRows };
@@ -896,10 +909,13 @@ describe("registered catalog reads Node HTTP oracle", () => {
     ] as const) {
       const page = [{ ...historyRows[0], _id: id }, historyRows[0]];
       const input: Record<string, unknown> = { item: itemDoc, assets: [], historyRows: fixtureValue(page) };
-      mocks.collection.mockImplementation(() => ({ aggregate: (stages: unknown[]) => {
-        input.pipeline = stages;
-        return { toArray: async () => page };
-      } }));
+      mocks.collection.mockImplementation(() => ({
+        countDocuments: async () => page.length,
+        aggregate: (stages: unknown[]) => {
+          input.pipeline = stages;
+          return { toArray: async () => page };
+        },
+      }));
       await itemCase("history-stored-id-" + label, "/v1/items/demo/changelog?limit=1", 200, input);
     }
     const mixedAssets = [{artifactId: storedOid}, {artifactId: 15}, {artifactId: "live"}];
@@ -910,6 +926,7 @@ describe("registered catalog reads Node HTTP oracle", () => {
     mocks.assetFind.mockReturnValue(query(mixedAssets));
     mocks.collection.mockImplementation(() => ({
       find: () => ({ toArray: async () => linkedBuilds }),
+      countDocuments: async () => 0,
       aggregate: (stages: unknown[]) => {
         typedContext.pipeline = stages;
         return { toArray: async () => [] };
@@ -1049,6 +1066,7 @@ describe("registered catalog reads Node HTTP oracle", () => {
         historyRows: [],
       };
       mocks.collection.mockImplementation(() => ({
+        countDocuments: async () => 0,
         aggregate: (stages: unknown[]) => {
           input.pipeline = BSON.deserialize(
             BSON.serialize({ stages }, { ignoreUndefined: false }),

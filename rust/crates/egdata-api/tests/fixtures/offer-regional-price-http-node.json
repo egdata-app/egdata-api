@@ -2688,6 +2688,31 @@
       },
       {
         "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "pricev2",
           "method": "many",
           "query": {
@@ -2779,7 +2804,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             },
             "localization": {
               "locale": "en-US",
@@ -2801,7 +2827,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ad57bc2ce53c876d6eb39e38717bf35214cb9668\""
+        "etag": "\"8dcc9b386074ebf7702f1d7a742650afee4d3f36\""
       },
       "body": {
         "data": [
@@ -2864,7 +2890,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -2911,6 +2938,31 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {
@@ -2995,7 +3047,8 @@
             "pagination": {
               "limit": 20,
               "hasMore": false,
-              "nextCursor": null
+              "nextCursor": null,
+              "total": 1
             },
             "localization": {
               "locale": "en-US",
@@ -3017,7 +3070,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"46c3d89cfaf7384680e926a93580c1ce9e4a94ee\""
+        "etag": "\"259fbded812be87a2cb9c093fd16ac6cbd267eac\""
       },
       "body": {
         "data": [
@@ -3076,7 +3129,8 @@
           "pagination": {
             "limit": 20,
             "hasMore": false,
-            "nextCursor": null
+            "nextCursor": null,
+            "total": 1
           }
         }
       }
@@ -3123,6 +3177,31 @@
             }
           }
         ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offers.list.total:filters={}"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offers.list.total:filters={}",
+          "payload": 1,
+          "ttl": 60
+        },
+        "result": null
       },
       {
         "call": {

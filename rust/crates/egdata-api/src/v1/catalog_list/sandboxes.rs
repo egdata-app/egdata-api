@@ -266,16 +266,20 @@ fn page_meta_for(
     b: &CursorBinding,
     more: bool,
     tuple: Vec<CursorSortValue>,
+    total: Value,
 ) -> Result<Value, ProblemError> {
-    Ok(json!(page_meta(
-        b.limit,
-        more,
-        if more {
-            Some(encode_for(s, b, &tuple)?)
-        } else {
-            None
-        }
-    )))
+    Ok(json!(
+        page_meta(
+            b.limit,
+            more,
+            if more {
+                Some(encode_for(s, b, &tuple)?)
+            } else {
+                None
+            }
+        )
+        .with_total(total)
+    ))
 }
 fn field_string(v: &Value, key: &str) -> Option<String> {
     v[key].as_str().map(str::to_owned)
@@ -319,24 +323,16 @@ async fn list(s: &AppState, q: &BTreeMap<String, String>) -> Payload {
             } else {
                 Document::new()
             };
-            let rows = find(
-                s,
-                "namespaces",
-                f,
-                MongoFindOptions {
-                    sort: Some(mongo_sort_spec(&sort)),
-                    limit: Some(i64::from(p.limit) + 1),
-                    ..Default::default()
-                },
-            )
-            .await?;
+            let (rows,total)=counted_page(s,"sandboxes.list",&[],60,"namespaces",Some(doc!{}),
+                PageRead::Find(f,MongoFindOptions{sort:Some(mongo_sort_spec(&sort)),limit:Some(i64::from(p.limit)+1),..Default::default()})).await?;
+            let rows=json_docs(rows);
             let page = trim_page(rows, p.limit as usize);
             let tuple = page
                 .items
                 .last()
                 .map(|v| vec![js_string(&v["_id"]).into()])
                 .unwrap_or_default();
-            Ok(json!({"data":page.items,"pagination":page_meta_for(s,&b,page.has_more,tuple)?}))
+            Ok(json!({"data":page.items,"pagination":page_meta_for(s,&b,page.has_more,tuple,total)?}))
         },
     )
     .await?;
@@ -428,6 +424,11 @@ async fn listing(s: &AppState, id: &str, q: &BTreeMap<String, String>, is_offer:
     } else {
         ("items", "sandboxes.items")
     };
+    let count_parts: Vec<_> = parts
+        .iter()
+        .filter(|(key, _)| !matches!(**key, "limit" | "cursor"))
+        .map(|(key, v)| (*key, v.clone()))
+        .collect();
     let mut b = page_binding(operation, filters, "lastModifiedDate:desc,id:asc", p.limit);
     if let Some(r) = &rp {
         b.country = r.country.clone();
@@ -437,21 +438,14 @@ async fn listing(s: &AppState, id: &str, q: &BTreeMap<String, String>, is_offer:
     }
     require_sandbox(s, id).await?;
     let result=cached(s,operation,parts,60,|| async {
+        let base=f.clone();
         let f = if let Some(after) = cursor_filter(s, &p, &b, &*ITEM_SORT)? {
             doc! {"$and":[f,after]}
         } else {
             f
         };
-        let rows = s.mongo.find_many(
-            collection,
-            f,
-            MongoFindOptions {
-                sort: Some(mongo_sort_spec(&*ITEM_SORT)),
-                limit: Some(i64::from(p.limit) + 1),
-                ..Default::default()
-            },
-        )
-        .await.map_err(|_|internal_error())?;
+        let (rows,total)=counted_page(s,operation,&count_parts,60,collection,Some(base),
+            PageRead::Find(f,MongoFindOptions{sort:Some(mongo_sort_spec(&*ITEM_SORT)),limit:Some(i64::from(p.limit)+1),..Default::default()})).await?;
         let page = trim_page(rows, p.limit as usize);
         let tuple = page
             .items
@@ -463,7 +457,7 @@ async fn listing(s: &AppState, id: &str, q: &BTreeMap<String, String>, is_offer:
                 ]
             })
             .unwrap_or_default();
-        let pagination = page_meta_for(s, &b, page.has_more, tuple)?;
+        let pagination = page_meta_for(s, &b, page.has_more, tuple, total)?;
         if let Some(r) = &rp {
             let rows: Vec<_> = page.items.into_iter().map(bjson).collect();
             let ids = rows
@@ -616,6 +610,7 @@ async fn assets(s: &AppState, id: &str, q: &BTreeMap<String, String>) -> Payload
     )
     .await?;
     let mut rows = result.as_array().cloned().unwrap_or_default();
+    let total = json!(rows.len());
     if let Some(c) = p.cursor.as_deref() {
         let last = decode_for(s, c, &b)?;
         let t = std::array::from_fn(|i| {
@@ -636,8 +631,7 @@ async fn assets(s: &AppState, id: &str, q: &BTreeMap<String, String>) -> Payload
                 .collect()
         })
         .unwrap_or_default();
-    let meta =
-        json!({"count":page.items.len(),"pagination":page_meta_for(s,&b,page.has_more,tuple)?});
+    let meta = json!({"count":page.items.len(),"pagination":page_meta_for(s,&b,page.has_more,tuple,total)?});
     Ok((json!(page.items), Some(meta)))
 }
 async fn base_game(s: &AppState, id: &str, q: &BTreeMap<String, String>) -> Payload {
@@ -860,24 +854,17 @@ async fn changelog(s: &AppState, id: &str, q: &BTreeMap<String, String>) -> Payl
         let base =
             doc! {"metadata.contextId":{"$in":bson::to_bson(&ids).map_err(|_|internal_error())?}};
         let filter = if let Some(after) = cursor_filter(s, &p, &b, &*CHANGELOG_SORT)? {
-            doc! {"$and":[base,after]}
+            doc! {"$and":[&base,after]}
         } else {
-            base
+            base.clone()
         };
-        let rows = s
-            .mongo
-            .aggregate(
-                "changelogs_v2",
-                vec![
+        let (rows,total)=counted_page(s,"sandboxes.changelog",&[("sandboxId",json!(id))],60,"changelogs_v2",Some(base),PageRead::Aggregate(vec![
                     doc! {"$match":filter},
                     doc! {"$sort":mongo_sort_spec(&*CHANGELOG_SORT)},
                     doc! {"$limit":i64::from(p.limit)+1},
                     doc! {"$project":{"_id":1,"metadata":1,"timestamp":1}},
-                ],
-            )
-            .await
-            .map(json_docs)
-            .map_err(|_| internal_error())?;
+                ])).await?;
+        let rows=json_docs(rows);
         let page = trim_page(rows, p.limit as usize);
         let tuple = page
             .items
@@ -898,7 +885,7 @@ async fn changelog(s: &AppState, id: &str, q: &BTreeMap<String, String>) -> Payl
             row["metadata"]["context"] = context;
             hits.push(row);
         }
-        Ok(json!({"hits":hits,"pagination":page_meta_for(s,&b,page.has_more,tuple)?}))
+        Ok(json!({"hits":hits,"pagination":page_meta_for(s,&b,page.has_more,tuple,total)?}))
     }).await?;
     Ok((
         json!({"hits":result["hits"]}),
@@ -932,7 +919,7 @@ async fn builds(s: &AppState, id: &str, q: &BTreeMap<String, String>) -> Payload
         60,
         || async {
             let mut f = doc! {"namespace":id};
-            if let Some(platforms) = platforms {
+            if let Some(platforms) = &platforms {
                 f.insert(
                     "releaseInfo",
                     doc! {"$elemMatch":{"platform":{"$in":platforms}}},
@@ -958,23 +945,11 @@ async fn builds(s: &AppState, id: &str, q: &BTreeMap<String, String>) -> Payload
                 MongoSortField::new("updatedAt", SortDirection::Desc, NullsOrder::Last),
                 MongoSortField::new("_id", SortDirection::Desc, NullsOrder::Last),
             ];
-            let base = doc! {"appName":{"$in":apps}};
-            let f = if let Some(after) = cursor_filter(s, &p, &b, &sort)? {
-                doc! {"$and":[base,after]}
-            } else {
-                base
-            };
-            let rows = find(
-                s,
-                "builds",
-                f,
-                MongoFindOptions {
-                    sort: Some(mongo_sort_spec(&sort)),
-                    limit: Some(i64::from(p.limit) + 1),
-                    ..Default::default()
-                },
-            )
-            .await?;
+            let base = doc! {"appName":{"$in":&apps}};
+            let f=if let Some(after)=cursor_filter(s,&p,&b,&sort)? {doc!{"$and":[&base,after]}} else {base.clone()};
+            let (rows,total)=counted_page(s,"sandboxes.builds",&[("sandboxId",json!(id)),("platforms",json!(platforms))],60,"builds",(!apps.is_empty()).then_some(base),
+                PageRead::Find(f,MongoFindOptions{sort:Some(mongo_sort_spec(&sort)),limit:Some(i64::from(p.limit)+1),..Default::default()})).await?;
+            let rows=json_docs(rows);
             let page = trim_page(rows, p.limit as usize);
             let tuple = page
                 .items
@@ -993,7 +968,7 @@ async fn builds(s: &AppState, id: &str, q: &BTreeMap<String, String>) -> Payload
                     crate::v1::builds::stored_build_summary(row, None).map(|v| serialize_value(&v))
                 })
                 .collect::<Result<Vec<_>, _>>()?;
-            Ok(json!({"data":summaries,"pagination":page_meta_for(s,&b,page.has_more,tuple)?}))
+            Ok(json!({"data":summaries,"pagination":page_meta_for(s,&b,page.has_more,tuple,total)?}))
         },
     )
     .await?;

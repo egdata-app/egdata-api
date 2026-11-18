@@ -11,13 +11,14 @@ import {
 import { getImage } from "../../utils/get-image.js";
 import { localizeOffers } from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
-import { cached, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, v1CacheKey } from "../cache.js";
 import { decodeCursor, encodeCursor } from "../cursor.js";
 import { badRequest, notFound } from "../errors.js";
 import {
   type MongoSortField,
   mongoKeysetFilter,
   mongoSortSpec,
+  pageMeta,
   parsePagination,
   trimPage,
 } from "../pagination.js";
@@ -155,9 +156,12 @@ app.get("/offers/events/:id", async (c) => {
         { $limit: limit + 1 },
       );
 
-      const rows = (await Offer.aggregate(pipeline).exec()) as Array<
-        Record<string, any>
-      >;
+      const [rows, total] = await Promise.all([
+        Offer.aggregate(pipeline).exec() as Promise<Array<Record<string, any>>>,
+        cachedTotal("offers.event", { id }, 60, () =>
+          Offer.countDocuments({ tags: { $elemMatch: { id } } }),
+        ),
+      ]);
       const { items, hasMore } = trimPage(rows, limit);
       const localized = await localizeOffers(
         items.map((row) => ({
@@ -171,17 +175,17 @@ app.get("/offers/events/:id", async (c) => {
         elements: localized.map((offer) =>
           serializeOffer(offer, { price: offer.price }),
         ),
-        pagination: {
+        pagination: pageMeta(
           limit,
           hasMore,
-          nextCursor:
-            hasMore && lastRow
-              ? encodeCursor(binding, [
-                  lastRow.sortDiscount ?? null,
-                  String(lastRow.id),
-                ])
-              : null,
-        },
+          hasMore && lastRow
+            ? encodeCursor(binding, [
+                lastRow.sortDiscount ?? null,
+                String(lastRow.id),
+              ])
+            : null,
+          total,
+        ),
         title: String(event.name ?? ""),
       };
     },
@@ -218,14 +222,16 @@ app.get("/offers/upcoming", async (c) => {
     60,
     async () => {
       const last = cursor ? decodeCursor(cursor, binding) : null;
-      const filter: Record<string, unknown> = {
+      const now = new Date();
+      const baseFilter: Record<string, unknown> = {
         releaseDate: {
-          $gt: new Date(),
+          $gt: now,
           $ne: null,
           $lt: new Date("2099-01-01"),
         },
         offerType: { $in: ["BASE_GAME", "DLC"] },
       };
+      const filter: Record<string, unknown> = { ...baseFilter };
       if (last) {
         Object.assign(
           filter,
@@ -239,10 +245,15 @@ app.get("/offers/upcoming", async (c) => {
           ),
         );
       }
-      const offers = await Offer.find(filter, undefined, {
-        limit: limit + 1,
-        sort: mongoSortSpec(sort),
-      }).lean();
+      const [offers, total] = await Promise.all([
+        Offer.find(filter, undefined, {
+          limit: limit + 1,
+          sort: mongoSortSpec(sort),
+        }).lean(),
+        cachedTotal("offers.upcoming", {}, 60, () =>
+          Offer.countDocuments(baseFilter),
+        ),
+      ]);
       const { items, hasMore } = trimPage(offers, limit);
       const prices = await PriceEngine.find({
         region,
@@ -263,19 +274,19 @@ app.get("/offers/upcoming", async (c) => {
         elements: localized.map((offer) =>
           serializeOffer(offer, { price: offer.price }),
         ),
-        pagination: {
+        pagination: pageMeta(
           limit,
           hasMore,
-          nextCursor:
-            hasMore && lastOffer
-              ? encodeCursor(binding, [
-                  lastOffer.releaseDate
-                    ? new Date(lastOffer.releaseDate).toISOString()
-                    : null,
-                  String(lastOffer.id),
-                ])
-              : null,
-        },
+          hasMore && lastOffer
+            ? encodeCursor(binding, [
+                lastOffer.releaseDate
+                  ? new Date(lastOffer.releaseDate).toISOString()
+                  : null,
+                String(lastOffer.id),
+              ])
+            : null,
+          total,
+        ),
       };
     },
   );
@@ -361,17 +372,23 @@ const topCollection = (collectionId: "top-wishlisted" | "top-sellers") => {
       300,
       async () => {
         const last = cursor ? decodeCursor(cursor, binding) : null;
-        const filter: Record<string, unknown> = {
+        const baseFilter: Record<string, unknown> = {
           collectionId,
           position: { $gt: 0 },
         };
+        const filter: Record<string, unknown> = { ...baseFilter };
         if (last) {
           Object.assign(filter, mongoKeysetFilter(sort, last));
         }
-        const positions = await GamePosition.find(filter, undefined, {
-          limit: limit + 1,
-          sort: mongoSortSpec(sort),
-        }).lean();
+        const [positions, total] = await Promise.all([
+          GamePosition.find(filter, undefined, {
+            limit: limit + 1,
+            sort: mongoSortSpec(sort),
+          }).lean(),
+          cachedTotal(`offers.${collectionId}`, {}, 300, () =>
+            GamePosition.countDocuments(baseFilter),
+          ),
+        ]);
         const { items, hasMore } = trimPage(positions, limit);
         const offers = await Offer.find({
           id: { $in: items.map((entry) => entry.offerId) },
@@ -395,17 +412,17 @@ const topCollection = (collectionId: "top-wishlisted" | "top-sellers") => {
             ...serializeOffer(offer),
             position: positionByOfferId.get(String(offer.id)) ?? null,
           })),
-          pagination: {
+          pagination: pageMeta(
             limit,
             hasMore,
-            nextCursor:
-              hasMore && lastPosition
-                ? encodeCursor(binding, [
-                    Number(lastPosition.position),
-                    String(lastPosition.offerId),
-                  ])
-                : null,
-          },
+            hasMore && lastPosition
+              ? encodeCursor(binding, [
+                  Number(lastPosition.position),
+                  String(lastPosition.offerId),
+                ])
+              : null,
+            total,
+          ),
         };
       },
     );
@@ -597,11 +614,13 @@ app.get("/offers/latest-released", async (c) => {
     60,
     async () => {
       const last = cursor ? decodeCursor(cursor, binding) : null;
-      const filter: Record<string, unknown> = {
-        effectiveDate: { $lte: new Date() },
+      const now = new Date();
+      const baseFilter: Record<string, unknown> = {
+        effectiveDate: { $lte: now },
         offerType: { $in: ["BASE_GAME", "DLC"] },
-        releaseDate: { $ne: null, $lte: new Date() },
+        releaseDate: { $ne: null, $lte: now },
       };
+      const filter: Record<string, unknown> = { ...baseFilter };
       if (last) {
         Object.assign(
           filter,
@@ -615,10 +634,15 @@ app.get("/offers/latest-released", async (c) => {
           ),
         );
       }
-      const offers = await Offer.find(filter, undefined, {
-        limit: limit + 1,
-        sort: mongoSortSpec(sort),
-      }).lean();
+      const [offers, total] = await Promise.all([
+        Offer.find(filter, undefined, {
+          limit: limit + 1,
+          sort: mongoSortSpec(sort),
+        }).lean(),
+        cachedTotal("offers.latest-released", {}, 60, () =>
+          Offer.countDocuments(baseFilter),
+        ),
+      ]);
       const { items, hasMore } = trimPage(offers, limit);
       const prices = await PriceEngine.find({
         region,
@@ -639,19 +663,19 @@ app.get("/offers/latest-released", async (c) => {
         elements: localized.map((offer) =>
           serializeOffer(offer, { price: offer.price }),
         ),
-        pagination: {
+        pagination: pageMeta(
           limit,
           hasMore,
-          nextCursor:
-            hasMore && lastOffer
-              ? encodeCursor(binding, [
-                  lastOffer.releaseDate
-                    ? new Date(lastOffer.releaseDate).toISOString()
-                    : null,
-                  String(lastOffer.id),
-                ])
-              : null,
-        },
+          hasMore && lastOffer
+            ? encodeCursor(binding, [
+                lastOffer.releaseDate
+                  ? new Date(lastOffer.releaseDate).toISOString()
+                  : null,
+                String(lastOffer.id),
+              ])
+            : null,
+          total,
+        ),
       };
     },
   );

@@ -264,6 +264,7 @@ impl ApiConfig {
 
 #[derive(Clone)]
 pub struct AppState {
+    pub(crate) ssr_telemetry: Arc<crate::v1::ssr_telemetry::SsrTelemetry>,
     /// Wall clock for time-bound queries and signed cursors; replaceable in fixtures.
     pub now: fn() -> chrono::DateTime<chrono::Utc>,
     pub new_object_id: fn() -> bson::oid::ObjectId,

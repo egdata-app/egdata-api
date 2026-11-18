@@ -51,6 +51,792 @@ Record: [persist-owner-review-edits](https://github.com/egdata-app/egdata-api/bl
 
 Verification: tests/rust-legacy-account-admin-oracle.test.ts compares authenticated review edits, edition history, concurrent writes and deletion during an edit.; rust/scripts/compare-origins.mjs exercises signed-in owners against the Node and Rust HTTP origins and checks the stored review in MongoDB..
 
+## 2026-11-16 — Accept dashboard console session key identities on v1 endpoints
+
+Record: [console-session-v1-key-context](https://github.com/egdata-app/egdata-api/blob/main/changes/records/console-session-v1-key-context.json).
+
+- **v1 GET /v1/autocomplete** (autocomplete; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 POST /v1/offers/exists** (checkOfferExistence; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 POST /v1/offers/slugs** (checkOfferSlugs; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125;** (compareBuilds; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/assets/&#123;id&#125;** (getAsset; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/base-game/&#123;namespace&#125;** (getBaseGame; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;** (getBuild; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/history** (getBuildHistory; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/install-options** (getBuildInstallOptions; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/tree** (getBuildTree; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/changelist/&#123;id&#125;** (getChangelogEntry; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;** (getCollection; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;/&#123;week&#125;** (getCollectionWeek; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;/&#123;week&#125;/og** (getCollectionWeekOg; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/featured** (getFeaturedGames; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/franchises/&#123;slug&#125;** (getFranchise; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/free-games/og** (getFreeGamesOg; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/free-games/stats** (getFreeGamesStats; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/game-awards** (getGameAwards; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/game-awards/og** (getGameAwardsOg; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/stats/homepage** (getHomepageStats; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;** (getItem; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/assets** (getItemAssets; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/builds** (getItemBuilds; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/changelog** (getItemChangelog; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/offer** (getItemOffer; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 POST /v1/items/bulk** (getItemsBulk; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/items-sitemap.xml** (getItemsSitemap; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/items/sitemap.xml** (getItemsSitemapAlias; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/latest-games** (getLatestGames; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/stats/creations/monthly** (getMonthlyCreationStats; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/stats/releases/monthly** (getMonthlyReleaseStats; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;** (getOffer; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/achievements** (getOfferAchievements; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/age-rating** (getOfferAgeRating; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/assets** (getOfferAssets; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/builds** (getOfferBuilds; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/bundle** (getOfferBundle; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offer-by-slug/&#123;slug&#125;** (getOfferBySlug; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/changelog/stats** (getOfferChangelogStats; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/collection** (getOfferCollection; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/collections/&#123;collection&#125;** (getOfferCollectionEntry; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/events/&#123;id&#125;** (getOfferEvent; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/features** (getOfferFeatures; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/franchises** (getOfferFranchises; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/genres** (getOfferGenres; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/giveaways** (getOfferGiveaways; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/has-prepurchase** (getOfferHasPrepurchase; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/has-regular** (getOfferHasRegular; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/hltb** (getOfferHltb; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/igdb** (getOfferIgdb; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/items** (getOfferItems; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/mappings** (getOfferMappings; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/media** (getOfferMedia; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/og** (getOfferOg; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/og.webp** (getOfferOgWebp; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/overview** (getOfferOverview; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/polls** (getOfferPolls; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price** (getOfferPrice; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price/fairness** (getOfferPriceFairness; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price-stats** (getOfferPriceStats; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/ratings** (getOfferRatings; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/regional-price** (getOfferRegionalPrice; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/requirements** (getOfferRequirements; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews-summary** (getOfferReviewsSummary; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/suggestions** (getOfferSuggestions; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/technologies** (getOfferTechnologies; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/tops** (getOfferTops; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 POST /v1/items/bulk/offers** (getOffersForItemsBulk; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;** (getProfile; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/achievements/&#123;sandboxId&#125;** (getProfileAchievements; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/information** (getProfileInformation; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/random-game** (getProfileRandomGame; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/rare-achievements/&#123;sandboxId&#125;** (getProfileRareAchievements; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/sitemap.xml** (getProfilesSitemap; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;/cover** (getPromotionCover; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/promotions-sitemap.xml** (getPromotionsSitemap; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/region** (getRegion; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/related** (getRelatedOffers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/robots.txt** (getRobots; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;** (getSandbox; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/base-game** (getSandboxBaseGame; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/changelog** (getSandboxChangelog; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/og** (getSandboxOg; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/og.webp** (getSandboxOgWebp; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/stats** (getSandboxStats; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/sitemap.xml** (getSandboxesSitemap; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/search/&#123;id&#125;** (getSearchQuery; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/search/&#123;id&#125;/count** (getSearchQueryCount; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;/cover** (getSellerCoverOffers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;/stats** (getSellerStats; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sitemap.xml** (getSitemap; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/stats** (getStats; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/stats/creations/yearly** (getYearlyCreationStats; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/stats/releases/yearly** (getYearlyReleaseStats; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 POST /v1/catalog/hydrate** (hydrateCatalog; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/active-sales** (listActiveSales; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/files** (listBuildFiles; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/items** (listBuildItems; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/builds** (listBuilds; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/in-bundle** (listBundlesContainingOffer; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/changelist** (listChangelist; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/changelog** (listChangelog; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/countries** (listCountries; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/featured-discounts** (listFeaturedDiscounts; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/free-games/sellers** (listFreeGameSellers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/free-games** (listFreeGames; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/free-games/history** (listFreeGamesHistory; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/items** (listItems; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/items-from-offer/&#123;id&#125;** (listItemsFromOffer; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/latest-achievements** (listLatestAchievements; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/latest-released** (listLatestReleased; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/free-games/mobile** (listMobileFreeGames; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/changelog** (listOfferChangelog; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/events** (listOfferEvents; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/genres** (listOfferGenres; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price-history** (listOfferPriceHistory; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews** (listOfferReviews; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers** (listOffers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/achievements** (listProfileAchievements; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/games** (listProfileGames; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/leaderboard** (listProfileLeaderboard; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/rare-achievements** (listProfileRareAchievements; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;** (listPromotionOffers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/promotions** (listPromotions; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/regions** (listRegions; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sales** (listSales; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/achievements** (listSandboxAchievements; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/assets** (listSandboxAssets; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/builds** (listSandboxBuilds; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/items** (listSandboxItems; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/offers** (listSandboxOffers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sandboxes** (listSandboxes; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/search/developers** (listSearchDevelopers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/search/offer-types** (listSearchOfferTypes; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/search/publishers** (listSearchPublishers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/search/tags** (listSearchTags; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;** (listSellerOffers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/sellers** (listSellers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/tags** (listTags; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/top-sellers** (listTopSellers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/top-wishlisted** (listTopWishlisted; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/offers/upcoming** (listUpcomingOffers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/multisearch/items** (multisearchItems; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/multisearch/offers** (multisearchOffers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/multisearch/sellers** (multisearchSellers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 POST /v1/search/natural-language** (naturalLanguageSearch; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 POST /v1/builds/resolve-launcher-records** (resolveLauncherRecords; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/search/changelog** (searchChangelog; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/free-games/search** (searchFreeGames; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 GET /v1/search** (searchOffers; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+- **v1 POST /v1/search** (searchOffersRedirect; fixed; compatible)
+  - Before: Requests authenticated via an ephemeral dashboard console session sent a console_&lt;projectId&gt; key identity that the v1 origin rejected with HTTP 401 MISSING_KEY_CONTEXT.
+  - After: The v1 origin accepts verified gateway console_&lt;projectId&gt; identities alongside key_&lt;id&gt; identities, allowing authenticated dashboard Try It console requests to succeed with the same project permissions and quotas.
+  - Client action: None
+
+Verification: tests/v1-origin-provenance.test.ts; tests/v1-router.test.ts; dashboard/tests/console-sessions.test.ts.
+
+## 2026-11-16 — Add total count to v1 pagination metadata while preserving forward-only signed cursors
+
+Record: [v1-pagination-total-count](https://github.com/egdata-app/egdata-api/blob/main/changes/records/v1-pagination-total-count.json).
+
+- **v1 GET /v1/builds** (listBuilds; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/history** (getBuildHistory; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/builds/&#123;targetId&#125;/compare/&#123;baseId&#125;** (compareBuilds; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/files** (listBuildFiles; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/tree** (getBuildTree; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/builds/&#123;id&#125;/items** (listBuildItems; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sales** (listSales; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/active-sales** (listActiveSales; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/changelog** (listChangelog; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/changelist** (listChangelist; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;** (getCollection; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;/&#123;week&#125;** (getCollectionWeek; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/franchises/&#123;slug&#125;** (getFranchise; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/free-games/history** (listFreeGamesHistory; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/free-games/search** (searchFreeGames; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without `total`, and OpenSearch queries skipped or capped hit counting.
+  - After: `meta.pagination` includes `total` (exact integer count when available, or `null`) with `track_total_hits: true`, while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/items** (listItems; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/changelog** (getItemChangelog; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/multisearch/offers** (multisearchOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without `total`, and OpenSearch queries skipped or capped hit counting.
+  - After: `meta.pagination` includes `total` (exact integer count when available, or `null`) with `track_total_hits: true`, while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/multisearch/items** (multisearchItems; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without `total`, and OpenSearch queries skipped or capped hit counting.
+  - After: `meta.pagination` includes `total` (exact integer count when available, or `null`) with `track_total_hits: true`, while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/changelog** (listOfferChangelog; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/price-history** (listOfferPriceHistory; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews** (listOfferReviews; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers** (listOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/events/&#123;id&#125;** (getOfferEvent; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/upcoming** (listUpcomingOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/top-wishlisted** (listTopWishlisted; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/top-sellers** (listTopSellers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/offers/latest-released** (listLatestReleased; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/profiles/leaderboard** (listProfileLeaderboard; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/achievements** (listProfileAchievements; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/games** (listProfileGames; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;** (listPromotionOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sandboxes** (listSandboxes; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/items** (listSandboxItems; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/offers** (listSandboxOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/assets** (listSandboxAssets; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/changelog** (getSandboxChangelog; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/builds** (listSandboxBuilds; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/search** (searchOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without `total`, and OpenSearch queries skipped or capped hit counting.
+  - After: `meta.pagination` includes `total` (exact integer count when available, or `null`) with `track_total_hits: true`, while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/search/changelog** (searchChangelog; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without `total`, and OpenSearch queries skipped or capped hit counting.
+  - After: `meta.pagination` includes `total` (exact integer count when available, or `null`) with `track_total_hits: true`, while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;** (listSellerOffers; changed; compatible)
+  - Before: `meta.pagination` only returned `&#123; limit, hasMore, nextCursor &#125;` without a total matching item count.
+  - After: `meta.pagination` includes `total` (matching item count cached independently of `limit` and `cursor`, or `null` if unavailable), while preserving forward-only HMAC-signed cursor pagination (`page` and `offset` remain rejected with 400).
+  - Client action: None
+
+Verification: tests/v1-pagination.test.ts; tests/v1-offers-list.test.ts; tests/v1-pagination-totals.test.ts; tests/v1-router.test.ts; pnpm openapi:check.
+
 ## 2026-11-13 — Cache anonymous country, tag and genre reads at the edge
 
 Record: [anonymous-catalog-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/anonymous-catalog-edge-cache.json).

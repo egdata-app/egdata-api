@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   type MongoSortField,
   mongoKeysetFilter,
+  openSearchTotalHits,
+  pageMeta,
   parseLimit,
   trimPage,
 } from "../src/v1/pagination.js";
@@ -93,5 +95,23 @@ describe("v1 keyset pagination", () => {
 
   it("rejects an empty sort specification instead of scanning from the beginning", () => {
     expect(() => mongoKeysetFilter([], [])).toThrow();
+  });
+
+  it("includes total in pageMeta and normalizes OpenSearch hit totals", () => {
+    expect(pageMeta(20, true, "cursor-1", 125)).toEqual({
+      limit: 20,
+      hasMore: true,
+      nextCursor: "cursor-1",
+      total: 125,
+    });
+    expect(pageMeta(20, false, null)).toEqual({
+      limit: 20,
+      hasMore: false,
+      nextCursor: null,
+      total: null,
+    });
+    expect(openSearchTotalHits(42)).toBe(42);
+    expect(openSearchTotalHits({ value: 130000, relation: "eq" })).toBe(130000);
+    expect(openSearchTotalHits(undefined)).toBeNull();
   });
 });

@@ -14792,7 +14792,7 @@
         ],
         "responses": {
           "200": {
-            "description": "`data` is the page of expanded offers; `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`.",
+            "description": "`data` is the page of expanded offers; `meta.pagination` carries `limit`, `hasMore`, `nextCursor`, and `total`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -14872,7 +14872,7 @@
       "get": {
         "operationId": "searchFreeGames",
         "summary": "Search free games",
-        "description": "Searches the `egdata.offers` OpenSearch index for offers with giveaway entries, using the legacy title, offer type, tag, and category filters. Pagination uses `search_after` instead of offsets, so cursors stay stable while the index changes. Results default to `lastModifiedDate` descending with `id.keyword` ascending as a unique tie-breaker. `meta.result.total` is an OpenSearch estimate and may be a lower bound when the index reports a `gte` relation.\n\nAccount closure rejects all account keys, including warm credential caches, with 401 INVALID_API_KEY before quota or cache access. Failure to verify credential/account status returns uncacheable 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30. Initial email/terms onboarding gates the dashboard and existing/new console sessions: 403 EMAIL_VERIFICATION_REQUIRED until email is verified, then 403 AGREEMENT_REQUIRED until the current terms edition is accepted. Existing API keys keep working even after a dashboard visit. Privacy notices do not require acceptance.",
+        "description": "Searches the `egdata.offers` OpenSearch index for offers with giveaway entries, using the legacy title, offer type, tag, and category filters. Pagination uses `search_after` instead of offsets, so cursors stay stable while the index changes. Results default to `lastModifiedDate` descending with `id.keyword` ascending as a unique tie-breaker. `meta.pagination.total` and `meta.result.total` report the exact OpenSearch hit count.\n\nAccount closure rejects all account keys, including warm credential caches, with 401 INVALID_API_KEY before quota or cache access. Failure to verify credential/account status returns uncacheable 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30. Initial email/terms onboarding gates the dashboard and existing/new console sessions: 403 EMAIL_VERIFICATION_REQUIRED until email is verified, then 403 AGREEMENT_REQUIRED until the current terms edition is accepted. Existing API keys keep working even after a dashboard visit. Privacy notices do not require acceptance.",
         "tags": [
           "Free Games"
         ],
@@ -15021,7 +15021,7 @@
         ],
         "responses": {
           "200": {
-            "description": "`data` is the page of localized offers; `meta.result` carries the estimated total, the total relation, `timedOut`, and `tookMs`.",
+            "description": "`data` is the page of localized offers; `meta.pagination` carries `limit`, `hasMore`, `nextCursor`, and `total`, and `meta.result` carries the hit total, the total relation, `timedOut`, and `tookMs`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -15620,7 +15620,7 @@
         ],
         "responses": {
           "200": {
-            "description": "`data` is the page of expanded localized offers; `meta.title` is the event name, `meta.start` is 0 on the first page (null afterwards, because cursors do not expose offsets), and `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`.",
+            "description": "`data` is the page of expanded localized offers; `meta.title` is the event name, `meta.start` is 0 on the first page (null afterwards, because cursors do not expose offsets), and `meta.pagination` carries `limit`, `hasMore`, `nextCursor`, and `total`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -18096,7 +18096,8 @@
         "required": [
           "limit",
           "hasMore",
-          "nextCursor"
+          "nextCursor",
+          "total"
         ],
         "properties": {
           "limit": {
@@ -18109,6 +18110,11 @@
           },
           "nextCursor": {
             "type": "string",
+            "nullable": true
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
             "nullable": true
           }
         }

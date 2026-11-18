@@ -1380,10 +1380,10 @@ fn free_games_operations() -> Vec<V1OperationMetadata> {
             .desc("Cursor-paginated giveaway history ordered by `endDate` descending and then `id` descending. Each entry contains the giveaway record, the expanded localized offer, and the current regional price. Cursors are bound to the filter set, ordering, country, locale, and page size, and expire after 24 hours.")
             .page()
             .params(vec![country_parameter(), locale_parameter(), limit_parameter(25), cursor_parameter()])
-            .resp_desc("`data` is the page of expanded offers; `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`.")
+            .resp_desc("`data` is the page of expanded offers; `meta.pagination` carries `limit`, `hasMore`, `nextCursor`, and `total`.")
             .leg(&["/free-games/history"]),
         op("searchFreeGames", V1HttpMethod::Get, "/v1/free-games/search", "Search free games", &["Free Games"], V1Scope::CatalogRead, V1AuthMode::Key)
-            .desc("Searches the `egdata.offers` OpenSearch index for offers with giveaway entries, using the legacy title, offer type, tag, and category filters. Pagination uses `search_after` instead of offsets, so cursors stay stable while the index changes. Results default to `lastModifiedDate` descending with `id.keyword` ascending as a unique tie-breaker. `meta.result.total` is an OpenSearch estimate and may be a lower bound when the index reports a `gte` relation.")
+            .desc("Searches the `egdata.offers` OpenSearch index for offers with giveaway entries, using the legacy title, offer type, tag, and category filters. Pagination uses `search_after` instead of offsets, so cursors stay stable while the index changes. Results default to `lastModifiedDate` descending with `id.keyword` ascending as a unique tie-breaker. `meta.pagination.total` and `meta.result.total` report the exact OpenSearch hit count.")
             .page()
             .policy(V1ExpensivePolicy::Search)
             .params(vec![
@@ -1398,7 +1398,7 @@ fn free_games_operations() -> Vec<V1OperationMetadata> {
                 limit_parameter(50),
                 cursor_parameter(),
             ])
-            .resp_desc("`data` is the page of localized offers; `meta.result` carries the estimated total, the total relation, `timedOut`, and `tookMs`.")
+            .resp_desc("`data` is the page of localized offers; `meta.pagination` carries `limit`, `hasMore`, `nextCursor`, and `total`, and `meta.result` carries the hit total, the total relation, `timedOut`, and `tookMs`.")
             .leg(&["/free-games/search"]),
         op("getFreeGamesStats", V1HttpMethod::Get, "/v1/free-games/stats", "Free game statistics", &["Free Games"], V1Scope::CatalogRead, V1AuthMode::Key)
             .desc("Returns giveaway totals, distinct seller counts, repeated giveaways, and the summed value of all recorded giveaways for the selected pricing region. When no price rows exist the value object is still returned with zero amounts and nullable currency codes instead of failing.")
@@ -1447,7 +1447,7 @@ fn promotions_operations() -> Vec<V1OperationMetadata> {
                 limit_parameter(50),
                 cursor_parameter(),
             ])
-            .resp_desc("`data` is the page of expanded localized offers; `meta.title` is the event name, `meta.start` is 0 on the first page (null afterwards, because cursors do not expose offsets), and `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`.")
+            .resp_desc("`data` is the page of expanded localized offers; `meta.title` is the event name, `meta.start` is 0 on the first page (null afterwards, because cursors do not expose offsets), and `meta.pagination` carries `limit`, `hasMore`, `nextCursor`, and `total`.")
             .leg(&["/promotions/{id}"]),
         op("getPromotionCover", V1HttpMethod::Get, "/v1/promotions/{id}/cover", "Promotion cover offer", &["Promotions"], V1Scope::CatalogRead, V1AuthMode::Key)
             .desc("Returns the localized base-game offer from the first namespace referenced by the promotion. This is the offer metadata the legacy endpoint returned; it is not a rendered image. OG image routes remain outside v1.")

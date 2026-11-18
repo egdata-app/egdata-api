@@ -593,10 +593,6 @@ fn decode_cursor(
     .transpose()
 }
 
-fn page_value(limit: u32, more: bool, token: Option<String>) -> Value {
-    json!(page_meta(limit, more, token))
-}
-
 fn sort_value(value: &Value) -> CursorSortValue {
     match value {
         Value::Null => CursorSortValue::Null,
@@ -684,11 +680,10 @@ async fn history(
             ..Default::default()
         };
         // The date tie-break tuple always uses the BSON date value from the original row.
-        let rows = state
-            .mongo
-            .find_many("freegames", filter, options)
-            .await
-            .map_err(|_| internal_error())?;
+        let (rows,total)=tokio::join!(state.mongo.find_many("freegames",filter,options),
+            super::counts::documents(state,"free-games.history",&[],60,"freegames",doc!{}));
+        let rows=rows.map_err(|_| internal_error())?;
+        let total=total?;
         let page = trim_page(rows, paging.limit as usize);
         let offer_ids = page
             .items
@@ -776,7 +771,7 @@ async fn history(
         } else {
             None
         };
-        Ok(json!({"data":data,"pagination":page_value(paging.limit,page.has_more,token)}))
+        Ok(json!({"data":data,"pagination":page_meta(paging.limit,page.has_more,token).with_total(total)}))
     })
     .await?;
     Ok(page_response(
@@ -881,6 +876,7 @@ async fn search(
         }
         let mut body = json!({
             "size": paging.limit + 1,
+            "track_total_hits":true,
             "query": {"bool":{"must":must,"filter":filter}},
             "sort": [
                 {(sort_field.as_str()): {"order":sort_dir,"missing":"_last"}},
@@ -908,7 +904,14 @@ async fn search(
         let (total_value, total_relation) = if total.is_number() {
             (total.clone(), json!("eq"))
         } else {
-            (total["value"].clone(), total["relation"].clone())
+            (
+                total
+                    .get("value")
+                    .filter(|v| v.is_number())
+                    .cloned()
+                    .unwrap_or(Value::Null),
+                total["relation"].clone(),
+            )
         };
         let has_more = hits.len() > paging.limit as usize;
         let page = &hits[..hits.len().min(paging.limit as usize)];
@@ -959,7 +962,7 @@ async fn search(
         };
         Ok(json!({
             "data": data,
-            "pagination": page_value(paging.limit, has_more, token),
+            "pagination": page_meta(paging.limit, has_more, token).with_total(total_value.clone()),
             "result": {
                 "total": total_value, "totalRelation": total_relation,
                 "timedOut": super::search::js_truthy(&response["timed_out"]),
