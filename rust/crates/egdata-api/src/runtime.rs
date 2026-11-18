@@ -185,11 +185,10 @@ async fn shutdown_signal() {
 
 fn validate_listener(bind: IpAddr, config: &crate::state::ApiConfig) -> Result<()> {
     if !bind.is_loopback()
-        && (!config.origin_auth_required
-            || config
-                .origin_auth_token
-                .as_deref()
-                .is_none_or(str::is_empty))
+        && config
+            .origin_auth_token
+            .as_deref()
+            .is_none_or(str::is_empty)
     {
         bail!(
             "Configure ORIGIN_AUTH_REQUIRED=true and ORIGIN_AUTH_TOKEN to serve outside loopback behind the gateway"
@@ -252,7 +251,10 @@ mod tests {
         assert!(validate_listener("127.0.0.1".parse().unwrap(), &config).is_ok());
         config.origin_auth_required = true;
         assert!(validate_listener(bind, &config).is_err());
+        config.origin_auth_required = false;
         config.origin_auth_token = Some("fixture".into());
+        assert!(validate_listener(bind, &config).is_ok());
+        config.origin_auth_required = true;
         assert!(validate_listener(bind, &config).is_ok());
     }
 
