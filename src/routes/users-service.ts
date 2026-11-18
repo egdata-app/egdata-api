@@ -43,7 +43,8 @@ const middleware = createMiddleware<{
     return c.json({ error: "Invalid authorization header" }, 401);
   }
 
-  const token = authorization.replace("Bearer ", "").replace("eg1~", "");
+  const supplied = authorization.slice("Bearer ".length);
+  const token = supplied.startsWith("eg1~") ? supplied.slice(4) : supplied;
 
   const decoded = jwt.decode(token) as {
     sub: string;
@@ -61,7 +62,7 @@ const middleware = createMiddleware<{
     jti: string;
   };
 
-  if (!decoded || !decoded.sub) {
+  if (!decoded || typeof decoded.sub !== "string" || !decoded.sub) {
     console.error("Invalid JWT");
     return c.json({ error: "Invalid JWT" }, 401);
   }
@@ -74,6 +75,20 @@ const middleware = createMiddleware<{
     return c.json({ error: "JWT is expired" }, 401);
   }
 
+  try {
+    const response = await fetch("https://api.epicgames.dev/epic/oauth/v2/tokenInfo", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({token:supplied}),
+    });
+    if (!response.ok) return c.json({ error: "Invalid JWT" }, 401);
+    const verified = (await response.json()) as { active?: unknown; account_id?: unknown } | null;
+    if (verified?.active !== true || verified.account_id !== decoded.sub) {
+      return c.json({ error: "Invalid JWT" }, 401);
+    }
+  } catch {
+    return c.json({ error: "Invalid JWT" }, 401);
+  }
   c.set("jwt", decoded);
   c.set("access_token", `eg1~${token}`);
 

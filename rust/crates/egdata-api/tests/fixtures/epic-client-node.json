@@ -1,0 +1,1740 @@
+[
+  {
+    "name": "profile success",
+    "op": "profile",
+    "input": {
+      "body": {
+        "data": {
+          "PlayerProfile": {
+            "playerProfile": {
+              "epicAccountId": "fixture",
+              "displayName": "Player",
+              "productAchievements": {
+                "__typename": "ServiceError"
+              },
+              "achievementsSummaries": {
+                "status": "OK"
+              }
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfile($epicAccountId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNameavatar{smallmediumlarge}}}}",
+          "variables": {
+            "epicAccountId": "fixture"
+          },
+          "operationName": "playerProfile"
+        }
+      }
+    ],
+    "output": {
+      "value": {
+        "epicAccountId": "fixture",
+        "displayName": "Player",
+        "productAchievements": {
+          "__typename": "ServiceError"
+        },
+        "achievementsSummaries": {
+          "status": "OK"
+        }
+      }
+    }
+  },
+  {
+    "name": "profile partial",
+    "op": "profile",
+    "input": {
+      "body": {
+        "data": {
+          "PlayerProfile": {
+            "playerProfile": {
+              "epicAccountId": "fixture",
+              "displayName": "Player",
+              "productAchievements": {
+                "__typename": "ServiceError"
+              },
+              "achievementsSummaries": {
+                "status": "OK"
+              }
+            }
+          }
+        },
+        "errors": [
+          {
+            "message": "fixture error"
+          }
+        ]
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfile($epicAccountId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNameavatar{smallmediumlarge}}}}",
+          "variables": {
+            "epicAccountId": "fixture"
+          },
+          "operationName": "playerProfile"
+        }
+      }
+    ],
+    "output": {
+      "value": {
+        "epicAccountId": "fixture",
+        "displayName": "Player",
+        "productAchievements": {
+          "__typename": "ServiceError"
+        },
+        "achievementsSummaries": {
+          "status": "OK"
+        }
+      }
+    }
+  },
+  {
+    "name": "profile empty",
+    "op": "profile",
+    "input": {
+      "body": {}
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfile($epicAccountId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNameavatar{smallmediumlarge}}}}",
+          "variables": {
+            "epicAccountId": "fixture"
+          },
+          "operationName": "playerProfile"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "profile data",
+    "op": "profile",
+    "input": {
+      "body": {
+        "data": {}
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfile($epicAccountId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNameavatar{smallmediumlarge}}}}",
+          "variables": {
+            "epicAccountId": "fixture"
+          },
+          "operationName": "playerProfile"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "profile player",
+    "op": "profile",
+    "input": {
+      "body": {
+        "data": {
+          "PlayerProfile": {}
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfile($epicAccountId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNameavatar{smallmediumlarge}}}}",
+          "variables": {
+            "epicAccountId": "fixture"
+          },
+          "operationName": "playerProfile"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "profile nullProfile",
+    "op": "profile",
+    "input": {
+      "body": {
+        "data": {
+          "PlayerProfile": {
+            "playerProfile": null
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfile($epicAccountId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNameavatar{smallmediumlarge}}}}",
+          "variables": {
+            "epicAccountId": "fixture"
+          },
+          "operationName": "playerProfile"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "profile non-success",
+    "op": "profile",
+    "input": {
+      "status": 429,
+      "body": {
+        "data": {
+          "PlayerProfile": {
+            "playerProfile": {
+              "epicAccountId": "fixture",
+              "displayName": "Player",
+              "productAchievements": {
+                "__typename": "ServiceError"
+              },
+              "achievementsSummaries": {
+                "status": "OK"
+              }
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfile($epicAccountId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNameavatar{smallmediumlarge}}}}",
+          "variables": {
+            "epicAccountId": "fixture"
+          },
+          "operationName": "playerProfile"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "profile unavailable",
+    "op": "profile",
+    "input": {
+      "drop": true
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfile($epicAccountId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNameavatar{smallmediumlarge}}}}",
+          "variables": {
+            "epicAccountId": "fixture"
+          },
+          "operationName": "playerProfile"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "product success",
+    "op": "product",
+    "input": {
+      "body": {
+        "data": {
+          "PlayerProfile": {
+            "playerProfile": {
+              "epicAccountId": "fixture",
+              "displayName": "Player",
+              "productAchievements": {
+                "__typename": "ServiceError"
+              },
+              "achievementsSummaries": {
+                "status": "OK"
+              }
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfileAchievementsByProductId($epicAccountId:String!$productId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNamerelationshipavatar{smallmediumlarge}productAchievements(productId:$productId){__typename...onPlayerProductAchievementsResponseSuccess{data{epicAccountIdsandboxIdtotalXPtotalUnlockedachievementSets{achievementSetIdisBasetotalUnlockedtotalXP}playerAwards{awardTypeunlockedDateTimeachievementSetId}playerAchievements{playerAchievement{achievementNameepicAccountIdprogresssandboxIdunlockedunlockDateXPachievementSetIdisBase}}}}}}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "productId": "product"
+          },
+          "operationName": "playerProfileAchievementsByProductId"
+        }
+      }
+    ],
+    "output": {
+      "value": {
+        "__typename": "ServiceError"
+      }
+    }
+  },
+  {
+    "name": "product partial",
+    "op": "product",
+    "input": {
+      "body": {
+        "data": {
+          "PlayerProfile": {
+            "playerProfile": {
+              "epicAccountId": "fixture",
+              "displayName": "Player",
+              "productAchievements": {
+                "__typename": "ServiceError"
+              },
+              "achievementsSummaries": {
+                "status": "OK"
+              }
+            }
+          }
+        },
+        "errors": [
+          {
+            "message": "fixture error"
+          }
+        ]
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfileAchievementsByProductId($epicAccountId:String!$productId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNamerelationshipavatar{smallmediumlarge}productAchievements(productId:$productId){__typename...onPlayerProductAchievementsResponseSuccess{data{epicAccountIdsandboxIdtotalXPtotalUnlockedachievementSets{achievementSetIdisBasetotalUnlockedtotalXP}playerAwards{awardTypeunlockedDateTimeachievementSetId}playerAchievements{playerAchievement{achievementNameepicAccountIdprogresssandboxIdunlockedunlockDateXPachievementSetIdisBase}}}}}}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "productId": "product"
+          },
+          "operationName": "playerProfileAchievementsByProductId"
+        }
+      }
+    ],
+    "output": {
+      "value": {
+        "__typename": "ServiceError"
+      }
+    }
+  },
+  {
+    "name": "product empty",
+    "op": "product",
+    "input": {
+      "body": {}
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfileAchievementsByProductId($epicAccountId:String!$productId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNamerelationshipavatar{smallmediumlarge}productAchievements(productId:$productId){__typename...onPlayerProductAchievementsResponseSuccess{data{epicAccountIdsandboxIdtotalXPtotalUnlockedachievementSets{achievementSetIdisBasetotalUnlockedtotalXP}playerAwards{awardTypeunlockedDateTimeachievementSetId}playerAchievements{playerAchievement{achievementNameepicAccountIdprogresssandboxIdunlockedunlockDateXPachievementSetIdisBase}}}}}}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "productId": "product"
+          },
+          "operationName": "playerProfileAchievementsByProductId"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "product data",
+    "op": "product",
+    "input": {
+      "body": {
+        "data": {}
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfileAchievementsByProductId($epicAccountId:String!$productId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNamerelationshipavatar{smallmediumlarge}productAchievements(productId:$productId){__typename...onPlayerProductAchievementsResponseSuccess{data{epicAccountIdsandboxIdtotalXPtotalUnlockedachievementSets{achievementSetIdisBasetotalUnlockedtotalXP}playerAwards{awardTypeunlockedDateTimeachievementSetId}playerAchievements{playerAchievement{achievementNameepicAccountIdprogresssandboxIdunlockedunlockDateXPachievementSetIdisBase}}}}}}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "productId": "product"
+          },
+          "operationName": "playerProfileAchievementsByProductId"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "product player",
+    "op": "product",
+    "input": {
+      "body": {
+        "data": {
+          "PlayerProfile": {}
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfileAchievementsByProductId($epicAccountId:String!$productId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNamerelationshipavatar{smallmediumlarge}productAchievements(productId:$productId){__typename...onPlayerProductAchievementsResponseSuccess{data{epicAccountIdsandboxIdtotalXPtotalUnlockedachievementSets{achievementSetIdisBasetotalUnlockedtotalXP}playerAwards{awardTypeunlockedDateTimeachievementSetId}playerAchievements{playerAchievement{achievementNameepicAccountIdprogresssandboxIdunlockedunlockDateXPachievementSetIdisBase}}}}}}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "productId": "product"
+          },
+          "operationName": "playerProfileAchievementsByProductId"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "product nullProfile",
+    "op": "product",
+    "input": {
+      "body": {
+        "data": {
+          "PlayerProfile": {
+            "playerProfile": null
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfileAchievementsByProductId($epicAccountId:String!$productId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNamerelationshipavatar{smallmediumlarge}productAchievements(productId:$productId){__typename...onPlayerProductAchievementsResponseSuccess{data{epicAccountIdsandboxIdtotalXPtotalUnlockedachievementSets{achievementSetIdisBasetotalUnlockedtotalXP}playerAwards{awardTypeunlockedDateTimeachievementSetId}playerAchievements{playerAchievement{achievementNameepicAccountIdprogresssandboxIdunlockedunlockDateXPachievementSetIdisBase}}}}}}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "productId": "product"
+          },
+          "operationName": "playerProfileAchievementsByProductId"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "product non-success",
+    "op": "product",
+    "input": {
+      "status": 429,
+      "body": {
+        "data": {
+          "PlayerProfile": {
+            "playerProfile": {
+              "epicAccountId": "fixture",
+              "displayName": "Player",
+              "productAchievements": {
+                "__typename": "ServiceError"
+              },
+              "achievementsSummaries": {
+                "status": "OK"
+              }
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfileAchievementsByProductId($epicAccountId:String!$productId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNamerelationshipavatar{smallmediumlarge}productAchievements(productId:$productId){__typename...onPlayerProductAchievementsResponseSuccess{data{epicAccountIdsandboxIdtotalXPtotalUnlockedachievementSets{achievementSetIdisBasetotalUnlockedtotalXP}playerAwards{awardTypeunlockedDateTimeachievementSetId}playerAchievements{playerAchievement{achievementNameepicAccountIdprogresssandboxIdunlockedunlockDateXPachievementSetIdisBase}}}}}}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "productId": "product"
+          },
+          "operationName": "playerProfileAchievementsByProductId"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "product unavailable",
+    "op": "product",
+    "input": {
+      "drop": true
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfileAchievementsByProductId($epicAccountId:String!$productId:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){epicAccountIddisplayNamerelationshipavatar{smallmediumlarge}productAchievements(productId:$productId){__typename...onPlayerProductAchievementsResponseSuccess{data{epicAccountIdsandboxIdtotalXPtotalUnlockedachievementSets{achievementSetIdisBasetotalUnlockedtotalXP}playerAwards{awardTypeunlockedDateTimeachievementSetId}playerAchievements{playerAchievement{achievementNameepicAccountIdprogresssandboxIdunlockedunlockDateXPachievementSetIdisBase}}}}}}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "productId": "product"
+          },
+          "operationName": "playerProfileAchievementsByProductId"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "summaries success",
+    "op": "summaries",
+    "input": {
+      "body": {
+        "data": {
+          "PlayerProfile": {
+            "playerProfile": {
+              "epicAccountId": "fixture",
+              "displayName": "Player",
+              "productAchievements": {
+                "__typename": "ServiceError"
+              },
+              "achievementsSummaries": {
+                "status": "OK"
+              }
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfilePrivate($epicAccountId:String!$locale:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){privacy{accessLevel}relationshipachievementsSummaries{__typename...onPlayerAchievementResponseSuccess{statusdata{totalUnlockedtotalXPsandboxIdbaseOfferForSandbox(locale:$locale){idnamespacekeyImages{urltypealtmd5}}product(locale:$locale){nameslug}productAchievements{totalAchievementstotalProductXP}playerAwards{awardType}}}}}}ContentControl{get{__typename}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "locale": "en-US"
+          },
+          "operationName": "playerProfilePrivate"
+        }
+      }
+    ],
+    "output": {
+      "value": {
+        "status": "OK"
+      }
+    }
+  },
+  {
+    "name": "summaries partial",
+    "op": "summaries",
+    "input": {
+      "body": {
+        "data": {
+          "PlayerProfile": {
+            "playerProfile": {
+              "epicAccountId": "fixture",
+              "displayName": "Player",
+              "productAchievements": {
+                "__typename": "ServiceError"
+              },
+              "achievementsSummaries": {
+                "status": "OK"
+              }
+            }
+          }
+        },
+        "errors": [
+          {
+            "message": "fixture error"
+          }
+        ]
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfilePrivate($epicAccountId:String!$locale:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){privacy{accessLevel}relationshipachievementsSummaries{__typename...onPlayerAchievementResponseSuccess{statusdata{totalUnlockedtotalXPsandboxIdbaseOfferForSandbox(locale:$locale){idnamespacekeyImages{urltypealtmd5}}product(locale:$locale){nameslug}productAchievements{totalAchievementstotalProductXP}playerAwards{awardType}}}}}}ContentControl{get{__typename}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "locale": "en-US"
+          },
+          "operationName": "playerProfilePrivate"
+        }
+      }
+    ],
+    "output": {
+      "value": {
+        "status": "OK"
+      }
+    }
+  },
+  {
+    "name": "summaries empty",
+    "op": "summaries",
+    "input": {
+      "body": {}
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfilePrivate($epicAccountId:String!$locale:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){privacy{accessLevel}relationshipachievementsSummaries{__typename...onPlayerAchievementResponseSuccess{statusdata{totalUnlockedtotalXPsandboxIdbaseOfferForSandbox(locale:$locale){idnamespacekeyImages{urltypealtmd5}}product(locale:$locale){nameslug}productAchievements{totalAchievementstotalProductXP}playerAwards{awardType}}}}}}ContentControl{get{__typename}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "locale": "en-US"
+          },
+          "operationName": "playerProfilePrivate"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "summaries data",
+    "op": "summaries",
+    "input": {
+      "body": {
+        "data": {}
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfilePrivate($epicAccountId:String!$locale:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){privacy{accessLevel}relationshipachievementsSummaries{__typename...onPlayerAchievementResponseSuccess{statusdata{totalUnlockedtotalXPsandboxIdbaseOfferForSandbox(locale:$locale){idnamespacekeyImages{urltypealtmd5}}product(locale:$locale){nameslug}productAchievements{totalAchievementstotalProductXP}playerAwards{awardType}}}}}}ContentControl{get{__typename}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "locale": "en-US"
+          },
+          "operationName": "playerProfilePrivate"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "summaries player",
+    "op": "summaries",
+    "input": {
+      "body": {
+        "data": {
+          "PlayerProfile": {}
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfilePrivate($epicAccountId:String!$locale:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){privacy{accessLevel}relationshipachievementsSummaries{__typename...onPlayerAchievementResponseSuccess{statusdata{totalUnlockedtotalXPsandboxIdbaseOfferForSandbox(locale:$locale){idnamespacekeyImages{urltypealtmd5}}product(locale:$locale){nameslug}productAchievements{totalAchievementstotalProductXP}playerAwards{awardType}}}}}}ContentControl{get{__typename}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "locale": "en-US"
+          },
+          "operationName": "playerProfilePrivate"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "summaries nullProfile",
+    "op": "summaries",
+    "input": {
+      "body": {
+        "data": {
+          "PlayerProfile": {
+            "playerProfile": null
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfilePrivate($epicAccountId:String!$locale:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){privacy{accessLevel}relationshipachievementsSummaries{__typename...onPlayerAchievementResponseSuccess{statusdata{totalUnlockedtotalXPsandboxIdbaseOfferForSandbox(locale:$locale){idnamespacekeyImages{urltypealtmd5}}product(locale:$locale){nameslug}productAchievements{totalAchievementstotalProductXP}playerAwards{awardType}}}}}}ContentControl{get{__typename}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "locale": "en-US"
+          },
+          "operationName": "playerProfilePrivate"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "summaries non-success",
+    "op": "summaries",
+    "input": {
+      "status": 429,
+      "body": {
+        "data": {
+          "PlayerProfile": {
+            "playerProfile": {
+              "epicAccountId": "fixture",
+              "displayName": "Player",
+              "productAchievements": {
+                "__typename": "ServiceError"
+              },
+              "achievementsSummaries": {
+                "status": "OK"
+              }
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfilePrivate($epicAccountId:String!$locale:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){privacy{accessLevel}relationshipachievementsSummaries{__typename...onPlayerAchievementResponseSuccess{statusdata{totalUnlockedtotalXPsandboxIdbaseOfferForSandbox(locale:$locale){idnamespacekeyImages{urltypealtmd5}}product(locale:$locale){nameslug}productAchievements{totalAchievementstotalProductXP}playerAwards{awardType}}}}}}ContentControl{get{__typename}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "locale": "en-US"
+          },
+          "operationName": "playerProfilePrivate"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "summaries unavailable",
+    "op": "summaries",
+    "input": {
+      "drop": true
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "queryplayerProfilePrivate($epicAccountId:String!$locale:String!){PlayerProfile{playerProfile(epicAccountId:$epicAccountId){privacy{accessLevel}relationshipachievementsSummaries{__typename...onPlayerAchievementResponseSuccess{statusdata{totalUnlockedtotalXPsandboxIdbaseOfferForSandbox(locale:$locale){idnamespacekeyImages{urltypealtmd5}}product(locale:$locale){nameslug}productAchievements{totalAchievementstotalProductXP}playerAwards{awardType}}}}}}ContentControl{get{__typename}}}",
+          "variables": {
+            "epicAccountId": "fixture",
+            "locale": "en-US"
+          },
+          "operationName": "playerProfilePrivate"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "ownership success",
+    "op": "ownership",
+    "input": {
+      "body": {
+        "data": {
+          "Entitlements": {
+            "cartOffersValidation": {
+              "conflictingOffers": [],
+              "missingPrerequisites": [],
+              "fullyOwnedOffers": [],
+              "possiblePartialUpgradeOffers": [],
+              "unablePartiallyUpgradeOffers": []
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "authorization": "Bearer fixture-token",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "querygetOffersValidation($offers:[OfferToValidate]!){Entitlements{cartOffersValidation(offerParams:$offers){conflictingOffers{offerIdnamespaceconflictingOffers{namespaceofferId}}missingPrerequisites{namespaceofferIdmissingPrerequisiteItems{itemIdnamespace}}fullyOwnedOffers{namespaceofferId}possiblePartialUpgradeOffers{namespaceofferId}unablePartiallyUpgradeOffers{namespaceofferId}}}}",
+          "variables": {
+            "offers": [
+              {
+                "offerId": "one",
+                "namespace": "ns"
+              }
+            ]
+          },
+          "operationName": "getOffersValidation"
+        }
+      }
+    ],
+    "output": {
+      "value": {
+        "conflictingOffers": [],
+        "missingPrerequisites": [],
+        "fullyOwnedOffers": [],
+        "possiblePartialUpgradeOffers": [],
+        "unablePartiallyUpgradeOffers": []
+      }
+    }
+  },
+  {
+    "name": "ownership partial errors",
+    "op": "ownership",
+    "input": {
+      "body": {
+        "data": {
+          "Entitlements": {
+            "cartOffersValidation": {
+              "conflictingOffers": [],
+              "missingPrerequisites": [],
+              "fullyOwnedOffers": [],
+              "possiblePartialUpgradeOffers": [],
+              "unablePartiallyUpgradeOffers": []
+            }
+          }
+        },
+        "errors": [
+          {
+            "message": "fixture error"
+          }
+        ]
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "authorization": "Bearer fixture-token",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "querygetOffersValidation($offers:[OfferToValidate]!){Entitlements{cartOffersValidation(offerParams:$offers){conflictingOffers{offerIdnamespaceconflictingOffers{namespaceofferId}}missingPrerequisites{namespaceofferIdmissingPrerequisiteItems{itemIdnamespace}}fullyOwnedOffers{namespaceofferId}possiblePartialUpgradeOffers{namespaceofferId}unablePartiallyUpgradeOffers{namespaceofferId}}}}",
+          "variables": {
+            "offers": [
+              {
+                "offerId": "one",
+                "namespace": "ns"
+              }
+            ]
+          },
+          "operationName": "getOffersValidation"
+        }
+      }
+    ],
+    "output": {
+      "value": [
+        {
+          "message": "fixture error"
+        }
+      ]
+    }
+  },
+  {
+    "name": "ownership HTTP error with data and errors",
+    "op": "ownership",
+    "input": {
+      "status": 403,
+      "body": {
+        "data": {
+          "Entitlements": {
+            "cartOffersValidation": {
+              "conflictingOffers": [],
+              "missingPrerequisites": [],
+              "fullyOwnedOffers": [],
+              "possiblePartialUpgradeOffers": [],
+              "unablePartiallyUpgradeOffers": []
+            }
+          }
+        },
+        "errors": [
+          {
+            "message": "fixture error"
+          }
+        ]
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "authorization": "Bearer fixture-token",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "querygetOffersValidation($offers:[OfferToValidate]!){Entitlements{cartOffersValidation(offerParams:$offers){conflictingOffers{offerIdnamespaceconflictingOffers{namespaceofferId}}missingPrerequisites{namespaceofferIdmissingPrerequisiteItems{itemIdnamespace}}fullyOwnedOffers{namespaceofferId}possiblePartialUpgradeOffers{namespaceofferId}unablePartiallyUpgradeOffers{namespaceofferId}}}}",
+          "variables": {
+            "offers": [
+              {
+                "offerId": "one",
+                "namespace": "ns"
+              }
+            ]
+          },
+          "operationName": "getOffersValidation"
+        }
+      }
+    ],
+    "output": {
+      "value": [
+        {
+          "message": "fixture error"
+        }
+      ]
+    }
+  },
+  {
+    "name": "ownership HTTP error with only data",
+    "op": "ownership",
+    "input": {
+      "status": 401,
+      "body": {
+        "data": {
+          "Entitlements": {
+            "cartOffersValidation": {
+              "conflictingOffers": [],
+              "missingPrerequisites": [],
+              "fullyOwnedOffers": [],
+              "possiblePartialUpgradeOffers": [],
+              "unablePartiallyUpgradeOffers": []
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "authorization": "Bearer fixture-token",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "querygetOffersValidation($offers:[OfferToValidate]!){Entitlements{cartOffersValidation(offerParams:$offers){conflictingOffers{offerIdnamespaceconflictingOffers{namespaceofferId}}missingPrerequisites{namespaceofferIdmissingPrerequisiteItems{itemIdnamespace}}fullyOwnedOffers{namespaceofferId}possiblePartialUpgradeOffers{namespaceofferId}unablePartiallyUpgradeOffers{namespaceofferId}}}}",
+          "variables": {
+            "offers": [
+              {
+                "offerId": "one",
+                "namespace": "ns"
+              }
+            ]
+          },
+          "operationName": "getOffersValidation"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "ownership empty errors",
+    "op": "ownership",
+    "input": {
+      "body": {
+        "data": {
+          "Entitlements": {
+            "cartOffersValidation": {
+              "conflictingOffers": [],
+              "missingPrerequisites": [],
+              "fullyOwnedOffers": [],
+              "possiblePartialUpgradeOffers": [],
+              "unablePartiallyUpgradeOffers": []
+            }
+          }
+        },
+        "errors": []
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "authorization": "Bearer fixture-token",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "querygetOffersValidation($offers:[OfferToValidate]!){Entitlements{cartOffersValidation(offerParams:$offers){conflictingOffers{offerIdnamespaceconflictingOffers{namespaceofferId}}missingPrerequisites{namespaceofferIdmissingPrerequisiteItems{itemIdnamespace}}fullyOwnedOffers{namespaceofferId}possiblePartialUpgradeOffers{namespaceofferId}unablePartiallyUpgradeOffers{namespaceofferId}}}}",
+          "variables": {
+            "offers": [
+              {
+                "offerId": "one",
+                "namespace": "ns"
+              }
+            ]
+          },
+          "operationName": "getOffersValidation"
+        }
+      }
+    ],
+    "output": {
+      "value": {
+        "conflictingOffers": [],
+        "missingPrerequisites": [],
+        "fullyOwnedOffers": [],
+        "possiblePartialUpgradeOffers": [],
+        "unablePartiallyUpgradeOffers": []
+      }
+    }
+  },
+  {
+    "name": "ownership errors only",
+    "op": "ownership",
+    "input": {
+      "body": {
+        "errors": [
+          {
+            "message": "fixture error"
+          }
+        ]
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "authorization": "Bearer fixture-token",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "querygetOffersValidation($offers:[OfferToValidate]!){Entitlements{cartOffersValidation(offerParams:$offers){conflictingOffers{offerIdnamespaceconflictingOffers{namespaceofferId}}missingPrerequisites{namespaceofferIdmissingPrerequisiteItems{itemIdnamespace}}fullyOwnedOffers{namespaceofferId}possiblePartialUpgradeOffers{namespaceofferId}unablePartiallyUpgradeOffers{namespaceofferId}}}}",
+          "variables": {
+            "offers": [
+              {
+                "offerId": "one",
+                "namespace": "ns"
+              }
+            ]
+          },
+          "operationName": "getOffersValidation"
+        }
+      }
+    ],
+    "output": {
+      "value": [
+        {
+          "message": "fixture error"
+        }
+      ]
+    }
+  },
+  {
+    "name": "ownership malformed JSON",
+    "op": "ownership",
+    "input": {
+      "raw": "not JSON"
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "authorization": "Bearer fixture-token",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "querygetOffersValidation($offers:[OfferToValidate]!){Entitlements{cartOffersValidation(offerParams:$offers){conflictingOffers{offerIdnamespaceconflictingOffers{namespaceofferId}}missingPrerequisites{namespaceofferIdmissingPrerequisiteItems{itemIdnamespace}}fullyOwnedOffers{namespaceofferId}possiblePartialUpgradeOffers{namespaceofferId}unablePartiallyUpgradeOffers{namespaceofferId}}}}",
+          "variables": {
+            "offers": [
+              {
+                "offerId": "one",
+                "namespace": "ns"
+              }
+            ]
+          },
+          "operationName": "getOffersValidation"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "ownership connection closed",
+    "op": "ownership",
+    "input": {
+      "drop": true
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "authorization": "Bearer fixture-token",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "querygetOffersValidation($offers:[OfferToValidate]!){Entitlements{cartOffersValidation(offerParams:$offers){conflictingOffers{offerIdnamespaceconflictingOffers{namespaceofferId}}missingPrerequisites{namespaceofferIdmissingPrerequisiteItems{itemIdnamespace}}fullyOwnedOffers{namespaceofferId}possiblePartialUpgradeOffers{namespaceofferId}unablePartiallyUpgradeOffers{namespaceofferId}}}}",
+          "variables": {
+            "offers": [
+              {
+                "offerId": "one",
+                "namespace": "ns"
+              }
+            ]
+          },
+          "operationName": "getOffersValidation"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "ownership forbidden with an empty error list",
+    "op": "ownership",
+    "input": {
+      "status": 403,
+      "body": {
+        "errors": []
+      }
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "headers": {
+          "accept": "application/json",
+          "accept-language": "en-US,en;q=0.9",
+          "authorization": "Bearer fixture-token",
+          "content-type": "application/json",
+          "origin": "https://store.epicgames.com",
+          "referer": "https://store.epicgames.com/en-US/",
+          "user-agent": "EpicGamesLauncher/18.8.0-44107768+++Portal+Release-Live Windows/10.0.26100.1.256.64bit"
+        },
+        "body": {
+          "query": "querygetOffersValidation($offers:[OfferToValidate]!){Entitlements{cartOffersValidation(offerParams:$offers){conflictingOffers{offerIdnamespaceconflictingOffers{namespaceofferId}}missingPrerequisites{namespaceofferIdmissingPrerequisiteItems{itemIdnamespace}}fullyOwnedOffers{namespaceofferId}possiblePartialUpgradeOffers{namespaceofferId}unablePartiallyUpgradeOffers{namespaceofferId}}}}",
+          "variables": {
+            "offers": [
+              {
+                "offerId": "one",
+                "namespace": "ns"
+              }
+            ]
+          },
+          "operationName": "getOffersValidation"
+        }
+      }
+    ],
+    "output": {
+      "value": []
+    }
+  },
+  {
+    "name": "ownership invalid bearer header",
+    "op": "ownership",
+    "input": {
+      "token": "bad\nvalue",
+      "body": {
+        "data": {
+          "Entitlements": {
+            "cartOffersValidation": {
+              "conflictingOffers": [],
+              "missingPrerequisites": [],
+              "fullyOwnedOffers": [],
+              "possiblePartialUpgradeOffers": [],
+              "unablePartiallyUpgradeOffers": []
+            }
+          }
+        }
+      }
+    },
+    "requests": [],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "featured full references",
+    "op": "featured",
+    "input": {
+      "body": {
+        "data": {
+          "Storefront": {
+            "storefrontModulesPaginated": {
+              "modules": [
+                {
+                  "id": "new-carousel-definitive",
+                  "slides": [
+                    {
+                      "offer": {
+                        "id": "one",
+                        "namespace": "ns",
+                        "offer": {
+                          "title": "One"
+                        }
+                      }
+                    },
+                    {
+                      "offer": {
+                        "id": "two",
+                        "namespace": "second"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "headers": {}
+      }
+    ],
+    "output": {
+      "value": [
+        {
+          "id": "one",
+          "namespace": "ns",
+          "offer": {
+            "title": "One"
+          }
+        },
+        {
+          "id": "two",
+          "namespace": "second"
+        }
+      ]
+    }
+  },
+  {
+    "name": "featured empty slides",
+    "op": "featured",
+    "input": {
+      "body": {
+        "data": {
+          "Storefront": {
+            "storefrontModulesPaginated": {
+              "modules": [
+                {
+                  "id": "new-carousel-definitive",
+                  "slides": []
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "headers": {}
+      }
+    ],
+    "output": {
+      "value": []
+    }
+  },
+  {
+    "name": "featured missing carousel",
+    "op": "featured",
+    "input": {
+      "body": {
+        "data": {
+          "Storefront": {
+            "storefrontModulesPaginated": {
+              "modules": []
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "headers": {}
+      }
+    ],
+    "output": {
+      "error": "upstream"
+    }
+  },
+  {
+    "name": "featured absent slides",
+    "op": "featured",
+    "input": {
+      "body": {
+        "data": {
+          "Storefront": {
+            "storefrontModulesPaginated": {
+              "modules": [
+                {
+                  "id": "new-carousel-definitive"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "headers": {}
+      }
+    ],
+    "output": {
+      "error": "upstream"
+    }
+  },
+  {
+    "name": "featured missing offer",
+    "op": "featured",
+    "input": {
+      "body": {
+        "data": {
+          "Storefront": {
+            "storefrontModulesPaginated": {
+              "modules": [
+                {
+                  "id": "new-carousel-definitive",
+                  "slides": [
+                    {}
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "headers": {}
+      }
+    ],
+    "output": {
+      "error": "upstream"
+    }
+  },
+  {
+    "name": "featured HTTP error with valid layout",
+    "op": "featured",
+    "input": {
+      "status": 503,
+      "body": {
+        "data": {
+          "Storefront": {
+            "storefrontModulesPaginated": {
+              "modules": [
+                {
+                  "id": "new-carousel-definitive",
+                  "slides": []
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "headers": {}
+      }
+    ],
+    "output": {
+      "value": []
+    }
+  },
+  {
+    "name": "featured invalid JSON",
+    "op": "featured",
+    "input": {
+      "raw": "invalid"
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "headers": {}
+      }
+    ],
+    "output": {
+      "error": "upstream"
+    }
+  },
+  {
+    "name": "featured unavailable",
+    "op": "featured",
+    "input": {
+      "drop": true
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "headers": {}
+      }
+    ],
+    "output": {
+      "error": "upstream"
+    }
+  },
+  {
+    "name": "discord accepted response",
+    "op": "discord",
+    "input": {
+      "status": 201,
+      "body": {
+        "user": {
+          "id": "one",
+          "username": "Player"
+        }
+      }
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "headers": {
+          "authorization": "Bearer fixture-token"
+        }
+      }
+    ],
+    "output": {
+      "value": {
+        "id": "one",
+        "username": "Player"
+      }
+    }
+  },
+  {
+    "name": "discord missing user",
+    "op": "discord",
+    "input": {
+      "body": {}
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "headers": {
+          "authorization": "Bearer fixture-token"
+        }
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "discord unauthorized",
+    "op": "discord",
+    "input": {
+      "status": 401,
+      "body": {
+        "error": "invalid"
+      }
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "headers": {
+          "authorization": "Bearer fixture-token"
+        }
+      }
+    ],
+    "output": {
+      "error": "Failed to fetch Discord user: 401"
+    }
+  },
+  {
+    "name": "discord invalid JSON",
+    "op": "discord",
+    "input": {
+      "raw": "malformed"
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "headers": {
+          "authorization": "Bearer fixture-token"
+        }
+      }
+    ],
+    "output": {
+      "error": "upstream"
+    }
+  },
+  {
+    "name": "discord unavailable",
+    "op": "discord",
+    "input": {
+      "drop": true
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "headers": {
+          "authorization": "Bearer fixture-token"
+        }
+      }
+    ],
+    "output": {
+      "error": "upstream"
+    }
+  }
+]

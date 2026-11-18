@@ -1,0 +1,2174 @@
+[
+  {
+    "name": "changelog-joined-page",
+    "request": {
+      "path": "/v1/offers/game-a/changelog?query=%20car%20&type=UPDATE&field=title&limit=1",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.changelog:field=\"title\":id=\"game-a\":limit=1:query=\"car\":type=\"UPDATE\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "game-a"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "items": 1
+            }
+          }
+        },
+        "result": {
+          "id": "game-a",
+          "items": [
+            {
+              "id": "item-a"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game-a"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "game-a",
+            "subItems": [
+              {
+                "id": "sub"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    "item-a",
+                    "sub"
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "game-a"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "item-a"
+          },
+          {
+            "id": "sub"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$in": [
+                "item-a",
+                "sub"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "artifact"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "metadata.contextId": {
+                  "$in": [
+                    "game-a",
+                    "item-a",
+                    "sub",
+                    "artifact"
+                  ]
+                },
+                "$text": {
+                  "$search": "car"
+                },
+                "metadata.changes.changeType": "UPDATE",
+                "metadata.changes.field": "title"
+              }
+            },
+            {
+              "$sort": {
+                "timestamp": -1,
+                "_id": -1
+              }
+            },
+            {
+              "$limit": 2
+            },
+            {
+              "$lookup": {
+                "from": "offers",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$id",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "offerDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$id",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "itemDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "assets",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$artifactId",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "assetDoc"
+              }
+            },
+            {
+              "$addFields": {
+                "document": {
+                  "$switch": {
+                    "branches": [
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "offer"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$offerDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "item"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$itemDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "asset"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$assetDoc",
+                            0
+                          ]
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 1,
+                "metadata": 1,
+                "timestamp": 1,
+                "document": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "64c000000000000000000001"
+            },
+            "timestamp": {
+              "$date": "2026-11-15T02:00:00.000Z"
+            },
+            "metadata": {
+              "contextId": "sub",
+              "contextType": "item"
+            },
+            "document": {
+              "id": "sub",
+              "__v": 0
+            }
+          },
+          {
+            "_id": {
+              "$oid": "64c000000000000000000001"
+            },
+            "timestamp": {
+              "$date": "2026-11-15T02:00:00.000Z"
+            },
+            "metadata": {
+              "contextId": "sub",
+              "contextType": "item"
+            },
+            "document": {
+              "id": "sub",
+              "__v": 0
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.changelog:field=\"title\":id=\"game-a\":limit=1:query=\"car\":type=\"UPDATE\"",
+          "payload": {
+            "elements": [
+              {
+                "_id": "64c000000000000000000001",
+                "timestamp": "2026-11-15T02:00:00.000Z",
+                "metadata": {
+                  "contextId": "sub",
+                  "contextType": "item"
+                },
+                "document": {
+                  "id": "sub"
+                }
+              }
+            ],
+            "pagination": {
+              "limit": 1,
+              "hasMore": true,
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLmNoYW5nZWxvZyIsImZpbHRlcnMiOnsib2ZmZXJJZCI6ImdhbWUtYSIsInF1ZXJ5IjoiY2FyIiwidHlwZSI6IlVQREFURSIsImZpZWxkIjoidGl0bGUifSwiZmlsdGVySGFzaCI6IjJkMzZjMzA1ZDBkZGM1NGMyNzMzY2NkNGQ5YzExMTQ3MjRiYTFmOGZhNTAwYzY4YjgzYmI2NTU5OGM5NDE5NTMiLCJvcmRlcmluZyI6InRpbWVzdGFtcDpkZXNjLF9pZDpkZXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTVUMDI6MDA6MDAuMDAwWiIsIm9pZDo2NGMwMDAwMDAwMDAwMDAwMDAwMDAwMDEiXX0.-nkI3IN6eHUBF-Qh938DiFjtTuqFMsikLx3D9XS4AGE"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"256a92c06984f4c7e08c77a9b8ed08a369a9af82\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": "64c000000000000000000001",
+            "timestamp": "2026-11-15T02:00:00.000Z",
+            "metadata": {
+              "contextId": "sub",
+              "contextType": "item"
+            },
+            "document": {
+              "id": "sub"
+            }
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLmNoYW5nZWxvZyIsImZpbHRlcnMiOnsib2ZmZXJJZCI6ImdhbWUtYSIsInF1ZXJ5IjoiY2FyIiwidHlwZSI6IlVQREFURSIsImZpZWxkIjoidGl0bGUifSwiZmlsdGVySGFzaCI6IjJkMzZjMzA1ZDBkZGM1NGMyNzMzY2NkNGQ5YzExMTQ3MjRiYTFmOGZhNTAwYzY4YjgzYmI2NTU5OGM5NDE5NTMiLCJvcmRlcmluZyI6InRpbWVzdGFtcDpkZXNjLF9pZDpkZXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTVUMDI6MDA6MDAuMDAwWiIsIm9pZDo2NGMwMDAwMDAwMDAwMDAwMDAwMDAwMDEiXX0.-nkI3IN6eHUBF-Qh938DiFjtTuqFMsikLx3D9XS4AGE"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "changelog-continued",
+    "request": {
+      "path": "/v1/offers/game-a/changelog?query=%20car%20&type=UPDATE&field=title&limit=1&cursor=eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLmNoYW5nZWxvZyIsImZpbHRlcnMiOnsib2ZmZXJJZCI6ImdhbWUtYSIsInF1ZXJ5IjoiY2FyIiwidHlwZSI6IlVQREFURSIsImZpZWxkIjoidGl0bGUifSwiZmlsdGVySGFzaCI6IjJkMzZjMzA1ZDBkZGM1NGMyNzMzY2NkNGQ5YzExMTQ3MjRiYTFmOGZhNTAwYzY4YjgzYmI2NTU5OGM5NDE5NTMiLCJvcmRlcmluZyI6InRpbWVzdGFtcDpkZXNjLF9pZDpkZXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTVUMDI6MDA6MDAuMDAwWiIsIm9pZDo2NGMwMDAwMDAwMDAwMDAwMDAwMDAwMDEiXX0.-nkI3IN6eHUBF-Qh938DiFjtTuqFMsikLx3D9XS4AGE",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.changelog:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLmNoYW5nZWxvZyIsImZpbHRlcnMiOnsib2ZmZXJJZCI6ImdhbWUtYSIsInF1ZXJ5IjoiY2FyIiwidHlwZSI6IlVQREFURSIsImZpZWxkIjoidGl0bGUifSwiZmlsdGVySGFzaCI6IjJkMzZjMzA1ZDBkZGM1NGMyNzMzY2NkNGQ5YzExMTQ3MjRiYTFmOGZhNTAwYzY4YjgzYmI2NTU5OGM5NDE5NTMiLCJvcmRlcmluZyI6InRpbWVzdGFtcDpkZXNjLF9pZDpkZXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTVUMDI6MDA6MDAuMDAwWiIsIm9pZDo2NGMwMDAwMDAwMDAwMDAwMDAwMDAwMDEiXX0.-nkI3IN6eHUBF-Qh938DiFjtTuqFMsikLx3D9XS4AGE\":field=\"title\":id=\"game-a\":limit=1:query=\"car\":type=\"UPDATE\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "game-a"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "items": 1
+            }
+          }
+        },
+        "result": {
+          "id": "game-a",
+          "items": [
+            {
+              "id": "item-a"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game-a"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "game-a",
+            "subItems": [
+              {
+                "id": "sub"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    "item-a",
+                    "sub"
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "game-a"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "item-a"
+          },
+          {
+            "id": "sub"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$in": [
+                "item-a",
+                "sub"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "artifact"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "metadata.contextId": {
+                  "$in": [
+                    "game-a",
+                    "item-a",
+                    "sub",
+                    "artifact"
+                  ]
+                },
+                "$text": {
+                  "$search": "car"
+                },
+                "metadata.changes.changeType": "UPDATE",
+                "metadata.changes.field": "title"
+              }
+            },
+            {
+              "$match": {
+                "$or": [
+                  {
+                    "timestamp": {
+                      "$lt": {
+                        "$date": "2026-11-15T02:00:00.000Z"
+                      }
+                    }
+                  },
+                  {
+                    "timestamp": null
+                  },
+                  {
+                    "$and": [
+                      {
+                        "timestamp": {
+                          "$eq": {
+                            "$date": "2026-11-15T02:00:00.000Z"
+                          }
+                        }
+                      },
+                      {
+                        "_id": {
+                          "$lt": {
+                            "$oid": "64c000000000000000000001"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "$and": [
+                      {
+                        "timestamp": {
+                          "$eq": {
+                            "$date": "2026-11-15T02:00:00.000Z"
+                          }
+                        }
+                      },
+                      {
+                        "_id": null
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "$sort": {
+                "timestamp": -1,
+                "_id": -1
+              }
+            },
+            {
+              "$limit": 2
+            },
+            {
+              "$lookup": {
+                "from": "offers",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$id",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "offerDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$id",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "itemDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "assets",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$artifactId",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "assetDoc"
+              }
+            },
+            {
+              "$addFields": {
+                "document": {
+                  "$switch": {
+                    "branches": [
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "offer"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$offerDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "item"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$itemDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "asset"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$assetDoc",
+                            0
+                          ]
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 1,
+                "metadata": 1,
+                "timestamp": 1,
+                "document": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.changelog:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLmNoYW5nZWxvZyIsImZpbHRlcnMiOnsib2ZmZXJJZCI6ImdhbWUtYSIsInF1ZXJ5IjoiY2FyIiwidHlwZSI6IlVQREFURSIsImZpZWxkIjoidGl0bGUifSwiZmlsdGVySGFzaCI6IjJkMzZjMzA1ZDBkZGM1NGMyNzMzY2NkNGQ5YzExMTQ3MjRiYTFmOGZhNTAwYzY4YjgzYmI2NTU5OGM5NDE5NTMiLCJvcmRlcmluZyI6InRpbWVzdGFtcDpkZXNjLF9pZDpkZXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTVUMDI6MDA6MDAuMDAwWiIsIm9pZDo2NGMwMDAwMDAwMDAwMDAwMDAwMDAwMDEiXX0.-nkI3IN6eHUBF-Qh938DiFjtTuqFMsikLx3D9XS4AGE\":field=\"title\":id=\"game-a\":limit=1:query=\"car\":type=\"UPDATE\"",
+          "payload": {
+            "elements": [],
+            "pagination": {
+              "limit": 1,
+              "hasMore": false,
+              "nextCursor": null
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"0abce40006125ef975512b2ed71814e93a15a82d\""
+      },
+      "body": {
+        "data": [],
+        "meta": {
+          "pagination": {
+            "limit": 1,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "changelog-missing",
+    "request": {
+      "path": "/v1/offers/game-a/changelog",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.changelog:id=\"game-a\":limit=20"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "game-a"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "items": 1
+            }
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"992f1d8f782a29deb2144e88d94b400506d6c0a0\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/offer-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No offer exists with this ID.",
+        "instance": "/v1/offers/game-a/changelog",
+        "code": "OFFER_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "changelog-bad-cursor",
+    "request": {
+      "path": "/v1/offers/game-a/changelog?cursor=bad",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.changelog:cursor=\"bad\":id=\"game-a\":limit=20"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "game-a"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "items": 1
+            }
+          }
+        },
+        "result": {
+          "id": "game-a",
+          "items": [
+            {
+              "id": "item-a"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game-a"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": "game-a",
+            "subItems": [
+              {
+                "id": "sub"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    "item-a",
+                    "sub"
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "game-a"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "item-a"
+          },
+          {
+            "id": "sub"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$in": [
+                "item-a",
+                "sub"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "artifact"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"1d867953d7be83bc9b35764fd91a3bd80571daea\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-cursor",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The cursor is malformed. Use the `nextCursor` value from a previous response.",
+        "instance": "/v1/offers/game-a/changelog",
+        "code": "INVALID_CURSOR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "changelog-grouped-errors",
+    "request": {
+      "path": "/v1/offers/game-a/changelog?query=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&type=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&field=yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy&extra=z",
+      "method": "GET"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d31891b8e4b4ef32e909dd127651e642467eb1da\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/offers/game-a/changelog",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "parameter": "query",
+            "pointer": "/query",
+            "code": "TOO_BIG",
+            "message": "Too big: expected string to have <=200 characters"
+          },
+          {
+            "parameter": "type",
+            "pointer": "/type",
+            "code": "TOO_BIG",
+            "message": "Too big: expected string to have <=100 characters"
+          },
+          {
+            "parameter": "field",
+            "pointer": "/field",
+            "code": "TOO_BIG",
+            "message": "Too big: expected string to have <=200 characters"
+          },
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"extra\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "changelog-cache",
+    "request": {
+      "path": "/v1/offers/game-a/changelog",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.changelog:id=\"game-a\":limit=20"
+        },
+        "result": {
+          "elements": [
+            {
+              "_id": "64c000000000000000000001",
+              "timestamp": "2026-11-15T02:00:00.000Z",
+              "metadata": {
+                "contextId": "sub",
+                "contextType": "item"
+              },
+              "document": {
+                "id": "sub",
+                "__v": 0
+              }
+            }
+          ],
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8ba04d277fa35a23f54ac88895ea774d8717b570\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": "64c000000000000000000001",
+            "timestamp": "2026-11-15T02:00:00.000Z",
+            "metadata": {
+              "contextId": "sub",
+              "contextType": "item"
+            },
+            "document": {
+              "id": "sub",
+              "__v": 0
+            }
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-missing",
+    "request": {
+      "path": "/v1/offers/game-a/changelog/stats",
+      "method": "GET"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"a6d1b831e1db774dacf5ccf266b738eae7e6862b\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/offers/game-a/changelog/stats",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "parameter": "from",
+            "pointer": "/from",
+            "code": "INVALID_TYPE",
+            "message": "Invalid input: expected string, received undefined"
+          },
+          {
+            "parameter": "to",
+            "pointer": "/to",
+            "code": "INVALID_TYPE",
+            "message": "Invalid input: expected string, received undefined"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "stats-empty",
+    "request": {
+      "path": "/v1/offers/game-a/changelog/stats?from=&to=&extra=1",
+      "method": "GET"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"3d2bfb476d6025ea6433ca71dc245e481c6e8598\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/offers/game-a/changelog/stats",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "parameter": "from",
+            "pointer": "/from",
+            "code": "TOO_SMALL",
+            "message": "Too small: expected string to have >=1 characters"
+          },
+          {
+            "parameter": "to",
+            "pointer": "/to",
+            "code": "TOO_SMALL",
+            "message": "Too small: expected string to have >=1 characters"
+          },
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"extra\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "stats-invalid",
+    "request": {
+      "path": "/v1/offers/game-a/changelog/stats?from=no&to=2026-11-17",
+      "method": "GET"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"df659791f2d3bbd0064296bd13443678fb661489\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-timestamp",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `from` parameter must be an ISO 8601 timestamp such as 2025-01-31T00:00:00Z.",
+        "instance": "/v1/offers/game-a/changelog/stats",
+        "code": "INVALID_TIMESTAMP",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stats-reversed",
+    "request": {
+      "path": "/v1/offers/game-a/changelog/stats?from=2026-11-18&to=2026-11-17",
+      "method": "GET"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"613c2a73a33ba0393006193a509ab231d28fd46e\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-timestamp",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `from` timestamp must not be later than `to`.",
+        "instance": "/v1/offers/game-a/changelog/stats",
+        "code": "INVALID_TIMESTAMP",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stats-present",
+    "request": {
+      "path": "/v1/offers/game-a/changelog/stats?from=2026-11-01&to=2026-11-17",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.changelog-stats:from=\"2026-11-01T00:00:00.000Z\":id=\"game-a\":to=\"2026-11-17T00:00:00.000Z\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "game-a"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "game-a",
+          "items": [
+            {
+              "id": "item-a"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "metadata.contextId": "game-a",
+            "timestamp": {
+              "$gte": {
+                "$date": "2026-11-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2026-11-17T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            },
+            "projection": {
+              "timestamp": 1,
+              "metadata.changes": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "timestamp": "2026-11-16T00:00:00Z",
+            "metadata": {
+              "changes": [
+                {
+                  "changeType": "MODIFY",
+                  "field": "10"
+                },
+                {
+                  "changeType": 0,
+                  "field": "2"
+                }
+              ]
+            }
+          },
+          {
+            "timestamp": "2026-11-15T02:00:00.000Z",
+            "metadata": {
+              "changes": [
+                {
+                  "changeType": "MODIFY",
+                  "field": "title"
+                },
+                null
+              ]
+            }
+          },
+          {
+            "timestamp": {
+              "$date": "2026-11-15T02:00:00.000Z"
+            },
+            "metadata": {
+              "changes": [
+                {
+                  "field": "10"
+                }
+              ]
+            }
+          },
+          {
+            "timestamp": "Sun, 15 Nov 2026 02:00:00 GMT",
+            "metadata": {
+              "changes": []
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.changelog-stats:from=\"2026-11-01T00:00:00.000Z\":id=\"game-a\":to=\"2026-11-17T00:00:00.000Z\"",
+          "payload": {
+            "dailyChanges": {
+              "2026-11-16": 1,
+              "2026-11-15": 2
+            },
+            "weekdayChanges": {
+              "0": 2,
+              "1": 1
+            },
+            "changeTypes": {
+              "0": 1,
+              "MODIFY": 2
+            },
+            "changeFields": {
+              "2": 1,
+              "10": 2,
+              "title": 1
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"25c3665cecc4d2407961c430fa2b56219458c719\""
+      },
+      "body": {
+        "data": {
+          "dailyChanges": {
+            "2026-11-16": 1,
+            "2026-11-15": 2
+          },
+          "weekdayChanges": {
+            "0": 2,
+            "1": 1
+          },
+          "changeTypes": {
+            "0": 1,
+            "MODIFY": 2
+          },
+          "changeFields": {
+            "2": 1,
+            "10": 2,
+            "title": 1
+          }
+        },
+        "meta": {
+          "from": "2026-11-01T00:00:00.000Z",
+          "to": "2026-11-17T00:00:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "name": "reviews-hydrate",
+    "request": {
+      "path": "/v1/offers/game-a/reviews?verified=false&limit=3",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.reviews:id=\"game-a\":limit=3:verified=false"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "many",
+          "query": {
+            "id": "game-a",
+            "verified": false
+          },
+          "options": {
+            "limit": 4,
+            "sort": {
+              "createdAt": -1,
+              "_id": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "64c000000000000000000001"
+            },
+            "id": "game-a",
+            "userId": "u",
+            "rating": 3,
+            "createdAt": {
+              "$date": "2026-11-15T02:00:00.000Z"
+            },
+            "__v": 7
+          },
+          {
+            "_id": "two",
+            "id": "game-a",
+            "userId": "missing",
+            "rating": 3,
+            "createdAt": {
+              "$date": "2026-11-15T02:00:00.000Z"
+            },
+            "__v": 7
+          },
+          {
+            "_id": {
+              "$oid": "64c000000000000000000001"
+            },
+            "id": "game-a",
+            "userId": "u",
+            "rating": 3,
+            "createdAt": {
+              "$date": "2026-11-15T02:00:00.000Z"
+            },
+            "__v": 7
+          },
+          {
+            "_id": {
+              "$oid": "64c000000000000000000001"
+            },
+            "id": "game-a",
+            "userId": "extra",
+            "rating": 3,
+            "createdAt": {
+              "$date": "2026-11-15T02:00:00.000Z"
+            },
+            "__v": 7
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "many",
+          "query": {
+            "accountId": {
+              "$in": [
+                "u",
+                "missing"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "accountId": "u",
+            "displayName": "Name",
+            "__v": 2
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.reviews:id=\"game-a\":limit=3:verified=false",
+          "payload": {
+            "elements": [
+              {
+                "_id": "64c000000000000000000001",
+                "id": "game-a",
+                "userId": "u",
+                "rating": 3,
+                "createdAt": "2026-11-15T02:00:00.000Z",
+                "user": {
+                  "accountId": "u",
+                  "displayName": "Name"
+                }
+              },
+              {
+                "_id": "two",
+                "id": "game-a",
+                "userId": "missing",
+                "rating": 3,
+                "createdAt": "2026-11-15T02:00:00.000Z",
+                "user": null
+              },
+              {
+                "_id": "64c000000000000000000001",
+                "id": "game-a",
+                "userId": "u",
+                "rating": 3,
+                "createdAt": "2026-11-15T02:00:00.000Z",
+                "user": {
+                  "accountId": "u",
+                  "displayName": "Name"
+                }
+              }
+            ],
+            "pagination": {
+              "limit": 3,
+              "hasMore": true,
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnJldmlld3MiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJ2ZXJpZmllZCI6ZmFsc2V9LCJmaWx0ZXJIYXNoIjoiZmM1NDFmMWZhMWEyY2EyMGNjZjI3ZTA3ZDYwY2U3ZDcyNTliMGY1NTg4YjkyNTJiN2NlZmJkYmFiNGQ4ZTBiMSIsIm9yZGVyaW5nIjoiY3JlYXRlZEF0OmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjozLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xNVQwMjowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.MnXYQexK6Vl4P009LooP3w3TNxLxsc8907JoQcZ2zHU"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"3bcec98ea2f8fb58aa056aecf1893da6c49d8f15\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": "64c000000000000000000001",
+            "id": "game-a",
+            "userId": "u",
+            "rating": 3,
+            "createdAt": "2026-11-15T02:00:00.000Z",
+            "user": {
+              "accountId": "u",
+              "displayName": "Name"
+            }
+          },
+          {
+            "_id": "two",
+            "id": "game-a",
+            "userId": "missing",
+            "rating": 3,
+            "createdAt": "2026-11-15T02:00:00.000Z",
+            "user": null
+          },
+          {
+            "_id": "64c000000000000000000001",
+            "id": "game-a",
+            "userId": "u",
+            "rating": 3,
+            "createdAt": "2026-11-15T02:00:00.000Z",
+            "user": {
+              "accountId": "u",
+              "displayName": "Name"
+            }
+          }
+        ],
+        "meta": {
+          "verified": false,
+          "pagination": {
+            "limit": 3,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnJldmlld3MiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJ2ZXJpZmllZCI6ZmFsc2V9LCJmaWx0ZXJIYXNoIjoiZmM1NDFmMWZhMWEyY2EyMGNjZjI3ZTA3ZDYwY2U3ZDcyNTliMGY1NTg4YjkyNTJiN2NlZmJkYmFiNGQ4ZTBiMSIsIm9yZGVyaW5nIjoiY3JlYXRlZEF0OmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjozLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xNVQwMjowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.MnXYQexK6Vl4P009LooP3w3TNxLxsc8907JoQcZ2zHU"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "reviews-continued",
+    "request": {
+      "path": "/v1/offers/game-a/reviews?verified=0&limit=3&cursor=eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnJldmlld3MiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJ2ZXJpZmllZCI6ZmFsc2V9LCJmaWx0ZXJIYXNoIjoiZmM1NDFmMWZhMWEyY2EyMGNjZjI3ZTA3ZDYwY2U3ZDcyNTliMGY1NTg4YjkyNTJiN2NlZmJkYmFiNGQ4ZTBiMSIsIm9yZGVyaW5nIjoiY3JlYXRlZEF0OmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjozLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xNVQwMjowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.MnXYQexK6Vl4P009LooP3w3TNxLxsc8907JoQcZ2zHU",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.reviews:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnJldmlld3MiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJ2ZXJpZmllZCI6ZmFsc2V9LCJmaWx0ZXJIYXNoIjoiZmM1NDFmMWZhMWEyY2EyMGNjZjI3ZTA3ZDYwY2U3ZDcyNTliMGY1NTg4YjkyNTJiN2NlZmJkYmFiNGQ4ZTBiMSIsIm9yZGVyaW5nIjoiY3JlYXRlZEF0OmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjozLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xNVQwMjowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.MnXYQexK6Vl4P009LooP3w3TNxLxsc8907JoQcZ2zHU\":id=\"game-a\":limit=3:verified=false"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "many",
+          "query": {
+            "id": "game-a",
+            "verified": false,
+            "$or": [
+              {
+                "createdAt": {
+                  "$lt": {
+                    "$date": "2026-11-15T02:00:00.000Z"
+                  }
+                }
+              },
+              {
+                "createdAt": null
+              },
+              {
+                "$and": [
+                  {
+                    "createdAt": {
+                      "$eq": {
+                        "$date": "2026-11-15T02:00:00.000Z"
+                      }
+                    }
+                  },
+                  {
+                    "_id": {
+                      "$lt": {
+                        "$oid": "64c000000000000000000001"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "createdAt": {
+                      "$eq": {
+                        "$date": "2026-11-15T02:00:00.000Z"
+                      }
+                    }
+                  },
+                  {
+                    "_id": null
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "limit": 4,
+            "sort": {
+              "createdAt": -1,
+              "_id": -1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.reviews:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnJldmlld3MiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJnYW1lLWEiLCJ2ZXJpZmllZCI6ZmFsc2V9LCJmaWx0ZXJIYXNoIjoiZmM1NDFmMWZhMWEyY2EyMGNjZjI3ZTA3ZDYwY2U3ZDcyNTliMGY1NTg4YjkyNTJiN2NlZmJkYmFiNGQ4ZTBiMSIsIm9yZGVyaW5nIjoiY3JlYXRlZEF0OmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjozLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNi0xMS0xNVQwMjowMDowMC4wMDBaIiwib2lkOjY0YzAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.MnXYQexK6Vl4P009LooP3w3TNxLxsc8907JoQcZ2zHU\":id=\"game-a\":limit=3:verified=false",
+          "payload": {
+            "elements": [],
+            "pagination": {
+              "limit": 3,
+              "hasMore": false,
+              "nextCursor": null
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ce8d175aff171ea6c4fa15d4def60dc4f1df0163\""
+      },
+      "body": {
+        "data": [],
+        "meta": {
+          "verified": false,
+          "pagination": {
+            "limit": 3,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "reviews-unfiltered",
+    "request": {
+      "path": "/v1/offers/game-a/reviews",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.reviews:id=\"game-a\":limit=20"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "many",
+          "query": {
+            "id": "game-a"
+          },
+          "options": {
+            "limit": 21,
+            "sort": {
+              "createdAt": -1,
+              "_id": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "game-a",
+            "rating": 1
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.reviews:id=\"game-a\":limit=20",
+          "payload": {
+            "elements": [
+              {
+                "id": "game-a",
+                "rating": 1,
+                "user": null
+              }
+            ],
+            "pagination": {
+              "limit": 20,
+              "hasMore": false,
+              "nextCursor": null
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"7247915b5afb00fe834460f7cd477ff0700454f2\""
+      },
+      "body": {
+        "data": [
+          {
+            "id": "game-a",
+            "rating": 1,
+            "user": null
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "reviews-invalid-verified",
+    "request": {
+      "path": "/v1/offers/game-a/reviews?verified=some",
+      "method": "GET"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"4360c503af869422198a1ea24cf287d92ca1e3d2\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `verified` parameter must be true or false.",
+        "instance": "/v1/offers/game-a/reviews",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "parameter": "verified",
+            "code": "INVALID",
+            "message": "Expected a boolean."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "reviews-over-limit",
+    "request": {
+      "path": "/v1/offers/game-a/reviews?limit=26",
+      "method": "GET"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"4817b6e06746dee674b31424b4d864b8d0b207ea\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-limit",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `limit` parameter must be an integer between 1 and 25.",
+        "instance": "/v1/offers/game-a/reviews",
+        "code": "INVALID_LIMIT",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "reviews-empty-js-whitespace-cursor",
+    "request": {
+      "path": "/v1/offers/game-a/reviews?cursor=%EF%BB%BF",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.reviews:id=\"game-a\":limit=20"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "many",
+          "query": {
+            "id": "game-a"
+          },
+          "options": {
+            "limit": 21,
+            "sort": {
+              "createdAt": -1,
+              "_id": -1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.reviews:id=\"game-a\":limit=20",
+          "payload": {
+            "elements": [],
+            "pagination": {
+              "limit": 20,
+              "hasMore": false,
+              "nextCursor": null
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"318c919cc2f232950a59a9702a083288ef6a9a4b\""
+      },
+      "body": {
+        "data": [],
+        "meta": {
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "review-summary-verified",
+    "request": {
+      "path": "/v1/offers/game-a/reviews-summary?verified=true",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.reviews-summary:id=\"game-a\":verified=true"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "id": "game-a",
+                "verified": true
+              }
+            },
+            {
+              "$group": {
+                "_id": null,
+                "total": {
+                  "$sum": 1
+                },
+                "averageRating": {
+                  "$avg": "$rating"
+                },
+                "recommended": {
+                  "$sum": {
+                    "$cond": [
+                      "$recommended",
+                      1,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": null,
+            "total": 3,
+            "recommended": 2,
+            "averageRating": 4.5
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.reviews-summary:id=\"game-a\":verified=true",
+          "payload": {
+            "overallScore": 4.5,
+            "recommendedPercentage": 0.6666666666666666,
+            "notRecommendedPercentage": 0.3333333333333333,
+            "totalReviews": 3
+          },
+          "ttl": 300
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"0108ad84834cdb964949c77cf032d9f23e37694b\""
+      },
+      "body": {
+        "data": {
+          "overallScore": 4.5,
+          "recommendedPercentage": 0.6666666666666666,
+          "notRecommendedPercentage": 0.3333333333333333,
+          "totalReviews": 3
+        },
+        "meta": {
+          "verified": true
+        }
+      }
+    }
+  },
+  {
+    "name": "review-summary-empty",
+    "request": {
+      "path": "/v1/offers/game-a/reviews-summary",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.reviews-summary:id=\"game-a\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "id": "game-a"
+              }
+            },
+            {
+              "$group": {
+                "_id": null,
+                "total": {
+                  "$sum": 1
+                },
+                "averageRating": {
+                  "$avg": "$rating"
+                },
+                "recommended": {
+                  "$sum": {
+                    "$cond": [
+                      "$recommended",
+                      1,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.reviews-summary:id=\"game-a\"",
+          "payload": {
+            "overallScore": 0,
+            "recommendedPercentage": 0,
+            "notRecommendedPercentage": 0,
+            "totalReviews": 0
+          },
+          "ttl": 300
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"910f4000e2f9f0df143ff6d8f499e3c68c1dfc46\""
+      },
+      "body": {
+        "data": {
+          "overallScore": 0,
+          "recommendedPercentage": 0,
+          "notRecommendedPercentage": 0,
+          "totalReviews": 0
+        },
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "review-summary-failed",
+    "request": {
+      "path": "/v1/offers/game-a/reviews-summary",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.reviews-summary:id=\"game-a\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "id": "game-a"
+              }
+            },
+            {
+              "$group": {
+                "_id": null,
+                "total": {
+                  "$sum": 1
+                },
+                "averageRating": {
+                  "$avg": "$rating"
+                },
+                "recommended": {
+                  "$sum": {
+                    "$cond": [
+                      "$recommended",
+                      1,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "options": {}
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"eae307db9cd2b3c838921958255a428d140dbd9f\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/game-a/reviews-summary",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  }
+]

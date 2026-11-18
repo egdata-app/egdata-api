@@ -1,0 +1,382 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "egdata Versioned API",
+    "version": "1.0.0",
+    "description": "Version 1 of the egdata public read-only REST API.\n\nThe updated origin removes Aikido runtime instrumentation, telemetry and Aikido-specific blocking. Existing authentication, origin access controls and gateway quotas still apply. Custom legacy anti-abuse challenges do not apply to v1; deployment is separate from contract publication.\n\nSuccessful JSON responses use `{ data, meta }`. Paginated collections use opaque forward cursors with `meta.pagination`. Errors use RFC 9457 Problem Details (`application/problem+json`) with a stable `code` and `requestId`.\n\nApplications authenticate data operations with an API key through the Cloudflare Worker gateway. `/v1/health`, `/v1/open-api.json`, and CORS preflights are unauthenticated.\n\nEach project shares one exact quota across all its API keys, console sessions, and authenticated legacy/v1 gateway requests. Commercial plans provide fixed monthly EUR VAT-inclusive pricing with hard caps: Free (EUR 0/month, 60 RPM, 100,000 requests/UTC calendar month shared across all free projects on the account), Pro (EUR 9/month, 200 RPM, 300,000 requests/monthly billing period), and Scale (EUR 19/month, 600 RPM, 1,000,000 requests/monthly billing period). Explicit manual/grandfathered/enterprise grants preserve their approved overrides without conflation with self-serve Stripe subscriptions. Expensive-operation minute policies and period budgets are evaluated independently per plan. Plan entitlements are checked separately from API key scopes before cache lookup or quota debit; missing plan capabilities return 403 PLAN_ENTITLEMENT_REQUIRED. Key rotation, console renewal, project restoration, and within-period plan upgrades never reset consumed allowances. Admitted cache hits and 304 responses consume units consistently, while upstream 5xx responses keep minute admission consumed and credit back the monthly/period unit idempotently. Minute/operation exhaustion returns 429 RATE_LIMITED, free calendar-month exhaustion returns 429 MONTHLY_QUOTA_EXCEEDED, paid billing-period exhaustion returns 429 PERIOD_QUOTA_EXCEEDED, and expensive-operation period budget exhaustion returns 429 EXPENSIVE_BUDGET_EXCEEDED, each with RateLimit, RateLimit-Policy, X-RateLimit-Policy, and Retry-After; unavailable admission returns 503 QUOTA_UNAVAILABLE. Accounts include one project by default, with additional projects approved manually and a 24-hour account-level creation cooldown.\n\nThe signed-in dashboard API console can alternatively use a project-scoped session lasting at most 10 minutes. Console credentials require that dashboard login and are not portable API keys. Console requests use the same operation permissions, plan entitlements, and quota admission and count toward project usage.\n\nAdministrators can review project limit requests or manage manual/enterprise grants in the developer dashboard, while self-service subscriptions (checkout, Billing Portal, upgrades/downgrades, and 14-day withdrawal/refund requests) are managed per project. Approved manual RPM overrides apply to existing and future project keys and the API console without resetting quota counters.\n\nBreaking changes require a new major API version. Additive fields and operations may be introduced within v1.\n\nShared HTTP caching is disabled on outgoing authenticated v1 data responses. Every authenticated data request, including conditional requests, passes API key or dashboard-session authentication, permission checks, and exact quota admission before internal Worker/origin caching or private ETag revalidation. `/v1/health` and `/v1/open-api.json` are unauthenticated, skip quota admission and the Worker edge cache, and successful responses use `Cache-Control: public, max-age=60` with `CDN-Cache-Control: no-store`. CORS preflights also skip authentication and quota admission.",
+    "contact": {
+      "name": "egdata.app",
+      "url": "https://egdata.app"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://devs.egdata.app/proxy",
+      "description": "Staging gateway; operation paths include /v1."
+    },
+    {
+      "url": "https://api.egdata.app",
+      "description": "Production host; operation paths include /v1."
+    }
+  ],
+  "tags": [
+    {
+      "name": "System",
+      "description": "Health and versioned metadata."
+    },
+    {
+      "name": "Regions",
+      "description": "Countries and Epic pricing regions."
+    },
+    {
+      "name": "Catalog",
+      "description": "Cross-catalog discovery endpoints."
+    },
+    {
+      "name": "Offers",
+      "description": "Offer listing, events, and bulk checks."
+    },
+    {
+      "name": "Offer Details",
+      "description": "Offer subresources and relationships."
+    },
+    {
+      "name": "Prices",
+      "description": "Current, historical, and regional prices."
+    },
+    {
+      "name": "Offer Reviews",
+      "description": "Read-only public offer reviews."
+    },
+    {
+      "name": "Search",
+      "description": "Faceted search and changelog search."
+    },
+    {
+      "name": "Items",
+      "description": "Epic catalog items."
+    },
+    {
+      "name": "Sellers",
+      "description": "Seller metadata and statistics."
+    },
+    {
+      "name": "Sandboxes",
+      "description": "Namespaces and sandbox resources."
+    },
+    {
+      "name": "Builds",
+      "description": "Build manifests, files, and comparisons."
+    },
+    {
+      "name": "Free Games",
+      "description": "Current and historical giveaways."
+    },
+    {
+      "name": "Promotions",
+      "description": "Promotional events."
+    },
+    {
+      "name": "Collections",
+      "description": "Ranked storefront collections."
+    },
+    {
+      "name": "Profiles",
+      "description": "Public player profiles."
+    },
+    {
+      "name": "Stats",
+      "description": "Aggregate catalog statistics."
+    },
+    {
+      "name": "Franchises",
+      "description": "Franchise metadata and offers."
+    },
+    {
+      "name": "Game Awards",
+      "description": "The Game Awards modules."
+    },
+    {
+      "name": "Native",
+      "description": "Sitemaps and native image responses."
+    }
+  ],
+  "paths": {},
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Version 1 API key from the egdata Developer Portal. `Authorization: Bearer <key>` is also accepted; sending two different credentials is rejected."
+      },
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Version 1 API key passed as a Bearer credential."
+      }
+    },
+    "schemas": {
+      "Problem": {
+        "type": "object",
+        "required": [
+          "type",
+          "title",
+          "status",
+          "detail",
+          "code",
+          "requestId"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "pointer": {
+                  "type": "string"
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Pagination": {
+        "type": "object",
+        "required": [
+          "limit",
+          "hasMore",
+          "nextCursor"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Price": {
+        "type": "object",
+        "additionalProperties": true,
+        "nullable": true,
+        "properties": {
+          "offerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "currencyCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "precision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "originalPrice": {
+            "type": "integer",
+            "nullable": true
+          },
+          "discountPrice": {
+            "type": "integer",
+            "nullable": true
+          },
+          "discount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "Offer": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "id",
+          "namespace",
+          "title",
+          "offerType"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "longDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "offerType": {
+            "type": "string",
+            "nullable": true
+          },
+          "effectiveDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "releaseDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "keyImages": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "seller": {
+            "type": "object",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "price": {
+            "$ref": "#/components/schemas/Price"
+          }
+        }
+      },
+      "Item": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "customAttributes": {
+            "type": "object",
+            "nullable": true
+          }
+        }
+      },
+      "Seller": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    },
+    "responses": {
+      "Problem": {
+        "description": "RFC 9457 Problem Details",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      }
+    }
+  }
+}

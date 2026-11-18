@@ -1,0 +1,163 @@
+[
+  {
+    "input": {},
+    "output": {
+      "error": "MONGO_URL is required"
+    }
+  },
+  {
+    "input": {
+      "MONGO_URL": ""
+    },
+    "output": {
+      "error": "MONGO_URL is required"
+    }
+  },
+  {
+    "input": {
+      "MONGO_URL": "catalog.example.invalid"
+    },
+    "output": {
+      "error": "MONGO_CA is required"
+    }
+  },
+  {
+    "input": {
+      "MONGO_URL": "catalog.example.invalid",
+      "MONGO_CA": "ca.pem"
+    },
+    "output": {
+      "error": "MONGO_CERT is required"
+    }
+  },
+  {
+    "input": {
+      "MONGO_URL": "catalog.example.invalid",
+      "MONGO_CA": "ca.pem",
+      "MONGO_CERT": "client.pem"
+    },
+    "output": {
+      "driver": {
+        "uri": "mongodb+srv://catalog.example.invalid/egdata",
+        "opts": {
+          "tls": true,
+          "authMechanism": "MONGODB-X509",
+          "authSource": "$external",
+          "tlsCAFile": "ca.pem",
+          "tlsCertificateKeyFile": "client.pem"
+        }
+      },
+      "database": "egdata"
+    }
+  },
+  {
+    "input": {
+      "MONGO_URL": "mongodb://127.0.0.1:27017/database?appName=api",
+      "MONGO_CA": "ca.pem",
+      "MONGO_CERT": "client.pem"
+    },
+    "output": {
+      "driver": {
+        "uri": "mongodb://127.0.0.1:27017/database?appName=api",
+        "opts": {
+          "tls": true,
+          "authMechanism": "MONGODB-X509",
+          "authSource": "$external",
+          "tlsCAFile": "ca.pem",
+          "tlsCertificateKeyFile": "client.pem"
+        }
+      },
+      "database": "egdata"
+    }
+  },
+  {
+    "input": {
+      "MONGO_URL": "mongodb+srv://db.example.invalid/?retryWrites=true",
+      "MONGO_CA": "ca.pem",
+      "MONGO_CERT": "client.pem"
+    },
+    "output": {
+      "driver": {
+        "uri": "mongodb+srv://db.example.invalid/?retryWrites=true",
+        "opts": {
+          "tls": true,
+          "authMechanism": "MONGODB-X509",
+          "authSource": "$external",
+          "tlsCAFile": "ca.pem",
+          "tlsCertificateKeyFile": "client.pem"
+        }
+      },
+      "database": "egdata"
+    }
+  },
+  {
+    "input": {
+      "MONGO_URL": "catalog.example.invalid",
+      "MONGO_CA": " certificate with spaces.pem ",
+      "MONGO_CERT": "  signed.pem"
+    },
+    "output": {
+      "driver": {
+        "uri": "mongodb+srv://catalog.example.invalid/egdata",
+        "opts": {
+          "tls": true,
+          "authMechanism": "MONGODB-X509",
+          "authSource": "$external",
+          "tlsCAFile": " certificate with spaces.pem ",
+          "tlsCertificateKeyFile": "  signed.pem"
+        }
+      },
+      "database": "egdata"
+    }
+  },
+  {
+    "input": {
+      "MONGO_URL": "  standalone.invalid ",
+      "MONGO_CA": "ca.pem",
+      "MONGO_CERT": "client.pem"
+    },
+    "output": {
+      "driver": {
+        "uri": "mongodb+srv://  standalone.invalid /egdata",
+        "opts": {
+          "tls": true,
+          "authMechanism": "MONGODB-X509",
+          "authSource": "$external",
+          "tlsCAFile": "ca.pem",
+          "tlsCertificateKeyFile": "client.pem"
+        }
+      },
+      "database": "egdata"
+    }
+  },
+  {
+    "input": {
+      "MONGO_URL": "catalog.example.invalid",
+      "MONGO_CA": " ",
+      "MONGO_CERT": "client.pem"
+    },
+    "output": {
+      "driver": {
+        "uri": "mongodb+srv://catalog.example.invalid/egdata",
+        "opts": {
+          "tls": true,
+          "authMechanism": "MONGODB-X509",
+          "authSource": "$external",
+          "tlsCAFile": " ",
+          "tlsCertificateKeyFile": "client.pem"
+        }
+      },
+      "database": "egdata"
+    }
+  },
+  {
+    "input": {
+      "MONGO_URL": "catalog.example.invalid",
+      "MONGO_CA": "ca.pem",
+      "MONGO_CERT": ""
+    },
+    "output": {
+      "error": "MONGO_CERT is required"
+    }
+  }
+]

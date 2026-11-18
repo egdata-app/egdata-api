@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="640" viewBox="0 0 480 640">
+  <defs><linearGradient id="sky" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#102040"/><stop offset="1" stop-color="#fa6432"/></linearGradient></defs>
+  <rect width="480" height="640" fill="url(#sky)"/>
+  <circle cx="355" cy="150" r="120" fill="#ffc857"/>
+  <path d="M0 510 Q120 410 240 540 T480 500 V640 H0Z" fill="#183a61"/>
+  <text x="28" y="590" fill="white" font-family="sans-serif" font-size="32">LOCAL COVER</text>
+</svg>

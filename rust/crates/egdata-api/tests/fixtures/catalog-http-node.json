@@ -1,0 +1,1548 @@
+[
+  {
+    "name": "item-offer-linked",
+    "request": {
+      "method": "GET",
+      "path": "/v1/items/item-linked/offer"
+    },
+    "input": {
+      "item": {
+        "id": "item-linked"
+      },
+      "subItems": [
+        {
+          "_id": "linked",
+          "subItems": [
+            {
+              "id": "item-linked"
+            }
+          ]
+        }
+      ],
+      "offers": [
+        {
+          "_id": "mongo-linked",
+          "id": "linked",
+          "namespace": "ns",
+          "title": "Title linked",
+          "description": "Desc",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          }
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": {
+          "_id": "mongo-linked",
+          "id": "linked",
+          "namespace": "ns",
+          "title": "Title linked",
+          "description": "Desc",
+          "longDescription": null,
+          "offerType": "BASE_GAME",
+          "effectiveDate": null,
+          "creationDate": null,
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "isCodeRedemptionOnly": null,
+          "keyImages": [],
+          "currentPrice": null,
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          },
+          "productSlug": null,
+          "offerMappings": null,
+          "urlSlug": null,
+          "url": null,
+          "tags": [],
+          "items": [],
+          "categories": null,
+          "developerDisplayName": null,
+          "publisherDisplayName": null,
+          "prePurchase": null,
+          "releaseDate": null,
+          "pcReleaseDate": null,
+          "viewableDate": null,
+          "countriesBlacklist": null,
+          "countriesWhitelist": null,
+          "refundType": null,
+          "customAttributes": null,
+          "price": null,
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        },
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      }
+    }
+  },
+  {
+    "name": "item-offer-missing",
+    "request": {
+      "method": "GET",
+      "path": "/v1/items/item-missing/offer"
+    },
+    "input": {
+      "item": null
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/item-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No item matches 'item-missing'.",
+        "instance": "/v1/items/item-missing/offer",
+        "code": "ITEM_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "item-offer-no-eligible-offer",
+    "request": {
+      "method": "GET",
+      "path": "/v1/items/item-no-offer/offer"
+    },
+    "input": {
+      "item": {
+        "id": "item-no-offer"
+      },
+      "subItems": [],
+      "offers": []
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/item-offer-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No base-game offer is available for item 'item-no-offer' in US.",
+        "instance": "/v1/items/item-no-offer/offer",
+        "code": "ITEM_OFFER_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "item-offer-country-blocked",
+    "request": {
+      "method": "GET",
+      "path": "/v1/items/item-blocked/offer?country=DE"
+    },
+    "input": {
+      "item": {
+        "id": "item-blocked"
+      },
+      "subItems": [
+        {
+          "_id": "blocked",
+          "subItems": [
+            {
+              "id": "item-blocked"
+            }
+          ]
+        }
+      ],
+      "offers": [
+        {
+          "_id": "mongo-blocked",
+          "id": "blocked",
+          "namespace": "ns",
+          "title": "Title blocked",
+          "description": "Desc",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          },
+          "countriesBlacklist": [
+            "DE"
+          ]
+        }
+      ]
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/item-offer-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No base-game offer is available for item 'item-blocked' in DE.",
+        "instance": "/v1/items/item-blocked/offer",
+        "code": "ITEM_OFFER_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "item-offer-localized-translated-price",
+    "request": {
+      "method": "GET",
+      "path": "/v1/items/item-localized/offer?country=FR&locale=fr-FR"
+    },
+    "input": {
+      "item": {
+        "id": "item-localized"
+      },
+      "subItems": [
+        {
+          "_id": "localized",
+          "subItems": [
+            {
+              "id": "item-localized"
+            }
+          ]
+        }
+      ],
+      "offers": [
+        {
+          "_id": "mongo-localized",
+          "id": "localized",
+          "namespace": "ns",
+          "title": "Title localized",
+          "description": "Desc",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          }
+        }
+      ],
+      "price": {
+        "offerId": "localized",
+        "region": "EURO",
+        "currencyCode": "EUR",
+        "price": {
+          "originalPrice": 1999,
+          "discountPrice": 1499,
+          "discount": 25
+        }
+      },
+      "localization": {
+        "entityType": "offer",
+        "entityId": "ns:localized",
+        "locale": "fr-FR",
+        "source": "oracle",
+        "fetchedAt": "2026-11-01T00:00:00.000Z",
+        "data": {
+          "title": "Titre localisé",
+          "description": "Description localisée"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": {
+          "_id": "mongo-localized",
+          "id": "localized",
+          "namespace": "ns",
+          "title": "Titre localisé",
+          "description": "Description localisée",
+          "longDescription": null,
+          "offerType": "BASE_GAME",
+          "effectiveDate": null,
+          "creationDate": null,
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "isCodeRedemptionOnly": null,
+          "keyImages": [],
+          "currentPrice": null,
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          },
+          "productSlug": null,
+          "offerMappings": null,
+          "urlSlug": null,
+          "url": null,
+          "tags": [],
+          "items": [],
+          "categories": null,
+          "developerDisplayName": null,
+          "publisherDisplayName": null,
+          "prePurchase": null,
+          "releaseDate": null,
+          "pcReleaseDate": null,
+          "viewableDate": null,
+          "countriesBlacklist": null,
+          "countriesWhitelist": null,
+          "refundType": null,
+          "customAttributes": null,
+          "price": {
+            "offerId": "localized",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 1999,
+            "discountPrice": 1499,
+            "price": {
+              "originalPrice": 1999,
+              "discountPrice": 1499,
+              "discount": 25,
+              "currencyCode": "EUR",
+              "precision": 2
+            },
+            "updatedAt": null
+          },
+          "locale": "fr-FR",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "locale": "fr-FR",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "oracle",
+              "fetchedAt": "2026-11-01T00:00:00.000Z"
+            }
+          }
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "source": "oracle",
+            "fetchedAt": "2026-11-01T00:00:00.000Z"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "item-offer-localized-locale-fallback",
+    "request": {
+      "method": "GET",
+      "path": "/v1/items/item-localized-fallback/offer?country=FR&locale=fr-FR"
+    },
+    "input": {
+      "item": {
+        "id": "item-localized-fallback"
+      },
+      "subItems": [
+        {
+          "_id": "localized-fallback",
+          "subItems": [
+            {
+              "id": "item-localized-fallback"
+            }
+          ]
+        }
+      ],
+      "offers": [
+        {
+          "_id": "mongo-localized-fallback",
+          "id": "localized-fallback",
+          "namespace": "ns",
+          "title": "Title localized-fallback",
+          "description": "Desc",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          }
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": {
+          "_id": "mongo-localized-fallback",
+          "id": "localized-fallback",
+          "namespace": "ns",
+          "title": "Title localized-fallback",
+          "description": "Desc",
+          "longDescription": null,
+          "offerType": "BASE_GAME",
+          "effectiveDate": null,
+          "creationDate": null,
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "isCodeRedemptionOnly": null,
+          "keyImages": [],
+          "currentPrice": null,
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          },
+          "productSlug": null,
+          "offerMappings": null,
+          "urlSlug": null,
+          "url": null,
+          "tags": [],
+          "items": [],
+          "categories": null,
+          "developerDisplayName": null,
+          "publisherDisplayName": null,
+          "prePurchase": null,
+          "releaseDate": null,
+          "pcReleaseDate": null,
+          "viewableDate": null,
+          "countriesBlacklist": null,
+          "countriesWhitelist": null,
+          "refundType": null,
+          "customAttributes": null,
+          "price": null,
+          "locale": "fr-FR",
+          "localeStatus": "fallback",
+          "canonicalLocale": "en-US"
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR",
+          "localeStatus": "fallback",
+          "canonicalLocale": "en-US"
+        }
+      }
+    }
+  },
+  {
+    "name": "item-offer-localized-bom-locale",
+    "request": {
+      "method": "GET",
+      "path": "/v1/items/item-localized/offer?country=FR&locale=%EF%BB%BFfr-FR"
+    },
+    "input": {
+      "item": {
+        "id": "item-localized"
+      },
+      "subItems": [
+        {
+          "_id": "localized",
+          "subItems": [
+            {
+              "id": "item-localized"
+            }
+          ]
+        }
+      ],
+      "offers": [
+        {
+          "_id": "mongo-localized",
+          "id": "localized",
+          "namespace": "ns",
+          "title": "Title localized",
+          "description": "Desc",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          }
+        }
+      ],
+      "price": {
+        "offerId": "localized",
+        "region": "EURO",
+        "currencyCode": "EUR",
+        "price": {
+          "originalPrice": 1999,
+          "discountPrice": 1499,
+          "discount": 25
+        }
+      },
+      "localization": {
+        "entityType": "offer",
+        "entityId": "ns:localized",
+        "locale": "fr-FR",
+        "source": "oracle",
+        "fetchedAt": "2026-11-01T00:00:00.000Z",
+        "data": {
+          "title": "Titre localisé",
+          "description": "Description localisée"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": {
+          "_id": "mongo-localized",
+          "id": "localized",
+          "namespace": "ns",
+          "title": "Titre localisé",
+          "description": "Description localisée",
+          "longDescription": null,
+          "offerType": "BASE_GAME",
+          "effectiveDate": null,
+          "creationDate": null,
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "isCodeRedemptionOnly": null,
+          "keyImages": [],
+          "currentPrice": null,
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          },
+          "productSlug": null,
+          "offerMappings": null,
+          "urlSlug": null,
+          "url": null,
+          "tags": [],
+          "items": [],
+          "categories": null,
+          "developerDisplayName": null,
+          "publisherDisplayName": null,
+          "prePurchase": null,
+          "releaseDate": null,
+          "pcReleaseDate": null,
+          "viewableDate": null,
+          "countriesBlacklist": null,
+          "countriesWhitelist": null,
+          "refundType": null,
+          "customAttributes": null,
+          "price": {
+            "offerId": "localized",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 1999,
+            "discountPrice": 1499,
+            "price": {
+              "originalPrice": 1999,
+              "discountPrice": 1499,
+              "discount": 25,
+              "currencyCode": "EUR",
+              "precision": 2
+            },
+            "updatedAt": null
+          },
+          "locale": "fr-FR",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "locale": "fr-FR",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "oracle",
+              "fetchedAt": "2026-11-01T00:00:00.000Z"
+            }
+          }
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "source": "oracle",
+            "fetchedAt": "2026-11-01T00:00:00.000Z"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "item-offer-nel-locale-rejected",
+    "request": {
+      "method": "GET",
+      "path": "/v1/items/item-nel/offer?locale=%C2%85"
+    },
+    "input": {
+      "item": null
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-locale",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "Invalid locale ''. Use a BCP 47 tag such as en-US or pt-BR.",
+        "instance": "/v1/items/item-nel/offer",
+        "code": "INVALID_LOCALE",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "item-offer-cache-hit-not-found",
+    "request": {
+      "method": "GET",
+      "path": "/v1/items/item-cache-hit/offer"
+    },
+    "input": {
+      "cache": {
+        "status": "offer_not_found"
+      }
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/item-offer-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No base-game offer is available for item 'item-cache-hit' in US.",
+        "instance": "/v1/items/item-cache-hit/offer",
+        "code": "ITEM_OFFER_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "item-offer-malformed-cache-falls-through",
+    "request": {
+      "method": "GET",
+      "path": "/v1/items/item-cache-malformed/offer"
+    },
+    "input": {
+      "cache": "{malformed",
+      "item": {
+        "id": "item-cache-malformed"
+      },
+      "subItems": [
+        {
+          "_id": "cache-malformed",
+          "subItems": [
+            {
+              "id": "item-cache-malformed"
+            }
+          ]
+        }
+      ],
+      "offers": [
+        {
+          "_id": "mongo-cache-malformed",
+          "id": "cache-malformed",
+          "namespace": "ns",
+          "title": "Title cache-malformed",
+          "description": "Desc",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          }
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": {
+          "_id": "mongo-cache-malformed",
+          "id": "cache-malformed",
+          "namespace": "ns",
+          "title": "Title cache-malformed",
+          "description": "Desc",
+          "longDescription": null,
+          "offerType": "BASE_GAME",
+          "effectiveDate": null,
+          "creationDate": null,
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "isCodeRedemptionOnly": null,
+          "keyImages": [],
+          "currentPrice": null,
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          },
+          "productSlug": null,
+          "offerMappings": null,
+          "urlSlug": null,
+          "url": null,
+          "tags": [],
+          "items": [],
+          "categories": null,
+          "developerDisplayName": null,
+          "publisherDisplayName": null,
+          "prePurchase": null,
+          "releaseDate": null,
+          "pcReleaseDate": null,
+          "viewableDate": null,
+          "countriesBlacklist": null,
+          "countriesWhitelist": null,
+          "refundType": null,
+          "customAttributes": null,
+          "price": null,
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        },
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      }
+    }
+  },
+  {
+    "name": "item-offer-invalid-locale",
+    "request": {
+      "method": "GET",
+      "path": "/v1/items/item-invalid-locale/offer?locale=not_a_locale"
+    },
+    "input": {
+      "item": null
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-locale",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "Invalid locale 'not_a_locale'. Use a BCP 47 tag such as en-US or pt-BR.",
+        "instance": "/v1/items/item-invalid-locale/offer",
+        "code": "INVALID_LOCALE",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "item-offer-unknown-query",
+    "request": {
+      "method": "GET",
+      "path": "/v1/items/item-query/offer?currency=EUR"
+    },
+    "input": {
+      "item": null
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/items/item-query/offer",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"currency\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "item-offers-direct-linked-missing",
+    "request": {
+      "method": "POST",
+      "path": "/v1/items/bulk/offers",
+      "body": {
+        "items": [
+          "item-direct",
+          "item-linked",
+          "item-absent"
+        ]
+      }
+    },
+    "input": {
+      "direct": [
+        {
+          "_id": "mongo-direct",
+          "id": "direct",
+          "namespace": "ns",
+          "title": "Title direct",
+          "description": "Desc",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [
+            {
+              "id": "item-direct"
+            }
+          ],
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          }
+        }
+      ],
+      "linked": [
+        {
+          "_id": "linked",
+          "subItems": [
+            {
+              "id": "item-linked"
+            }
+          ]
+        }
+      ],
+      "linkedOffers": [
+        {
+          "_id": "mongo-linked",
+          "id": "linked",
+          "namespace": "ns",
+          "title": "Title linked",
+          "description": "Desc",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          }
+        }
+      ],
+      "absent": "item-absent"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": {
+          "item-direct": {
+            "_id": "mongo-direct",
+            "id": "direct",
+            "namespace": "ns",
+            "title": "Title direct",
+            "description": "Desc",
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": {
+              "id": "seller-a",
+              "name": "Seller A"
+            },
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [
+              {
+                "id": "item-direct"
+              }
+            ],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": null,
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          "item-linked": {
+            "_id": "mongo-linked",
+            "id": "linked",
+            "namespace": "ns",
+            "title": "Title linked",
+            "description": "Desc",
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": {
+              "id": "seller-a",
+              "name": "Seller A"
+            },
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": null,
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          "item-absent": null
+        },
+        "meta": {
+          "requested": 3,
+          "found": 2,
+          "country": "US",
+          "region": "US",
+          "locale": "en-US"
+        }
+      }
+    }
+  },
+  {
+    "name": "item-offers-duplicates-and-unknown",
+    "request": {
+      "method": "POST",
+      "path": "/v1/items/bulk/offers?country=FR",
+      "body": {
+        "items": [
+          "item-direct",
+          "item-direct",
+          "unknown"
+        ]
+      }
+    },
+    "input": {
+      "direct": [
+        {
+          "_id": "mongo-direct",
+          "id": "direct",
+          "namespace": "ns",
+          "title": "Title direct",
+          "description": "Desc",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [
+            {
+              "id": "item-direct"
+            }
+          ],
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          }
+        }
+      ],
+      "linked": [],
+      "linkedOffers": [],
+      "requested": [
+        "item-direct",
+        "unknown"
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": {
+          "item-direct": {
+            "_id": "mongo-direct",
+            "id": "direct",
+            "namespace": "ns",
+            "title": "Title direct",
+            "description": "Desc",
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": {
+              "id": "seller-a",
+              "name": "Seller A"
+            },
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [
+              {
+                "id": "item-direct"
+              }
+            ],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": null,
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          "unknown": null
+        },
+        "meta": {
+          "requested": 2,
+          "found": 1,
+          "country": "FR",
+          "region": "EURO",
+          "locale": "en-US"
+        }
+      }
+    }
+  },
+  {
+    "name": "item-offers-all-unknown",
+    "request": {
+      "method": "POST",
+      "path": "/v1/items/bulk/offers",
+      "body": {
+        "items": [
+          "unknown-a",
+          "unknown-b"
+        ]
+      }
+    },
+    "input": {
+      "direct": [],
+      "linked": [],
+      "linkedOffers": [],
+      "requested": [
+        "unknown-a",
+        "unknown-b"
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": {
+          "unknown-a": null,
+          "unknown-b": null
+        },
+        "meta": {
+          "requested": 2,
+          "found": 0,
+          "country": "US",
+          "region": "US",
+          "locale": "en-US"
+        }
+      }
+    }
+  },
+  {
+    "name": "item-offers-empty",
+    "request": {
+      "method": "POST",
+      "path": "/v1/items/bulk/offers",
+      "body": {
+        "items": []
+      }
+    },
+    "input": {
+      "direct": [],
+      "linked": [],
+      "linkedOffers": [],
+      "requested": []
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": {},
+        "meta": {
+          "requested": 0,
+          "found": 0,
+          "country": "US",
+          "region": "US",
+          "locale": "en-US"
+        }
+      }
+    }
+  },
+  {
+    "name": "item-offers-country-blocked",
+    "request": {
+      "method": "POST",
+      "path": "/v1/items/bulk/offers?country=FR",
+      "body": {
+        "items": [
+          "item-blocked-bulk"
+        ]
+      }
+    },
+    "input": {
+      "direct": [
+        {
+          "_id": "mongo-blocked-bulk",
+          "id": "blocked-bulk",
+          "namespace": "ns",
+          "title": "Title blocked-bulk",
+          "description": "Desc",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [
+            {
+              "id": "item-blocked-bulk"
+            }
+          ],
+          "seller": {
+            "id": "seller-a",
+            "name": "Seller A"
+          },
+          "countriesBlacklist": [
+            "FR"
+          ]
+        }
+      ],
+      "linked": [],
+      "linkedOffers": [],
+      "requested": [
+        "item-blocked-bulk"
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": {
+          "item-blocked-bulk": null
+        },
+        "meta": {
+          "requested": 1,
+          "found": 0,
+          "country": "FR",
+          "region": "EURO",
+          "locale": "en-US"
+        }
+      }
+    }
+  },
+  {
+    "name": "seller-cover-top-list-empty-fallback",
+    "request": {
+      "method": "GET",
+      "path": "/v1/sellers/seller-a/cover"
+    },
+    "input": {
+      "topSellerPositions": [
+        {
+          "offerId": "top-offer",
+          "position": 1
+        }
+      ],
+      "topSellerOffers": [],
+      "fallbackOffers": []
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": [],
+        "meta": {
+          "count": 0,
+          "country": "US",
+          "region": "US",
+          "locale": "en-US"
+        }
+      }
+    }
+  },
+  {
+    "name": "seller-cover-fallback-nonempty",
+    "request": {
+      "method": "GET",
+      "path": "/v1/sellers/seller-b/cover"
+    },
+    "input": {
+      "topSellerPositions": [
+        {
+          "offerId": "top-offer",
+          "position": 1
+        }
+      ],
+      "topSellerOffers": [],
+      "fallbackOffers": [
+        {
+          "_id": "mongo-fallback",
+          "id": "fallback",
+          "namespace": "ns",
+          "title": "Title fallback",
+          "description": "Desc",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "seller": {
+            "id": "seller-b",
+            "name": "Seller B"
+          }
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": [
+          {
+            "_id": "mongo-fallback",
+            "id": "fallback",
+            "namespace": "ns",
+            "title": "Title fallback",
+            "description": "Desc",
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": {
+              "id": "seller-b",
+              "name": "Seller B"
+            },
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": null,
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "count": 1,
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      }
+    }
+  },
+  {
+    "name": "seller-cover-prefers-top-seller-offers",
+    "request": {
+      "method": "GET",
+      "path": "/v1/sellers/seller-c/cover"
+    },
+    "input": {
+      "topSellerPositions": [
+        {
+          "offerId": "top-offer",
+          "position": 1
+        }
+      ],
+      "topSellerOffers": [
+        {
+          "_id": "mongo-top-offer",
+          "id": "top-offer",
+          "namespace": "ns",
+          "title": "Title top-offer",
+          "description": "Desc",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "seller": {
+            "id": "seller-c",
+            "name": "Seller C"
+          }
+        }
+      ],
+      "fallbackOffers": []
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": [
+          {
+            "_id": "mongo-top-offer",
+            "id": "top-offer",
+            "namespace": "ns",
+            "title": "Title top-offer",
+            "description": "Desc",
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": {
+              "id": "seller-c",
+              "name": "Seller C"
+            },
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": null,
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "count": 1,
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      }
+    }
+  },
+  {
+    "name": "seller-stats-combined-free-games",
+    "request": {
+      "method": "GET",
+      "path": "/v1/sellers/seller-a/stats"
+    },
+    "input": {
+      "seller": {
+        "_id": "seller-a",
+        "name": "Seller A"
+      },
+      "offers": 7,
+      "items": 4,
+      "games": 2,
+      "freegames": 2,
+      "mobileFreegames": 3
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": {
+          "offers": 7,
+          "items": 4,
+          "games": 2,
+          "freegames": 5,
+          "seller": {
+            "id": null,
+            "name": "Seller A",
+            "slug": null,
+            "externalId": null
+          }
+        },
+        "meta": {}
+      }
+    }
+  }
+]

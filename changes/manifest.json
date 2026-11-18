@@ -7,7 +7,8 @@
       "method": "GET",
       "path": "/autocomplete",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/top_reads.rs"
       ],
       "status": "active"
     },
@@ -17,7 +18,8 @@
       "method": "POST",
       "path": "/offers/exists",
       "sources": [
-        "src/routes/offers/index.ts"
+        "src/routes/offers/index.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -27,7 +29,8 @@
       "method": "GET",
       "path": "/builds/{targetId}/compare/{baseId}",
       "sources": [
-        "src/routes/builds.ts"
+        "src/routes/builds.ts",
+        "rust/crates/egdata-api/src/legacy/builds.rs"
       ],
       "status": "active"
     },
@@ -37,7 +40,8 @@
       "method": "GET",
       "path": "/search/{id}/count",
       "sources": [
-        "src/routes/search.ts"
+        "src/routes/search.ts",
+        "rust/crates/egdata-api/src/legacy/search/extra.rs"
       ],
       "status": "active"
     },
@@ -47,7 +51,8 @@
       "method": "POST",
       "path": "/auth/challenge",
       "sources": [
-        "src/services/anti-abuse-runtime.ts"
+        "src/services/anti-abuse-runtime.ts",
+        "rust/crates/egdata-api/src/legacy/mod.rs"
       ],
       "status": "active"
     },
@@ -57,7 +62,8 @@
       "method": "GET",
       "path": "/builds/{id}",
       "sources": [
-        "src/routes/builds.ts"
+        "src/routes/builds.ts",
+        "rust/crates/egdata-api/src/legacy/builds.rs"
       ],
       "status": "active"
     },
@@ -67,7 +73,8 @@
       "method": "GET",
       "path": "/builds/{id}/tree",
       "sources": [
-        "src/routes/builds.ts"
+        "src/routes/builds.ts",
+        "rust/crates/egdata-api/src/legacy/builds.rs"
       ],
       "status": "active"
     },
@@ -77,7 +84,8 @@
       "method": "GET",
       "path": "/builds/{id}/history",
       "sources": [
-        "src/routes/builds.ts"
+        "src/routes/builds.ts",
+        "rust/crates/egdata-api/src/legacy/builds.rs"
       ],
       "status": "active"
     },
@@ -87,7 +95,8 @@
       "method": "GET",
       "path": "/builds/{id}/install-options",
       "sources": [
-        "src/routes/builds.ts"
+        "src/routes/builds.ts",
+        "rust/crates/egdata-api/src/legacy/builds.rs"
       ],
       "status": "active"
     },
@@ -97,7 +106,8 @@
       "method": "GET",
       "path": "/changelist/{id}",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/top_reads.rs"
       ],
       "status": "active"
     },
@@ -107,7 +117,8 @@
       "method": "GET",
       "path": "/free-games",
       "sources": [
-        "src/routes/free-games.tsx"
+        "src/routes/free-games.tsx",
+        "rust/crates/egdata-api/src/legacy/catalog/free_games.rs"
       ],
       "status": "active"
     },
@@ -117,7 +128,8 @@
       "method": "GET",
       "path": "/free-games/stats",
       "sources": [
-        "src/routes/free-games.tsx"
+        "src/routes/free-games.tsx",
+        "rust/crates/egdata-api/src/legacy/catalog/free_games.rs"
       ],
       "status": "active"
     },
@@ -127,7 +139,8 @@
       "method": "GET",
       "path": "/health",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/system.rs"
       ],
       "status": "active"
     },
@@ -137,7 +150,8 @@
       "method": "GET",
       "path": "/stats/homepage",
       "sources": [
-        "src/routes/stats.ts"
+        "src/routes/stats.ts",
+        "rust/crates/egdata-api/src/legacy/stats.rs"
       ],
       "status": "active"
     },
@@ -147,7 +161,8 @@
       "method": "GET",
       "path": "/items/{id}",
       "sources": [
-        "src/routes/items.ts"
+        "src/routes/items.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -157,7 +172,8 @@
       "method": "GET",
       "path": "/items/{id}/assets",
       "sources": [
-        "src/routes/items.ts"
+        "src/routes/items.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -167,7 +183,8 @@
       "method": "GET",
       "path": "/items/{id}/builds",
       "sources": [
-        "src/routes/items.ts"
+        "src/routes/items.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -177,7 +194,8 @@
       "method": "GET",
       "path": "/items/{id}/changelog",
       "sources": [
-        "src/routes/items.ts"
+        "src/routes/items.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -187,7 +205,8 @@
       "method": "GET",
       "path": "/items/{id}/offer",
       "sources": [
-        "src/routes/items.ts"
+        "src/routes/items.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -197,7 +216,8 @@
       "method": "POST",
       "path": "/items/bulk",
       "sources": [
-        "src/routes/items.ts"
+        "src/routes/items.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -207,7 +227,8 @@
       "method": "GET",
       "path": "/stats/creations/monthly",
       "sources": [
-        "src/routes/stats.ts"
+        "src/routes/stats.ts",
+        "rust/crates/egdata-api/src/legacy/stats.rs"
       ],
       "status": "active"
     },
@@ -217,7 +238,8 @@
       "method": "GET",
       "path": "/stats/releases/monthly",
       "sources": [
-        "src/routes/stats.ts"
+        "src/routes/stats.ts",
+        "rust/crates/egdata-api/src/legacy/stats.rs"
       ],
       "status": "active"
     },
@@ -227,7 +249,8 @@
       "method": "GET",
       "path": "/offers/{id}",
       "sources": [
-        "src/routes/offers/index.ts"
+        "src/routes/offers/index.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -237,7 +260,8 @@
       "method": "GET",
       "path": "/offers/{id}/age-rating",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -247,7 +271,8 @@
       "method": "GET",
       "path": "/offers/{id}/bundle",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -257,7 +282,8 @@
       "method": "GET",
       "path": "/offers/{id}/changelog/stats",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offer_history.rs"
       ],
       "status": "active"
     },
@@ -267,7 +293,8 @@
       "method": "GET",
       "path": "/offers/{id}/collections/{collection}",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -277,7 +304,8 @@
       "method": "GET",
       "path": "/offers/events/{id}",
       "sources": [
-        "src/routes/offers/index.ts"
+        "src/routes/offers/index.ts",
+        "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
       ],
       "status": "active"
     },
@@ -287,7 +315,8 @@
       "method": "GET",
       "path": "/offers/{id}/features",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -297,7 +326,8 @@
       "method": "GET",
       "path": "/offers/{id}/hltb",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -307,7 +337,8 @@
       "method": "GET",
       "path": "/offers/{id}/igdb",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -317,7 +348,8 @@
       "method": "GET",
       "path": "/offers/{id}/mappings",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -327,7 +359,8 @@
       "method": "GET",
       "path": "/offers/{id}/media",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -337,7 +370,8 @@
       "method": "GET",
       "path": "/offers/{id}/og",
       "sources": [
-        "src/routes/offers/og.ts"
+        "src/routes/offers/og.ts",
+        "rust/crates/egdata-api/src/legacy/og_editorial.rs"
       ],
       "status": "active"
     },
@@ -347,7 +381,8 @@
       "method": "GET",
       "path": "/offers/{id}/og.webp",
       "sources": [
-        "src/routes/offers/og.ts"
+        "src/routes/offers/og.ts",
+        "rust/crates/egdata-api/src/legacy/og_editorial.rs"
       ],
       "status": "active"
     },
@@ -357,7 +392,8 @@
       "method": "GET",
       "path": "/offers/{id}/overview",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/top_reads.rs"
       ],
       "status": "active"
     },
@@ -367,7 +403,8 @@
       "method": "GET",
       "path": "/offers/{id}/polls",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -377,7 +414,8 @@
       "method": "GET",
       "path": "/offers/{id}/has-prepurchase",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -387,7 +425,8 @@
       "method": "GET",
       "path": "/offers/{id}/price",
       "sources": [
-        "src/routes/offers/price.ts"
+        "src/routes/offers/price.ts",
+        "rust/crates/egdata-api/src/legacy/offer_prices.rs"
       ],
       "status": "active"
     },
@@ -397,7 +436,8 @@
       "method": "GET",
       "path": "/offers/{id}/price/fairness",
       "sources": [
-        "src/routes/offers/price.ts"
+        "src/routes/offers/price.ts",
+        "rust/crates/egdata-api/src/legacy/offer_prices.rs"
       ],
       "status": "active"
     },
@@ -407,7 +447,8 @@
       "method": "GET",
       "path": "/offers/{id}/price-history",
       "sources": [
-        "src/routes/offers/price.ts"
+        "src/routes/offers/price.ts",
+        "rust/crates/egdata-api/src/legacy/offer_prices.rs"
       ],
       "status": "active"
     },
@@ -417,7 +458,8 @@
       "method": "GET",
       "path": "/offers/{id}/price-stats",
       "sources": [
-        "src/routes/offers/price.ts"
+        "src/routes/offers/price.ts",
+        "rust/crates/egdata-api/src/legacy/offer_prices.rs"
       ],
       "status": "active"
     },
@@ -427,7 +469,8 @@
       "method": "GET",
       "path": "/offers/{id}/ratings",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -437,7 +480,8 @@
       "method": "GET",
       "path": "/offers/{id}/regional-price",
       "sources": [
-        "src/routes/offers/price.ts"
+        "src/routes/offers/price.ts",
+        "rust/crates/egdata-api/src/legacy/offer_prices.rs"
       ],
       "status": "active"
     },
@@ -447,7 +491,8 @@
       "method": "GET",
       "path": "/offers/{id}/has-regular",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -457,7 +502,8 @@
       "method": "GET",
       "path": "/offers/{id}/requirements",
       "sources": [
-        "src/routes/offers/requirements.ts"
+        "src/routes/offers/requirements.ts",
+        "rust/crates/egdata-api/src/legacy/offer_prices.rs"
       ],
       "status": "active"
     },
@@ -467,7 +513,8 @@
       "method": "GET",
       "path": "/offers/{id}/reviews-summary",
       "sources": [
-        "src/routes/offers/reviews.ts"
+        "src/routes/offers/reviews.ts",
+        "rust/crates/egdata-api/src/legacy/offer_prices.rs"
       ],
       "status": "active"
     },
@@ -477,7 +524,8 @@
       "method": "POST",
       "path": "/items/bulk/offers",
       "sources": [
-        "src/routes/items.ts"
+        "src/routes/items.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -487,7 +535,8 @@
       "method": "GET",
       "path": "/offers/{id}/tops",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -497,7 +546,8 @@
       "method": "GET",
       "path": "/region",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/system.rs"
       ],
       "status": "active"
     },
@@ -507,7 +557,8 @@
       "method": "GET",
       "path": "/sandboxes/{sandboxId}",
       "sources": [
-        "src/routes/sandbox.ts"
+        "src/routes/sandbox.ts",
+        "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
       ],
       "status": "active"
     },
@@ -517,7 +568,8 @@
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/base-game",
       "sources": [
-        "src/routes/sandbox.ts"
+        "src/routes/sandbox.ts",
+        "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
       ],
       "status": "active"
     },
@@ -527,7 +579,8 @@
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/og",
       "sources": [
-        "src/routes/sandbox-og.ts"
+        "src/routes/sandbox-og.ts",
+        "rust/crates/egdata-api/src/legacy/og_editorial.rs"
       ],
       "status": "active"
     },
@@ -537,7 +590,8 @@
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/og.webp",
       "sources": [
-        "src/routes/sandbox-og.ts"
+        "src/routes/sandbox-og.ts",
+        "rust/crates/egdata-api/src/legacy/og_editorial.rs"
       ],
       "status": "active"
     },
@@ -547,7 +601,8 @@
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/stats",
       "sources": [
-        "src/routes/sandbox.ts"
+        "src/routes/sandbox.ts",
+        "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
       ],
       "status": "active"
     },
@@ -557,7 +612,8 @@
       "method": "GET",
       "path": "/search/{id}",
       "sources": [
-        "src/routes/search.ts"
+        "src/routes/search.ts",
+        "rust/crates/egdata-api/src/legacy/search.rs"
       ],
       "status": "active"
     },
@@ -567,7 +623,8 @@
       "method": "GET",
       "path": "/sellers/{id}/cover",
       "sources": [
-        "src/routes/sellers.ts"
+        "src/routes/sellers.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -577,7 +634,8 @@
       "method": "GET",
       "path": "/sellers/{id}/stats",
       "sources": [
-        "src/routes/sellers.ts"
+        "src/routes/sellers.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -587,7 +645,8 @@
       "method": "GET",
       "path": "/stats",
       "sources": [
-        "src/routes/stats.ts"
+        "src/routes/stats.ts",
+        "rust/crates/egdata-api/src/legacy/stats.rs"
       ],
       "status": "active"
     },
@@ -597,7 +656,8 @@
       "method": "GET",
       "path": "/stats/creations/yearly",
       "sources": [
-        "src/routes/stats.ts"
+        "src/routes/stats.ts",
+        "rust/crates/egdata-api/src/legacy/stats.rs"
       ],
       "status": "active"
     },
@@ -607,7 +667,8 @@
       "method": "GET",
       "path": "/stats/releases/yearly",
       "sources": [
-        "src/routes/stats.ts"
+        "src/routes/stats.ts",
+        "rust/crates/egdata-api/src/legacy/stats.rs"
       ],
       "status": "active"
     },
@@ -617,7 +678,8 @@
       "method": "POST",
       "path": "/catalog/hydrate",
       "sources": [
-        "src/routes/catalog-hydrate.ts"
+        "src/routes/catalog-hydrate.ts",
+        "rust/crates/egdata-api/src/legacy/system.rs"
       ],
       "status": "active"
     },
@@ -627,7 +689,8 @@
       "method": "GET",
       "path": "/",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
       ],
       "status": "active"
     },
@@ -637,7 +700,8 @@
       "method": "GET",
       "path": "/assets/{id}",
       "sources": [
-        "src/routes/assets.ts"
+        "src/routes/assets.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -647,7 +711,8 @@
       "method": "GET",
       "path": "/base-game/{namespace}",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/root_and_ops/root_reads.rs"
       ],
       "status": "active"
     },
@@ -657,7 +722,8 @@
       "method": "GET",
       "path": "/changelog",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/root_and_ops/root_reads.rs"
       ],
       "status": "active"
     },
@@ -667,7 +733,8 @@
       "method": "GET",
       "path": "/collections/{slug}",
       "sources": [
-        "src/routes/collections.tsx"
+        "src/routes/collections.tsx",
+        "rust/crates/egdata-api/src/legacy/og_editorial.rs"
       ],
       "status": "active"
     },
@@ -677,7 +744,8 @@
       "method": "GET",
       "path": "/collections/{slug}/{week}",
       "sources": [
-        "src/routes/collections.tsx"
+        "src/routes/collections.tsx",
+        "rust/crates/egdata-api/src/legacy/og_editorial.rs"
       ],
       "status": "active"
     },
@@ -687,7 +755,8 @@
       "method": "GET",
       "path": "/collections/{slug}/{week}/og",
       "sources": [
-        "src/routes/collections.tsx"
+        "src/routes/collections.tsx",
+        "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
       ],
       "status": "active"
     },
@@ -697,7 +766,8 @@
       "method": "GET",
       "path": "/doc",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/system.rs"
       ],
       "status": "active"
     },
@@ -707,7 +777,8 @@
       "method": "GET",
       "path": "/franchises/{slug}",
       "sources": [
-        "src/routes/franchises.ts"
+        "src/routes/franchises.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -717,7 +788,8 @@
       "method": "GET",
       "path": "/free-games/og",
       "sources": [
-        "src/routes/free-games.tsx"
+        "src/routes/free-games.tsx",
+        "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
       ],
       "status": "active"
     },
@@ -727,7 +799,8 @@
       "method": "GET",
       "path": "/game-awards",
       "sources": [
-        "src/routes/game-awards.ts"
+        "src/routes/game-awards.ts",
+        "rust/crates/egdata-api/src/legacy/og_editorial.rs"
       ],
       "status": "active"
     },
@@ -737,7 +810,8 @@
       "method": "GET",
       "path": "/game-awards/og",
       "sources": [
-        "src/routes/game-awards.ts"
+        "src/routes/game-awards.ts",
+        "rust/crates/egdata-api/src/legacy/og_editorial.rs"
       ],
       "status": "active"
     },
@@ -749,7 +823,8 @@
       "sources": [
         "src/graphql/index.ts",
         "src/graphql/loaders.ts",
-        "src/middlewares/apollo.ts"
+        "src/middlewares/apollo.ts",
+        "rust/crates/egdata-api/src/graphql/mod.rs"
       ],
       "status": "active"
     },
@@ -759,7 +834,8 @@
       "method": "GET",
       "path": "/items-from-offer/{id}",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/root_and_ops/root_reads.rs"
       ],
       "status": "active"
     },
@@ -769,7 +845,8 @@
       "method": "GET",
       "path": "/items/sitemap.xml",
       "sources": [
-        "src/routes/items.ts"
+        "src/routes/items.ts",
+        "rust/crates/egdata-api/src/legacy/sitemaps.rs"
       ],
       "status": "active"
     },
@@ -779,7 +856,8 @@
       "method": "GET",
       "path": "/items-sitemap.xml",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/sitemaps.rs"
       ],
       "status": "active"
     },
@@ -789,7 +867,8 @@
       "method": "GET",
       "path": "/multisearch",
       "sources": [
-        "src/routes/multisearch.ts"
+        "src/routes/multisearch.ts",
+        "rust/crates/egdata-api/src/legacy/root_and_ops/multisearch.rs"
       ],
       "status": "active"
     },
@@ -799,7 +878,8 @@
       "method": "GET",
       "path": "/multisearch/items",
       "sources": [
-        "src/routes/multisearch.ts"
+        "src/routes/multisearch.ts",
+        "rust/crates/egdata-api/src/legacy/root_and_ops/multisearch.rs"
       ],
       "status": "active"
     },
@@ -809,7 +889,8 @@
       "method": "GET",
       "path": "/multisearch/offers",
       "sources": [
-        "src/routes/multisearch.ts"
+        "src/routes/multisearch.ts",
+        "rust/crates/egdata-api/src/legacy/root_and_ops/multisearch.rs"
       ],
       "status": "active"
     },
@@ -819,7 +900,8 @@
       "method": "GET",
       "path": "/multisearch/sellers",
       "sources": [
-        "src/routes/multisearch.ts"
+        "src/routes/multisearch.ts",
+        "rust/crates/egdata-api/src/legacy/root_and_ops/multisearch.rs"
       ],
       "status": "active"
     },
@@ -829,7 +911,8 @@
       "method": "GET",
       "path": "/offer-by-slug/{slug}",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/system.rs"
       ],
       "status": "active"
     },
@@ -839,7 +922,8 @@
       "method": "GET",
       "path": "/open-api.json",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/system.rs"
       ],
       "status": "active"
     },
@@ -849,7 +933,8 @@
       "method": "GET",
       "path": "/ping",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/system.rs"
       ],
       "status": "active"
     },
@@ -859,7 +944,8 @@
       "method": "GET",
       "path": "/profiles/{id}",
       "sources": [
-        "src/routes/profiles.tsx"
+        "src/routes/profiles.tsx",
+        "rust/crates/egdata-api/src/legacy/profiles.rs"
       ],
       "status": "active"
     },
@@ -869,7 +955,8 @@
       "method": "GET",
       "path": "/profiles/{id}/achievements",
       "sources": [
-        "src/routes/profiles.tsx"
+        "src/routes/profiles.tsx",
+        "rust/crates/egdata-api/src/legacy/profiles.rs"
       ],
       "status": "active"
     },
@@ -879,7 +966,8 @@
       "method": "GET",
       "path": "/profiles/{id}/achievements/{sandboxId}",
       "sources": [
-        "src/routes/profiles.tsx"
+        "src/routes/profiles.tsx",
+        "rust/crates/egdata-api/src/legacy/profiles.rs"
       ],
       "status": "active"
     },
@@ -889,7 +977,8 @@
       "method": "GET",
       "path": "/profiles/{id}/games",
       "sources": [
-        "src/routes/profiles.tsx"
+        "src/routes/profiles.tsx",
+        "rust/crates/egdata-api/src/legacy/profiles.rs"
       ],
       "status": "active"
     },
@@ -899,7 +988,8 @@
       "method": "GET",
       "path": "/profiles/{id}/information",
       "sources": [
-        "src/routes/profiles.tsx"
+        "src/routes/profiles.tsx",
+        "rust/crates/egdata-api/src/legacy/profiles.rs"
       ],
       "status": "active"
     },
@@ -909,7 +999,8 @@
       "method": "GET",
       "path": "/profiles/{id}/random-game",
       "sources": [
-        "src/routes/profiles.tsx"
+        "src/routes/profiles.tsx",
+        "rust/crates/egdata-api/src/legacy/profiles.rs"
       ],
       "status": "active"
     },
@@ -919,7 +1010,8 @@
       "method": "GET",
       "path": "/profiles/{id}/rare-achievements",
       "sources": [
-        "src/routes/profiles.tsx"
+        "src/routes/profiles.tsx",
+        "rust/crates/egdata-api/src/legacy/profiles.rs"
       ],
       "status": "active"
     },
@@ -929,7 +1021,8 @@
       "method": "GET",
       "path": "/profiles/{id}/rare-achievements/{sandboxId}",
       "sources": [
-        "src/routes/profiles.tsx"
+        "src/routes/profiles.tsx",
+        "rust/crates/egdata-api/src/legacy/profiles.rs"
       ],
       "status": "active"
     },
@@ -939,7 +1032,8 @@
       "method": "GET",
       "path": "/profiles/{id}/refresh-status",
       "sources": [
-        "src/routes/profiles.tsx"
+        "src/routes/profiles.tsx",
+        "rust/crates/egdata-api/src/legacy/profiles.rs"
       ],
       "status": "active"
     },
@@ -949,7 +1043,8 @@
       "method": "GET",
       "path": "/profiles/leaderboard",
       "sources": [
-        "src/routes/profiles.tsx"
+        "src/routes/profiles.tsx",
+        "rust/crates/egdata-api/src/legacy/profiles.rs"
       ],
       "status": "active"
     },
@@ -959,7 +1054,8 @@
       "method": "GET",
       "path": "/profiles/sitemap.xml",
       "sources": [
-        "src/routes/profiles.tsx"
+        "src/routes/profiles.tsx",
+        "rust/crates/egdata-api/src/legacy/profiles.rs"
       ],
       "status": "active"
     },
@@ -969,7 +1065,8 @@
       "method": "GET",
       "path": "/promotions",
       "sources": [
-        "src/routes/promotions.ts"
+        "src/routes/promotions.ts",
+        "rust/crates/egdata-api/src/legacy/og_editorial.rs"
       ],
       "status": "active"
     },
@@ -979,7 +1076,8 @@
       "method": "GET",
       "path": "/promotions/{id}",
       "sources": [
-        "src/routes/promotions.ts"
+        "src/routes/promotions.ts",
+        "rust/crates/egdata-api/src/legacy/og_editorial.rs"
       ],
       "status": "active"
     },
@@ -989,7 +1087,8 @@
       "method": "GET",
       "path": "/promotions/{id}/cover",
       "sources": [
-        "src/routes/promotions.ts"
+        "src/routes/promotions.ts",
+        "rust/crates/egdata-api/src/legacy/og_editorial.rs"
       ],
       "status": "active"
     },
@@ -999,7 +1098,8 @@
       "method": "GET",
       "path": "/promotions-sitemap.xml",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/sitemaps.rs"
       ],
       "status": "active"
     },
@@ -1009,7 +1109,8 @@
       "method": "GET",
       "path": "/push/vapid-public-key",
       "sources": [
-        "src/routes/push.ts"
+        "src/routes/push.ts",
+        "rust/crates/egdata-api/src/legacy/account_admin.rs"
       ],
       "status": "active"
     },
@@ -1019,7 +1120,8 @@
       "method": "GET",
       "path": "/robots.txt",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/system.rs"
       ],
       "status": "active"
     },
@@ -1029,7 +1131,8 @@
       "method": "GET",
       "path": "/sandboxes/sitemap.xml",
       "sources": [
-        "src/routes/sandbox.ts"
+        "src/routes/sandbox.ts",
+        "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
       ],
       "status": "active"
     },
@@ -1039,7 +1142,8 @@
       "method": "GET",
       "path": "/search",
       "sources": [
-        "src/routes/search.ts"
+        "src/routes/search.ts",
+        "rust/crates/egdata-api/src/legacy/search.rs"
       ],
       "status": "active"
     },
@@ -1049,7 +1153,8 @@
       "method": "GET",
       "path": "/sitemap.xml",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/sitemaps.rs"
       ],
       "status": "active"
     },
@@ -1059,7 +1164,8 @@
       "method": "GET",
       "path": "/tags",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/system.rs"
       ],
       "status": "active"
     },
@@ -1069,7 +1175,8 @@
       "method": "GET",
       "path": "/ui",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/system.rs"
       ],
       "status": "active"
     },
@@ -1091,7 +1198,8 @@
       "sources": [
         "src/graphql/index.ts",
         "src/graphql/loaders.ts",
-        "src/middlewares/apollo.ts"
+        "src/middlewares/apollo.ts",
+        "rust/crates/egdata-api/src/graphql/mod.rs"
       ],
       "status": "active"
     },
@@ -1101,7 +1209,8 @@
       "method": "POST",
       "path": "/ping",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/root_and_ops/root_reads.rs"
       ],
       "status": "active"
     },
@@ -1111,7 +1220,8 @@
       "method": "GET",
       "path": "/active-sales",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/top_reads.rs"
       ],
       "status": "active"
     },
@@ -1121,7 +1231,8 @@
       "method": "GET",
       "path": "/builds/{id}/files",
       "sources": [
-        "src/routes/builds.ts"
+        "src/routes/builds.ts",
+        "rust/crates/egdata-api/src/legacy/builds.rs"
       ],
       "status": "active"
     },
@@ -1131,7 +1242,8 @@
       "method": "GET",
       "path": "/builds/{id}/items",
       "sources": [
-        "src/routes/builds.ts"
+        "src/routes/builds.ts",
+        "rust/crates/egdata-api/src/legacy/builds.rs"
       ],
       "status": "active"
     },
@@ -1141,7 +1253,8 @@
       "method": "GET",
       "path": "/builds",
       "sources": [
-        "src/routes/builds.ts"
+        "src/routes/builds.ts",
+        "rust/crates/egdata-api/src/legacy/builds.rs"
       ],
       "status": "active"
     },
@@ -1151,7 +1264,8 @@
       "method": "GET",
       "path": "/offers/{id}/in-bundle",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -1161,7 +1275,8 @@
       "method": "GET",
       "path": "/changelist",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/top_reads.rs"
       ],
       "status": "active"
     },
@@ -1171,7 +1286,8 @@
       "method": "GET",
       "path": "/countries",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/system.rs"
       ],
       "status": "active"
     },
@@ -1181,7 +1297,8 @@
       "method": "GET",
       "path": "/offers/featured-discounts",
       "sources": [
-        "src/routes/offers/index.ts"
+        "src/routes/offers/index.ts",
+        "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
       ],
       "status": "active"
     },
@@ -1191,7 +1308,8 @@
       "method": "GET",
       "path": "/featured",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/top_reads.rs"
       ],
       "status": "active"
     },
@@ -1201,7 +1319,8 @@
       "method": "GET",
       "path": "/free-games/history",
       "sources": [
-        "src/routes/free-games.tsx"
+        "src/routes/free-games.tsx",
+        "rust/crates/egdata-api/src/legacy/catalog/free_games.rs"
       ],
       "status": "active"
     },
@@ -1211,7 +1330,8 @@
       "method": "GET",
       "path": "/free-games/sellers",
       "sources": [
-        "src/routes/free-games.tsx"
+        "src/routes/free-games.tsx",
+        "rust/crates/egdata-api/src/legacy/catalog/free_games.rs"
       ],
       "status": "active"
     },
@@ -1221,7 +1341,8 @@
       "method": "GET",
       "path": "/items",
       "sources": [
-        "src/routes/items.ts"
+        "src/routes/items.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -1231,7 +1352,8 @@
       "method": "GET",
       "path": "/offers/latest-achievements",
       "sources": [
-        "src/routes/offers/index.ts"
+        "src/routes/offers/index.ts",
+        "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
       ],
       "status": "active"
     },
@@ -1241,7 +1363,8 @@
       "method": "GET",
       "path": "/latest-games",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/top_reads.rs"
       ],
       "status": "active"
     },
@@ -1251,7 +1374,8 @@
       "method": "GET",
       "path": "/offers/latest-released",
       "sources": [
-        "src/routes/offers/index.ts"
+        "src/routes/offers/index.ts",
+        "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
       ],
       "status": "active"
     },
@@ -1261,7 +1385,8 @@
       "method": "GET",
       "path": "/free-games/mobile",
       "sources": [
-        "src/routes/free-games.tsx"
+        "src/routes/free-games.tsx",
+        "rust/crates/egdata-api/src/legacy/catalog/free_games.rs"
       ],
       "status": "active"
     },
@@ -1271,7 +1396,8 @@
       "method": "GET",
       "path": "/offers/{id}/achievements",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -1281,7 +1407,8 @@
       "method": "GET",
       "path": "/offers/{id}/assets",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -1291,7 +1418,8 @@
       "method": "GET",
       "path": "/offers/{id}/builds",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -1301,7 +1429,8 @@
       "method": "GET",
       "path": "/offers/{id}/changelog",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offer_history.rs"
       ],
       "status": "active"
     },
@@ -1311,7 +1440,8 @@
       "method": "GET",
       "path": "/offers/{id}/collection",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -1321,7 +1451,8 @@
       "method": "GET",
       "path": "/offers/{id}/genres",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -1331,7 +1462,8 @@
       "method": "GET",
       "path": "/offers/events",
       "sources": [
-        "src/routes/offers/index.ts"
+        "src/routes/offers/index.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -1341,7 +1473,8 @@
       "method": "GET",
       "path": "/offers/{id}/franchises",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -1351,7 +1484,8 @@
       "method": "GET",
       "path": "/offers/genres",
       "sources": [
-        "src/routes/offers/index.ts"
+        "src/routes/offers/index.ts",
+        "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
       ],
       "status": "active"
     },
@@ -1361,7 +1495,8 @@
       "method": "GET",
       "path": "/offers/{id}/giveaways",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -1371,7 +1506,8 @@
       "method": "GET",
       "path": "/offers/{id}/items",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -1381,7 +1517,8 @@
       "method": "GET",
       "path": "/offers/{id}/reviews",
       "sources": [
-        "src/routes/offers/reviews.ts"
+        "src/routes/offers/reviews.ts",
+        "rust/crates/egdata-api/src/legacy/offer_history.rs"
       ],
       "status": "active"
     },
@@ -1391,7 +1528,8 @@
       "method": "GET",
       "path": "/offers",
       "sources": [
-        "src/routes/offers/index.ts"
+        "src/routes/offers/index.ts",
+        "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
       ],
       "status": "active"
     },
@@ -1401,7 +1539,8 @@
       "method": "GET",
       "path": "/offers/{id}/suggestions",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -1411,7 +1550,8 @@
       "method": "GET",
       "path": "/offers/{id}/technologies",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -1421,7 +1561,8 @@
       "method": "GET",
       "path": "/regions",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/system.rs"
       ],
       "status": "active"
     },
@@ -1431,7 +1572,8 @@
       "method": "GET",
       "path": "/offers/{id}/related",
       "sources": [
-        "src/routes/offers/data.ts"
+        "src/routes/offers/data.ts",
+        "rust/crates/egdata-api/src/legacy/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -1441,7 +1583,8 @@
       "method": "GET",
       "path": "/sales",
       "sources": [
-        "src/index.ts"
+        "src/index.ts",
+        "rust/crates/egdata-api/src/legacy/top_reads.rs"
       ],
       "status": "active"
     },
@@ -1451,7 +1594,8 @@
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/achievements",
       "sources": [
-        "src/routes/sandbox.ts"
+        "src/routes/sandbox.ts",
+        "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
       ],
       "status": "active"
     },
@@ -1461,7 +1605,8 @@
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/assets",
       "sources": [
-        "src/routes/sandbox.ts"
+        "src/routes/sandbox.ts",
+        "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
       ],
       "status": "active"
     },
@@ -1471,7 +1616,8 @@
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/builds",
       "sources": [
-        "src/routes/sandbox.ts"
+        "src/routes/sandbox.ts",
+        "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
       ],
       "status": "active"
     },
@@ -1481,7 +1627,8 @@
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/changelog",
       "sources": [
-        "src/routes/sandbox.ts"
+        "src/routes/sandbox.ts",
+        "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
       ],
       "status": "active"
     },
@@ -1491,7 +1638,8 @@
       "method": "GET",
       "path": "/sandboxes",
       "sources": [
-        "src/routes/sandbox.ts"
+        "src/routes/sandbox.ts",
+        "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
       ],
       "status": "active"
     },
@@ -1501,7 +1649,8 @@
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/items",
       "sources": [
-        "src/routes/sandbox.ts"
+        "src/routes/sandbox.ts",
+        "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
       ],
       "status": "active"
     },
@@ -1511,7 +1660,8 @@
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/offers",
       "sources": [
-        "src/routes/sandbox.ts"
+        "src/routes/sandbox.ts",
+        "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
       ],
       "status": "active"
     },
@@ -1521,7 +1671,8 @@
       "method": "GET",
       "path": "/search/developers",
       "sources": [
-        "src/routes/search.ts"
+        "src/routes/search.ts",
+        "rust/crates/egdata-api/src/legacy/search.rs"
       ],
       "status": "active"
     },
@@ -1531,7 +1682,8 @@
       "method": "GET",
       "path": "/search/offer-types",
       "sources": [
-        "src/routes/search.ts"
+        "src/routes/search.ts",
+        "rust/crates/egdata-api/src/legacy/search.rs"
       ],
       "status": "active"
     },
@@ -1541,7 +1693,8 @@
       "method": "GET",
       "path": "/search/publishers",
       "sources": [
-        "src/routes/search.ts"
+        "src/routes/search.ts",
+        "rust/crates/egdata-api/src/legacy/search.rs"
       ],
       "status": "active"
     },
@@ -1551,7 +1704,8 @@
       "method": "GET",
       "path": "/search/tags",
       "sources": [
-        "src/routes/search.ts"
+        "src/routes/search.ts",
+        "rust/crates/egdata-api/src/legacy/search.rs"
       ],
       "status": "active"
     },
@@ -1561,7 +1715,8 @@
       "method": "GET",
       "path": "/sellers/{id}",
       "sources": [
-        "src/routes/sellers.ts"
+        "src/routes/sellers.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -1571,7 +1726,8 @@
       "method": "GET",
       "path": "/sellers",
       "sources": [
-        "src/routes/sellers.ts"
+        "src/routes/sellers.ts",
+        "rust/crates/egdata-api/src/legacy/catalog.rs"
       ],
       "status": "active"
     },
@@ -1581,7 +1737,8 @@
       "method": "GET",
       "path": "/offers/top-sellers",
       "sources": [
-        "src/routes/offers/index.ts"
+        "src/routes/offers/index.ts",
+        "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
       ],
       "status": "active"
     },
@@ -1591,7 +1748,8 @@
       "method": "GET",
       "path": "/offers/top-wishlisted",
       "sources": [
-        "src/routes/offers/index.ts"
+        "src/routes/offers/index.ts",
+        "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
       ],
       "status": "active"
     },
@@ -1601,7 +1759,8 @@
       "method": "GET",
       "path": "/offers/upcoming",
       "sources": [
-        "src/routes/offers/index.ts"
+        "src/routes/offers/index.ts",
+        "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
       ],
       "status": "active"
     },
@@ -1611,7 +1770,8 @@
       "method": "POST",
       "path": "/builds/resolve-launcher-records",
       "sources": [
-        "src/routes/build-launcher-records.ts"
+        "src/routes/build-launcher-records.ts",
+        "rust/crates/egdata-api/src/legacy/builds.rs"
       ],
       "status": "active"
     },
@@ -1621,7 +1781,8 @@
       "method": "POST",
       "path": "/offers/slugs",
       "sources": [
-        "src/routes/offers/index.ts"
+        "src/routes/offers/index.ts",
+        "rust/crates/egdata-api/src/legacy/offers.rs"
       ],
       "status": "active"
     },
@@ -1631,7 +1792,8 @@
       "method": "GET",
       "path": "/search/changelog",
       "sources": [
-        "src/routes/search.ts"
+        "src/routes/search.ts",
+        "rust/crates/egdata-api/src/legacy/search/extra.rs"
       ],
       "status": "active"
     },
@@ -1641,7 +1803,8 @@
       "method": "GET",
       "path": "/free-games/search",
       "sources": [
-        "src/routes/free-games.tsx"
+        "src/routes/free-games.tsx",
+        "rust/crates/egdata-api/src/legacy/catalog/free_games.rs"
       ],
       "status": "active"
     },
@@ -1651,7 +1814,8 @@
       "method": "POST",
       "path": "/search",
       "sources": [
-        "src/routes/search.ts"
+        "src/routes/search.ts",
+        "rust/crates/egdata-api/src/legacy/search.rs"
       ],
       "status": "active"
     },
@@ -1661,7 +1825,8 @@
       "method": "POST",
       "path": "/search/v2/search",
       "sources": [
-        "src/routes/search.ts"
+        "src/routes/search.ts",
+        "rust/crates/egdata-api/src/legacy/search.rs"
       ],
       "status": "active"
     },
@@ -1671,7 +1836,8 @@
       "method": "GET",
       "path": "/search/v2/search",
       "sources": [
-        "src/routes/search.ts"
+        "src/routes/search.ts",
+        "rust/crates/egdata-api/src/legacy/search.rs"
       ],
       "status": "active"
     },
@@ -1681,7 +1847,8 @@
       "method": "POST",
       "path": "/search/natural-language",
       "sources": [
-        "src/routes/search.ts"
+        "src/routes/search.ts",
+        "rust/crates/egdata-api/src/legacy/search/extra.rs"
       ],
       "status": "active"
     },
@@ -1692,7 +1859,8 @@
       "path": "/v1/autocomplete",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
       ],
       "status": "active"
     },
@@ -1703,7 +1871,8 @@
       "path": "/v1/offers/exists",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/routes/offers.ts"
+        "src/v1/routes/offers.ts",
+        "rust/crates/egdata-api/src/v1/offers.rs"
       ],
       "status": "active"
     },
@@ -1714,7 +1883,8 @@
       "path": "/v1/offers/slugs",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/routes/offers.ts"
+        "src/v1/routes/offers.ts",
+        "rust/crates/egdata-api/src/v1/offers.rs"
       ],
       "status": "active"
     },
@@ -1725,7 +1895,8 @@
       "path": "/v1/builds/{targetId}/compare/{baseId}",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/routes/builds.ts"
+        "src/v1/routes/builds.ts",
+        "rust/crates/egdata-api/src/v1/builds.rs"
       ],
       "status": "active"
     },
@@ -1736,7 +1907,8 @@
       "path": "/v1/assets/{id}",
       "sources": [
         "src/v1/operations/assets.ts",
-        "src/v1/routes/assets.ts"
+        "src/v1/routes/assets.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -1747,7 +1919,8 @@
       "path": "/v1/base-game/{namespace}",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
       ],
       "status": "active"
     },
@@ -1758,7 +1931,8 @@
       "path": "/v1/builds/{id}",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/routes/builds.ts"
+        "src/v1/routes/builds.ts",
+        "rust/crates/egdata-api/src/v1/builds.rs"
       ],
       "status": "active"
     },
@@ -1769,7 +1943,8 @@
       "path": "/v1/builds/{id}/history",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/routes/builds.ts"
+        "src/v1/routes/builds.ts",
+        "rust/crates/egdata-api/src/v1/builds.rs"
       ],
       "status": "active"
     },
@@ -1780,7 +1955,8 @@
       "path": "/v1/builds/{id}/install-options",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/routes/builds.ts"
+        "src/v1/routes/builds.ts",
+        "rust/crates/egdata-api/src/v1/builds.rs"
       ],
       "status": "active"
     },
@@ -1791,7 +1967,8 @@
       "path": "/v1/builds/{id}/tree",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/routes/builds.ts"
+        "src/v1/routes/builds.ts",
+        "rust/crates/egdata-api/src/v1/builds.rs"
       ],
       "status": "active"
     },
@@ -1802,7 +1979,8 @@
       "path": "/v1/changelist/{id}",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
       ],
       "status": "active"
     },
@@ -1813,7 +1991,8 @@
       "path": "/v1/collections/{slug}",
       "sources": [
         "src/v1/operations/collections.ts",
-        "src/v1/routes/collections.ts"
+        "src/v1/routes/collections.ts",
+        "rust/crates/egdata-api/src/v1/collections.rs"
       ],
       "status": "active"
     },
@@ -1824,7 +2003,8 @@
       "path": "/v1/collections/{slug}/{week}",
       "sources": [
         "src/v1/operations/collections.ts",
-        "src/v1/routes/collections.ts"
+        "src/v1/routes/collections.ts",
+        "rust/crates/egdata-api/src/v1/collections.rs"
       ],
       "status": "active"
     },
@@ -1835,7 +2015,8 @@
       "path": "/v1/collections/{slug}/{week}/og",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/routes/og.ts"
+        "src/v1/routes/og.ts",
+        "rust/crates/egdata-api/src/v1/og.rs"
       ],
       "status": "active"
     },
@@ -1846,7 +2027,8 @@
       "path": "/v1/featured",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
       ],
       "status": "active"
     },
@@ -1857,7 +2039,8 @@
       "path": "/v1/franchises/{slug}",
       "sources": [
         "src/v1/operations/franchises.ts",
-        "src/v1/routes/franchises.ts"
+        "src/v1/routes/franchises.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -1868,7 +2051,8 @@
       "path": "/v1/free-games/og",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/routes/og.ts"
+        "src/v1/routes/og.ts",
+        "rust/crates/egdata-api/src/v1/og.rs"
       ],
       "status": "active"
     },
@@ -1879,7 +2063,8 @@
       "path": "/v1/free-games/stats",
       "sources": [
         "src/v1/operations/free-games.ts",
-        "src/v1/routes/free-games.ts"
+        "src/v1/routes/free-games.ts",
+        "rust/crates/egdata-api/src/v1/free_games.rs"
       ],
       "status": "active"
     },
@@ -1890,7 +2075,8 @@
       "path": "/v1/game-awards",
       "sources": [
         "src/v1/operations/game-awards.ts",
-        "src/v1/routes/game-awards.ts"
+        "src/v1/routes/game-awards.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -1901,7 +2087,8 @@
       "path": "/v1/game-awards/og",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/routes/og.ts"
+        "src/v1/routes/og.ts",
+        "rust/crates/egdata-api/src/v1/og.rs"
       ],
       "status": "active"
     },
@@ -1912,7 +2099,8 @@
       "path": "/v1/health",
       "sources": [
         "src/v1/operations/system.ts",
-        "src/v1/routes/system.ts"
+        "src/v1/routes/system.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -1923,7 +2111,8 @@
       "path": "/v1/stats/homepage",
       "sources": [
         "src/v1/operations/stats.ts",
-        "src/v1/routes/stats.ts"
+        "src/v1/routes/stats.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -1934,7 +2123,8 @@
       "path": "/v1/items/{id}",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/routes/items.ts"
+        "src/v1/routes/items.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
       ],
       "status": "active"
     },
@@ -1945,7 +2135,8 @@
       "path": "/v1/items/{id}/assets",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/routes/items.ts"
+        "src/v1/routes/items.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
       ],
       "status": "active"
     },
@@ -1956,7 +2147,8 @@
       "path": "/v1/items/{id}/builds",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/routes/items.ts"
+        "src/v1/routes/items.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
       ],
       "status": "active"
     },
@@ -1967,7 +2159,8 @@
       "path": "/v1/items/{id}/changelog",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/routes/items.ts"
+        "src/v1/routes/items.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
       ],
       "status": "active"
     },
@@ -1978,7 +2171,8 @@
       "path": "/v1/items/{id}/offer",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/routes/items.ts"
+        "src/v1/routes/items.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
       ],
       "status": "active"
     },
@@ -1989,7 +2183,8 @@
       "path": "/v1/items/bulk",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/routes/items.ts"
+        "src/v1/routes/items.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
       ],
       "status": "active"
     },
@@ -2000,7 +2195,8 @@
       "path": "/v1/items-sitemap.xml",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/routes/native.ts"
+        "src/v1/routes/native.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -2011,7 +2207,8 @@
       "path": "/v1/items/sitemap.xml",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/routes/native.ts"
+        "src/v1/routes/native.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -2022,7 +2219,8 @@
       "path": "/v1/latest-games",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
       ],
       "status": "active"
     },
@@ -2033,7 +2231,8 @@
       "path": "/v1/stats/creations/monthly",
       "sources": [
         "src/v1/operations/stats.ts",
-        "src/v1/routes/stats.ts"
+        "src/v1/routes/stats.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -2044,7 +2243,8 @@
       "path": "/v1/stats/releases/monthly",
       "sources": [
         "src/v1/operations/stats.ts",
-        "src/v1/routes/stats.ts"
+        "src/v1/routes/stats.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -2055,7 +2255,8 @@
       "path": "/v1/offers/{id}",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/routes/offers.ts"
+        "src/v1/routes/offers.ts",
+        "rust/crates/egdata-api/src/v1/offers.rs"
       ],
       "status": "active"
     },
@@ -2066,7 +2267,8 @@
       "path": "/v1/offers/{id}/achievements",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_insights.rs"
       ],
       "status": "active"
     },
@@ -2077,7 +2279,8 @@
       "path": "/v1/offers/{id}/age-rating",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_metadata.rs"
       ],
       "status": "active"
     },
@@ -2088,7 +2291,8 @@
       "path": "/v1/offers/{id}/assets",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_metadata.rs"
       ],
       "status": "active"
     },
@@ -2099,7 +2303,8 @@
       "path": "/v1/offers/{id}/builds",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_metadata.rs"
       ],
       "status": "active"
     },
@@ -2110,7 +2315,8 @@
       "path": "/v1/offers/{id}/bundle",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -2121,7 +2327,8 @@
       "path": "/v1/offer-by-slug/{slug}",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
       ],
       "status": "active"
     },
@@ -2132,7 +2339,8 @@
       "path": "/v1/offers/{id}/changelog/stats",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_details.rs"
       ],
       "status": "active"
     },
@@ -2143,7 +2351,8 @@
       "path": "/v1/offers/{id}/collection",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -2154,7 +2363,8 @@
       "path": "/v1/offers/{id}/collections/{collection}",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -2165,7 +2375,8 @@
       "path": "/v1/offers/events/{id}",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/routes/offers.ts"
+        "src/v1/routes/offers.ts",
+        "rust/crates/egdata-api/src/v1/offers.rs"
       ],
       "status": "active"
     },
@@ -2176,7 +2387,8 @@
       "path": "/v1/offers/{id}/features",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_metadata.rs"
       ],
       "status": "active"
     },
@@ -2187,7 +2399,8 @@
       "path": "/v1/offers/{id}/franchises",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_metadata.rs"
       ],
       "status": "active"
     },
@@ -2198,7 +2411,8 @@
       "path": "/v1/offers/{id}/genres",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_metadata.rs"
       ],
       "status": "active"
     },
@@ -2209,7 +2423,8 @@
       "path": "/v1/offers/{id}/giveaways",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_insights.rs"
       ],
       "status": "active"
     },
@@ -2220,7 +2435,8 @@
       "path": "/v1/offers/{id}/has-prepurchase",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -2231,7 +2447,8 @@
       "path": "/v1/offers/{id}/has-regular",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -2242,7 +2459,8 @@
       "path": "/v1/offers/{id}/hltb",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_insights.rs"
       ],
       "status": "active"
     },
@@ -2253,7 +2471,8 @@
       "path": "/v1/offers/{id}/igdb",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_insights.rs"
       ],
       "status": "active"
     },
@@ -2264,7 +2483,8 @@
       "path": "/v1/offers/{id}/items",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_metadata.rs"
       ],
       "status": "active"
     },
@@ -2275,7 +2495,8 @@
       "path": "/v1/offers/{id}/mappings",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_metadata.rs"
       ],
       "status": "active"
     },
@@ -2286,7 +2507,8 @@
       "path": "/v1/offers/{id}/media",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_metadata.rs"
       ],
       "status": "active"
     },
@@ -2297,7 +2519,8 @@
       "path": "/v1/offers/{id}/og",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/routes/og.ts"
+        "src/v1/routes/og.ts",
+        "rust/crates/egdata-api/src/v1/og.rs"
       ],
       "status": "active"
     },
@@ -2308,7 +2531,8 @@
       "path": "/v1/offers/{id}/og.webp",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/routes/og.ts"
+        "src/v1/routes/og.ts",
+        "rust/crates/egdata-api/src/v1/og.rs"
       ],
       "status": "active"
     },
@@ -2319,7 +2543,8 @@
       "path": "/v1/offers/{id}/overview",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_insights.rs"
       ],
       "status": "active"
     },
@@ -2330,7 +2555,8 @@
       "path": "/v1/offers/{id}/polls",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_insights.rs"
       ],
       "status": "active"
     },
@@ -2341,7 +2567,8 @@
       "path": "/v1/offers/{id}/price",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_prices.rs"
       ],
       "status": "active"
     },
@@ -2352,7 +2579,8 @@
       "path": "/v1/offers/{id}/price/fairness",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_prices.rs"
       ],
       "status": "active"
     },
@@ -2363,7 +2591,8 @@
       "path": "/v1/offers/{id}/price-stats",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_prices.rs"
       ],
       "status": "active"
     },
@@ -2374,7 +2603,8 @@
       "path": "/v1/offers/{id}/ratings",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_insights.rs"
       ],
       "status": "active"
     },
@@ -2385,7 +2615,8 @@
       "path": "/v1/offers/{id}/regional-price",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_prices.rs"
       ],
       "status": "active"
     },
@@ -2396,7 +2627,8 @@
       "path": "/v1/offers/{id}/requirements",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_insights.rs"
       ],
       "status": "active"
     },
@@ -2407,7 +2639,8 @@
       "path": "/v1/offers/{id}/reviews-summary",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_details.rs"
       ],
       "status": "active"
     },
@@ -2418,7 +2651,8 @@
       "path": "/v1/items/bulk/offers",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/routes/items.ts"
+        "src/v1/routes/items.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
       ],
       "status": "active"
     },
@@ -2429,7 +2663,8 @@
       "path": "/v1/offers/{id}/suggestions",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -2440,7 +2675,8 @@
       "path": "/v1/offers/{id}/technologies",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_metadata.rs"
       ],
       "status": "active"
     },
@@ -2451,7 +2687,8 @@
       "path": "/v1/offers/{id}/tops",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_insights.rs"
       ],
       "status": "active"
     },
@@ -2462,7 +2699,8 @@
       "path": "/v1/profiles/{id}",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/routes/profiles.ts"
+        "src/v1/routes/profiles.ts",
+        "rust/crates/egdata-api/src/v1/profiles.rs"
       ],
       "status": "active"
     },
@@ -2473,7 +2711,8 @@
       "path": "/v1/profiles/{id}/achievements/{sandboxId}",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/routes/profiles.ts"
+        "src/v1/routes/profiles.ts",
+        "rust/crates/egdata-api/src/v1/profiles.rs"
       ],
       "status": "active"
     },
@@ -2484,7 +2723,8 @@
       "path": "/v1/profiles/{id}/information",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/routes/profiles.ts"
+        "src/v1/routes/profiles.ts",
+        "rust/crates/egdata-api/src/v1/profiles.rs"
       ],
       "status": "active"
     },
@@ -2495,7 +2735,8 @@
       "path": "/v1/profiles/{id}/random-game",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/routes/profiles.ts"
+        "src/v1/routes/profiles.ts",
+        "rust/crates/egdata-api/src/v1/profiles.rs"
       ],
       "status": "active"
     },
@@ -2506,7 +2747,8 @@
       "path": "/v1/profiles/{id}/rare-achievements/{sandboxId}",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/routes/profiles.ts"
+        "src/v1/routes/profiles.ts",
+        "rust/crates/egdata-api/src/v1/profiles.rs"
       ],
       "status": "active"
     },
@@ -2517,7 +2759,8 @@
       "path": "/v1/profiles/sitemap.xml",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/routes/native.ts"
+        "src/v1/routes/native.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -2528,7 +2771,8 @@
       "path": "/v1/promotions/{id}/cover",
       "sources": [
         "src/v1/operations/promotions.ts",
-        "src/v1/routes/promotions.ts"
+        "src/v1/routes/promotions.ts",
+        "rust/crates/egdata-api/src/v1/promotions.rs"
       ],
       "status": "active"
     },
@@ -2539,7 +2783,8 @@
       "path": "/v1/promotions-sitemap.xml",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/routes/native.ts"
+        "src/v1/routes/native.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -2550,7 +2795,8 @@
       "path": "/v1/region",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog.rs"
       ],
       "status": "active"
     },
@@ -2561,7 +2807,8 @@
       "path": "/v1/offers/{id}/related",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -2572,7 +2819,8 @@
       "path": "/v1/robots.txt",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/routes/native.ts"
+        "src/v1/routes/native.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -2583,7 +2831,8 @@
       "path": "/v1/sandboxes/{sandboxId}",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/routes/sandboxes.ts"
+        "src/v1/routes/sandboxes.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
       ],
       "status": "active"
     },
@@ -2594,7 +2843,8 @@
       "path": "/v1/sandboxes/{sandboxId}/base-game",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/routes/sandboxes.ts"
+        "src/v1/routes/sandboxes.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
       ],
       "status": "active"
     },
@@ -2605,7 +2855,8 @@
       "path": "/v1/sandboxes/{sandboxId}/changelog",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/routes/sandboxes.ts"
+        "src/v1/routes/sandboxes.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
       ],
       "status": "active"
     },
@@ -2616,7 +2867,8 @@
       "path": "/v1/sandboxes/sitemap.xml",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/routes/native.ts"
+        "src/v1/routes/native.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -2627,7 +2879,8 @@
       "path": "/v1/sandboxes/{sandboxId}/og",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/routes/og.ts"
+        "src/v1/routes/og.ts",
+        "rust/crates/egdata-api/src/v1/og.rs"
       ],
       "status": "active"
     },
@@ -2638,7 +2891,8 @@
       "path": "/v1/sandboxes/{sandboxId}/og.webp",
       "sources": [
         "src/v1/operations/og.ts",
-        "src/v1/routes/og.ts"
+        "src/v1/routes/og.ts",
+        "rust/crates/egdata-api/src/v1/og.rs"
       ],
       "status": "active"
     },
@@ -2649,7 +2903,8 @@
       "path": "/v1/sandboxes/{sandboxId}/stats",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/routes/sandboxes.ts"
+        "src/v1/routes/sandboxes.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
       ],
       "status": "active"
     },
@@ -2660,7 +2915,8 @@
       "path": "/v1/search/{id}",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/routes/search.ts"
+        "src/v1/routes/search.ts",
+        "rust/crates/egdata-api/src/v1/search.rs"
       ],
       "status": "active"
     },
@@ -2671,7 +2927,8 @@
       "path": "/v1/search/{id}/count",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/routes/search.ts"
+        "src/v1/routes/search.ts",
+        "rust/crates/egdata-api/src/v1/search.rs"
       ],
       "status": "active"
     },
@@ -2682,7 +2939,8 @@
       "path": "/v1/sellers/{id}/cover",
       "sources": [
         "src/v1/operations/sellers.ts",
-        "src/v1/routes/sellers.ts"
+        "src/v1/routes/sellers.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sellers.rs"
       ],
       "status": "active"
     },
@@ -2693,7 +2951,8 @@
       "path": "/v1/sellers/{id}/stats",
       "sources": [
         "src/v1/operations/sellers.ts",
-        "src/v1/routes/sellers.ts"
+        "src/v1/routes/sellers.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sellers.rs"
       ],
       "status": "active"
     },
@@ -2704,7 +2963,8 @@
       "path": "/v1/sitemap.xml",
       "sources": [
         "src/v1/operations/native.ts",
-        "src/v1/routes/native.ts"
+        "src/v1/routes/native.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -2715,7 +2975,8 @@
       "path": "/v1/stats",
       "sources": [
         "src/v1/operations/stats.ts",
-        "src/v1/routes/stats.ts"
+        "src/v1/routes/stats.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -2726,7 +2987,8 @@
       "path": "/v1/open-api.json",
       "sources": [
         "src/v1/operations/system.ts",
-        "src/v1/routes/system.ts"
+        "src/v1/routes/system.ts",
+        "rust/crates/egdata-api/src/v1/mod.rs"
       ],
       "status": "active"
     },
@@ -2737,7 +2999,8 @@
       "path": "/v1/stats/creations/yearly",
       "sources": [
         "src/v1/operations/stats.ts",
-        "src/v1/routes/stats.ts"
+        "src/v1/routes/stats.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -2748,7 +3011,8 @@
       "path": "/v1/stats/releases/yearly",
       "sources": [
         "src/v1/operations/stats.ts",
-        "src/v1/routes/stats.ts"
+        "src/v1/routes/stats.ts",
+        "rust/crates/egdata-api/src/v1/system.rs"
       ],
       "status": "active"
     },
@@ -2759,7 +3023,8 @@
       "path": "/v1/catalog/hydrate",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog-hydrate.ts"
+        "src/v1/routes/catalog-hydrate.ts",
+        "rust/crates/egdata-api/src/v1/catalog.rs"
       ],
       "status": "active"
     },
@@ -2770,7 +3035,8 @@
       "path": "/v1/active-sales",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
       ],
       "status": "active"
     },
@@ -2781,7 +3047,8 @@
       "path": "/v1/builds/{id}/files",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/routes/builds.ts"
+        "src/v1/routes/builds.ts",
+        "rust/crates/egdata-api/src/v1/builds.rs"
       ],
       "status": "active"
     },
@@ -2792,7 +3059,8 @@
       "path": "/v1/builds/{id}/items",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/routes/builds.ts"
+        "src/v1/routes/builds.ts",
+        "rust/crates/egdata-api/src/v1/builds.rs"
       ],
       "status": "active"
     },
@@ -2803,7 +3071,8 @@
       "path": "/v1/builds",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/routes/builds.ts"
+        "src/v1/routes/builds.ts",
+        "rust/crates/egdata-api/src/v1/builds.rs"
       ],
       "status": "active"
     },
@@ -2814,7 +3083,8 @@
       "path": "/v1/offers/{id}/in-bundle",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_relations.rs"
       ],
       "status": "active"
     },
@@ -2825,7 +3095,8 @@
       "path": "/v1/changelist",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
       ],
       "status": "active"
     },
@@ -2836,7 +3107,8 @@
       "path": "/v1/changelog",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
       ],
       "status": "active"
     },
@@ -2847,7 +3119,8 @@
       "path": "/v1/countries",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog.rs"
       ],
       "status": "active"
     },
@@ -2858,7 +3131,8 @@
       "path": "/v1/offers/featured-discounts",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/routes/offers.ts"
+        "src/v1/routes/offers.ts",
+        "rust/crates/egdata-api/src/v1/offers.rs"
       ],
       "status": "active"
     },
@@ -2869,7 +3143,8 @@
       "path": "/v1/free-games",
       "sources": [
         "src/v1/operations/free-games.ts",
-        "src/v1/routes/free-games.ts"
+        "src/v1/routes/free-games.ts",
+        "rust/crates/egdata-api/src/v1/free_games.rs"
       ],
       "status": "active"
     },
@@ -2880,7 +3155,8 @@
       "path": "/v1/free-games/sellers",
       "sources": [
         "src/v1/operations/free-games.ts",
-        "src/v1/routes/free-games.ts"
+        "src/v1/routes/free-games.ts",
+        "rust/crates/egdata-api/src/v1/free_games.rs"
       ],
       "status": "active"
     },
@@ -2891,7 +3167,8 @@
       "path": "/v1/free-games/history",
       "sources": [
         "src/v1/operations/free-games.ts",
-        "src/v1/routes/free-games.ts"
+        "src/v1/routes/free-games.ts",
+        "rust/crates/egdata-api/src/v1/free_games.rs"
       ],
       "status": "active"
     },
@@ -2902,7 +3179,8 @@
       "path": "/v1/items",
       "sources": [
         "src/v1/operations/items.ts",
-        "src/v1/routes/items.ts"
+        "src/v1/routes/items.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
       ],
       "status": "active"
     },
@@ -2913,7 +3191,8 @@
       "path": "/v1/items-from-offer/{id}",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
       ],
       "status": "active"
     },
@@ -2924,7 +3203,8 @@
       "path": "/v1/offers/latest-achievements",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/routes/offers.ts"
+        "src/v1/routes/offers.ts",
+        "rust/crates/egdata-api/src/v1/offers.rs"
       ],
       "status": "active"
     },
@@ -2935,7 +3215,8 @@
       "path": "/v1/offers/latest-released",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/routes/offers.ts"
+        "src/v1/routes/offers.ts",
+        "rust/crates/egdata-api/src/v1/offers.rs"
       ],
       "status": "active"
     },
@@ -2946,7 +3227,8 @@
       "path": "/v1/free-games/mobile",
       "sources": [
         "src/v1/operations/free-games.ts",
-        "src/v1/routes/free-games.ts"
+        "src/v1/routes/free-games.ts",
+        "rust/crates/egdata-api/src/v1/free_games.rs"
       ],
       "status": "active"
     },
@@ -2957,7 +3239,8 @@
       "path": "/v1/offers/{id}/changelog",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_details.rs"
       ],
       "status": "active"
     },
@@ -2968,7 +3251,8 @@
       "path": "/v1/offers/events",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/routes/offers.ts"
+        "src/v1/routes/offers.ts",
+        "rust/crates/egdata-api/src/v1/offers.rs"
       ],
       "status": "active"
     },
@@ -2979,7 +3263,8 @@
       "path": "/v1/offers/genres",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/routes/offers.ts"
+        "src/v1/routes/offers.ts",
+        "rust/crates/egdata-api/src/v1/offers.rs"
       ],
       "status": "active"
     },
@@ -2990,7 +3275,8 @@
       "path": "/v1/offers/{id}/price-history",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_prices.rs"
       ],
       "status": "active"
     },
@@ -3001,7 +3287,8 @@
       "path": "/v1/offers/{id}/reviews",
       "sources": [
         "src/v1/operations/offer-details.ts",
-        "src/v1/routes/offer-details.ts"
+        "src/v1/routes/offer-details.ts",
+        "rust/crates/egdata-api/src/v1/offer_details.rs"
       ],
       "status": "active"
     },
@@ -3012,7 +3299,8 @@
       "path": "/v1/offers",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/routes/offers.ts"
+        "src/v1/routes/offers.ts",
+        "rust/crates/egdata-api/src/v1/offers.rs"
       ],
       "status": "active"
     },
@@ -3023,7 +3311,8 @@
       "path": "/v1/profiles/{id}/achievements",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/routes/profiles.ts"
+        "src/v1/routes/profiles.ts",
+        "rust/crates/egdata-api/src/v1/profiles.rs"
       ],
       "status": "active"
     },
@@ -3034,7 +3323,8 @@
       "path": "/v1/profiles/{id}/games",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/routes/profiles.ts"
+        "src/v1/routes/profiles.ts",
+        "rust/crates/egdata-api/src/v1/profiles.rs"
       ],
       "status": "active"
     },
@@ -3045,7 +3335,8 @@
       "path": "/v1/profiles/leaderboard",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/routes/profiles.ts"
+        "src/v1/routes/profiles.ts",
+        "rust/crates/egdata-api/src/v1/profiles.rs"
       ],
       "status": "active"
     },
@@ -3056,7 +3347,8 @@
       "path": "/v1/profiles/{id}/rare-achievements",
       "sources": [
         "src/v1/operations/profiles.ts",
-        "src/v1/routes/profiles.ts"
+        "src/v1/routes/profiles.ts",
+        "rust/crates/egdata-api/src/v1/profiles.rs"
       ],
       "status": "active"
     },
@@ -3067,7 +3359,8 @@
       "path": "/v1/promotions/{id}",
       "sources": [
         "src/v1/operations/promotions.ts",
-        "src/v1/routes/promotions.ts"
+        "src/v1/routes/promotions.ts",
+        "rust/crates/egdata-api/src/v1/promotions.rs"
       ],
       "status": "active"
     },
@@ -3078,7 +3371,8 @@
       "path": "/v1/promotions",
       "sources": [
         "src/v1/operations/promotions.ts",
-        "src/v1/routes/promotions.ts"
+        "src/v1/routes/promotions.ts",
+        "rust/crates/egdata-api/src/v1/promotions.rs"
       ],
       "status": "active"
     },
@@ -3089,7 +3383,8 @@
       "path": "/v1/regions",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog.rs"
       ],
       "status": "active"
     },
@@ -3100,7 +3395,8 @@
       "path": "/v1/sales",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
       ],
       "status": "active"
     },
@@ -3111,7 +3407,8 @@
       "path": "/v1/sandboxes/{sandboxId}/achievements",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/routes/sandboxes.ts"
+        "src/v1/routes/sandboxes.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
       ],
       "status": "active"
     },
@@ -3122,7 +3419,8 @@
       "path": "/v1/sandboxes/{sandboxId}/assets",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/routes/sandboxes.ts"
+        "src/v1/routes/sandboxes.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
       ],
       "status": "active"
     },
@@ -3133,7 +3431,8 @@
       "path": "/v1/sandboxes/{sandboxId}/builds",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/routes/sandboxes.ts"
+        "src/v1/routes/sandboxes.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
       ],
       "status": "active"
     },
@@ -3144,7 +3443,8 @@
       "path": "/v1/sandboxes",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/routes/sandboxes.ts"
+        "src/v1/routes/sandboxes.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
       ],
       "status": "active"
     },
@@ -3155,7 +3455,8 @@
       "path": "/v1/sandboxes/{sandboxId}/items",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/routes/sandboxes.ts"
+        "src/v1/routes/sandboxes.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
       ],
       "status": "active"
     },
@@ -3166,7 +3467,8 @@
       "path": "/v1/sandboxes/{sandboxId}/offers",
       "sources": [
         "src/v1/operations/sandboxes.ts",
-        "src/v1/routes/sandboxes.ts"
+        "src/v1/routes/sandboxes.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
       ],
       "status": "active"
     },
@@ -3177,7 +3479,8 @@
       "path": "/v1/search/developers",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/routes/search.ts"
+        "src/v1/routes/search.ts",
+        "rust/crates/egdata-api/src/v1/search.rs"
       ],
       "status": "active"
     },
@@ -3188,7 +3491,8 @@
       "path": "/v1/search/offer-types",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/routes/search.ts"
+        "src/v1/routes/search.ts",
+        "rust/crates/egdata-api/src/v1/search.rs"
       ],
       "status": "active"
     },
@@ -3199,7 +3503,8 @@
       "path": "/v1/search/publishers",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/routes/search.ts"
+        "src/v1/routes/search.ts",
+        "rust/crates/egdata-api/src/v1/search.rs"
       ],
       "status": "active"
     },
@@ -3210,7 +3515,8 @@
       "path": "/v1/search/tags",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/routes/search.ts"
+        "src/v1/routes/search.ts",
+        "rust/crates/egdata-api/src/v1/search.rs"
       ],
       "status": "active"
     },
@@ -3221,7 +3527,8 @@
       "path": "/v1/sellers/{id}",
       "sources": [
         "src/v1/operations/sellers.ts",
-        "src/v1/routes/sellers.ts"
+        "src/v1/routes/sellers.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sellers.rs"
       ],
       "status": "active"
     },
@@ -3232,7 +3539,8 @@
       "path": "/v1/sellers",
       "sources": [
         "src/v1/operations/sellers.ts",
-        "src/v1/routes/sellers.ts"
+        "src/v1/routes/sellers.ts",
+        "rust/crates/egdata-api/src/v1/catalog_list/sellers.rs"
       ],
       "status": "active"
     },
@@ -3243,7 +3551,8 @@
       "path": "/v1/tags",
       "sources": [
         "src/v1/operations/catalog.ts",
-        "src/v1/routes/catalog.ts"
+        "src/v1/routes/catalog.ts",
+        "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
       ],
       "status": "active"
     },
@@ -3254,7 +3563,8 @@
       "path": "/v1/offers/top-sellers",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/routes/offers.ts"
+        "src/v1/routes/offers.ts",
+        "rust/crates/egdata-api/src/v1/offers.rs"
       ],
       "status": "active"
     },
@@ -3265,7 +3575,8 @@
       "path": "/v1/offers/top-wishlisted",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/routes/offers.ts"
+        "src/v1/routes/offers.ts",
+        "rust/crates/egdata-api/src/v1/offers.rs"
       ],
       "status": "active"
     },
@@ -3276,7 +3587,8 @@
       "path": "/v1/offers/upcoming",
       "sources": [
         "src/v1/operations/offers.ts",
-        "src/v1/routes/offers.ts"
+        "src/v1/routes/offers.ts",
+        "rust/crates/egdata-api/src/v1/offers.rs"
       ],
       "status": "active"
     },
@@ -3287,7 +3599,8 @@
       "path": "/v1/multisearch/items",
       "sources": [
         "src/v1/operations/multisearch.ts",
-        "src/v1/routes/multisearch.ts"
+        "src/v1/routes/multisearch.ts",
+        "rust/crates/egdata-api/src/v1/search.rs"
       ],
       "status": "active"
     },
@@ -3298,7 +3611,8 @@
       "path": "/v1/multisearch/offers",
       "sources": [
         "src/v1/operations/multisearch.ts",
-        "src/v1/routes/multisearch.ts"
+        "src/v1/routes/multisearch.ts",
+        "rust/crates/egdata-api/src/v1/search.rs"
       ],
       "status": "active"
     },
@@ -3309,7 +3623,8 @@
       "path": "/v1/multisearch/sellers",
       "sources": [
         "src/v1/operations/multisearch.ts",
-        "src/v1/routes/multisearch.ts"
+        "src/v1/routes/multisearch.ts",
+        "rust/crates/egdata-api/src/v1/search.rs"
       ],
       "status": "active"
     },
@@ -3320,7 +3635,8 @@
       "path": "/v1/search/natural-language",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/routes/search.ts"
+        "src/v1/routes/search.ts",
+        "rust/crates/egdata-api/src/v1/search.rs"
       ],
       "status": "active"
     },
@@ -3331,7 +3647,8 @@
       "path": "/v1/builds/resolve-launcher-records",
       "sources": [
         "src/v1/operations/builds.ts",
-        "src/v1/routes/builds.ts"
+        "src/v1/routes/builds.ts",
+        "rust/crates/egdata-api/src/v1/build_launcher.rs"
       ],
       "status": "active"
     },
@@ -3342,7 +3659,8 @@
       "path": "/v1/search/changelog",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/routes/search.ts"
+        "src/v1/routes/search.ts",
+        "rust/crates/egdata-api/src/v1/search.rs"
       ],
       "status": "active"
     },
@@ -3353,7 +3671,8 @@
       "path": "/v1/free-games/search",
       "sources": [
         "src/v1/operations/free-games.ts",
-        "src/v1/routes/free-games.ts"
+        "src/v1/routes/free-games.ts",
+        "rust/crates/egdata-api/src/v1/free_games.rs"
       ],
       "status": "active"
     },
@@ -3364,7 +3683,8 @@
       "path": "/v1/search",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/routes/search.ts"
+        "src/v1/routes/search.ts",
+        "rust/crates/egdata-api/src/v1/search.rs"
       ],
       "status": "active"
     },
@@ -3375,12 +3695,146 @@
       "path": "/v1/search",
       "sources": [
         "src/v1/operations/search.ts",
-        "src/v1/routes/search.ts"
+        "src/v1/routes/search.ts",
+        "rust/crates/egdata-api/src/v1/search.rs"
       ],
       "status": "active"
     }
   ],
   "records": [
+    {
+      "record": {
+        "id": "persist-owner-review-edits",
+        "recordedDate": "2026-11-18",
+        "title": "Persist owner review changes and include newly saved reviews in public counts",
+        "endpoints": [
+          {
+            "apiVersion": "legacy",
+            "operationId": "listOfferReviews",
+            "method": "GET",
+            "path": "/offers/{id}/reviews",
+            "type": "fixed",
+            "compatibility": "compatible",
+            "before": "The legacy editor could fail to persist an owner's changes, leaving the earlier text and rating in subsequent review lists. The review form could also fail to locate a valid product after the origin started.",
+            "after": "After a successful edit and cache refresh, the list reflects the owner's saved review. Each edit keeps the review's identity and appends the prior version to its history. New reviews for resolved products appear after the same cache refresh.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "getOfferReviewsSummary",
+            "method": "GET",
+            "path": "/offers/{id}/reviews-summary",
+            "type": "fixed",
+            "compatibility": "compatible",
+            "before": "The legacy editor sent an invalid MongoDB update, so an attempted rating or recommendation change could leave the original values in the summary. The review form could also fail to locate a valid product after the origin started.",
+            "after": "After a successful owner edit and cache refresh, the summary uses the saved rating, recommendation and verification status. Editing a review keeps the review count for the offer. New reviews for resolved products appear after the same cache refresh.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "v1",
+            "operationId": "listOfferReviews",
+            "method": "GET",
+            "path": "/v1/offers/{id}/reviews",
+            "type": "fixed",
+            "compatibility": "compatible",
+            "before": "The legacy editor could fail to persist an owner's changes, leaving the earlier text and rating in subsequent review lists. The review form could also fail to locate a valid product after the origin started.",
+            "after": "After a successful edit and cache refresh, the list reflects the owner's saved review. Each edit keeps the review's identity and appends the prior version to its history. New reviews for resolved products appear after the same cache refresh.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "v1",
+            "operationId": "getOfferReviewsSummary",
+            "method": "GET",
+            "path": "/v1/offers/{id}/reviews-summary",
+            "type": "fixed",
+            "compatibility": "compatible",
+            "before": "The legacy editor sent an invalid MongoDB update, so an attempted rating or recommendation change could leave the original values in the summary. The review form could also fail to locate a valid product after the origin started.",
+            "after": "After a successful owner edit and cache refresh, the summary uses the saved rating, recommendation and verification status. Editing a review keeps the review count for the offer. New reviews for resolved products appear after the same cache refresh.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "legacyGet_graphql_220e6fb1",
+            "method": "GET",
+            "path": "/graphql",
+            "type": "fixed",
+            "compatibility": "compatible",
+            "before": "A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.",
+            "after": "A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.",
+            "clientAction": "None",
+            "schemaFields": [
+              "Profile.reviewsCount",
+              "ProfileHighlights.reviewsCount"
+            ]
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "legacyGet_profiles_id__f0000a67",
+            "method": "GET",
+            "path": "/profiles/{id}",
+            "type": "fixed",
+            "compatibility": "compatible",
+            "before": "A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.",
+            "after": "A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "legacyGet_profiles_id_information_1a333c76",
+            "method": "GET",
+            "path": "/profiles/{id}/information",
+            "type": "fixed",
+            "compatibility": "compatible",
+            "before": "A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.",
+            "after": "A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "legacyPost_graphql_fac042a8",
+            "method": "POST",
+            "path": "/graphql",
+            "type": "fixed",
+            "compatibility": "compatible",
+            "before": "A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.",
+            "after": "A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.",
+            "clientAction": "None",
+            "schemaFields": [
+              "Profile.reviewsCount",
+              "ProfileHighlights.reviewsCount"
+            ]
+          },
+          {
+            "apiVersion": "v1",
+            "operationId": "getProfile",
+            "method": "GET",
+            "path": "/v1/profiles/{id}",
+            "type": "fixed",
+            "compatibility": "compatible",
+            "before": "A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.",
+            "after": "A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "v1",
+            "operationId": "getProfileInformation",
+            "method": "GET",
+            "path": "/v1/profiles/{id}/information",
+            "type": "fixed",
+            "compatibility": "compatible",
+            "before": "A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.",
+            "after": "A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.",
+            "clientAction": "None"
+          }
+        ],
+        "verification": [
+          "tests/rust-legacy-account-admin-oracle.test.ts compares authenticated review edits, edition history, concurrent writes and deletion during an edit.",
+          "rust/scripts/compare-origins.mjs exercises signed-in owners against the Node and Rust HTTP origins and checks the stored review in MongoDB."
+        ]
+      },
+      "contentHash": "99d53de4eb5cddd17d16ca68a2be4cff064e2d80a13a46e3a193bdf1684ae286",
+      "source": "changes/records/persist-owner-review-edits.json"
+    },
     {
       "record": {
         "id": "anonymous-catalog-edge-cache",

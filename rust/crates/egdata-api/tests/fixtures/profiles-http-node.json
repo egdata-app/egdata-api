@@ -1,0 +1,3014 @@
+[
+  {
+    "name": "profiles_leaderboard",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/leaderboard?limit=2"
+    },
+    "input": {
+      "mongoAggregate": [
+        [
+          {
+            "$project": {
+              "epicAccountId": 1,
+              "sandboxId": 1,
+              "totalXP": 1,
+              "totalUnlocked": 1,
+              "playerAwards": 1
+            }
+          },
+          {
+            "$group": {
+              "_id": {
+                "player": "$epicAccountId",
+                "sandbox": "$sandboxId"
+              },
+              "xpForSandbox": {
+                "$max": "$totalXP"
+              },
+              "unlockedForSandbox": {
+                "$max": "$totalUnlocked"
+              },
+              "awardsForSandbox_arr": {
+                "$push": "$playerAwards"
+              }
+            }
+          },
+          {
+            "$addFields": {
+              "awardsForSandbox": {
+                "$reduce": {
+                  "input": "$awardsForSandbox_arr",
+                  "initialValue": [],
+                  "in": {
+                    "$setUnion": [
+                      "$$value",
+                      "$$this"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$project": {
+              "awardsForSandbox_arr": 0
+            }
+          },
+          {
+            "$group": {
+              "_id": "$_id.player",
+              "xpEarned": {
+                "$sum": "$xpForSandbox"
+              },
+              "achievementsWon": {
+                "$sum": "$unlockedForSandbox"
+              },
+              "awards_arr": {
+                "$push": "$awardsForSandbox"
+              }
+            }
+          },
+          {
+            "$addFields": {
+              "awards": {
+                "$reduce": {
+                  "input": "$awards_arr",
+                  "initialValue": [],
+                  "in": {
+                    "$setUnion": [
+                      "$$value",
+                      "$$this"
+                    ]
+                  }
+                }
+              },
+              "awardsEarned": {
+                "$size": {
+                  "$reduce": {
+                    "input": "$awards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$project": {
+              "awards_arr": 0
+            }
+          },
+          {
+            "$addFields": {
+              "awardsByType": {
+                "$arrayToObject": {
+                  "$map": {
+                    "input": {
+                      "$setUnion": {
+                        "$map": {
+                          "input": "$awards",
+                          "as": "a",
+                          "in": "$$a.awardType"
+                        }
+                      }
+                    },
+                    "as": "type",
+                    "in": {
+                      "k": "$$type",
+                      "v": {
+                        "$size": {
+                          "$filter": {
+                            "input": "$awards",
+                            "as": "a",
+                            "cond": {
+                              "$eq": [
+                                "$$a.awardType",
+                                "$$type"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$lookup": {
+              "from": "epic",
+              "localField": "_id",
+              "foreignField": "accountId",
+              "as": "player"
+            }
+          },
+          {
+            "$unwind": {
+              "path": "$player",
+              "preserveNullAndEmptyArrays": true
+            }
+          },
+          {
+            "$setWindowFields": {
+              "sortBy": {
+                "xpEarned": -1
+              },
+              "output": {
+                "rank": {
+                  "$rank": {}
+                }
+              }
+            }
+          },
+          {
+            "$project": {
+              "_id": 0,
+              "rank": 1,
+              "accountId": "$_id",
+              "displayName": "$player.displayName",
+              "xpEarned": 1,
+              "achievementsWon": 1,
+              "awardsEarned": 1,
+              "awardsByType": 1
+            }
+          },
+          {
+            "$sort": {
+              "rank": 1,
+              "accountId": 1
+            }
+          },
+          {
+            "$limit": 3
+          }
+        ]
+      ],
+      "mongoAggregateResults": [
+        [
+          {
+            "rank": 1,
+            "accountId": "account-1",
+            "displayName": "Top Player",
+            "xpEarned": 9000,
+            "achievementsWon": 90,
+            "awardsEarned": 2,
+            "awardsByType": {
+              "GOLD": 2
+            }
+          },
+          {
+            "rank": 2,
+            "accountId": "account-2",
+            "displayName": "Second Player",
+            "xpEarned": 8000,
+            "achievementsWon": 80,
+            "awardsEarned": 1,
+            "awardsByType": {
+              "SILVER": 1
+            }
+          },
+          {
+            "rank": 3,
+            "accountId": "account-3",
+            "displayName": "Third Player",
+            "xpEarned": 7000,
+            "achievementsWon": 70,
+            "awardsEarned": 0,
+            "awardsByType": {}
+          }
+        ]
+      ],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": null,
+      "epicError": false
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8b6c98f4eaf69e1e32546f497aab2104d1242ea8\""
+      },
+      "body": {
+        "data": [
+          {
+            "rank": 1,
+            "accountId": "account-1",
+            "displayName": "Top Player",
+            "xpEarned": 9000,
+            "achievementsWon": 90,
+            "awardsEarned": 2,
+            "awardsByType": {
+              "GOLD": 2
+            }
+          },
+          {
+            "rank": 2,
+            "accountId": "account-2",
+            "displayName": "Second Player",
+            "xpEarned": 8000,
+            "achievementsWon": 80,
+            "awardsEarned": 1,
+            "awardsByType": {
+              "SILVER": 1
+            }
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "limit": 2,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MiwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMiwiYWNjb3VudC0yIl19.ZKLaa2cXctEs0qj-SwBArjCHa-G71kreMwZ6PUsXbnc"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "profiles_detail_missing",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-1"
+    },
+    "input": {
+      "mongoAggregate": [],
+      "mongoAggregateResults": [],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": null,
+      "epicError": false
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"2fa449c7a0d39b2336093fe1aef8ca354193a7ea\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/profile-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No Epic profile was found for 'player-1'.",
+        "instance": "/v1/profiles/player-1",
+        "code": "PROFILE_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "profiles_achievements",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-1/achievements?limit=2"
+    },
+    "input": {
+      "mongoAggregate": [
+        [
+          {
+            "$match": {
+              "epicAccountId": "player-1"
+            }
+          },
+          {
+            "$unwind": "$playerAchievements"
+          },
+          {
+            "$match": {
+              "playerAchievements.playerAchievement.unlocked": true
+            }
+          },
+          {
+            "$addFields": {
+              "unlockDate": "$playerAchievements.playerAchievement.unlockDate"
+            }
+          },
+          {
+            "$group": {
+              "_id": {
+                "achievementName": "$playerAchievements.playerAchievement.achievementName",
+                "sandboxId": "$playerAchievements.playerAchievement.sandboxId"
+              },
+              "doc": {
+                "$first": "$$ROOT"
+              },
+              "latestUnlockDate": {
+                "$max": "$unlockDate"
+              }
+            }
+          },
+          {
+            "$replaceRoot": {
+              "newRoot": "$doc"
+            }
+          },
+          {
+            "$addFields": {
+              "sortUnlockDate": {
+                "$convert": {
+                  "input": "$unlockDate",
+                  "to": "date",
+                  "onError": null,
+                  "onNull": null
+                }
+              }
+            }
+          },
+          {
+            "$lookup": {
+              "from": "achievementsets",
+              "let": {
+                "achievementName": "$playerAchievements.playerAchievement.achievementName",
+                "sandboxId": "$playerAchievements.playerAchievement.sandboxId"
+              },
+              "pipeline": [
+                {
+                  "$match": {
+                    "$expr": {
+                      "$eq": [
+                        "$sandboxId",
+                        "$$sandboxId"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "$unwind": "$achievements"
+                },
+                {
+                  "$match": {
+                    "$expr": {
+                      "$eq": [
+                        "$achievements.name",
+                        "$$achievementName"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "$project": {
+                    "_id": 0,
+                    "achievementDetails": "$achievements"
+                  }
+                }
+              ],
+              "as": "achievementDetails"
+            }
+          },
+          {
+            "$unwind": {
+              "path": "$achievementDetails",
+              "preserveNullAndEmptyArrays": false
+            }
+          },
+          {
+            "$project": {
+              "_id": 0,
+              "achievementName": "$playerAchievements.playerAchievement.achievementName",
+              "unlockDate": "$playerAchievements.playerAchievement.unlockDate",
+              "XP": "$playerAchievements.playerAchievement.XP",
+              "sandboxId": "$playerAchievements.playerAchievement.sandboxId",
+              "isBase": "$playerAchievements.playerAchievement.isBase",
+              "achievementDetails": "$achievementDetails.achievementDetails",
+              "sortUnlockDate": 1
+            }
+          },
+          {
+            "$sort": {
+              "sortUnlockDate": -1,
+              "sandboxId": 1,
+              "achievementName": 1
+            }
+          },
+          {
+            "$limit": 3
+          }
+        ],
+        [
+          {
+            "$match": {
+              "epicAccountId": "player-1"
+            }
+          },
+          {
+            "$unwind": "$playerAchievements"
+          },
+          {
+            "$match": {
+              "playerAchievements.playerAchievement.unlocked": true
+            }
+          },
+          {
+            "$group": {
+              "_id": {
+                "achievementName": "$playerAchievements.playerAchievement.achievementName",
+                "sandboxId": "$playerAchievements.playerAchievement.sandboxId"
+              }
+            }
+          },
+          {
+            "$count": "count"
+          }
+        ]
+      ],
+      "mongoAggregateResults": [],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": null,
+      "epicError": false
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"434dec20626ccf959e58d101a1d840f9a4e60b0b\""
+      },
+      "body": {
+        "data": {
+          "achievements": [],
+          "count": 0
+        },
+        "meta": {
+          "pagination": {
+            "limit": 2,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "profiles_achievements_populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-1/achievements?limit=1"
+    },
+    "input": {
+      "mongoAggregate": [
+        [
+          {
+            "$match": {
+              "epicAccountId": "player-1"
+            }
+          },
+          {
+            "$unwind": "$playerAchievements"
+          },
+          {
+            "$match": {
+              "playerAchievements.playerAchievement.unlocked": true
+            }
+          },
+          {
+            "$addFields": {
+              "unlockDate": "$playerAchievements.playerAchievement.unlockDate"
+            }
+          },
+          {
+            "$group": {
+              "_id": {
+                "achievementName": "$playerAchievements.playerAchievement.achievementName",
+                "sandboxId": "$playerAchievements.playerAchievement.sandboxId"
+              },
+              "doc": {
+                "$first": "$$ROOT"
+              },
+              "latestUnlockDate": {
+                "$max": "$unlockDate"
+              }
+            }
+          },
+          {
+            "$replaceRoot": {
+              "newRoot": "$doc"
+            }
+          },
+          {
+            "$addFields": {
+              "sortUnlockDate": {
+                "$convert": {
+                  "input": "$unlockDate",
+                  "to": "date",
+                  "onError": null,
+                  "onNull": null
+                }
+              }
+            }
+          },
+          {
+            "$lookup": {
+              "from": "achievementsets",
+              "let": {
+                "achievementName": "$playerAchievements.playerAchievement.achievementName",
+                "sandboxId": "$playerAchievements.playerAchievement.sandboxId"
+              },
+              "pipeline": [
+                {
+                  "$match": {
+                    "$expr": {
+                      "$eq": [
+                        "$sandboxId",
+                        "$$sandboxId"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "$unwind": "$achievements"
+                },
+                {
+                  "$match": {
+                    "$expr": {
+                      "$eq": [
+                        "$achievements.name",
+                        "$$achievementName"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "$project": {
+                    "_id": 0,
+                    "achievementDetails": "$achievements"
+                  }
+                }
+              ],
+              "as": "achievementDetails"
+            }
+          },
+          {
+            "$unwind": {
+              "path": "$achievementDetails",
+              "preserveNullAndEmptyArrays": false
+            }
+          },
+          {
+            "$project": {
+              "_id": 0,
+              "achievementName": "$playerAchievements.playerAchievement.achievementName",
+              "unlockDate": "$playerAchievements.playerAchievement.unlockDate",
+              "XP": "$playerAchievements.playerAchievement.XP",
+              "sandboxId": "$playerAchievements.playerAchievement.sandboxId",
+              "isBase": "$playerAchievements.playerAchievement.isBase",
+              "achievementDetails": "$achievementDetails.achievementDetails",
+              "sortUnlockDate": 1
+            }
+          },
+          {
+            "$sort": {
+              "sortUnlockDate": -1,
+              "sandboxId": 1,
+              "achievementName": 1
+            }
+          },
+          {
+            "$limit": 2
+          }
+        ],
+        [
+          {
+            "$match": {
+              "epicAccountId": "player-1"
+            }
+          },
+          {
+            "$unwind": "$playerAchievements"
+          },
+          {
+            "$match": {
+              "playerAchievements.playerAchievement.unlocked": true
+            }
+          },
+          {
+            "$group": {
+              "_id": {
+                "achievementName": "$playerAchievements.playerAchievement.achievementName",
+                "sandboxId": "$playerAchievements.playerAchievement.sandboxId"
+              }
+            }
+          },
+          {
+            "$count": "count"
+          }
+        ]
+      ],
+      "mongoAggregateResults": [
+        [
+          {
+            "achievementName": "Achievement 0",
+            "unlockDate": "2026-11-16T00:00:00.000Z",
+            "XP": 10,
+            "sandboxId": "sandbox-0",
+            "isBase": true,
+            "achievementDetails": {
+              "name": "Achievement 0",
+              "description": "Description 0",
+              "xp": 10,
+              "completedPercent": 12
+            },
+            "sortUnlockDate": "2026-11-16T00:00:00.000Z"
+          },
+          {
+            "achievementName": "Achievement 1",
+            "unlockDate": "2026-11-15T00:00:00.000Z",
+            "XP": 10,
+            "sandboxId": "sandbox-1",
+            "isBase": true,
+            "achievementDetails": {
+              "name": "Achievement 1",
+              "description": "Description 1",
+              "xp": 10,
+              "completedPercent": 13
+            },
+            "sortUnlockDate": "2026-11-15T00:00:00.000Z"
+          }
+        ],
+        [
+          {
+            "count": 2
+          }
+        ]
+      ],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [
+        {
+          "namespace": {
+            "$in": [
+              "sandbox-0"
+            ]
+          },
+          "offerType": {
+            "$in": [
+              "BASE_GAME",
+              "DLC"
+            ]
+          },
+          "prePurchase": {
+            "$ne": true
+          }
+        }
+      ],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": null,
+      "epicError": false
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"36d94372f7a08e6cc07d0120563cede9646fe5eb\""
+      },
+      "body": {
+        "data": {
+          "achievements": [
+            {
+              "name": "Achievement 0",
+              "description": "Description 0",
+              "xp": 10,
+              "completedPercent": 12,
+              "unlocked": true,
+              "unlockDate": "2026-11-16T00:00:00.000Z",
+              "offer": null
+            }
+          ],
+          "count": 2
+        },
+        "meta": {
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5hY2hpZXZlbWVudHMiLCJmaWx0ZXJzIjp7InByb2ZpbGVJZCI6InBsYXllci0xIn0sImZpbHRlckhhc2giOiI4NTQ0ZDEwYzQxZDUwMGE3NjU1Zjg5OTVkMTg1NTc3ODFmYjY1ODJkY2NmODE3M2ZmMmE4Y2M2OGU2MmNmNDc0Iiwib3JkZXJpbmciOiJ1bmxvY2tEYXRlOmRlc2Msc2FuZGJveElkOmFzYyxhY2hpZXZlbWVudE5hbWU6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTZUMDA6MDA6MDAuMDAwWiIsInNhbmRib3gtMCIsIkFjaGlldmVtZW50IDAiXX0.Q5c4LHB6KHH-YKEwdhh7PifHOO_ELWIKIxRsr3AFBaQ"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "profiles_sandbox_achievements",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-1/achievements/sandbox-1"
+    },
+    "input": {
+      "mongoAggregate": [],
+      "mongoAggregateResults": [],
+      "mongoFind": [
+        {
+          "epicAccountId": "player-1",
+          "sandboxId": "sandbox-1"
+        }
+      ],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": null,
+      "epicError": false
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8d52caf29487fd935d4ac8fc28cd0a6230e1d5d5\""
+      },
+      "body": {
+        "data": {
+          "playerAchievements": [],
+          "sandboxAchievements": []
+        },
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "profiles_sandbox_achievements_populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-1/achievements/sandbox-1"
+    },
+    "input": {
+      "mongoAggregate": [],
+      "mongoAggregateResults": [],
+      "mongoFind": [
+        {
+          "epicAccountId": "player-1",
+          "sandboxId": "sandbox-1"
+        }
+      ],
+      "mongoFindResults": [
+        [
+          {
+            "epicAccountId": "player-1",
+            "sandboxId": "sandbox-1",
+            "achievementSets": [
+              {
+                "achievementSetId": "set-1"
+              }
+            ],
+            "playerAchievements": [
+              {
+                "achievementName": "A"
+              }
+            ]
+          }
+        ]
+      ],
+      "modelFind": [
+        {
+          "achievementSetId": {
+            "$in": [
+              "set-1"
+            ]
+          }
+        }
+      ],
+      "modelFindResults": [
+        [
+          {
+            "achievementSetId": "set-1",
+            "sandboxId": "sandbox-1",
+            "achievements": [
+              {
+                "name": "A",
+                "xp": 10
+              }
+            ]
+          }
+        ]
+      ],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": null,
+      "epicError": false
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"3c4dc0a978df575be1c9ad7851c348b93ef78f6d\""
+      },
+      "body": {
+        "data": {
+          "playerAchievements": [
+            {
+              "epicAccountId": "player-1",
+              "sandboxId": "sandbox-1",
+              "achievementSets": [
+                {
+                  "achievementSetId": "set-1"
+                }
+              ],
+              "playerAchievements": [
+                {
+                  "achievementName": "A"
+                }
+              ]
+            }
+          ],
+          "sandboxAchievements": [
+            {
+              "achievementSetId": "set-1",
+              "sandboxId": "sandbox-1",
+              "achievements": [
+                {
+                  "name": "A",
+                  "xp": 10
+                }
+              ]
+            }
+          ]
+        },
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "profiles_rare_achievements",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-1/rare-achievements"
+    },
+    "input": {
+      "mongoAggregate": [
+        [
+          {
+            "$match": {
+              "epicAccountId": "player-1",
+              "playerAchievements": {
+                "$elemMatch": {
+                  "playerAchievement.unlocked": true
+                }
+              }
+            }
+          },
+          {
+            "$unwind": "$playerAchievements"
+          },
+          {
+            "$match": {
+              "playerAchievements.playerAchievement.unlocked": true
+            }
+          },
+          {
+            "$lookup": {
+              "from": "achievementsets",
+              "let": {
+                "setId": "$playerAchievements.playerAchievement.achievementSetId",
+                "name": "$playerAchievements.playerAchievement.achievementName"
+              },
+              "pipeline": [
+                {
+                  "$match": {
+                    "$expr": {
+                      "$eq": [
+                        "$achievementSetId",
+                        "$$setId"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "$unwind": "$achievements"
+                },
+                {
+                  "$match": {
+                    "$expr": {
+                      "$eq": [
+                        "$achievements.name",
+                        "$$name"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "$project": {
+                    "_id": 0,
+                    "sandboxId": 1,
+                    "achievementSetId": 1,
+                    "achievement": "$achievements"
+                  }
+                }
+              ],
+              "as": "achDoc"
+            }
+          },
+          {
+            "$unwind": "$achDoc"
+          },
+          {
+            "$replaceRoot": {
+              "newRoot": {
+                "$mergeObjects": [
+                  "$achDoc.achievement",
+                  {
+                    "sandboxId": "$achDoc.sandboxId",
+                    "achievementSetId": "$achDoc.achievementSetId",
+                    "unlocked": true,
+                    "unlockDate": "$playerAchievements.playerAchievement.unlockDate"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "$group": {
+              "_id": null,
+              "rare25": {
+                "$topN": {
+                  "n": 25,
+                  "sortBy": {
+                    "completedPercent": 1
+                  },
+                  "output": "$$ROOT"
+                }
+              }
+            }
+          },
+          {
+            "$unwind": "$rare25"
+          },
+          {
+            "$replaceRoot": {
+              "newRoot": "$rare25"
+            }
+          },
+          {
+            "$lookup": {
+              "from": "offers",
+              "let": {
+                "sbx": "$sandboxId"
+              },
+              "pipeline": [
+                {
+                  "$match": {
+                    "$expr": {
+                      "$and": [
+                        {
+                          "$eq": [
+                            "$namespace",
+                            "$$sbx"
+                          ]
+                        },
+                        {
+                          "$eq": [
+                            "$offerType",
+                            "BASE_GAME"
+                          ]
+                        },
+                        {
+                          "$eq": [
+                            "$isCodeRedemptionOnly",
+                            false
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "$sort": {
+                    "isDisplayable": -1,
+                    "title": 1,
+                    "lastModifiedDate": -1
+                  }
+                },
+                {
+                  "$limit": 1
+                },
+                {
+                  "$project": {
+                    "_id": 0,
+                    "id": 1,
+                    "namespace": 1,
+                    "keyImages": 1,
+                    "title": 1,
+                    "productSlug": 1
+                  }
+                }
+              ],
+              "as": "offer"
+            }
+          },
+          {
+            "$unwind": {
+              "path": "$offer",
+              "preserveNullAndEmptyArrays": true
+            }
+          }
+        ]
+      ],
+      "mongoAggregateResults": [
+        [
+          {
+            "name": "Rare Achievement",
+            "description": "Rare",
+            "completedPercent": 3,
+            "sandboxId": "sandbox-1",
+            "achievementSetId": "set-1",
+            "unlocked": true,
+            "unlockDate": "2026-11-16T00:00:00.000Z",
+            "offer": {
+              "id": "offer-1",
+              "namespace": "sandbox-1",
+              "title": "Game One",
+              "productSlug": "game-one",
+              "keyImages": []
+            }
+          }
+        ]
+      ],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": null,
+      "epicError": false
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"f88759a853205b903ad181c5b5a6618463d4dec1\""
+      },
+      "body": {
+        "data": [
+          {
+            "name": "Rare Achievement",
+            "description": "Rare",
+            "completedPercent": 3,
+            "sandboxId": "sandbox-1",
+            "achievementSetId": "set-1",
+            "unlocked": true,
+            "unlockDate": "2026-11-16T00:00:00.000Z",
+            "offer": {
+              "id": "offer-1",
+              "namespace": "sandbox-1",
+              "title": "Game One",
+              "productSlug": "game-one",
+              "keyImages": []
+            }
+          }
+        ],
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "profiles_rare_sandbox_achievements",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-1/rare-achievements/sandbox-1"
+    },
+    "input": {
+      "mongoAggregate": [
+        [
+          {
+            "$match": {
+              "epicAccountId": "player-1",
+              "sandboxId": "sandbox-1"
+            }
+          },
+          {
+            "$unwind": "$playerAchievements"
+          },
+          {
+            "$match": {
+              "playerAchievements.playerAchievement.unlocked": true
+            }
+          },
+          {
+            "$lookup": {
+              "from": "achievementsets",
+              "let": {
+                "setId": "$playerAchievements.playerAchievement.achievementSetId",
+                "name": "$playerAchievements.playerAchievement.achievementName"
+              },
+              "pipeline": [
+                {
+                  "$match": {
+                    "$expr": {
+                      "$eq": [
+                        "$achievementSetId",
+                        "$$setId"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "$unwind": "$achievements"
+                },
+                {
+                  "$match": {
+                    "$expr": {
+                      "$eq": [
+                        "$achievements.name",
+                        "$$name"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "$project": {
+                    "_id": 0,
+                    "sandboxId": 1,
+                    "achievementSetId": 1,
+                    "achievement": "$achievements"
+                  }
+                }
+              ],
+              "as": "achDoc"
+            }
+          },
+          {
+            "$unwind": "$achDoc"
+          },
+          {
+            "$replaceRoot": {
+              "newRoot": {
+                "$mergeObjects": [
+                  "$achDoc.achievement",
+                  {
+                    "sandboxId": "$achDoc.sandboxId",
+                    "achievementSetId": "$achDoc.achievementSetId",
+                    "unlocked": true,
+                    "unlockDate": "$playerAchievements.playerAchievement.unlockDate"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "$sort": {
+              "completedPercent": 1
+            }
+          },
+          {
+            "$limit": 3
+          }
+        ]
+      ],
+      "mongoAggregateResults": [
+        [
+          {
+            "name": "Rare Sandbox Achievement",
+            "description": "Rare sandbox",
+            "completedPercent": 1,
+            "sandboxId": "sandbox-1",
+            "achievementSetId": "set-1",
+            "unlocked": true,
+            "unlockDate": "2026-11-15T00:00:00.000Z"
+          }
+        ]
+      ],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": null,
+      "epicError": false
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e147c2103e9851edeacc7ae4d0002d3c059998ed\""
+      },
+      "body": {
+        "data": [
+          {
+            "name": "Rare Sandbox Achievement",
+            "description": "Rare sandbox",
+            "completedPercent": 1,
+            "sandboxId": "sandbox-1",
+            "achievementSetId": "set-1",
+            "unlocked": true,
+            "unlockDate": "2026-11-15T00:00:00.000Z"
+          }
+        ],
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "profiles_information_missing",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-1/information"
+    },
+    "input": {
+      "mongoAggregate": [],
+      "mongoAggregateResults": [],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": null,
+      "epicError": false
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"22bdf0ef67f79df8598929ce89abb1d60542f58b\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/profile-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No Epic profile was found for 'player-1'.",
+        "instance": "/v1/profiles/player-1/information",
+        "code": "PROFILE_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "profiles_games_missing",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-1/games?limit=2"
+    },
+    "input": {
+      "mongoAggregate": [],
+      "mongoAggregateResults": [],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": null,
+      "epicError": false
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"3536532a8fd52369d899035e2b345454dd652483\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/profile-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No Epic profile was found for 'player-1'.",
+        "instance": "/v1/profiles/player-1/games",
+        "code": "PROFILE_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "profiles_random_game_missing",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-1/random-game?sandbox=sandbox-1"
+    },
+    "input": {
+      "mongoAggregate": [],
+      "mongoAggregateResults": [],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": null,
+      "epicError": false
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"39b246f0f24b60778f5e638259c4191c4b384eee\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/profile-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No Epic profile was found for 'player-1'.",
+        "instance": "/v1/profiles/player-1/random-game",
+        "code": "PROFILE_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "profiles_random_game_populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-2/random-game?sandbox=sandbox-1"
+    },
+    "input": {
+      "mongoAggregate": [],
+      "mongoAggregateResults": [],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [
+        {
+          "epicAccountId": {
+            "$eq": "player-2"
+          },
+          "sandboxId": {
+            "$eq": "sandbox-1"
+          }
+        }
+      ],
+      "mongoFindOneResults": [
+        {
+          "epicAccountId": "player-2",
+          "sandboxId": "sandbox-1",
+          "totalXP": 50
+        }
+      ],
+      "modelFindOne": [
+        {
+          "_id": {
+            "$eq": "sandbox-1"
+          }
+        },
+        {
+          "namespace": {
+            "$eq": "sandbox-1"
+          },
+          "offerType": "BASE_GAME"
+        }
+      ],
+      "modelFindOneResults": [
+        {
+          "_id": "sandbox-1",
+          "parent": "product-1"
+        },
+        {
+          "id": "offer-1",
+          "namespace": "sandbox-1",
+          "offerType": "BASE_GAME",
+          "title": "Game One",
+          "productSlug": "game-one",
+          "keyImages": []
+        }
+      ],
+      "mongoCount": [],
+      "epicProfile": {
+        "epicAccountId": "player-2",
+        "displayName": "Public Player",
+        "avatar": {
+          "small": "https://img/s",
+          "medium": "https://img/m",
+          "large": "https://img/l"
+        }
+      },
+      "epicError": false
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"f7d893f69dd55ee09dc5248abe593fbaf1d2f16f\""
+      },
+      "body": {
+        "data": {
+          "id": "offer-1",
+          "namespace": "sandbox-1",
+          "offerType": "BASE_GAME",
+          "title": "Game One",
+          "productSlug": "game-one",
+          "keyImages": []
+        },
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "profiles_detail_populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-2"
+    },
+    "input": {
+      "mongoAggregate": [],
+      "mongoAggregateResults": [],
+      "mongoFind": [
+        {
+          "epicAccountId": "player-2"
+        },
+        {
+          "_id": {
+            "$in": [
+              "product-1"
+            ]
+          }
+        }
+      ],
+      "mongoFindResults": [
+        [
+          {
+            "sandboxId": "sandbox-1",
+            "playerAwards": [
+              {
+                "awardType": "GOLD",
+                "id": "award-1"
+              }
+            ],
+            "totalXP": 50,
+            "totalUnlocked": 2
+          }
+        ],
+        [
+          {
+            "_id": "product-1",
+            "name": "Product One"
+          }
+        ]
+      ],
+      "modelFind": [
+        {
+          "_id": {
+            "$in": [
+              "sandbox-1"
+            ]
+          }
+        },
+        {
+          "namespace": {
+            "$in": [
+              "sandbox-1"
+            ]
+          },
+          "offerType": "BASE_GAME"
+        },
+        {
+          "sandboxId": {
+            "$in": [
+              "sandbox-1"
+            ]
+          }
+        }
+      ],
+      "modelFindResults": [
+        [
+          {
+            "_id": "sandbox-1",
+            "parent": "product-1"
+          }
+        ],
+        [
+          {
+            "id": "offer-1",
+            "namespace": "sandbox-1",
+            "title": "Game One",
+            "productSlug": "game-one",
+            "keyImages": []
+          }
+        ],
+        [
+          {
+            "sandboxId": "sandbox-1",
+            "achievements": [
+              {
+                "xp": 5
+              },
+              {
+                "xp": 10
+              }
+            ]
+          }
+        ]
+      ],
+      "mongoFindOne": [
+        {
+          "accountId": {
+            "$eq": "player-2"
+          }
+        }
+      ],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [
+        {
+          "userId": "player-2"
+        }
+      ],
+      "epicProfile": {
+        "epicAccountId": "player-2",
+        "displayName": "Public Player",
+        "avatar": {
+          "small": "https://img/s",
+          "medium": "https://img/m",
+          "large": "https://img/l"
+        }
+      },
+      "epicError": false
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"bff98f49dc6993066f6b160455d2fd1e9a9e4f31\""
+      },
+      "body": {
+        "data": {
+          "epicAccountId": "player-2",
+          "displayName": "Public Player",
+          "avatar": {
+            "small": "https://img/s",
+            "medium": "https://img/m",
+            "large": "https://img/l"
+          },
+          "achievements": {
+            "__typename": "AchievementsSummaryResponse",
+            "status": 200,
+            "data": [
+              {
+                "playerAwards": [
+                  {
+                    "awardType": "GOLD",
+                    "id": "award-1"
+                  }
+                ],
+                "totalXP": 50,
+                "totalUnlocked": 2,
+                "sandboxId": "sandbox-1",
+                "baseOfferForSandbox": {
+                  "id": "offer-1",
+                  "namespace": "sandbox-1",
+                  "keyImages": []
+                },
+                "product": {
+                  "name": "Game One",
+                  "slug": "game-one"
+                },
+                "productAchievements": {
+                  "totalAchievements": 2,
+                  "totalProductXP": 15
+                }
+              }
+            ]
+          },
+          "linkedAccounts": null,
+          "creationDate": null,
+          "reviews": 0
+        },
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "profiles_information_populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-2/information"
+    },
+    "input": {
+      "mongoAggregate": [
+        [
+          {
+            "$match": {
+              "epicAccountId": "player-2"
+            }
+          },
+          {
+            "$group": {
+              "_id": "$sandboxId",
+              "playerAwards": {
+                "$first": "$playerAwards"
+              },
+              "totalUnlocked": {
+                "$first": "$totalUnlocked"
+              },
+              "totalXP": {
+                "$first": "$totalXP"
+              }
+            }
+          },
+          {
+            "$group": {
+              "_id": null,
+              "totalGames": {
+                "$sum": 1
+              },
+              "totalPlayerAwards": {
+                "$sum": {
+                  "$size": {
+                    "$ifNull": [
+                      "$playerAwards",
+                      []
+                    ]
+                  }
+                }
+              },
+              "totalAchievements": {
+                "$sum": {
+                  "$ifNull": [
+                    "$totalUnlocked",
+                    0
+                  ]
+                }
+              },
+              "totalXP": {
+                "$sum": {
+                  "$ifNull": [
+                    "$totalXP",
+                    0
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      ],
+      "mongoAggregateResults": [
+        [
+          {
+            "totalGames": 5,
+            "totalPlayerAwards": 3,
+            "totalAchievements": 25,
+            "totalXP": 100
+          }
+        ]
+      ],
+      "mongoFind": [
+        {
+          "accountId": {
+            "$eq": "player-2"
+          }
+        }
+      ],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [
+        {
+          "accountId": {
+            "$eq": "player-2"
+          }
+        }
+      ],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [
+        {
+          "userId": "player-2"
+        }
+      ],
+      "epicProfile": {
+        "epicAccountId": "player-2",
+        "displayName": "Public Player",
+        "avatar": {
+          "small": "https://img/s",
+          "medium": "https://img/m",
+          "large": "https://img/l"
+        }
+      },
+      "epicError": false
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e785ef17f1b8f39c658ac4b6155d2c583246d0ee\""
+      },
+      "body": {
+        "data": {
+          "epicAccountId": "player-2",
+          "displayName": "Public Player",
+          "avatar": {
+            "small": "https://img/s",
+            "medium": "https://img/m",
+            "large": "https://img/l"
+          },
+          "stats": {
+            "totalGames": 5,
+            "totalAchievements": 25,
+            "totalPlayerAwards": 3,
+            "totalXP": 850,
+            "reviewsCount": 0
+          },
+          "linkedAccounts": null,
+          "creationDate": null,
+          "donations": [],
+          "discord": false
+        },
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "profiles_games_populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-2/games?limit=2"
+    },
+    "input": {
+      "mongoAggregate": [
+        [
+          {
+            "$match": {
+              "epicAccountId": "player-2"
+            }
+          },
+          {
+            "$group": {
+              "_id": "$sandboxId",
+              "totalUnlocked": {
+                "$max": "$totalUnlocked"
+              },
+              "totalXP": {
+                "$max": "$totalXP"
+              },
+              "playerAwards_arr": {
+                "$push": "$playerAwards"
+              }
+            }
+          },
+          {
+            "$addFields": {
+              "playerAwards": {
+                "$reduce": {
+                  "input": "$playerAwards_arr",
+                  "initialValue": [],
+                  "in": {
+                    "$setUnion": [
+                      "$$value",
+                      "$$this"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$project": {
+              "playerAwards_arr": 0
+            }
+          },
+          {
+            "$lookup": {
+              "from": "offers",
+              "let": {
+                "sbx": "$_id"
+              },
+              "pipeline": [
+                {
+                  "$match": {
+                    "$expr": {
+                      "$and": [
+                        {
+                          "$eq": [
+                            "$namespace",
+                            "$$sbx"
+                          ]
+                        },
+                        {
+                          "$eq": [
+                            "$offerType",
+                            "BASE_GAME"
+                          ]
+                        },
+                        {
+                          "$eq": [
+                            "$isCodeRedemptionOnly",
+                            false
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "$sort": {
+                    "isDisplayable": -1,
+                    "title": 1,
+                    "lastModifiedDate": -1
+                  }
+                },
+                {
+                  "$limit": 1
+                },
+                {
+                  "$project": {
+                    "_id": 0,
+                    "id": 1,
+                    "namespace": 1,
+                    "keyImages": 1,
+                    "title": 1,
+                    "productSlug": 1
+                  }
+                }
+              ],
+              "as": "offer"
+            }
+          },
+          {
+            "$unwind": {
+              "path": "$offer",
+              "preserveNullAndEmptyArrays": true
+            }
+          },
+          {
+            "$lookup": {
+              "from": "achievementsets",
+              "localField": "_id",
+              "foreignField": "sandboxId",
+              "as": "achievementSets"
+            }
+          },
+          {
+            "$addFields": {
+              "totalAchievements": {
+                "$sum": {
+                  "$map": {
+                    "input": "$achievementSets",
+                    "as": "s",
+                    "in": {
+                      "$size": {
+                        "$ifNull": [
+                          "$$s.achievements",
+                          []
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "totalProductXP": {
+                "$sum": {
+                  "$map": {
+                    "input": "$achievementSets",
+                    "as": "s",
+                    "in": {
+                      "$reduce": {
+                        "input": {
+                          "$ifNull": [
+                            "$$s.achievements",
+                            []
+                          ]
+                        },
+                        "initialValue": 0,
+                        "in": {
+                          "$add": [
+                            "$$value",
+                            "$$this.xp"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$addFields": {
+              "productAchievements": {
+                "totalAchievements": "$totalAchievements",
+                "totalProductXP": "$totalProductXP"
+              },
+              "completionPercentage": {
+                "$cond": [
+                  {
+                    "$eq": [
+                      "$totalAchievements",
+                      0
+                    ]
+                  },
+                  0,
+                  {
+                    "$divide": [
+                      "$totalUnlocked",
+                      "$totalAchievements"
+                    ]
+                  }
+                ]
+              },
+              "baseOfferForSandbox": {
+                "id": "$offer.id",
+                "namespace": "$offer.namespace",
+                "keyImages": "$offer.keyImages"
+              },
+              "product": {
+                "name": "$offer.title",
+                "slug": "$offer.productSlug"
+              },
+              "sandboxId": "$_id"
+            }
+          },
+          {
+            "$project": {
+              "_id": 0,
+              "offer": 0,
+              "achievementSets": 0,
+              "totalAchievements": 0,
+              "totalProductXP": 0
+            }
+          },
+          {
+            "$sort": {
+              "completionPercentage": -1,
+              "product.name": 1,
+              "sandboxId": 1
+            }
+          },
+          {
+            "$limit": 3
+          }
+        ]
+      ],
+      "mongoAggregateResults": [
+        [
+          {
+            "totalUnlocked": 9,
+            "totalXP": 1000,
+            "playerAwards": [],
+            "productAchievements": {
+              "totalAchievements": 10,
+              "totalProductXP": 1000
+            },
+            "completionPercentage": 0.9,
+            "baseOfferForSandbox": {
+              "id": "offer-0",
+              "namespace": "sandbox-0",
+              "keyImages": []
+            },
+            "product": {
+              "name": "Game 0",
+              "slug": "game-0"
+            },
+            "sandboxId": "sandbox-0"
+          },
+          {
+            "totalUnlocked": 8,
+            "totalXP": 900,
+            "playerAwards": [],
+            "productAchievements": {
+              "totalAchievements": 10,
+              "totalProductXP": 1000
+            },
+            "completionPercentage": 0.8,
+            "baseOfferForSandbox": {
+              "id": "offer-1",
+              "namespace": "sandbox-1",
+              "keyImages": []
+            },
+            "product": {
+              "name": "Game 1",
+              "slug": "game-1"
+            },
+            "sandboxId": "sandbox-1"
+          },
+          {
+            "totalUnlocked": 7,
+            "totalXP": 800,
+            "playerAwards": [],
+            "productAchievements": {
+              "totalAchievements": 10,
+              "totalProductXP": 1000
+            },
+            "completionPercentage": 0.7,
+            "baseOfferForSandbox": {
+              "id": "offer-2",
+              "namespace": "sandbox-2",
+              "keyImages": []
+            },
+            "product": {
+              "name": "Game 2",
+              "slug": "game-2"
+            },
+            "sandboxId": "sandbox-2"
+          }
+        ]
+      ],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": {
+        "epicAccountId": "player-2",
+        "displayName": "Public Player",
+        "avatar": {
+          "small": "https://img/s",
+          "medium": "https://img/m",
+          "large": "https://img/l"
+        }
+      },
+      "epicError": false
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ea00b9d630021dff36a356dad59a034352f40eda\""
+      },
+      "body": {
+        "data": {
+          "achievements": [
+            {
+              "totalUnlocked": 9,
+              "totalXP": 1000,
+              "playerAwards": [],
+              "productAchievements": {
+                "totalAchievements": 10,
+                "totalProductXP": 1000
+              },
+              "completionPercentage": 0.9,
+              "baseOfferForSandbox": {
+                "id": "offer-0",
+                "namespace": "sandbox-0",
+                "keyImages": []
+              },
+              "product": {
+                "name": "Game 0",
+                "slug": "game-0"
+              },
+              "sandboxId": "sandbox-0"
+            },
+            {
+              "totalUnlocked": 8,
+              "totalXP": 900,
+              "playerAwards": [],
+              "productAchievements": {
+                "totalAchievements": 10,
+                "totalProductXP": 1000
+              },
+              "completionPercentage": 0.8,
+              "baseOfferForSandbox": {
+                "id": "offer-1",
+                "namespace": "sandbox-1",
+                "keyImages": []
+              },
+              "product": {
+                "name": "Game 1",
+                "slug": "game-1"
+              },
+              "sandboxId": "sandbox-1"
+            }
+          ]
+        },
+        "meta": {
+          "pagination": {
+            "limit": 2,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicGxheWVyLTIiLCJzb3J0IjoiY29tcGxldGlvbiIsInBsYXRpbnVtIjpmYWxzZX0sImZpbHRlckhhc2giOiIyOTQwMzY2NTEzMTBjNDZiNDI5M2Q5YjhjYjc0MmJhYWJmMTk4ZGZiNjE0MDdhMDVlZjJmZTMxNWRmZWQyMGY0Iiwib3JkZXJpbmciOiJjb21wbGV0aW9uUGVyY2VudGFnZTpkZXNjLHByb2R1Y3QubmFtZTphc2Msc2FuZGJveElkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjIsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzAuOCwiR2FtZSAxIiwic2FuZGJveC0xIl19.u-qKsUB4M9UYnS21DIoDTjgaB89QmJAqIkyhVIoKSH0"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "profiles_games_invalid_platinum",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-2/games?platinum=perhaps"
+    },
+    "input": {
+      "mongoAggregate": [],
+      "mongoAggregateResults": [],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": {
+        "epicAccountId": "player-2",
+        "displayName": "Public Player",
+        "avatar": {
+          "small": "https://img/s",
+          "medium": "https://img/m",
+          "large": "https://img/l"
+        }
+      },
+      "epicError": false
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"2ed2b4969f636038122380baac44c5bdbf8efb18\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `platinum` parameter must be true or false.",
+        "instance": "/v1/profiles/player-2/games",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "parameter": "platinum",
+            "code": "INVALID",
+            "message": "Expected a boolean."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "profiles_games_invalid_cursor",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-2/games?cursor=not-a-cursor"
+    },
+    "input": {
+      "mongoAggregate": [],
+      "mongoAggregateResults": [],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": {
+        "epicAccountId": "player-2",
+        "displayName": "Public Player",
+        "avatar": {
+          "small": "https://img/s",
+          "medium": "https://img/m",
+          "large": "https://img/l"
+        }
+      },
+      "epicError": false
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"a8199799ff1aa7ddf26b3d6affe1c6ac0738a80f\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-cursor",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The cursor is malformed. Use the `nextCursor` value from a previous response.",
+        "instance": "/v1/profiles/player-2/games",
+        "code": "INVALID_CURSOR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "profiles_epic_failure",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-3"
+    },
+    "input": {
+      "mongoAggregate": [],
+      "mongoAggregateResults": [],
+      "mongoFind": [],
+      "mongoFindResults": [],
+      "modelFind": [],
+      "modelFindResults": [],
+      "mongoFindOne": [],
+      "mongoFindOneResults": [],
+      "modelFindOne": [],
+      "modelFindOneResults": [],
+      "mongoCount": [],
+      "epicProfile": null,
+      "epicError": true
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d3313e22107012cae4c63d6a5eedc0e64518d885\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/profile-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No Epic profile was found for 'player-3'.",
+        "instance": "/v1/profiles/player-3",
+        "code": "PROFILE_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "profiles_leaderboard_continuation",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/leaderboard?limit=2&cursor=eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5sZWFkZXJib2FyZCIsImZpbHRlcnMiOnt9LCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsIm9yZGVyaW5nIjoicmFuazphc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MiwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMiwiYWNjb3VudC0yIl19.ZKLaa2cXctEs0qj-SwBArjCHa-G71kreMwZ6PUsXbnc"
+    },
+    "input": {
+      "mongoAggregate": [
+        [
+          {
+            "$project": {
+              "epicAccountId": 1,
+              "sandboxId": 1,
+              "totalXP": 1,
+              "totalUnlocked": 1,
+              "playerAwards": 1
+            }
+          },
+          {
+            "$group": {
+              "_id": {
+                "player": "$epicAccountId",
+                "sandbox": "$sandboxId"
+              },
+              "xpForSandbox": {
+                "$max": "$totalXP"
+              },
+              "unlockedForSandbox": {
+                "$max": "$totalUnlocked"
+              },
+              "awardsForSandbox_arr": {
+                "$push": "$playerAwards"
+              }
+            }
+          },
+          {
+            "$addFields": {
+              "awardsForSandbox": {
+                "$reduce": {
+                  "input": "$awardsForSandbox_arr",
+                  "initialValue": [],
+                  "in": {
+                    "$setUnion": [
+                      "$$value",
+                      "$$this"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$project": {
+              "awardsForSandbox_arr": 0
+            }
+          },
+          {
+            "$group": {
+              "_id": "$_id.player",
+              "xpEarned": {
+                "$sum": "$xpForSandbox"
+              },
+              "achievementsWon": {
+                "$sum": "$unlockedForSandbox"
+              },
+              "awards_arr": {
+                "$push": "$awardsForSandbox"
+              }
+            }
+          },
+          {
+            "$addFields": {
+              "awards": {
+                "$reduce": {
+                  "input": "$awards_arr",
+                  "initialValue": [],
+                  "in": {
+                    "$setUnion": [
+                      "$$value",
+                      "$$this"
+                    ]
+                  }
+                }
+              },
+              "awardsEarned": {
+                "$size": {
+                  "$reduce": {
+                    "input": "$awards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$project": {
+              "awards_arr": 0
+            }
+          },
+          {
+            "$addFields": {
+              "awardsByType": {
+                "$arrayToObject": {
+                  "$map": {
+                    "input": {
+                      "$setUnion": {
+                        "$map": {
+                          "input": "$awards",
+                          "as": "a",
+                          "in": "$$a.awardType"
+                        }
+                      }
+                    },
+                    "as": "type",
+                    "in": {
+                      "k": "$$type",
+                      "v": {
+                        "$size": {
+                          "$filter": {
+                            "input": "$awards",
+                            "as": "a",
+                            "cond": {
+                              "$eq": [
+                                "$$a.awardType",
+                                "$$type"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$lookup": {
+              "from": "epic",
+              "localField": "_id",
+              "foreignField": "accountId",
+              "as": "player"
+            }
+          },
+          {
+            "$unwind": {
+              "path": "$player",
+              "preserveNullAndEmptyArrays": true
+            }
+          },
+          {
+            "$setWindowFields": {
+              "sortBy": {
+                "xpEarned": -1
+              },
+              "output": {
+                "rank": {
+                  "$rank": {}
+                }
+              }
+            }
+          },
+          {
+            "$project": {
+              "_id": 0,
+              "rank": 1,
+              "accountId": "$_id",
+              "displayName": "$player.displayName",
+              "xpEarned": 1,
+              "achievementsWon": 1,
+              "awardsEarned": 1,
+              "awardsByType": 1
+            }
+          },
+          {
+            "$match": {
+              "$or": [
+                {
+                  "rank": {
+                    "$gt": 2
+                  }
+                },
+                {
+                  "$and": [
+                    {
+                      "rank": {
+                        "$eq": 2
+                      }
+                    },
+                    {
+                      "accountId": {
+                        "$gt": "account-2"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$sort": {
+              "rank": 1,
+              "accountId": 1
+            }
+          },
+          {
+            "$limit": 3
+          }
+        ]
+      ],
+      "mongoAggregateResults": [
+        [
+          {
+            "rank": 3,
+            "accountId": "account-3",
+            "displayName": "Third Player",
+            "xpEarned": 7000,
+            "achievementsWon": 70,
+            "awardsEarned": 0,
+            "awardsByType": {}
+          }
+        ]
+      ],
+      "mongoFindOne": [],
+      "mongoCount": [],
+      "epicProfile": null,
+      "epicError": false
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d3af74d4e8d482803285e5f732eac7ea3a58b5ad\""
+      },
+      "body": {
+        "data": [
+          {
+            "rank": 3,
+            "accountId": "account-3",
+            "displayName": "Third Player",
+            "xpEarned": 7000,
+            "achievementsWon": 70,
+            "awardsEarned": 0,
+            "awardsByType": {}
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "limit": 2,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "profiles_games_continuation",
+    "request": {
+      "method": "GET",
+      "path": "/v1/profiles/player-2/games?limit=2&cursor=eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicGxheWVyLTIiLCJzb3J0IjoiY29tcGxldGlvbiIsInBsYXRpbnVtIjpmYWxzZX0sImZpbHRlckhhc2giOiIyOTQwMzY2NTEzMTBjNDZiNDI5M2Q5YjhjYjc0MmJhYWJmMTk4ZGZiNjE0MDdhMDVlZjJmZTMxNWRmZWQyMGY0Iiwib3JkZXJpbmciOiJjb21wbGV0aW9uUGVyY2VudGFnZTpkZXNjLHByb2R1Y3QubmFtZTphc2Msc2FuZGJveElkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjIsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzAuOCwiR2FtZSAxIiwic2FuZGJveC0xIl19.u-qKsUB4M9UYnS21DIoDTjgaB89QmJAqIkyhVIoKSH0"
+    },
+    "input": {
+      "mongoAggregate": [
+        [
+          {
+            "$match": {
+              "epicAccountId": "player-2"
+            }
+          },
+          {
+            "$group": {
+              "_id": "$sandboxId",
+              "totalUnlocked": {
+                "$max": "$totalUnlocked"
+              },
+              "totalXP": {
+                "$max": "$totalXP"
+              },
+              "playerAwards_arr": {
+                "$push": "$playerAwards"
+              }
+            }
+          },
+          {
+            "$addFields": {
+              "playerAwards": {
+                "$reduce": {
+                  "input": "$playerAwards_arr",
+                  "initialValue": [],
+                  "in": {
+                    "$setUnion": [
+                      "$$value",
+                      "$$this"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$project": {
+              "playerAwards_arr": 0
+            }
+          },
+          {
+            "$lookup": {
+              "from": "offers",
+              "let": {
+                "sbx": "$_id"
+              },
+              "pipeline": [
+                {
+                  "$match": {
+                    "$expr": {
+                      "$and": [
+                        {
+                          "$eq": [
+                            "$namespace",
+                            "$$sbx"
+                          ]
+                        },
+                        {
+                          "$eq": [
+                            "$offerType",
+                            "BASE_GAME"
+                          ]
+                        },
+                        {
+                          "$eq": [
+                            "$isCodeRedemptionOnly",
+                            false
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "$sort": {
+                    "isDisplayable": -1,
+                    "title": 1,
+                    "lastModifiedDate": -1
+                  }
+                },
+                {
+                  "$limit": 1
+                },
+                {
+                  "$project": {
+                    "_id": 0,
+                    "id": 1,
+                    "namespace": 1,
+                    "keyImages": 1,
+                    "title": 1,
+                    "productSlug": 1
+                  }
+                }
+              ],
+              "as": "offer"
+            }
+          },
+          {
+            "$unwind": {
+              "path": "$offer",
+              "preserveNullAndEmptyArrays": true
+            }
+          },
+          {
+            "$lookup": {
+              "from": "achievementsets",
+              "localField": "_id",
+              "foreignField": "sandboxId",
+              "as": "achievementSets"
+            }
+          },
+          {
+            "$addFields": {
+              "totalAchievements": {
+                "$sum": {
+                  "$map": {
+                    "input": "$achievementSets",
+                    "as": "s",
+                    "in": {
+                      "$size": {
+                        "$ifNull": [
+                          "$$s.achievements",
+                          []
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "totalProductXP": {
+                "$sum": {
+                  "$map": {
+                    "input": "$achievementSets",
+                    "as": "s",
+                    "in": {
+                      "$reduce": {
+                        "input": {
+                          "$ifNull": [
+                            "$$s.achievements",
+                            []
+                          ]
+                        },
+                        "initialValue": 0,
+                        "in": {
+                          "$add": [
+                            "$$value",
+                            "$$this.xp"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$addFields": {
+              "productAchievements": {
+                "totalAchievements": "$totalAchievements",
+                "totalProductXP": "$totalProductXP"
+              },
+              "completionPercentage": {
+                "$cond": [
+                  {
+                    "$eq": [
+                      "$totalAchievements",
+                      0
+                    ]
+                  },
+                  0,
+                  {
+                    "$divide": [
+                      "$totalUnlocked",
+                      "$totalAchievements"
+                    ]
+                  }
+                ]
+              },
+              "baseOfferForSandbox": {
+                "id": "$offer.id",
+                "namespace": "$offer.namespace",
+                "keyImages": "$offer.keyImages"
+              },
+              "product": {
+                "name": "$offer.title",
+                "slug": "$offer.productSlug"
+              },
+              "sandboxId": "$_id"
+            }
+          },
+          {
+            "$project": {
+              "_id": 0,
+              "offer": 0,
+              "achievementSets": 0,
+              "totalAchievements": 0,
+              "totalProductXP": 0
+            }
+          },
+          {
+            "$match": {
+              "$or": [
+                {
+                  "completionPercentage": {
+                    "$lt": 0.8
+                  }
+                },
+                {
+                  "completionPercentage": null
+                },
+                {
+                  "$and": [
+                    {
+                      "completionPercentage": {
+                        "$eq": 0.8
+                      }
+                    },
+                    {
+                      "product.name": {
+                        "$gt": "Game 1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "$and": [
+                    {
+                      "completionPercentage": {
+                        "$eq": 0.8
+                      }
+                    },
+                    {
+                      "product.name": {
+                        "$eq": "Game 1"
+                      }
+                    },
+                    {
+                      "sandboxId": {
+                        "$gt": "sandbox-1"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$sort": {
+              "completionPercentage": -1,
+              "product.name": 1,
+              "sandboxId": 1
+            }
+          },
+          {
+            "$limit": 3
+          }
+        ]
+      ],
+      "mongoAggregateResults": [
+        [
+          {
+            "totalUnlocked": 7,
+            "totalXP": 800,
+            "playerAwards": [],
+            "productAchievements": {
+              "totalAchievements": 10,
+              "totalProductXP": 1000
+            },
+            "completionPercentage": 0.7,
+            "baseOfferForSandbox": {
+              "id": "offer-2",
+              "namespace": "sandbox-2",
+              "keyImages": []
+            },
+            "product": {
+              "name": "Game 2",
+              "slug": "game-2"
+            },
+            "sandboxId": "sandbox-2"
+          }
+        ]
+      ],
+      "mongoFind": [],
+      "modelFind": [],
+      "mongoFindOne": [],
+      "mongoCount": [],
+      "epicProfile": {
+        "epicAccountId": "player-2",
+        "displayName": "Public Player",
+        "avatar": {
+          "small": "https://img/s",
+          "medium": "https://img/m",
+          "large": "https://img/l"
+        }
+      },
+      "epicError": false
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"6eae9456538509db7f3bc9bf013bf65abadd8ff8\""
+      },
+      "body": {
+        "data": {
+          "achievements": [
+            {
+              "totalUnlocked": 7,
+              "totalXP": 800,
+              "playerAwards": [],
+              "productAchievements": {
+                "totalAchievements": 10,
+                "totalProductXP": 1000
+              },
+              "completionPercentage": 0.7,
+              "baseOfferForSandbox": {
+                "id": "offer-2",
+                "namespace": "sandbox-2",
+                "keyImages": []
+              },
+              "product": {
+                "name": "Game 2",
+                "slug": "game-2"
+              },
+              "sandboxId": "sandbox-2"
+            }
+          ]
+        },
+        "meta": {
+          "pagination": {
+            "limit": 2,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,655 @@
+[
+  {
+    "documents": {
+      "offers": [
+        "2d000000025f6964000f000000636174616c6f672d7265636f7264000269640008000000617263686976650000",
+        "32000000025f69640014000000777261707065642d646174652d7265636f7264000269640008000000777261707065640000",
+        "39000000025f696400180000006d697373696e672d63757272656e63792d7265636f726400026964000b000000696e636f6d706c6574650000"
+      ],
+      "pricev2_historical": [
+        "a3000000026f6666657249640008000000617263686976650002726567696f6e00030000005553000964617465008009001b870100000975706461746564417400e07cd606880100000370726963650041000000106f726967696e616c507269636500cf07000010646973636f756e74507269636500db0500000263757272656e6379436f646500040000005553440000075f69640064e00000000000000000000100",
+        "a3000000026f6666657249640008000000617263686976650002726567696f6e00030000005553000964617465008009001b870100000975706461746564417400e07cd606880100000370726963650041000000106f726967696e616c507269636500cf07000010646973636f756e74507269636500e70300000263757272656e6379436f646500040000005553440000075f69640064e00000000000000000000200",
+        "a1000000026f6666657249640008000000617263686976650002726567696f6e000300000055530009646174650000c8a06a8501000009757064617465644174000024c76f850100000370726963650041000000106f726967696e616c507269636500cf07000010646973636f756e74507269636500db0500000263757272656e6379436f646500040000005553440000025f696400060000007072696f720000",
+        "b3000000026f6666657249640008000000617263686976650002726567696f6e00030000005553000264617465000b000000323032322d31312d30310002757064617465644174000b000000323032322d31312d3033000370726963650041000000106f726967696e616c507269636500cf07000010646973636f756e74507269636500db0500000263757272656e6379436f646500040000005553440000025f6964000a000000746578742d646174650000",
+        "ac000000026f6666657249640008000000617263686976650004726567696f6e00190000000230000300000045550002310003000000555300000964617465008009001b870100000975706461746564417400e07cd6068801000003707269636500330000000263757272656e6379436f6465000400000045555200026f726967696e616c50726963650005000000323435300000025f6964000d0000006d756c74692d726567696f6e0000",
+        "9a000000026f6666657249640008000000617263686976650002726567696f6e00030000004a50000964617465008009001b870100000975706461746564417400e07cd60688010000037072696365003a0000000263757272656e6379436f646500040000004a505900136f726967696e616c50726963650020250000000000000000000000003e3000025f696400060000006a6170616e0000",
+        "8d000000026f6666657249640008000000617263686976650002726567696f6e00030000004555000a64617465000975706461746564417400e07cd60688010000037072696365002e0000000263757272656e6379436f6465000400000045555200106f726967696e616c5072696365000000000000025f6964000d0000006d697373696e672d646174650000",
+        "7d000000026f666665724964000b000000696e636f6d706c6574650002726567696f6e00030000005553000964617465008009001b870100000975706461746564417400e07cd6068801000003707269636500170000001063757272656e6379436f6465000700000000025f6964000900000063757272656e63790000",
+        "b6000000026f6666657249640008000000777261707065640002726567696f6e00030000005553000364617465001b000000022464617465000b000000323032342d30312d303100000975706461746564417400e07cd606880100000370726963650041000000106f726967696e616c507269636500cf07000010646973636f756e74507269636500db0500000263757272656e6379436f646500040000005553440000025f69640008000000777261707065640000",
+        "9b000000026f6666657249640008000000777261707065640002726567696f6e00030000005553000a64617465000975706461746564417400e07cd606880100000370726963650041000000106f726967696e616c507269636500cf07000010646973636f756e74507269636500db0500000263757272656e6379436f646500040000005553440000025f696400080000006e6f2d646174650000"
+      ]
+    },
+    "cases": [
+      {
+        "path": "/v1/offers/archive/price-history",
+        "response": {
+          "status": 200,
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "private, no-cache",
+            "cdn-cache-control": "no-store",
+            "cloudflare-cdn-cache-control": "no-store",
+            "x-content-type-options": "nosniff",
+            "x-request-id": "req_node_oracle",
+            "etag": "\"e87ed0bb44f4186aae9d595f578e66a6b0dc3728\""
+          },
+          "body": {
+            "data": {
+              "US": [
+                {
+                  "offerId": "archive",
+                  "region": "US",
+                  "currencyCode": "USD",
+                  "precision": 2,
+                  "originalPrice": 1999,
+                  "discountPrice": 1499,
+                  "price": {
+                    "originalPrice": 1999,
+                    "discountPrice": 1499,
+                    "currencyCode": "USD",
+                    "precision": 2
+                  },
+                  "date": "2023-03-25T23:00:00.000Z",
+                  "updatedAt": "2023-05-10T18:05:00.000Z"
+                },
+                {
+                  "offerId": "archive",
+                  "region": "US",
+                  "currencyCode": "USD",
+                  "precision": 2,
+                  "originalPrice": 1999,
+                  "discountPrice": 999,
+                  "price": {
+                    "originalPrice": 1999,
+                    "discountPrice": 999,
+                    "currencyCode": "USD",
+                    "precision": 2
+                  },
+                  "date": "2023-03-25T23:00:00.000Z",
+                  "updatedAt": "2023-05-10T18:05:00.000Z"
+                },
+                {
+                  "offerId": "archive",
+                  "region": "US",
+                  "currencyCode": "USD",
+                  "precision": 2,
+                  "originalPrice": 1999,
+                  "discountPrice": 1499,
+                  "price": {
+                    "originalPrice": 1999,
+                    "discountPrice": 1499,
+                    "currencyCode": "USD",
+                    "precision": 2
+                  },
+                  "date": "2023-01-01T00:00:00.000Z",
+                  "updatedAt": "2023-01-02T00:00:00.000Z"
+                },
+                {
+                  "offerId": "archive",
+                  "region": "US",
+                  "currencyCode": "USD",
+                  "precision": 2,
+                  "originalPrice": 1999,
+                  "discountPrice": 1499,
+                  "price": {
+                    "originalPrice": 1999,
+                    "discountPrice": 1499,
+                    "currencyCode": "USD",
+                    "precision": 2
+                  },
+                  "date": "2022-11-01",
+                  "updatedAt": "2022-11-03T00:00:00.000Z"
+                }
+              ],
+              "EU,US": [
+                {
+                  "offerId": "archive",
+                  "region": [
+                    "EU",
+                    "US"
+                  ],
+                  "currencyCode": "EUR",
+                  "precision": 2,
+                  "originalPrice": 2450,
+                  "price": {
+                    "currencyCode": "EUR",
+                    "originalPrice": 2450,
+                    "precision": 2
+                  },
+                  "date": "2023-03-25T23:00:00.000Z",
+                  "updatedAt": "2023-05-10T18:05:00.000Z"
+                }
+              ],
+              "JP": [
+                {
+                  "offerId": "archive",
+                  "region": "JP",
+                  "currencyCode": "JPY",
+                  "precision": 0,
+                  "originalPrice": 950,
+                  "price": {
+                    "currencyCode": "JPY",
+                    "originalPrice": 950,
+                    "precision": 0
+                  },
+                  "date": "2023-03-25T23:00:00.000Z",
+                  "updatedAt": "2023-05-10T18:05:00.000Z"
+                }
+              ]
+            },
+            "meta": {
+              "region": null,
+              "locale": "en-US",
+              "grouped": true,
+              "regions": 3,
+              "since": null
+            }
+          }
+        }
+      },
+      {
+        "path": "/v1/offers/archive/price-history?since=2023-03-01",
+        "response": {
+          "status": 200,
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "private, no-cache",
+            "cdn-cache-control": "no-store",
+            "cloudflare-cdn-cache-control": "no-store",
+            "x-content-type-options": "nosniff",
+            "x-request-id": "req_node_oracle",
+            "etag": "\"e7659f2537f60afa54222b4f0c8a4948af6c1627\""
+          },
+          "body": {
+            "data": {
+              "US": [
+                {
+                  "offerId": "archive",
+                  "region": "US",
+                  "currencyCode": "USD",
+                  "precision": 2,
+                  "originalPrice": 1999,
+                  "discountPrice": 1499,
+                  "price": {
+                    "originalPrice": 1999,
+                    "discountPrice": 1499,
+                    "currencyCode": "USD",
+                    "precision": 2
+                  },
+                  "date": "2023-03-25T23:00:00.000Z",
+                  "updatedAt": "2023-05-10T18:05:00.000Z"
+                },
+                {
+                  "offerId": "archive",
+                  "region": "US",
+                  "currencyCode": "USD",
+                  "precision": 2,
+                  "originalPrice": 1999,
+                  "discountPrice": 999,
+                  "price": {
+                    "originalPrice": 1999,
+                    "discountPrice": 999,
+                    "currencyCode": "USD",
+                    "precision": 2
+                  },
+                  "date": "2023-03-25T23:00:00.000Z",
+                  "updatedAt": "2023-05-10T18:05:00.000Z"
+                }
+              ],
+              "EU,US": [
+                {
+                  "offerId": "archive",
+                  "region": [
+                    "EU",
+                    "US"
+                  ],
+                  "currencyCode": "EUR",
+                  "precision": 2,
+                  "originalPrice": 2450,
+                  "price": {
+                    "currencyCode": "EUR",
+                    "originalPrice": 2450,
+                    "precision": 2
+                  },
+                  "date": "2023-03-25T23:00:00.000Z",
+                  "updatedAt": "2023-05-10T18:05:00.000Z"
+                }
+              ],
+              "JP": [
+                {
+                  "offerId": "archive",
+                  "region": "JP",
+                  "currencyCode": "JPY",
+                  "precision": 0,
+                  "originalPrice": 950,
+                  "price": {
+                    "currencyCode": "JPY",
+                    "originalPrice": 950,
+                    "precision": 0
+                  },
+                  "date": "2023-03-25T23:00:00.000Z",
+                  "updatedAt": "2023-05-10T18:05:00.000Z"
+                }
+              ]
+            },
+            "meta": {
+              "region": null,
+              "locale": "en-US",
+              "grouped": true,
+              "regions": 3,
+              "since": "2023-03-01T00:00:00.000Z"
+            }
+          }
+        }
+      },
+      {
+        "path": "/v1/offers/archive/price-history?region=JP",
+        "response": {
+          "status": 200,
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "private, no-cache",
+            "cdn-cache-control": "no-store",
+            "cloudflare-cdn-cache-control": "no-store",
+            "x-content-type-options": "nosniff",
+            "x-request-id": "req_node_oracle",
+            "etag": "\"b4b5070941e2adb92d927eeb2e2d73bae35361b3\""
+          },
+          "body": {
+            "data": [
+              {
+                "offerId": "archive",
+                "region": "JP",
+                "currencyCode": "JPY",
+                "precision": 0,
+                "originalPrice": 950,
+                "price": {
+                  "currencyCode": "JPY",
+                  "originalPrice": 950,
+                  "precision": 0
+                },
+                "date": "2023-03-25T23:00:00.000Z",
+                "updatedAt": "2023-05-10T18:05:00.000Z"
+              }
+            ],
+            "meta": {
+              "region": "JP",
+              "locale": "en-US",
+              "since": null,
+              "pagination": {
+                "limit": 20,
+                "hasMore": false,
+                "nextCursor": null
+              }
+            }
+          }
+        }
+      },
+      {
+        "path": "/v1/offers/archive/price-history?country=DE",
+        "response": {
+          "status": 200,
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "private, no-cache",
+            "cdn-cache-control": "no-store",
+            "cloudflare-cdn-cache-control": "no-store",
+            "x-content-type-options": "nosniff",
+            "x-request-id": "req_node_oracle",
+            "etag": "\"c8cdae0cdb170533947301f6daaf644b1b4d351b\""
+          },
+          "body": {
+            "data": [],
+            "meta": {
+              "region": "EURO",
+              "locale": "en-US",
+              "since": null,
+              "pagination": {
+                "limit": 20,
+                "hasMore": false,
+                "nextCursor": null
+              }
+            }
+          }
+        }
+      },
+      {
+        "path": "/v1/offers/archive/price-history?region=US",
+        "localSince": "2023-02-15T15:00:00.000Z",
+        "response": {
+          "status": 200,
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "private, no-cache",
+            "cdn-cache-control": "no-store",
+            "cloudflare-cdn-cache-control": "no-store",
+            "x-content-type-options": "nosniff",
+            "x-request-id": "req_node_oracle",
+            "etag": "\"7c0498748057e707128b7a4ce1542d7dd17ee695\""
+          },
+          "body": {
+            "data": [
+              {
+                "offerId": "archive",
+                "region": "US",
+                "currencyCode": "USD",
+                "precision": 2,
+                "originalPrice": 1999,
+                "discountPrice": 999,
+                "price": {
+                  "originalPrice": 1999,
+                  "discountPrice": 999,
+                  "currencyCode": "USD",
+                  "precision": 2
+                },
+                "date": "2023-03-25T23:00:00.000Z",
+                "updatedAt": "2023-05-10T18:05:00.000Z"
+              },
+              {
+                "offerId": "archive",
+                "region": "US",
+                "currencyCode": "USD",
+                "precision": 2,
+                "originalPrice": 1999,
+                "discountPrice": 1499,
+                "price": {
+                  "originalPrice": 1999,
+                  "discountPrice": 1499,
+                  "currencyCode": "USD",
+                  "precision": 2
+                },
+                "date": "2023-03-25T23:00:00.000Z",
+                "updatedAt": "2023-05-10T18:05:00.000Z"
+              },
+              {
+                "offerId": "archive",
+                "region": [
+                  "EU",
+                  "US"
+                ],
+                "currencyCode": "EUR",
+                "precision": 2,
+                "originalPrice": 2450,
+                "price": {
+                  "currencyCode": "EUR",
+                  "originalPrice": 2450,
+                  "precision": 2
+                },
+                "date": "2023-03-25T23:00:00.000Z",
+                "updatedAt": "2023-05-10T18:05:00.000Z"
+              }
+            ],
+            "meta": {
+              "region": "US",
+              "locale": "en-US",
+              "since": "2023-02-15T15:00:00.000Z",
+              "pagination": {
+                "limit": 20,
+                "hasMore": false,
+                "nextCursor": null
+              }
+            }
+          }
+        }
+      },
+      {
+        "path": "/v1/offers/archive/price-history?region=US",
+        "localSince": "2024-03-31T01:30:00.000Z",
+        "response": {
+          "status": 200,
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "private, no-cache",
+            "cdn-cache-control": "no-store",
+            "cloudflare-cdn-cache-control": "no-store",
+            "x-content-type-options": "nosniff",
+            "x-request-id": "req_node_oracle",
+            "etag": "\"efced700beb2dcfed0fb366a133d1e758b0ba550\""
+          },
+          "body": {
+            "data": [],
+            "meta": {
+              "region": "US",
+              "locale": "en-US",
+              "since": "2024-03-31T01:30:00.000Z",
+              "pagination": {
+                "limit": 20,
+                "hasMore": false,
+                "nextCursor": null
+              }
+            }
+          }
+        }
+      },
+      {
+        "path": "/v1/offers/wrapped/price-history?region=US&limit=1",
+        "response": {
+          "status": 200,
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "private, no-cache",
+            "cdn-cache-control": "no-store",
+            "cloudflare-cdn-cache-control": "no-store",
+            "x-content-type-options": "nosniff",
+            "x-request-id": "req_node_oracle",
+            "etag": "\"1742371ef32746dc1ca9e9328c292b5cb6c17eb0\""
+          },
+          "body": {
+            "data": [
+              {
+                "offerId": "wrapped",
+                "region": "US",
+                "currencyCode": "USD",
+                "precision": 2,
+                "originalPrice": 1999,
+                "discountPrice": 1499,
+                "price": {
+                  "originalPrice": 1999,
+                  "discountPrice": 1499,
+                  "currencyCode": "USD",
+                  "precision": 2
+                },
+                "date": {
+                  "$date": "2024-01-01"
+                },
+                "updatedAt": "2023-05-10T18:05:00.000Z"
+              }
+            ],
+            "meta": {
+              "region": "US",
+              "locale": "en-US",
+              "since": null,
+              "pagination": {
+                "limit": 1,
+                "hasMore": true,
+                "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJ3cmFwcGVkIiwicmVnaW9uIjoiVVMiLCJzaW5jZSI6bnVsbH0sImZpbHRlckhhc2giOiI3MzM1MjMxNDkxM2MzMDNmYzE1MTNhNDY5NWQ1MmNiZjViM2YxMmFhMzc3OWNiZTIzMDc2MTE1Zjc4ZDM5Mjc2Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyNC0wMS0wMVQwMDowMDowMC4wMDBaIiwid3JhcHBlZCJdfQ.QRiZHLUB3tscIf1qYSXjZlNmFtkB0-32_hziQiNLIMk"
+              }
+            }
+          }
+        }
+      },
+      {
+        "path": "/v1/offers/archive/price-history?region=US&limit=1",
+        "response": {
+          "status": 200,
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "private, no-cache",
+            "cdn-cache-control": "no-store",
+            "cloudflare-cdn-cache-control": "no-store",
+            "x-content-type-options": "nosniff",
+            "x-request-id": "req_node_oracle",
+            "etag": "\"43d2b3b35c973c837b9da2da0c8b0b24e244906c\""
+          },
+          "body": {
+            "data": [
+              {
+                "offerId": "archive",
+                "region": "US",
+                "currencyCode": "USD",
+                "precision": 2,
+                "originalPrice": 1999,
+                "discountPrice": 999,
+                "price": {
+                  "originalPrice": 1999,
+                  "discountPrice": 999,
+                  "currencyCode": "USD",
+                  "precision": 2
+                },
+                "date": "2023-03-25T23:00:00.000Z",
+                "updatedAt": "2023-05-10T18:05:00.000Z"
+              }
+            ],
+            "meta": {
+              "region": "US",
+              "locale": "en-US",
+              "since": null,
+              "pagination": {
+                "limit": 1,
+                "hasMore": true,
+                "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJhcmNoaXZlIiwicmVnaW9uIjoiVVMiLCJzaW5jZSI6bnVsbH0sImZpbHRlckhhc2giOiIwNjg1MjhiNDc0ZGE5NWYzMDEzMmNmZGRjNWExNWVlMmFhODRmOTlmYmIyNmUxMGYyNGY4MTE2ZDc1YWRiOTE0Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMy0wMy0yNVQyMzowMDowMC4wMDBaIiwib2lkOjY0ZTAwMDAwMDAwMDAwMDAwMDAwMDAwMiJdfQ.JHsLzskwSdsufBHgSIQBSfEHuuRHkaz44qqkJ51sK_0"
+              }
+            }
+          }
+        }
+      },
+      {
+        "path": "/v1/offers/archive/price-history?region=US&limit=1&cursor=eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJhcmNoaXZlIiwicmVnaW9uIjoiVVMiLCJzaW5jZSI6bnVsbH0sImZpbHRlckhhc2giOiIwNjg1MjhiNDc0ZGE5NWYzMDEzMmNmZGRjNWExNWVlMmFhODRmOTlmYmIyNmUxMGYyNGY4MTE2ZDc1YWRiOTE0Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMy0wMy0yNVQyMzowMDowMC4wMDBaIiwib2lkOjY0ZTAwMDAwMDAwMDAwMDAwMDAwMDAwMiJdfQ.JHsLzskwSdsufBHgSIQBSfEHuuRHkaz44qqkJ51sK_0",
+        "response": {
+          "status": 200,
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "private, no-cache",
+            "cdn-cache-control": "no-store",
+            "cloudflare-cdn-cache-control": "no-store",
+            "x-content-type-options": "nosniff",
+            "x-request-id": "req_node_oracle",
+            "etag": "\"565d7516008e13d6dd9043f88b392c2923c6e802\""
+          },
+          "body": {
+            "data": [
+              {
+                "offerId": "archive",
+                "region": "US",
+                "currencyCode": "USD",
+                "precision": 2,
+                "originalPrice": 1999,
+                "discountPrice": 1499,
+                "price": {
+                  "originalPrice": 1999,
+                  "discountPrice": 1499,
+                  "currencyCode": "USD",
+                  "precision": 2
+                },
+                "date": "2023-03-25T23:00:00.000Z",
+                "updatedAt": "2023-05-10T18:05:00.000Z"
+              }
+            ],
+            "meta": {
+              "region": "US",
+              "locale": "en-US",
+              "since": null,
+              "pagination": {
+                "limit": 1,
+                "hasMore": true,
+                "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJhcmNoaXZlIiwicmVnaW9uIjoiVVMiLCJzaW5jZSI6bnVsbH0sImZpbHRlckhhc2giOiIwNjg1MjhiNDc0ZGE5NWYzMDEzMmNmZGRjNWExNWVlMmFhODRmOTlmYmIyNmUxMGYyNGY4MTE2ZDc1YWRiOTE0Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMy0wMy0yNVQyMzowMDowMC4wMDBaIiwib2lkOjY0ZTAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.s3O37YFP_shvDZFApks58PKk92XT6Ioi3tUq1i-OANI"
+              }
+            }
+          }
+        }
+      },
+      {
+        "path": "/v1/offers/archive/price-history?region=US&limit=1&cursor=eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlci1kZXRhaWxzLnByaWNlLWhpc3RvcnkiLCJmaWx0ZXJzIjp7Im9mZmVySWQiOiJhcmNoaXZlIiwicmVnaW9uIjoiVVMiLCJzaW5jZSI6bnVsbH0sImZpbHRlckhhc2giOiIwNjg1MjhiNDc0ZGE5NWYzMDEzMmNmZGRjNWExNWVlMmFhODRmOTlmYmIyNmUxMGYyNGY4MTE2ZDc1YWRiOTE0Iiwib3JkZXJpbmciOiJkYXRlOmRlc2MsX2lkOmRlc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlsiMjAyMy0wMy0yNVQyMzowMDowMC4wMDBaIiwib2lkOjY0ZTAwMDAwMDAwMDAwMDAwMDAwMDAwMSJdfQ.s3O37YFP_shvDZFApks58PKk92XT6Ioi3tUq1i-OANI",
+        "response": {
+          "status": 200,
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "private, no-cache",
+            "cdn-cache-control": "no-store",
+            "cloudflare-cdn-cache-control": "no-store",
+            "x-content-type-options": "nosniff",
+            "x-request-id": "req_node_oracle",
+            "etag": "\"2194aaa5a780d56e1d402ad17af930ba570e9a11\""
+          },
+          "body": {
+            "data": [
+              {
+                "offerId": "archive",
+                "region": "US",
+                "currencyCode": "USD",
+                "precision": 2,
+                "originalPrice": 1999,
+                "discountPrice": 1499,
+                "price": {
+                  "originalPrice": 1999,
+                  "discountPrice": 1499,
+                  "currencyCode": "USD",
+                  "precision": 2
+                },
+                "date": "2023-01-01T00:00:00.000Z",
+                "updatedAt": "2023-01-02T00:00:00.000Z"
+              }
+            ],
+            "meta": {
+              "region": "US",
+              "locale": "en-US",
+              "since": null,
+              "pagination": {
+                "limit": 1,
+                "hasMore": false,
+                "nextCursor": null
+              }
+            }
+          }
+        }
+      },
+      {
+        "path": "/v1/offers/incomplete/price-history?region=US",
+        "response": {
+          "status": 500,
+          "headers": {
+            "content-type": "application/problem+json",
+            "cache-control": "private, no-store",
+            "cdn-cache-control": "no-store",
+            "cloudflare-cdn-cache-control": "no-store",
+            "x-request-id": "req_node_oracle",
+            "etag": "\"8bc432d9551375f44e5e2118325f0d2c9b827b9c\""
+          },
+          "body": {
+            "type": "https://api.egdata.app/problems/internal-error",
+            "title": "Internal Server Error",
+            "status": 500,
+            "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+            "instance": "/v1/offers/incomplete/price-history",
+            "code": "INTERNAL_ERROR",
+            "requestId": "req_node_oracle"
+          }
+        }
+      },
+      {
+        "path": "/v1/offers/unknown/price-history",
+        "response": {
+          "status": 404,
+          "headers": {
+            "content-type": "application/problem+json",
+            "cache-control": "private, no-store",
+            "cdn-cache-control": "no-store",
+            "cloudflare-cdn-cache-control": "no-store",
+            "x-content-type-options": "nosniff",
+            "x-request-id": "req_node_oracle",
+            "etag": "\"03883a074871f6e27713649298b67186df516bdd\""
+          },
+          "body": {
+            "type": "https://api.egdata.app/problems/offer-not-found",
+            "title": "Not Found",
+            "status": 404,
+            "detail": "No offer exists with this ID.",
+            "instance": "/v1/offers/unknown/price-history",
+            "code": "OFFER_NOT_FOUND",
+            "requestId": "req_node_oracle"
+          }
+        }
+      }
+    ]
+  }
+]

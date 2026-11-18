@@ -1,0 +1,2029 @@
+[
+  {
+    "name": "legacy-offer-history-changelog",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog?page=2&limit=2junk&query=blue&type=update&field=title"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:game:2:2:blue:update:title"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "items": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "subItems": [
+              {
+                "id": "subitem"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    "item",
+                    "subitem"
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "game"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "item"
+          },
+          {
+            "id": "linked"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$in": [
+                "item",
+                "linked"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": "asset"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "game",
+                "item",
+                "linked",
+                "asset"
+              ]
+            },
+            "$text": {
+              "$search": "blue"
+            },
+            "metadata.changes.changeType": "update",
+            "metadata.changes.field": "title"
+          },
+          "options": {}
+        },
+        "result": 5
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "metadata.contextId": {
+                  "$in": [
+                    "game",
+                    "item",
+                    "linked",
+                    "asset"
+                  ]
+                },
+                "$text": {
+                  "$search": "blue"
+                },
+                "metadata.changes.changeType": "update",
+                "metadata.changes.field": "title"
+              }
+            },
+            {
+              "$sort": {
+                "timestamp": -1
+              }
+            },
+            {
+              "$skip": 2
+            },
+            {
+              "$limit": 2
+            },
+            {
+              "$lookup": {
+                "from": "offers",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$id",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "offerDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$id",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "itemDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "assets",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$artifactId",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "assetDoc"
+              }
+            },
+            {
+              "$addFields": {
+                "document": {
+                  "$switch": {
+                    "branches": [
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "offer"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$offerDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "item"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$itemDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "asset"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$assetDoc",
+                            0
+                          ]
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 1,
+                "metadata": 1,
+                "timestamp": 1,
+                "document": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000010"
+            },
+            "timestamp": {
+              "$date": "2025-04-16T12:00:00.000Z"
+            },
+            "metadata": {
+              "contextId": "item",
+              "changes": [
+                {
+                  "field": "title",
+                  "changeType": "update"
+                },
+                {
+                  "field": "title",
+                  "changeType": "insert"
+                }
+              ]
+            },
+            "document": {
+              "id": "item"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "changelog:game:2:2:blue:update:title",
+          "payload": {
+            "elements": [
+              {
+                "_id": "65ba00000000000000000010",
+                "timestamp": "2025-04-16T12:00:00.000Z",
+                "metadata": {
+                  "contextId": "item",
+                  "changes": [
+                    {
+                      "field": "title",
+                      "changeType": "update"
+                    },
+                    {
+                      "field": "title",
+                      "changeType": "insert"
+                    }
+                  ]
+                },
+                "document": {
+                  "id": "item"
+                }
+              }
+            ],
+            "page": 2,
+            "limit": 2,
+            "totalCount": 5,
+            "totalPages": 3,
+            "hasNextPage": true,
+            "hasPreviousPage": true
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"ad9bf3efcc7f61df88a48e5d206174877eeb2a3f\""
+      },
+      "body": {
+        "elements": [
+          {
+            "_id": "65ba00000000000000000010",
+            "timestamp": "2025-04-16T12:00:00.000Z",
+            "metadata": {
+              "contextId": "item",
+              "changes": [
+                {
+                  "field": "title",
+                  "changeType": "update"
+                },
+                {
+                  "field": "title",
+                  "changeType": "insert"
+                }
+              ]
+            },
+            "document": {
+              "id": "item"
+            }
+          }
+        ],
+        "page": 2,
+        "limit": 2,
+        "totalCount": 5,
+        "totalPages": 3,
+        "hasNextPage": true,
+        "hasPreviousPage": true
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-changelog-no-offer",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:game:1:10:undefined:undefined:undefined"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"20c50f4f8898ce673caf7b361affa29038bfabdf\""
+      },
+      "body": {
+        "message": "Offer not found"
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-changelog-hit",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog?query=&type="
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:game:1:10:::undefined"
+        },
+        "result": {
+          "elements": [
+            "cached"
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"03b1049540e6e8f98bbad58a54b99f5296d84f18\""
+      },
+      "body": {
+        "elements": [
+          "cached"
+        ]
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-stats-missing",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog/stats?from=2020"
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"7f973932c53822b4da4309ff04388a1479a16be9\""
+      },
+      "body": {
+        "message": "Missing from or to query parameter"
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-stats-invalid",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog/stats?from=no&to=2025"
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"8a155acc17571f27e659d277a3eb9d4814ca69f6\""
+      },
+      "body": {
+        "message": "Invalid from or to query parameter"
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-stats",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog/stats?from=2025-04-01&to=2025-05-01T15:30:00%2B02:00"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog-stats:game:2025-04-01T00:00:00.000Z:2025-05-01T13:30:00.000Z"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "metadata.contextId": "game",
+            "timestamp": {
+              "$gte": {
+                "$date": "2025-04-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2025-05-01T13:30:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000010"
+            },
+            "timestamp": {
+              "$date": "2025-04-16T12:00:00.000Z"
+            },
+            "metadata": {
+              "contextId": "item",
+              "changes": [
+                {
+                  "field": "title",
+                  "changeType": "update"
+                },
+                {
+                  "field": "title",
+                  "changeType": "insert"
+                }
+              ]
+            },
+            "document": {
+              "id": "item"
+            }
+          },
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000010"
+            },
+            "timestamp": {
+              "$date": "2025-04-16T12:00:00.000Z"
+            },
+            "metadata": {
+              "changes": [
+                {
+                  "field": "date",
+                  "changeType": "update"
+                }
+              ]
+            },
+            "document": {
+              "id": "item"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "changelog-stats:game:2025-04-01T00:00:00.000Z:2025-05-01T13:30:00.000Z",
+          "payload": {
+            "title": 2,
+            "date": 1
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"1e80fbe0b3cc1d003dad7c25073ef1339cc755c2\""
+      },
+      "body": {
+        "dailyChanges": {
+          "2025-04-16": 2
+        },
+        "weekdayChanges": {
+          "3": 2
+        },
+        "changeTypes": {
+          "update": 2,
+          "insert": 1
+        },
+        "changeFields": {
+          "title": 2,
+          "date": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-stats-hit",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog/stats?from=2025-04-01&to=2025-05-01T15:30:00%2B02:00"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog-stats:game:2025-04-01T00:00:00.000Z:2025-05-01T13:30:00.000Z"
+        },
+        "result": {
+          "title": 2,
+          "date": 1
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"14922f18e647c61a45826d6894d450d0b5d22272\""
+      },
+      "body": {
+        "title": 2,
+        "date": 1
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-stats-invalid-row",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog/stats?from=2025-04-01&to=2025-05-01T15:30:00%2B02:00"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog-stats:game:2025-04-01T00:00:00.000Z:2025-05-01T13:30:00.000Z"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "metadata.contextId": "game",
+            "timestamp": {
+              "$gte": {
+                "$date": "2025-04-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2025-05-01T13:30:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "timestamp": "not a BSON date"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "legacy-offer-history-changelog-typed-references",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:game:1:10:undefined:undefined:undefined"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "items": [
+            {
+              "id": {
+                "$oid": "65de00000000000000000021"
+              }
+            },
+            {
+              "id": {
+                "$numberLong": "9007199254741019"
+              }
+            },
+            {}
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "subItems": [
+              {
+                "id": {
+                  "$numberDecimal": "14.5"
+                }
+              },
+              {
+                "id": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    {
+                      "$oid": "65de00000000000000000021"
+                    },
+                    {
+                      "$numberLong": "9007199254741019"
+                    },
+                    null,
+                    {
+                      "$numberDecimal": "14.5"
+                    },
+                    false
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "game"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": {
+              "$oid": "65de00000000000000000021"
+            }
+          },
+          {
+            "id": {
+              "$numberLong": "9007199254741019"
+            }
+          },
+          {}
+        ]
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "many",
+          "query": {
+            "itemId": {
+              "$in": [
+                {
+                  "$oid": "65de00000000000000000021"
+                },
+                {
+                  "$numberLong": "9007199254741019"
+                },
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "artifactId": {
+              "$numberDecimal": "14.5"
+            }
+          },
+          {}
+        ]
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {
+            "metadata.contextId": {
+              "$in": [
+                "game",
+                {
+                  "$oid": "65de00000000000000000021"
+                },
+                {
+                  "$numberLong": "9007199254741019"
+                },
+                null,
+                {
+                  "$numberDecimal": "14.5"
+                },
+                null
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "metadata.contextId": {
+                  "$in": [
+                    "game",
+                    {
+                      "$oid": "65de00000000000000000021"
+                    },
+                    {
+                      "$numberLong": "9007199254741019"
+                    },
+                    null,
+                    {
+                      "$numberDecimal": "14.5"
+                    },
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "$sort": {
+                "timestamp": -1
+              }
+            },
+            {
+              "$skip": 0
+            },
+            {
+              "$limit": 10
+            },
+            {
+              "$lookup": {
+                "from": "offers",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$id",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "offerDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "items",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$id",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "itemDoc"
+              }
+            },
+            {
+              "$lookup": {
+                "from": "assets",
+                "let": {
+                  "contextId": "$metadata.contextId"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$eq": [
+                          "$artifactId",
+                          "$$contextId"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "as": "assetDoc"
+              }
+            },
+            {
+              "$addFields": {
+                "document": {
+                  "$switch": {
+                    "branches": [
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "offer"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$offerDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "item"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$itemDoc",
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "case": {
+                          "$eq": [
+                            "$metadata.contextType",
+                            "asset"
+                          ]
+                        },
+                        "then": {
+                          "$arrayElemAt": [
+                            "$assetDoc",
+                            0
+                          ]
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "_id": 1,
+                "metadata": 1,
+                "timestamp": 1,
+                "document": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "changelog:game:1:10:undefined:undefined:undefined",
+          "payload": {
+            "elements": [],
+            "page": 1,
+            "limit": 10,
+            "totalCount": 0,
+            "totalPages": 0,
+            "hasNextPage": false,
+            "hasPreviousPage": false
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"23aa9abeaf0e02839f9f79c208c64203ce483165\""
+      },
+      "body": {
+        "elements": [],
+        "page": 1,
+        "limit": 10,
+        "totalCount": 0,
+        "totalPages": 0,
+        "hasNextPage": false,
+        "hasPreviousPage": false
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-changelog-null-reference",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:game:1:10:undefined:undefined:undefined"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "items": [
+            null
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "legacy-offer-history-changelog-broken-subitems",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog:game:1:10:undefined:undefined:undefined"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "items": []
+        }
+      },
+      {
+        "call": {
+          "collection": "offersubitems",
+          "method": "many",
+          "query": {
+            "_id": "game"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          }
+        },
+        "result": [
+          {}
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "legacy-offer-history-stats-null-change",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog/stats?from=2025-04-01&to=2025-05-01T15:30:00%2B02:00"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog-stats:game:2025-04-01T00:00:00.000Z:2025-05-01T13:30:00.000Z"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "metadata.contextId": "game",
+            "timestamp": {
+              "$gte": {
+                "$date": "2025-04-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2025-05-01T13:30:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000010"
+            },
+            "timestamp": {
+              "$date": "2025-04-16T12:00:00.000Z"
+            },
+            "metadata": {
+              "changes": [
+                null
+              ]
+            },
+            "document": {
+              "id": "item"
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"ffa5578af85cd8c29d2df2242dc504e3b2ba687d\""
+      },
+      "body": "Internal Server Error"
+    }
+  },
+  {
+    "name": "legacy-offer-history-stats-legacy-calendar",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog/stats?from=12%2F31%2F2024%20GMT&to=2025-02-29"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog-stats:game:2024-12-31T00:00:00.000Z:2025-03-01T00:00:00.000Z"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "metadata.contextId": "game",
+            "timestamp": {
+              "$gte": {
+                "$date": "2024-12-31T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2025-03-01T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "changelog-stats:game:2024-12-31T00:00:00.000Z:2025-03-01T00:00:00.000Z",
+          "payload": {},
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"135307d51ee1cce43e8832213b290ec1eba0ff70\""
+      },
+      "body": {
+        "dailyChanges": {},
+        "weekdayChanges": {},
+        "changeTypes": {},
+        "changeFields": {}
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-stats-inverted-bounds",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog/stats?from=2026&to=2024"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog-stats:game:2026-01-01T00:00:00.000Z:2024-01-01T00:00:00.000Z"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "metadata.contextId": "game",
+            "timestamp": {
+              "$gte": {
+                "$date": "2026-01-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2024-01-01T00:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            }
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "changelog-stats:game:2026-01-01T00:00:00.000Z:2024-01-01T00:00:00.000Z",
+          "payload": {},
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"135307d51ee1cce43e8832213b290ec1eba0ff70\""
+      },
+      "body": {
+        "dailyChanges": {},
+        "weekdayChanges": {},
+        "changeTypes": {},
+        "changeFields": {}
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-stats-sparse-cache",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog/stats?from=2025-04-01&to=2025-05-01T15:30:00%2B02:00"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog-stats:game:2025-04-01T00:00:00.000Z:2025-05-01T13:30:00.000Z"
+        },
+        "result": [
+          null,
+          false,
+          2
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"1bb074d4a248f5499a29a7fa797794dd40ae5a9a\""
+      },
+      "body": [
+        null,
+        false,
+        2
+      ]
+    }
+  },
+  {
+    "name": "legacy-offer-history-stats-native-count-keys",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/changelog/stats?from=2025-04-01&to=2025-05-01T15:30:00%2B02:00"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "changelog-stats:game:2025-04-01T00:00:00.000Z:2025-05-01T13:30:00.000Z"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "many",
+          "query": {
+            "metadata.contextId": "game",
+            "timestamp": {
+              "$gte": {
+                "$date": "2025-04-01T00:00:00.000Z"
+              },
+              "$lte": {
+                "$date": "2025-05-01T13:30:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "timestamp": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "_id": {
+              "$oid": "65ba00000000000000000010"
+            },
+            "timestamp": {
+              "$date": "2025-04-16T12:00:00.000Z"
+            },
+            "metadata": {
+              "changes": [
+                {
+                  "changeType": {
+                    "$numberDecimal": "14.5"
+                  },
+                  "field": {
+                    "$numberLong": "9007199254741019"
+                  }
+                },
+                {
+                  "changeType": true,
+                  "field": [
+                    1,
+                    {
+                      "$numberDecimal": "14.5"
+                    }
+                  ]
+                },
+                {
+                  "field": null
+                },
+                {}
+              ]
+            },
+            "document": {
+              "id": "item"
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "changelog-stats:game:2025-04-01T00:00:00.000Z:2025-05-01T13:30:00.000Z",
+          "payload": {
+            "9007199254741019": 1,
+            "1,14.5": 1,
+            "null": 1,
+            "undefined": 1
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"0e1144767e82beb6dd19bd5371799df19def93a5\""
+      },
+      "body": {
+        "dailyChanges": {
+          "2025-04-16": 1
+        },
+        "weekdayChanges": {
+          "3": 1
+        },
+        "changeTypes": {
+          "14.5": 1,
+          "true": 1,
+          "undefined": 2
+        },
+        "changeFields": {
+          "9007199254741019": 1,
+          "1,14.5": 1,
+          "null": 1,
+          "undefined": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-reviews-anonymous",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/reviews?limit=99&page=2&verified=false"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "many",
+          "query": {
+            "id": "game",
+            "userId": {
+              "$ne": null
+            },
+            "verified": false
+          },
+          "options": {
+            "sort": {
+              "createdAt": -1
+            },
+            "limit": 25,
+            "skip": 25
+          }
+        },
+        "result": [
+          {
+            "id": "game",
+            "userId": "fixture-other",
+            "rating": 4
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "many",
+          "query": {
+            "accountId": {
+              "$in": [
+                "fixture-other"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "id": "game",
+            "userId": {
+              "$ne": null
+            },
+            "verified": false
+          },
+          "options": {}
+        },
+        "result": 19
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"d555f33dc71b45ef45e00d65541e74d0f2aab135\""
+      },
+      "body": {
+        "elements": [
+          {
+            "id": "game",
+            "userId": "fixture-other",
+            "rating": 4,
+            "user": null
+          }
+        ],
+        "page": 2,
+        "total": 19,
+        "limit": 25
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-reviews-invalid-token",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/reviews?verified=other",
+      "headers": {
+        "authorization": "Bearer invalid"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "many",
+          "query": {
+            "id": "game",
+            "userId": {
+              "$ne": null
+            }
+          },
+          "options": {
+            "sort": {
+              "createdAt": -1
+            },
+            "limit": 10,
+            "skip": 0
+          }
+        },
+        "result": [
+          {
+            "id": "game",
+            "userId": "fixture-other",
+            "rating": 4
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "many",
+          "query": {
+            "accountId": {
+              "$in": [
+                "fixture-other"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "id": "game",
+            "userId": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 19
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"daded0775a549595cbd1b807aa5797ed30a4e53d\""
+      },
+      "body": {
+        "elements": [
+          {
+            "id": "game",
+            "userId": "fixture-other",
+            "rating": 4,
+            "user": null
+          }
+        ],
+        "page": 1,
+        "total": 19,
+        "limit": 10
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-reviews-verified",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/reviews?verified=true",
+      "headers": {
+        "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBpZCI6ImZpeHR1cmUtYXBwIiwic3ViIjoiZml4dHVyZS1zdWJqZWN0In0.fixture"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "epicTokenInfo",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBpZCI6ImZpeHR1cmUtYXBwIiwic3ViIjoiZml4dHVyZS1zdWJqZWN0In0.fixture"
+        },
+        "result": "fixture-reviewer"
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "many",
+          "query": {
+            "id": "game",
+            "userId": {
+              "$ne": "fixture-reviewer"
+            },
+            "verified": true
+          },
+          "options": {
+            "sort": {
+              "createdAt": -1
+            },
+            "limit": 10,
+            "skip": 0
+          }
+        },
+        "result": [
+          {
+            "id": "game",
+            "userId": "fixture-other",
+            "rating": 4
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "one",
+          "query": {
+            "userId": "fixture-reviewer",
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "game",
+          "userId": "fixture-reviewer",
+          "rating": 5
+        }
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "many",
+          "query": {
+            "accountId": {
+              "$in": [
+                "fixture-reviewer",
+                "fixture-other"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "accountId": "fixture-reviewer",
+            "displayName": "Fixture"
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "id": "game",
+            "userId": {
+              "$ne": "fixture-reviewer"
+            },
+            "verified": true
+          },
+          "options": {}
+        },
+        "result": 7
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"9c13a2597ac5b4eb78f75c1aca00d1b481ec061e\""
+      },
+      "body": {
+        "elements": [
+          {
+            "id": "game",
+            "userId": "fixture-reviewer",
+            "rating": 5,
+            "user": {
+              "accountId": "fixture-reviewer",
+              "displayName": "Fixture"
+            }
+          },
+          {
+            "id": "game",
+            "userId": "fixture-other",
+            "rating": 4,
+            "user": null
+          }
+        ],
+        "page": 1,
+        "total": 7,
+        "limit": 10
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-reviews-cookie-no-review",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/reviews",
+      "headers": {
+        "cookie": "EPIC_AUTH=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBpZCI6ImZpeHR1cmUtYXBwIiwic3ViIjoiZml4dHVyZS1zdWJqZWN0In0.fixture"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "epicTokenInfo",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBpZCI6ImZpeHR1cmUtYXBwIiwic3ViIjoiZml4dHVyZS1zdWJqZWN0In0.fixture"
+        },
+        "result": "fixture-reviewer"
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "many",
+          "query": {
+            "id": "game",
+            "userId": {
+              "$ne": "fixture-reviewer"
+            }
+          },
+          "options": {
+            "sort": {
+              "createdAt": -1
+            },
+            "limit": 10,
+            "skip": 0
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "one",
+          "query": {
+            "userId": "fixture-reviewer",
+            "id": "game"
+          },
+          "options": {}
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "many",
+          "query": {
+            "accountId": {
+              "$in": []
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "id": "game",
+            "userId": {
+              "$ne": "fixture-reviewer"
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"da76cf5c3709daa16475feeb5b3d0e55c72a29ac\""
+      },
+      "body": {
+        "elements": [],
+        "page": 1,
+        "total": 0,
+        "limit": 10
+      }
+    }
+  },
+  {
+    "name": "legacy-offer-history-reviews-inactive",
+    "request": {
+      "method": "GET",
+      "path": "/offers/game/reviews",
+      "headers": {
+        "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBpZCI6ImZpeHR1cmUtYXBwIiwic3ViIjoiZml4dHVyZS1zdWJqZWN0In0.fixture"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "epicTokenInfo",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBpZCI6ImZpeHR1cmUtYXBwIiwic3ViIjoiZml4dHVyZS1zdWJqZWN0In0.fixture"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "many",
+          "query": {
+            "id": "game",
+            "userId": {
+              "$ne": null
+            }
+          },
+          "options": {
+            "sort": {
+              "createdAt": -1
+            },
+            "limit": 10,
+            "skip": 0
+          }
+        },
+        "result": [
+          {
+            "id": "game",
+            "userId": "fixture-other",
+            "rating": 4
+          }
+        ]
+      },
+      {
+        "call": {
+          "collection": "epic",
+          "method": "many",
+          "query": {
+            "accountId": {
+              "$in": [
+                "fixture-other"
+              ]
+            }
+          },
+          "options": {}
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "collection": "reviews",
+          "method": "count",
+          "query": {
+            "id": "game",
+            "userId": {
+              "$ne": null
+            }
+          },
+          "options": {}
+        },
+        "result": 19
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
+        "etag": "\"daded0775a549595cbd1b807aa5797ed30a4e53d\""
+      },
+      "body": {
+        "elements": [
+          {
+            "id": "game",
+            "userId": "fixture-other",
+            "rating": 4,
+            "user": null
+          }
+        ],
+        "page": 1,
+        "total": 19,
+        "limit": 10
+      }
+    }
+  }
+]

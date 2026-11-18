@@ -1,0 +1,70 @@
+[
+  {
+    "name": "credentials",
+    "hex": "4e414d453d666978747572650a4f50454e5345415243485f50415353574f52443d22707265244e414d453a247b4e414d457d2023737566666978220a524544495350415353574f52443d275c24746573742340263d270a4d4f4e474f5f55524c3d6d6f6e676f64623a2f2f6c6f63616c2f3f617574684d656368616e69736d3d4d4f4e474f44422d583530392661757468536f757263653d2465787465726e616c0a4245545445525f415554485f5345435245543d606a757374206120247b6c69746572616c7d60",
+    "parsed": {
+      "NAME": "fixture",
+      "OPENSEARCH_PASSWORD": "pre$NAME:${NAME} #suffix",
+      "REDISPASSWORD": "\\$test#@&=",
+      "MONGO_URL": "mongodb://local/?authMechanism=MONGODB-X509&authSource=$external",
+      "BETTER_AUTH_SECRET": "just a ${literal}"
+    }
+  },
+  {
+    "name": "assignments",
+    "hex": "efbbbf6578706f727420413d66697273740d413d6c6173740d0a423a2020636f6c6f6e2061737369676e6d656e740a656d7074793d0a7370616365642e6b65792d31203d2076616c756520202320636f6d6d656e740a69676e6f726564206c696e650a5f5f70726f746f5f5f3d76616c75650a",
+    "parsed": {
+      "A": "last",
+      "B": "colon assignment",
+      "empty": "",
+      "spaced.key-1": "value"
+    }
+  },
+  {
+    "name": "quoted",
+    "hex": "4f4e453d277261775c6e5c72270a54574f3d22657870616e6465645c6e5c72220a54485245453d606261636b5c6e600a464f55523d276d756c74690a6c696e652364617461270a",
+    "parsed": {
+      "ONE": "raw\\n\\r",
+      "TWO": "expanded\n\r",
+      "THREE": "back\\n",
+      "FOUR": "multi\nline#data"
+    }
+  },
+  {
+    "name": "comments",
+    "hex": "454d5054593d23626c616e6b0a484153483d6c6566742372696768740a51554f5445443d227769746823686173682220202320636f6d6d656e740a53494e474c453d2722696e6e657222270a",
+    "parsed": {
+      "EMPTY": "",
+      "HASH": "left",
+      "QUOTED": "with#hash",
+      "SINGLE": "\"inner\""
+    }
+  },
+  {
+    "name": "escaping",
+    "hex": "444f55424c453d22615c22625c5c63220a53494e474c453d27645c2765270a554e4b4e4f574e3d225c745c7122",
+    "parsed": {
+      "DOUBLE": "a\\\"b\\\\c",
+      "SINGLE": "d\\'e",
+      "UNKNOWN": "\\t\\q"
+    }
+  },
+  {
+    "name": "malformed",
+    "hex": "76616c69643d6265666f72650a696e76616c69643dc2850a413d27756e636c6f7365640a423d6e6578740a6a7573742061206c696e650a6578706f72740941465445523d6f6b",
+    "parsed": {
+      "valid": "before",
+      "invalid": "",
+      "A": "'unclosed",
+      "B": "next",
+      "AFTER": "ok"
+    }
+  },
+  {
+    "name": "utf8",
+    "hex": "583dff0a",
+    "parsed": {
+      "X": "�"
+    }
+  }
+]

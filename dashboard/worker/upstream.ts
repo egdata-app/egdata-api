@@ -1,3 +1,4 @@
+import { compareStagingOrigin } from "./staging-comparison.js";
 import type { DashboardEnv } from "./types.js";
 
 const INTERNAL_HEADERS = [
@@ -32,6 +33,7 @@ export type ForwardOptions = {
   headers?: Record<string, string>;
   /** v1 never accepts cookie-selected behavior or ambient credentials. */
   stripCookies?: boolean;
+  comparison?: { ctx: ExecutionContext; operationId: string };
 };
 
 export async function forwardToUpstream(
@@ -111,12 +113,32 @@ export async function forwardToUpstream(
   const hasBody = request.method !== "GET" && request.method !== "HEAD";
 
   try {
-    return await fetch(upstreamUrl.toString(), {
+    const response = await fetch(upstreamUrl.toString(), {
       method: request.method,
       headers,
       body: hasBody ? request.body : undefined,
       redirect: "manual",
     });
+    if (options.comparison) {
+      const { ctx, operationId } = options.comparison;
+      try {
+        compareStagingOrigin(
+          env,
+          ctx,
+          upstreamUrl,
+          request,
+          headers,
+          response,
+          operationId,
+        );
+      } catch {
+        console.warn("rust-origin-comparison", {
+          operationId,
+          result: "unavailable",
+        });
+      }
+    }
+    return response;
   } catch {
     return originUnavailableError(request);
   }

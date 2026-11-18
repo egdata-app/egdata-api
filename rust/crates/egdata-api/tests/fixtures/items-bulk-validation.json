@@ -1,0 +1,336 @@
+[
+  {
+    "name": "not_object",
+    "body": null,
+    "expected": {
+      "code": "INVALID_BODY",
+      "detail": "The request body must be a JSON object with an `items` array of strings.",
+      "errors": [
+        {
+          "pointer": "",
+          "code": "INVALID",
+          "message": "Expected an object."
+        }
+      ]
+    }
+  },
+  {
+    "name": "array_body",
+    "body": [],
+    "expected": {
+      "code": "INVALID_BODY",
+      "detail": "The request body must be a JSON object with an `items` array of strings.",
+      "errors": [
+        {
+          "pointer": "",
+          "code": "INVALID",
+          "message": "Expected an object."
+        }
+      ]
+    }
+  },
+  {
+    "name": "number_body",
+    "body": 3,
+    "expected": {
+      "code": "INVALID_BODY",
+      "detail": "The request body must be a JSON object with an `items` array of strings.",
+      "errors": [
+        {
+          "pointer": "",
+          "code": "INVALID",
+          "message": "Expected an object."
+        }
+      ]
+    }
+  },
+  {
+    "name": "unknown_fields",
+    "body": {
+      "items": [],
+      "bad": 1,
+      "other": true
+    },
+    "expected": {
+      "code": "INVALID_BODY",
+      "detail": "The request body contains unsupported field(s): bad, other.",
+      "errors": [
+        {
+          "pointer": "/bad",
+          "code": "UNKNOWN_FIELD",
+          "message": "The `bad` field is not supported."
+        },
+        {
+          "pointer": "/other",
+          "code": "UNKNOWN_FIELD",
+          "message": "The `other` field is not supported."
+        }
+      ]
+    }
+  },
+  {
+    "name": "unknown_pointer",
+    "body": {
+      "items": [],
+      "a/b~c": true
+    },
+    "expected": {
+      "code": "INVALID_BODY",
+      "detail": "The request body contains unsupported field(s): a/b~c.",
+      "errors": [
+        {
+          "pointer": "/a/b~c",
+          "code": "UNKNOWN_FIELD",
+          "message": "The `a/b~c` field is not supported."
+        }
+      ]
+    }
+  },
+  {
+    "name": "items_not_array",
+    "body": {
+      "items": "x"
+    },
+    "expected": {
+      "code": "INVALID_BODY",
+      "detail": "The `items` field must be an array of item identifiers.",
+      "errors": [
+        {
+          "pointer": "/items",
+          "code": "INVALID",
+          "message": "Expected an array of strings."
+        }
+      ]
+    }
+  },
+  {
+    "name": "items_missing",
+    "body": {},
+    "expected": {
+      "code": "INVALID_BODY",
+      "detail": "The `items` field must be an array of item identifiers.",
+      "errors": [
+        {
+          "pointer": "/items",
+          "code": "INVALID",
+          "message": "Expected an array of strings."
+        }
+      ]
+    }
+  },
+  {
+    "name": "too_many",
+    "body": {
+      "items": [
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x"
+      ]
+    },
+    "expected": {
+      "code": "BULK_LIMIT_EXCEEDED",
+      "detail": "At most 100 item identifiers can be resolved per request.",
+      "errors": [
+        {
+          "pointer": "/items",
+          "code": "TOO_MANY_ITEMS",
+          "message": "The array contains 101 entries; the maximum is 100."
+        }
+      ]
+    }
+  },
+  {
+    "name": "entry_wrong_type",
+    "body": {
+      "items": [
+        4
+      ]
+    },
+    "expected": {
+      "code": "INVALID_BODY",
+      "detail": "Every entry in `items` must be a string.",
+      "errors": [
+        {
+          "pointer": "/items/0",
+          "code": "INVALID",
+          "message": "Expected a string."
+        }
+      ]
+    }
+  },
+  {
+    "name": "entry_second_wrong_type",
+    "body": {
+      "items": [
+        "valid",
+        null
+      ]
+    },
+    "expected": {
+      "code": "INVALID_BODY",
+      "detail": "Every entry in `items` must be a string.",
+      "errors": [
+        {
+          "pointer": "/items/1",
+          "code": "INVALID",
+          "message": "Expected a string."
+        }
+      ]
+    }
+  },
+  {
+    "name": "entry_invalid_length",
+    "body": {
+      "items": [
+        "  "
+      ]
+    },
+    "expected": {
+      "code": "INVALID_BODY",
+      "detail": "Item identifiers must contain between 1 and 200 characters.",
+      "errors": [
+        {
+          "pointer": "/items/0",
+          "code": "INVALID",
+          "message": "Expected a non-empty identifier of at most 200 characters."
+        }
+      ]
+    }
+  },
+  {
+    "name": "entry_too_long",
+    "body": {
+      "items": [
+        "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      ]
+    },
+    "expected": {
+      "code": "INVALID_BODY",
+      "detail": "Item identifiers must contain between 1 and 200 characters.",
+      "errors": [
+        {
+          "pointer": "/items/0",
+          "code": "INVALID",
+          "message": "Expected a non-empty identifier of at most 200 characters."
+        }
+      ]
+    }
+  },
+  {
+    "name": "entry_utf16_length",
+    "body": {
+      "items": [
+        "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀"
+      ]
+    },
+    "expected": {
+      "code": "INVALID_BODY",
+      "detail": "Item identifiers must contain between 1 and 200 characters.",
+      "errors": [
+        {
+          "pointer": "/items/0",
+          "code": "INVALID",
+          "message": "Expected a non-empty identifier of at most 200 characters."
+        }
+      ]
+    }
+  }
+]

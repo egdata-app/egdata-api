@@ -1,0 +1,78 @@
+[
+  {
+    "setup": {
+      "mapping": {
+        "rank": {
+          "type": "integer"
+        }
+      },
+      "documents": [
+        {
+          "id": "a",
+          "rank": 1
+        },
+        {
+          "id": "b",
+          "rank": 2
+        }
+      ],
+      "query": {
+        "size": 1,
+        "sort": [
+          {
+            "rank": "asc"
+          }
+        ],
+        "query": {
+          "match_all": {}
+        }
+      }
+    },
+    "mapped": {
+      "properties": {
+        "rank": {
+          "type": "integer"
+        }
+      }
+    },
+    "pages": [
+      {
+        "total": {
+          "value": 2,
+          "relation": "eq"
+        },
+        "hits": [
+          {
+            "id": "a",
+            "source": {
+              "rank": 1
+            },
+            "sort": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "total": {
+          "value": 2,
+          "relation": "eq"
+        },
+        "hits": [
+          {
+            "id": "b",
+            "source": {
+              "rank": 2
+            },
+            "sort": [
+              2
+            ]
+          }
+        ]
+      }
+    ],
+    "missing": 404,
+    "invalidQuery": 400,
+    "unauthenticated": 401
+  }
+]

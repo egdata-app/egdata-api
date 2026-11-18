@@ -141,6 +141,48 @@ describe("GraphQL CDN caching and APQ", () => {
     );
   });
 
+  it("uses Apollo APQ error status, messages, and codes for invalid metadata", async () => {
+    const unsupported = await applyPersistedQuery({
+      method: "POST",
+      headers: {} as never,
+      search: "",
+      body: {
+        extensions: {
+          persistedQuery: { version: 2, sha256Hash: "a".repeat(64) },
+        },
+      },
+    });
+    expect(unsupported.response?.status).toBe(200);
+    expect(await unsupported.response?.json()).toEqual({
+      errors: [
+        {
+          message: "Unsupported persisted query version.",
+          extensions: { code: "PERSISTED_QUERY_NOT_SUPPORTED" },
+        },
+      ],
+    });
+
+    const invalidHash = await applyPersistedQuery({
+      method: "POST",
+      headers: {} as never,
+      search: "",
+      body: {
+        extensions: {
+          persistedQuery: { version: 1, sha256Hash: "not-a-sha256-hash" },
+        },
+      },
+    });
+    expect(invalidHash.response?.status).toBe(400);
+    expect(await invalidHash.response?.json()).toEqual({
+      errors: [
+        {
+          message: "Invalid persisted query sha256Hash.",
+          extensions: { code: "PERSISTED_QUERY_HASH_MISMATCH" },
+        },
+      ],
+    });
+  });
+
   it("only adds CDN headers to cacheable GET responses", () => {
     const getHeaders: Record<string, string> = {
       "cache-control": "max-age=120, public",

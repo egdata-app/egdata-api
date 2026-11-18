@@ -1,0 +1,2975 @@
+[
+  {
+    "name": "legacy /countries?extra=1",
+    "request": {
+      "method": "GET",
+      "path": "/countries?extra=1"
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400",
+        "cdn-cache-control": "public, max-age=86400, stale-while-revalidate=604800",
+        "etag": "\"7b489edd54d0edc8c59a0ccf251b6f43d83bd069\""
+      },
+      "body": [
+        "AD",
+        "AE",
+        "AF",
+        "AG",
+        "AI",
+        "AL",
+        "AM",
+        "AN",
+        "AO",
+        "AQ",
+        "AR",
+        "AS",
+        "AT",
+        "AU",
+        "AW",
+        "AX",
+        "AZ",
+        "BA",
+        "BB",
+        "BD",
+        "BE",
+        "BF",
+        "BG",
+        "BH",
+        "BI",
+        "BJ",
+        "BL",
+        "BM",
+        "BN",
+        "BO",
+        "BQ",
+        "BR",
+        "BS",
+        "BT",
+        "BV",
+        "BW",
+        "BY",
+        "BZ",
+        "CA",
+        "CC",
+        "CD",
+        "CF",
+        "CG",
+        "CH",
+        "CI",
+        "CK",
+        "CL",
+        "CM",
+        "CN",
+        "CO",
+        "CR",
+        "CU",
+        "CV",
+        "CW",
+        "CX",
+        "CY",
+        "CZ",
+        "DE",
+        "DJ",
+        "DK",
+        "DM",
+        "DO",
+        "DZ",
+        "EC",
+        "EE",
+        "EG",
+        "EH",
+        "ER",
+        "ES",
+        "ET",
+        "FI",
+        "FJ",
+        "FK",
+        "FM",
+        "FO",
+        "FR",
+        "GA",
+        "GB",
+        "GD",
+        "GE",
+        "GF",
+        "GG",
+        "GH",
+        "GI",
+        "GL",
+        "GM",
+        "GN",
+        "GP",
+        "GQ",
+        "GR",
+        "GS",
+        "GT",
+        "GU",
+        "GW",
+        "GY",
+        "HK",
+        "HM",
+        "HN",
+        "HR",
+        "HT",
+        "HU",
+        "ID",
+        "IE",
+        "IL",
+        "IM",
+        "IN",
+        "IO",
+        "IQ",
+        "IR",
+        "IS",
+        "IT",
+        "JE",
+        "JM",
+        "JO",
+        "JP",
+        "KE",
+        "KG",
+        "KH",
+        "KI",
+        "KM",
+        "KN",
+        "KP",
+        "KR",
+        "KW",
+        "KY",
+        "KZ",
+        "LA",
+        "LB",
+        "LC",
+        "LI",
+        "LK",
+        "LR",
+        "LS",
+        "LT",
+        "LU",
+        "LV",
+        "LY",
+        "MA",
+        "MC",
+        "MD",
+        "ME",
+        "MF",
+        "MG",
+        "MH",
+        "MK",
+        "ML",
+        "MM",
+        "MN",
+        "MO",
+        "MP",
+        "MQ",
+        "MR",
+        "MS",
+        "MT",
+        "MU",
+        "MV",
+        "MW",
+        "MX",
+        "MY",
+        "MZ",
+        "NA",
+        "NC",
+        "NE",
+        "NF",
+        "NG",
+        "NI",
+        "NL",
+        "NO",
+        "NP",
+        "NR",
+        "NU",
+        "NZ",
+        "OM",
+        "PA",
+        "PE",
+        "PF",
+        "PG",
+        "PH",
+        "PK",
+        "PL",
+        "PM",
+        "PN",
+        "PR",
+        "PS",
+        "PT",
+        "PW",
+        "PY",
+        "QA",
+        "RE",
+        "RO",
+        "RS",
+        "RU",
+        "RW",
+        "SA",
+        "SB",
+        "SC",
+        "SD",
+        "SE",
+        "SG",
+        "SH",
+        "SI",
+        "SJ",
+        "SK",
+        "SL",
+        "SM",
+        "SN",
+        "SO",
+        "SR",
+        "SS",
+        "ST",
+        "SV",
+        "SX",
+        "SY",
+        "SZ",
+        "TC",
+        "TD",
+        "TF",
+        "TG",
+        "TH",
+        "TJ",
+        "TK",
+        "TL",
+        "TM",
+        "TN",
+        "TO",
+        "TR",
+        "TT",
+        "TV",
+        "TW",
+        "TZ",
+        "UA",
+        "UG",
+        "UM",
+        "US",
+        "UY",
+        "UZ",
+        "VA",
+        "VC",
+        "VE",
+        "VG",
+        "VI",
+        "VN",
+        "VU",
+        "WF",
+        "WS",
+        "XK",
+        "YE",
+        "YT",
+        "ZA",
+        "ZM",
+        "ZW"
+      ]
+    }
+  },
+  {
+    "name": "legacy /regions",
+    "request": {
+      "method": "GET",
+      "path": "/regions"
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400",
+        "cdn-cache-control": "public, max-age=86400, stale-while-revalidate=604800",
+        "etag": "\"5437be8010b82009b3a7b9434b4485c82c79ca49\""
+      },
+      "body": {
+        "AE": {
+          "currencyCode": "AED",
+          "description": "United Arab Emirates",
+          "countries": [
+            "AE"
+          ]
+        },
+        "AFRICA": {
+          "currencyCode": "USD",
+          "description": "Africa",
+          "countries": [
+            "LR",
+            "TZ",
+            "DJ",
+            "LS",
+            "YE",
+            "UG",
+            "MA",
+            "DZ",
+            "MG",
+            "ML",
+            "EH",
+            "MR",
+            "MU",
+            "MW",
+            "MZ",
+            "ER",
+            "AO",
+            "ET",
+            "NA",
+            "ZM",
+            "NE",
+            "NG",
+            "ZW",
+            "BF",
+            "RW",
+            "BI",
+            "BJ",
+            "SC",
+            "SD",
+            "BW",
+            "SL",
+            "KE",
+            "GA",
+            "SN",
+            "SO",
+            "SS",
+            "CD",
+            "ST",
+            "GH",
+            "KM",
+            "CF",
+            "CG",
+            "CI",
+            "GM",
+            "SZ",
+            "GN",
+            "GQ",
+            "CM",
+            "GW",
+            "TD",
+            "TG",
+            "CV",
+            "TN"
+          ]
+        },
+        "ANZ": {
+          "currencyCode": "USD",
+          "description": "Oceania",
+          "countries": [
+            "CC",
+            "TV",
+            "MP",
+            "NR",
+            "FJ",
+            "HM",
+            "FM",
+            "NU",
+            "PW",
+            "CK",
+            "GU",
+            "SB",
+            "WF",
+            "CX",
+            "PG",
+            "TK",
+            "NF",
+            "MH",
+            "TO",
+            "WS",
+            "KI",
+            "PN",
+            "VU"
+          ]
+        },
+        "AR": {
+          "currencyCode": "USD",
+          "description": "Argentina",
+          "countries": [
+            "AR"
+          ]
+        },
+        "AU": {
+          "currencyCode": "AUD",
+          "description": "Australia",
+          "countries": [
+            "AU"
+          ]
+        },
+        "BG": {
+          "currencyCode": "BGN",
+          "description": "Bulgaria",
+          "countries": [
+            "BG"
+          ]
+        },
+        "BR2": {
+          "currencyCode": "BRL",
+          "description": "Brazil",
+          "countries": [
+            "BR"
+          ]
+        },
+        "CA": {
+          "currencyCode": "CAD",
+          "description": "Canada",
+          "countries": [
+            "CA"
+          ]
+        },
+        "CH": {
+          "currencyCode": "CHF",
+          "description": "Switzerland",
+          "countries": [
+            "CH",
+            "LI"
+          ]
+        },
+        "CIS": {
+          "currencyCode": "USD",
+          "description": "CIS",
+          "countries": [
+            "UZ",
+            "TJ",
+            "MD",
+            "TM",
+            "AZ",
+            "KG",
+            "AM",
+            "GE"
+          ]
+        },
+        "CL2": {
+          "currencyCode": "CLP",
+          "description": "Chile",
+          "countries": [
+            "CL"
+          ]
+        },
+        "CN2": {
+          "currencyCode": "CNY",
+          "description": "China",
+          "countries": [
+            "CN"
+          ]
+        },
+        "CO2": {
+          "currencyCode": "COP",
+          "description": "Colombia",
+          "countries": [
+            "CO"
+          ]
+        },
+        "CR2": {
+          "currencyCode": "CRC",
+          "description": "Costa Rica",
+          "countries": [
+            "CR"
+          ]
+        },
+        "CZ": {
+          "currencyCode": "CZK",
+          "description": "Czechia",
+          "countries": [
+            "CZ"
+          ]
+        },
+        "DK": {
+          "currencyCode": "DKK",
+          "description": "Denmark",
+          "countries": [
+            "DK"
+          ]
+        },
+        "EAST": {
+          "currencyCode": "USD",
+          "description": "Middle East/Central Asia",
+          "countries": [
+            "MN",
+            "EG",
+            "PS",
+            "JO",
+            "AF",
+            "SY",
+            "IQ",
+            "IR",
+            "MV",
+            "LY",
+            "LB",
+            "PK",
+            "OM",
+            "LK"
+          ]
+        },
+        "EURO": {
+          "currencyCode": "EUR",
+          "description": "Europe",
+          "countries": [
+            "DE",
+            "BE",
+            "FI",
+            "PT",
+            "LT",
+            "FO",
+            "LU",
+            "HR",
+            "LV",
+            "FR",
+            "MC",
+            "SI",
+            "ME",
+            "SK",
+            "SM",
+            "IE",
+            "MK",
+            "EE",
+            "AD",
+            "GL",
+            "MT",
+            "IS",
+            "AL",
+            "GR",
+            "IT",
+            "VA",
+            "ES",
+            "AT",
+            "RE",
+            "XK",
+            "CY",
+            "NL",
+            "BA"
+          ]
+        },
+        "GB": {
+          "currencyCode": "GBP",
+          "description": "United Kingdom",
+          "countries": [
+            "GB",
+            "GG",
+            "GI",
+            "IM",
+            "JE"
+          ]
+        },
+        "HK2": {
+          "currencyCode": "HKD",
+          "description": "Hong Kong",
+          "countries": [
+            "HK"
+          ]
+        },
+        "HU": {
+          "currencyCode": "HUF",
+          "description": "Hungary",
+          "countries": [
+            "HU"
+          ]
+        },
+        "ID2": {
+          "currencyCode": "IDR",
+          "description": "Indonesia",
+          "countries": [
+            "ID"
+          ]
+        },
+        "IL": {
+          "currencyCode": "ILS",
+          "description": "Israel",
+          "countries": [
+            "IL"
+          ]
+        },
+        "IN2": {
+          "currencyCode": "INR",
+          "description": "India",
+          "countries": [
+            "IN"
+          ]
+        },
+        "JP": {
+          "currencyCode": "JPY",
+          "description": "Japan",
+          "countries": [
+            "JP"
+          ]
+        },
+        "KR2": {
+          "currencyCode": "KRW",
+          "description": "South Korea",
+          "countries": [
+            "KR"
+          ]
+        },
+        "KZ": {
+          "currencyCode": "KZT",
+          "description": "Kazakhstan",
+          "countries": [
+            "KZ"
+          ]
+        },
+        "LATAM": {
+          "currencyCode": "USD",
+          "description": "Latin America/Caribbean",
+          "countries": [
+            "TT",
+            "BB",
+            "PR",
+            "JM",
+            "FK",
+            "HN",
+            "PY",
+            "DM",
+            "DO",
+            "BM",
+            "HT",
+            "BO",
+            "BS",
+            "SH",
+            "BZ",
+            "GD",
+            "EC",
+            "SR",
+            "KN",
+            "SV",
+            "MS",
+            "AG",
+            "AI",
+            "GT",
+            "VC",
+            "AN",
+            "TC",
+            "VE",
+            "PA",
+            "GY",
+            "CU",
+            "AW",
+            "LC",
+            "NI"
+          ]
+        },
+        "MIDEAST": {
+          "currencyCode": "USD",
+          "description": "Bahrain/Kuwait",
+          "countries": [
+            "BH",
+            "KW"
+          ]
+        },
+        "MX2": {
+          "currencyCode": "MXN",
+          "description": "Mexico",
+          "countries": [
+            "MX"
+          ]
+        },
+        "MY2": {
+          "currencyCode": "MYR",
+          "description": "Malaysia",
+          "countries": [
+            "MY"
+          ]
+        },
+        "NO": {
+          "currencyCode": "NOK",
+          "description": "Norway",
+          "countries": [
+            "NO"
+          ]
+        },
+        "NZ": {
+          "currencyCode": "NZD",
+          "description": "New Zealand",
+          "countries": [
+            "NZ"
+          ]
+        },
+        "PE2": {
+          "currencyCode": "PEN",
+          "description": "Peru",
+          "countries": [
+            "PE"
+          ]
+        },
+        "PH2": {
+          "currencyCode": "PHP",
+          "description": "Philippines",
+          "countries": [
+            "PH"
+          ]
+        },
+        "PL": {
+          "currencyCode": "PLN",
+          "description": "Poland",
+          "countries": [
+            "PL"
+          ]
+        },
+        "QA": {
+          "currencyCode": "QAR",
+          "description": "Qatar",
+          "countries": [
+            "QA"
+          ]
+        },
+        "RO": {
+          "currencyCode": "RON",
+          "description": "Romania",
+          "countries": [
+            "RO"
+          ]
+        },
+        "ROW": {
+          "currencyCode": "USD",
+          "description": "Rest of World",
+          "countries": [
+            "RS",
+            "BL",
+            "BQ",
+            "BV",
+            "SJ",
+            "UM",
+            "MF",
+            "YT",
+            "GF",
+            "MQ",
+            "KP",
+            "SX",
+            "IO",
+            "GP",
+            "GS",
+            "KY",
+            "AQ",
+            "VG",
+            "AS",
+            "TF",
+            "VI",
+            "CW",
+            "NC",
+            "PF",
+            "AX",
+            "PM"
+          ]
+        },
+        "RU": {
+          "currencyCode": "RUB",
+          "description": "Russia",
+          "countries": [
+            "RU",
+            "BY"
+          ]
+        },
+        "SA": {
+          "currencyCode": "SAR",
+          "description": "Saudi Arabia",
+          "countries": [
+            "SA"
+          ]
+        },
+        "SE": {
+          "currencyCode": "SEK",
+          "description": "Sweden",
+          "countries": [
+            "SE"
+          ]
+        },
+        "SEA": {
+          "currencyCode": "USD",
+          "description": "Southeast Asia",
+          "countries": [
+            "MM",
+            "MO",
+            "NP",
+            "BD",
+            "BT",
+            "LA",
+            "TL",
+            "BN",
+            "KH"
+          ]
+        },
+        "SG2": {
+          "currencyCode": "SGD",
+          "description": "Singapore",
+          "countries": [
+            "SG"
+          ]
+        },
+        "TH2": {
+          "currencyCode": "THB",
+          "description": "Thailand",
+          "countries": [
+            "TH"
+          ]
+        },
+        "TR": {
+          "currencyCode": "TRY",
+          "description": "Turkey",
+          "countries": [
+            "TR"
+          ]
+        },
+        "TW2": {
+          "currencyCode": "TWD",
+          "description": "Taiwan",
+          "countries": [
+            "TW"
+          ]
+        },
+        "UA": {
+          "currencyCode": "UAH",
+          "description": "Ukraine",
+          "countries": [
+            "UA"
+          ]
+        },
+        "US": {
+          "currencyCode": "USD",
+          "description": "United States",
+          "countries": [
+            "US"
+          ]
+        },
+        "UY2": {
+          "currencyCode": "UYU",
+          "description": "Uruguay",
+          "countries": [
+            "UY"
+          ]
+        },
+        "VN2": {
+          "currencyCode": "VND",
+          "description": "Vietnam",
+          "countries": [
+            "VN"
+          ]
+        },
+        "ZA2": {
+          "currencyCode": "ZAR",
+          "description": "South Africa",
+          "countries": [
+            "ZA"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy /region",
+    "request": {
+      "method": "GET",
+      "path": "/region"
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"305ebfb3f913d9e949c269ed9372b331b838c2ff\""
+      },
+      "body": {
+        "region": {
+          "code": "US",
+          "currencyCode": "USD",
+          "description": "United States",
+          "countries": [
+            "US"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "name": "legacy /robots.txt",
+    "request": {
+      "method": "GET",
+      "path": "/robots.txt"
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "text/plain",
+        "cache-control": "public, max-age=60",
+        "etag": "\"242fef7a48b8d825fe4d5f3297dacd9365e144fd\""
+      },
+      "body": "User-agent: *\nDisallow: /\nAllow: /sitemap.xml\nAllow: /sitemap.xml?*\nAllow: /promotions-sitemap.xml\nAllow: /profiles/sitemap.xml\nAllow: /sandboxes/sitemap.xml\nAllow: /sandboxes/sitemap.xml?*\nAllow: /items/sitemap.xml\nAllow: /items/sitemap.xml?*\nAllow: /offers/*/og\nAllow: /items/*/og\nAllow: /sandboxes/*/og\n"
+    }
+  },
+  {
+    "name": "legacy /ping",
+    "request": {
+      "method": "GET",
+      "path": "/ping"
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"e85c8250d2427549205ccf325e633df6ee9f430d\""
+      },
+      "body": {
+        "message": "pong"
+      }
+    }
+  },
+  {
+    "name": "legacy /health?verbose=yes",
+    "request": {
+      "method": "GET",
+      "path": "/health?verbose=yes"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "ping",
+          "service": "redis"
+        },
+        "result": true
+      },
+      {
+        "call": {
+          "method": "ping",
+          "service": "mongo"
+        },
+        "result": true
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"a42b824f93529ff2abdf72b8425e84d5ba35b65d\""
+      },
+      "body": {
+        "status": "ok",
+        "services": {
+          "redis": {
+            "status": "ok",
+            "latency": 0
+          },
+          "mongodb": {
+            "status": "ok",
+            "latency": 0
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "health with Redis unavailable",
+    "request": {
+      "method": "GET",
+      "path": "/health"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "ping",
+          "service": "redis"
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "method": "ping",
+          "service": "mongo"
+        },
+        "result": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"b6e3c77f4bf2c33dccd60da86647124157bf0fa7\""
+      },
+      "body": {
+        "status": "error",
+        "services": {
+          "redis": {
+            "status": "error",
+            "latency": null
+          },
+          "mongodb": {
+            "status": "ok",
+            "latency": 0
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "health with Mongo unavailable",
+    "request": {
+      "method": "GET",
+      "path": "/health"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "ping",
+          "service": "redis"
+        },
+        "result": true
+      },
+      {
+        "call": {
+          "method": "ping",
+          "service": "mongo"
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"a4e607141a38729caf38fc9fae07b9f808361d06\""
+      },
+      "body": {
+        "status": "error",
+        "services": {
+          "redis": {
+            "status": "ok",
+            "latency": 0
+          },
+          "mongodb": {
+            "status": "error",
+            "latency": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "region from first decoded cookie",
+    "request": {
+      "method": "GET",
+      "path": "/region",
+      "headers": {
+        "cookie": "other=x; EGDATA_COUNTRY=\"%45S\"; EGDATA_COUNTRY=CA"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"d4c2ce92dccd34140e6763a4801b80b140cf9a01\""
+      },
+      "body": {
+        "region": {
+          "code": "EURO",
+          "currencyCode": "EUR",
+          "description": "Europe",
+          "countries": [
+            "DE",
+            "BE",
+            "FI",
+            "PT",
+            "LT",
+            "FO",
+            "LU",
+            "HR",
+            "LV",
+            "FR",
+            "MC",
+            "SI",
+            "ME",
+            "SK",
+            "SM",
+            "IE",
+            "MK",
+            "EE",
+            "AD",
+            "GL",
+            "MT",
+            "IS",
+            "AL",
+            "GR",
+            "IT",
+            "VA",
+            "ES",
+            "AT",
+            "RE",
+            "XK",
+            "CY",
+            "NL",
+            "BA"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "name": "query wins over cookie",
+    "request": {
+      "method": "GET",
+      "path": "/region?country=CA&country=ES",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=GB"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"84fd65e344edc9576198e1394a8781a22f58ce15\""
+      },
+      "body": {
+        "region": {
+          "code": "CA",
+          "currencyCode": "CAD",
+          "description": "Canada",
+          "countries": [
+            "CA"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "name": "case-sensitive unknown country",
+    "request": {
+      "method": "GET",
+      "path": "/region?country=es"
+    },
+    "trace": [],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"8fa0fd9e94fd7c374a1fd5e37392568240674c91\""
+      },
+      "body": {
+        "message": "Country not found"
+      }
+    }
+  },
+  {
+    "name": "legacy missing route",
+    "request": {
+      "method": "GET",
+      "path": "/unregistered-fixture"
+    },
+    "trace": [],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"5b65037351caeb0e5a48d963d7ffa88d0271d546\""
+      },
+      "body": "404 Not Found"
+    }
+  },
+  {
+    "name": "legacy unmatched method",
+    "request": {
+      "path": "/region",
+      "method": "POST"
+    },
+    "trace": [],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"5b65037351caeb0e5a48d963d7ffa88d0271d546\""
+      },
+      "body": "404 Not Found"
+    }
+  },
+  {
+    "name": "empty country overrides cookie",
+    "request": {
+      "method": "GET",
+      "path": "/region?country=",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=US"
+      }
+    },
+    "trace": [],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"8fa0fd9e94fd7c374a1fd5e37392568240674c91\""
+      },
+      "body": {
+        "message": "Country not found"
+      }
+    }
+  },
+  {
+    "name": "tag groups",
+    "request": {
+      "method": "GET",
+      "path": "/tags?group=event&group=wrong"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "tags",
+          "method": "many",
+          "query": {
+            "groupName": "event"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "101",
+            "name": "Event"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"6781207b5ac1f4ffe0ef8ed58f1812c4f9f3a386\""
+      },
+      "body": [
+        {
+          "id": "101",
+          "name": "Event"
+        }
+      ]
+    }
+  },
+  {
+    "name": "all tags",
+    "request": {
+      "method": "GET",
+      "path": "/tags"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "tags",
+          "method": "many",
+          "query": {},
+          "options": {}
+        },
+        "result": []
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\""
+      },
+      "body": []
+    }
+  },
+  {
+    "name": "offer slug",
+    "request": {
+      "method": "GET",
+      "path": "/offer-by-slug/test"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "offerMappings.pageSlug": {
+              "$eq": "test"
+            }
+          },
+          "options": {}
+        },
+        "result": {
+          "id": "offer-one",
+          "title": "Sample"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"a2a999251bf6607b27212f237c5c20707b653337\""
+      },
+      "body": {
+        "id": "offer-one"
+      }
+    }
+  },
+  {
+    "name": "no matching slug",
+    "request": {
+      "method": "GET",
+      "path": "/offer-by-slug/missing"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "offerMappings.pageSlug": {
+              "$eq": "missing"
+            }
+          },
+          "options": {}
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"20c50f4f8898ce673caf7b361affa29038bfabdf\""
+      },
+      "body": {
+        "message": "Offer not found"
+      }
+    }
+  },
+  {
+    "name": "hydrate invalid",
+    "request": {
+      "method": "POST",
+      "path": "/catalog/hydrate",
+      "rawBody": "{"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "error": {
+          "code": "CATALOG_HYDRATION_INVALID_REQUEST",
+          "message": "The catalog hydration request is invalid."
+        }
+      }
+    }
+  },
+  {
+    "name": "hydrate declared oversized",
+    "request": {
+      "method": "POST",
+      "path": "/catalog/hydrate",
+      "headers": {
+        "content-length": "262145"
+      },
+      "rawBody": "{}"
+    },
+    "trace": [],
+    "response": {
+      "status": 413,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "error": {
+          "code": "CATALOG_HYDRATION_TOO_LARGE",
+          "message": "The catalog hydration request is too large."
+        }
+      }
+    }
+  },
+  {
+    "name": "index /sitemap.xml",
+    "request": {
+      "method": "GET",
+      "path": "/sitemap.xml"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 502
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml",
+        "cache-control": "public, max-age=86400, stale-while-revalidate=604800",
+        "etag": "\"45d8d05e092651af2db045ddda9f8b77558c8b4a\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <sitemap><loc>https://api.egdata.app/sitemap.xml?page=1</loc></sitemap><sitemap><loc>https://api.egdata.app/sitemap.xml?page=2</loc></sitemap>\n</sitemapindex>"
+    }
+  },
+  {
+    "name": "page /sitemap.xml",
+    "request": {
+      "method": "GET",
+      "path": "/sitemap.xml?page=2"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "many",
+          "query": {},
+          "options": {
+            "limit": 500,
+            "skip": 500,
+            "sort": {
+              "lastModifiedDate": -1
+            },
+            "projection": {
+              "id": 1,
+              "lastModifiedDate": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "game",
+            "lastModifiedDate": {
+              "$date": "2025-05-02T00:00:00.000Z"
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml",
+        "cache-control": "public, max-age=86400, stale-while-revalidate=604800",
+        "etag": "\"b932d6a2e89a5675ad058bb57eb6de5ca34f45dc\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">\n  \n      <url>\n        <loc>https://egdata.app/offers/game</loc>\n        <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"https://egdata.app/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"id\" href=\"https://egdata.app/id/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"ms\" href=\"https://egdata.app/ms/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"da\" href=\"https://egdata.app/da/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"de\" href=\"https://egdata.app/de/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"en-US\" href=\"https://egdata.app/en-US/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"es-ES\" href=\"https://egdata.app/es-ES/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"es-MX\" href=\"https://egdata.app/es-MX/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"fil\" href=\"https://egdata.app/fil/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"fr\" href=\"https://egdata.app/fr/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"it\" href=\"https://egdata.app/it/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"hu\" href=\"https://egdata.app/hu/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"nl\" href=\"https://egdata.app/nl/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"no\" href=\"https://egdata.app/no/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"pl\" href=\"https://egdata.app/pl/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"pt-BR\" href=\"https://egdata.app/pt-BR/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"pt\" href=\"https://egdata.app/pt/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"ro\" href=\"https://egdata.app/ro/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"fi\" href=\"https://egdata.app/fi/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"sv\" href=\"https://egdata.app/sv/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"vi\" href=\"https://egdata.app/vi/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"tr\" href=\"https://egdata.app/tr/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"cs\" href=\"https://egdata.app/cs/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"bg\" href=\"https://egdata.app/bg/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"ru\" href=\"https://egdata.app/ru/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"uk\" href=\"https://egdata.app/uk/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"https://egdata.app/ar/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"hi\" href=\"https://egdata.app/hi/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"th\" href=\"https://egdata.app/th/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"ja\" href=\"https://egdata.app/ja/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"zh-CN\" href=\"https://egdata.app/zh-CN/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"zh-Hant\" href=\"https://egdata.app/zh-Hant/offers/game\" />\n        <xhtml:link rel=\"alternate\" hreflang=\"ko\" href=\"https://egdata.app/ko/offers/game\" />\n        <lastmod>2025-05-02T00:00:00.000Z</lastmod>\n      </url>\n      \n</urlset>"
+    }
+  },
+  {
+    "name": "index /items-sitemap.xml",
+    "request": {
+      "method": "GET",
+      "path": "/items-sitemap.xml"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 1001
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml",
+        "cache-control": "public, max-age=86400, stale-while-revalidate=604800",
+        "etag": "\"7754e26c5b4dd9301cff89a3c6a2796de7264afb\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <sitemap><loc>https://api.egdata.app/items-sitemap.xml?page=1</loc></sitemap><sitemap><loc>https://api.egdata.app/items-sitemap.xml?page=2</loc></sitemap>\n</sitemapindex>"
+    }
+  },
+  {
+    "name": "page /items-sitemap.xml",
+    "request": {
+      "method": "GET",
+      "path": "/items-sitemap.xml?page=2"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "items",
+          "method": "many",
+          "query": {},
+          "options": {
+            "limit": 1000,
+            "skip": 1000,
+            "sort": {
+              "lastModifiedDate": -1
+            },
+            "projection": {
+              "id": 1,
+              "lastModifiedDate": 1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "game",
+            "lastModifiedDate": {
+              "$date": "2025-05-02T00:00:00.000Z"
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml",
+        "cache-control": "public, max-age=86400, stale-while-revalidate=604800",
+        "etag": "\"daf9c355d0d4fa0bc8e3495de1664d919e1bcb71\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url>\n        <loc>https://egdata.app/items/game</loc>\n        <lastmod>2025-05-02T00:00:00.000Z</lastmod>\n      </url>\n      \n      \n</urlset>"
+    }
+  },
+  {
+    "name": "promotion sitemap",
+    "request": {
+      "method": "GET",
+      "path": "/promotions-sitemap.xml"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "tags",
+          "method": "many",
+          "query": {
+            "groupName": "event",
+            "referenceCount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "limit": 1000,
+            "skip": 0,
+            "sort": {
+              "updated": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "id": "event1"
+          },
+          {
+            "id": "event2"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml",
+        "cache-control": "max-age=86400, stale-while-revalidate=604800",
+        "etag": "\"e95207e871c3cd7c2a18f6b8a763d3d01625004d\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n  <urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n        <url>\n          <loc>https://egdata.app/promotions/event1</loc>\n        </url>\n        <url>\n          <loc>https://egdata.app/promotions/event2</loc>\n        </url></urlset>"
+    }
+  },
+  {
+    "name": "swagger ui",
+    "request": {
+      "method": "GET",
+      "path": "/ui"
+    },
+    "trace": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "text/html; charset=UTF-8",
+        "etag": "\"da62343f88eb65fce485025bc03553aeab0b6192\""
+      },
+      "body": "\n      <!doctype html>\n      <html lang=\"en\">\n        <head>\n          <meta charset=\"utf-8\" />\n          <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n          <meta name=\"description\" content=\"SwaggerUI\" />\n          <title>SwaggerUI</title>\n        </head>\n        <body>\n          \n    <div>\n      <div id=\"swagger-ui\"></div>\n      <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui.css\" />\n      <script src=\"https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-bundle.js\" crossorigin=\"anonymous\"></script>\n      <script>\n        window.onload = () => {\n          window.ui = SwaggerUIBundle({\n            dom_id: '#swagger-ui',url: '/open-api.json',\n          })\n        }\n      </script>\n    </div>\n  \n        </body>\n      </html>\n    "
+    }
+  },
+  {
+    "name": "retired search GET",
+    "request": {
+      "method": "GET",
+      "path": "/search"
+    },
+    "trace": [],
+    "response": {
+      "status": 410,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"2c8ba9dcc49c4d450f9b131fcfb7ea9cb4fbbcb0\""
+      },
+      "body": {
+        "error": {
+          "code": "DEPRECATED",
+          "message": "Use /search/v2/search instead."
+        }
+      }
+    }
+  },
+  {
+    "name": "retired search POST",
+    "request": {
+      "method": "POST",
+      "path": "/search"
+    },
+    "trace": [],
+    "response": {
+      "status": 410,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "etag": "\"2c8ba9dcc49c4d450f9b131fcfb7ea9cb4fbbcb0\""
+      },
+      "body": {
+        "error": {
+          "code": "DEPRECATED",
+          "message": "Use /search/v2/search instead."
+        }
+      }
+    }
+  },
+  {
+    "name": "search tags",
+    "request": {
+      "method": "GET",
+      "path": "/search/tags"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "tags",
+          "method": "many",
+          "query": {
+            "status": "ACTIVE"
+          },
+          "options": {}
+        },
+        "result": [
+          {
+            "id": "tag",
+            "status": "ACTIVE"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+        "cdn-cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+        "etag": "\"477ae489dc516fdc9c594e6d464a6fb8d94fd3d7\""
+      },
+      "body": [
+        {
+          "id": "tag",
+          "status": "ACTIVE"
+        }
+      ]
+    }
+  },
+  {
+    "name": "search offer types",
+    "request": {
+      "method": "GET",
+      "path": "/search/offer-types"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$group": {
+                "_id": "$offerType",
+                "count": {
+                  "$sum": 1
+                }
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "GAME",
+            "count": 2
+          },
+          {
+            "_id": null,
+            "count": 5
+          },
+          {
+            "_id": "",
+            "count": 8
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"4a816dedc2bbd444ced4f1a2bff1699991093d06\""
+      },
+      "body": [
+        {
+          "_id": "GAME",
+          "count": 2
+        }
+      ]
+    }
+  },
+  {
+    "name": "search developers",
+    "request": {
+      "method": "GET",
+      "path": "/search/developers?query=Studio"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "developerDisplayName": {
+                  "$regex": {
+                    "$regularExpression": {
+                      "pattern": "Studio",
+                      "options": "i"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$group": {
+                "_id": "$developerDisplayName",
+                "count": {
+                  "$sum": 1
+                }
+              }
+            },
+            {
+              "$sort": {
+                "count": -1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "Studio",
+            "count": 3
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"f3321127b205927ec7f0174c81a10be0967b70c8\""
+      },
+      "body": [
+        {
+          "_id": "Studio",
+          "count": 3
+        }
+      ]
+    }
+  },
+  {
+    "name": "search publishers",
+    "request": {
+      "method": "GET",
+      "path": "/search/publishers"
+    },
+    "trace": [
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$group": {
+                "_id": "$publisherDisplayName",
+                "count": {
+                  "$sum": 1
+                }
+              }
+            },
+            {
+              "$sort": {
+                "count": -1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "_id": "Company",
+            "count": 2
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"e2ee8bf37bcfaa64ff5a75a27df6d4f15cd3e00d\""
+      },
+      "body": [
+        {
+          "_id": "Company",
+          "count": 2
+        }
+      ]
+    }
+  },
+  {
+    "name": "saved query",
+    "request": {
+      "method": "GET",
+      "path": "/search/saved-key"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "saved-key"
+        },
+        "result": {
+          "query": "game"
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"76411ccf3fc381b1c79edc2971642cba3d0334d0\""
+      },
+      "body": {
+        "query": "game"
+      }
+    }
+  },
+  {
+    "name": "missing saved query",
+    "request": {
+      "method": "GET",
+      "path": "/search/absent"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "absent"
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"aa320448025524dc9015d94ea363115116936c37\""
+      },
+      "body": {
+        "message": "Query not found"
+      }
+    }
+  },
+  {
+    "name": "legacy stats counts",
+    "request": {
+      "method": "GET",
+      "path": "/stats"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "stats:v0.3"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 7
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 5
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "sandboxes",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 3
+      },
+      {
+        "call": {
+          "collection": "products",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 8
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "localYears": [
+              2026,
+              2027
+            ]
+          },
+          "options": {}
+        },
+        "result": 7
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "localYears": [
+              2026,
+              2027
+            ]
+          },
+          "options": {}
+        },
+        "result": 5
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "stats:v0.3",
+          "payload": {
+            "offers": 7,
+            "items": 5,
+            "tags": 0,
+            "assets": 0,
+            "priceEngine": 0,
+            "changelog": 0,
+            "sandboxes": 3,
+            "products": 3,
+            "offersYear": 7,
+            "itemsYear": 5
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"7370b23c321810b7aae32e901c6a12a32d40b8a2\""
+      },
+      "body": {
+        "offers": 7,
+        "items": 5,
+        "tags": 0,
+        "assets": 0,
+        "priceEngine": 0,
+        "changelog": 0,
+        "sandboxes": 3,
+        "products": 3,
+        "offersYear": 7,
+        "itemsYear": 5
+      }
+    }
+  },
+  {
+    "name": "legacy stats failed sandbox count",
+    "request": {
+      "method": "GET",
+      "path": "/stats"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "stats:v0.3"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 7
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 5
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "sandboxes",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "products",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 8
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "localYears": [
+              2026,
+              2027
+            ]
+          },
+          "options": {}
+        },
+        "result": 7
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "localYears": [
+              2026,
+              2027
+            ]
+          },
+          "options": {}
+        },
+        "result": 5
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "stats:v0.3",
+          "payload": {
+            "offers": 7,
+            "items": 5,
+            "tags": 0,
+            "assets": 0,
+            "priceEngine": 0,
+            "changelog": 0,
+            "sandboxes": 0,
+            "offersYear": 7,
+            "itemsYear": 5
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"2ec7c2cc9b1ba193d530eaaeb0ba5d14089c00e9\""
+      },
+      "body": {
+        "offers": 7,
+        "items": 5,
+        "tags": 0,
+        "assets": 0,
+        "priceEngine": 0,
+        "changelog": 0,
+        "sandboxes": 0,
+        "offersYear": 7,
+        "itemsYear": 5
+      }
+    }
+  },
+  {
+    "name": "legacy stats failed products count",
+    "request": {
+      "method": "GET",
+      "path": "/stats"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "stats:v0.3"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 7
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 5
+      },
+      {
+        "call": {
+          "collection": "tags",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "assets",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "changelogs_v2",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "sandboxes",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 3
+      },
+      {
+        "call": {
+          "collection": "products",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {
+            "localYears": [
+              2026,
+              2027
+            ]
+          },
+          "options": {}
+        },
+        "result": 7
+      },
+      {
+        "call": {
+          "collection": "items",
+          "method": "count",
+          "query": {
+            "localYears": [
+              2026,
+              2027
+            ]
+          },
+          "options": {}
+        },
+        "result": 5
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "stats:v0.3",
+          "payload": {
+            "offers": 7,
+            "items": 5,
+            "tags": 0,
+            "assets": 0,
+            "priceEngine": 0,
+            "changelog": 0,
+            "sandboxes": 3,
+            "products": 0,
+            "offersYear": 7,
+            "itemsYear": 5
+          },
+          "ttl": 3600
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "etag": "\"e7fca8f3b26295567fe253150c39fdec9285487f\""
+      },
+      "body": {
+        "offers": 7,
+        "items": 5,
+        "tags": 0,
+        "assets": 0,
+        "priceEngine": 0,
+        "changelog": 0,
+        "sandboxes": 3,
+        "products": 0,
+        "offersYear": 7,
+        "itemsYear": 5
+      }
+    }
+  },
+  {
+    "name": "legacy stats cached",
+    "request": {
+      "method": "GET",
+      "path": "/stats"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "stats:v0.3"
+        },
+        "result": {
+          "offers": 12
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=3600",
+        "etag": "\"60033908d31a3a7a881d98c1509a62207a968c1a\""
+      },
+      "body": {
+        "offers": 12
+      }
+    }
+  },
+  {
+    "name": "legacy stats homepage",
+    "request": {
+      "method": "GET",
+      "path": "/stats/homepage",
+      "headers": {
+        "cookie": "EGDATA_COUNTRY=ES"
+      }
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "stats:homepage:EURO"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 7
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "EURO",
+            "updatedAt": {
+              "$gte": {
+                "$date": "2026-11-14T00:00:00.000Z"
+              }
+            },
+            "appliedRules": {
+              "$ne": []
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "count",
+          "query": {
+            "region": "EURO",
+            "appliedRules": {
+              "$ne": []
+            }
+          },
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "collection": "freegames",
+          "method": "count",
+          "query": {},
+          "options": {}
+        },
+        "result": 0
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "stats:homepage:EURO",
+          "payload": {
+            "offers": 7,
+            "trackedPriceChanges": 0,
+            "activeDiscounts": 0,
+            "giveaways": 0
+          },
+          "ttl": 86400
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60, s-maxage=300",
+        "cdn-cache-control": "public, max-age=300",
+        "etag": "\"302cd4805d814c3e0d2fe8208174a6c3aa85ed8a\""
+      },
+      "body": {
+        "offers": 7,
+        "trackedPriceChanges": 0,
+        "activeDiscounts": 0,
+        "giveaways": 0
+      }
+    }
+  },
+  {
+    "name": "legacy stats homepage unknown region",
+    "request": {
+      "method": "GET",
+      "path": "/stats/homepage?country=XX"
+    },
+    "trace": [],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"8fa0fd9e94fd7c374a1fd5e37392568240674c91\""
+      },
+      "body": {
+        "message": "Country not found"
+      }
+    }
+  },
+  {
+    "name": "legacy releases monthly",
+    "request": {
+      "method": "GET",
+      "path": "/stats/releases/monthly"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "stats:releases:monthly"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "prePurchase": {
+                  "$ne": true
+                },
+                "isCodeRedemptionOnly": {
+                  "$ne": true
+                },
+                "releaseDate": {
+                  "$ne": null,
+                  "$lte": {
+                    "$date": "2026-11-17T00:00:00.000Z"
+                  },
+                  "$gte": {
+                    "$date": "2018-12-06T00:00:00.000Z"
+                  }
+                },
+                "offerType": {
+                  "$eq": "BASE_GAME"
+                }
+              }
+            },
+            {
+              "$group": {
+                "_id": {
+                  "year": {
+                    "$year": "$releaseDate"
+                  },
+                  "month": {
+                    "$month": "$releaseDate"
+                  }
+                },
+                "releases": {
+                  "$sum": 1
+                }
+              }
+            },
+            {
+              "$sort": {
+                "_id.year": 1,
+                "_id.month": 1
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "year": "$_id.year",
+                "month": "$_id.month",
+                "releases": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "year": 2026,
+            "month": 11,
+            "releases": 5
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "stats:releases:monthly",
+          "payload": [
+            {
+              "year": 2026,
+              "month": 11,
+              "releases": 5
+            }
+          ],
+          "ttl": 86400
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"ab491c9e9f3dbe07bdc5febe2b535bd180acba11\""
+      },
+      "body": [
+        {
+          "year": 2026,
+          "month": 11,
+          "releases": 5
+        }
+      ]
+    }
+  },
+  {
+    "name": "legacy releases yearly",
+    "request": {
+      "method": "GET",
+      "path": "/stats/releases/yearly"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "stats:releases:yearly"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "prePurchase": {
+                  "$ne": true
+                },
+                "isCodeRedemptionOnly": {
+                  "$ne": true
+                },
+                "releaseDate": {
+                  "$ne": null,
+                  "$lte": {
+                    "$date": "2026-11-17T00:00:00.000Z"
+                  },
+                  "$gte": {
+                    "$date": "2018-12-06T00:00:00.000Z"
+                  }
+                },
+                "offerType": {
+                  "$eq": "BASE_GAME"
+                }
+              }
+            },
+            {
+              "$group": {
+                "_id": {
+                  "year": {
+                    "$year": "$releaseDate"
+                  }
+                },
+                "releases": {
+                  "$sum": 1
+                }
+              }
+            },
+            {
+              "$sort": {
+                "_id.year": 1
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "year": "$_id.year",
+                "releases": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "year": 2026,
+            "releases": 5
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "stats:releases:yearly",
+          "payload": [
+            {
+              "year": 2026,
+              "releases": 5
+            }
+          ],
+          "ttl": 86400
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"d48c2c93eb4609d6ee3afa6a8a968eee49f2994c\""
+      },
+      "body": [
+        {
+          "year": 2026,
+          "releases": 5
+        }
+      ]
+    }
+  },
+  {
+    "name": "legacy creations monthly",
+    "request": {
+      "method": "GET",
+      "path": "/stats/creations/monthly"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "stats:creations:monthly"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "prePurchase": {
+                  "$ne": true
+                },
+                "isCodeRedemptionOnly": {
+                  "$ne": true
+                },
+                "creationDate": {
+                  "$ne": null,
+                  "$lte": {
+                    "$date": "2026-11-17T00:00:00.000Z"
+                  },
+                  "$gte": {
+                    "$date": "2018-12-06T00:00:00.000Z"
+                  }
+                },
+                "offerType": {
+                  "$eq": "BASE_GAME"
+                }
+              }
+            },
+            {
+              "$group": {
+                "_id": {
+                  "year": {
+                    "$year": "$creationDate"
+                  },
+                  "month": {
+                    "$month": "$creationDate"
+                  }
+                },
+                "creations": {
+                  "$sum": 1
+                }
+              }
+            },
+            {
+              "$sort": {
+                "_id.year": 1,
+                "_id.month": 1
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "year": "$_id.year",
+                "month": "$_id.month",
+                "creations": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "year": 2026,
+            "month": 11,
+            "creations": 5
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "stats:creations:monthly",
+          "payload": [
+            {
+              "year": 2026,
+              "month": 11,
+              "creations": 5
+            }
+          ],
+          "ttl": 86400
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"b331ce132445ef1d00e8106fe9996bc4870d5d88\""
+      },
+      "body": [
+        {
+          "year": 2026,
+          "month": 11,
+          "creations": 5
+        }
+      ]
+    }
+  },
+  {
+    "name": "legacy creations yearly",
+    "request": {
+      "method": "GET",
+      "path": "/stats/creations/yearly"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "stats:creations:yearly"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "prePurchase": {
+                  "$ne": true
+                },
+                "isCodeRedemptionOnly": {
+                  "$ne": true
+                },
+                "creationDate": {
+                  "$ne": null,
+                  "$lte": {
+                    "$date": "2026-11-17T00:00:00.000Z"
+                  },
+                  "$gte": {
+                    "$date": "2018-12-06T00:00:00.000Z"
+                  }
+                },
+                "offerType": {
+                  "$eq": "BASE_GAME"
+                }
+              }
+            },
+            {
+              "$group": {
+                "_id": {
+                  "year": {
+                    "$year": "$creationDate"
+                  }
+                },
+                "creations": {
+                  "$sum": 1
+                }
+              }
+            },
+            {
+              "$sort": {
+                "_id.year": 1
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "year": "$_id.year",
+                "creations": 1
+              }
+            }
+          ],
+          "options": {}
+        },
+        "result": [
+          {
+            "year": 2026,
+            "creations": 5
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "stats:creations:yearly",
+          "payload": [
+            {
+              "year": 2026,
+              "creations": 5
+            }
+          ],
+          "ttl": 86400
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "etag": "\"ff34a103be228d4ca644408cd4fd14c7c9174124\""
+      },
+      "body": [
+        {
+          "year": 2026,
+          "creations": 5
+        }
+      ]
+    }
+  },
+  {
+    "name": "legacy stats chart cache",
+    "request": {
+      "method": "GET",
+      "path": "/stats/creations/yearly"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "stats:creations:yearly"
+        },
+        "result": [
+          {
+            "year": 2026,
+            "creations": 2
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=3600",
+        "etag": "\"508294e37ec8a7b06898c5c79219f5d365c340ef\""
+      },
+      "body": [
+        {
+          "year": 2026,
+          "creations": 2
+        }
+      ]
+    }
+  }
+]

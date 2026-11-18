@@ -1,0 +1,5953 @@
+[
+  {
+    "name": "canonical-schema",
+    "schema": {
+      "types": [
+        {
+          "kind": "OBJECT",
+          "name": "Achievement",
+          "fields": [
+            {
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "lockedIcon",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "rarity",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "score",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "unlockedIcon",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "AchievementSet",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "achievements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Achievement",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "isBase",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "sandboxId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "AppliedRule",
+          "fields": [
+            {
+              "name": "endDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "namespace",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "promotionStatus",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "regionIds",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "saleType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "startDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Asset",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "artifactId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "downloadSizeBytes",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "installedSizeBytes",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "itemId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "namespace",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "platform",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "title",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "AssetConnection",
+          "fields": [
+            {
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "elements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Asset",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "limit",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "page",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "total",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "UNION",
+          "name": "BaseGameResult",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": [
+            {
+              "name": "Item"
+            },
+            {
+              "name": "Offer"
+            }
+          ]
+        },
+        {
+          "kind": "SCALAR",
+          "name": "Boolean",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Build",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "appName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "buildVersion",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "downloadSizeBytes",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "files",
+              "type": {
+                "kind": "OBJECT",
+                "name": "FileConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "dir",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "extension",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "q",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "sort",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "hash",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "installOptions",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "installedSizeBytes",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "items",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Item",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "labelName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "metadata",
+              "type": {
+                "kind": "OBJECT",
+                "name": "BuildMetadata",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "technologies",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Technology",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "BuildConnection",
+          "fields": [
+            {
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "elements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Build",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "limit",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "page",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "total",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "BuildMetadata",
+          "fields": [
+            {
+              "name": "installationPoolId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "ENUM",
+          "name": "CacheControlScope",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": [
+            {
+              "name": "PRIVATE"
+            },
+            {
+              "name": "PUBLIC"
+            }
+          ],
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Changelog",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "document",
+              "type": {
+                "kind": "UNION",
+                "name": "ChangelogDocument",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "metadata",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ChangelogMetadata",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "timestamp",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ChangelogChange",
+          "fields": [
+            {
+              "name": "after",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "before",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "changeType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "field",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ChangelogConnection",
+          "fields": [
+            {
+              "name": "elements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Changelog",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "hasNextPage",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "hasPreviousPage",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "totalCount",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "totalPages",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "UNION",
+          "name": "ChangelogDocument",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": [
+            {
+              "name": "Asset"
+            },
+            {
+              "name": "Build"
+            },
+            {
+              "name": "Item"
+            },
+            {
+              "name": "Offer"
+            }
+          ]
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ChangelogMetadata",
+          "fields": [
+            {
+              "name": "changes",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ChangelogChange",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "contextId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "contextType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "CustomAttribute",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "key",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "type",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "value",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "SCALAR",
+          "name": "DateTime",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "File",
+          "fields": [
+            {
+              "name": "depth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "fileHash",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "fileName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "fileSize",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "installTags",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "manifestHash",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "FileConnection",
+          "fields": [
+            {
+              "name": "elements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "File",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "limit",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "page",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "total",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "SCALAR",
+          "name": "Float",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Franchise",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "allOffers",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Offer",
+                  "ofType": null
+                }
+              },
+              "args": [
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "offers",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "GenreOffer",
+          "fields": [
+            {
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "image",
+              "type": {
+                "kind": "OBJECT",
+                "name": "KeyImage",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "title",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "GenreResult",
+          "fields": [
+            {
+              "name": "genre",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Tag",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "offers",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "GenreOffer",
+                  "ofType": null
+                }
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Giveaway",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "endDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "namespace",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "startDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Hltb",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "completionist",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "hltbId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "main",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "mainExtra",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "SCALAR",
+          "name": "ID",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "SCALAR",
+          "name": "Int",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Item",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "applicationId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "assets",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Asset",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "builds",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Build",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "categories",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ItemCategory",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "changelog",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ChangelogConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "creationDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "customAttributes",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CustomAttribute",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "developer",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "developerId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "endOfSupport",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "entitlementName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "entitlementType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "eulaIds",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "itemType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "keyImages",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "KeyImage",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "lastModifiedDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "mainOffer",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Offer",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "namespace",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "offers",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Offer",
+                  "ofType": null
+                }
+              },
+              "args": [
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "releaseInfo",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ReleaseInfo",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "requiresSecureAccount",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "status",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "title",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "unsearchable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ItemCategory",
+          "fields": [
+            {
+              "name": "path",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ItemConnection",
+          "fields": [
+            {
+              "name": "elements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Item",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "limit",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "page",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "total",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "SCALAR",
+          "name": "JSON",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "KeyImage",
+          "fields": [
+            {
+              "name": "md5",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "type",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "url",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Offer",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "ageRating",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "country",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "canonicalLocale",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "categories",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "changelog",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ChangelogConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "countriesBlacklist",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "countriesWhitelist",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "creationDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "customAttributes",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CustomAttribute",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "developerDisplayName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "effectiveDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "expiryDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "features",
+              "type": {
+                "kind": "OBJECT",
+                "name": "OfferFeatures",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "franchises",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Franchise",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "giveaways",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Giveaway",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "hltb",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Hltb",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "isCodeRedemptionOnly",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "items",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Item",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "keyImages",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "KeyImage",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "lastModifiedDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "locale",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "localeStatus",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "localization",
+              "type": {
+                "kind": "OBJECT",
+                "name": "OfferLocalizationMetadata",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "longDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "namespace",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "offerMappings",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "OfferMappings",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "offerType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "pcReleaseDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "polls",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Poll",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "positions",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "prePurchase",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "price",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Price",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "country",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "productSlug",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "publisherDisplayName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "ratings",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Rating",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "refundType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "related",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Offer",
+                  "ofType": null
+                }
+              },
+              "args": [
+                {
+                  "name": "country",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "releaseDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "sandbox",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Sandbox",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "seller",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Seller",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "suggestions",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Offer",
+                  "ofType": null
+                }
+              },
+              "args": [
+                {
+                  "name": "country",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "tags",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Tag",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "title",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "url",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "urlSlug",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "viewableDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "OfferConnection",
+          "fields": [
+            {
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "elements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Offer",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "limit",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "page",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "total",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "OfferFeatures",
+          "fields": [
+            {
+              "name": "epicFeatures",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "features",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "launcher",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "OfferLocalizationMetadata",
+          "fields": [
+            {
+              "name": "fetchedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "source",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "sourceUpdatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "OfferMappings",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "pageSlug",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "pageType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Poll",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "options",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "PollOption",
+                  "ofType": null
+                }
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "PollOption",
+          "fields": [
+            {
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "votes",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Price",
+          "fields": [
+            {
+              "name": "appliedRules",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "AppliedRule",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "country",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "namespace",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "offerId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "price",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SinglePrice",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "region",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Profile",
+          "fields": [
+            {
+              "name": "accountId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "achievements",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ProfileAchievementConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": "25",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": "1",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "avatar",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ProfileAvatar",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "creationDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "displayName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "featuredAchievements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ProfileAchievement",
+                  "ofType": null
+                }
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": "8",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "featuredGames",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ProfileGame",
+                  "ofType": null
+                }
+              },
+              "args": [
+                {
+                  "name": "filter",
+                  "defaultValue": "ALL",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "ProfileGameFilter",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "limit",
+                  "defaultValue": "6",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "sort",
+                  "defaultValue": "COMPLETION",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "ProfileGameSort",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "games",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ProfileGameConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "filter",
+                  "defaultValue": "ALL",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "ProfileGameFilter",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "limit",
+                  "defaultValue": "12",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": "1",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "sort",
+                  "defaultValue": "COMPLETION",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "ProfileGameSort",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "heroGame",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ProfileHeroGame",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "highlights",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ProfileHighlights",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "linkedAccounts",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "recentActivity",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ProfileActivityItem",
+                  "ofType": null
+                }
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": "12",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": "1",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "reviewsCount",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ProfileAchievement",
+          "fields": [
+            {
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "displayName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "gameTitle",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "iconUrl",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "rarityPercent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "sandboxId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "unlockedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "xp",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ProfileAchievementConnection",
+          "fields": [
+            {
+              "name": "elements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ProfileAchievement",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "limit",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "page",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "total",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ProfileActivityItem",
+          "fields": [
+            {
+              "name": "achievementIconUrl",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "achievementName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "gameTitle",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "occurredAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "sandboxId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "type",
+              "type": {
+                "kind": "ENUM",
+                "name": "ProfileActivityType",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "ENUM",
+          "name": "ProfileActivityType",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": [
+            {
+              "name": "ACHIEVEMENT_UNLOCKED"
+            },
+            {
+              "name": "PLATINUM_EARNED"
+            }
+          ],
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ProfileAvatar",
+          "fields": [
+            {
+              "name": "large",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "medium",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "small",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ProfileGame",
+          "fields": [
+            {
+              "name": "completionPercent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "earnedXP",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "hasPlatinum",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "imageUrl",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "rarestAchievements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ProfileAchievement",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "sandboxId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "title",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "total",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "totalXP",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "unlocked",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ProfileGameConnection",
+          "fields": [
+            {
+              "name": "elements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ProfileGame",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "limit",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "page",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "total",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "ENUM",
+          "name": "ProfileGameFilter",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": [
+            {
+              "name": "ALL"
+            },
+            {
+              "name": "COMPLETED"
+            },
+            {
+              "name": "IN_PROGRESS"
+            },
+            {
+              "name": "NEAR_PLATINUM"
+            },
+            {
+              "name": "PLATINUM"
+            }
+          ],
+          "possibleTypes": null
+        },
+        {
+          "kind": "ENUM",
+          "name": "ProfileGameSort",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": [
+            {
+              "name": "ACHIEVEMENTS"
+            },
+            {
+              "name": "ALPHABETICAL"
+            },
+            {
+              "name": "COMPLETION"
+            },
+            {
+              "name": "XP"
+            }
+          ],
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ProfileHeroGame",
+          "fields": [
+            {
+              "name": "completionPercent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "imageUrl",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "sandboxId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "title",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ProfileHighlights",
+          "fields": [
+            {
+              "name": "level",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "reviewsCount",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "totalAchievements",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "totalGames",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "totalPlatinums",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "totalXP",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Query",
+          "fields": [
+            {
+              "name": "build",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Build",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "builds",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Build",
+                  "ofType": null
+                }
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "sortBy",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "sortDir",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "changelog",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Changelog",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "event",
+              "type": {
+                "kind": "OBJECT",
+                "name": "OfferConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "country",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "id",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                },
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "events",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Tag",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "featuredDiscounts",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Offer",
+                  "ofType": null
+                }
+              },
+              "args": [
+                {
+                  "name": "country",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "genres",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "GenreResult",
+                  "ofType": null
+                }
+              },
+              "args": [
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "item",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Item",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "items",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ItemConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "latestAchievements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Offer",
+                  "ofType": null
+                }
+              },
+              "args": [
+                {
+                  "name": "country",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "latestReleased",
+              "type": {
+                "kind": "OBJECT",
+                "name": "OfferConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "country",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "offer",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Offer",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "offers",
+              "type": {
+                "kind": "OBJECT",
+                "name": "OfferConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "country",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "profile",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Profile",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "sandbox",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Sandbox",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "sandboxHub",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SandboxHub",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "country",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "id",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "offerLimit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "updateLimit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "sandboxes",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SandboxConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "topSellers",
+              "type": {
+                "kind": "OBJECT",
+                "name": "OfferConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "topWishlisted",
+              "type": {
+                "kind": "OBJECT",
+                "name": "OfferConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "upcoming",
+              "type": {
+                "kind": "OBJECT",
+                "name": "OfferConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "country",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Rating",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "overallScore",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "recommendedPercentage",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "totalReviews",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ReleaseInfo",
+          "fields": [
+            {
+              "name": "appId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "platform",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Sandbox",
+          "fields": [
+            {
+              "name": "_id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "achievements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "AchievementSet",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "ageGatings",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "assets",
+              "type": {
+                "kind": "OBJECT",
+                "name": "AssetConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "platform",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "baseGame",
+              "type": {
+                "kind": "UNION",
+                "name": "BaseGameResult",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "country",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "builds",
+              "type": {
+                "kind": "OBJECT",
+                "name": "BuildConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "platform",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "changelog",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ChangelogConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "created",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "displayName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "items",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ItemConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "namespace",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "offers",
+              "type": {
+                "kind": "OBJECT",
+                "name": "OfferConnection",
+                "ofType": null
+              },
+              "args": [
+                {
+                  "name": "limit",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "locale",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "name": "page",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "parent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "stats",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SandboxStats",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "status",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "store",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "updated",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SandboxAchievementSummary",
+          "fields": [
+            {
+              "name": "baseTotal",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "sets",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "total",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "xp",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SandboxConnection",
+          "fields": [
+            {
+              "name": "elements",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Sandbox",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "limit",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "page",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "total",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SandboxHub",
+          "fields": [
+            {
+              "name": "achievements",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SandboxAchievementSummary",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "ageRating",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "created",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "developer",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "featuredOffers",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Offer",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "genres",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Tag",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "keyImages",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "KeyImage",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "namespace",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "platforms",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "price",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Price",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "primaryItem",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Item",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "primaryKind",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "primaryOffer",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Offer",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "publisher",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "recentBuilds",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Build",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "recentChanges",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Changelog",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "sandbox",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Sandbox",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "seller",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Seller",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "stats",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SandboxStats",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "title",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "updated",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SandboxStats",
+          "fields": [
+            {
+              "name": "achievements",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "assets",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "builds",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "items",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "offers",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Seller",
+          "fields": [
+            {
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SinglePrice",
+          "fields": [
+            {
+              "name": "basePayoutCurrencyCode",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "basePayoutPrice",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "currencyCode",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "discount",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "discountPrice",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "originalPrice",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "payoutCurrencyExchangeRate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "SCALAR",
+          "name": "String",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Tag",
+          "fields": [
+            {
+              "name": "groupName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Technology",
+          "fields": [
+            {
+              "name": "section",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "technology",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "__Directive",
+          "fields": [
+            {
+              "name": "args",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "__InputValue",
+                      "ofType": null
+                    }
+                  }
+                }
+              },
+              "args": [
+                {
+                  "name": "includeDeprecated",
+                  "defaultValue": "false",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "isRepeatable",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "locations",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "__DirectiveLocation",
+                      "ofType": null
+                    }
+                  }
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "ENUM",
+          "name": "__DirectiveLocation",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": [
+            {
+              "name": "ARGUMENT_DEFINITION"
+            },
+            {
+              "name": "ENUM"
+            },
+            {
+              "name": "ENUM_VALUE"
+            },
+            {
+              "name": "FIELD"
+            },
+            {
+              "name": "FIELD_DEFINITION"
+            },
+            {
+              "name": "FRAGMENT_DEFINITION"
+            },
+            {
+              "name": "FRAGMENT_SPREAD"
+            },
+            {
+              "name": "INLINE_FRAGMENT"
+            },
+            {
+              "name": "INPUT_FIELD_DEFINITION"
+            },
+            {
+              "name": "INPUT_OBJECT"
+            },
+            {
+              "name": "INTERFACE"
+            },
+            {
+              "name": "MUTATION"
+            },
+            {
+              "name": "OBJECT"
+            },
+            {
+              "name": "QUERY"
+            },
+            {
+              "name": "SCALAR"
+            },
+            {
+              "name": "SCHEMA"
+            },
+            {
+              "name": "SUBSCRIPTION"
+            },
+            {
+              "name": "UNION"
+            },
+            {
+              "name": "VARIABLE_DEFINITION"
+            }
+          ],
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "__EnumValue",
+          "fields": [
+            {
+              "name": "deprecationReason",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "isDeprecated",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "__Field",
+          "fields": [
+            {
+              "name": "args",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "__InputValue",
+                      "ofType": null
+                    }
+                  }
+                }
+              },
+              "args": [
+                {
+                  "name": "includeDeprecated",
+                  "defaultValue": "false",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "deprecationReason",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "isDeprecated",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "type",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "__Type",
+                  "ofType": null
+                }
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "__InputValue",
+          "fields": [
+            {
+              "name": "defaultValue",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "deprecationReason",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "isDeprecated",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "type",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "__Type",
+                  "ofType": null
+                }
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "__Schema",
+          "fields": [
+            {
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "directives",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "__Directive",
+                      "ofType": null
+                    }
+                  }
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "mutationType",
+              "type": {
+                "kind": "OBJECT",
+                "name": "__Type",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "queryType",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "__Type",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "subscriptionType",
+              "type": {
+                "kind": "OBJECT",
+                "name": "__Type",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "types",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "__Type",
+                      "ofType": null
+                    }
+                  }
+                }
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "__Type",
+          "fields": [
+            {
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "enumValues",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "__EnumValue",
+                    "ofType": null
+                  }
+                }
+              },
+              "args": [
+                {
+                  "name": "includeDeprecated",
+                  "defaultValue": "false",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "fields",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "__Field",
+                    "ofType": null
+                  }
+                }
+              },
+              "args": [
+                {
+                  "name": "includeDeprecated",
+                  "defaultValue": "false",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "inputFields",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "__InputValue",
+                    "ofType": null
+                  }
+                }
+              },
+              "args": [
+                {
+                  "name": "includeDeprecated",
+                  "defaultValue": "false",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                }
+              ]
+            },
+            {
+              "name": "interfaces",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "__Type",
+                    "ofType": null
+                  }
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "isOneOf",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "kind",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "__TypeKind",
+                  "ofType": null
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "ofType",
+              "type": {
+                "kind": "OBJECT",
+                "name": "__Type",
+                "ofType": null
+              },
+              "args": []
+            },
+            {
+              "name": "possibleTypes",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "__Type",
+                    "ofType": null
+                  }
+                }
+              },
+              "args": []
+            },
+            {
+              "name": "specifiedByURL",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "args": []
+            }
+          ],
+          "inputFields": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "ENUM",
+          "name": "__TypeKind",
+          "fields": null,
+          "inputFields": null,
+          "enumValues": [
+            {
+              "name": "ENUM"
+            },
+            {
+              "name": "INPUT_OBJECT"
+            },
+            {
+              "name": "INTERFACE"
+            },
+            {
+              "name": "LIST"
+            },
+            {
+              "name": "NON_NULL"
+            },
+            {
+              "name": "OBJECT"
+            },
+            {
+              "name": "SCALAR"
+            },
+            {
+              "name": "UNION"
+            }
+          ],
+          "possibleTypes": null
+        }
+      ],
+      "directives": [
+        {
+          "name": "cacheControl",
+          "isRepeatable": false,
+          "locations": [
+            "FIELD_DEFINITION",
+            "INTERFACE",
+            "OBJECT",
+            "UNION"
+          ],
+          "args": [
+            {
+              "name": "inheritMaxAge",
+              "defaultValue": null,
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "name": "maxAge",
+              "defaultValue": null,
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "name": "scope",
+              "defaultValue": null,
+              "type": {
+                "kind": "ENUM",
+                "name": "CacheControlScope",
+                "ofType": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "deprecated",
+          "isRepeatable": false,
+          "locations": [
+            "ARGUMENT_DEFINITION",
+            "ENUM_VALUE",
+            "FIELD_DEFINITION",
+            "INPUT_FIELD_DEFINITION"
+          ],
+          "args": [
+            {
+              "name": "reason",
+              "defaultValue": "\"No longer supported\"",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "include",
+          "isRepeatable": false,
+          "locations": [
+            "FIELD",
+            "FRAGMENT_SPREAD",
+            "INLINE_FRAGMENT"
+          ],
+          "args": [
+            {
+              "name": "if",
+              "defaultValue": null,
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "oneOf",
+          "isRepeatable": false,
+          "locations": [
+            "INPUT_OBJECT"
+          ],
+          "args": []
+        },
+        {
+          "name": "skip",
+          "isRepeatable": false,
+          "locations": [
+            "FIELD",
+            "FRAGMENT_SPREAD",
+            "INLINE_FRAGMENT"
+          ],
+          "args": [
+            {
+              "name": "if",
+              "defaultValue": null,
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "specifiedBy",
+          "isRepeatable": false,
+          "locations": [
+            "SCALAR"
+          ],
+          "args": [
+            {
+              "name": "url",
+              "defaultValue": null,
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -2,6 +2,55 @@
 
 Generated from validated change records. Recorded dates are not deployment dates.
 
+## 2026-11-18 — Persist owner review changes and include newly saved reviews in public counts
+
+Record: [persist-owner-review-edits](https://github.com/egdata-app/egdata-api/blob/main/changes/records/persist-owner-review-edits.json).
+
+- **legacy GET /offers/&#123;id&#125;/reviews** (listOfferReviews; fixed; compatible)
+  - Before: The legacy editor could fail to persist an owner's changes, leaving the earlier text and rating in subsequent review lists. The review form could also fail to locate a valid product after the origin started.
+  - After: After a successful edit and cache refresh, the list reflects the owner's saved review. Each edit keeps the review's identity and appends the prior version to its history. New reviews for resolved products appear after the same cache refresh.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/reviews-summary** (getOfferReviewsSummary; fixed; compatible)
+  - Before: The legacy editor sent an invalid MongoDB update, so an attempted rating or recommendation change could leave the original values in the summary. The review form could also fail to locate a valid product after the origin started.
+  - After: After a successful owner edit and cache refresh, the summary uses the saved rating, recommendation and verification status. Editing a review keeps the review count for the offer. New reviews for resolved products appear after the same cache refresh.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews** (listOfferReviews; fixed; compatible)
+  - Before: The legacy editor could fail to persist an owner's changes, leaving the earlier text and rating in subsequent review lists. The review form could also fail to locate a valid product after the origin started.
+  - After: After a successful edit and cache refresh, the list reflects the owner's saved review. Each edit keeps the review's identity and appends the prior version to its history. New reviews for resolved products appear after the same cache refresh.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/reviews-summary** (getOfferReviewsSummary; fixed; compatible)
+  - Before: The legacy editor sent an invalid MongoDB update, so an attempted rating or recommendation change could leave the original values in the summary. The review form could also fail to locate a valid product after the origin started.
+  - After: After a successful owner edit and cache refresh, the summary uses the saved rating, recommendation and verification status. Editing a review keeps the review count for the offer. New reviews for resolved products appear after the same cache refresh.
+  - Client action: None
+- **legacy GET /graphql** (legacyGet_graphql_220e6fb1; fixed; compatible)
+  - Before: A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.
+  - After: A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.
+  - Client action: None
+  - Schema fields: Profile.reviewsCount, ProfileHighlights.reviewsCount
+- **legacy GET /profiles/&#123;id&#125;** (legacyGet_profiles_id__f0000a67; fixed; compatible)
+  - Before: A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.
+  - After: A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.
+  - Client action: None
+- **legacy GET /profiles/&#123;id&#125;/information** (legacyGet_profiles_id_information_1a333c76; fixed; compatible)
+  - Before: A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.
+  - After: A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.
+  - Client action: None
+- **legacy POST /graphql** (legacyPost_graphql_fac042a8; fixed; compatible)
+  - Before: A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.
+  - After: A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.
+  - Client action: None
+  - Schema fields: Profile.reviewsCount, ProfileHighlights.reviewsCount
+- **v1 GET /v1/profiles/&#123;id&#125;** (getProfile; fixed; compatible)
+  - Before: A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.
+  - After: A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/information** (getProfileInformation; fixed; compatible)
+  - Before: A review submitted for a valid product could fail before insertion, leaving the owner's review count unchanged.
+  - After: A successfully created review contributes to its owner's count after the profile cache refreshes. Editing an existing review preserves that count.
+  - Client action: None
+
+Verification: tests/rust-legacy-account-admin-oracle.test.ts compares authenticated review edits, edition history, concurrent writes and deletion during an edit.; rust/scripts/compare-origins.mjs exercises signed-in owners against the Node and Rust HTTP origins and checks the stored review in MongoDB..
+
 ## 2026-11-13 — Cache anonymous country, tag and genre reads at the edge
 
 Record: [anonymous-catalog-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/anonymous-catalog-edge-cache.json).

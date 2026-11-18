@@ -1,0 +1,7692 @@
+{
+  "now": "2025-01-10T05:00:00.000Z",
+  "cases": [
+    {
+      "name": "invalid list locale",
+      "parentType": "Query",
+      "field": "offers",
+      "parent": {},
+      "args": {
+        "locale": "en_US"
+      },
+      "trace": [],
+      "error": {
+        "message": "Invalid locale parameter: en_US",
+        "extensions": {
+          "code": "BAD_USER_INPUT",
+          "argumentName": "locale"
+        }
+      }
+    },
+    {
+      "name": "invalid locale on offer",
+      "parentType": "Query",
+      "field": "offer",
+      "parent": {},
+      "args": {
+        "id": "o1",
+        "locale": "bad!",
+        "__selectedFields": [
+          "id",
+          "title",
+          "localeStatus"
+        ]
+      },
+      "trace": [],
+      "error": {
+        "message": "Invalid locale parameter: bad!",
+        "extensions": {
+          "code": "BAD_USER_INPUT",
+          "argumentName": "locale"
+        }
+      }
+    },
+    {
+      "name": "invalid locale on upcoming",
+      "parentType": "Query",
+      "field": "upcoming",
+      "parent": {},
+      "args": {
+        "id": "o1",
+        "locale": "bad!"
+      },
+      "trace": [],
+      "error": {
+        "message": "Invalid locale parameter: bad!",
+        "extensions": {
+          "code": "BAD_USER_INPUT",
+          "argumentName": "locale"
+        }
+      }
+    },
+    {
+      "name": "invalid locale on latestReleased",
+      "parentType": "Query",
+      "field": "latestReleased",
+      "parent": {},
+      "args": {
+        "id": "o1",
+        "locale": "bad!"
+      },
+      "trace": [],
+      "error": {
+        "message": "Invalid locale parameter: bad!",
+        "extensions": {
+          "code": "BAD_USER_INPUT",
+          "argumentName": "locale"
+        }
+      }
+    },
+    {
+      "name": "invalid locale on topSellers",
+      "parentType": "Query",
+      "field": "topSellers",
+      "parent": {},
+      "args": {
+        "id": "o1",
+        "locale": "bad!"
+      },
+      "trace": [],
+      "error": {
+        "message": "Invalid locale parameter: bad!",
+        "extensions": {
+          "code": "BAD_USER_INPUT",
+          "argumentName": "locale"
+        }
+      }
+    },
+    {
+      "name": "invalid locale on topWishlisted",
+      "parentType": "Query",
+      "field": "topWishlisted",
+      "parent": {},
+      "args": {
+        "id": "o1",
+        "locale": "bad!"
+      },
+      "trace": [],
+      "error": {
+        "message": "Invalid locale parameter: bad!",
+        "extensions": {
+          "code": "BAD_USER_INPUT",
+          "argumentName": "locale"
+        }
+      }
+    },
+    {
+      "name": "invalid locale on featuredDiscounts",
+      "parentType": "Query",
+      "field": "featuredDiscounts",
+      "parent": {},
+      "args": {
+        "id": "o1",
+        "locale": "bad!"
+      },
+      "trace": [],
+      "error": {
+        "message": "Invalid locale parameter: bad!",
+        "extensions": {
+          "code": "BAD_USER_INPUT",
+          "argumentName": "locale"
+        }
+      }
+    },
+    {
+      "name": "invalid locale on event",
+      "parentType": "Query",
+      "field": "event",
+      "parent": {},
+      "args": {
+        "id": "o1",
+        "locale": "bad!"
+      },
+      "trace": [],
+      "error": {
+        "message": "Invalid locale parameter: bad!",
+        "extensions": {
+          "code": "BAD_USER_INPUT",
+          "argumentName": "locale"
+        }
+      }
+    },
+    {
+      "name": "invalid locale on genres",
+      "parentType": "Query",
+      "field": "genres",
+      "parent": {},
+      "args": {
+        "id": "o1",
+        "locale": "bad!"
+      },
+      "trace": [],
+      "error": {
+        "message": "Invalid locale parameter: bad!",
+        "extensions": {
+          "code": "BAD_USER_INPUT",
+          "argumentName": "locale"
+        }
+      }
+    },
+    {
+      "name": "invalid locale on latestAchievements",
+      "parentType": "Query",
+      "field": "latestAchievements",
+      "parent": {},
+      "args": {
+        "id": "o1",
+        "locale": "bad!"
+      },
+      "trace": [],
+      "error": {
+        "message": "Invalid locale parameter: bad!",
+        "extensions": {
+          "code": "BAD_USER_INPUT",
+          "argumentName": "locale"
+        }
+      }
+    },
+    {
+      "name": "loader rejects absent sandbox",
+      "parentType": "Offer",
+      "field": "sandbox",
+      "parent": {},
+      "args": {},
+      "trace": [],
+      "error": {
+        "message": "The loader.load() function must be called with a value, but got: undefined.",
+        "extensions": {}
+      }
+    },
+    {
+      "name": "loader rejects null sandbox",
+      "parentType": "Offer",
+      "field": "sandbox",
+      "parent": {
+        "id": null,
+        "namespace": null
+      },
+      "args": {},
+      "trace": [],
+      "error": {
+        "message": "The loader.load() function must be called with a value, but got: null.",
+        "extensions": {}
+      }
+    },
+    {
+      "name": "loader rejects absent items",
+      "parentType": "Offer",
+      "field": "items",
+      "parent": {},
+      "args": {},
+      "trace": [],
+      "error": {
+        "message": "The loader.load() function must be called with a value, but got: undefined.",
+        "extensions": {}
+      }
+    },
+    {
+      "name": "loader rejects null items",
+      "parentType": "Offer",
+      "field": "items",
+      "parent": {
+        "id": null,
+        "namespace": null
+      },
+      "args": {},
+      "trace": [],
+      "error": {
+        "message": "The loader.load() function must be called with a value, but got: null.",
+        "extensions": {}
+      }
+    },
+    {
+      "name": "price for missing ID",
+      "parentType": "Offer",
+      "field": "price",
+      "parent": {},
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "pricev2",
+          "filter": {
+            "offerId": {
+              "$in": [
+                null
+              ]
+            },
+            "region": {
+              "$in": [
+                "US"
+              ]
+            }
+          },
+          "options": {},
+          "result": [
+            {
+              "offerId": null,
+              "region": "US",
+              "source": "null"
+            },
+            {
+              "region": "US",
+              "source": "missing"
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "region": "US",
+        "source": "missing"
+      }
+    },
+    {
+      "name": "price for null ID",
+      "parentType": "Offer",
+      "field": "price",
+      "parent": {
+        "id": null
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "pricev2",
+          "filter": {
+            "offerId": {
+              "$in": [
+                null
+              ]
+            },
+            "region": {
+              "$in": [
+                "US"
+              ]
+            }
+          },
+          "options": {},
+          "result": [
+            {
+              "offerId": null,
+              "region": "US",
+              "source": "null"
+            },
+            {
+              "region": "US",
+              "source": "missing"
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "offerId": null,
+        "region": "US",
+        "source": "null"
+      }
+    },
+    {
+      "name": "unlinked suggestions",
+      "parentType": "Offer",
+      "field": "suggestions",
+      "parent": {
+        "id": null,
+        "namespace": null,
+        "tags": [
+          {
+            "id": "genre"
+          }
+        ]
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "tags",
+          "filter": {
+            "id": {
+              "$in": [
+                "genre"
+              ]
+            },
+            "groupName": "genre"
+          },
+          "options": {},
+          "result": [
+            {
+              "id": "g1",
+              "name": "Action"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "tags": {
+              "$elemMatch": {
+                "id": {
+                  "$in": [
+                    "g1"
+                  ]
+                }
+              }
+            },
+            "id": {
+              "$ne": null
+            },
+            "namespace": {
+              "$ne": null
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "lastModifiedDate": -1
+            },
+            "limit": 25
+          },
+          "result": []
+        }
+      ],
+      "expected": []
+    },
+    {
+      "name": "unlinked offer features",
+      "parentType": "Offer",
+      "field": "features",
+      "parent": {
+        "id": null,
+        "namespace": null,
+        "tags": [
+          {
+            "id": "genre"
+          }
+        ]
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offersubitems",
+          "filter": {
+            "_id": null
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          },
+          "result": []
+        },
+        {
+          "method": "find",
+          "collection": "items",
+          "filter": {
+            "$or": [
+              {
+                "id": {
+                  "$in": []
+                }
+              },
+              {
+                "linkedOffers": null
+              }
+            ]
+          },
+          "options": {},
+          "result": []
+        }
+      ],
+      "expected": {
+        "launcher": "epic",
+        "features": [],
+        "epicFeatures": []
+      }
+    },
+    {
+      "name": "unlinked offer franchises",
+      "parentType": "Offer",
+      "field": "franchises",
+      "parent": {
+        "id": null,
+        "namespace": null,
+        "tags": [
+          {
+            "id": "genre"
+          }
+        ]
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "franchises",
+          "filter": {
+            "offers": null
+          },
+          "options": {},
+          "result": []
+        }
+      ],
+      "expected": []
+    },
+    {
+      "name": "unlinked offer giveaways",
+      "parentType": "Offer",
+      "field": "giveaways",
+      "parent": {
+        "id": null,
+        "namespace": null,
+        "tags": [
+          {
+            "id": "genre"
+          }
+        ]
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "freegames",
+          "filter": {
+            "id": null
+          },
+          "options": {
+            "sort": {
+              "startDate": -1
+            }
+          },
+          "result": []
+        }
+      ],
+      "expected": []
+    },
+    {
+      "name": "unlinked offer related",
+      "parentType": "Offer",
+      "field": "related",
+      "parent": {
+        "id": null,
+        "namespace": null,
+        "tags": [
+          {
+            "id": "genre"
+          }
+        ]
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "namespace": null,
+            "id": {
+              "$ne": null
+            }
+          },
+          "options": {
+            "limit": 25
+          },
+          "result": []
+        }
+      ],
+      "expected": []
+    },
+    {
+      "name": "unlinked offer positions",
+      "parentType": "Offer",
+      "field": "positions",
+      "parent": {
+        "id": null,
+        "namespace": null,
+        "tags": [
+          {
+            "id": "genre"
+          }
+        ]
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "game_positions",
+          "filter": {
+            "offerId": null
+          },
+          "options": {},
+          "result": []
+        }
+      ],
+      "expected": {}
+    },
+    {
+      "name": "unlinked offer ratings",
+      "parentType": "Offer",
+      "field": "ratings",
+      "parent": {
+        "id": null,
+        "namespace": null,
+        "tags": [
+          {
+            "id": "genre"
+          }
+        ]
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "sandboxes",
+          "filter": {
+            "_id": null
+          },
+          "options": {},
+          "result": null
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "unlinked offer polls",
+      "parentType": "Offer",
+      "field": "polls",
+      "parent": {
+        "id": null,
+        "namespace": null,
+        "tags": [
+          {
+            "id": "genre"
+          }
+        ]
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "ratings_polls",
+          "filter": {
+            "_id": {
+              "$eq": null
+            }
+          },
+          "options": {},
+          "result": null
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "unlinked offer hltb",
+      "parentType": "Offer",
+      "field": "hltb",
+      "parent": {
+        "id": null,
+        "namespace": null,
+        "tags": [
+          {
+            "id": "genre"
+          }
+        ]
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "hltbs",
+          "filter": {
+            "_id": {
+              "$eq": null
+            }
+          },
+          "options": {},
+          "result": null
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "unlinked offer ageRating",
+      "parentType": "Offer",
+      "field": "ageRating",
+      "parent": {
+        "id": null,
+        "namespace": null,
+        "tags": [
+          {
+            "id": "genre"
+          }
+        ]
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "sandboxes",
+          "filter": {
+            "_id": {
+              "$eq": null
+            }
+          },
+          "options": {},
+          "result": null
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "partial position row",
+      "parentType": "Offer",
+      "field": "positions",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "game_positions",
+          "filter": {
+            "offerId": "o1"
+          },
+          "options": {},
+          "result": [
+            {
+              "collectionId": "missing-position"
+            },
+            {
+              "collectionId": "ok",
+              "position": 1
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "ok": 1
+      }
+    },
+    {
+      "name": "partial feature references",
+      "parentType": "Offer",
+      "field": "features",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {},
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "name": "untagged"
+          },
+          {
+            "id": "not-numeric"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offersubitems",
+          "filter": {
+            "_id": "o1"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          },
+          "result": []
+        },
+        {
+          "method": "find",
+          "collection": "items",
+          "filter": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    null,
+                    "i1"
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "o1"
+              }
+            ]
+          },
+          "options": {},
+          "result": []
+        }
+      ],
+      "expected": {
+        "launcher": "epic",
+        "features": [],
+        "epicFeatures": []
+      }
+    },
+    {
+      "name": "invalid related offer locale",
+      "parentType": "Offer",
+      "field": "related",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {
+        "locale": "bad!"
+      },
+      "trace": [],
+      "error": {
+        "message": "Invalid locale parameter: bad!",
+        "extensions": {
+          "code": "BAD_USER_INPUT",
+          "argumentName": "locale"
+        }
+      }
+    },
+    {
+      "name": "invalid franchise locale",
+      "parentType": "Franchise",
+      "field": "allOffers",
+      "parent": {
+        "offers": [
+          "o1"
+        ]
+      },
+      "args": {
+        "locale": "bad!"
+      },
+      "trace": [],
+      "error": {
+        "message": "Invalid locale parameter: bad!",
+        "extensions": {
+          "code": "BAD_USER_INPUT",
+          "argumentName": "locale"
+        }
+      }
+    },
+    {
+      "name": "genre image fallback",
+      "parentType": "Query",
+      "field": "genres",
+      "parent": {},
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "tags",
+          "filter": {
+            "groupName": "genre",
+            "status": "ACTIVE"
+          },
+          "options": {},
+          "result": [
+            {
+              "id": "g1",
+              "name": "Action"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "tags": {
+              "$elemMatch": {
+                "id": "g1"
+              }
+            },
+            "offerType": "BASE_GAME",
+            "releaseDate": {
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "limit": 3,
+            "sort": {
+              "releaseDate": -1
+            }
+          },
+          "result": [
+            {
+              "id": "other-art",
+              "keyImages": [
+                {
+                  "type": "Other",
+                  "url": "fallback"
+                }
+              ]
+            },
+            {
+              "id": "no-art",
+              "keyImages": []
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "genre": {
+            "id": "g1",
+            "name": "Action"
+          },
+          "offers": [
+            {
+              "id": "other-art",
+              "image": {
+                "type": "Other",
+                "url": "fallback"
+              }
+            },
+            {
+              "id": "no-art"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "unmatched top seller position",
+      "parentType": "Query",
+      "field": "topSellers",
+      "parent": {},
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "game_positions",
+          "filter": {
+            "collectionId": "top-sellers",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "position": 1
+            },
+            "limit": 10,
+            "skip": 0
+          },
+          "result": [
+            {
+              "collectionId": "top-sellers",
+              "offerId": "o1",
+              "position": 2
+            },
+            {
+              "collectionId": "top-sellers",
+              "offerId": "o2",
+              "position": 1
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "id": {
+              "$in": [
+                "o1",
+                "o2"
+              ]
+            }
+          },
+          "options": {},
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "old-id",
+              "namespace": "ns2",
+              "title": "Second",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "game_positions",
+          "filter": {
+            "collectionId": "top-sellers",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {},
+          "result": 2
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o1",
+            "namespace": "ns",
+            "title": "First",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "position": 2,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "_id": "mongo-1",
+            "id": "old-id",
+            "namespace": "ns2",
+            "title": "Second",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "total": 2,
+        "page": 1,
+        "limit": 10
+      }
+    },
+    {
+      "name": "unrelated incomplete localization is ignored",
+      "parentType": "Query",
+      "field": "latestReleased",
+      "parent": {},
+      "args": {
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            },
+            "releaseDate": {
+              "$ne": null,
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "releaseDate": -1
+            },
+            "limit": 10,
+            "skip": 0
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityId": "unknown"
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "offers",
+          "filter": {
+            "releaseDate": {
+              "$ne": null
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            }
+          },
+          "options": {},
+          "result": 1
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o1",
+            "namespace": "ns",
+            "title": "First",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "locale": "es-ES",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          }
+        ],
+        "total": 1,
+        "page": 1,
+        "limit": 10
+      }
+    },
+    {
+      "name": "localization without fetch timestamp",
+      "parentType": "Query",
+      "field": "latestReleased",
+      "parent": {},
+      "args": {
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            },
+            "releaseDate": {
+              "$ne": null,
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "releaseDate": -1
+            },
+            "limit": 10,
+            "skip": 0
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityType": "offer",
+              "entityId": "ns:o1",
+              "locale": "es-ES",
+              "source": "egs",
+              "data": {
+                "title": "Primero",
+                "description": "Descripción localizada"
+              }
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "offers",
+          "filter": {
+            "releaseDate": {
+              "$ne": null
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            }
+          },
+          "options": {},
+          "result": 1
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o1",
+            "namespace": "ns",
+            "title": "Primero",
+            "description": "Descripción localizada",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "locale": "es-ES",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "egs"
+            }
+          }
+        ],
+        "total": 1,
+        "page": 1,
+        "limit": 10
+      }
+    },
+    {
+      "name": "explicitly null localization timestamps",
+      "parentType": "Query",
+      "field": "latestReleased",
+      "parent": {},
+      "args": {
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            },
+            "releaseDate": {
+              "$ne": null,
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "releaseDate": -1
+            },
+            "limit": 10,
+            "skip": 0
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityType": "offer",
+              "entityId": "ns:o1",
+              "locale": "es-ES",
+              "source": "egs",
+              "data": {
+                "title": "Primero",
+                "description": "Descripción localizada"
+              },
+              "fetchedAt": null,
+              "sourceUpdatedAt": null
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "offers",
+          "filter": {
+            "releaseDate": {
+              "$ne": null
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            }
+          },
+          "options": {},
+          "result": 1
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o1",
+            "namespace": "ns",
+            "title": "Primero",
+            "description": "Descripción localizada",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "locale": "es-ES",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "egs",
+              "fetchedAt": null
+            }
+          }
+        ],
+        "total": 1,
+        "page": 1,
+        "limit": 10
+      }
+    },
+    {
+      "name": "string localization timestamps retain offset",
+      "parentType": "Query",
+      "field": "latestReleased",
+      "parent": {},
+      "args": {
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            },
+            "releaseDate": {
+              "$ne": null,
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "releaseDate": -1
+            },
+            "limit": 10,
+            "skip": 0
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityType": "offer",
+              "entityId": "ns:o1",
+              "locale": "es-ES",
+              "source": "egs",
+              "data": {
+                "title": "Primero",
+                "description": "Descripción localizada"
+              },
+              "fetchedAt": "2025-02-10T08:00:00+02:00",
+              "sourceUpdatedAt": "2025-01-10T05:00:00Z"
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "offers",
+          "filter": {
+            "releaseDate": {
+              "$ne": null
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            }
+          },
+          "options": {},
+          "result": 1
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o1",
+            "namespace": "ns",
+            "title": "Primero",
+            "description": "Descripción localizada",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "locale": "es-ES",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "egs",
+              "fetchedAt": "2025-02-10T08:00:00+02:00",
+              "sourceUpdatedAt": "2025-01-10T05:00:00Z"
+            }
+          }
+        ],
+        "total": 1,
+        "page": 1,
+        "limit": 10
+      }
+    },
+    {
+      "name": "stored localization timestamp scalars",
+      "parentType": "Query",
+      "field": "latestReleased",
+      "parent": {},
+      "args": {
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            },
+            "releaseDate": {
+              "$ne": null,
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "releaseDate": -1
+            },
+            "limit": 10,
+            "skip": 0
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityType": "offer",
+              "entityId": "ns:o1",
+              "locale": "es-ES",
+              "source": "egs",
+              "data": {
+                "title": "Primero",
+                "description": "Descripción localizada"
+              },
+              "fetchedAt": 0,
+              "sourceUpdatedAt": "historical"
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "offers",
+          "filter": {
+            "releaseDate": {
+              "$ne": null
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            }
+          },
+          "options": {},
+          "result": 1
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o1",
+            "namespace": "ns",
+            "title": "Primero",
+            "description": "Descripción localizada",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "locale": "es-ES",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "egs",
+              "fetchedAt": 0,
+              "sourceUpdatedAt": "historical"
+            }
+          }
+        ],
+        "total": 1,
+        "page": 1,
+        "limit": 10
+      }
+    },
+    {
+      "name": "upcoming localized",
+      "parentType": "Query",
+      "field": "upcoming",
+      "parent": {},
+      "args": {
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "aggregate",
+          "collection": "offers",
+          "filter": [
+            {
+              "$match": {
+                "releaseDate": {
+                  "$gt": {
+                    "$date": "2025-01-10T05:00:00.000Z"
+                  },
+                  "$ne": null,
+                  "$lt": {
+                    "$date": "2099-01-01T00:00:00.000Z"
+                  }
+                },
+                "offerType": {
+                  "$in": [
+                    "BASE_GAME",
+                    "DLC"
+                  ]
+                }
+              }
+            },
+            {
+              "$sort": {
+                "releaseDate": 1
+              }
+            },
+            {
+              "$skip": 0
+            },
+            {
+              "$limit": 15
+            }
+          ],
+          "options": {},
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityType": "offer",
+              "entityId": "ns:o1",
+              "locale": "es-ES",
+              "source": "egs",
+              "data": {
+                "title": "Primero",
+                "description": "Descripción localizada"
+              },
+              "fetchedAt": "2025-01-10T05:00:00.000Z"
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "offers",
+          "filter": {
+            "releaseDate": {
+              "$gt": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {},
+          "result": 1
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o1",
+            "namespace": "ns",
+            "title": "Primero",
+            "description": "Descripción localizada",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "locale": "es-ES",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "egs",
+              "fetchedAt": "2025-01-10T05:00:00.000Z"
+            }
+          }
+        ],
+        "total": 1,
+        "page": 1,
+        "limit": 15
+      }
+    },
+    {
+      "name": "latest released localized",
+      "parentType": "Query",
+      "field": "latestReleased",
+      "parent": {},
+      "args": {
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            },
+            "releaseDate": {
+              "$ne": null,
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "releaseDate": -1
+            },
+            "limit": 10,
+            "skip": 0
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityType": "offer",
+              "entityId": "ns:o1",
+              "locale": "es-ES",
+              "source": "egs",
+              "data": {
+                "title": "Primero",
+                "description": "Descripción localizada"
+              },
+              "fetchedAt": "2025-01-10T05:00:00.000Z"
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "offers",
+          "filter": {
+            "releaseDate": {
+              "$ne": null
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            }
+          },
+          "options": {},
+          "result": 1
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o1",
+            "namespace": "ns",
+            "title": "Primero",
+            "description": "Descripción localizada",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "locale": "es-ES",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "egs",
+              "fetchedAt": "2025-01-10T05:00:00.000Z"
+            }
+          }
+        ],
+        "total": 1,
+        "page": 1,
+        "limit": 10
+      }
+    },
+    {
+      "name": "invalid nested locale",
+      "parentType": "Offer",
+      "field": "suggestions",
+      "parent": {
+        "id": "o1",
+        "locale": "bad!"
+      },
+      "args": {},
+      "trace": [],
+      "error": {
+        "message": "Invalid locale parameter: bad!",
+        "extensions": {
+          "code": "BAD_USER_INPUT",
+          "argumentName": "locale"
+        }
+      }
+    },
+    {
+      "name": "genre missing image collection",
+      "parentType": "Query",
+      "field": "genres",
+      "parent": {},
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "tags",
+          "filter": {
+            "groupName": "genre",
+            "status": "ACTIVE"
+          },
+          "options": {},
+          "result": [
+            {
+              "id": "g1",
+              "name": "Action"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "tags": {
+              "$elemMatch": {
+                "id": "g1"
+              }
+            },
+            "offerType": "BASE_GAME",
+            "releaseDate": {
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "limit": 3,
+            "sort": {
+              "releaseDate": -1
+            }
+          },
+          "result": [
+            {
+              "id": "absent-images"
+            }
+          ]
+        }
+      ],
+      "error": {
+        "message": "Cannot read properties of undefined (reading 'find')",
+        "extensions": {}
+      }
+    },
+    {
+      "name": "empty ratings are null",
+      "parentType": "Offer",
+      "field": "ageRating",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "sandboxes",
+          "filter": {
+            "_id": {
+              "$eq": "ns"
+            }
+          },
+          "options": {},
+          "result": {
+            "ageGatings": {
+              "ESRB": ""
+            }
+          }
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "localized offer",
+      "parentType": "Query",
+      "field": "offer",
+      "parent": {},
+      "args": {
+        "id": "o1",
+        "locale": "es-ES",
+        "__selectedFields": [
+          "id",
+          "title",
+          "localeStatus"
+        ]
+      },
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "offers",
+          "filter": {
+            "id": "o1"
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "title": 1,
+              "localeStatus": 1,
+              "_id": 1,
+              "namespace": 1
+            }
+          },
+          "result": {
+            "_id": "mongo-1",
+            "id": "o1",
+            "title": "First",
+            "namespace": "ns"
+          }
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityType": "offer",
+              "entityId": "ns:o1",
+              "locale": "es-ES",
+              "source": "egs",
+              "data": {
+                "title": "Primero",
+                "description": "Descripción localizada"
+              },
+              "fetchedAt": "2025-01-10T05:00:00.000Z"
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "title": "Primero",
+        "namespace": "ns",
+        "locale": "es-ES",
+        "localeStatus": "localized",
+        "canonicalLocale": "en-US",
+        "localization": {
+          "source": "egs",
+          "fetchedAt": "2025-01-10T05:00:00.000Z"
+        }
+      }
+    },
+    {
+      "name": "missing offer",
+      "parentType": "Query",
+      "field": "offer",
+      "parent": {},
+      "args": {
+        "id": "absent",
+        "__selectedFields": [
+          "id",
+          "title",
+          "localeStatus"
+        ]
+      },
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "offers",
+          "filter": {
+            "id": "absent"
+          },
+          "options": {
+            "projection": {
+              "id": 1,
+              "title": 1,
+              "localeStatus": 1,
+              "_id": 1,
+              "namespace": 1
+            }
+          },
+          "result": null
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "localized offers",
+      "parentType": "Query",
+      "field": "offers",
+      "parent": {},
+      "args": {
+        "limit": 3,
+        "page": 2,
+        "country": "ES",
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {},
+          "options": {
+            "limit": 3,
+            "skip": 3,
+            "sort": {
+              "lastModifiedDate": -1
+            }
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o2",
+              "namespace": "ns2",
+              "title": "Second",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "pricev2",
+          "filter": {
+            "offerId": {
+              "$in": [
+                "o1",
+                "o2"
+              ]
+            },
+            "region": "EURO"
+          },
+          "options": {},
+          "result": [
+            {
+              "offerId": "o1",
+              "region": "EURO",
+              "price": {
+                "discount": 100
+              }
+            },
+            {
+              "offerId": "o1",
+              "region": "EURO",
+              "price": {
+                "discount": 500
+              }
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1",
+                "ns2:o2"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityType": "offer",
+              "entityId": "ns:o1",
+              "locale": "es-ES",
+              "source": "egs",
+              "data": {
+                "title": "Primero",
+                "description": "Descripción localizada"
+              },
+              "fetchedAt": "2025-01-10T05:00:00.000Z"
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "offers",
+          "filter": {},
+          "options": {},
+          "result": 17
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o1",
+            "namespace": "ns",
+            "title": "Primero",
+            "description": "Descripción localizada",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "price": {
+              "offerId": "o1",
+              "region": "EURO",
+              "price": {
+                "discount": 100
+              }
+            },
+            "locale": "es-ES",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "egs",
+              "fetchedAt": "2025-01-10T05:00:00.000Z"
+            }
+          },
+          {
+            "_id": "mongo-1",
+            "id": "o2",
+            "namespace": "ns2",
+            "title": "Second",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "price": null,
+            "locale": "es-ES",
+            "localeStatus": "fallback",
+            "canonicalLocale": "en-US"
+          }
+        ],
+        "total": 17,
+        "page": 2,
+        "limit": 3
+      }
+    },
+    {
+      "name": "upcoming",
+      "parentType": "Query",
+      "field": "upcoming",
+      "parent": {},
+      "args": {},
+      "trace": [
+        {
+          "method": "aggregate",
+          "collection": "offers",
+          "filter": [
+            {
+              "$match": {
+                "releaseDate": {
+                  "$gt": {
+                    "$date": "2025-01-10T05:00:00.000Z"
+                  },
+                  "$ne": null,
+                  "$lt": {
+                    "$date": "2099-01-01T00:00:00.000Z"
+                  }
+                },
+                "offerType": {
+                  "$in": [
+                    "BASE_GAME",
+                    "DLC"
+                  ]
+                }
+              }
+            },
+            {
+              "$sort": {
+                "releaseDate": 1
+              }
+            },
+            {
+              "$skip": 0
+            },
+            {
+              "$limit": 15
+            }
+          ],
+          "options": {},
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "offers",
+          "filter": {
+            "releaseDate": {
+              "$gt": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {},
+          "result": 12
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o1",
+            "namespace": "ns",
+            "title": "First",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "total": 12,
+        "page": 1,
+        "limit": 15
+      }
+    },
+    {
+      "name": "latest released",
+      "parentType": "Query",
+      "field": "latestReleased",
+      "parent": {},
+      "args": {
+        "limit": -1,
+        "page": -1
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            },
+            "releaseDate": {
+              "$ne": null,
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "releaseDate": -1
+            },
+            "limit": 1,
+            "skip": 0
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o2",
+              "namespace": "ns2",
+              "title": "Second",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "offers",
+          "filter": {
+            "releaseDate": {
+              "$ne": null
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            }
+          },
+          "options": {},
+          "result": 17
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o2",
+            "namespace": "ns2",
+            "title": "Second",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "total": 17,
+        "page": 1,
+        "limit": 1
+      }
+    },
+    {
+      "name": "topSellers",
+      "parentType": "Query",
+      "field": "topSellers",
+      "parent": {},
+      "args": {
+        "limit": 2,
+        "page": 3
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "game_positions",
+          "filter": {
+            "collectionId": "top-sellers",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "position": 1
+            },
+            "limit": 2,
+            "skip": 4
+          },
+          "result": [
+            {
+              "collectionId": "top-sellers",
+              "offerId": "o1",
+              "position": 2
+            },
+            {
+              "collectionId": "top-sellers",
+              "offerId": "o2",
+              "position": 1
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "id": {
+              "$in": [
+                "o1",
+                "o2"
+              ]
+            }
+          },
+          "options": {},
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o2",
+              "namespace": "ns2",
+              "title": "Second",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "game_positions",
+          "filter": {
+            "collectionId": "top-sellers",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {},
+          "result": 18
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o2",
+            "namespace": "ns2",
+            "title": "Second",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "position": 1,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "_id": "mongo-1",
+            "id": "o1",
+            "namespace": "ns",
+            "title": "First",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "position": 2,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "total": 18,
+        "page": 3,
+        "limit": 2
+      }
+    },
+    {
+      "name": "topWishlisted",
+      "parentType": "Query",
+      "field": "topWishlisted",
+      "parent": {},
+      "args": {
+        "limit": 2,
+        "page": 3
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "game_positions",
+          "filter": {
+            "collectionId": "top-wishlisted",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "position": 1
+            },
+            "limit": 2,
+            "skip": 4
+          },
+          "result": [
+            {
+              "collectionId": "top-sellers",
+              "offerId": "o1",
+              "position": 2
+            },
+            {
+              "collectionId": "top-sellers",
+              "offerId": "o2",
+              "position": 1
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "id": {
+              "$in": [
+                "o1",
+                "o2"
+              ]
+            }
+          },
+          "options": {},
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o2",
+              "namespace": "ns2",
+              "title": "Second",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "game_positions",
+          "filter": {
+            "collectionId": "top-wishlisted",
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {},
+          "result": 18
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o2",
+            "namespace": "ns2",
+            "title": "Second",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "position": 1,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "_id": "mongo-1",
+            "id": "o1",
+            "namespace": "ns",
+            "title": "First",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "position": 2,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "total": 18,
+        "page": 3,
+        "limit": 2
+      }
+    },
+    {
+      "name": "featured discount",
+      "parentType": "Query",
+      "field": "featuredDiscounts",
+      "parent": {},
+      "args": {
+        "limit": 3,
+        "page": 2,
+        "country": "ES",
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "game_positions",
+          "filter": {
+            "position": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "position": 1
+            },
+            "limit": 200
+          },
+          "result": [
+            {
+              "collectionId": "top-sellers",
+              "offerId": "o1",
+              "position": 2
+            },
+            {
+              "collectionId": "top-sellers",
+              "offerId": "o2",
+              "position": 1
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "id": {
+              "$in": [
+                "o1",
+                "o2"
+              ]
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {},
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o2",
+              "namespace": "ns2",
+              "title": "Second",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "pricev2",
+          "filter": {
+            "offerId": {
+              "$in": [
+                "o1",
+                "o2"
+              ]
+            },
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {},
+          "result": [
+            {
+              "offerId": "o1",
+              "region": "EURO",
+              "price": {
+                "discount": 100
+              }
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityType": "offer",
+              "entityId": "ns:o1",
+              "locale": "es-ES",
+              "source": "egs",
+              "data": {
+                "title": "Primero",
+                "description": "Descripción localizada"
+              },
+              "fetchedAt": "2025-01-10T05:00:00.000Z"
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "_id": "mongo-1",
+          "id": "o1",
+          "namespace": "ns",
+          "title": "Primero",
+          "description": "Descripción localizada",
+          "keyImages": [
+            {
+              "type": "Thumbnail",
+              "url": "thumb"
+            },
+            {
+              "type": "OfferImageTall",
+              "url": "tall"
+            }
+          ],
+          "tags": [
+            {
+              "id": "19847"
+            },
+            {
+              "id": "1370"
+            },
+            {
+              "id": "1264"
+            },
+            {
+              "id": "1370"
+            }
+          ],
+          "items": [
+            {
+              "id": "i1"
+            }
+          ],
+          "customAttributes": {
+            "test": {
+              "type": "STRING",
+              "value": "y"
+            }
+          },
+          "locale": "es-ES",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "source": "egs",
+            "fetchedAt": "2025-01-10T05:00:00.000Z"
+          }
+        }
+      ]
+    },
+    {
+      "name": "event missing",
+      "parentType": "Query",
+      "field": "event",
+      "parent": {},
+      "args": {
+        "id": "missing"
+      },
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "tags",
+          "filter": {
+            "id": {
+              "$eq": "missing"
+            },
+            "groupName": "event"
+          },
+          "options": {},
+          "result": null
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "event",
+      "parentType": "Query",
+      "field": "event",
+      "parent": {},
+      "args": {
+        "id": "e1",
+        "limit": 3,
+        "page": 2,
+        "country": "ES",
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "tags",
+          "filter": {
+            "id": {
+              "$eq": "e1"
+            },
+            "groupName": "event"
+          },
+          "options": {},
+          "result": {
+            "id": "e1",
+            "groupName": "event"
+          }
+        },
+        {
+          "method": "aggregate",
+          "collection": "offers",
+          "filter": [
+            {
+              "$match": {
+                "tags": {
+                  "$elemMatch": {
+                    "id": {
+                      "$eq": "e1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$lookup": {
+                "from": "pricev2",
+                "let": {
+                  "offerId": "$id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$offerId",
+                              "$$offerId"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$region",
+                              "EURO"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "updatedAt": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  }
+                ],
+                "as": "price"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$price",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$sort": {
+                "price.price.discount": -1
+              }
+            },
+            {
+              "$skip": 3
+            },
+            {
+              "$limit": 3
+            }
+          ],
+          "options": {},
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example",
+              "price": {
+                "offerId": "o1",
+                "region": "EURO",
+                "price": {
+                  "discount": 100
+                }
+              }
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityType": "offer",
+              "entityId": "ns:o1",
+              "locale": "es-ES",
+              "source": "egs",
+              "data": {
+                "title": "Primero",
+                "description": "Descripción localizada"
+              },
+              "fetchedAt": "2025-01-10T05:00:00.000Z"
+            }
+          ]
+        },
+        {
+          "method": "count",
+          "collection": "offers",
+          "filter": {
+            "tags": {
+              "$elemMatch": {
+                "id": {
+                  "$eq": "e1"
+                }
+              }
+            }
+          },
+          "options": {},
+          "result": 9
+        }
+      ],
+      "expected": {
+        "elements": [
+          {
+            "_id": "mongo-1",
+            "id": "o1",
+            "namespace": "ns",
+            "title": "Primero",
+            "description": "Descripción localizada",
+            "keyImages": [
+              {
+                "type": "Thumbnail",
+                "url": "thumb"
+              },
+              {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            ],
+            "tags": [
+              {
+                "id": "19847"
+              },
+              {
+                "id": "1370"
+              },
+              {
+                "id": "1264"
+              },
+              {
+                "id": "1370"
+              }
+            ],
+            "items": [
+              {
+                "id": "i1"
+              }
+            ],
+            "customAttributes": {
+              "test": {
+                "type": "STRING",
+                "value": "y"
+              }
+            },
+            "locale": "es-ES",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "egs",
+              "fetchedAt": "2025-01-10T05:00:00.000Z"
+            }
+          }
+        ],
+        "total": 9,
+        "page": 2,
+        "limit": 3
+      }
+    },
+    {
+      "name": "genres",
+      "parentType": "Query",
+      "field": "genres",
+      "parent": {},
+      "args": {
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "tags",
+          "filter": {
+            "groupName": "genre",
+            "status": "ACTIVE"
+          },
+          "options": {},
+          "result": [
+            {
+              "id": "g1",
+              "name": "Action"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "tags": {
+              "$elemMatch": {
+                "id": "g1"
+              }
+            },
+            "offerType": "BASE_GAME",
+            "releaseDate": {
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "limit": 3,
+            "sort": {
+              "releaseDate": -1
+            }
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityType": "offer",
+              "entityId": "ns:o1",
+              "locale": "es-ES",
+              "source": "egs",
+              "data": {
+                "title": "Primero",
+                "description": "Descripción localizada"
+              },
+              "fetchedAt": "2025-01-10T05:00:00.000Z"
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "genre": {
+            "id": "g1",
+            "name": "Action"
+          },
+          "offers": [
+            {
+              "id": "o1",
+              "title": "Primero",
+              "image": {
+                "type": "OfferImageTall",
+                "url": "tall"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "latest achievements",
+      "parentType": "Query",
+      "field": "latestAchievements",
+      "parent": {},
+      "args": {
+        "limit": 3,
+        "page": 2,
+        "country": "ES",
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            },
+            "tags.id": "19847",
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "effectiveDate": -1
+            },
+            "skip": 0,
+            "limit": 15
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o2",
+              "namespace": "ns2",
+              "title": "Second",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "achievementsets",
+          "filter": {
+            "sandboxId": {
+              "$in": [
+                "ns",
+                "ns2"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {},
+          "result": [
+            {
+              "sandboxId": "ns"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "pricev2",
+          "filter": {
+            "offerId": {
+              "$in": [
+                "o1",
+                "o2"
+              ]
+            },
+            "region": "EURO"
+          },
+          "options": {},
+          "result": [
+            {
+              "offerId": "o1",
+              "region": "EURO",
+              "price": {
+                "discount": 100
+              }
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityType": "offer",
+              "entityId": "ns:o1",
+              "locale": "es-ES",
+              "source": "egs",
+              "data": {
+                "title": "Primero",
+                "description": "Descripción localizada"
+              },
+              "fetchedAt": "2025-01-10T05:00:00.000Z"
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "_id": "mongo-1",
+          "id": "o1",
+          "namespace": "ns",
+          "title": "Primero",
+          "description": "Descripción localizada",
+          "keyImages": [
+            {
+              "type": "Thumbnail",
+              "url": "thumb"
+            },
+            {
+              "type": "OfferImageTall",
+              "url": "tall"
+            }
+          ],
+          "tags": [
+            {
+              "id": "19847"
+            },
+            {
+              "id": "1370"
+            },
+            {
+              "id": "1264"
+            },
+            {
+              "id": "1370"
+            }
+          ],
+          "items": [
+            {
+              "id": "i1"
+            }
+          ],
+          "customAttributes": {
+            "test": {
+              "type": "STRING",
+              "value": "y"
+            }
+          },
+          "locale": "es-ES",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "source": "egs",
+            "fetchedAt": "2025-01-10T05:00:00.000Z"
+          }
+        }
+      ]
+    },
+    {
+      "name": "achievements scanned another page",
+      "parentType": "Query",
+      "field": "latestAchievements",
+      "parent": {},
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            },
+            "tags.id": "19847",
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "effectiveDate": -1
+            },
+            "skip": 0,
+            "limit": 15
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o0",
+              "namespace": "ns0",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns1",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o2",
+              "namespace": "ns2",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o3",
+              "namespace": "ns3",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o4",
+              "namespace": "ns4",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o5",
+              "namespace": "ns5",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o6",
+              "namespace": "ns6",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o7",
+              "namespace": "ns7",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o8",
+              "namespace": "ns8",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o9",
+              "namespace": "ns9",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o10",
+              "namespace": "ns10",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o11",
+              "namespace": "ns11",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o12",
+              "namespace": "ns12",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o13",
+              "namespace": "ns13",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o14",
+              "namespace": "ns14",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "achievementsets",
+          "filter": {
+            "sandboxId": {
+              "$in": [
+                "ns0",
+                "ns1",
+                "ns2",
+                "ns3",
+                "ns4",
+                "ns5",
+                "ns6",
+                "ns7",
+                "ns8",
+                "ns9",
+                "ns10",
+                "ns11",
+                "ns12",
+                "ns13",
+                "ns14"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {},
+          "result": []
+        },
+        {
+          "method": "find",
+          "collection": "pricev2",
+          "filter": {
+            "offerId": {
+              "$in": [
+                "o0",
+                "o1",
+                "o2",
+                "o3",
+                "o4",
+                "o5",
+                "o6",
+                "o7",
+                "o8",
+                "o9",
+                "o10",
+                "o11",
+                "o12",
+                "o13",
+                "o14"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {},
+          "result": []
+        },
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "offerType": {
+              "$in": [
+                "BASE_GAME"
+              ]
+            },
+            "tags.id": "19847",
+            "effectiveDate": {
+              "$lte": {
+                "$date": "2025-01-10T05:00:00.000Z"
+              }
+            }
+          },
+          "options": {
+            "sort": {
+              "effectiveDate": -1
+            },
+            "skip": 15,
+            "limit": 15
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o2",
+              "namespace": "ns2",
+              "title": "Second",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "achievementsets",
+          "filter": {
+            "sandboxId": {
+              "$in": [
+                "ns2"
+              ]
+            },
+            "isBase": true
+          },
+          "options": {},
+          "result": [
+            {
+              "sandboxId": "ns2"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "pricev2",
+          "filter": {
+            "offerId": {
+              "$in": [
+                "o2"
+              ]
+            },
+            "region": "US"
+          },
+          "options": {},
+          "result": []
+        }
+      ],
+      "expected": [
+        {
+          "_id": "mongo-1",
+          "id": "o2",
+          "namespace": "ns2",
+          "title": "Second",
+          "keyImages": [
+            {
+              "type": "Thumbnail",
+              "url": "thumb"
+            },
+            {
+              "type": "OfferImageTall",
+              "url": "tall"
+            }
+          ],
+          "tags": [
+            {
+              "id": "19847"
+            },
+            {
+              "id": "1370"
+            },
+            {
+              "id": "1264"
+            },
+            {
+              "id": "1370"
+            }
+          ],
+          "items": [
+            {
+              "id": "i1"
+            }
+          ],
+          "customAttributes": {
+            "test": {
+              "type": "STRING",
+              "value": "y"
+            }
+          },
+          "locale": "en-US",
+          "localeStatus": "canonical"
+        }
+      ]
+    },
+    {
+      "name": "individual price",
+      "parentType": "Offer",
+      "field": "price",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {
+        "country": "ES"
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "pricev2",
+          "filter": {
+            "offerId": {
+              "$in": [
+                "o1"
+              ]
+            },
+            "region": {
+              "$in": [
+                "EURO"
+              ]
+            }
+          },
+          "options": {},
+          "result": [
+            {
+              "offerId": "o1",
+              "region": "EURO",
+              "price": {
+                "discount": 100
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "offerId": "o1",
+        "region": "EURO",
+        "price": {
+          "discount": 100
+        }
+      }
+    },
+    {
+      "name": "explicit items keep caller order",
+      "parentType": "Offer",
+      "field": "items",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          },
+          {
+            "id": "missing"
+          },
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "items",
+          "filter": {
+            "id": {
+              "$in": [
+                "i1",
+                "missing"
+              ]
+            }
+          },
+          "options": {},
+          "result": [
+            {
+              "id": "i1",
+              "customAttributes": [
+                {
+                  "key": "ThirdPartyManagedApp",
+                  "type": "STRING",
+                  "value": "yes"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "id": "i1",
+          "customAttributes": [
+            {
+              "key": "ThirdPartyManagedApp",
+              "type": "STRING",
+              "value": "yes"
+            }
+          ]
+        },
+        null,
+        {
+          "id": "i1",
+          "customAttributes": [
+            {
+              "key": "ThirdPartyManagedApp",
+              "type": "STRING",
+              "value": "yes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "subitem fallback",
+      "parentType": "Offer",
+      "field": "items",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offersubitems",
+          "filter": {
+            "_id": {
+              "$in": [
+                "o1"
+              ]
+            }
+          },
+          "options": {},
+          "result": [
+            {
+              "_id": "o1",
+              "subItems": [
+                {
+                  "id": "i1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "items",
+          "filter": {
+            "id": {
+              "$in": [
+                "i1"
+              ]
+            }
+          },
+          "options": {},
+          "result": [
+            {
+              "id": "i1",
+              "customAttributes": [
+                {
+                  "key": "ThirdPartyManagedApp",
+                  "type": "STRING",
+                  "value": "yes"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "id": "i1",
+          "customAttributes": [
+            {
+              "key": "ThirdPartyManagedApp",
+              "type": "STRING",
+              "value": "yes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "no subitems",
+      "parentType": "Offer",
+      "field": "items",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offersubitems",
+          "filter": {
+            "_id": {
+              "$in": [
+                "o1"
+              ]
+            }
+          },
+          "options": {},
+          "result": []
+        }
+      ],
+      "expected": []
+    },
+    {
+      "name": "franchises",
+      "parentType": "Offer",
+      "field": "franchises",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "franchises",
+          "filter": {
+            "offers": "o1"
+          },
+          "options": {},
+          "result": [
+            {
+              "offers": [
+                "o1"
+              ]
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "offers": [
+            "o1"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "giveaways",
+      "parentType": "Offer",
+      "field": "giveaways",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "freegames",
+          "filter": {
+            "id": "o1"
+          },
+          "options": {
+            "sort": {
+              "startDate": -1
+            }
+          },
+          "result": [
+            {
+              "id": "o1",
+              "startDate": "2025-01-10T05:00:00.000Z"
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "id": "o1",
+          "startDate": "2025-01-10T05:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "name": "localized related",
+      "parentType": "Offer",
+      "field": "related",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example",
+        "locale": "es-ES"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "namespace": "ns",
+            "id": {
+              "$ne": "o1"
+            }
+          },
+          "options": {
+            "limit": 25
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o2",
+              "namespace": "ns2",
+              "title": "Second",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns2:o2"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": []
+        }
+      ],
+      "expected": [
+        {
+          "_id": "mongo-1",
+          "id": "o2",
+          "namespace": "ns2",
+          "title": "Second",
+          "keyImages": [
+            {
+              "type": "Thumbnail",
+              "url": "thumb"
+            },
+            {
+              "type": "OfferImageTall",
+              "url": "tall"
+            }
+          ],
+          "tags": [
+            {
+              "id": "19847"
+            },
+            {
+              "id": "1370"
+            },
+            {
+              "id": "1264"
+            },
+            {
+              "id": "1370"
+            }
+          ],
+          "items": [
+            {
+              "id": "i1"
+            }
+          ],
+          "customAttributes": {
+            "test": {
+              "type": "STRING",
+              "value": "y"
+            }
+          },
+          "locale": "es-ES",
+          "localeStatus": "fallback",
+          "canonicalLocale": "en-US"
+        }
+      ]
+    },
+    {
+      "name": "suggestions",
+      "parentType": "Offer",
+      "field": "suggestions",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "tags",
+          "filter": {
+            "id": {
+              "$in": [
+                "19847",
+                "1370",
+                "1264",
+                "1370"
+              ]
+            },
+            "groupName": "genre"
+          },
+          "options": {},
+          "result": [
+            {
+              "id": "g1",
+              "name": "Action"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "tags": {
+              "$elemMatch": {
+                "id": {
+                  "$in": [
+                    "g1"
+                  ]
+                }
+              }
+            },
+            "id": {
+              "$ne": "o1"
+            },
+            "namespace": {
+              "$ne": "ns"
+            },
+            "offerType": {
+              "$in": [
+                "BASE_GAME",
+                "DLC"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "lastModifiedDate": -1
+            },
+            "limit": 25
+          },
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o2",
+              "namespace": "ns2",
+              "title": "Second",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns2:o2"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": []
+        }
+      ],
+      "expected": [
+        {
+          "_id": "mongo-1",
+          "id": "o2",
+          "namespace": "ns2",
+          "title": "Second",
+          "keyImages": [
+            {
+              "type": "Thumbnail",
+              "url": "thumb"
+            },
+            {
+              "type": "OfferImageTall",
+              "url": "tall"
+            }
+          ],
+          "tags": [
+            {
+              "id": "19847"
+            },
+            {
+              "id": "1370"
+            },
+            {
+              "id": "1264"
+            },
+            {
+              "id": "1370"
+            }
+          ],
+          "items": [
+            {
+              "id": "i1"
+            }
+          ],
+          "customAttributes": {
+            "test": {
+              "type": "STRING",
+              "value": "y"
+            }
+          },
+          "locale": "es-ES",
+          "localeStatus": "fallback",
+          "canonicalLocale": "en-US"
+        }
+      ]
+    },
+    {
+      "name": "suggestions no tags",
+      "parentType": "Offer",
+      "field": "suggestions",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [],
+      "expected": []
+    },
+    {
+      "name": "rating chain",
+      "parentType": "Offer",
+      "field": "ratings",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "sandboxes",
+          "filter": {
+            "_id": "ns"
+          },
+          "options": {},
+          "result": {
+            "parent": "p1"
+          }
+        },
+        {
+          "method": "findOne",
+          "collection": "products",
+          "filter": {
+            "_id": {
+              "$eq": "p1"
+            }
+          },
+          "options": {},
+          "result": {
+            "slug": "game"
+          }
+        },
+        {
+          "method": "findOne",
+          "collection": "ratings",
+          "filter": {
+            "_id": "game"
+          },
+          "options": {},
+          "result": {
+            "rating": 4
+          }
+        }
+      ],
+      "expected": {
+        "rating": 4
+      }
+    },
+    {
+      "name": "rating no product",
+      "parentType": "Offer",
+      "field": "ratings",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "sandboxes",
+          "filter": {
+            "_id": "ns"
+          },
+          "options": {},
+          "result": {
+            "parent": "p1"
+          }
+        },
+        {
+          "method": "findOne",
+          "collection": "products",
+          "filter": {
+            "_id": {
+              "$eq": "p1"
+            }
+          },
+          "options": {},
+          "result": null
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "polls",
+      "parentType": "Offer",
+      "field": "polls",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "ratings_polls",
+          "filter": {
+            "_id": {
+              "$eq": "ns"
+            }
+          },
+          "options": {},
+          "result": {
+            "_id": "ns"
+          }
+        }
+      ],
+      "expected": {
+        "_id": "ns"
+      }
+    },
+    {
+      "name": "hltb",
+      "parentType": "Offer",
+      "field": "hltb",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "hltbs",
+          "filter": {
+            "_id": {
+              "$eq": "o1"
+            }
+          },
+          "options": {},
+          "result": {
+            "_id": "o1"
+          }
+        }
+      ],
+      "expected": {
+        "_id": "o1"
+      }
+    },
+    {
+      "name": "sandbox",
+      "parentType": "Offer",
+      "field": "sandbox",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "sandboxes",
+          "filter": {
+            "_id": {
+              "$in": [
+                "ns"
+              ]
+            }
+          },
+          "options": {},
+          "result": [
+            {
+              "_id": "ns",
+              "name": "Sandbox"
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "_id": "ns",
+        "name": "Sandbox"
+      }
+    },
+    {
+      "name": "positions use last duplicate",
+      "parentType": "Offer",
+      "field": "positions",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "game_positions",
+          "filter": {
+            "offerId": "o1"
+          },
+          "options": {},
+          "result": [
+            {
+              "collectionId": "top-sellers",
+              "offerId": "o1",
+              "position": 2
+            },
+            {
+              "collectionId": "top-sellers",
+              "offerId": "o2",
+              "position": 1
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "top-sellers": 1
+      }
+    },
+    {
+      "name": "age rating US",
+      "parentType": "Offer",
+      "field": "ageRating",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {
+        "country": "US"
+      },
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "sandboxes",
+          "filter": {
+            "_id": {
+              "$eq": "ns"
+            }
+          },
+          "options": {},
+          "result": {
+            "ageGatings": {
+              "ESRB": "T",
+              "USK": "12",
+              "Generic": "all"
+            }
+          }
+        }
+      ],
+      "expected": "T"
+    },
+    {
+      "name": "age rating DE",
+      "parentType": "Offer",
+      "field": "ageRating",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {
+        "country": "DE"
+      },
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "sandboxes",
+          "filter": {
+            "_id": {
+              "$eq": "ns"
+            }
+          },
+          "options": {},
+          "result": {
+            "ageGatings": {
+              "ESRB": "T",
+              "USK": "12",
+              "Generic": "all"
+            }
+          }
+        }
+      ],
+      "expected": "12"
+    },
+    {
+      "name": "age rating ZZ",
+      "parentType": "Offer",
+      "field": "ageRating",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {
+        "country": "ZZ"
+      },
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "sandboxes",
+          "filter": {
+            "_id": {
+              "$eq": "ns"
+            }
+          },
+          "options": {},
+          "result": {
+            "ageGatings": {
+              "ESRB": "T",
+              "USK": "12",
+              "Generic": "all"
+            }
+          }
+        }
+      ],
+      "expected": "all"
+    },
+    {
+      "name": "age rating null",
+      "parentType": "Offer",
+      "field": "ageRating",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {
+        "country": null
+      },
+      "trace": [
+        {
+          "method": "findOne",
+          "collection": "sandboxes",
+          "filter": {
+            "_id": {
+              "$eq": "ns"
+            }
+          },
+          "options": {},
+          "result": {
+            "ageGatings": {
+              "ESRB": "T",
+              "USK": "12",
+              "Generic": "all"
+            }
+          }
+        }
+      ],
+      "expected": "all"
+    },
+    {
+      "name": "features from items and tags",
+      "parentType": "Offer",
+      "field": "features",
+      "parent": {
+        "_id": "mongo-1",
+        "id": "o1",
+        "namespace": "ns",
+        "title": "First",
+        "items": [
+          {
+            "id": "i1"
+          }
+        ],
+        "keyImages": [
+          {
+            "type": "Thumbnail",
+            "url": "thumb"
+          },
+          {
+            "type": "OfferImageTall",
+            "url": "tall"
+          }
+        ],
+        "tags": [
+          {
+            "id": "19847"
+          },
+          {
+            "id": "1370"
+          },
+          {
+            "id": "1264"
+          },
+          {
+            "id": "1370"
+          }
+        ],
+        "customAttributes": [
+          {
+            "key": "test",
+            "type": "STRING",
+            "value": "y"
+          }
+        ],
+        "upstreamOnly": "example"
+      },
+      "args": {},
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offersubitems",
+          "filter": {
+            "_id": "o1"
+          },
+          "options": {
+            "projection": {
+              "_id": 1,
+              "subItems": 1
+            }
+          },
+          "result": [
+            {
+              "_id": "o1",
+              "subItems": [
+                {
+                  "id": "i2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "items",
+          "filter": {
+            "$or": [
+              {
+                "id": {
+                  "$in": [
+                    "i1",
+                    "i2"
+                  ]
+                }
+              },
+              {
+                "linkedOffers": "o1"
+              }
+            ]
+          },
+          "options": {},
+          "result": [
+            {
+              "id": "i1",
+              "customAttributes": [
+                {
+                  "key": "ThirdPartyManagedApp",
+                  "type": "STRING",
+                  "value": "yes"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "launcher": "ea",
+        "features": [
+          "Co-op",
+          "Single Player"
+        ],
+        "epicFeatures": [
+          "Achievements"
+        ]
+      }
+    },
+    {
+      "name": "franchise offers",
+      "parentType": "Franchise",
+      "field": "allOffers",
+      "parent": {
+        "offers": [
+          "o1",
+          "o2"
+        ]
+      },
+      "args": {
+        "locale": "es-ES"
+      },
+      "trace": [
+        {
+          "method": "find",
+          "collection": "offers",
+          "filter": {
+            "id": {
+              "$in": [
+                "o1",
+                "o2"
+              ]
+            }
+          },
+          "options": {},
+          "result": [
+            {
+              "_id": "mongo-1",
+              "id": "o1",
+              "namespace": "ns",
+              "title": "First",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            },
+            {
+              "_id": "mongo-1",
+              "id": "o2",
+              "namespace": "ns2",
+              "title": "Second",
+              "items": [
+                {
+                  "id": "i1"
+                }
+              ],
+              "keyImages": [
+                {
+                  "type": "Thumbnail",
+                  "url": "thumb"
+                },
+                {
+                  "type": "OfferImageTall",
+                  "url": "tall"
+                }
+              ],
+              "tags": [
+                {
+                  "id": "19847"
+                },
+                {
+                  "id": "1370"
+                },
+                {
+                  "id": "1264"
+                },
+                {
+                  "id": "1370"
+                }
+              ],
+              "customAttributes": [
+                {
+                  "key": "test",
+                  "type": "STRING",
+                  "value": "y"
+                }
+              ],
+              "upstreamOnly": "example"
+            }
+          ]
+        },
+        {
+          "method": "find",
+          "collection": "egs_localizations",
+          "filter": {
+            "entityType": "offer",
+            "entityId": {
+              "$in": [
+                "ns:o1",
+                "ns2:o2"
+              ]
+            },
+            "locale": "es-ES"
+          },
+          "options": {},
+          "result": [
+            {
+              "entityType": "offer",
+              "entityId": "ns:o1",
+              "locale": "es-ES",
+              "source": "egs",
+              "data": {
+                "title": "Primero",
+                "description": "Descripción localizada"
+              },
+              "fetchedAt": "2025-01-10T05:00:00.000Z"
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "_id": "mongo-1",
+          "id": "o1",
+          "namespace": "ns",
+          "title": "Primero",
+          "description": "Descripción localizada",
+          "keyImages": [
+            {
+              "type": "Thumbnail",
+              "url": "thumb"
+            },
+            {
+              "type": "OfferImageTall",
+              "url": "tall"
+            }
+          ],
+          "tags": [
+            {
+              "id": "19847"
+            },
+            {
+              "id": "1370"
+            },
+            {
+              "id": "1264"
+            },
+            {
+              "id": "1370"
+            }
+          ],
+          "items": [
+            {
+              "id": "i1"
+            }
+          ],
+          "customAttributes": {
+            "test": {
+              "type": "STRING",
+              "value": "y"
+            }
+          },
+          "locale": "es-ES",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "source": "egs",
+            "fetchedAt": "2025-01-10T05:00:00.000Z"
+          }
+        },
+        {
+          "_id": "mongo-1",
+          "id": "o2",
+          "namespace": "ns2",
+          "title": "Second",
+          "keyImages": [
+            {
+              "type": "Thumbnail",
+              "url": "thumb"
+            },
+            {
+              "type": "OfferImageTall",
+              "url": "tall"
+            }
+          ],
+          "tags": [
+            {
+              "id": "19847"
+            },
+            {
+              "id": "1370"
+            },
+            {
+              "id": "1264"
+            },
+            {
+              "id": "1370"
+            }
+          ],
+          "items": [
+            {
+              "id": "i1"
+            }
+          ],
+          "customAttributes": {
+            "test": {
+              "type": "STRING",
+              "value": "y"
+            }
+          },
+          "locale": "es-ES",
+          "localeStatus": "fallback",
+          "canonicalLocale": "en-US"
+        }
+      ]
+    }
+  ]
+}

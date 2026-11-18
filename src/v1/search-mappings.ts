@@ -108,8 +108,8 @@ function lookupMapping(
 ): Record<string, any> | undefined {
   let current: any = { properties };
   for (const segment of path.split(".")) {
-    if (!current?.properties?.[segment]) return undefined;
-    current = current.properties[segment];
+    current = current.properties?.[segment] ?? current.fields?.[segment];
+    if (!current) return undefined;
   }
   return current;
 }
@@ -127,12 +127,6 @@ function parentProperties(
     current.properties ??= {};
   }
   return current.properties ?? null;
-}
-
-function typeFor(path: string): string {
-  if (path.endsWith("Date") || path.endsWith("endDate")) return "date";
-  if (path.endsWith("title") || path.endsWith("description")) return "text";
-  return "keyword";
 }
 
 export type SearchMappingReport = {
@@ -199,7 +193,6 @@ export async function ensureV1SearchMappings(
       const segments = field.path.split(".");
       const last = segments.at(-1);
       if (!last) continue;
-      const parent = parentProperties(mapping, field.path);
       const directParentField =
         segments.length > 1
           ? lookupMapping(mapping.properties, segments.slice(0, -1).join("."))
@@ -210,8 +203,9 @@ export async function ensureV1SearchMappings(
         );
         continue;
       }
+      const parent = parentProperties(mapping, field.path);
       if (parent) {
-        parent[last] = { type: typeFor(field.path) };
+        parent[last] = { type: field.types[0] };
         report.applied.push(field.path);
       }
     }

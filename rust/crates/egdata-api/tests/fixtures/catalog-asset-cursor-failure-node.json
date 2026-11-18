@@ -1,0 +1,22 @@
+[
+  {
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "item:legacy:page",
+      "identifier": {
+        "type": "item",
+        "namespace": "Legacy",
+        "id": "page"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    },
+    "batches": [
+      "find",
+      "getMore"
+    ]
+  }
+]

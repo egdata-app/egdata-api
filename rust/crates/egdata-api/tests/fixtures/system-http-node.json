@@ -1,0 +1,5888 @@
+[
+  {
+    "name": "health-ok",
+    "request": {
+      "method": "GET",
+      "path": "/v1/health"
+    },
+    "input": {},
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "public, max-age=60",
+        "cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"05b7ad37c843dba543391adba6e07826f0c08b90\""
+      },
+      "body": {
+        "data": {
+          "status": "ok",
+          "services": {
+            "redis": {
+              "status": "ok",
+              "latencyMs": 0
+            },
+            "mongodb": {
+              "status": "ok",
+              "latencyMs": 0
+            }
+          }
+        },
+        "meta": {
+          "apiVersion": "v1"
+        }
+      }
+    }
+  },
+  {
+    "name": "health-redisPing",
+    "request": {
+      "method": "GET",
+      "path": "/v1/health"
+    },
+    "input": {
+      "failure": "redisPing"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 503,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "public, max-age=60",
+        "cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"3286da4d18512202cfe7982119d930f48d8b483f\""
+      },
+      "body": {
+        "data": {
+          "status": "error",
+          "services": {
+            "redis": {
+              "status": "error",
+              "latencyMs": null
+            },
+            "mongodb": {
+              "status": "ok",
+              "latencyMs": 0
+            }
+          }
+        },
+        "meta": {
+          "apiVersion": "v1"
+        }
+      }
+    }
+  },
+  {
+    "name": "health-mongoPing",
+    "request": {
+      "method": "GET",
+      "path": "/v1/health"
+    },
+    "input": {
+      "failure": "mongoPing"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 503,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "public, max-age=60",
+        "cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"29e391925c71e6939236c5915a318c39bc0fc60d\""
+      },
+      "body": {
+        "data": {
+          "status": "error",
+          "services": {
+            "redis": {
+              "status": "ok",
+              "latencyMs": 0
+            },
+            "mongodb": {
+              "status": "error",
+              "latencyMs": null
+            }
+          }
+        },
+        "meta": {
+          "apiVersion": "v1"
+        }
+      }
+    }
+  },
+  {
+    "name": "health-query",
+    "request": {
+      "method": "GET",
+      "path": "/v1/health?unknown=1"
+    },
+    "input": {},
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"2fba98dd0f14288d5d5e4b5c331f092b46a8a37c\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/health",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"unknown\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "openapi",
+    "request": {
+      "method": "GET",
+      "path": "/v1/open-api.json"
+    },
+    "input": {},
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "public, max-age=60",
+        "cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"27c7920e77dc30a6ca40f6f6de4d27a764c80bf8\""
+      },
+      "body": {
+        "sha256": "ff60e88db31375d5683e28d7cd4eb0d11fd538884da111af2bc119c543a5e250"
+      }
+    }
+  },
+  {
+    "name": "openapi-query",
+    "request": {
+      "method": "GET",
+      "path": "/v1/open-api.json?unknown=1"
+    },
+    "input": {},
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ad75f94aa849358bc065ec6ff80b917e0ca1a8e4\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/open-api.json",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"unknown\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "stats-counts",
+    "request": {
+      "method": "GET",
+      "path": "/v1/stats"
+    },
+    "input": {
+      "counts": {
+        "offers": 37,
+        "items": 29,
+        "tags": 6,
+        "assets": 10,
+        "pricev2": 98,
+        "changelogs_v2": 17,
+        "sandboxes": 7,
+        "products": 2,
+        "freegames": 4
+      }
+    },
+    "pipelines": [],
+    "counts": [
+      {
+        "collection": "offers",
+        "filter": {}
+      },
+      {
+        "collection": "items",
+        "filter": {}
+      },
+      {
+        "collection": "tags",
+        "filter": {}
+      },
+      {
+        "collection": "assets",
+        "filter": {}
+      },
+      {
+        "collection": "pricev2",
+        "filter": {}
+      },
+      {
+        "collection": "changelogs_v2",
+        "filter": {}
+      },
+      {
+        "collection": "sandboxes",
+        "filter": {}
+      },
+      {
+        "collection": "products",
+        "filter": {}
+      },
+      {
+        "collection": "offers",
+        "filter": {
+          "localYears": [
+            2026,
+            2027
+          ]
+        }
+      },
+      {
+        "collection": "items",
+        "filter": {
+          "localYears": [
+            2026,
+            2027
+          ]
+        }
+      }
+    ],
+    "writes": [
+      {
+        "key": "v1:stats.counts:",
+        "value": {
+          "offers": 37,
+          "items": 29,
+          "tags": 6,
+          "assets": 10,
+          "priceEngine": 98,
+          "changelog": 17,
+          "sandboxes": 7,
+          "products": 2,
+          "offersYear": 37,
+          "itemsYear": 29
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"33936cb71d353afc0937d9fcaa996f4398b3739c\""
+      },
+      "body": {
+        "data": {
+          "offers": 37,
+          "items": 29,
+          "tags": 6,
+          "assets": 10,
+          "priceEngine": 98,
+          "changelog": 17,
+          "sandboxes": 7,
+          "products": 2,
+          "offersYear": 37,
+          "itemsYear": 29
+        },
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "stats-partial-failure",
+    "request": {
+      "method": "GET",
+      "path": "/v1/stats"
+    },
+    "input": {
+      "counts": {
+        "offers": 37,
+        "items": 29,
+        "tags": 6,
+        "assets": 10,
+        "pricev2": 98,
+        "changelogs_v2": 17,
+        "sandboxes": 7,
+        "products": 2,
+        "freegames": 4
+      },
+      "failure": "items"
+    },
+    "pipelines": [],
+    "counts": [
+      {
+        "collection": "offers",
+        "filter": {}
+      },
+      {
+        "collection": "items",
+        "filter": {}
+      },
+      {
+        "collection": "tags",
+        "filter": {}
+      },
+      {
+        "collection": "assets",
+        "filter": {}
+      },
+      {
+        "collection": "pricev2",
+        "filter": {}
+      },
+      {
+        "collection": "changelogs_v2",
+        "filter": {}
+      },
+      {
+        "collection": "sandboxes",
+        "filter": {}
+      },
+      {
+        "collection": "products",
+        "filter": {}
+      },
+      {
+        "collection": "offers",
+        "filter": {
+          "localYears": [
+            2026,
+            2027
+          ]
+        }
+      },
+      {
+        "collection": "items",
+        "filter": {
+          "localYears": [
+            2026,
+            2027
+          ]
+        }
+      }
+    ],
+    "writes": [
+      {
+        "key": "v1:stats.counts:",
+        "value": {
+          "offers": 37,
+          "items": 0,
+          "tags": 6,
+          "assets": 10,
+          "priceEngine": 98,
+          "changelog": 17,
+          "sandboxes": 7,
+          "products": 2,
+          "offersYear": 37,
+          "itemsYear": 0
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"f99ae0d337bd1cd53166c6315c93d626ff8755d7\""
+      },
+      "body": {
+        "data": {
+          "offers": 37,
+          "items": 0,
+          "tags": 6,
+          "assets": 10,
+          "priceEngine": 98,
+          "changelog": 17,
+          "sandboxes": 7,
+          "products": 2,
+          "offersYear": 37,
+          "itemsYear": 0
+        },
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "stats-cached",
+    "request": {
+      "method": "GET",
+      "path": "/v1/stats"
+    },
+    "input": {
+      "cached": "{\"offers\":1}"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"01350b9dbb363c2435a8dfe60604f83930251278\""
+      },
+      "body": {
+        "data": {
+          "offers": 1
+        },
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "releases-monthly",
+    "request": {
+      "method": "GET",
+      "path": "/v1/stats/releases/monthly"
+    },
+    "input": {
+      "aggregate": [
+        {
+          "year": 2024,
+          "releases": 7,
+          "month": 2
+        }
+      ]
+    },
+    "pipelines": [
+      [
+        {
+          "$match": {
+            "prePurchase": {
+              "$ne": true
+            },
+            "isCodeRedemptionOnly": {
+              "$ne": true
+            },
+            "releaseDate": {
+              "$ne": null,
+              "$lte": "2026-11-17T12:00:00.000Z",
+              "$gte": "2018-12-06T00:00:00.000Z"
+            },
+            "offerType": {
+              "$eq": "BASE_GAME"
+            }
+          }
+        },
+        {
+          "$group": {
+            "_id": {
+              "year": {
+                "$year": "$releaseDate"
+              },
+              "month": {
+                "$month": "$releaseDate"
+              }
+            },
+            "releases": {
+              "$sum": 1
+            }
+          }
+        },
+        {
+          "$sort": {
+            "_id.year": 1,
+            "_id.month": 1
+          }
+        },
+        {
+          "$project": {
+            "_id": 0,
+            "year": "$_id.year",
+            "releases": 1,
+            "month": "$_id.month"
+          }
+        }
+      ]
+    ],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:stats.releases.monthly:",
+        "value": [
+          {
+            "year": 2024,
+            "releases": 7,
+            "month": 2
+          }
+        ],
+        "mode": "EX",
+        "ttl": 86400
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"970dfc4e11396d4452cad816cefa2b46ac68a821\""
+      },
+      "body": {
+        "data": [
+          {
+            "year": 2024,
+            "releases": 7,
+            "month": 2
+          }
+        ],
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "releases-yearly",
+    "request": {
+      "method": "GET",
+      "path": "/v1/stats/releases/yearly"
+    },
+    "input": {
+      "aggregate": [
+        {
+          "year": 2024,
+          "releases": 7
+        }
+      ]
+    },
+    "pipelines": [
+      [
+        {
+          "$match": {
+            "prePurchase": {
+              "$ne": true
+            },
+            "isCodeRedemptionOnly": {
+              "$ne": true
+            },
+            "releaseDate": {
+              "$ne": null,
+              "$lte": "2026-11-17T12:00:00.000Z",
+              "$gte": "2018-12-06T00:00:00.000Z"
+            },
+            "offerType": {
+              "$eq": "BASE_GAME"
+            }
+          }
+        },
+        {
+          "$group": {
+            "_id": {
+              "year": {
+                "$year": "$releaseDate"
+              }
+            },
+            "releases": {
+              "$sum": 1
+            }
+          }
+        },
+        {
+          "$sort": {
+            "_id.year": 1
+          }
+        },
+        {
+          "$project": {
+            "_id": 0,
+            "year": "$_id.year",
+            "releases": 1
+          }
+        }
+      ]
+    ],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:stats.releases.yearly:",
+        "value": [
+          {
+            "year": 2024,
+            "releases": 7
+          }
+        ],
+        "mode": "EX",
+        "ttl": 86400
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"9bb925bc6849e343240a371fe7546901419da9e6\""
+      },
+      "body": {
+        "data": [
+          {
+            "year": 2024,
+            "releases": 7
+          }
+        ],
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "creations-monthly",
+    "request": {
+      "method": "GET",
+      "path": "/v1/stats/creations/monthly"
+    },
+    "input": {
+      "aggregate": [
+        {
+          "year": 2024,
+          "creations": 7,
+          "month": 2
+        }
+      ]
+    },
+    "pipelines": [
+      [
+        {
+          "$match": {
+            "prePurchase": {
+              "$ne": true
+            },
+            "isCodeRedemptionOnly": {
+              "$ne": true
+            },
+            "creationDate": {
+              "$ne": null,
+              "$lte": "2026-11-17T12:00:00.000Z",
+              "$gte": "2018-12-06T00:00:00.000Z"
+            },
+            "offerType": {
+              "$eq": "BASE_GAME"
+            }
+          }
+        },
+        {
+          "$group": {
+            "_id": {
+              "year": {
+                "$year": "$creationDate"
+              },
+              "month": {
+                "$month": "$creationDate"
+              }
+            },
+            "creations": {
+              "$sum": 1
+            }
+          }
+        },
+        {
+          "$sort": {
+            "_id.year": 1,
+            "_id.month": 1
+          }
+        },
+        {
+          "$project": {
+            "_id": 0,
+            "year": "$_id.year",
+            "creations": 1,
+            "month": "$_id.month"
+          }
+        }
+      ]
+    ],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:stats.creations.monthly:",
+        "value": [
+          {
+            "year": 2024,
+            "creations": 7,
+            "month": 2
+          }
+        ],
+        "mode": "EX",
+        "ttl": 86400
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"7c342c13b8234d03681f136f25087bf17bd02a52\""
+      },
+      "body": {
+        "data": [
+          {
+            "year": 2024,
+            "creations": 7,
+            "month": 2
+          }
+        ],
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "creations-yearly",
+    "request": {
+      "method": "GET",
+      "path": "/v1/stats/creations/yearly"
+    },
+    "input": {
+      "aggregate": [
+        {
+          "year": 2024,
+          "creations": 7
+        }
+      ]
+    },
+    "pipelines": [
+      [
+        {
+          "$match": {
+            "prePurchase": {
+              "$ne": true
+            },
+            "isCodeRedemptionOnly": {
+              "$ne": true
+            },
+            "creationDate": {
+              "$ne": null,
+              "$lte": "2026-11-17T12:00:00.000Z",
+              "$gte": "2018-12-06T00:00:00.000Z"
+            },
+            "offerType": {
+              "$eq": "BASE_GAME"
+            }
+          }
+        },
+        {
+          "$group": {
+            "_id": {
+              "year": {
+                "$year": "$creationDate"
+              }
+            },
+            "creations": {
+              "$sum": 1
+            }
+          }
+        },
+        {
+          "$sort": {
+            "_id.year": 1
+          }
+        },
+        {
+          "$project": {
+            "_id": 0,
+            "year": "$_id.year",
+            "creations": 1
+          }
+        }
+      ]
+    ],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:stats.creations.yearly:",
+        "value": [
+          {
+            "year": 2024,
+            "creations": 7
+          }
+        ],
+        "mode": "EX",
+        "ttl": 86400
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"24cd0ec2da8b192ea5a037acc4da97557e6eab04\""
+      },
+      "body": {
+        "data": [
+          {
+            "year": 2024,
+            "creations": 7
+          }
+        ],
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "stats-chart-failure",
+    "request": {
+      "method": "GET",
+      "path": "/v1/stats/releases/monthly"
+    },
+    "input": {
+      "failure": "offers"
+    },
+    "pipelines": [
+      [
+        {
+          "$match": {
+            "prePurchase": {
+              "$ne": true
+            },
+            "isCodeRedemptionOnly": {
+              "$ne": true
+            },
+            "releaseDate": {
+              "$ne": null,
+              "$lte": "2026-11-17T12:00:00.000Z",
+              "$gte": "2018-12-06T00:00:00.000Z"
+            },
+            "offerType": {
+              "$eq": "BASE_GAME"
+            }
+          }
+        },
+        {
+          "$group": {
+            "_id": {
+              "year": {
+                "$year": "$releaseDate"
+              },
+              "month": {
+                "$month": "$releaseDate"
+              }
+            },
+            "releases": {
+              "$sum": 1
+            }
+          }
+        },
+        {
+          "$sort": {
+            "_id.year": 1,
+            "_id.month": 1
+          }
+        },
+        {
+          "$project": {
+            "_id": 0,
+            "year": "$_id.year",
+            "releases": 1,
+            "month": "$_id.month"
+          }
+        }
+      ]
+    ],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"132c243d199427e792682e30f15fb9de58a8eda5\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/stats/releases/monthly",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "homepage-euro",
+    "request": {
+      "method": "GET",
+      "path": "/v1/stats/homepage?country=DE"
+    },
+    "input": {
+      "counts": {
+        "offers": 37,
+        "items": 29,
+        "tags": 6,
+        "assets": 10,
+        "pricev2": 98,
+        "changelogs_v2": 17,
+        "sandboxes": 7,
+        "products": 2,
+        "freegames": 4
+      }
+    },
+    "pipelines": [],
+    "counts": [
+      {
+        "collection": "offers",
+        "filter": {}
+      },
+      {
+        "collection": "pricev2",
+        "filter": {
+          "region": "EURO",
+          "updatedAt": {
+            "$gte": "2026-11-14T12:00:00.000Z"
+          },
+          "appliedRules": {
+            "$ne": []
+          }
+        }
+      },
+      {
+        "collection": "pricev2",
+        "filter": {
+          "region": "EURO",
+          "appliedRules": {
+            "$ne": []
+          }
+        }
+      },
+      {
+        "collection": "freegames",
+        "filter": {}
+      }
+    ],
+    "writes": [
+      {
+        "key": "v1:stats.homepage:region=\"EURO\"",
+        "value": {
+          "offers": 37,
+          "trackedPriceChanges": 98,
+          "activeDiscounts": 98,
+          "giveaways": 4
+        },
+        "mode": "EX",
+        "ttl": 86400
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d69cfba9411046791b80902f808868a0fcdd7653\""
+      },
+      "body": {
+        "data": {
+          "offers": 37,
+          "trackedPriceChanges": 98,
+          "activeDiscounts": 98,
+          "giveaways": 4
+        },
+        "meta": {}
+      }
+    }
+  },
+  {
+    "name": "homepage-invalid",
+    "request": {
+      "method": "GET",
+      "path": "/v1/stats/homepage?country=ZZ"
+    },
+    "input": {},
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8ed7f620be175dc56b3b6e736fb49929daa7b8be\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-country",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "Unknown country code 'ZZ'. Use an ISO 3166-1 alpha-2 code such as US or GB.",
+        "instance": "/v1/stats/homepage",
+        "code": "INVALID_COUNTRY",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "franchise-empty",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "A series",
+        "offers": []
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:franchises.detail:country=\"US\":limit=20:locale=\"en-US\":region=\"US\":slug=\"series\"",
+        "value": {
+          "data": {
+            "id": "series",
+            "name": "A series",
+            "lastUpdated": null,
+            "elements": [],
+            "stats": {
+              "totalTimeHastily": 0,
+              "totalTimeNormally": 0,
+              "totalTimeCompletely": 0,
+              "totalAchievements": 0,
+              "totalXp": 0,
+              "gamesCount": 0
+            }
+          },
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"88d9ee27f5390398c1cb309bd73777bb47d7e574\""
+      },
+      "body": {
+        "data": {
+          "id": "series",
+          "name": "A series",
+          "lastUpdated": null,
+          "elements": [],
+          "stats": {
+            "totalTimeHastily": 0,
+            "totalTimeNormally": 0,
+            "totalTimeCompletely": 0,
+            "totalAchievements": 0,
+            "totalXp": 0,
+            "gamesCount": 0
+          }
+        },
+        "meta": {
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "franchise-missing",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/missing"
+    },
+    "input": {},
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"b345648ce4b25eb0791ef130bf383212714db4cc\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/franchise-not-found",
+        "title": "Not Found",
+        "status": 404,
+        "detail": "No franchise with slug 'missing' exists.",
+        "instance": "/v1/franchises/missing",
+        "code": "FRANCHISE_NOT_FOUND",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "franchise-populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?country=DE"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "A series",
+        "offers": [
+          "game"
+        ],
+        "lastUpdated": "2025-03-20T12:00:00Z"
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "A game",
+            "releaseDate": "2024-02-02T12:00:00Z",
+            "offerType": "BASE_GAME"
+          }
+        ],
+        "pricev2": [
+          {
+            "offerId": "game",
+            "price": {
+              "discountPrice": 1500,
+              "originalPrice": 2000,
+              "currencyCode": "EUR"
+            }
+          }
+        ],
+        "achievementsets": [
+          {
+            "achievements": [
+              {
+                "xp": "10"
+              },
+              {
+                "xp": 5
+              }
+            ]
+          }
+        ],
+        "igdbs": [
+          {
+            "igdbId": 1,
+            "timeToBeat": {
+              "hastily": "31",
+              "normally": 65
+            }
+          },
+          {
+            "igdbId": 1,
+            "timeToBeat": {
+              "hastily": 90
+            }
+          }
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:franchises.detail:country=\"DE\":limit=20:locale=\"en-US\":region=\"EURO\":slug=\"series\"",
+        "value": {
+          "data": {
+            "id": "series",
+            "name": "A series",
+            "lastUpdated": "2025-03-20T12:00:00.000Z",
+            "elements": [
+              {
+                "_id": null,
+                "id": "game",
+                "namespace": "ns",
+                "title": "A game",
+                "description": null,
+                "longDescription": null,
+                "offerType": "BASE_GAME",
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2024-02-02T12:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": {
+                  "offerId": "game",
+                  "region": null,
+                  "currencyCode": "EUR",
+                  "precision": 2,
+                  "originalPrice": 2000,
+                  "discountPrice": 1500,
+                  "price": {
+                    "discountPrice": 1500,
+                    "originalPrice": 2000,
+                    "currencyCode": "EUR",
+                    "precision": 2
+                  },
+                  "updatedAt": null
+                },
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "stats": {
+              "totalTimeHastily": 31,
+              "totalTimeNormally": 65,
+              "totalTimeCompletely": 0,
+              "totalAchievements": 2,
+              "totalXp": 15,
+              "gamesCount": 1
+            }
+          },
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"2d9606cf7a5a5fccef42b547703649ac79aed9de\""
+      },
+      "body": {
+        "data": {
+          "id": "series",
+          "name": "A series",
+          "lastUpdated": "2025-03-20T12:00:00.000Z",
+          "elements": [
+            {
+              "_id": null,
+              "id": "game",
+              "namespace": "ns",
+              "title": "A game",
+              "description": null,
+              "longDescription": null,
+              "offerType": "BASE_GAME",
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": null,
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": null,
+              "items": null,
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": "2024-02-02T12:00:00.000Z",
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": null,
+              "countriesWhitelist": null,
+              "refundType": null,
+              "customAttributes": null,
+              "price": {
+                "offerId": "game",
+                "region": null,
+                "currencyCode": "EUR",
+                "precision": 2,
+                "originalPrice": 2000,
+                "discountPrice": 1500,
+                "price": {
+                  "discountPrice": 1500,
+                  "originalPrice": 2000,
+                  "currencyCode": "EUR",
+                  "precision": 2
+                },
+                "updatedAt": null
+              },
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "stats": {
+            "totalTimeHastily": 31,
+            "totalTimeNormally": 65,
+            "totalTimeCompletely": 0,
+            "totalAchievements": 2,
+            "totalXp": 15,
+            "gamesCount": 1
+          }
+        },
+        "meta": {
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "awards-populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards"
+    },
+    "input": {
+      "rows": {
+        "storefront-modules": [
+          {
+            "title": " Awards ",
+            "moduleIndex": 1,
+            "moduleType": "games",
+            "offers": [
+              {
+                "id": "game"
+              }
+            ]
+          }
+        ],
+        "offers": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "A game",
+            "offerType": "BASE_GAME"
+          }
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:game-awards.modules:locale=\"en-US\":region=\"US\"",
+        "value": [
+          {
+            "title": "Awards",
+            "moduleIndex": 1,
+            "moduleType": "games",
+            "offers": [
+              {
+                "_id": null,
+                "id": "game",
+                "namespace": "ns",
+                "title": "A game",
+                "description": null,
+                "longDescription": null,
+                "offerType": "BASE_GAME",
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ]
+          }
+        ],
+        "mode": "EX",
+        "ttl": 60
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"bbfc4abdfcfe22060a619e499ccc95495fcc2b00\""
+      },
+      "body": {
+        "data": [
+          {
+            "title": "Awards",
+            "moduleIndex": 1,
+            "moduleType": "games",
+            "offers": [
+              {
+                "_id": null,
+                "id": "game",
+                "namespace": "ns",
+                "title": "A game",
+                "description": null,
+                "longDescription": null,
+                "offerType": "BASE_GAME",
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "eventSlug": "the-game-awards"
+        }
+      }
+    }
+  },
+  {
+    "name": "awards-empty",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards?country=DE"
+    },
+    "input": {},
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:game-awards.modules:locale=\"en-US\":region=\"EURO\"",
+        "value": [],
+        "mode": "EX",
+        "ttl": 60
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"a091de1624b3f738597b5a2fda2acd9bda07b054\""
+      },
+      "body": {
+        "data": [],
+        "meta": {
+          "country": "DE",
+          "region": "EURO",
+          "locale": "en-US",
+          "eventSlug": "the-game-awards"
+        }
+      }
+    }
+  },
+  {
+    "name": "awards-localized",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards?locale=es-ES"
+    },
+    "input": {
+      "rows": {
+        "storefront-modules": [
+          {
+            "title": " 2025 ",
+            "offers": [
+              {
+                "id": "game"
+              },
+              {
+                "id": "missing"
+              }
+            ]
+          }
+        ],
+        "offers": [
+          {
+            "id": "game",
+            "namespace": "ns",
+            "title": "Game",
+            "customAttributes": [
+              {
+                "key": "quality",
+                "value": "hd",
+                "type": "STRING"
+              }
+            ]
+          }
+        ],
+        "egs_localizations": [
+          {
+            "entityType": "offer",
+            "entityId": "ns:game",
+            "locale": "es-ES",
+            "source": "epic",
+            "fetchedAt": "2026-01-01T00:00:00.000Z",
+            "data": {
+              "title": "Juego",
+              "description": "Un juego"
+            }
+          }
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:game-awards.modules:locale=\"es-ES\":region=\"US\"",
+        "value": [
+          {
+            "title": "2025",
+            "moduleIndex": null,
+            "moduleType": null,
+            "offers": [
+              {
+                "_id": null,
+                "id": "game",
+                "namespace": "ns",
+                "title": "Juego",
+                "description": "Un juego",
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": {
+                  "quality": {
+                    "type": "STRING",
+                    "value": "hd"
+                  }
+                },
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": "epic",
+                    "fetchedAt": "2026-01-01T00:00:00.000Z"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "mode": "EX",
+        "ttl": 60
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ab326ba71c36b1ace5a759a525056b787f549728\""
+      },
+      "body": {
+        "data": [
+          {
+            "title": "2025",
+            "moduleIndex": null,
+            "moduleType": null,
+            "offers": [
+              {
+                "_id": null,
+                "id": "game",
+                "namespace": "ns",
+                "title": "Juego",
+                "description": "Un juego",
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": {
+                  "quality": {
+                    "type": "STRING",
+                    "value": "hd"
+                  }
+                },
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": "epic",
+                    "fetchedAt": "2026-01-01T00:00:00.000Z"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "es-ES",
+          "eventSlug": "the-game-awards"
+        }
+      }
+    }
+  },
+  {
+    "name": "unknown-validation",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?x=1"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d8bf95d1cec1d64167ee6840af7fbb8663a65160\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/franchises/series",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"x\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "blank-validation",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/%20"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"a432a244a4b717fbab7dc8002f0a5d00cb27bdca\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/missing-parameter",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `slug` path parameter is required.",
+        "instance": "/v1/franchises/ ",
+        "code": "MISSING_PARAMETER",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "limit-validation",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?limit=-1"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"2b92b61784dd89bb0f18ae7215a1aa8af90a8829\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-limit",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `limit` parameter must be an integer between 1 and 100.",
+        "instance": "/v1/franchises/series",
+        "code": "INVALID_LIMIT",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "country-validation",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?country=XX"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"5459d7fb5133634395a13182ca4a8c031837e105\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-country",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "Unknown country code 'XX'. Use an ISO 3166-1 alpha-2 code such as US or GB.",
+        "instance": "/v1/franchises/series",
+        "code": "INVALID_COUNTRY",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "cursor-validation",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?cursor=bad"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"b876858d252b0d14302a20aa24adfd7cc0f440b8\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-cursor",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The cursor is malformed. Use the `nextCursor` value from a previous response.",
+        "instance": "/v1/franchises/series",
+        "code": "INVALID_CURSOR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "awards-country-validation",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards?country=XX"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"0e549ab3c6e8e3da42b64b00e036230202e24cc1\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-country",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "Unknown country code 'XX'. Use an ISO 3166-1 alpha-2 code such as US or GB.",
+        "instance": "/v1/game-awards",
+        "code": "INVALID_COUNTRY",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "awards-unknown-validation",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards?x=1"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"9416624f8814342ff6c4f37e4b7fb5c8c832efa1\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/game-awards",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"x\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "franchise-legacy-cursor-tuple",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?limit=1&cursor=eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmFuY2hpc2VzLmRldGFpbCIsImZpbHRlcnMiOnsic2x1ZyI6InNlcmllcyJ9LCJmaWx0ZXJIYXNoIjoiMzE3OTYyMGY4MDg2ZGJjMDFlYmRmZGNkY2FlYzZlYzA5YjVkYjhlYWFjODY4NmVlMWQzY2ZiMjhiMGM3N2U4ZiIsIm9yZGVyaW5nIjoicmVsZWFzZURhdGU6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5MTY4MDAwMDAsImxhc3QiOlsib2xkIl19.09soovI9_FM96tbpbjDLwEcw8UyU5_cK1E73Zy_BoOc"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"9d29aeec5f1aab2c2807350cecb23745921b2d93\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-cursor",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The cursor sort tuple is invalid.",
+        "instance": "/v1/franchises/series",
+        "code": "INVALID_CURSOR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "franchise-dependency-franchises",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?locale=es-ES"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ]
+      },
+      "failure": "franchises"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d07cb0ecd715f0bc7e83fe902513760a34c245be\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/franchises/series",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "franchise-dependency-offers",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?locale=es-ES"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ]
+      },
+      "failure": "offers"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d07cb0ecd715f0bc7e83fe902513760a34c245be\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/franchises/series",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "franchise-dependency-offers.projection",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?locale=es-ES"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ]
+      },
+      "failure": "offers.projection"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d07cb0ecd715f0bc7e83fe902513760a34c245be\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/franchises/series",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "franchise-dependency-pricev2",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?locale=es-ES"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ]
+      },
+      "failure": "pricev2"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d07cb0ecd715f0bc7e83fe902513760a34c245be\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/franchises/series",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "franchise-dependency-egs_localizations",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?locale=es-ES"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ]
+      },
+      "failure": "egs_localizations"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d07cb0ecd715f0bc7e83fe902513760a34c245be\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/franchises/series",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "franchise-dependency-achievementsets",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?locale=es-ES"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ]
+      },
+      "failure": "achievementsets"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d07cb0ecd715f0bc7e83fe902513760a34c245be\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/franchises/series",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "franchise-dependency-igdbs",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?locale=es-ES"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ]
+      },
+      "failure": "igdbs"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d07cb0ecd715f0bc7e83fe902513760a34c245be\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/franchises/series",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "franchise-partial",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series"
+    },
+    "input": {
+      "franchise": {
+        "_id": null,
+        "id": "fallback"
+      },
+      "rows": {}
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:franchises.detail:country=\"US\":limit=20:locale=\"en-US\":region=\"US\":slug=\"series\"",
+        "value": {
+          "data": {
+            "id": "fallback",
+            "name": null,
+            "lastUpdated": null,
+            "elements": [],
+            "stats": {
+              "totalTimeHastily": 0,
+              "totalTimeNormally": 0,
+              "totalTimeCompletely": 0,
+              "totalAchievements": 0,
+              "totalXp": 0,
+              "gamesCount": 0
+            }
+          },
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"1d34f538fa2ea0be33a8645d9a9efb21ec4bd2df\""
+      },
+      "body": {
+        "data": {
+          "id": "fallback",
+          "name": null,
+          "lastUpdated": null,
+          "elements": [],
+          "stats": {
+            "totalTimeHastily": 0,
+            "totalTimeNormally": 0,
+            "totalTimeCompletely": 0,
+            "totalAchievements": 0,
+            "totalXp": 0,
+            "gamesCount": 0
+          }
+        },
+        "meta": {
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "franchise-historical-rows",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?limit=1"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": 5
+          },
+          {}
+        ],
+        "achievementsets": [
+          {
+            "achievements": null
+          }
+        ],
+        "igdbs": [
+          {
+            "igdbId": 4,
+            "timeToBeat": {}
+          },
+          {
+            "igdbId": "",
+            "timeToBeat": {}
+          },
+          {}
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:franchises.detail:country=\"US\":limit=1:locale=\"en-US\":region=\"US\":slug=\"series\"",
+        "value": {
+          "data": {
+            "id": "series",
+            "name": "Fixture",
+            "lastUpdated": null,
+            "elements": [
+              {
+                "_id": null,
+                "id": "5",
+                "namespace": null,
+                "title": null,
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "stats": {
+              "totalTimeHastily": 0,
+              "totalTimeNormally": 0,
+              "totalTimeCompletely": 0,
+              "totalAchievements": 0,
+              "totalXp": 0,
+              "gamesCount": 1
+            }
+          },
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmFuY2hpc2VzLmRldGFpbCIsImZpbHRlcnMiOnsic2x1ZyI6InNlcmllcyJ9LCJmaWx0ZXJIYXNoIjoiMzE3OTYyMGY4MDg2ZGJjMDFlYmRmZGNkY2FlYzZlYzA5YjVkYjhlYWFjODY4NmVlMWQzY2ZiMjhiMGM3N2U4ZiIsIm9yZGVyaW5nIjoicmVsZWFzZURhdGU6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5MTY4MDAwMDAsImxhc3QiOltudWxsLDVdfQ.56IQerNiszIaUE4MEMn_bB_7_k-ciLdtm9KLHvPIh3I"
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"aa4ede57e7362a3de9e8e5c66109bd4dec5b40c4\""
+      },
+      "body": {
+        "data": {
+          "id": "series",
+          "name": "Fixture",
+          "lastUpdated": null,
+          "elements": [
+            {
+              "_id": null,
+              "id": "5",
+              "namespace": null,
+              "title": null,
+              "description": null,
+              "longDescription": null,
+              "offerType": null,
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": null,
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": null,
+              "items": null,
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": null,
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": null,
+              "countriesWhitelist": null,
+              "refundType": null,
+              "customAttributes": null,
+              "price": null,
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "stats": {
+            "totalTimeHastily": 0,
+            "totalTimeNormally": 0,
+            "totalTimeCompletely": 0,
+            "totalAchievements": 0,
+            "totalXp": 0,
+            "gamesCount": 1
+          }
+        },
+        "meta": {
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmFuY2hpc2VzLmRldGFpbCIsImZpbHRlcnMiOnsic2x1ZyI6InNlcmllcyJ9LCJmaWx0ZXJIYXNoIjoiMzE3OTYyMGY4MDg2ZGJjMDFlYmRmZGNkY2FlYzZlYzA5YjVkYjhlYWFjODY4NmVlMWQzY2ZiMjhiMGM3N2U4ZiIsIm9yZGVyaW5nIjoicmVsZWFzZURhdGU6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5MTY4MDAwMDAsImxhc3QiOltudWxsLDVdfQ.56IQerNiszIaUE4MEMn_bB_7_k-ciLdtm9KLHvPIh3I"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "franchise-null-sort-id",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?limit=1"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": null
+          },
+          {}
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:franchises.detail:country=\"US\":limit=1:locale=\"en-US\":region=\"US\":slug=\"series\"",
+        "value": {
+          "data": {
+            "id": "series",
+            "name": "Fixture",
+            "lastUpdated": null,
+            "elements": [
+              {
+                "_id": null,
+                "id": null,
+                "namespace": null,
+                "title": null,
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ],
+            "stats": {
+              "totalTimeHastily": 0,
+              "totalTimeNormally": 0,
+              "totalTimeCompletely": 0,
+              "totalAchievements": 0,
+              "totalXp": 0,
+              "gamesCount": 0
+            }
+          },
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmFuY2hpc2VzLmRldGFpbCIsImZpbHRlcnMiOnsic2x1ZyI6InNlcmllcyJ9LCJmaWx0ZXJIYXNoIjoiMzE3OTYyMGY4MDg2ZGJjMDFlYmRmZGNkY2FlYzZlYzA5YjVkYjhlYWFjODY4NmVlMWQzY2ZiMjhiMGM3N2U4ZiIsIm9yZGVyaW5nIjoicmVsZWFzZURhdGU6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5MTY4MDAwMDAsImxhc3QiOltudWxsLG51bGxdfQ.43B5SkqPF1rrU3hlZd3s0cudhIt2hPWx881YMcpNlh4"
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"1e8c0693d02275ba7257849d89641cbefef56503\""
+      },
+      "body": {
+        "data": {
+          "id": "series",
+          "name": "Fixture",
+          "lastUpdated": null,
+          "elements": [
+            {
+              "_id": null,
+              "id": null,
+              "namespace": null,
+              "title": null,
+              "description": null,
+              "longDescription": null,
+              "offerType": null,
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": null,
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": null,
+              "items": null,
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": null,
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": null,
+              "countriesWhitelist": null,
+              "refundType": null,
+              "customAttributes": null,
+              "price": null,
+              "locale": "en-US",
+              "localeStatus": "canonical"
+            }
+          ],
+          "stats": {
+            "totalTimeHastily": 0,
+            "totalTimeNormally": 0,
+            "totalTimeCompletely": 0,
+            "totalAchievements": 0,
+            "totalXp": 0,
+            "gamesCount": 0
+          }
+        },
+        "meta": {
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJmcmFuY2hpc2VzLmRldGFpbCIsImZpbHRlcnMiOnsic2x1ZyI6InNlcmllcyJ9LCJmaWx0ZXJIYXNoIjoiMzE3OTYyMGY4MDg2ZGJjMDFlYmRmZGNkY2FlYzZlYzA5YjVkYjhlYWFjODY4NmVlMWQzY2ZiMjhiMGM3N2U4ZiIsIm9yZGVyaW5nIjoicmVsZWFzZURhdGU6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5MTY4MDAwMDAsImxhc3QiOltudWxsLG51bGxdfQ.43B5SkqPF1rrU3hlZd3s0cudhIt2hPWx881YMcpNlh4"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "awards-dependency-storefront-modules",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards?locale=es-ES"
+    },
+    "input": {
+      "rows": {
+        "storefront-modules": [
+          {
+            "offers": [
+              {
+                "id": "one"
+              },
+              {
+                "id": "one"
+              },
+              {
+                "id": "two"
+              }
+            ],
+            "title": 2025
+          },
+          {
+            "offers": null
+          },
+          {},
+          {
+            "offers": []
+          }
+        ],
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ]
+      },
+      "failure": "storefront-modules"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d664822661d7d1e114928ea06f23455485806321\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/game-awards",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "awards-dependency-offers",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards?locale=es-ES"
+    },
+    "input": {
+      "rows": {
+        "storefront-modules": [
+          {
+            "offers": [
+              {
+                "id": "one"
+              },
+              {
+                "id": "one"
+              },
+              {
+                "id": "two"
+              }
+            ],
+            "title": 2025
+          },
+          {
+            "offers": null
+          },
+          {},
+          {
+            "offers": []
+          }
+        ],
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ]
+      },
+      "failure": "offers"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d664822661d7d1e114928ea06f23455485806321\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/game-awards",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "awards-dependency-pricev2",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards?locale=es-ES"
+    },
+    "input": {
+      "rows": {
+        "storefront-modules": [
+          {
+            "offers": [
+              {
+                "id": "one"
+              },
+              {
+                "id": "one"
+              },
+              {
+                "id": "two"
+              }
+            ],
+            "title": 2025
+          },
+          {
+            "offers": null
+          },
+          {},
+          {
+            "offers": []
+          }
+        ],
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ]
+      },
+      "failure": "pricev2"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d664822661d7d1e114928ea06f23455485806321\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/game-awards",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "awards-dependency-egs_localizations",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards?locale=es-ES"
+    },
+    "input": {
+      "rows": {
+        "storefront-modules": [
+          {
+            "offers": [
+              {
+                "id": "one"
+              },
+              {
+                "id": "one"
+              },
+              {
+                "id": "two"
+              }
+            ],
+            "title": 2025
+          },
+          {
+            "offers": null
+          },
+          {},
+          {
+            "offers": []
+          }
+        ],
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ]
+      },
+      "failure": "egs_localizations"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d664822661d7d1e114928ea06f23455485806321\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/game-awards",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "awards-empty-price-failure",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards"
+    },
+    "input": {
+      "failure": "pricev2"
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d664822661d7d1e114928ea06f23455485806321\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/game-awards",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "awards-historical-modules",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards"
+    },
+    "input": {
+      "rows": {
+        "storefront-modules": [
+          {
+            "offers": [
+              {
+                "id": "one"
+              },
+              {
+                "id": "one"
+              },
+              {
+                "id": "two"
+              }
+            ],
+            "title": 2025
+          },
+          {
+            "offers": null
+          },
+          {},
+          {
+            "offers": []
+          }
+        ],
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:game-awards.modules:locale=\"en-US\":region=\"US\"",
+        "value": [
+          {
+            "title": "2025",
+            "moduleIndex": null,
+            "moduleType": null,
+            "offers": [
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "One",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              },
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "One",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              },
+              {
+                "_id": null,
+                "id": "two",
+                "namespace": "ns2",
+                "title": "Two",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ]
+          }
+        ],
+        "mode": "EX",
+        "ttl": 60
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"f8e96b4ef341c360dd58c04b08ff501adbc3380f\""
+      },
+      "body": {
+        "data": [
+          {
+            "title": "2025",
+            "moduleIndex": null,
+            "moduleType": null,
+            "offers": [
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "One",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              },
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "One",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              },
+              {
+                "_id": null,
+                "id": "two",
+                "namespace": "ns2",
+                "title": "Two",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "eventSlug": "the-game-awards"
+        }
+      }
+    }
+  },
+  {
+    "name": "awards-invalid-module",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards"
+    },
+    "input": {
+      "rows": {
+        "storefront-modules": [
+          {
+            "offers": 42
+          }
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d664822661d7d1e114928ea06f23455485806321\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/game-awards",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "awards-null-reference",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards"
+    },
+    "input": {
+      "rows": {
+        "storefront-modules": [
+          {
+            "offers": [
+              null
+            ]
+          }
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d664822661d7d1e114928ea06f23455485806321\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/game-awards",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "franchise-localization-missing",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?locale=es-ES"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ],
+        "egs_localizations": [
+          {},
+          {
+            "entityId": "ns:one",
+            "data": {
+              "title": "Local"
+            },
+            "source": "fixture"
+          }
+        ],
+        "storefront-modules": [
+          {
+            "offers": [
+              {
+                "id": "one"
+              },
+              {
+                "id": "one"
+              },
+              {
+                "id": "two"
+              }
+            ],
+            "title": 2025
+          },
+          {
+            "offers": null
+          },
+          {},
+          {
+            "offers": []
+          }
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:franchises.detail:country=\"US\":limit=20:locale=\"es-ES\":region=\"US\":slug=\"series\"",
+        "value": {
+          "data": {
+            "id": "series",
+            "name": "Fixture",
+            "lastUpdated": null,
+            "elements": [
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": "fixture",
+                    "fetchedAt": null
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "two",
+                "namespace": "ns2",
+                "title": "Two",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ],
+            "stats": {
+              "totalTimeHastily": 0,
+              "totalTimeNormally": 0,
+              "totalTimeCompletely": 0,
+              "totalAchievements": 0,
+              "totalXp": 0,
+              "gamesCount": 2
+            }
+          },
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"43bd2e27ea74ed92cd0cd70820bb946f51baab11\""
+      },
+      "body": {
+        "data": {
+          "id": "series",
+          "name": "Fixture",
+          "lastUpdated": null,
+          "elements": [
+            {
+              "_id": null,
+              "id": "one",
+              "namespace": "ns",
+              "title": "Local",
+              "description": null,
+              "longDescription": null,
+              "offerType": null,
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": null,
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": null,
+              "items": null,
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": "2020-01-01T00:00:00.000Z",
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": null,
+              "countriesWhitelist": null,
+              "refundType": null,
+              "customAttributes": null,
+              "price": null,
+              "locale": "es-ES",
+              "localeStatus": "localized",
+              "canonicalLocale": "en-US",
+              "localization": {
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "source": "fixture",
+                  "fetchedAt": null
+                }
+              }
+            },
+            {
+              "_id": null,
+              "id": "two",
+              "namespace": "ns2",
+              "title": "Two",
+              "description": null,
+              "longDescription": null,
+              "offerType": null,
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": null,
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": null,
+              "items": null,
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": null,
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": null,
+              "countriesWhitelist": null,
+              "refundType": null,
+              "customAttributes": null,
+              "price": null,
+              "locale": "es-ES",
+              "localeStatus": "fallback",
+              "canonicalLocale": "en-US"
+            }
+          ],
+          "stats": {
+            "totalTimeHastily": 0,
+            "totalTimeNormally": 0,
+            "totalTimeCompletely": 0,
+            "totalAchievements": 0,
+            "totalXp": 0,
+            "gamesCount": 2
+          }
+        },
+        "meta": {
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "award-localization-missing",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards?locale=es-ES"
+    },
+    "input": {
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ],
+        "egs_localizations": [
+          {},
+          {
+            "entityId": "ns:one",
+            "data": {
+              "title": "Local"
+            },
+            "source": "fixture"
+          }
+        ],
+        "storefront-modules": [
+          {
+            "offers": [
+              {
+                "id": "one"
+              },
+              {
+                "id": "one"
+              },
+              {
+                "id": "two"
+              }
+            ],
+            "title": 2025
+          },
+          {
+            "offers": null
+          },
+          {},
+          {
+            "offers": []
+          }
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:game-awards.modules:locale=\"es-ES\":region=\"US\"",
+        "value": [
+          {
+            "title": "2025",
+            "moduleIndex": null,
+            "moduleType": null,
+            "offers": [
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": "fixture",
+                    "fetchedAt": null
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": "fixture",
+                    "fetchedAt": null
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "two",
+                "namespace": "ns2",
+                "title": "Two",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ]
+          }
+        ],
+        "mode": "EX",
+        "ttl": 60
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"73fd1f02b5be2154a4bc2ee399fc57f6421c3cfb\""
+      },
+      "body": {
+        "data": [
+          {
+            "title": "2025",
+            "moduleIndex": null,
+            "moduleType": null,
+            "offers": [
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": "fixture",
+                    "fetchedAt": null
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": "fixture",
+                    "fetchedAt": null
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "two",
+                "namespace": "ns2",
+                "title": "Two",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "es-ES",
+          "eventSlug": "the-game-awards"
+        }
+      }
+    }
+  },
+  {
+    "name": "franchise-localization-null",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?locale=es-ES"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ],
+        "egs_localizations": [
+          {},
+          {
+            "entityId": "ns:one",
+            "data": {
+              "title": "Local"
+            },
+            "source": null,
+            "fetchedAt": null,
+            "sourceUpdatedAt": false
+          }
+        ],
+        "storefront-modules": [
+          {
+            "offers": [
+              {
+                "id": "one"
+              },
+              {
+                "id": "one"
+              },
+              {
+                "id": "two"
+              }
+            ],
+            "title": 2025
+          },
+          {
+            "offers": null
+          },
+          {},
+          {
+            "offers": []
+          }
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:franchises.detail:country=\"US\":limit=20:locale=\"es-ES\":region=\"US\":slug=\"series\"",
+        "value": {
+          "data": {
+            "id": "series",
+            "name": "Fixture",
+            "lastUpdated": null,
+            "elements": [
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": null,
+                    "fetchedAt": null
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "two",
+                "namespace": "ns2",
+                "title": "Two",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ],
+            "stats": {
+              "totalTimeHastily": 0,
+              "totalTimeNormally": 0,
+              "totalTimeCompletely": 0,
+              "totalAchievements": 0,
+              "totalXp": 0,
+              "gamesCount": 2
+            }
+          },
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"393297cb5ae2c17074cc40ba5a362ca29ab33093\""
+      },
+      "body": {
+        "data": {
+          "id": "series",
+          "name": "Fixture",
+          "lastUpdated": null,
+          "elements": [
+            {
+              "_id": null,
+              "id": "one",
+              "namespace": "ns",
+              "title": "Local",
+              "description": null,
+              "longDescription": null,
+              "offerType": null,
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": null,
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": null,
+              "items": null,
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": "2020-01-01T00:00:00.000Z",
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": null,
+              "countriesWhitelist": null,
+              "refundType": null,
+              "customAttributes": null,
+              "price": null,
+              "locale": "es-ES",
+              "localeStatus": "localized",
+              "canonicalLocale": "en-US",
+              "localization": {
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "source": null,
+                  "fetchedAt": null
+                }
+              }
+            },
+            {
+              "_id": null,
+              "id": "two",
+              "namespace": "ns2",
+              "title": "Two",
+              "description": null,
+              "longDescription": null,
+              "offerType": null,
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": null,
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": null,
+              "items": null,
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": null,
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": null,
+              "countriesWhitelist": null,
+              "refundType": null,
+              "customAttributes": null,
+              "price": null,
+              "locale": "es-ES",
+              "localeStatus": "fallback",
+              "canonicalLocale": "en-US"
+            }
+          ],
+          "stats": {
+            "totalTimeHastily": 0,
+            "totalTimeNormally": 0,
+            "totalTimeCompletely": 0,
+            "totalAchievements": 0,
+            "totalXp": 0,
+            "gamesCount": 2
+          }
+        },
+        "meta": {
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "award-localization-null",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards?locale=es-ES"
+    },
+    "input": {
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ],
+        "egs_localizations": [
+          {},
+          {
+            "entityId": "ns:one",
+            "data": {
+              "title": "Local"
+            },
+            "source": null,
+            "fetchedAt": null,
+            "sourceUpdatedAt": false
+          }
+        ],
+        "storefront-modules": [
+          {
+            "offers": [
+              {
+                "id": "one"
+              },
+              {
+                "id": "one"
+              },
+              {
+                "id": "two"
+              }
+            ],
+            "title": 2025
+          },
+          {
+            "offers": null
+          },
+          {},
+          {
+            "offers": []
+          }
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:game-awards.modules:locale=\"es-ES\":region=\"US\"",
+        "value": [
+          {
+            "title": "2025",
+            "moduleIndex": null,
+            "moduleType": null,
+            "offers": [
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": null,
+                    "fetchedAt": null
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": null,
+                    "fetchedAt": null
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "two",
+                "namespace": "ns2",
+                "title": "Two",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ]
+          }
+        ],
+        "mode": "EX",
+        "ttl": 60
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"048c044b48af6e752c77d33ab0acc6d0255c81df\""
+      },
+      "body": {
+        "data": [
+          {
+            "title": "2025",
+            "moduleIndex": null,
+            "moduleType": null,
+            "offers": [
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": null,
+                    "fetchedAt": null
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": null,
+                    "fetchedAt": null
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "two",
+                "namespace": "ns2",
+                "title": "Two",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "es-ES",
+          "eventSlug": "the-game-awards"
+        }
+      }
+    }
+  },
+  {
+    "name": "franchise-localization-historical",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?locale=es-ES"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ],
+        "egs_localizations": [
+          {},
+          {
+            "entityId": "ns:one",
+            "data": {
+              "title": "Local"
+            },
+            "source": "fixture",
+            "fetchedAt": 42,
+            "sourceUpdatedAt": "old"
+          }
+        ],
+        "storefront-modules": [
+          {
+            "offers": [
+              {
+                "id": "one"
+              },
+              {
+                "id": "one"
+              },
+              {
+                "id": "two"
+              }
+            ],
+            "title": 2025
+          },
+          {
+            "offers": null
+          },
+          {},
+          {
+            "offers": []
+          }
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:franchises.detail:country=\"US\":limit=20:locale=\"es-ES\":region=\"US\":slug=\"series\"",
+        "value": {
+          "data": {
+            "id": "series",
+            "name": "Fixture",
+            "lastUpdated": null,
+            "elements": [
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": "fixture",
+                    "fetchedAt": 42,
+                    "sourceUpdatedAt": "old"
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "two",
+                "namespace": "ns2",
+                "title": "Two",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ],
+            "stats": {
+              "totalTimeHastily": 0,
+              "totalTimeNormally": 0,
+              "totalTimeCompletely": 0,
+              "totalAchievements": 0,
+              "totalXp": 0,
+              "gamesCount": 2
+            }
+          },
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        },
+        "mode": "EX",
+        "ttl": 3600
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"bd60663b07805cf878b34a69dd591fb4614c569c\""
+      },
+      "body": {
+        "data": {
+          "id": "series",
+          "name": "Fixture",
+          "lastUpdated": null,
+          "elements": [
+            {
+              "_id": null,
+              "id": "one",
+              "namespace": "ns",
+              "title": "Local",
+              "description": null,
+              "longDescription": null,
+              "offerType": null,
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": null,
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": null,
+              "items": null,
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": "2020-01-01T00:00:00.000Z",
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": null,
+              "countriesWhitelist": null,
+              "refundType": null,
+              "customAttributes": null,
+              "price": null,
+              "locale": "es-ES",
+              "localeStatus": "localized",
+              "canonicalLocale": "en-US",
+              "localization": {
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "source": "fixture",
+                  "fetchedAt": 42,
+                  "sourceUpdatedAt": "old"
+                }
+              }
+            },
+            {
+              "_id": null,
+              "id": "two",
+              "namespace": "ns2",
+              "title": "Two",
+              "description": null,
+              "longDescription": null,
+              "offerType": null,
+              "effectiveDate": null,
+              "creationDate": null,
+              "lastModifiedDate": null,
+              "isCodeRedemptionOnly": null,
+              "keyImages": null,
+              "currentPrice": null,
+              "seller": null,
+              "productSlug": null,
+              "offerMappings": null,
+              "urlSlug": null,
+              "url": null,
+              "tags": null,
+              "items": null,
+              "categories": null,
+              "developerDisplayName": null,
+              "publisherDisplayName": null,
+              "prePurchase": null,
+              "releaseDate": null,
+              "pcReleaseDate": null,
+              "viewableDate": null,
+              "countriesBlacklist": null,
+              "countriesWhitelist": null,
+              "refundType": null,
+              "customAttributes": null,
+              "price": null,
+              "locale": "es-ES",
+              "localeStatus": "fallback",
+              "canonicalLocale": "en-US"
+            }
+          ],
+          "stats": {
+            "totalTimeHastily": 0,
+            "totalTimeNormally": 0,
+            "totalTimeCompletely": 0,
+            "totalAchievements": 0,
+            "totalXp": 0,
+            "gamesCount": 2
+          }
+        },
+        "meta": {
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "award-localization-historical",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards?locale=es-ES"
+    },
+    "input": {
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ],
+        "egs_localizations": [
+          {},
+          {
+            "entityId": "ns:one",
+            "data": {
+              "title": "Local"
+            },
+            "source": "fixture",
+            "fetchedAt": 42,
+            "sourceUpdatedAt": "old"
+          }
+        ],
+        "storefront-modules": [
+          {
+            "offers": [
+              {
+                "id": "one"
+              },
+              {
+                "id": "one"
+              },
+              {
+                "id": "two"
+              }
+            ],
+            "title": 2025
+          },
+          {
+            "offers": null
+          },
+          {},
+          {
+            "offers": []
+          }
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:game-awards.modules:locale=\"es-ES\":region=\"US\"",
+        "value": [
+          {
+            "title": "2025",
+            "moduleIndex": null,
+            "moduleType": null,
+            "offers": [
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": "fixture",
+                    "fetchedAt": 42,
+                    "sourceUpdatedAt": "old"
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": "fixture",
+                    "fetchedAt": 42,
+                    "sourceUpdatedAt": "old"
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "two",
+                "namespace": "ns2",
+                "title": "Two",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ]
+          }
+        ],
+        "mode": "EX",
+        "ttl": 60
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"7228f2b1b942af2c5bc78d4853cc575ce09afadf\""
+      },
+      "body": {
+        "data": [
+          {
+            "title": "2025",
+            "moduleIndex": null,
+            "moduleType": null,
+            "offers": [
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": "fixture",
+                    "fetchedAt": 42,
+                    "sourceUpdatedAt": "old"
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": "ns",
+                "title": "Local",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": "2020-01-01T00:00:00.000Z",
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "localized",
+                "canonicalLocale": "en-US",
+                "localization": {
+                  "locale": "es-ES",
+                  "localeStatus": "localized",
+                  "canonicalLocale": "en-US",
+                  "localization": {
+                    "source": "fixture",
+                    "fetchedAt": 42,
+                    "sourceUpdatedAt": "old"
+                  }
+                }
+              },
+              {
+                "_id": null,
+                "id": "two",
+                "namespace": "ns2",
+                "title": "Two",
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "es-ES",
+          "eventSlug": "the-game-awards"
+        }
+      }
+    }
+  },
+  {
+    "name": "award-missing-localization-identity",
+    "request": {
+      "method": "GET",
+      "path": "/v1/game-awards?locale=es-ES"
+    },
+    "input": {
+      "rows": {
+        "storefront-modules": [
+          {
+            "offers": [
+              {
+                "id": "one"
+              }
+            ]
+          }
+        ],
+        "offers": [
+          {
+            "id": "one"
+          }
+        ]
+      }
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [
+      {
+        "key": "v1:game-awards.modules:locale=\"es-ES\":region=\"US\"",
+        "value": [
+          {
+            "title": "",
+            "moduleIndex": null,
+            "moduleType": null,
+            "offers": [
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": null,
+                "title": null,
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ]
+          }
+        ],
+        "mode": "EX",
+        "ttl": 60
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e135dca447172a87a937e37b86a23be2c699d4c2\""
+      },
+      "body": {
+        "data": [
+          {
+            "title": "",
+            "moduleIndex": null,
+            "moduleType": null,
+            "offers": [
+              {
+                "_id": null,
+                "id": "one",
+                "namespace": null,
+                "title": null,
+                "description": null,
+                "longDescription": null,
+                "offerType": null,
+                "effectiveDate": null,
+                "creationDate": null,
+                "lastModifiedDate": null,
+                "isCodeRedemptionOnly": null,
+                "keyImages": null,
+                "currentPrice": null,
+                "seller": null,
+                "productSlug": null,
+                "offerMappings": null,
+                "urlSlug": null,
+                "url": null,
+                "tags": null,
+                "items": null,
+                "categories": null,
+                "developerDisplayName": null,
+                "publisherDisplayName": null,
+                "prePurchase": null,
+                "releaseDate": null,
+                "pcReleaseDate": null,
+                "viewableDate": null,
+                "countriesBlacklist": null,
+                "countriesWhitelist": null,
+                "refundType": null,
+                "customAttributes": null,
+                "price": null,
+                "locale": "es-ES",
+                "localeStatus": "fallback",
+                "canonicalLocale": "en-US"
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "es-ES",
+          "eventSlug": "the-game-awards"
+        }
+      }
+    }
+  },
+  {
+    "name": "franchise-unconfigured-cursor",
+    "request": {
+      "method": "GET",
+      "path": "/v1/franchises/series?limit=1"
+    },
+    "input": {
+      "franchise": {
+        "_id": "series",
+        "name": "Fixture",
+        "offers": [
+          "one",
+          "two"
+        ]
+      },
+      "rows": {
+        "offers": [
+          {
+            "id": "one",
+            "namespace": "ns",
+            "title": "One",
+            "releaseDate": "2020-01-01"
+          },
+          {
+            "id": "two",
+            "namespace": "ns2",
+            "title": "Two"
+          }
+        ]
+      },
+      "noCursorSecret": true
+    },
+    "pipelines": [],
+    "counts": [],
+    "writes": [],
+    "response": {
+      "status": 503,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"3d8d0a4a53b9266b3f955112b57e289bedcc53bd\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/cursor-not-configured",
+        "title": "Service Unavailable",
+        "status": 503,
+        "detail": "Cursor pagination is not configured on this API origin.",
+        "instance": "/v1/franchises/series",
+        "code": "CURSOR_NOT_CONFIGURED",
+        "requestId": "req_node_oracle"
+      }
+    }
+  }
+]

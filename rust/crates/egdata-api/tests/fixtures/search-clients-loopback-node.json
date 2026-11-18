@@ -1,0 +1,2955 @@
+[
+  {
+    "name": "OpenSearch empty address",
+    "input": {
+      "service": "open",
+      "base": "",
+      "replies": []
+    },
+    "requests": [],
+    "output": {
+      "config": "OPENSEARCH_URL is required for OpenSearch-backed routes."
+    }
+  },
+  {
+    "name": "Vectorize blank configuration token",
+    "input": {
+      "service": "vector",
+      "env": {
+        "CLOUDFLARE_API_TOKEN": " "
+      },
+      "replies": []
+    },
+    "requests": [],
+    "output": {
+      "message": "CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required for natural-language search.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize interrupted embedding request",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "drop": true
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation request failed.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize interrupted query request",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[[0,0.125,1e-7]]}}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "drop": true
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/vectorize/v2/indexes/egdata-offers/query",
+        "auth": "Bearer fixture",
+        "body": "{\"vector\":[0,0.125,1e-7],\"topK\":7,\"returnMetadata\":\"all\",\"returnValues\":false}"
+      }
+    ],
+    "output": {
+      "message": "Vectorize offer query request failed.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize empty error entries",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 503,
+          "type": "application/json",
+          "body": "{\"errors\":[{},{\"message\":\"later\"},{}]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation failed: later",
+      "status": 503
+    }
+  },
+  {
+    "name": "Meili prefixed host with trailing slash",
+    "input": {
+      "service": "meili",
+      "base": "http://HOST/prefix/",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/prefix/indexes/offers/search",
+        "auth": null,
+        "body": "{\"q\":\"co-op ★\",\"limit\":7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "Vectorize scalar embedding result",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":42}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize missing data property",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize null embedding rows",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":null}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize missing array-like row",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":{}}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize floating zero object length",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[{\"length\":0.0}]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize string object length",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[{\"length\":\"0\"}]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "typeError": "embedding.some is not a function"
+    }
+  },
+  {
+    "name": "Vectorize out-of-range scalar embedding",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[1e999]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "typeError": "embedding.some is not a function"
+    }
+  },
+  {
+    "name": "Vectorize out-of-range array coordinate",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[[1e999]]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize duplicate indexed embedding row",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":{\"0\":42,\"0\":[0.25]}}}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"matches\":[]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/vectorize/v2/indexes/egdata-offers/query",
+        "auth": "Bearer fixture",
+        "body": "{\"vector\":[0.25],\"topK\":7,\"returnMetadata\":\"all\",\"returnValues\":false}"
+      }
+    ],
+    "output": {
+      "value": []
+    }
+  },
+  {
+    "name": "Vectorize duplicate data property",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":null,\"d\\u0061ta\":[[0.25]]}}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"matches\":[]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/vectorize/v2/indexes/egdata-offers/query",
+        "auth": "Bearer fixture",
+        "body": "{\"vector\":[0.25],\"topK\":7,\"returnMetadata\":\"all\",\"returnValues\":false}"
+      }
+    ],
+    "output": {
+      "value": []
+    }
+  },
+  {
+    "name": "Vectorize duplicate response result",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":null,\"result\":{\"data\":[[0.25]]}}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"matches\":[]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/vectorize/v2/indexes/egdata-offers/query",
+        "auth": "Bearer fixture",
+        "body": "{\"vector\":[0.25],\"topK\":7,\"returnMetadata\":\"all\",\"returnValues\":false}"
+      }
+    ],
+    "output": {
+      "value": []
+    }
+  },
+  {
+    "name": "Vectorize empty string embedding",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[\"\"]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize false embedding",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[false]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize true embedding",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[true]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "typeError": "embedding.some is not a function"
+    }
+  },
+  {
+    "name": "OpenSearch invalid encoded username",
+    "input": {
+      "service": "open",
+      "base": "http://%FF:fixture@HOST",
+      "replies": []
+    },
+    "requests": [],
+    "output": {
+      "config": "URI malformed"
+    }
+  },
+  {
+    "name": "OpenSearch interrupted gzip payload",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "encoding": "gzip",
+          "wireHex": "1f8b080000000000000a"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "compressionError": true
+    }
+  },
+  {
+    "name": "Vectorize malformed JSON object",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid response.",
+      "status": 200
+    }
+  },
+  {
+    "name": "Vectorize missing first embedding row",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize malformed embedding rows",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":42}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize array-like embedding rows",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":{\"0\":[0.25,0.5]}}}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"matches\":[]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/vectorize/v2/indexes/egdata-offers/query",
+        "auth": "Bearer fixture",
+        "body": "{\"vector\":[0.25,0.5],\"topK\":7,\"returnMetadata\":\"all\",\"returnValues\":false}"
+      }
+    ],
+    "output": {
+      "value": []
+    }
+  },
+  {
+    "name": "Vectorize string embedding rows",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":\"broken\"}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "typeError": "embedding.some is not a function"
+    }
+  },
+  {
+    "name": "nonstandard upstream failure status",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 600,
+          "type": "application/json",
+          "body": "{\"message\":\"proxy failure\"}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "status": 600
+    }
+  },
+  {
+    "name": "OpenSearch exhausts aborted responses",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "truncated": true
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "transportError": true
+    }
+  },
+  {
+    "name": "OpenSearch exhausts dropped connections",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "drop": true
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "transportError": true
+    }
+  },
+  {
+    "name": "OpenSearch stops on malformed retryable error JSON",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 503,
+          "type": "application/json",
+          "body": "incomplete JSON"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "invalidJson": true
+    }
+  },
+  {
+    "name": "OpenSearch text response after retries",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 502,
+          "type": "application/json",
+          "body": "{}"
+        },
+        {
+          "status": 503,
+          "type": "application/json",
+          "body": "{}"
+        },
+        {
+          "status": 504,
+          "type": "application/json",
+          "body": "{}"
+        },
+        {
+          "status": 200,
+          "type": "text/plain",
+          "body": "ready"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": "ready"
+    }
+  },
+  {
+    "name": "Meili URL userinfo",
+    "input": {
+      "service": "meili",
+      "base": "http://fixture:example@HOST",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [],
+    "output": {
+      "transportError": true
+    }
+  },
+  {
+    "name": "Meili Latin-1 key",
+    "input": {
+      "service": "meili",
+      "env": {
+        "MEILISEARCH_API_KEY": "fixture-café"
+      },
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/indexes/offers/search",
+        "auth": "Bearer fixture-café",
+        "body": "{\"q\":\"co-op ★\",\"limit\":7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "Meili unrepresentable key",
+    "input": {
+      "service": "meili",
+      "env": {
+        "MEILISEARCH_API_KEY": "fixture🔍"
+      },
+      "replies": []
+    },
+    "requests": [],
+    "output": {
+      "invalidHeader": true
+    }
+  },
+  {
+    "name": "Meili malformed header",
+    "input": {
+      "service": "meili",
+      "env": {
+        "MEILISEARCH_API_KEY": "fixture\nvalue"
+      },
+      "replies": []
+    },
+    "requests": [],
+    "output": {
+      "invalidHeader": true
+    }
+  },
+  {
+    "name": "Meili blank key",
+    "input": {
+      "service": "meili",
+      "env": {
+        "MEILISEARCH_API_KEY": "    "
+      },
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/indexes/offers/search",
+        "auth": "Bearer",
+        "body": "{\"q\":\"co-op ★\",\"limit\":7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "Meili interrupted server response",
+    "input": {
+      "service": "meili",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "truncated": true
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/indexes/offers/search",
+        "auth": null,
+        "body": "{\"q\":\"co-op ★\",\"limit\":7}"
+      }
+    ],
+    "output": {
+      "transportError": true
+    }
+  },
+  {
+    "name": "Meili dropped connection",
+    "input": {
+      "service": "meili",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "drop": true
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/indexes/offers/search",
+        "auth": null,
+        "body": "{\"q\":\"co-op ★\",\"limit\":7}"
+      }
+    ],
+    "output": {
+      "transportError": true
+    }
+  },
+  {
+    "name": "Meili truncated multi search response",
+    "input": {
+      "service": "meili",
+      "multi": true,
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "truncated": true
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/multi-search",
+        "auth": null,
+        "body": "{\"queries\":[]}"
+      }
+    ],
+    "output": {
+      "transportError": true
+    }
+  },
+  {
+    "name": "Meili malformed successful multi search JSON",
+    "input": {
+      "service": "meili",
+      "multi": true,
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "not-json"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/multi-search",
+        "auth": null,
+        "body": "{\"queries\":[]}"
+      }
+    ],
+    "output": {
+      "invalidJson": true
+    }
+  },
+  {
+    "name": "Vectorize malformed error envelope",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 400,
+          "type": "application/json",
+          "body": "null"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "typeError": "Cannot read properties of null (reading 'errors')"
+    }
+  },
+  {
+    "name": "Vectorize null error descriptions",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 429,
+          "type": "application/json",
+          "body": "{\"errors\":[{\"code\":null,\"message\":\"retry\"}]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation failed: : retry",
+      "status": 429
+    }
+  },
+  {
+    "name": "Vectorize nullable first row",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[null]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize interrupted result body",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[[0,0.125,1e-7]]}}",
+          "truncated": true
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid response.",
+      "status": 200
+    }
+  },
+  {
+    "name": "Vectorize malformed errors collection",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 403,
+          "type": "application/json",
+          "body": "{\"errors\":{}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "typeError": "errors?.map is not a function"
+    }
+  },
+  {
+    "name": "Vectorize null error entry",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 429,
+          "type": "application/json",
+          "body": "{\"errors\":[null]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "typeError": "Cannot destructure property 'code' of 'object null' as it is null."
+    }
+  },
+  {
+    "name": "unsupported protocol",
+    "input": {
+      "service": "open",
+      "base": "ftp://HOST",
+      "replies": []
+    },
+    "requests": [],
+    "output": {
+      "config": "Invalid protocol: 'ftp:'"
+    }
+  },
+  {
+    "name": "recover after socket close",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "drop": true
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "recover after interrupted search response",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "truncated": true
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "compressed OpenSearch gzip",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "encoding": "gzip",
+          "wireHex": "1f8b080000000000000aab56cac82c2956b28a8ead0500a52f7d250b000000"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "compressed OpenSearch deflate",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "encoding": "deflate",
+          "wireHex": "789cab56cac82c2956b28a8ead0500175003e7"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "compressed OpenSearch br",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "encoding": "br",
+          "wireHex": "0b05807b2268697473223a5b5d7d03"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "invalidJson": true
+    }
+  },
+  {
+    "name": "compressed OpenSearch broken-gzip",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "encoding": "gzip",
+          "wireHex": "626164"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "compressionError": true
+    }
+  },
+  {
+    "name": "interrupted mapping response",
+    "input": {
+      "service": "open",
+      "op": "getMapping",
+      "index": "offers",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "truncated": true
+        },
+        {
+          "status": 403,
+          "type": "application/json",
+          "body": "{\"error\":\"forbidden\"}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/offers/_mapping",
+        "auth": null,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/offers/_mapping",
+        "auth": null,
+        "body": ""
+      }
+    ],
+    "output": {
+      "status": 403
+    }
+  },
+  {
+    "name": "invalid UTF-8 URL credentials",
+    "input": {
+      "service": "open",
+      "base": "http://x:p%FF@HOST",
+      "replies": []
+    },
+    "requests": [],
+    "output": {
+      "config": "URI malformed"
+    }
+  },
+  {
+    "name": "Meili malformed service address",
+    "input": {
+      "service": "meili",
+      "base": "http://host with spaces",
+      "replies": []
+    },
+    "requests": [],
+    "output": {
+      "config": "The provided host is not valid"
+    }
+  },
+  {
+    "name": "Meili redirected POST",
+    "input": {
+      "service": "meili",
+      "replies": [
+        {
+          "status": 303,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "location": "/result"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/indexes/offers/search",
+        "auth": null,
+        "body": "{\"q\":\"co-op ★\",\"limit\":7}"
+      },
+      {
+        "method": "GET",
+        "path": "/result",
+        "auth": null,
+        "body": ""
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "Vectorize numeric embedding instead of array",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[123]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "typeError": "embedding.some is not a function"
+    }
+  },
+  {
+    "name": "Vectorize zero embedding instead of array",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[0]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize object embedding with a zero length",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[{\"length\":0}]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "redirect location is not followed",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 307,
+          "type": "application/json",
+          "body": "{\"hits\":[]}",
+          "location": "/next"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "mapping with unrelated index",
+    "input": {
+      "service": "open",
+      "op": "getMapping",
+      "index": "offers",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"other\":{\"mappings\":{}}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/offers/_mapping",
+        "auth": null,
+        "body": ""
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "mapping with null mappings",
+    "input": {
+      "service": "open",
+      "op": "getMapping",
+      "index": "offers",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"offers\":{\"mappings\":null}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/offers/_mapping",
+        "auth": null,
+        "body": ""
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "mapping with entries",
+    "input": {
+      "service": "open",
+      "op": "getMapping",
+      "index": "offers",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"offers\":{\"mappings\":{\"properties\":{\"title\":{\"type\":\"keyword\"}}}}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/offers/_mapping",
+        "auth": null,
+        "body": ""
+      }
+    ],
+    "output": {
+      "value": {
+        "properties": {
+          "title": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "mapping 404",
+    "input": {
+      "service": "open",
+      "op": "getMapping",
+      "index": "offers",
+      "replies": [
+        {
+          "status": 404,
+          "type": "application/json",
+          "body": "{\"error\":\"not found\"}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/offers/_mapping",
+        "auth": null,
+        "body": ""
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "mapping put retries",
+    "input": {
+      "service": "open",
+      "op": "putMapping",
+      "index": "offers",
+      "replies": [
+        {
+          "status": 504,
+          "type": "application/json",
+          "body": "{}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"acknowledged\":true}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/offers/_mapping",
+        "auth": null,
+        "body": "{\"properties\":{\"title\":{\"type\":\"keyword\"}}}"
+      },
+      {
+        "method": "POST",
+        "path": "/offers/_mapping",
+        "auth": null,
+        "body": "{\"properties\":{\"title\":{\"type\":\"keyword\"}}}"
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "mapping invalid successful JSON",
+    "input": {
+      "service": "open",
+      "op": "putMapping",
+      "index": "offers",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "bad"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/offers/_mapping",
+        "auth": null,
+        "body": "{\"properties\":{\"title\":{\"type\":\"keyword\"}}}"
+      }
+    ],
+    "output": {
+      "invalidJson": true
+    }
+  },
+  {
+    "name": "Vectorize null result",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":null}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "typeError": "Cannot read properties of null (reading 'data')"
+    }
+  },
+  {
+    "name": "Vectorize null envelope",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "null"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "typeError": "Cannot read properties of null (reading 'success')"
+    }
+  },
+  {
+    "name": "Vectorize non-array matches",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[[0,0.125,1e-7]]}}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"matches\":\"invalid\"}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/vectorize/v2/indexes/egdata-offers/query",
+        "auth": "Bearer fixture",
+        "body": "{\"vector\":[0,0.125,1e-7],\"topK\":7,\"returnMetadata\":\"all\",\"returnValues\":false}"
+      }
+    ],
+    "output": {
+      "typeError": "(result.matches ?? []).filter is not a function"
+    }
+  },
+  {
+    "name": "Vectorize null hit",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[[0,0.125,1e-7]]}}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"matches\":[null]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/vectorize/v2/indexes/egdata-offers/query",
+        "auth": "Bearer fixture",
+        "body": "{\"vector\":[0,0.125,1e-7],\"topK\":7,\"returnMetadata\":\"all\",\"returnValues\":false}"
+      }
+    ],
+    "output": {
+      "typeError": "Cannot read properties of null (reading 'id')"
+    }
+  },
+  {
+    "name": "Vectorize non-array first embedding",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[\"wrong\"]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "typeError": "embedding.some is not a function"
+    }
+  },
+  {
+    "name": "Vectorize null search result",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[[0,0.125,1e-7]]}}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":null}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/vectorize/v2/indexes/egdata-offers/query",
+        "auth": "Bearer fixture",
+        "body": "{\"vector\":[0,0.125,1e-7],\"topK\":7,\"returnMetadata\":\"all\",\"returnValues\":false}"
+      }
+    ],
+    "output": {
+      "typeError": "Cannot read properties of null (reading 'matches')"
+    }
+  },
+  {
+    "name": "Vectorize primitive result gives no matches",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[[0,0.125,1e-7]]}}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":42}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/vectorize/v2/indexes/egdata-offers/query",
+        "auth": "Bearer fixture",
+        "body": "{\"vector\":[0,0.125,1e-7],\"topK\":7,\"returnMetadata\":\"all\",\"returnValues\":false}"
+      }
+    ],
+    "output": {
+      "value": []
+    }
+  },
+  {
+    "name": "OpenSearch large integer and BOM",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "﻿{\"id\":9007199254740993}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "id": 9007199254740992
+      }
+    }
+  },
+  {
+    "name": "URL credentials override separate credentials",
+    "input": {
+      "service": "open",
+      "base": "http://url%20user:pass%3Aword@HOST/prefix?tenant=one#frag",
+      "env": {
+        "OPENSEARCH_USERNAME": " api ",
+        "OPENSEARCH_PASSWORD": " key "
+      },
+      "index": "sale *~!()'+,2026",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/prefix/sale%20*~!()'%2B%2C2026/_search?tenant=one",
+        "auth": "Basic dXJsIHVzZXI6cGFzczp3b3Jk",
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "credentials are trimmed as JavaScript strings",
+    "input": {
+      "service": "open",
+      "env": {
+        "OPENSEARCH_USERNAME": "﻿test﻿",
+        "OPENSEARCH_PASSWORD": "﻿code﻿"
+      },
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": "Basic dGVzdDpjb2Rl",
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "partial URL credentials without separate credentials",
+    "input": {
+      "service": "open",
+      "base": "http://orphan@HOST",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "partial URL credentials plus separate credentials",
+    "input": {
+      "service": "open",
+      "base": "http://orphan@HOST",
+      "env": {
+        "OPENSEARCH_USERNAME": "api",
+        "OPENSEARCH_PASSWORD": "pwd"
+      },
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": "Basic YXBpOnB3ZA==",
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "blank separate password",
+    "input": {
+      "service": "open",
+      "env": {
+        "OPENSEARCH_PASSWORD": ""
+      },
+      "replies": []
+    },
+    "requests": [],
+    "output": {
+      "config": "OPENSEARCH_USERNAME and OPENSEARCH_PASSWORD cannot be blank when configured."
+    }
+  },
+  {
+    "name": "partial separate credentials",
+    "input": {
+      "service": "open",
+      "env": {
+        "OPENSEARCH_USERNAME": "x"
+      },
+      "replies": []
+    },
+    "requests": [],
+    "output": {
+      "config": "OPENSEARCH_USERNAME and OPENSEARCH_PASSWORD must be set together."
+    }
+  },
+  {
+    "name": "malformed credential encoding",
+    "input": {
+      "service": "open",
+      "base": "http://x:p%ZZ@HOST",
+      "replies": []
+    },
+    "requests": [],
+    "output": {
+      "config": "URI malformed"
+    }
+  },
+  {
+    "name": "missing embedded user",
+    "input": {
+      "service": "open",
+      "base": "http://:password@HOST",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "invalid URL",
+    "input": {
+      "service": "open",
+      "base": "invalid URL",
+      "replies": []
+    },
+    "requests": [],
+    "output": {
+      "config": "Invalid URL"
+    }
+  },
+  {
+    "name": "gateway retries",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 502,
+          "type": "application/json",
+          "body": "{}"
+        },
+        {
+          "status": 503,
+          "type": "application/json",
+          "body": "{}"
+        },
+        {
+          "status": 504,
+          "type": "application/json",
+          "body": "{}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "retry ceiling",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 503,
+          "type": "application/json",
+          "body": "{\"error\":\"busy\"}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      },
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "status": 503
+    }
+  },
+  {
+    "name": "auth is terminal",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 401,
+          "type": "application/json",
+          "body": "{\"error\":\"auth\"}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "status": 401
+    }
+  },
+  {
+    "name": "throttling is terminal",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 429,
+          "type": "application/json",
+          "body": "{\"error\":\"throttled\"}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "status": 429
+    }
+  },
+  {
+    "name": "invalid json before retry",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 502,
+          "type": "application/json",
+          "body": "bad"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "invalidJson": true
+    }
+  },
+  {
+    "name": "vendor json",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/vnd.opensearch+json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "plain text body",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 200,
+          "type": "text/plain",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": "{\"hits\":[]}"
+    }
+  },
+  {
+    "name": "redirect is returned by SDK",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 302,
+          "type": "text/plain",
+          "body": "moved"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": "moved"
+    }
+  },
+  {
+    "name": "empty body",
+    "input": {
+      "service": "open",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": ""
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/_search",
+        "auth": null,
+        "body": "{\"query\":{\"match_all\":{}},\"min_score\":1e-7}"
+      }
+    ],
+    "output": {
+      "value": ""
+    }
+  },
+  {
+    "name": "Meili index and key",
+    "input": {
+      "service": "meili",
+      "base": "HOST/prefix",
+      "index": "offers-previews",
+      "env": {
+        "MEILISEARCH_API_KEY": "key"
+      },
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/prefix/indexes/offers-previews/search",
+        "auth": "Bearer key",
+        "body": "{\"q\":\"co-op ★\",\"limit\":7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "Meili multi search",
+    "input": {
+      "service": "meili",
+      "multi": true,
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"results\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/multi-search",
+        "auth": null,
+        "body": "{\"queries\":[]}"
+      }
+    ],
+    "output": {
+      "value": {
+        "results": []
+      }
+    }
+  },
+  {
+    "name": "Meili empty body",
+    "input": {
+      "service": "meili",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": ""
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/indexes/offers/search",
+        "auth": null,
+        "body": "{\"q\":\"co-op ★\",\"limit\":7}"
+      }
+    ],
+    "output": {
+      "value": null
+    }
+  },
+  {
+    "name": "Meili malformed error",
+    "input": {
+      "service": "meili",
+      "replies": [
+        {
+          "status": 403,
+          "type": "application/json",
+          "body": "invalid"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/indexes/offers/search",
+        "auth": null,
+        "body": "{\"q\":\"co-op ★\",\"limit\":7}"
+      }
+    ],
+    "output": {
+      "invalidJson": true
+    }
+  },
+  {
+    "name": "Meili structured error",
+    "input": {
+      "service": "meili",
+      "replies": [
+        {
+          "status": 403,
+          "type": "application/json",
+          "body": "{\"message\":\"denied\",\"code\":\"invalid_api_key\"}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/indexes/offers/search",
+        "auth": null,
+        "body": "{\"q\":\"co-op ★\",\"limit\":7}"
+      }
+    ],
+    "output": {
+      "status": 403
+    }
+  },
+  {
+    "name": "Meili UTF8 BOM",
+    "input": {
+      "service": "meili",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "﻿{\"hits\":[]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/indexes/offers/search",
+        "auth": null,
+        "body": "{\"q\":\"co-op ★\",\"limit\":7}"
+      }
+    ],
+    "output": {
+      "value": {
+        "hits": []
+      }
+    }
+  },
+  {
+    "name": "Vectorize matches and path",
+    "input": {
+      "service": "vector",
+      "index": "sale *~!()'+,2026",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[[0,0.125,1e-7]]}}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"matches\":[{\"id\":\"a\",\"score\":1,\"metadata\":{\"title\":\"Game\"}}]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/vectorize/v2/indexes/sale%20*~!()'%2B%2C2026/query",
+        "auth": "Bearer fixture",
+        "body": "{\"vector\":[0,0.125,1e-7],\"topK\":7,\"returnMetadata\":\"all\",\"returnValues\":false}"
+      }
+    ],
+    "output": {
+      "value": [
+        {
+          "id": "a",
+          "score": 1,
+          "metadata": {
+            "title": "Game"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Vectorize invalid individual hits",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[[0,0.125,1e-7]]}}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"matches\":[{\"id\":1,\"score\":1},{\"id\":\"wrong\",\"score\":\"bad\"},{\"id\":\"\",\"score\":1},{\"id\":\"ok\",\"score\":0.1}]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/vectorize/v2/indexes/egdata-offers/query",
+        "auth": "Bearer fixture",
+        "body": "{\"vector\":[0,0.125,1e-7],\"topK\":7,\"returnMetadata\":\"all\",\"returnValues\":false}"
+      }
+    ],
+    "output": {
+      "value": [
+        {
+          "id": "ok",
+          "score": 0.1
+        }
+      ]
+    }
+  },
+  {
+    "name": "Vectorize embedding accepts only first row",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[[0.5],\"ignore this\"]}}"
+        },
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/vectorize/v2/indexes/egdata-offers/query",
+        "auth": "Bearer fixture",
+        "body": "{\"vector\":[0.5],\"topK\":7,\"returnMetadata\":\"all\",\"returnValues\":false}"
+      }
+    ],
+    "output": {
+      "value": []
+    }
+  },
+  {
+    "name": "Vectorize rejects non-numeric embedding",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"result\":{\"data\":[[0.5,\"1\"]]}}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid embedding.",
+      "status": null
+    }
+  },
+  {
+    "name": "Vectorize wrong envelope shape",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "[\"x\"]"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation failed.",
+      "status": 200
+    }
+  },
+  {
+    "name": "Vectorize explicit code and empty message",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 403,
+          "type": "application/json",
+          "body": "{\"success\":false,\"result\":{\"data\":\"not-an-embedding\"},\"errors\":[{\"code\":23,\"message\":\"\"},{\"message\":\"bad request\"}]}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation failed: 23: , bad request",
+      "status": 403
+    }
+  },
+  {
+    "name": "Vectorize invalid JSON",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "bad"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation returned an invalid response.",
+      "status": 200
+    }
+  },
+  {
+    "name": "Vectorize missing result",
+    "input": {
+      "service": "vector",
+      "replies": [
+        {
+          "status": 200,
+          "type": "application/json",
+          "body": "{\"success\":true}"
+        }
+      ]
+    },
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/client/v4/accounts/account/ai/run/@cf/baai/bge-base-en-v1.5",
+        "auth": "Bearer fixture",
+        "body": "{\"text\":\"co-op ★\"}"
+      }
+    ],
+    "output": {
+      "message": "Workers AI embedding generation failed.",
+      "status": 200
+    }
+  }
+]

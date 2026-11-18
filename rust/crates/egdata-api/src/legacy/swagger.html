@@ -1,0 +1,27 @@
+
+      <!doctype html>
+      <html lang="en">
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta name="description" content="SwaggerUI" />
+          <title>SwaggerUI</title>
+        </head>
+        <body>
+          
+    <div>
+      <div id="swagger-ui"></div>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui.css" />
+      <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-bundle.js" crossorigin="anonymous"></script>
+      <script>
+        window.onload = () => {
+          window.ui = SwaggerUIBundle({
+            dom_id: '#swagger-ui',url: '/open-api.json',
+          })
+        }
+      </script>
+    </div>
+  
+        </body>
+      </html>
+    

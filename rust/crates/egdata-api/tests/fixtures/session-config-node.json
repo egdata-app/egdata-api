@@ -1,0 +1,93 @@
+[
+  {
+    "input": {
+      "BETTER_AUTH_SECRET": " fixture-synthetic-primary-key-for-session-tests ",
+      "AUTH_SECRET": "fixture-synthetic-fallback-key-for-session-tests"
+    },
+    "secret": " fixture-synthetic-primary-key-for-session-tests "
+  },
+  {
+    "input": {
+      "BETTER_AUTH_SECRET": "",
+      "AUTH_SECRET": " fixture-synthetic-fallback-key-for-session-tests "
+    },
+    "secret": " fixture-synthetic-fallback-key-for-session-tests "
+  },
+  {
+    "input": {
+      "BETTER_AUTH_SECRETS": "",
+      "BETTER_AUTH_SECRET": "fixture-synthetic-primary-key-for-session-tests"
+    },
+    "secret": "fixture-synthetic-primary-key-for-session-tests"
+  },
+  {
+    "input": {
+      "BETTER_AUTH_SECRETS": "7:fixture-synthetic-primary-key-for-session-tests,1:fixture-synthetic-fallback-key-for-session-tests",
+      "BETTER_AUTH_SECRET": "fixture-synthetic-fallback-key-for-session-tests"
+    },
+    "secret": "fixture-synthetic-primary-key-for-session-tests"
+  },
+  {
+    "input": {
+      "BETTER_AUTH_SECRETS": " 1: fixture-synthetic-primary-key-for-session-tests:with-colon , 9:fixture-synthetic-fallback-key-for-session-tests",
+      "BETTER_AUTH_SECRET": "fixture-synthetic-fallback-key-for-session-tests"
+    },
+    "secret": "fixture-synthetic-primary-key-for-session-tests:with-colon"
+  },
+  {
+    "input": {
+      "BETTER_AUTH_SECRETS": "+12suffix:fixture-synthetic-primary-key-for-session-tests,3:fixture-synthetic-fallback-key-for-session-tests",
+      "BETTER_AUTH_SECRET": "fixture-synthetic-fallback-key-for-session-tests"
+    },
+    "secret": "fixture-synthetic-primary-key-for-session-tests"
+  },
+  {
+    "input": {
+      "BETTER_AUTH_SECRETS": "-0:fixture-synthetic-primary-key-for-session-tests",
+      "BETTER_AUTH_SECRET": "fixture-synthetic-fallback-key-for-session-tests"
+    },
+    "secret": "fixture-synthetic-primary-key-for-session-tests"
+  },
+  {
+    "input": {
+      "BETTER_AUTH_SECRETS": "02:fixture-synthetic-primary-key-for-session-tests,2:fixture-synthetic-fallback-key-for-session-tests",
+      "BETTER_AUTH_SECRET": "fixture-synthetic-fallback-key-for-session-tests"
+    },
+    "secret": null
+  },
+  {
+    "input": {
+      "BETTER_AUTH_SECRETS": "-1:fixture-synthetic-primary-key-for-session-tests",
+      "BETTER_AUTH_SECRET": "fixture-synthetic-fallback-key-for-session-tests"
+    },
+    "secret": null
+  },
+  {
+    "input": {
+      "BETTER_AUTH_SECRETS": "x:fixture-synthetic-primary-key-for-session-tests",
+      "BETTER_AUTH_SECRET": "fixture-synthetic-fallback-key-for-session-tests"
+    },
+    "secret": null
+  },
+  {
+    "input": {
+      "BETTER_AUTH_SECRETS": "1000000000000000000000:fixture-synthetic-primary-key-for-session-tests",
+      "BETTER_AUTH_SECRET": "fixture-synthetic-fallback-key-for-session-tests"
+    },
+    "secret": null
+  },
+  {
+    "input": {
+      "BETTER_AUTH_SECRETS": "1:fixture-synthetic-primary-key-for-session-tests,2: ",
+      "BETTER_AUTH_SECRET": "fixture-synthetic-fallback-key-for-session-tests"
+    },
+    "secret": null
+  },
+  {
+    "input": {
+      "BETTER_AUTH_SECRETS": "1:fixture-synthetic-primary-key-for-session-tests,broken",
+      "BETTER_AUTH_SECRET": "fixture-synthetic-fallback-key-for-session-tests"
+    },
+    "secret": null
+  }
+]

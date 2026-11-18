@@ -1,0 +1,74 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/egdata-core",
+    "crates/egdata-infra",
+    "crates/egdata-graphql",
+    "crates/egdata-api",
+    "crates/egdata-diff",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+authors = ["egdata"]
+
+[workspace.lints.rust]
+warnings = "deny"
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+
+[workspace.dependencies]
+aes = "0.8"
+anyhow = "1"
+async-graphql = { version = "7.2", features = ["chrono", "dataloader", "apollo_persisted_queries"] }
+async-graphql-axum = "7.2"
+async-trait = "0.1"
+axum = { version = "0.8", features = ["macros", "multipart"] }
+base64 = "0.22"
+bson = { version = "2.15", features = ["chrono-0_4"] }
+bytes = "1"
+cbc = "0.1"
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4", features = ["derive"] }
+futures = "0.3"
+flate2 = "1"
+hex = "0.4"
+hmac = "0.12"
+http = "1"
+http-body-util = "0.1"
+icu_collator = "2.1"
+icu_locale_core = "2.1"
+sys-locale = "0.3"
+jsonwebtoken = "9"
+lru = "0.13"
+mongodb = "3.10"
+num-bigint = "0.4"
+num-traits = "0.2"
+indexmap = "2"
+percent-encoding = "2"
+rand = "0.9"
+redis = { version = "1.8", features = ["tokio-comp", "connection-manager", "tokio-rustls-comp"] }
+regex = "1"
+ryu-js = "1.0.3"
+reqwest = { version = "0.12", default-features = false, features = ["json", "multipart", "rustls-tls", "gzip", "brotli"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order", "float_roundtrip"] }
+sha1 = "0.10"
+sha2 = "0.10"
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls-ring", "postgres", "chrono", "json"] }
+takumi = { version = "2.20", features = ["from-html", "png", "webp", "jpeg", "svg-source", "woff", "woff2", "font-face"] }
+thiserror = "2"
+tokio = { version = "1", features = ["full"] }
+tower = { version = "0.5", features = ["util"] }
+tower-http = { version = "0.6", features = ["compression-full", "cors", "trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+unic-langid = "0.9"
+url = "2"
+urlencoding = "2"
+utoipa = { version = "5", features = ["axum_extras", "chrono"] }
+uuid = { version = "1", features = ["v4"] }
+web-push = { version = "0.11", default-features = false, features = ["hyper-client"] }

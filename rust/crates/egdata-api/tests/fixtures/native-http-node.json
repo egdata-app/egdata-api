@@ -1,0 +1,1622 @@
+[
+  {
+    "name": "robots",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/robots.txt",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"956a25aff9aaf7f038a93b79b6c60283773e710f\""
+      },
+      "body": "User-agent: *\nDisallow: /\nAllow: /v1/sitemap.xml\nAllow: /v1/sitemap.xml?*\nAllow: /v1/items-sitemap.xml\nAllow: /v1/items-sitemap.xml?*\nAllow: /v1/promotions-sitemap.xml\nAllow: /v1/profiles/sitemap.xml\nAllow: /v1/sandboxes/sitemap.xml\nAllow: /v1/sandboxes/sitemap.xml?*\nAllow: /v1/items/sitemap.xml\nAllow: /v1/items/sitemap.xml?*\nAllow: /v1/offers/*/og\nAllow: /v1/sandboxes/*/og\n"
+    }
+  },
+  {
+    "name": "robots-head",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/robots.txt",
+      "method": "HEAD"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": ""
+    }
+  },
+  {
+    "name": "robots-unknown-query",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/robots.txt?bad=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"b28661d3cd4d26056bc062e2c3453702d6a6c3cf\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/robots.txt",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"bad\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "offers-index-empty",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sitemap.xml",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"9b143460cc32c4faca73884099647f2b1062ca7e\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n\n</sitemapindex>"
+    }
+  },
+  {
+    "name": "offers-page",
+    "input": {
+      "rows": [
+        {
+          "id": "offer-a",
+          "lastModifiedDate": "2026-09-01T01:02:03.000Z"
+        }
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"22ef6e8212fdaf8a61e6ad286ba40aec4a1e83b2\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">\n  <url>\n    <loc>https://egdata.app/offers/offer-a</loc>\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"https://egdata.app/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"id\" href=\"https://egdata.app/id/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ms\" href=\"https://egdata.app/ms/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"da\" href=\"https://egdata.app/da/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"de\" href=\"https://egdata.app/de/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"en-US\" href=\"https://egdata.app/en-US/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-ES\" href=\"https://egdata.app/es-ES/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-MX\" href=\"https://egdata.app/es-MX/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fil\" href=\"https://egdata.app/fil/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fr\" href=\"https://egdata.app/fr/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"it\" href=\"https://egdata.app/it/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hu\" href=\"https://egdata.app/hu/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"nl\" href=\"https://egdata.app/nl/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"no\" href=\"https://egdata.app/no/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pl\" href=\"https://egdata.app/pl/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt-BR\" href=\"https://egdata.app/pt-BR/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt\" href=\"https://egdata.app/pt/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ro\" href=\"https://egdata.app/ro/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fi\" href=\"https://egdata.app/fi/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"sv\" href=\"https://egdata.app/sv/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"vi\" href=\"https://egdata.app/vi/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"tr\" href=\"https://egdata.app/tr/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"cs\" href=\"https://egdata.app/cs/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"bg\" href=\"https://egdata.app/bg/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ru\" href=\"https://egdata.app/ru/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"uk\" href=\"https://egdata.app/uk/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"https://egdata.app/ar/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hi\" href=\"https://egdata.app/hi/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"th\" href=\"https://egdata.app/th/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ja\" href=\"https://egdata.app/ja/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-CN\" href=\"https://egdata.app/zh-CN/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-Hant\" href=\"https://egdata.app/zh-Hant/offers/offer-a\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ko\" href=\"https://egdata.app/ko/offers/offer-a\" />\n    <lastmod>2026-09-01T01:02:03.000Z</lastmod>\n  </url>\n</urlset>"
+    }
+  },
+  {
+    "name": "items-index",
+    "input": {
+      "rows": [],
+      "count": 1001,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"a67060fa0678eba7dff3adacb57a76dc30c09f93\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <sitemap><loc>https://api.egdata.app/v1/items-sitemap.xml?page=1</loc></sitemap>\n  <sitemap><loc>https://api.egdata.app/v1/items-sitemap.xml?page=2</loc></sitemap>\n</sitemapindex>"
+    }
+  },
+  {
+    "name": "items-alias-index",
+    "input": {
+      "rows": [],
+      "count": 1001,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items/sitemap.xml",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"7f4ef16b11ace1a6d2d75f55f6100fa4d03a0314\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <sitemap><loc>https://api.egdata.app/v1/items/sitemap.xml?page=1</loc></sitemap>\n  <sitemap><loc>https://api.egdata.app/v1/items/sitemap.xml?page=2</loc></sitemap>\n</sitemapindex>"
+    }
+  },
+  {
+    "name": "items-page",
+    "input": {
+      "rows": [
+        {
+          "id": "item-a",
+          "lastModifiedDate": "2026-09-02"
+        },
+        {
+          "id": "item-b",
+          "lastModifiedDate": null
+        }
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml?page=2",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"baf312945ed6c916fa820bf52b8db90547cfbe4a\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url>\n    <loc>https://egdata.app/items/item-a</loc>\n    <lastmod>2026-09-02T00:00:00.000Z</lastmod>\n  </url>\n  <url>\n    <loc>https://egdata.app/items/item-b</loc>\n\n  </url>\n</urlset>"
+    }
+  },
+  {
+    "name": "items-zero-page",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml?page=0",
+      "method": "GET"
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"54a58f78d2f5076092d98ed6df1ddaed10232b8e\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `page` parameter must be between 1 and 9007199254740991.",
+        "instance": "/v1/items-sitemap.xml",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "parameter": "page",
+            "code": "INVALID",
+            "message": "Out of range."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "items-bad-page",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml?page=nope",
+      "method": "GET"
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8e9dc65f222c9084107f47285e7fde40e590561b\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `page` parameter must be an integer.",
+        "instance": "/v1/items-sitemap.xml",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "parameter": "page",
+            "code": "INVALID",
+            "message": "Expected an integer."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "items-duplicate-page",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml?page=1&page=bad",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"c539a58bce0ed5ab2d7a563733daf5ca54e8d903\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n\n</urlset>"
+    }
+  },
+  {
+    "name": "promotions",
+    "input": {
+      "rows": [
+        {
+          "id": "event-a"
+        }
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/promotions-sitemap.xml",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"472ca67b09e9067bbeffe3f2bc31a955f8aeca14\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url><loc>https://egdata.app/promotions/event-a</loc></url>\n</urlset>"
+    }
+  },
+  {
+    "name": "profiles",
+    "input": {
+      "rows": [
+        {
+          "accountId": "account-a"
+        },
+        {
+          "accountId": ""
+        },
+        {}
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/profiles/sitemap.xml",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ff651ef09ce1fa185ede9e66ae859b24f308c5b2\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url><loc>https://egdata.app/profile/account-a</loc></url>\n</urlset>"
+    }
+  },
+  {
+    "name": "sandboxes-index",
+    "input": {
+      "rows": [],
+      "count": 1001,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sandboxes/sitemap.xml",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"18a698e892061f8206797574e518ff2201f080c9\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <sitemap><loc>https://api.egdata.app/v1/sandboxes/sitemap.xml?page=1</loc></sitemap>\n  <sitemap><loc>https://api.egdata.app/v1/sandboxes/sitemap.xml?page=2</loc></sitemap>\n</sitemapindex>"
+    }
+  },
+  {
+    "name": "sandboxes-page",
+    "input": {
+      "rows": [
+        {
+          "_id": "sandbox-a",
+          "updated": "2026-09-03T00:00:00Z"
+        },
+        {
+          "_id": "sandbox-b",
+          "updated": null
+        }
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sandboxes/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"b529c733e68ed5b5b8417f90a403817ea9300bcd\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url><loc>https://egdata.app/sandboxes/sandbox-a</loc><lastmod>2026-09-03T00:00:00.000Z</lastmod></url>\n  <url><loc>https://egdata.app/sandboxes/sandbox-a/items</loc><lastmod>2026-09-03T00:00:00.000Z</lastmod></url>\n  <url><loc>https://egdata.app/sandboxes/sandbox-a/offers</loc><lastmod>2026-09-03T00:00:00.000Z</lastmod></url>\n  <url><loc>https://egdata.app/sandboxes/sandbox-a/assets</loc><lastmod>2026-09-03T00:00:00.000Z</lastmod></url>\n  <url><loc>https://egdata.app/sandboxes/sandbox-a/achievements</loc><lastmod>2026-09-03T00:00:00.000Z</lastmod></url>\n  <url><loc>https://egdata.app/sandboxes/sandbox-b</loc></url>\n  <url><loc>https://egdata.app/sandboxes/sandbox-b/items</loc></url>\n  <url><loc>https://egdata.app/sandboxes/sandbox-b/offers</loc></url>\n  <url><loc>https://egdata.app/sandboxes/sandbox-b/assets</loc></url>\n  <url><loc>https://egdata.app/sandboxes/sandbox-b/achievements</loc></url>\n</urlset>"
+    }
+  },
+  {
+    "name": "offers-invalid-date",
+    "input": {
+      "rows": [
+        {
+          "id": "offer-a",
+          "lastModifiedDate": "invalid"
+        }
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ba18ea7ead474ae80609835d3d791b96defb5556\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "items-invalid-date",
+    "input": {
+      "rows": [
+        {
+          "id": "item-a",
+          "lastModifiedDate": "invalid"
+        }
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"faf187029a974fbf8921680231c87f8f64c62554\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/items-sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "sandboxes-invalid-date",
+    "input": {
+      "rows": [
+        {
+          "_id": "sandbox-a",
+          "updated": "invalid"
+        }
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sandboxes/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8d306759b13927d5a211b77de060c0e968bf11b3\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/sandboxes/sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "items-db-failure",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": true
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"faf187029a974fbf8921680231c87f8f64c62554\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/items-sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "offers-count-failure",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": true
+    },
+    "request": {
+      "path": "/v1/sitemap.xml",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ba18ea7ead474ae80609835d3d791b96defb5556\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "offer-rows-failure",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": true
+    },
+    "request": {
+      "path": "/v1/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ba18ea7ead474ae80609835d3d791b96defb5556\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "item-count-failure",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": true
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"faf187029a974fbf8921680231c87f8f64c62554\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/items-sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "promotions-rows-failure",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": true
+    },
+    "request": {
+      "path": "/v1/promotions-sitemap.xml",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"3a0115d4d5ea72065e5f6e93457cc4bc9f1707fc\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/promotions-sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "profile-rows-failure",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": true
+    },
+    "request": {
+      "path": "/v1/profiles/sitemap.xml",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"3f283b19647431f735002208068f113ac50f0b3e\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/profiles/sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "sandbox-count-failure",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": true
+    },
+    "request": {
+      "path": "/v1/sandboxes/sitemap.xml",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8d306759b13927d5a211b77de060c0e968bf11b3\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/sandboxes/sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "sandbox-rows-failure",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": true
+    },
+    "request": {
+      "path": "/v1/sandboxes/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8d306759b13927d5a211b77de060c0e968bf11b3\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/sandboxes/sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "unknown query /v1/items-sitemap.xml",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml?unknown=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"58fb8752c2daf8975adabb0e1c209fd9ca8b435f\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/items-sitemap.xml",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"unknown\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "unknown query /v1/promotions-sitemap.xml",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/promotions-sitemap.xml?unknown=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"dd366fe520a49bff3c5d326653eaaf8f83ba54be\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/promotions-sitemap.xml",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"unknown\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "unknown query /v1/profiles/sitemap.xml",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/profiles/sitemap.xml?unknown=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"331ef4653c0f55a7ad1fdd8190b801a045f79155\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/profiles/sitemap.xml",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"unknown\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "unknown query /v1/sandboxes/sitemap.xml",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sandboxes/sitemap.xml?unknown=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"19fce4324be65d5e7b37b87007d4718c8f2ca97c\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/sandboxes/sitemap.xml",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"unknown\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "invalid sandbox page",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sandboxes/sitemap.xml?page=0",
+      "method": "GET"
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"9a2503044f7bfadc89df64fd94c1b393778d6302\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `page` parameter must be between 1 and 9007199254740991.",
+        "instance": "/v1/sandboxes/sitemap.xml",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "parameter": "page",
+            "code": "INVALID",
+            "message": "Out of range."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "offer historical scalars",
+    "input": {
+      "rows": [
+        {
+          "id": 42,
+          "lastModifiedDate": 1.9
+        },
+        {
+          "id": null,
+          "lastModifiedDate": false
+        },
+        {
+          "id": true,
+          "lastModifiedDate": true
+        },
+        {
+          "lastModifiedDate": 0
+        },
+        {
+          "id": [
+            "nested"
+          ],
+          "lastModifiedDate": ""
+        }
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"63a891923c4f3603235c14c42ae9685a2ea3b42d\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">\n  <url>\n    <loc>https://egdata.app/offers/42</loc>\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"https://egdata.app/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"id\" href=\"https://egdata.app/id/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ms\" href=\"https://egdata.app/ms/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"da\" href=\"https://egdata.app/da/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"de\" href=\"https://egdata.app/de/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"en-US\" href=\"https://egdata.app/en-US/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-ES\" href=\"https://egdata.app/es-ES/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-MX\" href=\"https://egdata.app/es-MX/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fil\" href=\"https://egdata.app/fil/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fr\" href=\"https://egdata.app/fr/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"it\" href=\"https://egdata.app/it/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hu\" href=\"https://egdata.app/hu/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"nl\" href=\"https://egdata.app/nl/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"no\" href=\"https://egdata.app/no/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pl\" href=\"https://egdata.app/pl/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt-BR\" href=\"https://egdata.app/pt-BR/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt\" href=\"https://egdata.app/pt/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ro\" href=\"https://egdata.app/ro/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fi\" href=\"https://egdata.app/fi/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"sv\" href=\"https://egdata.app/sv/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"vi\" href=\"https://egdata.app/vi/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"tr\" href=\"https://egdata.app/tr/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"cs\" href=\"https://egdata.app/cs/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"bg\" href=\"https://egdata.app/bg/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ru\" href=\"https://egdata.app/ru/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"uk\" href=\"https://egdata.app/uk/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"https://egdata.app/ar/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hi\" href=\"https://egdata.app/hi/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"th\" href=\"https://egdata.app/th/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ja\" href=\"https://egdata.app/ja/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-CN\" href=\"https://egdata.app/zh-CN/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-Hant\" href=\"https://egdata.app/zh-Hant/offers/42\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ko\" href=\"https://egdata.app/ko/offers/42\" />\n    <lastmod>1970-01-01T00:00:00.001Z</lastmod>\n  </url>\n  <url>\n    <loc>https://egdata.app/offers/null</loc>\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"https://egdata.app/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"id\" href=\"https://egdata.app/id/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ms\" href=\"https://egdata.app/ms/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"da\" href=\"https://egdata.app/da/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"de\" href=\"https://egdata.app/de/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"en-US\" href=\"https://egdata.app/en-US/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-ES\" href=\"https://egdata.app/es-ES/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-MX\" href=\"https://egdata.app/es-MX/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fil\" href=\"https://egdata.app/fil/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fr\" href=\"https://egdata.app/fr/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"it\" href=\"https://egdata.app/it/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hu\" href=\"https://egdata.app/hu/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"nl\" href=\"https://egdata.app/nl/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"no\" href=\"https://egdata.app/no/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pl\" href=\"https://egdata.app/pl/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt-BR\" href=\"https://egdata.app/pt-BR/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt\" href=\"https://egdata.app/pt/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ro\" href=\"https://egdata.app/ro/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fi\" href=\"https://egdata.app/fi/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"sv\" href=\"https://egdata.app/sv/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"vi\" href=\"https://egdata.app/vi/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"tr\" href=\"https://egdata.app/tr/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"cs\" href=\"https://egdata.app/cs/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"bg\" href=\"https://egdata.app/bg/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ru\" href=\"https://egdata.app/ru/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"uk\" href=\"https://egdata.app/uk/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"https://egdata.app/ar/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hi\" href=\"https://egdata.app/hi/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"th\" href=\"https://egdata.app/th/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ja\" href=\"https://egdata.app/ja/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-CN\" href=\"https://egdata.app/zh-CN/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-Hant\" href=\"https://egdata.app/zh-Hant/offers/null\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ko\" href=\"https://egdata.app/ko/offers/null\" />\n\n  </url>\n  <url>\n    <loc>https://egdata.app/offers/true</loc>\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"https://egdata.app/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"id\" href=\"https://egdata.app/id/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ms\" href=\"https://egdata.app/ms/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"da\" href=\"https://egdata.app/da/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"de\" href=\"https://egdata.app/de/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"en-US\" href=\"https://egdata.app/en-US/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-ES\" href=\"https://egdata.app/es-ES/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-MX\" href=\"https://egdata.app/es-MX/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fil\" href=\"https://egdata.app/fil/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fr\" href=\"https://egdata.app/fr/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"it\" href=\"https://egdata.app/it/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hu\" href=\"https://egdata.app/hu/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"nl\" href=\"https://egdata.app/nl/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"no\" href=\"https://egdata.app/no/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pl\" href=\"https://egdata.app/pl/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt-BR\" href=\"https://egdata.app/pt-BR/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt\" href=\"https://egdata.app/pt/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ro\" href=\"https://egdata.app/ro/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fi\" href=\"https://egdata.app/fi/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"sv\" href=\"https://egdata.app/sv/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"vi\" href=\"https://egdata.app/vi/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"tr\" href=\"https://egdata.app/tr/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"cs\" href=\"https://egdata.app/cs/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"bg\" href=\"https://egdata.app/bg/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ru\" href=\"https://egdata.app/ru/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"uk\" href=\"https://egdata.app/uk/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"https://egdata.app/ar/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hi\" href=\"https://egdata.app/hi/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"th\" href=\"https://egdata.app/th/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ja\" href=\"https://egdata.app/ja/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-CN\" href=\"https://egdata.app/zh-CN/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-Hant\" href=\"https://egdata.app/zh-Hant/offers/true\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ko\" href=\"https://egdata.app/ko/offers/true\" />\n    <lastmod>1970-01-01T00:00:00.001Z</lastmod>\n  </url>\n  <url>\n    <loc>https://egdata.app/offers/undefined</loc>\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"https://egdata.app/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"id\" href=\"https://egdata.app/id/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ms\" href=\"https://egdata.app/ms/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"da\" href=\"https://egdata.app/da/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"de\" href=\"https://egdata.app/de/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"en-US\" href=\"https://egdata.app/en-US/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-ES\" href=\"https://egdata.app/es-ES/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-MX\" href=\"https://egdata.app/es-MX/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fil\" href=\"https://egdata.app/fil/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fr\" href=\"https://egdata.app/fr/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"it\" href=\"https://egdata.app/it/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hu\" href=\"https://egdata.app/hu/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"nl\" href=\"https://egdata.app/nl/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"no\" href=\"https://egdata.app/no/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pl\" href=\"https://egdata.app/pl/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt-BR\" href=\"https://egdata.app/pt-BR/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt\" href=\"https://egdata.app/pt/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ro\" href=\"https://egdata.app/ro/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fi\" href=\"https://egdata.app/fi/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"sv\" href=\"https://egdata.app/sv/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"vi\" href=\"https://egdata.app/vi/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"tr\" href=\"https://egdata.app/tr/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"cs\" href=\"https://egdata.app/cs/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"bg\" href=\"https://egdata.app/bg/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ru\" href=\"https://egdata.app/ru/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"uk\" href=\"https://egdata.app/uk/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"https://egdata.app/ar/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hi\" href=\"https://egdata.app/hi/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"th\" href=\"https://egdata.app/th/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ja\" href=\"https://egdata.app/ja/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-CN\" href=\"https://egdata.app/zh-CN/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-Hant\" href=\"https://egdata.app/zh-Hant/offers/undefined\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ko\" href=\"https://egdata.app/ko/offers/undefined\" />\n\n  </url>\n  <url>\n    <loc>https://egdata.app/offers/nested</loc>\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"https://egdata.app/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"id\" href=\"https://egdata.app/id/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ms\" href=\"https://egdata.app/ms/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"da\" href=\"https://egdata.app/da/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"de\" href=\"https://egdata.app/de/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"en-US\" href=\"https://egdata.app/en-US/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-ES\" href=\"https://egdata.app/es-ES/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-MX\" href=\"https://egdata.app/es-MX/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fil\" href=\"https://egdata.app/fil/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fr\" href=\"https://egdata.app/fr/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"it\" href=\"https://egdata.app/it/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hu\" href=\"https://egdata.app/hu/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"nl\" href=\"https://egdata.app/nl/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"no\" href=\"https://egdata.app/no/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pl\" href=\"https://egdata.app/pl/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt-BR\" href=\"https://egdata.app/pt-BR/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt\" href=\"https://egdata.app/pt/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ro\" href=\"https://egdata.app/ro/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fi\" href=\"https://egdata.app/fi/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"sv\" href=\"https://egdata.app/sv/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"vi\" href=\"https://egdata.app/vi/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"tr\" href=\"https://egdata.app/tr/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"cs\" href=\"https://egdata.app/cs/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"bg\" href=\"https://egdata.app/bg/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ru\" href=\"https://egdata.app/ru/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"uk\" href=\"https://egdata.app/uk/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"https://egdata.app/ar/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hi\" href=\"https://egdata.app/hi/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"th\" href=\"https://egdata.app/th/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ja\" href=\"https://egdata.app/ja/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-CN\" href=\"https://egdata.app/zh-CN/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-Hant\" href=\"https://egdata.app/zh-Hant/offers/nested\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ko\" href=\"https://egdata.app/ko/offers/nested\" />\n\n  </url>\n</urlset>"
+    }
+  },
+  {
+    "name": "item historical scalars",
+    "input": {
+      "rows": [
+        {
+          "id": 42,
+          "lastModifiedDate": 1.9
+        },
+        {
+          "id": null,
+          "lastModifiedDate": false
+        },
+        {
+          "id": true,
+          "lastModifiedDate": true
+        },
+        {
+          "lastModifiedDate": 0
+        },
+        {
+          "id": [
+            "nested"
+          ],
+          "lastModifiedDate": ""
+        }
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"7fa03f535b04a4868f5489c783c106de42db2c94\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url>\n    <loc>https://egdata.app/items/42</loc>\n    <lastmod>1970-01-01T00:00:00.001Z</lastmod>\n  </url>\n  <url>\n    <loc>https://egdata.app/items/null</loc>\n\n  </url>\n  <url>\n    <loc>https://egdata.app/items/true</loc>\n    <lastmod>1970-01-01T00:00:00.001Z</lastmod>\n  </url>\n  <url>\n    <loc>https://egdata.app/items/undefined</loc>\n\n  </url>\n  <url>\n    <loc>https://egdata.app/items/nested</loc>\n\n  </url>\n</urlset>"
+    }
+  },
+  {
+    "name": "historical promotion IDs",
+    "input": {
+      "rows": [
+        {
+          "id": 42
+        },
+        {
+          "id": null
+        },
+        {}
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/promotions-sitemap.xml",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"a3173f8b984a6f574428186c6dd722565c5dc290\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url><loc>https://egdata.app/promotions/42</loc></url>\n  <url><loc>https://egdata.app/promotions/null</loc></url>\n  <url><loc>https://egdata.app/promotions/undefined</loc></url>\n</urlset>"
+    }
+  },
+  {
+    "name": "historical profile IDs",
+    "input": {
+      "rows": [
+        {
+          "accountId": 41
+        },
+        {
+          "accountId": 0
+        },
+        {
+          "accountId": true
+        },
+        {
+          "accountId": {}
+        },
+        {
+          "accountId": null
+        }
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/profiles/sitemap.xml",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"19d8dc485dab17aa0261dd8593c2ee3fefd3fc0f\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url><loc>https://egdata.app/profile/41</loc></url>\n  <url><loc>https://egdata.app/profile/true</loc></url>\n  <url><loc>https://egdata.app/profile/[object Object]</loc></url>\n</urlset>"
+    }
+  },
+  {
+    "name": "historical sandbox IDs",
+    "input": {
+      "rows": [
+        {
+          "_id": 42
+        },
+        {
+          "_id": null
+        },
+        {}
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sandboxes/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"9409c6a6cca53e3053763a8ccb195bbbaae47958\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url><loc>https://egdata.app/sandboxes/42</loc></url>\n  <url><loc>https://egdata.app/sandboxes/42/items</loc></url>\n  <url><loc>https://egdata.app/sandboxes/42/offers</loc></url>\n  <url><loc>https://egdata.app/sandboxes/42/assets</loc></url>\n  <url><loc>https://egdata.app/sandboxes/42/achievements</loc></url>\n  <url><loc>https://egdata.app/sandboxes/null</loc></url>\n  <url><loc>https://egdata.app/sandboxes/null/items</loc></url>\n  <url><loc>https://egdata.app/sandboxes/null/offers</loc></url>\n  <url><loc>https://egdata.app/sandboxes/null/assets</loc></url>\n  <url><loc>https://egdata.app/sandboxes/null/achievements</loc></url>\n  <url><loc>https://egdata.app/sandboxes/undefined</loc></url>\n  <url><loc>https://egdata.app/sandboxes/undefined/items</loc></url>\n  <url><loc>https://egdata.app/sandboxes/undefined/offers</loc></url>\n  <url><loc>https://egdata.app/sandboxes/undefined/assets</loc></url>\n  <url><loc>https://egdata.app/sandboxes/undefined/achievements</loc></url>\n</urlset>"
+    }
+  },
+  {
+    "name": "item extended-year timestamps",
+    "input": {
+      "rows": [
+        {
+          "id": "latest",
+          "lastModifiedDate": 8640000000000000
+        },
+        {
+          "id": "earliest",
+          "lastModifiedDate": -8640000000000000
+        },
+        {
+          "id": "extended",
+          "lastModifiedDate": -62198755200000
+        },
+        {
+          "id": "year",
+          "lastModifiedDate": "2020"
+        },
+        {
+          "id": "month",
+          "lastModifiedDate": "2020-04"
+        },
+        {
+          "id": "array",
+          "lastModifiedDate": [
+            "2020-04-01"
+          ]
+        }
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"392ba0fec1eef69cd0e97b46156673b57cb68f25\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url>\n    <loc>https://egdata.app/items/latest</loc>\n    <lastmod>+275760-09-13T00:00:00.000Z</lastmod>\n  </url>\n  <url>\n    <loc>https://egdata.app/items/earliest</loc>\n    <lastmod>-271821-04-20T00:00:00.000Z</lastmod>\n  </url>\n  <url>\n    <loc>https://egdata.app/items/extended</loc>\n    <lastmod>-000001-01-01T00:00:00.000Z</lastmod>\n  </url>\n  <url>\n    <loc>https://egdata.app/items/year</loc>\n    <lastmod>2020-01-01T00:00:00.000Z</lastmod>\n  </url>\n  <url>\n    <loc>https://egdata.app/items/month</loc>\n    <lastmod>2020-04-01T00:00:00.000Z</lastmod>\n  </url>\n  <url>\n    <loc>https://egdata.app/items/array</loc>\n    <lastmod>2020-04-01T00:00:00.000Z</lastmod>\n  </url>\n</urlset>"
+    }
+  },
+  {
+    "name": "item invalid timestamp magnitude",
+    "input": {
+      "rows": [
+        {
+          "id": "overflow",
+          "lastModifiedDate": 8640000000000001
+        }
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"faf187029a974fbf8921680231c87f8f64c62554\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/items-sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stored BSON date 8640000000000000 /v1/sitemap.xml?page=1",
+    "input": {
+      "wireRows": [
+        "300000000269640009000000626f756e6461727900096c6173744d6f64696669656444617465000000dcc208b21e0000"
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"7be8d6121631795fe87a69bdcfa0d5d4d59dc9b7\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">\n  <url>\n    <loc>https://egdata.app/offers/boundary</loc>\n    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"https://egdata.app/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"id\" href=\"https://egdata.app/id/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ms\" href=\"https://egdata.app/ms/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"da\" href=\"https://egdata.app/da/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"de\" href=\"https://egdata.app/de/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"en-US\" href=\"https://egdata.app/en-US/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-ES\" href=\"https://egdata.app/es-ES/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"es-MX\" href=\"https://egdata.app/es-MX/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fil\" href=\"https://egdata.app/fil/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fr\" href=\"https://egdata.app/fr/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"it\" href=\"https://egdata.app/it/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hu\" href=\"https://egdata.app/hu/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"nl\" href=\"https://egdata.app/nl/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"no\" href=\"https://egdata.app/no/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pl\" href=\"https://egdata.app/pl/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt-BR\" href=\"https://egdata.app/pt-BR/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"pt\" href=\"https://egdata.app/pt/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ro\" href=\"https://egdata.app/ro/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"fi\" href=\"https://egdata.app/fi/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"sv\" href=\"https://egdata.app/sv/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"vi\" href=\"https://egdata.app/vi/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"tr\" href=\"https://egdata.app/tr/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"cs\" href=\"https://egdata.app/cs/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"bg\" href=\"https://egdata.app/bg/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ru\" href=\"https://egdata.app/ru/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"uk\" href=\"https://egdata.app/uk/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"https://egdata.app/ar/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"hi\" href=\"https://egdata.app/hi/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"th\" href=\"https://egdata.app/th/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ja\" href=\"https://egdata.app/ja/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-CN\" href=\"https://egdata.app/zh-CN/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"zh-Hant\" href=\"https://egdata.app/zh-Hant/offers/boundary\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ko\" href=\"https://egdata.app/ko/offers/boundary\" />\n    <lastmod>+275760-09-13T00:00:00.000Z</lastmod>\n  </url>\n</urlset>"
+    }
+  },
+  {
+    "name": "stored BSON date 8640000000000001 /v1/sitemap.xml?page=1",
+    "input": {
+      "wireRows": [
+        "300000000269640009000000626f756e6461727900096c6173744d6f64696669656444617465000100dcc208b21e0000"
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ba18ea7ead474ae80609835d3d791b96defb5556\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stored BSON date 8640000000000000 /v1/items-sitemap.xml?page=1",
+    "input": {
+      "wireRows": [
+        "300000000269640009000000626f756e6461727900096c6173744d6f64696669656444617465000000dcc208b21e0000"
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"f8007647d12c778b0ab0b297c7f1b60831f12a74\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url>\n    <loc>https://egdata.app/items/boundary</loc>\n    <lastmod>+275760-09-13T00:00:00.000Z</lastmod>\n  </url>\n</urlset>"
+    }
+  },
+  {
+    "name": "stored BSON date 8640000000000001 /v1/items-sitemap.xml?page=1",
+    "input": {
+      "wireRows": [
+        "300000000269640009000000626f756e6461727900096c6173744d6f64696669656444617465000100dcc208b21e0000"
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items-sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"faf187029a974fbf8921680231c87f8f64c62554\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/items-sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stored BSON date 8640000000000000 /v1/items/sitemap.xml?page=1",
+    "input": {
+      "wireRows": [
+        "300000000269640009000000626f756e6461727900096c6173744d6f64696669656444617465000000dcc208b21e0000"
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"f8007647d12c778b0ab0b297c7f1b60831f12a74\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url>\n    <loc>https://egdata.app/items/boundary</loc>\n    <lastmod>+275760-09-13T00:00:00.000Z</lastmod>\n  </url>\n</urlset>"
+    }
+  },
+  {
+    "name": "stored BSON date 8640000000000001 /v1/items/sitemap.xml?page=1",
+    "input": {
+      "wireRows": [
+        "300000000269640009000000626f756e6461727900096c6173744d6f64696669656444617465000100dcc208b21e0000"
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/items/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"65760968576a854ceeeda510975b8280ae2e56c6\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/items/sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stored BSON date 8640000000000000 /v1/sandboxes/sitemap.xml?page=1",
+    "input": {
+      "wireRows": [
+        "28000000025f69640009000000626f756e64617279000975706461746564000000dcc208b21e0000"
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sandboxes/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"215247301c295ec4131eeb16492fc41162f89aca\""
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url><loc>https://egdata.app/sandboxes/boundary</loc><lastmod>+275760-09-13T00:00:00.000Z</lastmod></url>\n  <url><loc>https://egdata.app/sandboxes/boundary/items</loc><lastmod>+275760-09-13T00:00:00.000Z</lastmod></url>\n  <url><loc>https://egdata.app/sandboxes/boundary/offers</loc><lastmod>+275760-09-13T00:00:00.000Z</lastmod></url>\n  <url><loc>https://egdata.app/sandboxes/boundary/assets</loc><lastmod>+275760-09-13T00:00:00.000Z</lastmod></url>\n  <url><loc>https://egdata.app/sandboxes/boundary/achievements</loc><lastmod>+275760-09-13T00:00:00.000Z</lastmod></url>\n</urlset>"
+    }
+  },
+  {
+    "name": "stored BSON date 8640000000000001 /v1/sandboxes/sitemap.xml?page=1",
+    "input": {
+      "wireRows": [
+        "28000000025f69640009000000626f756e64617279000975706461746564000100dcc208b21e0000"
+      ],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/sandboxes/sitemap.xml?page=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8d306759b13927d5a211b77de060c0e968bf11b3\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/sandboxes/sitemap.xml",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "conditional-match",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/robots.txt",
+      "method": "GET",
+      "headers": {
+        "if-none-match": "\"956a25aff9aaf7f038a93b79b6c60283773e710f\""
+      }
+    },
+    "response": {
+      "status": 304,
+      "headers": {
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"956a25aff9aaf7f038a93b79b6c60283773e710f\""
+      },
+      "body": ""
+    }
+  },
+  {
+    "name": "conditional-weak",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/robots.txt",
+      "method": "GET",
+      "headers": {
+        "if-none-match": "W/\"956a25aff9aaf7f038a93b79b6c60283773e710f\""
+      }
+    },
+    "response": {
+      "status": 304,
+      "headers": {
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"956a25aff9aaf7f038a93b79b6c60283773e710f\""
+      },
+      "body": ""
+    }
+  },
+  {
+    "name": "conditional-wildcard",
+    "input": {
+      "rows": [],
+      "count": 0,
+      "fail": false
+    },
+    "request": {
+      "path": "/v1/robots.txt",
+      "method": "GET",
+      "headers": {
+        "if-none-match": "*"
+      }
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8",
+        "cache-control": "private, max-age=3600, stale-while-revalidate=604800",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"956a25aff9aaf7f038a93b79b6c60283773e710f\""
+      },
+      "body": "User-agent: *\nDisallow: /\nAllow: /v1/sitemap.xml\nAllow: /v1/sitemap.xml?*\nAllow: /v1/items-sitemap.xml\nAllow: /v1/items-sitemap.xml?*\nAllow: /v1/promotions-sitemap.xml\nAllow: /v1/profiles/sitemap.xml\nAllow: /v1/sandboxes/sitemap.xml\nAllow: /v1/sandboxes/sitemap.xml?*\nAllow: /v1/items/sitemap.xml\nAllow: /v1/items/sitemap.xml?*\nAllow: /v1/offers/*/og\nAllow: /v1/sandboxes/*/og\n"
+    }
+  }
+]

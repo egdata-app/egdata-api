@@ -1,0 +1,11 @@
+*
+!rust/
+!rust/**
+rust/target/
+!openapi/
+!openapi/**
+!src/
+!src/static/
+!src/static/**
+!src/graphql/
+!src/graphql/typedefs.ts

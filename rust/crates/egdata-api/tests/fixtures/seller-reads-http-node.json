@@ -1,0 +1,404 @@
+[
+  {
+    "name": "seller-directory-populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/sellers"
+    },
+    "input": {
+      "sellers": [
+        {
+          "id": "seller-b",
+          "name": "Beta Studio",
+          "slug": "beta",
+          "externalId": 2
+        },
+        {
+          "id": "seller-a",
+          "name": "Alpha Studio",
+          "slug": "alpha",
+          "externalId": 1
+        },
+        {
+          "id": "seller-a",
+          "name": "Alpha Duplicate",
+          "slug": "duplicate",
+          "externalId": 3
+        },
+        {
+          "id": "",
+          "name": "Invalid Seller"
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": [
+          {
+            "id": "seller-a",
+            "name": "Alpha Studio",
+            "slug": "alpha",
+            "externalId": 1
+          },
+          {
+            "id": "seller-b",
+            "name": "Beta Studio",
+            "slug": "beta",
+            "externalId": 2
+          }
+        ],
+        "meta": {
+          "count": 2,
+          "total": 2,
+          "truncated": false
+        }
+      }
+    }
+  },
+  {
+    "name": "seller-directory-cache-hit",
+    "request": {
+      "method": "GET",
+      "path": "/v1/sellers"
+    },
+    "input": {
+      "cachePayload": "{\"sellers\":[{\"id\":\"seller-a\",\"name\":\"Alpha Studio\",\"slug\":\"alpha\",\"externalId\":1},{\"id\":\"seller-b\",\"name\":\"Beta Studio\",\"slug\":\"beta\",\"externalId\":2}],\"total\":2}"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": [
+          {
+            "id": "seller-a",
+            "name": "Alpha Studio",
+            "slug": "alpha",
+            "externalId": 1
+          },
+          {
+            "id": "seller-b",
+            "name": "Beta Studio",
+            "slug": "beta",
+            "externalId": 2
+          }
+        ],
+        "meta": {
+          "count": 2,
+          "total": 2,
+          "truncated": false
+        }
+      }
+    }
+  },
+  {
+    "name": "seller-offers-populated-filtered",
+    "request": {
+      "method": "GET",
+      "path": "/v1/sellers/seller-a?country=US&locale=en-US&offerType=BASE_GAME&ignoredSandboxes=ns-old&limit=10"
+    },
+    "input": {
+      "offers": [
+        {
+          "id": "seller-game-a",
+          "namespace": "ns-a",
+          "title": "Seller Game A",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": [],
+          "seller": {
+            "id": "seller-a",
+            "name": "Alpha Studio"
+          }
+        },
+        {
+          "id": "seller-game-b",
+          "namespace": "ns-b",
+          "title": "Seller Game B",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": [],
+          "seller": {
+            "id": "seller-a",
+            "name": "Alpha Studio"
+          }
+        }
+      ],
+      "prices": [
+        {
+          "offerId": "seller-game-a",
+          "region": "US",
+          "currencyCode": "USD",
+          "price": {
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50
+          }
+        }
+      ],
+      "mongoFilters": [
+        {
+          "collection": "offers",
+          "filter": {
+            "seller.id": "seller-a",
+            "offerType": "BASE_GAME",
+            "namespace": {
+              "$nin": [
+                "ns-old"
+              ]
+            }
+          }
+        },
+        {
+          "collection": "pricev2",
+          "filter": {
+            "offerId": {
+              "$in": [
+                "seller-game-a",
+                "seller-game-b"
+              ]
+            },
+            "region": "US"
+          }
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": [
+          {
+            "_id": null,
+            "id": "seller-game-a",
+            "namespace": "ns-a",
+            "title": "Seller Game A",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-10-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": {
+              "id": "seller-a",
+              "name": "Alpha Studio"
+            },
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": {
+              "offerId": "seller-game-a",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 1999,
+              "discountPrice": 999,
+              "price": {
+                "originalPrice": 1999,
+                "discountPrice": 999,
+                "discount": 50,
+                "currencyCode": "USD",
+                "precision": 2
+              },
+              "updatedAt": null
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          },
+          {
+            "_id": null,
+            "id": "seller-game-b",
+            "namespace": "ns-b",
+            "title": "Seller Game B",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-10-01T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": {
+              "id": "seller-a",
+              "name": "Alpha Studio"
+            },
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical",
+          "pagination": {
+            "limit": 10,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "seller-offers-missing-seller-empty",
+    "request": {
+      "method": "GET",
+      "path": "/v1/sellers/seller-missing"
+    },
+    "input": {
+      "offers": [],
+      "prices": []
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "data": [],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "seller-directory-database-error",
+    "request": {
+      "method": "GET",
+      "path": "/v1/sellers"
+    },
+    "input": {
+      "databaseFailure": true
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/sellers",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "seller-directory-unknown-query",
+    "request": {
+      "method": "GET",
+      "path": "/v1/sellers?country=US"
+    },
+    "input": {},
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/sellers",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"country\""
+          }
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,30 @@
+FROM rust:1.95.0-alpine AS builder
+RUN apk add --no-cache build-base cmake clang perl tzdata pkgconf openssl-dev openssl-libs-static
+WORKDIR /app
+COPY rust/ rust/
+COPY openapi/ openapi/
+COPY src/static/ src/static/
+COPY src/graphql/typedefs.ts src/graphql/typedefs.ts
+WORKDIR /app/rust
+ENV OPENSSL_STATIC=1
+# COPY preserves host mtimes. Refresh workspace inputs before checking cached crate artifacts.
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/app/rust/target \
+    find crates ../openapi ../src -type f -exec touch {} + && \
+    target="$(rustc -vV | sed -n 's/^host: //p')" && \
+    RUSTFLAGS="-C target-feature=+crt-static" cargo build --release --locked \
+      --target "$target" -p egdata-api --bins && \
+    mkdir /artifacts && cp "target/$target/release/egdata-api" "target/$target/release/generate-openapi" /artifacts/ && \
+    ! readelf -l /artifacts/egdata-api | grep -q 'Requesting program interpreter'
+
+FROM scratch
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=builder /usr/share/zoneinfo/ /usr/share/zoneinfo/
+COPY --from=builder /artifacts/ /usr/local/bin/
+COPY openapi/egdata.openapi.json openapi/egdata.v1.openapi.json /app/openapi/
+WORKDIR /app
+USER 65532:65532
+ENV NODE_ENV=production PORT=4000 ORIGIN_AUTH_REQUIRED=true
+EXPOSE 4000
+ENTRYPOINT ["/usr/local/bin/egdata-api"]
+CMD ["--bind","0.0.0.0"]

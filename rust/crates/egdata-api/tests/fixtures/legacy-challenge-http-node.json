@@ -1,0 +1,102 @@
+[
+  {
+    "name": "off 503",
+    "mode": "off",
+    "request": {
+      "path": "/auth/challenge",
+      "method": "POST",
+      "rawBody": "{}"
+    },
+    "response": {
+      "status": 503,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "error": {
+          "code": "ANTI_ABUSE_DISABLED"
+        }
+      }
+    }
+  },
+  {
+    "name": "enforce 400",
+    "mode": "enforce",
+    "request": {
+      "path": "/auth/challenge",
+      "method": "POST",
+      "rawBody": "{"
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store"
+      },
+      "body": {
+        "error": {
+          "code": "INVALID_CHALLENGE"
+        }
+      }
+    }
+  },
+  {
+    "name": "enforce 200",
+    "mode": "enforce",
+    "request": {
+      "path": "/auth/challenge",
+      "method": "POST",
+      "rawBody": "{}"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store"
+      },
+      "body": {
+        "challenge": "<issued challenge>",
+        "difficulty": 16,
+        "expiresAt": 60000,
+        "algorithm": "SHA-256"
+      }
+    }
+  },
+  {
+    "name": "GET fallback",
+    "mode": "off",
+    "request": {
+      "path": "/auth/challenge",
+      "method": "GET"
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"5b65037351caeb0e5a48d963d7ffa88d0271d546\""
+      },
+      "body": "404 Not Found"
+    }
+  },
+  {
+    "name": "HEAD fallback",
+    "mode": "off",
+    "request": {
+      "path": "/auth/challenge",
+      "method": "HEAD"
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "etag": "\"5b65037351caeb0e5a48d963d7ffa88d0271d546\""
+      },
+      "body": ""
+    }
+  }
+]

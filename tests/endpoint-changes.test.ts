@@ -397,3 +397,29 @@ describe("strict operation coverage", () => {
     expect(checkChanges(base, head, baseCommit).errors).toEqual([]);
   });
 });
+
+it("requires a fresh explicit assessment for Rust source and build configuration", () => {
+  const base = fixture();
+  const head = new Map(base);
+  const paths = [
+    "rust/Cargo.toml",
+    "rust/Cargo.lock",
+    "rust/rust-toolchain.toml",
+    "rust/crates/egdata-api/Cargo.toml",
+    "rust/crates/egdata-api/src/v1/catalog.rs",
+  ];
+  for (const path of paths) head.set(path, "new Rust migration source");
+  head.set("rust/MIGRATION.md", "Implementation status only");
+  head.set("rust/target/build/output.rs", "Generated compiler output");
+  const result = impact(base, head);
+  expect(result.unknown).toEqual([...paths].sort());
+  expect(checkChanges(base, head, baseCommit).errors).toContain(
+    "API changes require a current validated impact assessment",
+  );
+  assess(base, head);
+  expect(checkChanges(base, head, baseCommit).errors).toEqual([]);
+  head.set(paths[4], "changed Rust route implementation");
+  expect(checkChanges(base, head, baseCommit).errors.join("\n")).toContain(
+    "Stale assessment",
+  );
+});

@@ -1,0 +1,284 @@
+[
+  {
+    "input": {
+      "sandboxId": "ns",
+      "items": [
+        {
+          "id": "one",
+          "namespace": "ns",
+          "title": "Game",
+          "releaseInfo": [
+            {
+              "appId": "real",
+              "platform": [
+                "Mac"
+              ]
+            },
+            {
+              "appId": "virtual",
+              "platform": [
+                "Windows",
+                "Mac",
+                "",
+                7,
+                null
+              ]
+            }
+          ]
+        },
+        {
+          "namespace": null,
+          "releaseInfo": [
+            {
+              "appId": "missing-id",
+              "platform": [
+                "Windows"
+              ]
+            }
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "artifactId": "real",
+          "platform": "Windows",
+          "updatedAt": "2025-01-01"
+        },
+        {
+          "artifactId": null,
+          "platform": "Windows",
+          "updatedAt": null
+        },
+        {
+          "artifactId": "😀",
+          "updatedAt": null
+        },
+        {
+          "artifactId": "",
+          "updatedAt": null
+        },
+        {
+          "artifactId": "z",
+          "updatedAt": "invalid"
+        }
+      ]
+    },
+    "output": [
+      {
+        "artifactId": "z",
+        "updatedAt": "invalid"
+      },
+      {
+        "artifactId": "real",
+        "platform": "Windows",
+        "updatedAt": "2025-01-01T00:00:00.000Z"
+      },
+      {
+        "artifactId": "missing-id",
+        "downloadSizeBytes": 0,
+        "installedSizeBytes": 0,
+        "itemId": null,
+        "namespace": "ns",
+        "platform": "Windows",
+        "_id": "virtual:undefined:missing-id:Windows",
+        "title": null,
+        "updatedAt": "1970-01-01T00:00:00.000Z"
+      },
+      {
+        "artifactId": "virtual",
+        "downloadSizeBytes": 0,
+        "installedSizeBytes": 0,
+        "itemId": "one",
+        "namespace": "ns",
+        "platform": "Mac",
+        "_id": "virtual:one:virtual:Mac",
+        "title": "Game",
+        "updatedAt": "1970-01-01T00:00:00.000Z"
+      },
+      {
+        "artifactId": "virtual",
+        "downloadSizeBytes": 0,
+        "installedSizeBytes": 0,
+        "itemId": "one",
+        "namespace": "ns",
+        "platform": "Windows",
+        "_id": "virtual:one:virtual:Windows",
+        "title": "Game",
+        "updatedAt": "1970-01-01T00:00:00.000Z"
+      },
+      {
+        "artifactId": "😀",
+        "updatedAt": null
+      },
+      {
+        "artifactId": "",
+        "updatedAt": null
+      },
+      {
+        "artifactId": null,
+        "platform": "Windows",
+        "updatedAt": null
+      }
+    ],
+    "queries": [
+      {
+        "collection": "items",
+        "args": [
+          {
+            "namespace": {
+              "$eq": "ns"
+            }
+          },
+          {
+            "id": 1,
+            "namespace": 1,
+            "releaseInfo": 1,
+            "title": 1
+          }
+        ]
+      },
+      {
+        "collection": "assets",
+        "args": [
+          {
+            "namespace": {
+              "$eq": "ns"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "input": {
+      "sandboxId": "ns",
+      "platforms": [
+        "Windows"
+      ],
+      "items": [
+        {
+          "id": null,
+          "releaseInfo": [
+            {
+              "appId": "v",
+              "platform": [
+                "Mac",
+                "Windows"
+              ]
+            }
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "artifactId": "a",
+          "platform": "Windows",
+          "updatedAt": "2020-01-01T00:00:00Z"
+        },
+        {
+          "artifactId": "a",
+          "platform": null,
+          "updatedAt": null
+        }
+      ]
+    },
+    "output": [
+      {
+        "artifactId": "a",
+        "platform": "Windows",
+        "updatedAt": "2020-01-01T00:00:00.000Z"
+      },
+      {
+        "artifactId": "v",
+        "downloadSizeBytes": 0,
+        "installedSizeBytes": 0,
+        "itemId": null,
+        "namespace": "ns",
+        "platform": "Windows",
+        "_id": "virtual:null:v:Windows",
+        "title": null,
+        "updatedAt": "1970-01-01T00:00:00.000Z"
+      }
+    ],
+    "queries": [
+      {
+        "collection": "items",
+        "args": [
+          {
+            "namespace": {
+              "$eq": "ns"
+            }
+          },
+          {
+            "id": 1,
+            "namespace": 1,
+            "releaseInfo": 1,
+            "title": 1
+          }
+        ]
+      },
+      {
+        "collection": "assets",
+        "args": [
+          {
+            "namespace": {
+              "$eq": "ns"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "input": {
+      "sandboxId": "ns",
+      "items": [
+        {
+          "releaseInfo": "invalid"
+        },
+        {
+          "releaseInfo": [
+            {},
+            null,
+            {
+              "appId": "",
+              "platform": [
+                "Windows"
+              ]
+            }
+          ]
+        }
+      ],
+      "assets": []
+    },
+    "output": [],
+    "queries": [
+      {
+        "collection": "items",
+        "args": [
+          {
+            "namespace": {
+              "$eq": "ns"
+            }
+          },
+          {
+            "id": 1,
+            "namespace": 1,
+            "releaseInfo": 1,
+            "title": 1
+          }
+        ]
+      },
+      {
+        "collection": "assets",
+        "args": [
+          {
+            "namespace": {
+              "$eq": "ns"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

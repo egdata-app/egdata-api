@@ -1,0 +1,404 @@
+[
+  {
+    "name": "mixed-stream",
+    "request": {
+      "method": "POST",
+      "path": "/v1/catalog/hydrate",
+      "raw": "{\"schemaVersion\":2,\"identifiers\":[{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"fail\"},{\"type\":\"asset\",\"namespace\":\"N\",\"artifactId\":\"José\",\"platform\":\"Win32\"},{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"large\"},{\"type\":\"release-app\",\"namespace\":\"N\",\"appId\":\"XA\",\"platform\":\"Mac\"}],\"knownRoots\":[{\"rootKey\":\"release-app:n:xa:mac\",\"graphHash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}],\"knownRecords\":[{\"recordKey\":\"item:n:test\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]}",
+      "headers": {
+        "content-type": "application/vnd.egdata+json; charset=utf-8"
+      }
+    },
+    "calls": [
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "N",
+          "id": "fail"
+        },
+        "knownRoots": [
+          {
+            "rootKey": "release-app:n:xa:mac",
+            "graphHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "knownRecords": [
+          {
+            "recordKey": "item:n:test",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ]
+      },
+      {
+        "identifier": {
+          "type": "asset",
+          "namespace": "N",
+          "artifactId": "José",
+          "platform": "Win32"
+        },
+        "knownRoots": [
+          {
+            "rootKey": "release-app:n:xa:mac",
+            "graphHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "knownRecords": [
+          {
+            "recordKey": "item:n:test",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ]
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "N",
+          "id": "large"
+        },
+        "knownRoots": [
+          {
+            "rootKey": "release-app:n:xa:mac",
+            "graphHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "knownRecords": [
+          {
+            "recordKey": "item:n:test",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ]
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "N",
+          "appId": "XA",
+          "platform": "Mac"
+        },
+        "knownRoots": [
+          {
+            "rootKey": "release-app:n:xa:mac",
+            "graphHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "knownRecords": [
+          {
+            "recordKey": "item:n:test",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/x-ndjson; charset=utf-8",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": "{\"schemaVersion\":2,\"rootKey\":\"item:n:fail\",\"identifier\":{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"fail\"},\"hydratedAt\":\"2026-11-17T12:00:00.000Z\",\"status\":\"error\",\"error\":{\"code\":\"CATALOG_ROOT_RESOLUTION_FAILED\",\"message\":\"This catalog root could not be hydrated.\"}}\n{\"schemaVersion\":2,\"rootKey\":\"asset:n:jos%C3%A9:win32\",\"identifier\":{\"type\":\"asset\",\"namespace\":\"N\",\"artifactId\":\"José\",\"platform\":\"Win32\"},\"hydratedAt\":\"2026-11-17T12:00:00.000Z\",\"status\":\"not-found\"}\n{\"schemaVersion\":2,\"rootKey\":\"item:n:large\",\"identifier\":{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"large\"},\"hydratedAt\":\"2026-11-17T12:00:00.000Z\",\"status\":\"error\",\"error\":{\"code\":\"CATALOG_ROOT_TOO_LARGE\",\"message\":\"This catalog root exceeds the hydration limit.\"}}\n{\"schemaVersion\":2,\"rootKey\":\"release-app:n:xa:mac\",\"identifier\":{\"type\":\"release-app\",\"namespace\":\"N\",\"appId\":\"XA\",\"platform\":\"Mac\"},\"hydratedAt\":\"2026-11-17T12:00:00.000Z\",\"status\":\"unchanged\",\"graphHash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}\n"
+    }
+  },
+  {
+    "name": "normalized-duplicate",
+    "request": {
+      "method": "POST",
+      "path": "/v1/catalog/hydrate",
+      "raw": "{\"schemaVersion\":2,\"identifiers\":[{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"É\"},{\"type\":\"item\",\"namespace\":\"N\",\"id\":\" é \"}],\"knownRoots\":[{\"rootKey\":\"release-app:n:xa:mac\",\"graphHash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}],\"knownRecords\":[{\"recordKey\":\"item:n:test\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "calls": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/catalog-hydration-invalid-request",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The catalog hydration request is invalid.",
+        "instance": "/v1/catalog/hydrate",
+        "code": "CATALOG_HYDRATION_INVALID_REQUEST",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "missing-arrays",
+    "request": {
+      "method": "POST",
+      "path": "/v1/catalog/hydrate",
+      "raw": "{\"schemaVersion\":2}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "calls": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/catalog-hydration-invalid-request",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The catalog hydration request is invalid.",
+        "instance": "/v1/catalog/hydrate",
+        "code": "CATALOG_HYDRATION_INVALID_REQUEST",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "bom-only",
+    "request": {
+      "method": "POST",
+      "path": "/v1/catalog/hydrate",
+      "raw": "{\"schemaVersion\":2,\"identifiers\":[{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"﻿\"}],\"knownRoots\":[{\"rootKey\":\"release-app:n:xa:mac\",\"graphHash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}],\"knownRecords\":[{\"recordKey\":\"item:n:test\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "calls": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/catalog-hydration-invalid-request",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The catalog hydration request is invalid.",
+        "instance": "/v1/catalog/hydrate",
+        "code": "CATALOG_HYDRATION_INVALID_REQUEST",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "unicode-nel",
+    "request": {
+      "method": "POST",
+      "path": "/v1/catalog/hydrate",
+      "raw": "{\"schemaVersion\":2,\"identifiers\":[{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"\"}],\"knownRoots\":[{\"rootKey\":\"release-app:n:xa:mac\",\"graphHash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}],\"knownRecords\":[{\"recordKey\":\"item:n:test\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "calls": [
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "N",
+          "id": ""
+        },
+        "knownRoots": [
+          {
+            "rootKey": "release-app:n:xa:mac",
+            "graphHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "knownRecords": [
+          {
+            "recordKey": "item:n:test",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/x-ndjson; charset=utf-8",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": "{\"schemaVersion\":2,\"rootKey\":\"item:n:%C2%85\",\"identifier\":{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"\"},\"hydratedAt\":\"2026-11-17T12:00:00.000Z\",\"status\":\"not-found\"}\n"
+    }
+  },
+  {
+    "name": "bom-duplicate",
+    "request": {
+      "method": "POST",
+      "path": "/v1/catalog/hydrate",
+      "raw": "{\"schemaVersion\":2,\"identifiers\":[{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"key\"},{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"﻿KEY\"}],\"knownRoots\":[{\"rootKey\":\"release-app:n:xa:mac\",\"graphHash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}],\"knownRecords\":[{\"recordKey\":\"item:n:test\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]}",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "calls": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/catalog-hydration-invalid-request",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The catalog hydration request is invalid.",
+        "instance": "/v1/catalog/hydrate",
+        "code": "CATALOG_HYDRATION_INVALID_REQUEST",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "invalid-json",
+    "request": {
+      "method": "POST",
+      "path": "/v1/catalog/hydrate",
+      "raw": "{",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "calls": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/catalog-hydration-invalid-request",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The catalog hydration request is not valid JSON.",
+        "instance": "/v1/catalog/hydrate",
+        "code": "CATALOG_HYDRATION_INVALID_REQUEST",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "declared-oversize",
+    "request": {
+      "method": "POST",
+      "path": "/v1/catalog/hydrate",
+      "raw": "{}",
+      "headers": {
+        "content-type": "application/json",
+        "content-length": "262145"
+      }
+    },
+    "calls": [],
+    "response": {
+      "status": 413,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/catalog-hydration-too-large",
+        "title": "Content Too Large",
+        "status": 413,
+        "detail": "The catalog hydration request is too large (maximum 256 KiB).",
+        "instance": "/v1/catalog/hydrate",
+        "code": "CATALOG_HYDRATION_TOO_LARGE",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "missing-content-type",
+    "request": {
+      "method": "POST",
+      "path": "/v1/catalog/hydrate",
+      "raw": "{}",
+      "headers": {}
+    },
+    "calls": [],
+    "response": {
+      "status": 415,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/unsupported-media-type",
+        "title": "Unsupported Media Type",
+        "status": 415,
+        "detail": "A JSON request body is required. Send Content-Type: application/json.",
+        "instance": "/v1/catalog/hydrate",
+        "code": "UNSUPPORTED_MEDIA_TYPE",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "wrong-content-type",
+    "request": {
+      "method": "POST",
+      "path": "/v1/catalog/hydrate",
+      "raw": "{}",
+      "headers": {
+        "content-type": "text/plain"
+      }
+    },
+    "calls": [],
+    "response": {
+      "status": 415,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle"
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/unsupported-media-type",
+        "title": "Unsupported Media Type",
+        "status": 415,
+        "detail": "This endpoint accepts application/json request bodies only.",
+        "instance": "/v1/catalog/hydrate",
+        "code": "UNSUPPORTED_MEDIA_TYPE",
+        "requestId": "req_node_oracle"
+      }
+    }
+  }
+]

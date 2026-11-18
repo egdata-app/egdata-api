@@ -1,8 +1,6 @@
 import { db as dbInstance } from '../db/index.js';
 import { Offer, Sandbox } from '../models/index.js';
 
-const { db } = dbInstance;
-
 export const getProduct = async (offerId: string) => {
   const offer = await Offer.findOne({ id: { $eq: offerId } });
 
@@ -16,7 +14,5 @@ export const getProduct = async (offerId: string) => {
     return null;
   }
 
-  const product = db.collection('products').findOne({ _id: { $eq: sandbox.parent } });
-
-  return product;
+  return dbInstance.db.collection('products').findOne({ _id: { $eq: sandbox.parent } });
 };

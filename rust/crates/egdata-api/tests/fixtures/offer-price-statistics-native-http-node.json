@@ -1,0 +1,6838 @@
+[
+  {
+    "name": "stats-native-decimal",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberDecimal": "410.50"
+            },
+            "payoutCurrencyExchangeRate": 1.75
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberDecimal": "410.50"
+            },
+            "payoutCurrencyExchangeRate": 1.75
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 411,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 411,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lowest": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 220,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lastDiscount": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 411,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 411,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"fa3529fe9bfdaec077aa628dcd778704c22768c3\""
+      },
+      "body": {
+        "data": {
+          "current": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 411,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 411,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lowest": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 126,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 126,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lastDiscount": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 411,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 411,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          }
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-native-unpromoted",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberLong": "9007199254740999"
+            },
+            "payoutCurrencyExchangeRate": 1.75
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberLong": "9007199254740999"
+            },
+            "payoutCurrencyExchangeRate": 1.75
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 9007199254741000,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 9007199254741000,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lowest": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 220,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lastDiscount": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 9007199254741000,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 9007199254741000,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"86d1f98fa67ac1197a90f5562da2b60054ad8f40\""
+      },
+      "body": {
+        "data": {
+          "current": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 9007199254741000,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 9007199254741000,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lowest": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 126,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 126,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lastDiscount": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 9007199254741000,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 9007199254741000,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          }
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-native-unknownRate",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125,
+            "payoutCurrencyExchangeRate": "1.25"
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125,
+            "payoutCurrencyExchangeRate": "1.25"
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 125,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 125,
+                "payoutCurrencyExchangeRate": "1.25",
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lowest": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 220,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lastDiscount": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 125,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 125,
+                "payoutCurrencyExchangeRate": "1.25",
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"872b957b04180b01e0229e3dff89f0d7040537db\""
+      },
+      "body": {
+        "data": {
+          "current": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 125,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 125,
+              "payoutCurrencyExchangeRate": "1.25",
+              "basePayoutPrice": null,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lowest": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 126,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 126,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lastDiscount": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 125,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 125,
+              "payoutCurrencyExchangeRate": "1.25",
+              "basePayoutPrice": null,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          }
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-native-otherField",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": "123",
+            "originalPrice": 123.5,
+            "payoutCurrencyExchangeRate": 1.75
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": "123",
+            "originalPrice": 123.5,
+            "payoutCurrencyExchangeRate": 1.75
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 124,
+              "discountPrice": 123,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 123,
+                "originalPrice": 124,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 216,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lowest": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 220,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lastDiscount": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 124,
+              "discountPrice": 123,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 123,
+                "originalPrice": 124,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 216,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"a105cd1ff5a054f6717c8b625f7fced6382cd3a6\""
+      },
+      "body": {
+        "data": {
+          "current": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 124,
+            "discountPrice": 123,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 123,
+              "originalPrice": 124,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 216,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lowest": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 126,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 126,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lastDiscount": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 124,
+            "discountPrice": 123,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 123,
+              "originalPrice": 124,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 216,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          }
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-native-bogusDiscount",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "discountPrice": [
+              3,
+              4
+            ],
+            "originalPrice": 12.5,
+            "payoutCurrencyExchangeRate": 1.75
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "discountPrice": [
+              3,
+              4
+            ],
+            "originalPrice": 12.5,
+            "payoutCurrencyExchangeRate": 1.75
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 13,
+              "discountPrice": null,
+              "price": {
+                "currencyCode": "USD",
+                "discountPrice": null,
+                "originalPrice": 13,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 13,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lowest": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 220,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lastDiscount": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 13,
+              "discountPrice": null,
+              "price": {
+                "currencyCode": "USD",
+                "discountPrice": null,
+                "originalPrice": 13,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 13,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"663066207f212b39657491498183d329ac4eb90d\""
+      },
+      "body": {
+        "data": {
+          "current": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "USD",
+            "precision": 2,
+            "originalPrice": 13,
+            "discountPrice": null,
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": null,
+              "originalPrice": 13,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 13,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lowest": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 126,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 126,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lastDiscount": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "USD",
+            "precision": 2,
+            "originalPrice": 13,
+            "discountPrice": null,
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": null,
+              "originalPrice": 13,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 13,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          }
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-native-sparse",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": "sparse",
+          "currencyCode": "JPY",
+          "discountPrice": {
+            "$numberDecimal": "349.80"
+          },
+          "price": null
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": "sparse",
+          "currencyCode": "JPY",
+          "discountPrice": {
+            "$numberDecimal": "349.80"
+          },
+          "price": null
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": {
+              "offerId": "sparse",
+              "region": null,
+              "currencyCode": "JPY",
+              "precision": 0,
+              "discountPrice": 350,
+              "price": null,
+              "updatedAt": null
+            },
+            "lowest": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 220,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lastDiscount": {
+              "offerId": "sparse",
+              "region": null,
+              "currencyCode": "JPY",
+              "precision": 0,
+              "discountPrice": 350,
+              "price": null,
+              "updatedAt": null
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d4b7e911713aedc4a2bbbe3b3c12915f285a5993\""
+      },
+      "body": {
+        "data": {
+          "current": {
+            "offerId": "sparse",
+            "region": null,
+            "currencyCode": "JPY",
+            "precision": 0,
+            "discountPrice": 350,
+            "price": null,
+            "updatedAt": null
+          },
+          "lowest": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 126,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 126,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lastDiscount": {
+            "offerId": "sparse",
+            "region": null,
+            "currencyCode": "JPY",
+            "precision": 0,
+            "discountPrice": 350,
+            "price": null,
+            "updatedAt": null
+          }
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-native-negative",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": -40,
+            "payoutCurrencyExchangeRate": 1.75
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": -40,
+            "payoutCurrencyExchangeRate": 1.75
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": -40,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": -40,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lowest": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 220,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lastDiscount": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": -40,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": -40,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"696ad28df4a0a752d43d64dae92b8595cdea0859\""
+      },
+      "body": {
+        "data": {
+          "current": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": -40,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": -40,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lowest": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 126,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 126,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lastDiscount": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": -40,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": -40,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          }
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-native-usd",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 25.5,
+            "payoutCurrencyExchangeRate": {
+              "rate": 1
+            }
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "USD",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 25.5,
+            "payoutCurrencyExchangeRate": {
+              "rate": 1
+            }
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 26,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "USD",
+                "discountPrice": 350,
+                "originalPrice": 26,
+                "payoutCurrencyExchangeRate": {
+                  "rate": 1
+                },
+                "basePayoutPrice": 26,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lowest": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 220,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lastDiscount": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 26,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "USD",
+                "discountPrice": 350,
+                "originalPrice": 26,
+                "payoutCurrencyExchangeRate": {
+                  "rate": 1
+                },
+                "basePayoutPrice": 26,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"6873ee9b64a43c8f410940861e188afd8ac9ebab\""
+      },
+      "body": {
+        "data": {
+          "current": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "USD",
+            "precision": 2,
+            "originalPrice": 26,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": 350,
+              "originalPrice": 26,
+              "payoutCurrencyExchangeRate": {
+                "rate": 1
+              },
+              "basePayoutPrice": 26,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lowest": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 126,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 126,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lastDiscount": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "USD",
+            "precision": 2,
+            "originalPrice": 26,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "USD",
+              "discountPrice": 350,
+              "originalPrice": 26,
+              "payoutCurrencyExchangeRate": {
+                "rate": 1
+              },
+              "basePayoutPrice": 26,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          }
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-native-exchangeDecimal",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": {
+              "$numberDecimal": "1.175"
+            }
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": {
+              "$numberDecimal": "1.175"
+            }
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": {
+                  "bytes": {
+                    "0": 151,
+                    "1": 4,
+                    "2": 0,
+                    "3": 0,
+                    "4": 0,
+                    "5": 0,
+                    "6": 0,
+                    "7": 0,
+                    "8": 0,
+                    "9": 0,
+                    "10": 0,
+                    "11": 0,
+                    "12": 0,
+                    "13": 0,
+                    "14": 58,
+                    "15": 48
+                  }
+                },
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lowest": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 220,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lastDiscount": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": {
+                  "bytes": {
+                    "0": 151,
+                    "1": 4,
+                    "2": 0,
+                    "3": 0,
+                    "4": 0,
+                    "5": 0,
+                    "6": 0,
+                    "7": 0,
+                    "8": 0,
+                    "9": 0,
+                    "10": 0,
+                    "11": 0,
+                    "12": 0,
+                    "13": 0,
+                    "14": 58,
+                    "15": 48
+                  }
+                },
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"06237ebd7ca607ed2cc5c468a02f917042bf6413\""
+      },
+      "body": {
+        "data": {
+          "current": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 126,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 126,
+              "payoutCurrencyExchangeRate": {
+                "bytes": {
+                  "0": 151,
+                  "1": 4,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0,
+                  "8": 0,
+                  "9": 0,
+                  "10": 0,
+                  "11": 0,
+                  "12": 0,
+                  "13": 0,
+                  "14": 58,
+                  "15": 48
+                }
+              },
+              "basePayoutPrice": null,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lowest": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 126,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 126,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lastDiscount": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 126,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 126,
+              "payoutCurrencyExchangeRate": {
+                "bytes": {
+                  "0": 151,
+                  "1": 4,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0,
+                  "8": 0,
+                  "9": 0,
+                  "10": 0,
+                  "11": 0,
+                  "12": 0,
+                  "13": 0,
+                  "14": 58,
+                  "15": 48
+                }
+              },
+              "basePayoutPrice": null,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          }
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-invalid-current-currency",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": {
+              "code": "foreign"
+            },
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 7,
+            "payoutCurrencyExchangeRate": 1.75
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberDecimal": "410.50"
+            },
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": null
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e9f4fd37fa1239859b3982150f44c3c9e48395f2\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/offer-oracle/price-stats",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stats-current-read-failure",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberDecimal": "410.50"
+            },
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": null
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e9f4fd37fa1239859b3982150f44c3c9e48395f2\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/offer-oracle/price-stats",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stats-invalid-lowest-currency",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": {
+              "code": "foreign"
+            },
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 7,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 12
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e9f4fd37fa1239859b3982150f44c3c9e48395f2\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/offer-oracle/price-stats",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stats-lowest-read-failure",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e9f4fd37fa1239859b3982150f44c3c9e48395f2\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/offer-oracle/price-stats",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stats-invalid-last-currency",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberDecimal": "410.50"
+            },
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": null
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": {
+              "code": "foreign"
+            },
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 7,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 12
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e9f4fd37fa1239859b3982150f44c3c9e48395f2\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/offer-oracle/price-stats",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stats-last-read-failure",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberDecimal": "410.50"
+            },
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": null
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "error": true
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e9f4fd37fa1239859b3982150f44c3c9e48395f2\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/offer-oracle/price-stats",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stats-availability-lowercase-blocked",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {
+          "countriesWhitelist": [
+            "fr"
+          ],
+          "countriesBlacklist": [
+            "FR"
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": {
+              "code": "foreign"
+            },
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 7,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 12
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberDecimal": "410.50"
+            },
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": null
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": null,
+            "lowest": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 411,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 411,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lastDiscount": null
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"56396e85a87626cb432676086fa4675810178ffb\""
+      },
+      "body": {
+        "data": {
+          "current": null,
+          "lowest": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 411,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 411,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lastDiscount": null
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-availability-out-of-country",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {
+          "countriesWhitelist": [
+            "US"
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": {
+              "code": "foreign"
+            },
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 7,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 12
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberDecimal": "410.50"
+            },
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": null
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": null,
+            "lowest": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 411,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 411,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lastDiscount": null
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"56396e85a87626cb432676086fa4675810178ffb\""
+      },
+      "body": {
+        "data": {
+          "current": null,
+          "lowest": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 411,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 411,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lastDiscount": null
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-availability-lowercase-allowed",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {
+          "countriesWhitelist": [
+            "fr"
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": {
+              "code": "foreign"
+            },
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 7,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 12
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberDecimal": "410.50"
+            },
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": null
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e9f4fd37fa1239859b3982150f44c3c9e48395f2\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/offer-oracle/price-stats",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stats-availability-malformed-list",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {
+          "countriesBlacklist": "FR"
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": {
+              "code": "foreign"
+            },
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 7,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 12
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberDecimal": "410.50"
+            },
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": null
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e9f4fd37fa1239859b3982150f44c3c9e48395f2\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/offer-oracle/price-stats",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stats-availability-malformed-entry",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {
+          "countriesWhitelist": [
+            null
+          ]
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": {
+              "code": "foreign"
+            },
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 7,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 12
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberDecimal": "410.50"
+            },
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": null
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e9f4fd37fa1239859b3982150f44c3c9e48395f2\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/offer-oracle/price-stats",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "stats-independent-missing-20",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": null,
+            "lowest": null,
+            "lastDiscount": null
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"87a04c86f8f0cc7986a9854bae3c0527da1305c6\""
+      },
+      "body": {
+        "data": {
+          "current": null,
+          "lowest": null,
+          "lastDiscount": null
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-independent-missing-21",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 220,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lowest": null,
+            "lastDiscount": null
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"c97d11607bfe6da4cbdb0dd4a989c12778fbe452\""
+      },
+      "body": {
+        "data": {
+          "current": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 126,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 126,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lowest": null,
+          "lastDiscount": null
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-independent-missing-22",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberDecimal": "410.50"
+            },
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": null
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": null,
+            "lowest": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 411,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 411,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lastDiscount": null
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"56396e85a87626cb432676086fa4675810178ffb\""
+      },
+      "body": {
+        "data": {
+          "current": null,
+          "lowest": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 411,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 411,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lastDiscount": null
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-native-driver-promotion",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": {
+              "$symbol": "EUR"
+            },
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberLong": "125"
+            },
+            "payoutCurrencyExchangeRate": {
+              "$numberLong": "2"
+            }
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": {
+              "$symbol": "EUR"
+            },
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberLong": "125"
+            },
+            "payoutCurrencyExchangeRate": {
+              "$numberLong": "2"
+            }
+          }
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": {
+              "$symbol": "EUR"
+            },
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberLong": "125"
+            },
+            "payoutCurrencyExchangeRate": {
+              "$numberLong": "2"
+            }
+          }
+        }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\"",
+          "payload": {
+            "current": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 125,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 125,
+                "payoutCurrencyExchangeRate": 2,
+                "basePayoutPrice": 250,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lowest": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 125,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 125,
+                "payoutCurrencyExchangeRate": 2,
+                "basePayoutPrice": 250,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            },
+            "lastDiscount": {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 125,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 125,
+                "payoutCurrencyExchangeRate": 2,
+                "basePayoutPrice": 250,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ba8732fdcad868cba4cb6df9e84575aa91ca9865\""
+      },
+      "body": {
+        "data": {
+          "current": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 125,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 125,
+              "payoutCurrencyExchangeRate": 2,
+              "basePayoutPrice": 250,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lowest": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 125,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 125,
+              "payoutCurrencyExchangeRate": 2,
+              "basePayoutPrice": 250,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          },
+          "lastDiscount": {
+            "offerId": "24.00",
+            "region": "EURO",
+            "currencyCode": "EUR",
+            "precision": 2,
+            "originalPrice": 125,
+            "discountPrice": 350,
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": 350,
+              "originalPrice": 125,
+              "payoutCurrencyExchangeRate": 2,
+              "basePayoutPrice": 250,
+              "precision": 2
+            },
+            "updatedAt": "2025-10-13T00:00:00.000Z",
+            "date": "2025-10-12T00:00:00.000Z"
+          }
+        },
+        "meta": {
+          "country": "FR",
+          "region": "EURO",
+          "locale": "fr-FR"
+        }
+      }
+    }
+  },
+  {
+    "name": "history-group-typed-decimal",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-history",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.by-region:id=\"offer-oracle\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "offer-oracle"
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": {
+              "$in": [
+                "AE",
+                "AFRICA",
+                "ANZ",
+                "AR",
+                "AU",
+                "BG",
+                "BR2",
+                "CA",
+                "CH",
+                "CIS",
+                "CL2",
+                "CN2",
+                "CO2",
+                "CR2",
+                "CZ",
+                "DK",
+                "EAST",
+                "EURO",
+                "GB",
+                "HK2",
+                "HU",
+                "ID2",
+                "IL",
+                "IN2",
+                "JP",
+                "KR2",
+                "KZ",
+                "LATAM",
+                "MIDEAST",
+                "MX2",
+                "MY2",
+                "NO",
+                "NZ",
+                "PE2",
+                "PH2",
+                "PL",
+                "QA",
+                "RO",
+                "ROW",
+                "RU",
+                "SA",
+                "SE",
+                "SEA",
+                "SG2",
+                "TH2",
+                "TR",
+                "TW2",
+                "UA",
+                "US",
+                "UY2",
+                "VN2",
+                "ZA2"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "date": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "offerId": {
+              "$numberDecimal": "24.00"
+            },
+            "region": {
+              "$numberDecimal": "23.00"
+            },
+            "updatedAt": {
+              "$date": "2025-10-13T00:00:00.000Z"
+            },
+            "date": {
+              "$date": "2025-10-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              },
+              "originalPrice": {
+                "$numberDecimal": "410.50"
+              },
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null
+            }
+          },
+          {
+            "offerId": {
+              "$numberDecimal": "24.00"
+            },
+            "region": "EURO",
+            "updatedAt": {
+              "$date": "2025-10-13T00:00:00.000Z"
+            },
+            "date": {
+              "$date": "2025-10-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              },
+              "originalPrice": 125.5,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.by-region:id=\"offer-oracle\"",
+          "payload": {
+            "23.00": [
+              {
+                "offerId": "24.00",
+                "region": {
+                  "$numberDecimal": "23.00"
+                },
+                "currencyCode": "EUR",
+                "precision": 2,
+                "originalPrice": 411,
+                "discountPrice": 350,
+                "price": {
+                  "currencyCode": "EUR",
+                  "discountPrice": 350,
+                  "originalPrice": 411,
+                  "payoutCurrencyExchangeRate": 1.75,
+                  "basePayoutPrice": null,
+                  "precision": 2
+                },
+                "updatedAt": "2025-10-13T00:00:00.000Z",
+                "date": "2025-10-12T00:00:00.000Z"
+              }
+            ],
+            "EURO": [
+              {
+                "offerId": "24.00",
+                "region": "EURO",
+                "currencyCode": "EUR",
+                "precision": 2,
+                "originalPrice": 126,
+                "discountPrice": 350,
+                "price": {
+                  "currencyCode": "EUR",
+                  "discountPrice": 350,
+                  "originalPrice": 126,
+                  "payoutCurrencyExchangeRate": 1.75,
+                  "basePayoutPrice": 220,
+                  "precision": 2
+                },
+                "updatedAt": "2025-10-13T00:00:00.000Z",
+                "date": "2025-10-12T00:00:00.000Z"
+              }
+            ]
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"03624f4ba14793f9777eb9dc86af7f56d86dd56b\""
+      },
+      "body": {
+        "data": {
+          "23.00": [
+            {
+              "offerId": "24.00",
+              "region": {
+                "$numberDecimal": "23.00"
+              },
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 411,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 411,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          ],
+          "EURO": [
+            {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 220,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          ]
+        },
+        "meta": {
+          "region": null,
+          "locale": "en-US",
+          "grouped": true,
+          "regions": 2,
+          "since": null
+        }
+      }
+    }
+  },
+  {
+    "name": "history-group-typed-long",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-history",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.by-region:id=\"offer-oracle\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "offer-oracle"
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": {
+              "$in": [
+                "AE",
+                "AFRICA",
+                "ANZ",
+                "AR",
+                "AU",
+                "BG",
+                "BR2",
+                "CA",
+                "CH",
+                "CIS",
+                "CL2",
+                "CN2",
+                "CO2",
+                "CR2",
+                "CZ",
+                "DK",
+                "EAST",
+                "EURO",
+                "GB",
+                "HK2",
+                "HU",
+                "ID2",
+                "IL",
+                "IN2",
+                "JP",
+                "KR2",
+                "KZ",
+                "LATAM",
+                "MIDEAST",
+                "MX2",
+                "MY2",
+                "NO",
+                "NZ",
+                "PE2",
+                "PH2",
+                "PL",
+                "QA",
+                "RO",
+                "ROW",
+                "RU",
+                "SA",
+                "SE",
+                "SEA",
+                "SG2",
+                "TH2",
+                "TR",
+                "TW2",
+                "UA",
+                "US",
+                "UY2",
+                "VN2",
+                "ZA2"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "date": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "offerId": {
+              "$numberDecimal": "24.00"
+            },
+            "region": {
+              "$numberLong": "9007199254741011"
+            },
+            "updatedAt": {
+              "$date": "2025-10-13T00:00:00.000Z"
+            },
+            "date": {
+              "$date": "2025-10-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              },
+              "originalPrice": {
+                "$numberDecimal": "410.50"
+              },
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null
+            }
+          },
+          {
+            "offerId": {
+              "$numberDecimal": "24.00"
+            },
+            "region": "EURO",
+            "updatedAt": {
+              "$date": "2025-10-13T00:00:00.000Z"
+            },
+            "date": {
+              "$date": "2025-10-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              },
+              "originalPrice": 125.5,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.by-region:id=\"offer-oracle\"",
+          "payload": {
+            "9007199254741011": [
+              {
+                "offerId": "24.00",
+                "region": {
+                  "high": 2097152,
+                  "low": 19,
+                  "unsigned": false
+                },
+                "currencyCode": "EUR",
+                "precision": 2,
+                "originalPrice": 411,
+                "discountPrice": 350,
+                "price": {
+                  "currencyCode": "EUR",
+                  "discountPrice": 350,
+                  "originalPrice": 411,
+                  "payoutCurrencyExchangeRate": 1.75,
+                  "basePayoutPrice": null,
+                  "precision": 2
+                },
+                "updatedAt": "2025-10-13T00:00:00.000Z",
+                "date": "2025-10-12T00:00:00.000Z"
+              }
+            ],
+            "EURO": [
+              {
+                "offerId": "24.00",
+                "region": "EURO",
+                "currencyCode": "EUR",
+                "precision": 2,
+                "originalPrice": 126,
+                "discountPrice": 350,
+                "price": {
+                  "currencyCode": "EUR",
+                  "discountPrice": 350,
+                  "originalPrice": 126,
+                  "payoutCurrencyExchangeRate": 1.75,
+                  "basePayoutPrice": 220,
+                  "precision": 2
+                },
+                "updatedAt": "2025-10-13T00:00:00.000Z",
+                "date": "2025-10-12T00:00:00.000Z"
+              }
+            ]
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"aeb6cacb6e76af6be53745c3b6c4b74c51af77c7\""
+      },
+      "body": {
+        "data": {
+          "9007199254741011": [
+            {
+              "offerId": "24.00",
+              "region": {
+                "high": 2097152,
+                "low": 19,
+                "unsigned": false
+              },
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 411,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 411,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": null,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          ],
+          "EURO": [
+            {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 220,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          ]
+        },
+        "meta": {
+          "region": null,
+          "locale": "en-US",
+          "grouped": true,
+          "regions": 2,
+          "since": null
+        }
+      }
+    }
+  },
+  {
+    "name": "history-group-noncoercible",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-history",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.by-region:id=\"offer-oracle\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "offer-oracle"
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": {
+              "$in": [
+                "AE",
+                "AFRICA",
+                "ANZ",
+                "AR",
+                "AU",
+                "BG",
+                "BR2",
+                "CA",
+                "CH",
+                "CIS",
+                "CL2",
+                "CN2",
+                "CO2",
+                "CR2",
+                "CZ",
+                "DK",
+                "EAST",
+                "EURO",
+                "GB",
+                "HK2",
+                "HU",
+                "ID2",
+                "IL",
+                "IN2",
+                "JP",
+                "KR2",
+                "KZ",
+                "LATAM",
+                "MIDEAST",
+                "MX2",
+                "MY2",
+                "NO",
+                "NZ",
+                "PE2",
+                "PH2",
+                "PL",
+                "QA",
+                "RO",
+                "ROW",
+                "RU",
+                "SA",
+                "SE",
+                "SEA",
+                "SG2",
+                "TH2",
+                "TR",
+                "TW2",
+                "UA",
+                "US",
+                "UY2",
+                "VN2",
+                "ZA2"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "date": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "offerId": {
+              "$numberDecimal": "24.00"
+            },
+            "region": {
+              "toString": "broken"
+            },
+            "updatedAt": {
+              "$date": "2025-10-13T00:00:00.000Z"
+            },
+            "date": {
+              "$date": "2025-10-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              },
+              "originalPrice": {
+                "$numberDecimal": "410.50"
+              },
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null
+            }
+          },
+          {
+            "offerId": {
+              "$numberDecimal": "24.00"
+            },
+            "region": "EURO",
+            "updatedAt": {
+              "$date": "2025-10-13T00:00:00.000Z"
+            },
+            "date": {
+              "$date": "2025-10-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              },
+              "originalPrice": 125.5,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e98b0cdba711d590e88fd8520cb5e7728287d453\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/offer-oracle/price-history",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "history-group-inherited-key",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-history",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.by-region:id=\"offer-oracle\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "offer-oracle"
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": {
+              "$in": [
+                "AE",
+                "AFRICA",
+                "ANZ",
+                "AR",
+                "AU",
+                "BG",
+                "BR2",
+                "CA",
+                "CH",
+                "CIS",
+                "CL2",
+                "CN2",
+                "CO2",
+                "CR2",
+                "CZ",
+                "DK",
+                "EAST",
+                "EURO",
+                "GB",
+                "HK2",
+                "HU",
+                "ID2",
+                "IL",
+                "IN2",
+                "JP",
+                "KR2",
+                "KZ",
+                "LATAM",
+                "MIDEAST",
+                "MX2",
+                "MY2",
+                "NO",
+                "NZ",
+                "PE2",
+                "PH2",
+                "PL",
+                "QA",
+                "RO",
+                "ROW",
+                "RU",
+                "SA",
+                "SE",
+                "SEA",
+                "SG2",
+                "TH2",
+                "TR",
+                "TW2",
+                "UA",
+                "US",
+                "UY2",
+                "VN2",
+                "ZA2"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "date": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "offerId": {
+              "$numberDecimal": "24.00"
+            },
+            "region": "constructor",
+            "updatedAt": {
+              "$date": "2025-10-13T00:00:00.000Z"
+            },
+            "date": {
+              "$date": "2025-10-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              },
+              "originalPrice": {
+                "$numberDecimal": "410.50"
+              },
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null
+            }
+          },
+          {
+            "offerId": {
+              "$numberDecimal": "24.00"
+            },
+            "region": "EURO",
+            "updatedAt": {
+              "$date": "2025-10-13T00:00:00.000Z"
+            },
+            "date": {
+              "$date": "2025-10-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              },
+              "originalPrice": 125.5,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220
+            }
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e98b0cdba711d590e88fd8520cb5e7728287d453\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/offer-oracle/price-history",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "history-group-ignored-null",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-history",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.by-region:id=\"offer-oracle\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "id": 1
+            }
+          }
+        },
+        "result": {
+          "id": "offer-oracle"
+        }
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "many",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": {
+              "$in": [
+                "AE",
+                "AFRICA",
+                "ANZ",
+                "AR",
+                "AU",
+                "BG",
+                "BR2",
+                "CA",
+                "CH",
+                "CIS",
+                "CL2",
+                "CN2",
+                "CO2",
+                "CR2",
+                "CZ",
+                "DK",
+                "EAST",
+                "EURO",
+                "GB",
+                "HK2",
+                "HU",
+                "ID2",
+                "IL",
+                "IN2",
+                "JP",
+                "KR2",
+                "KZ",
+                "LATAM",
+                "MIDEAST",
+                "MX2",
+                "MY2",
+                "NO",
+                "NZ",
+                "PE2",
+                "PH2",
+                "PL",
+                "QA",
+                "RO",
+                "ROW",
+                "RU",
+                "SA",
+                "SE",
+                "SEA",
+                "SG2",
+                "TH2",
+                "TR",
+                "TW2",
+                "UA",
+                "US",
+                "UY2",
+                "VN2",
+                "ZA2"
+              ]
+            }
+          },
+          "options": {
+            "sort": {
+              "date": -1
+            }
+          }
+        },
+        "result": [
+          {
+            "offerId": {
+              "$numberDecimal": "24.00"
+            },
+            "region": null,
+            "updatedAt": {
+              "$date": "2025-10-13T00:00:00.000Z"
+            },
+            "date": {
+              "$date": "2025-10-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              },
+              "originalPrice": {
+                "$numberDecimal": "410.50"
+              },
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": null
+            }
+          },
+          {
+            "offerId": {
+              "$numberDecimal": "24.00"
+            },
+            "region": "EURO",
+            "updatedAt": {
+              "$date": "2025-10-13T00:00:00.000Z"
+            },
+            "date": {
+              "$date": "2025-10-12T00:00:00.000Z"
+            },
+            "price": {
+              "currencyCode": "EUR",
+              "discountPrice": {
+                "$numberDecimal": "349.8"
+              },
+              "originalPrice": 125.5,
+              "payoutCurrencyExchangeRate": 1.75,
+              "basePayoutPrice": 220
+            }
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:offer-details.price-history.by-region:id=\"offer-oracle\"",
+          "payload": {
+            "EURO": [
+              {
+                "offerId": "24.00",
+                "region": "EURO",
+                "currencyCode": "EUR",
+                "precision": 2,
+                "originalPrice": 126,
+                "discountPrice": 350,
+                "price": {
+                  "currencyCode": "EUR",
+                  "discountPrice": 350,
+                  "originalPrice": 126,
+                  "payoutCurrencyExchangeRate": 1.75,
+                  "basePayoutPrice": 220,
+                  "precision": 2
+                },
+                "updatedAt": "2025-10-13T00:00:00.000Z",
+                "date": "2025-10-12T00:00:00.000Z"
+              }
+            ]
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"b3a44970ea4d685b7d8c1529fccb751ecfbc8c78\""
+      },
+      "body": {
+        "data": {
+          "EURO": [
+            {
+              "offerId": "24.00",
+              "region": "EURO",
+              "currencyCode": "EUR",
+              "precision": 2,
+              "originalPrice": 126,
+              "discountPrice": 350,
+              "price": {
+                "currencyCode": "EUR",
+                "discountPrice": 350,
+                "originalPrice": 126,
+                "payoutCurrencyExchangeRate": 1.75,
+                "basePayoutPrice": 220,
+                "precision": 2
+              },
+              "updatedAt": "2025-10-13T00:00:00.000Z",
+              "date": "2025-10-12T00:00:00.000Z"
+            }
+          ]
+        },
+        "meta": {
+          "region": null,
+          "locale": "en-US",
+          "grouped": true,
+          "regions": 1,
+          "since": null
+        }
+      }
+    }
+  },
+  {
+    "name": "history-group-cache-array",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-history",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.by-region:id=\"offer-oracle\""
+        },
+        "result": [
+          "a",
+          "b"
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"11816ce4334f1ddbbe0f4ae64b7f9fbad4da2718\""
+      },
+      "body": {
+        "data": [
+          "a",
+          "b"
+        ],
+        "meta": {
+          "region": null,
+          "locale": "en-US",
+          "grouped": true,
+          "regions": 2,
+          "since": null
+        }
+      }
+    }
+  },
+  {
+    "name": "history-group-cache-text",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-history",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.by-region:id=\"offer-oracle\""
+        },
+        "result": "A🎮"
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"5092348afef9b35accb6e4ddc23fbffba9e6d934\""
+      },
+      "body": {
+        "data": "A🎮",
+        "meta": {
+          "region": null,
+          "locale": "en-US",
+          "grouped": true,
+          "regions": 3,
+          "since": null
+        }
+      }
+    }
+  },
+  {
+    "name": "history-group-cache-scalar",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-history",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history.by-region:id=\"offer-oracle\""
+        },
+        "result": false
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"12f5ad74d28cde59892cf2c57466f825767c1199\""
+      },
+      "body": {
+        "data": false,
+        "meta": {
+          "region": null,
+          "locale": "en-US",
+          "grouped": true,
+          "regions": 0,
+          "since": null
+        }
+      }
+    }
+  },
+  {
+    "name": "history-page-cache-absent",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-history?region=EURO",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history:id=\"offer-oracle\":limit=20:locale=\"en-US\":region=\"EURO\""
+        },
+        "result": {}
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"f92b649df1208f9edd37983b69dadd41381fa8c0\""
+      },
+      "body": {
+        "meta": {
+          "region": "EURO",
+          "locale": "en-US",
+          "since": null
+        }
+      }
+    }
+  },
+  {
+    "name": "history-page-cache-only-elements",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-history?region=EURO",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history:id=\"offer-oracle\":limit=20:locale=\"en-US\":region=\"EURO\""
+        },
+        "result": {
+          "elements": [
+            7
+          ]
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"dbe3fd0eb1d696043ef36d14b9bcaf6609ac3f5a\""
+      },
+      "body": {
+        "data": [
+          7
+        ],
+        "meta": {
+          "region": "EURO",
+          "locale": "en-US",
+          "since": null
+        }
+      }
+    }
+  },
+  {
+    "name": "history-page-cache-only-meta",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-history?region=EURO",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-history:id=\"offer-oracle\":limit=20:locale=\"en-US\":region=\"EURO\""
+        },
+        "result": {
+          "pagination": {
+            "limit": 5
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"af3b77fa1dada92323e06c0e940a3fb73541a3f2\""
+      },
+      "body": {
+        "meta": {
+          "region": "EURO",
+          "locale": "en-US",
+          "since": null,
+          "pagination": {
+            "limit": 5
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "stats-immediate-error-with-pending-history",
+    "request": {
+      "path": "/v1/offers/offer-oracle/price-stats?country=fr&locale=fr-FR",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:offer-details.price-stats:id=\"offer-oracle\":region=\"EURO\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "offers",
+          "method": "one",
+          "query": {
+            "id": {
+              "$eq": "offer-oracle"
+            }
+          },
+          "options": {
+            "projection": {
+              "countriesWhitelist": 1,
+              "countriesBlacklist": 1
+            }
+          }
+        },
+        "result": {}
+      },
+      {
+        "call": {
+          "collection": "pricev2",
+          "method": "one",
+          "query": {
+            "offerId": {
+              "$eq": "offer-oracle"
+            },
+            "region": {
+              "$eq": "EURO"
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "error": true
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "price.discountPrice": 1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": 125.5,
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": 220
+          }
+        },
+        "releaseAfterResponse": true
+      },
+      {
+        "call": {
+          "collection": "pricev2_historical",
+          "method": "one",
+          "query": {
+            "offerId": "offer-oracle",
+            "region": "EURO",
+            "price.discount": {
+              "$gt": 0
+            }
+          },
+          "options": {
+            "sort": {
+              "updatedAt": -1
+            }
+          }
+        },
+        "result": {
+          "offerId": {
+            "$numberDecimal": "24.00"
+          },
+          "region": "EURO",
+          "updatedAt": {
+            "$date": "2025-10-13T00:00:00.000Z"
+          },
+          "date": {
+            "$date": "2025-10-12T00:00:00.000Z"
+          },
+          "price": {
+            "currencyCode": "EUR",
+            "discountPrice": {
+              "$numberDecimal": "349.8"
+            },
+            "originalPrice": {
+              "$numberDecimal": "410.50"
+            },
+            "payoutCurrencyExchangeRate": 1.75,
+            "basePayoutPrice": null
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 500,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"e9f4fd37fa1239859b3982150f44c3c9e48395f2\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/internal-error",
+        "title": "Internal Server Error",
+        "status": 500,
+        "detail": "The API could not complete the request. Retry later and include the request ID when contacting support.",
+        "instance": "/v1/offers/offer-oracle/price-stats",
+        "code": "INTERNAL_ERROR",
+        "requestId": "req_node_oracle"
+      }
+    },
+    "remainingReadsAfterResponse": 0
+  }
+]

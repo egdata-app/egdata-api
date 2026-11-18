@@ -1,0 +1,198 @@
+[
+  {
+    "name": "numeric keys",
+    "bsonHex": "bc010000026964000700000073746f72656400096372656174696f6e446174650000a8da769b010000026c6173744d6f646966696564446174650008000000323032352d3036000a72656c65617365446174650004637573746f6d41747472696275746573005501000003300019000000106b657900000000001076616c756500010000000003310015000000106b657900feffffff087479706500000003320020000000016b65790000000000000006400a74797065000876616c756500010003330025000000016b65790000000000000000000276616c756500080000006f6d6974746564000003340025000000016b657900000000000000f87f0276616c756500080000006f6d697474656400000335002f000000126b6579000000000000000000107479706500080000000276616c756500080000006f6d6974746564000003360030000000126b657900070000000000200012747970650002000000000000000276616c756500050000006c6f6e6700000337001c0000000a6b6579000274797065000800000069676e6f7265640000033800220000000e6b65790001000000000276616c756500080000006f6d697474656400000000",
+    "item": {
+      "_id": null,
+      "id": "stored",
+      "namespace": null,
+      "title": null,
+      "description": null,
+      "longDescription": null,
+      "itemType": null,
+      "creationDate": "2026-01-01T00:00:00.000Z",
+      "lastModifiedDate": "2025-06-01T00:00:00.000Z",
+      "releaseDate": null,
+      "keyImages": null,
+      "categories": null,
+      "developer": null,
+      "entitlementName": null,
+      "entitlementType": null,
+      "status": null,
+      "url": null,
+      "linkedOffers": null,
+      "builds": null,
+      "customAttributes": {
+        "-2": {
+          "type": "STRING"
+        },
+        "2.75": {
+          "type": "STRING",
+          "value": true
+        },
+        "9007199254740999": {
+          "type": 2,
+          "value": "long"
+        }
+      }
+    }
+  },
+  {
+    "name": "null fallback",
+    "bsonHex": "b5000000026964000700000073746f72656400096372656174696f6e446174650000a8da769b010000026c6173744d6f646966696564446174650008000000323032352d3036000a72656c65617365446174650004637573746f6d41747472696275746573004e00000003300043000000026b657900020000006100105f5f7600010000000376616c75650023000000106964000600000013636f7374007d000000000000000000000000003c3000000a31000000",
+    "item": {
+      "_id": null,
+      "id": "stored",
+      "namespace": null,
+      "title": null,
+      "description": null,
+      "longDescription": null,
+      "itemType": null,
+      "creationDate": "2026-01-01T00:00:00.000Z",
+      "lastModifiedDate": "2025-06-01T00:00:00.000Z",
+      "releaseDate": null,
+      "keyImages": null,
+      "categories": null,
+      "developer": null,
+      "entitlementName": null,
+      "entitlementType": null,
+      "status": null,
+      "url": null,
+      "linkedOffers": null,
+      "builds": null,
+      "customAttributes": [
+        {
+          "key": "a",
+          "value": {
+            "id": "6",
+            "cost": {
+              "bytes": {
+                "0": 125,
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0,
+                "8": 0,
+                "9": 0,
+                "10": 0,
+                "11": 0,
+                "12": 0,
+                "13": 0,
+                "14": 60,
+                "15": 48
+              }
+            }
+          }
+        },
+        null
+      ]
+    }
+  },
+  {
+    "name": "raw map",
+    "bsonHex": "95000000026964000700000073746f72656400096372656174696f6e446174650000a8da769b010000026c6173744d6f646966696564446174650008000000323032352d3036000a72656c65617365446174650003637573746f6d41747472696275746573002e0000001069640006000000105f5f760005000000136e61746976650020000000000000000000000000003e300000",
+    "item": {
+      "_id": null,
+      "id": "stored",
+      "namespace": null,
+      "title": null,
+      "description": null,
+      "longDescription": null,
+      "itemType": null,
+      "creationDate": "2026-01-01T00:00:00.000Z",
+      "lastModifiedDate": "2025-06-01T00:00:00.000Z",
+      "releaseDate": null,
+      "keyImages": null,
+      "categories": null,
+      "developer": null,
+      "entitlementName": null,
+      "entitlementType": null,
+      "status": null,
+      "url": null,
+      "linkedOffers": null,
+      "builds": null,
+      "customAttributes": {
+        "id": 6,
+        "__v": 5,
+        "native": {
+          "$numberDecimal": "3.2"
+        }
+      }
+    }
+  },
+  {
+    "name": "object coercion failure",
+    "bsonHex": "b8000000026964000700000073746f72656400096372656174696f6e446174650000a8da769b010000026c6173744d6f646966696564446174650008000000323032352d3036000a72656c65617365446174650004637573746f6d41747472696275746573005100000003300049000000036b6579002200000002746f537472696e67000f00000070726576696f75732076616c756500000376616c756500160000001069640007000000105f5f76000500000000000000",
+    "item": {
+      "_id": null,
+      "id": "stored",
+      "namespace": null,
+      "title": null,
+      "description": null,
+      "longDescription": null,
+      "itemType": null,
+      "creationDate": "2026-01-01T00:00:00.000Z",
+      "lastModifiedDate": "2025-06-01T00:00:00.000Z",
+      "releaseDate": null,
+      "keyImages": null,
+      "categories": null,
+      "developer": null,
+      "entitlementName": null,
+      "entitlementType": null,
+      "status": null,
+      "url": null,
+      "linkedOffers": null,
+      "builds": null,
+      "customAttributes": [
+        {
+          "key": {
+            "toString": "previous value"
+          },
+          "value": {
+            "id": "7"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "array coercion failure",
+    "bsonHex": "a5000000026964000700000073746f72656400096372656174696f6e446174650000a8da769b010000026c6173744d6f646966696564446174650008000000323032352d3036000a72656c65617365446174650004637573746f6d41747472696275746573003e00000003300036000000046b657900180000000330001000000008746f537472696e67000000000376616c7565000d000000106964000400000000000000",
+    "item": {
+      "_id": null,
+      "id": "stored",
+      "namespace": null,
+      "title": null,
+      "description": null,
+      "longDescription": null,
+      "itemType": null,
+      "creationDate": "2026-01-01T00:00:00.000Z",
+      "lastModifiedDate": "2025-06-01T00:00:00.000Z",
+      "releaseDate": null,
+      "keyImages": null,
+      "categories": null,
+      "developer": null,
+      "entitlementName": null,
+      "entitlementType": null,
+      "status": null,
+      "url": null,
+      "linkedOffers": null,
+      "builds": null,
+      "customAttributes": [
+        {
+          "key": [
+            {
+              "toString": false
+            }
+          ],
+          "value": {
+            "id": "4"
+          }
+        }
+      ]
+    }
+  }
+]

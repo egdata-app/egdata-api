@@ -1,0 +1,237 @@
+[
+  {
+    "name": "cohort partial",
+    "rows": [
+      {
+        "day": 40001,
+        "id": "recent",
+        "firstChallenge": 10,
+        "lastChallenge": 10,
+        "lastPuzzle": 0,
+        "lastSolve": 0
+      },
+      {
+        "day": 40000,
+        "id": "older",
+        "firstChallenge": 15,
+        "lastChallenge": 15,
+        "lastPuzzle": 0,
+        "lastSolve": 0
+      },
+      {
+        "day": 40001,
+        "id": "recent",
+        "firstChallenge": 8,
+        "lastChallenge": 8,
+        "lastPuzzle": 0,
+        "lastSolve": 0
+      }
+    ],
+    "state": [
+      {
+        "type": "string",
+        "value": "wrong-type"
+      },
+      {
+        "type": "hash",
+        "values": {
+          "__count": "1",
+          "__lastObservedAt": "10",
+          "recent": {
+            "firstChallenge": 8,
+            "lastChallenge": 10,
+            "lastPuzzle": 0,
+            "lastSolve": 0
+          },
+          "__firstObservedAt": "8"
+        },
+        "expireAt": 3456259200
+      },
+      null,
+      null
+    ]
+  },
+  {
+    "name": "cohort retry",
+    "rows": [
+      {
+        "day": 40001,
+        "id": "recent",
+        "firstChallenge": 10,
+        "lastChallenge": 10,
+        "lastPuzzle": 0,
+        "lastSolve": 0
+      },
+      {
+        "day": 40000,
+        "id": "older",
+        "firstChallenge": 15,
+        "lastChallenge": 15,
+        "lastPuzzle": 0,
+        "lastSolve": 0
+      },
+      {
+        "day": 40001,
+        "id": "recent",
+        "firstChallenge": 8,
+        "lastChallenge": 8,
+        "lastPuzzle": 0,
+        "lastSolve": 0
+      }
+    ],
+    "state": [
+      {
+        "type": "hash",
+        "values": {
+          "__count": "1",
+          "older": {
+            "firstChallenge": 15,
+            "lastChallenge": 15,
+            "lastPuzzle": 0,
+            "lastSolve": 0
+          },
+          "__lastObservedAt": "15",
+          "__firstObservedAt": "15"
+        },
+        "expireAt": 3456172800
+      },
+      {
+        "type": "hash",
+        "values": {
+          "__count": "1",
+          "__lastObservedAt": "10",
+          "recent": {
+            "firstChallenge": 8,
+            "lastChallenge": 10,
+            "lastPuzzle": 0,
+            "lastSolve": 0
+          },
+          "__firstObservedAt": "8"
+        },
+        "expireAt": 3456259200
+      },
+      null,
+      null
+    ]
+  },
+  {
+    "name": "summary partial",
+    "sums": [
+      {
+        "minute": 57600000,
+        "values": {
+          "requests": 3
+        }
+      },
+      {
+        "minute": 57600001,
+        "values": {
+          "requests": 4
+        }
+      }
+    ],
+    "state": [
+      {
+        "type": "hash",
+        "values": {
+          "__count": "1",
+          "older": {
+            "firstChallenge": 15,
+            "lastChallenge": 15,
+            "lastPuzzle": 0,
+            "lastSolve": 0
+          },
+          "__lastObservedAt": "15",
+          "__firstObservedAt": "15"
+        },
+        "expireAt": 3456172800
+      },
+      {
+        "type": "hash",
+        "values": {
+          "__count": "1",
+          "__lastObservedAt": "10",
+          "recent": {
+            "firstChallenge": 8,
+            "lastChallenge": 10,
+            "lastPuzzle": 0,
+            "lastSolve": 0
+          },
+          "__firstObservedAt": "8"
+        },
+        "expireAt": 3456259200
+      },
+      {
+        "type": "hash",
+        "values": {
+          "requests": "3",
+          "batch": "1"
+        },
+        "expireAt": 3456086460
+      },
+      {
+        "type": "string",
+        "value": "wrong-type"
+      }
+    ]
+  },
+  {
+    "name": "summary retry",
+    "sums": [
+      {
+        "minute": 57600001,
+        "values": {
+          "requests": 4
+        }
+      }
+    ],
+    "state": [
+      {
+        "type": "hash",
+        "values": {
+          "__count": "1",
+          "older": {
+            "firstChallenge": 15,
+            "lastChallenge": 15,
+            "lastPuzzle": 0,
+            "lastSolve": 0
+          },
+          "__lastObservedAt": "15",
+          "__firstObservedAt": "15"
+        },
+        "expireAt": 3456172800
+      },
+      {
+        "type": "hash",
+        "values": {
+          "__count": "1",
+          "__lastObservedAt": "10",
+          "recent": {
+            "firstChallenge": 8,
+            "lastChallenge": 10,
+            "lastPuzzle": 0,
+            "lastSolve": 0
+          },
+          "__firstObservedAt": "8"
+        },
+        "expireAt": 3456259200
+      },
+      {
+        "type": "hash",
+        "values": {
+          "requests": "3",
+          "batch": "1"
+        },
+        "expireAt": 3456086460
+      },
+      {
+        "type": "hash",
+        "values": {
+          "requests": "4",
+          "batch": "1"
+        },
+        "expireAt": 3456086520
+      }
+    ]
+  }
+]

@@ -1,0 +1,100 @@
+services:
+  mongo:
+    image: mongo:7
+    # Bootstrap only on container loopback, then require TLS and X.509 for all clients.
+    entrypoint: ["/bin/bash", "-ec"]
+    command:
+      - |
+        set -euo pipefail
+        umask 077
+        mkdir -p /tmp/egdata-certs
+        cd /tmp/egdata-certs
+        openssl req -x509 -newkey rsa:2048 -nodes -days 2 -subj "/CN=egdata-fixture-ca" -keyout ca.key -out ca.pem 2>/dev/null
+        for role in server client; do
+          openssl req -newkey rsa:2048 -nodes -subj "/CN=egdata-fixture-$$role" -keyout "$$role.key" -out "$$role.csr" 2>/dev/null
+          case "$$role" in
+            server) printf 'extendedKeyUsage=serverAuth,clientAuth\nsubjectAltName=DNS:localhost,DNS:mongo,IP:127.0.0.1\n' > extensions ;;
+            client) printf 'extendedKeyUsage=clientAuth\n' > extensions ;;
+          esac
+          openssl x509 -req -days 2 -in "$$role.csr" -CA ca.pem -CAkey ca.key -CAcreateserial -extfile extensions -out "$$role.crt" 2>/dev/null
+          cat "$$role.crt" "$$role.key" > "$$role.pem"
+        done
+        if ! test -f /data/db/egdata-fixture-initialized; then
+          mongod --bind_ip 127.0.0.1 --port 27018 --fork --logpath /tmp/egdata-bootstrap.log
+          mongosh --quiet --port 27018 --eval 'db.getSiblingDB("$$external").createUser({user:"CN=egdata-fixture-client",roles:[{role:"readWriteAnyDatabase",db:"admin"},{role:"dbAdminAnyDatabase",db:"admin"}]})'
+          mongod --shutdown --dbpath /data/db
+          touch /data/db/egdata-fixture-initialized
+        fi
+        install -m 0444 client.pem ca.pem /run/fixture-client/
+        chown -R mongodb:mongodb /data/db /tmp/egdata-certs
+        exec gosu mongodb mongod --bind_ip_all --auth --tlsMode requireTLS --tlsCAFile ca.pem --tlsCertificateKeyFile server.pem
+    volumes: ["client-certs:/run/fixture-client"]
+    ports: ["127.0.0.1::27017"]
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--tls", "--tlsCAFile", "/tmp/egdata-certs/ca.pem", "--tlsCertificateKeyFile", "/tmp/egdata-certs/client.pem", "--authenticationMechanism", "MONGODB-X509", "--authenticationDatabase", "$$external", "--eval", "quit(db.adminCommand('ping').ok ? 0 : 1)"]
+      interval: 2s
+      timeout: 5s
+      retries: 40
+  redis:
+    image: redis:7-alpine
+    ports: ["127.0.0.1::6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 40
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: egdata_test
+      POSTGRES_PASSWORD: egdata_test
+      POSTGRES_DB: egdata_test
+    ports: ["127.0.0.1::5432"]
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "egdata_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 40
+
+  search:
+    profiles: ["search"]
+    image: opensearchproject/opensearch:2.19.2
+    environment:
+      discovery.type: single-node
+      plugins.security.ssl.http.enabled: "false"
+      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: "Fixture-Only-Search-42!"
+    ports: ["127.0.0.1::9200"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -u admin:$$OPENSEARCH_INITIAL_ADMIN_PASSWORD http://localhost:9200/_cluster/health >/dev/null"]
+      interval: 3s
+      timeout: 4s
+      retries: 40
+  origin:
+    profiles: ["origin"]
+    # Review PATCH recomputes ownership through Epic. Use the offline path in this fixture.
+    extra_hosts: ["store.epicgames.com:127.0.0.1"]
+    image: ${EGDATA_TEST_ORIGIN_IMAGE:-egdata-rust-origin:local-migration}
+    ports: ["127.0.0.1::4000"]
+    depends_on:
+      mongo: {condition: service_healthy}
+      redis: {condition: service_healthy}
+      postgres: {condition: service_healthy}
+    volumes: ["client-certs:/run/fixture-client:ro"]
+    environment:
+      MONGO_URL: mongodb://mongo:27017
+      NO_PROXY: "localhost,127.0.0.1,mongo,redis,postgres,search,store.epicgames.com"
+      MONGO_CA: /run/fixture-client/ca.pem
+      MONGO_CERT: /run/fixture-client/client.pem
+      REDISHOST: redis
+      OPENSEARCH_URL: http://search:9200
+      OPENSEARCH_USERNAME: admin
+      OPENSEARCH_PASSWORD: "Fixture-Only-Search-42!"
+      NEON_CONNECTION_URI: postgresql://egdata_test:egdata_test@postgres:5432/egdata_test
+      BETTER_AUTH_SECRETS: "3:fixture-origin-session-secret-used-locally,1:fixture-older-cookie-signing-secret"
+      BETTER_AUTH_SECRET: fixture-legacy-cookie-signing-secret
+      ORIGIN_AUTH_TOKEN: fixture-origin-token
+      V1_CURSOR_SECRET: fixture-only-shared-key-for-cross-origin-pagination
+      NODE_ICU_LOCALE: en-US
+volumes:
+  client-certs:

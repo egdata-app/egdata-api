@@ -1,0 +1,1800 @@
+[
+  {
+    "name": "events",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/events"
+    },
+    "input": {
+      "events": [
+        {
+          "id": "spring-sale",
+          "name": "Spring Sale",
+          "groupName": "event",
+          "status": "ACTIVE"
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"3cdfabe5af76c598db736f12b0039e330b3feb6b\""
+      },
+      "body": {
+        "data": [
+          {
+            "id": "spring-sale",
+            "name": "Spring Sale",
+            "groupName": "event",
+            "status": "ACTIVE"
+          }
+        ],
+        "meta": {
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "priced-us-list",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers?country=US"
+    },
+    "input": {
+      "offers": [
+        {
+          "id": "oracle-game",
+          "namespace": "ns-oracle",
+          "title": "Oracle Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": []
+        }
+      ],
+      "prices": [
+        {
+          "offerId": "oracle-game",
+          "region": "US",
+          "currencyCode": "USD",
+          "price": {
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50
+          }
+        }
+      ],
+      "cache": "miss"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"50f7ca32b9a54d684143086f7b8392d5ad32418d\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": null,
+            "id": "oracle-game",
+            "namespace": "ns-oracle",
+            "title": "Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": {
+              "offerId": "oracle-game",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 1999,
+              "discountPrice": 999,
+              "price": {
+                "originalPrice": 1999,
+                "discountPrice": 999,
+                "discount": 50,
+                "currencyCode": "USD",
+                "precision": 2
+              },
+              "updatedAt": null
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical",
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "priced-us-list-cache-hit",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers?country=US"
+    },
+    "input": {
+      "cachePayload": "{\"offers\":[{\"_id\":null,\"id\":\"oracle-game\",\"namespace\":\"ns-oracle\",\"title\":\"Oracle Game\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-01-02T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":[],\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":[],\"items\":[],\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":{\"offerId\":\"oracle-game\",\"region\":\"US\",\"currencyCode\":\"USD\",\"precision\":2,\"originalPrice\":1999,\"discountPrice\":999,\"price\":{\"originalPrice\":1999,\"discountPrice\":999,\"discount\":50,\"currencyCode\":\"USD\",\"precision\":2},\"updatedAt\":null},\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null},\"localization\":{\"locale\":\"en-US\",\"localeStatus\":\"canonical\"},\"cacheTtl\":60}"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"50f7ca32b9a54d684143086f7b8392d5ad32418d\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": null,
+            "id": "oracle-game",
+            "namespace": "ns-oracle",
+            "title": "Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": {
+              "offerId": "oracle-game",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 1999,
+              "discountPrice": 999,
+              "price": {
+                "originalPrice": 1999,
+                "discountPrice": 999,
+                "discount": 50,
+                "currencyCode": "USD",
+                "precision": 2
+              },
+              "updatedAt": null
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical",
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "priced-us-list-malformed-cache",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers?country=US"
+    },
+    "input": {
+      "cachePayload": "not-json",
+      "offers": [
+        {
+          "id": "oracle-game",
+          "namespace": "ns-oracle",
+          "title": "Oracle Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": []
+        }
+      ],
+      "prices": [
+        {
+          "offerId": "oracle-game",
+          "region": "US",
+          "currencyCode": "USD",
+          "price": {
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50
+          }
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"50f7ca32b9a54d684143086f7b8392d5ad32418d\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": null,
+            "id": "oracle-game",
+            "namespace": "ns-oracle",
+            "title": "Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": {
+              "offerId": "oracle-game",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 1999,
+              "discountPrice": 999,
+              "price": {
+                "originalPrice": 1999,
+                "discountPrice": 999,
+                "discount": 50,
+                "currencyCode": "USD",
+                "precision": 2
+              },
+              "updatedAt": null
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "localeStatus": "canonical",
+          "pagination": {
+            "limit": 20,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "localized-us-detail-with-price",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/oracle-game?country=US&locale=es-ES"
+    },
+    "input": {
+      "offer": {
+        "id": "oracle-game",
+        "namespace": "ns-oracle",
+        "title": "Oracle Game",
+        "offerType": "BASE_GAME",
+        "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+        "keyImages": [],
+        "tags": [],
+        "items": [],
+        "customAttributes": [],
+        "countriesWhitelist": [
+          "US"
+        ],
+        "description": "Canonical description"
+      },
+      "prices": [
+        {
+          "offerId": "oracle-game",
+          "region": "US",
+          "currencyCode": "USD",
+          "price": {
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "discount": 50
+          },
+          "updatedAt": "2026-01-03T00:00:00.000Z"
+        }
+      ],
+      "localizations": [
+        {
+          "entityType": "offer",
+          "entityId": "ns-oracle:oracle-game",
+          "locale": "es-ES",
+          "source": "epic",
+          "fetchedAt": "2026-01-04T00:00:00.000Z",
+          "data": {
+            "title": "Juego Oráculo",
+            "description": "Descripción localizada"
+          }
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"c2ab01a8b7c603ad453efaff8e34fb9a80d07ee2\""
+      },
+      "body": {
+        "data": {
+          "_id": null,
+          "id": "oracle-game",
+          "namespace": "ns-oracle",
+          "title": "Juego Oráculo",
+          "description": "Descripción localizada",
+          "longDescription": null,
+          "offerType": "BASE_GAME",
+          "effectiveDate": null,
+          "creationDate": null,
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "isCodeRedemptionOnly": null,
+          "keyImages": [],
+          "currentPrice": null,
+          "seller": null,
+          "productSlug": null,
+          "offerMappings": null,
+          "urlSlug": null,
+          "url": null,
+          "tags": [],
+          "items": [],
+          "categories": null,
+          "developerDisplayName": null,
+          "publisherDisplayName": null,
+          "prePurchase": null,
+          "releaseDate": null,
+          "pcReleaseDate": null,
+          "viewableDate": null,
+          "countriesBlacklist": null,
+          "countriesWhitelist": [
+            "US"
+          ],
+          "refundType": null,
+          "customAttributes": {},
+          "price": {
+            "offerId": "oracle-game",
+            "region": "US",
+            "currencyCode": "USD",
+            "precision": 2,
+            "originalPrice": 1999,
+            "discountPrice": 999,
+            "price": {
+              "originalPrice": 1999,
+              "discountPrice": 999,
+              "discount": 50,
+              "currencyCode": "USD",
+              "precision": 2
+            },
+            "updatedAt": "2026-01-03T00:00:00.000Z"
+          },
+          "locale": "es-ES",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "locale": "es-ES",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "epic",
+              "fetchedAt": "2026-01-04T00:00:00.000Z"
+            }
+          }
+        },
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "es-ES",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "source": "epic",
+            "fetchedAt": "2026-01-04T00:00:00.000Z"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "localized-gb-detail-price-ineligible",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/oracle-game?country=GB&locale=es-ES"
+    },
+    "input": {
+      "offer": {
+        "id": "oracle-game",
+        "namespace": "ns-oracle",
+        "title": "Oracle Game",
+        "offerType": "BASE_GAME",
+        "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+        "keyImages": [],
+        "tags": [],
+        "items": [],
+        "customAttributes": [],
+        "countriesWhitelist": [
+          "US"
+        ],
+        "description": "Canonical description"
+      },
+      "prices": [],
+      "localizations": [
+        {
+          "entityType": "offer",
+          "entityId": "ns-oracle:oracle-game",
+          "locale": "es-ES",
+          "source": "epic",
+          "fetchedAt": "2026-01-04T00:00:00.000Z",
+          "data": {
+            "title": "Juego Oráculo",
+            "description": "Descripción localizada"
+          }
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"9eedee257e9ad7205d07f1c99e1b70ad6137597b\""
+      },
+      "body": {
+        "data": {
+          "_id": null,
+          "id": "oracle-game",
+          "namespace": "ns-oracle",
+          "title": "Juego Oráculo",
+          "description": "Descripción localizada",
+          "longDescription": null,
+          "offerType": "BASE_GAME",
+          "effectiveDate": null,
+          "creationDate": null,
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "isCodeRedemptionOnly": null,
+          "keyImages": [],
+          "currentPrice": null,
+          "seller": null,
+          "productSlug": null,
+          "offerMappings": null,
+          "urlSlug": null,
+          "url": null,
+          "tags": [],
+          "items": [],
+          "categories": null,
+          "developerDisplayName": null,
+          "publisherDisplayName": null,
+          "prePurchase": null,
+          "releaseDate": null,
+          "pcReleaseDate": null,
+          "viewableDate": null,
+          "countriesBlacklist": null,
+          "countriesWhitelist": [
+            "US"
+          ],
+          "refundType": null,
+          "customAttributes": {},
+          "price": null,
+          "locale": "es-ES",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "locale": "es-ES",
+            "localeStatus": "localized",
+            "canonicalLocale": "en-US",
+            "localization": {
+              "source": "epic",
+              "fetchedAt": "2026-01-04T00:00:00.000Z"
+            }
+          }
+        },
+        "meta": {
+          "country": "GB",
+          "region": "GB",
+          "locale": "es-ES",
+          "localeStatus": "localized",
+          "canonicalLocale": "en-US",
+          "localization": {
+            "source": "epic",
+            "fetchedAt": "2026-01-04T00:00:00.000Z"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "list-limit-bound",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers?limit=101"
+    },
+    "input": {},
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"f6ec99bdcb413eb92e2af2dcfb7656f9b837f358\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-limit",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The `limit` parameter must be an integer between 1 and 100.",
+        "instance": "/v1/offers",
+        "code": "INVALID_LIMIT",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "unknown-list-query",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers?unexpected=1"
+    },
+    "input": {},
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"45c277352c1cff7aea9a5ec59efc13dee9a3e361\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/offers",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "code": "UNRECOGNIZED_KEYS",
+            "message": "Unrecognized key: \"unexpected\""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "upcoming-populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/upcoming?limit=7"
+    },
+    "input": {
+      "offers": [
+        {
+          "id": "oracle-upcoming",
+          "namespace": "ns-oracle",
+          "title": "Oracle Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": [],
+          "releaseDate": "2098-01-02T00:00:00.000Z"
+        }
+      ],
+      "prices": []
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"3577290f212c524e9ef8c7685d6a99b083017b7e\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": null,
+            "id": "oracle-upcoming",
+            "namespace": "ns-oracle",
+            "title": "Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": "2098-01-02T00:00:00.000Z",
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "pagination": {
+            "limit": 7,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "top-sellers-populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/top-sellers?limit=5"
+    },
+    "input": {
+      "positions": [
+        {
+          "collectionId": "top-sellers",
+          "offerId": "ranked-two",
+          "position": 1
+        },
+        {
+          "collectionId": "top-sellers",
+          "offerId": "ranked-one",
+          "position": 2
+        }
+      ],
+      "offers": [
+        {
+          "id": "ranked-one",
+          "namespace": "ns-oracle",
+          "title": "Oracle Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": []
+        },
+        {
+          "id": "ranked-two",
+          "namespace": "ns-oracle",
+          "title": "Oracle Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": []
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"2941ecab6bd0ccc8c3fdffe2c39389e5d7a0bc15\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": null,
+            "id": "ranked-two",
+            "namespace": "ns-oracle",
+            "title": "Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical",
+            "position": 1
+          },
+          {
+            "_id": null,
+            "id": "ranked-one",
+            "namespace": "ns-oracle",
+            "title": "Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical",
+            "position": 2
+          }
+        ],
+        "meta": {
+          "locale": "en-US",
+          "pagination": {
+            "limit": 5,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "slugs-populated",
+    "request": {
+      "method": "POST",
+      "path": "/v1/offers/slugs",
+      "body": {
+        "slugs": [
+          "oracle-game",
+          "missing"
+        ]
+      }
+    },
+    "input": {
+      "offers": [
+        {
+          "id": "oracle-slug",
+          "namespace": "ns-oracle",
+          "customAttributes": [
+            {
+              "key": "slug",
+              "value": "oracle-game/home"
+            }
+          ]
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"3eb9f70405fa3e8df0cbe971a583e1ff777e151d\""
+      },
+      "body": {
+        "data": [
+          {
+            "slug": "oracle-game",
+            "id": "oracle-slug",
+            "namespace": "ns-oracle"
+          },
+          {
+            "slug": "missing",
+            "id": null,
+            "namespace": null
+          }
+        ],
+        "meta": {
+          "found": 1,
+          "requested": 2
+        }
+      }
+    }
+  },
+  {
+    "name": "exists-populated",
+    "request": {
+      "method": "POST",
+      "path": "/v1/offers/exists",
+      "body": {
+        "offers": [
+          " oracle-game ",
+          "missing",
+          "oracle-game"
+        ]
+      }
+    },
+    "input": {
+      "offers": [
+        {
+          "id": "oracle-game"
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"06d4242788ace8f4c35f3a392d80c49614ebf9ae\""
+      },
+      "body": {
+        "data": {
+          "existingOffers": [
+            "oracle-game"
+          ],
+          "nonExistingOffers": [
+            "missing"
+          ]
+        },
+        "meta": {
+          "requested": 2,
+          "existing": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "latest-released-populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/latest-released?limit=6"
+    },
+    "input": {
+      "offers": [
+        {
+          "id": "oracle-released",
+          "namespace": "ns-oracle",
+          "title": "Oracle Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": [],
+          "releaseDate": "2020-01-02T00:00:00.000Z",
+          "effectiveDate": "2020-01-01T00:00:00.000Z"
+        }
+      ],
+      "prices": []
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"b22523e98bd7461923bc89255e0158387723fb0e\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": null,
+            "id": "oracle-released",
+            "namespace": "ns-oracle",
+            "title": "Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": "2020-01-01T00:00:00.000Z",
+            "creationDate": null,
+            "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": "2020-01-02T00:00:00.000Z",
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "pagination": {
+            "limit": 6,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "event-detail-populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/events/spring-sale?limit=4"
+    },
+    "input": {
+      "event": {
+        "id": "spring-sale",
+        "name": "Spring Sale",
+        "groupName": "event",
+        "status": "ACTIVE"
+      },
+      "aggregateOffers": [
+        {
+          "id": "event-game",
+          "namespace": "ns-oracle",
+          "title": "Oracle Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": [],
+          "sortDiscount": 35,
+          "price": {
+            "offerId": "event-game",
+            "price": {
+              "discount": 35,
+              "originalPrice": 2000,
+              "discountPrice": 1300
+            },
+            "currencyCode": "USD"
+          }
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"117764f750aaeea4ad2c905672fa5379f3069019\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": null,
+            "id": "event-game",
+            "namespace": "ns-oracle",
+            "title": "Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": {
+              "offerId": "event-game",
+              "region": null,
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 2000,
+              "discountPrice": 1300,
+              "price": {
+                "discount": 35,
+                "originalPrice": 2000,
+                "discountPrice": 1300,
+                "currencyCode": "USD",
+                "precision": 2
+              },
+              "updatedAt": null
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "title": "Spring Sale",
+          "pagination": {
+            "limit": 4,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "featured-discounts-populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/featured-discounts?country=US"
+    },
+    "input": {
+      "positions": [
+        {
+          "offerId": "featured-game",
+          "position": 3
+        }
+      ],
+      "offers": [
+        {
+          "id": "featured-game",
+          "namespace": "ns-oracle",
+          "title": "Oracle Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": []
+        }
+      ],
+      "prices": [
+        {
+          "offerId": "featured-game",
+          "region": "US",
+          "currencyCode": "USD",
+          "price": {
+            "originalPrice": 1500,
+            "discountPrice": 1000,
+            "discount": 33
+          }
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"850efee340d4395e7dc56ed972fd7bca30151e04\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": null,
+            "id": "featured-game",
+            "namespace": "ns-oracle",
+            "title": "Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": {
+              "offerId": "featured-game",
+              "region": "US",
+              "currencyCode": "USD",
+              "precision": 2,
+              "originalPrice": 1500,
+              "discountPrice": 1000,
+              "price": {
+                "originalPrice": 1500,
+                "discountPrice": 1000,
+                "discount": 33,
+                "currencyCode": "USD",
+                "precision": 2
+              },
+              "updatedAt": null
+            },
+            "locale": "en-US",
+            "localeStatus": "canonical",
+            "position": 3
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "latest-achievements-populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/latest-achievements"
+    },
+    "input": {
+      "offers": [
+        {
+          "id": "achievement-game",
+          "namespace": "ns-achievement",
+          "title": "Oracle Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [
+            {
+              "id": "19847"
+            }
+          ],
+          "items": [],
+          "customAttributes": [],
+          "effectiveDate": "2020-01-01T00:00:00.000Z"
+        }
+      ],
+      "achievements": [
+        {
+          "sandboxId": "ns-achievement",
+          "isBase": true,
+          "count": 8
+        }
+      ],
+      "prices": []
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8aa9908936048cf78753e3ff55237fd4155e3cbe\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": null,
+            "id": "achievement-game",
+            "namespace": "ns-achievement",
+            "title": "Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": "2020-01-01T00:00:00.000Z",
+            "creationDate": null,
+            "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [
+              {
+                "id": "19847"
+              }
+            ],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical",
+            "achievements": {
+              "sandboxId": "ns-achievement",
+              "isBase": true,
+              "count": 8
+            }
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "genres-populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/genres?locale=en-US"
+    },
+    "input": {
+      "genres": [
+        {
+          "id": "genre-action",
+          "name": "Action",
+          "groupName": "genre",
+          "status": "ACTIVE"
+        }
+      ],
+      "offers": [
+        {
+          "id": "genre-game",
+          "namespace": "ns-genre",
+          "title": "Genre Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [
+            {
+              "id": "genre-action"
+            }
+          ],
+          "items": [],
+          "customAttributes": [],
+          "releaseDate": "2025-01-01T00:00:00.000Z"
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"83c40583c8def3f2ee574806695c36727d1949b3\""
+      },
+      "body": {
+        "data": [
+          {
+            "genre": {
+              "id": "genre-action",
+              "name": "Action",
+              "groupName": "genre",
+              "status": "ACTIVE"
+            },
+            "offers": [
+              {
+                "id": "genre-game",
+                "title": "Genre Game",
+                "image": null,
+                "locale": "en-US",
+                "localeStatus": "canonical"
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "locale": "en-US",
+          "count": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "top-wishlisted-populated",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/top-wishlisted?limit=10"
+    },
+    "input": {
+      "positions": [
+        {
+          "offerId": "wish-game",
+          "position": 2
+        }
+      ],
+      "offers": [
+        {
+          "id": "wish-game",
+          "namespace": "ns-wish",
+          "title": "Wish Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": []
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"b30c3f44709e90b734fc9490af44ba6b7c669c4d\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": null,
+            "id": "wish-game",
+            "namespace": "ns-wish",
+            "title": "Wish Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": null,
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical",
+            "position": 2
+          }
+        ],
+        "meta": {
+          "locale": "en-US",
+          "pagination": {
+            "limit": 10,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "upcoming-cursor-first-page",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/upcoming?limit=1"
+    },
+    "input": {
+      "offers": [
+        {
+          "id": "cursor-a",
+          "namespace": "ns-oracle",
+          "title": "Oracle Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": [],
+          "releaseDate": "2098-01-01T00:00:00.000Z"
+        },
+        {
+          "id": "cursor-b",
+          "namespace": "ns-oracle",
+          "title": "Oracle Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": [],
+          "releaseDate": "2098-01-02T00:00:00.000Z"
+        }
+      ],
+      "prices": []
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"5df3cfee1bc304bda45ce2278a4fc1687aef25a9\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": null,
+            "id": "cursor-a",
+            "namespace": "ns-oracle",
+            "title": "Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": "2098-01-01T00:00:00.000Z",
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudXBjb21pbmciLCJmaWx0ZXJzIjp7fSwiZmlsdGVySGFzaCI6IjQ0MTM2ZmEzNTViMzY3OGExMTQ2YWQxNmY3ZTg2NDllOTRmYjRmYzIxZmU3N2U4MzEwYzA2MGY2MWNhYWZmOGEiLCJvcmRlcmluZyI6InJlbGVhc2VEYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjA5OC0wMS0wMVQwMDowMDowMC4wMDBaIiwiY3Vyc29yLWEiXX0.YJCQTyWoxN9DL6wF2LnQsB00FypsqOm18G0VpmoBXZs"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "upcoming-cursor-continuation",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/upcoming?limit=1&cursor=eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudXBjb21pbmciLCJmaWx0ZXJzIjp7fSwiZmlsdGVySGFzaCI6IjQ0MTM2ZmEzNTViMzY3OGExMTQ2YWQxNmY3ZTg2NDllOTRmYjRmYzIxZmU3N2U4MzEwYzA2MGY2MWNhYWZmOGEiLCJvcmRlcmluZyI6InJlbGVhc2VEYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjA5OC0wMS0wMVQwMDowMDowMC4wMDBaIiwiY3Vyc29yLWEiXX0.YJCQTyWoxN9DL6wF2LnQsB00FypsqOm18G0VpmoBXZs"
+    },
+    "input": {
+      "offers": [
+        {
+          "id": "cursor-b",
+          "namespace": "ns-oracle",
+          "title": "Oracle Game",
+          "offerType": "BASE_GAME",
+          "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+          "keyImages": [],
+          "tags": [],
+          "items": [],
+          "customAttributes": [],
+          "releaseDate": "2098-01-02T00:00:00.000Z"
+        }
+      ],
+      "prices": [],
+      "cursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudXBjb21pbmciLCJmaWx0ZXJzIjp7fSwiZmlsdGVySGFzaCI6IjQ0MTM2ZmEzNTViMzY3OGExMTQ2YWQxNmY3ZTg2NDllOTRmYjRmYzIxZmU3N2U4MzEwYzA2MGY2MWNhYWZmOGEiLCJvcmRlcmluZyI6InJlbGVhc2VEYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjA5OC0wMS0wMVQwMDowMDowMC4wMDBaIiwiY3Vyc29yLWEiXX0.YJCQTyWoxN9DL6wF2LnQsB00FypsqOm18G0VpmoBXZs"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d9d82892ae6131ac7aa8bc8647adff7374939285\""
+      },
+      "body": {
+        "data": [
+          {
+            "_id": null,
+            "id": "cursor-b",
+            "namespace": "ns-oracle",
+            "title": "Oracle Game",
+            "description": null,
+            "longDescription": null,
+            "offerType": "BASE_GAME",
+            "effectiveDate": null,
+            "creationDate": null,
+            "lastModifiedDate": "2026-01-02T00:00:00.000Z",
+            "isCodeRedemptionOnly": null,
+            "keyImages": [],
+            "currentPrice": null,
+            "seller": null,
+            "productSlug": null,
+            "offerMappings": null,
+            "urlSlug": null,
+            "url": null,
+            "tags": [],
+            "items": [],
+            "categories": null,
+            "developerDisplayName": null,
+            "publisherDisplayName": null,
+            "prePurchase": null,
+            "releaseDate": "2098-01-02T00:00:00.000Z",
+            "pcReleaseDate": null,
+            "viewableDate": null,
+            "countriesBlacklist": null,
+            "countriesWhitelist": null,
+            "refundType": null,
+            "customAttributes": {},
+            "price": null,
+            "locale": "en-US",
+            "localeStatus": "canonical"
+          }
+        ],
+        "meta": {
+          "country": "US",
+          "region": "US",
+          "locale": "en-US",
+          "pagination": {
+            "limit": 1,
+            "hasMore": false,
+            "nextCursor": null
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "upcoming-cursor-limit-mismatch",
+    "request": {
+      "method": "GET",
+      "path": "/v1/offers/upcoming?limit=2&cursor=eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudXBjb21pbmciLCJmaWx0ZXJzIjp7fSwiZmlsdGVySGFzaCI6IjQ0MTM2ZmEzNTViMzY3OGExMTQ2YWQxNmY3ZTg2NDllOTRmYjRmYzIxZmU3N2U4MzEwYzA2MGY2MWNhYWZmOGEiLCJvcmRlcmluZyI6InJlbGVhc2VEYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjA5OC0wMS0wMVQwMDowMDowMC4wMDBaIiwiY3Vyc29yLWEiXX0.YJCQTyWoxN9DL6wF2LnQsB00FypsqOm18G0VpmoBXZs"
+    },
+    "input": {
+      "cursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJvZmZlcnMudXBjb21pbmciLCJmaWx0ZXJzIjp7fSwiZmlsdGVySGFzaCI6IjQ0MTM2ZmEzNTViMzY3OGExMTQ2YWQxNmY3ZTg2NDllOTRmYjRmYzIxZmU3N2U4MzEwYzA2MGY2MWNhYWZmOGEiLCJvcmRlcmluZyI6InJlbGVhc2VEYXRlOmFzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ5Mzg0MDAwMDAsImxhc3QiOlsiMjA5OC0wMS0wMVQwMDowMDowMC4wMDBaIiwiY3Vyc29yLWEiXX0.YJCQTyWoxN9DL6wF2LnQsB00FypsqOm18G0VpmoBXZs"
+    },
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"ac71fb074f0aeb77ae7312053607b87eeb0e6033\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/cursor-mismatch",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The cursor was issued for a different operation, filter set, ordering, country, locale, or page size. Restart pagination with the new parameters.",
+        "instance": "/v1/offers/upcoming",
+        "code": "CURSOR_MISMATCH",
+        "requestId": "req_node_oracle"
+      }
+    }
+  }
+]

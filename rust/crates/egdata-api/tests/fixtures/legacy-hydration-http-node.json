@@ -1,0 +1,100 @@
+[
+  {
+    "name": "legacy mixed stream without content type",
+    "request": {
+      "method": "POST",
+      "path": "/catalog/hydrate",
+      "raw": "{\"schemaVersion\":2,\"identifiers\":[{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"fail\"},{\"type\":\"asset\",\"namespace\":\"N\",\"artifactId\":\"José\",\"platform\":\"Win32\"},{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"large\"},{\"type\":\"release-app\",\"namespace\":\"N\",\"appId\":\"XA\",\"platform\":\"Mac\"}],\"knownRoots\":[{\"rootKey\":\"release-app:n:xa:mac\",\"graphHash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}],\"knownRecords\":[{\"recordKey\":\"item:n:test\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]}",
+      "headers": {}
+    },
+    "calls": [
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "N",
+          "id": "fail"
+        },
+        "knownRoots": [
+          {
+            "rootKey": "release-app:n:xa:mac",
+            "graphHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "knownRecords": [
+          {
+            "recordKey": "item:n:test",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ]
+      },
+      {
+        "identifier": {
+          "type": "asset",
+          "namespace": "N",
+          "artifactId": "José",
+          "platform": "Win32"
+        },
+        "knownRoots": [
+          {
+            "rootKey": "release-app:n:xa:mac",
+            "graphHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "knownRecords": [
+          {
+            "recordKey": "item:n:test",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ]
+      },
+      {
+        "identifier": {
+          "type": "item",
+          "namespace": "N",
+          "id": "large"
+        },
+        "knownRoots": [
+          {
+            "rootKey": "release-app:n:xa:mac",
+            "graphHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "knownRecords": [
+          {
+            "recordKey": "item:n:test",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ]
+      },
+      {
+        "identifier": {
+          "type": "release-app",
+          "namespace": "N",
+          "appId": "XA",
+          "platform": "Mac"
+        },
+        "knownRoots": [
+          {
+            "rootKey": "release-app:n:xa:mac",
+            "graphHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "knownRecords": [
+          {
+            "recordKey": "item:n:test",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/x-ndjson; charset=utf-8",
+        "cache-control": "private, no-store",
+        "x-content-type-options": "nosniff"
+      },
+      "body": "{\"schemaVersion\":2,\"rootKey\":\"item:n:fail\",\"identifier\":{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"fail\"},\"hydratedAt\":\"2026-11-17T12:00:00.000Z\",\"status\":\"error\",\"error\":{\"code\":\"CATALOG_ROOT_RESOLUTION_FAILED\",\"message\":\"This catalog root could not be hydrated.\"}}\n{\"schemaVersion\":2,\"rootKey\":\"asset:n:jos%C3%A9:win32\",\"identifier\":{\"type\":\"asset\",\"namespace\":\"N\",\"artifactId\":\"José\",\"platform\":\"Win32\"},\"hydratedAt\":\"2026-11-17T12:00:00.000Z\",\"status\":\"not-found\"}\n{\"schemaVersion\":2,\"rootKey\":\"item:n:large\",\"identifier\":{\"type\":\"item\",\"namespace\":\"N\",\"id\":\"large\"},\"hydratedAt\":\"2026-11-17T12:00:00.000Z\",\"status\":\"error\",\"error\":{\"code\":\"CATALOG_ROOT_TOO_LARGE\",\"message\":\"This catalog root exceeds the hydration limit.\"}}\n{\"schemaVersion\":2,\"rootKey\":\"release-app:n:xa:mac\",\"identifier\":{\"type\":\"release-app\",\"namespace\":\"N\",\"appId\":\"XA\",\"platform\":\"Mac\"},\"hydratedAt\":\"2026-11-17T12:00:00.000Z\",\"status\":\"unchanged\",\"graphHash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}\n"
+    }
+  }
+]

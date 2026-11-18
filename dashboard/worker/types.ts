@@ -139,6 +139,8 @@ export interface DashboardEnv
   CF_ANALYTICS_API_TOKEN?: string;
   ANTI_ABUSE_EDGE_SECRET?: string;
   ORIGIN_AUTH_TOKEN?: string;
+  RUST_SHADOW_ORIGIN?: string;
+  RUST_SHADOW_TOKEN?: string;
   ENABLE_DEV_AUTH?: string;
   /** One SQLite-backed quota object per environment and account ID. Binding name retained for deployment compatibility. */
   API_KEY_RATE_LIMITER: DurableObjectNamespace<

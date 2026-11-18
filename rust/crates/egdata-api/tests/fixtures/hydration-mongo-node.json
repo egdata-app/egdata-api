@@ -1,0 +1,2541 @@
+[
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ]
+    },
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "item",
+          "namespace": "store",
+          "id": "item"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "item:store:item",
+      "identifier": {
+        "type": "item",
+        "namespace": "store",
+        "id": "item"
+      },
+      "status": "resolved",
+      "graphHash": "4dc15f146145819f6d42112ef709e862d7d94e0be3b202f7d9a02863e4c59e0d",
+      "recordKeys": [
+        "asset:store:game:windows:store:item",
+        "item:store:item"
+      ],
+      "records": [
+        {
+          "recordKey": "asset:store:game:windows:store:item",
+          "sha256": "b396e00002970b178561c8ecf4aa139759fa083b8516deac7e322af2cce25286",
+          "record": {
+            "type": "asset",
+            "namespace": "store",
+            "artifactId": "game",
+            "platform": "Windows",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "downloadSizeBytes": 16167389303,
+            "installedSizeBytes": 17100000000
+          }
+        },
+        {
+          "recordKey": "item:store:item",
+          "sha256": "92345f4e7f17a431aecae71113e5d42c314312a874ac78db372d292dbbf56530",
+          "record": {
+            "type": "item",
+            "namespace": "store",
+            "id": "item",
+            "title": "Example",
+            "keyImages": [],
+            "categories": [],
+            "customAttributes": [],
+            "creationDate": "2024-02-03T00:00:00.000Z",
+            "eulaIds": [],
+            "installModes": [],
+            "entitlementStartDate": "2024-02-03T01:00:00.123Z"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ]
+    },
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "item",
+          "namespace": "store",
+          "id": "item"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": [
+        {
+          "rootKey": "item:store:item",
+          "graphHash": "4dc15f146145819f6d42112ef709e862d7d94e0be3b202f7d9a02863e4c59e0d"
+        }
+      ]
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "item:store:item",
+      "identifier": {
+        "type": "item",
+        "namespace": "store",
+        "id": "item"
+      },
+      "status": "unchanged",
+      "graphHash": "4dc15f146145819f6d42112ef709e862d7d94e0be3b202f7d9a02863e4c59e0d"
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ]
+    },
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "item",
+          "namespace": "store",
+          "id": "item"
+        }
+      ],
+      "knownRecords": [
+        {
+          "recordKey": "asset:store:game:windows:store:item",
+          "sha256": "b396e00002970b178561c8ecf4aa139759fa083b8516deac7e322af2cce25286"
+        },
+        {
+          "recordKey": "item:store:item",
+          "sha256": "92345f4e7f17a431aecae71113e5d42c314312a874ac78db372d292dbbf56530"
+        }
+      ],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "item:store:item",
+      "identifier": {
+        "type": "item",
+        "namespace": "store",
+        "id": "item"
+      },
+      "status": "resolved",
+      "graphHash": "4dc15f146145819f6d42112ef709e862d7d94e0be3b202f7d9a02863e4c59e0d",
+      "recordKeys": [
+        "asset:store:game:windows:store:item",
+        "item:store:item"
+      ],
+      "records": []
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ]
+    },
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "item",
+          "namespace": "store",
+          "id": "item"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": [
+        {
+          "rootKey": "item:store:item",
+          "graphHash": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "rootKey": "item:store:item",
+          "graphHash": "4dc15f146145819f6d42112ef709e862d7d94e0be3b202f7d9a02863e4c59e0d"
+        }
+      ]
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "item:store:item",
+      "identifier": {
+        "type": "item",
+        "namespace": "store",
+        "id": "item"
+      },
+      "status": "resolved",
+      "graphHash": "4dc15f146145819f6d42112ef709e862d7d94e0be3b202f7d9a02863e4c59e0d",
+      "recordKeys": [
+        "asset:store:game:windows:store:item",
+        "item:store:item"
+      ],
+      "records": [
+        {
+          "recordKey": "asset:store:game:windows:store:item",
+          "sha256": "b396e00002970b178561c8ecf4aa139759fa083b8516deac7e322af2cce25286",
+          "record": {
+            "type": "asset",
+            "namespace": "store",
+            "artifactId": "game",
+            "platform": "Windows",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "downloadSizeBytes": 16167389303,
+            "installedSizeBytes": 17100000000
+          }
+        },
+        {
+          "recordKey": "item:store:item",
+          "sha256": "92345f4e7f17a431aecae71113e5d42c314312a874ac78db372d292dbbf56530",
+          "record": {
+            "type": "item",
+            "namespace": "store",
+            "id": "item",
+            "title": "Example",
+            "keyImages": [],
+            "categories": [],
+            "customAttributes": [],
+            "creationDate": "2024-02-03T00:00:00.000Z",
+            "eulaIds": [],
+            "installModes": [],
+            "entitlementStartDate": "2024-02-03T01:00:00.123Z"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ]
+    },
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "item",
+          "namespace": "store",
+          "id": "item"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": [
+        {
+          "rootKey": "item:store:item",
+          "graphHash": "4dc15f146145819f6d42112ef709e862d7d94e0be3b202f7d9a02863e4c59e0d"
+        },
+        {
+          "rootKey": "item:store:item",
+          "graphHash": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "item:store:item",
+      "identifier": {
+        "type": "item",
+        "namespace": "store",
+        "id": "item"
+      },
+      "status": "unchanged",
+      "graphHash": "4dc15f146145819f6d42112ef709e862d7d94e0be3b202f7d9a02863e4c59e0d"
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Old item",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid",
+          "useCount": 2.5,
+          "linkedOffers": [
+            "official"
+          ],
+          "categories": [
+            "",
+            "🎮",
+            "Z",
+            "🎮",
+            {
+              "path": ""
+            },
+            {
+              "path": "𝄞"
+            }
+          ],
+          "eulaIds": [
+            "",
+            "🎮",
+            "A"
+          ],
+          "releaseInfo": [
+            {
+              "id": "early",
+              "appId": "game",
+              "platform": [
+                "Windows"
+              ]
+            },
+            {
+              "id": "winner",
+              "appId": "game",
+              "platform": [
+                "Windows",
+                "Linux"
+              ]
+            }
+          ]
+        },
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid",
+          "useCount": 2.5,
+          "linkedOffers": [
+            "official"
+          ],
+          "categories": [
+            "",
+            "🎮",
+            "Z",
+            "🎮",
+            {
+              "path": ""
+            },
+            {
+              "path": "𝄞"
+            }
+          ],
+          "eulaIds": [
+            "",
+            "🎮",
+            "A"
+          ],
+          "releaseInfo": [
+            {
+              "id": "early",
+              "appId": "game",
+              "platform": [
+                "Windows"
+              ]
+            },
+            {
+              "id": "winner",
+              "appId": "game",
+              "platform": [
+                "Windows",
+                "Linux"
+              ]
+            }
+          ]
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "store",
+          "id": "official",
+          "title": "Old offer",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "item",
+              "namespace": "store"
+            }
+          ],
+          "tags": [
+            {
+              "id": "é"
+            },
+            {
+              "id": "é"
+            }
+          ],
+          "prePurchase": false
+        },
+        {
+          "namespace": "store",
+          "id": "official",
+          "title": "Offer",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "item",
+              "namespace": "store"
+            }
+          ],
+          "tags": [
+            {
+              "id": "é"
+            },
+            {
+              "id": "é"
+            }
+          ],
+          "prePurchase": false
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        },
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 2.25,
+          "installedSizeBytes": 17100000000
+        }
+      ],
+      "offersubitems": [
+        {
+          "offerId": "official",
+          "subItems": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "item",
+          "namespace": "store",
+          "id": "item"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "item:store:item",
+      "identifier": {
+        "type": "item",
+        "namespace": "store",
+        "id": "item"
+      },
+      "status": "resolved",
+      "graphHash": "4273dd1c30fb4046715c2eb8f3e6b453f7ff1530abea098e94915d5e776b8256",
+      "recordKeys": [
+        "asset:store:game:windows:store:item",
+        "item:store:item",
+        "offer-item:store:official:store:item",
+        "offer:store:official",
+        "release-app:store:game:linux:store:item",
+        "release-app:store:game:windows:store:item"
+      ],
+      "records": [
+        {
+          "recordKey": "asset:store:game:windows:store:item",
+          "sha256": "54c35d6ccf06fc684098f552f68049b27e7323311f8728b50b8b583cbdc0940c",
+          "record": {
+            "type": "asset",
+            "namespace": "store",
+            "artifactId": "game",
+            "platform": "Windows",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "downloadSizeBytes": 2.25,
+            "installedSizeBytes": 17100000000,
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        },
+        {
+          "recordKey": "item:store:item",
+          "sha256": "2ff28a2dd2c476f66e9fd2ed85a6a2788d30b67bd320bd40352a0824abfbcdbb",
+          "record": {
+            "type": "item",
+            "namespace": "store",
+            "id": "item",
+            "title": "Example",
+            "keyImages": [],
+            "categories": [
+              "Z",
+              "𝄞",
+              "🎮",
+              ""
+            ],
+            "customAttributes": [],
+            "creationDate": "2024-02-03T00:00:00.000Z",
+            "eulaIds": [
+              "A",
+              "🎮",
+              ""
+            ],
+            "installModes": [],
+            "entitlementStartDate": "2024-02-03T01:00:00.123Z",
+            "useCount": 2.5,
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        },
+        {
+          "recordKey": "offer-item:store:official:store:item",
+          "sha256": "ff20e6e88c86941c6b449907b436b675e66277b1b9dc3259ef721bcd008986c5",
+          "record": {
+            "type": "offer-item",
+            "offerNamespace": "store",
+            "offerId": "official",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "sources": [
+              "direct",
+              "subitem",
+              "linked"
+            ],
+            "isPrimary": true
+          }
+        },
+        {
+          "recordKey": "offer:store:official",
+          "sha256": "770c76400837c3960cf36d78b8ce40fc0681c34f939c39e57cbcf5fde586b2ac",
+          "record": {
+            "type": "offer",
+            "namespace": "store",
+            "id": "official",
+            "title": "Offer",
+            "offerType": "BASE_GAME",
+            "keyImages": [],
+            "tags": [
+              {
+                "id": "é"
+              },
+              {
+                "id": "é"
+              }
+            ],
+            "categories": [],
+            "customAttributes": [],
+            "prePurchase": false,
+            "countriesBlacklist": [],
+            "countriesWhitelist": [],
+            "offerMappings": []
+          }
+        },
+        {
+          "recordKey": "release-app:store:game:linux:store:item",
+          "sha256": "24128a94e7443ca2d68e98b2b0606bfeb40401383c20f4c6709c23427da8e14e",
+          "record": {
+            "type": "release-app",
+            "namespace": "store",
+            "appId": "game",
+            "platform": "Linux",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "releaseId": "winner",
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        },
+        {
+          "recordKey": "release-app:store:game:windows:store:item",
+          "sha256": "a9479ba0416ba0ff1283e5df530e0e7031d900858fad5cb2b5dcf8fb26a13ce5",
+          "record": {
+            "type": "release-app",
+            "namespace": "store",
+            "appId": "game",
+            "platform": "Windows",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "releaseId": "winner",
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Old item",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid",
+          "useCount": 2.5,
+          "linkedOffers": [
+            "official"
+          ],
+          "categories": [
+            "",
+            "🎮",
+            "Z",
+            "🎮",
+            {
+              "path": ""
+            },
+            {
+              "path": "𝄞"
+            }
+          ],
+          "eulaIds": [
+            "",
+            "🎮",
+            "A"
+          ],
+          "releaseInfo": [
+            {
+              "id": "early",
+              "appId": "game",
+              "platform": [
+                "Windows"
+              ]
+            },
+            {
+              "id": "winner",
+              "appId": "game",
+              "platform": [
+                "Windows",
+                "Linux"
+              ]
+            }
+          ]
+        },
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid",
+          "useCount": 2.5,
+          "linkedOffers": [
+            "official"
+          ],
+          "categories": [
+            "",
+            "🎮",
+            "Z",
+            "🎮",
+            {
+              "path": ""
+            },
+            {
+              "path": "𝄞"
+            }
+          ],
+          "eulaIds": [
+            "",
+            "🎮",
+            "A"
+          ],
+          "releaseInfo": [
+            {
+              "id": "early",
+              "appId": "game",
+              "platform": [
+                "Windows"
+              ]
+            },
+            {
+              "id": "winner",
+              "appId": "game",
+              "platform": [
+                "Windows",
+                "Linux"
+              ]
+            }
+          ]
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "store",
+          "id": "official",
+          "title": "Old offer",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "item",
+              "namespace": "store"
+            }
+          ],
+          "tags": [
+            {
+              "id": "é"
+            },
+            {
+              "id": "é"
+            }
+          ],
+          "prePurchase": false
+        },
+        {
+          "namespace": "store",
+          "id": "official",
+          "title": "Offer",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "item",
+              "namespace": "store"
+            }
+          ],
+          "tags": [
+            {
+              "id": "é"
+            },
+            {
+              "id": "é"
+            }
+          ],
+          "prePurchase": false
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        },
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 2.25,
+          "installedSizeBytes": 17100000000
+        }
+      ],
+      "offersubitems": [
+        {
+          "offerId": "official",
+          "subItems": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "item",
+          "namespace": "store",
+          "id": "item"
+        }
+      ],
+      "knownRecords": [
+        {
+          "recordKey": "offer-item:store:official:store:item",
+          "sha256": "ff20e6e88c86941c6b449907b436b675e66277b1b9dc3259ef721bcd008986c5"
+        },
+        {
+          "recordKey": "offer-item:store:official:store:item",
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "recordKey": "item:store:item",
+          "sha256": "2ff28a2dd2c476f66e9fd2ed85a6a2788d30b67bd320bd40352a0824abfbcdbb"
+        }
+      ],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "item:store:item",
+      "identifier": {
+        "type": "item",
+        "namespace": "store",
+        "id": "item"
+      },
+      "status": "resolved",
+      "graphHash": "4273dd1c30fb4046715c2eb8f3e6b453f7ff1530abea098e94915d5e776b8256",
+      "recordKeys": [
+        "asset:store:game:windows:store:item",
+        "item:store:item",
+        "offer-item:store:official:store:item",
+        "offer:store:official",
+        "release-app:store:game:linux:store:item",
+        "release-app:store:game:windows:store:item"
+      ],
+      "records": [
+        {
+          "recordKey": "asset:store:game:windows:store:item",
+          "sha256": "54c35d6ccf06fc684098f552f68049b27e7323311f8728b50b8b583cbdc0940c",
+          "record": {
+            "type": "asset",
+            "namespace": "store",
+            "artifactId": "game",
+            "platform": "Windows",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "downloadSizeBytes": 2.25,
+            "installedSizeBytes": 17100000000,
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        },
+        {
+          "recordKey": "offer-item:store:official:store:item",
+          "sha256": "ff20e6e88c86941c6b449907b436b675e66277b1b9dc3259ef721bcd008986c5",
+          "record": {
+            "type": "offer-item",
+            "offerNamespace": "store",
+            "offerId": "official",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "sources": [
+              "direct",
+              "subitem",
+              "linked"
+            ],
+            "isPrimary": true
+          }
+        },
+        {
+          "recordKey": "offer:store:official",
+          "sha256": "770c76400837c3960cf36d78b8ce40fc0681c34f939c39e57cbcf5fde586b2ac",
+          "record": {
+            "type": "offer",
+            "namespace": "store",
+            "id": "official",
+            "title": "Offer",
+            "offerType": "BASE_GAME",
+            "keyImages": [],
+            "tags": [
+              {
+                "id": "é"
+              },
+              {
+                "id": "é"
+              }
+            ],
+            "categories": [],
+            "customAttributes": [],
+            "prePurchase": false,
+            "countriesBlacklist": [],
+            "countriesWhitelist": [],
+            "offerMappings": []
+          }
+        },
+        {
+          "recordKey": "release-app:store:game:linux:store:item",
+          "sha256": "24128a94e7443ca2d68e98b2b0606bfeb40401383c20f4c6709c23427da8e14e",
+          "record": {
+            "type": "release-app",
+            "namespace": "store",
+            "appId": "game",
+            "platform": "Linux",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "releaseId": "winner",
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        },
+        {
+          "recordKey": "release-app:store:game:windows:store:item",
+          "sha256": "a9479ba0416ba0ff1283e5df530e0e7031d900858fad5cb2b5dcf8fb26a13ce5",
+          "record": {
+            "type": "release-app",
+            "namespace": "store",
+            "appId": "game",
+            "platform": "Windows",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "releaseId": "winner",
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Old item",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid",
+          "useCount": 2.5,
+          "linkedOffers": [
+            "official"
+          ],
+          "categories": [
+            "",
+            "🎮",
+            "Z",
+            "🎮",
+            {
+              "path": ""
+            },
+            {
+              "path": "𝄞"
+            }
+          ],
+          "eulaIds": [
+            "",
+            "🎮",
+            "A"
+          ],
+          "releaseInfo": [
+            {
+              "id": "early",
+              "appId": "game",
+              "platform": [
+                "Windows"
+              ]
+            },
+            {
+              "id": "winner",
+              "appId": "game",
+              "platform": [
+                "Windows",
+                "Linux"
+              ]
+            }
+          ]
+        },
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid",
+          "useCount": 2.5,
+          "linkedOffers": [
+            "official"
+          ],
+          "categories": [
+            "",
+            "🎮",
+            "Z",
+            "🎮",
+            {
+              "path": ""
+            },
+            {
+              "path": "𝄞"
+            }
+          ],
+          "eulaIds": [
+            "",
+            "🎮",
+            "A"
+          ],
+          "releaseInfo": [
+            {
+              "id": "early",
+              "appId": "game",
+              "platform": [
+                "Windows"
+              ]
+            },
+            {
+              "id": "winner",
+              "appId": "game",
+              "platform": [
+                "Windows",
+                "Linux"
+              ]
+            }
+          ]
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "store",
+          "id": "official",
+          "title": "Old offer",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "item",
+              "namespace": "store"
+            }
+          ],
+          "tags": [
+            {
+              "id": "é"
+            },
+            {
+              "id": "é"
+            }
+          ],
+          "prePurchase": false
+        },
+        {
+          "namespace": "store",
+          "id": "official",
+          "title": "Offer",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "item",
+              "namespace": "store"
+            }
+          ],
+          "tags": [
+            {
+              "id": "é"
+            },
+            {
+              "id": "é"
+            }
+          ],
+          "prePurchase": false
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        },
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 2.25,
+          "installedSizeBytes": 17100000000
+        }
+      ],
+      "offersubitems": [
+        {
+          "offerId": "official",
+          "subItems": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "asset",
+          "namespace": "store",
+          "artifactId": "game",
+          "platform": "Windows"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "asset:store:game:windows",
+      "identifier": {
+        "type": "asset",
+        "namespace": "store",
+        "artifactId": "game",
+        "platform": "Windows"
+      },
+      "status": "resolved",
+      "graphHash": "4273dd1c30fb4046715c2eb8f3e6b453f7ff1530abea098e94915d5e776b8256",
+      "recordKeys": [
+        "asset:store:game:windows:store:item",
+        "item:store:item",
+        "offer-item:store:official:store:item",
+        "offer:store:official",
+        "release-app:store:game:linux:store:item",
+        "release-app:store:game:windows:store:item"
+      ],
+      "records": [
+        {
+          "recordKey": "asset:store:game:windows:store:item",
+          "sha256": "54c35d6ccf06fc684098f552f68049b27e7323311f8728b50b8b583cbdc0940c",
+          "record": {
+            "type": "asset",
+            "namespace": "store",
+            "artifactId": "game",
+            "platform": "Windows",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "downloadSizeBytes": 2.25,
+            "installedSizeBytes": 17100000000,
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        },
+        {
+          "recordKey": "item:store:item",
+          "sha256": "2ff28a2dd2c476f66e9fd2ed85a6a2788d30b67bd320bd40352a0824abfbcdbb",
+          "record": {
+            "type": "item",
+            "namespace": "store",
+            "id": "item",
+            "title": "Example",
+            "keyImages": [],
+            "categories": [
+              "Z",
+              "𝄞",
+              "🎮",
+              ""
+            ],
+            "customAttributes": [],
+            "creationDate": "2024-02-03T00:00:00.000Z",
+            "eulaIds": [
+              "A",
+              "🎮",
+              ""
+            ],
+            "installModes": [],
+            "entitlementStartDate": "2024-02-03T01:00:00.123Z",
+            "useCount": 2.5,
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        },
+        {
+          "recordKey": "offer-item:store:official:store:item",
+          "sha256": "ff20e6e88c86941c6b449907b436b675e66277b1b9dc3259ef721bcd008986c5",
+          "record": {
+            "type": "offer-item",
+            "offerNamespace": "store",
+            "offerId": "official",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "sources": [
+              "direct",
+              "subitem",
+              "linked"
+            ],
+            "isPrimary": true
+          }
+        },
+        {
+          "recordKey": "offer:store:official",
+          "sha256": "770c76400837c3960cf36d78b8ce40fc0681c34f939c39e57cbcf5fde586b2ac",
+          "record": {
+            "type": "offer",
+            "namespace": "store",
+            "id": "official",
+            "title": "Offer",
+            "offerType": "BASE_GAME",
+            "keyImages": [],
+            "tags": [
+              {
+                "id": "é"
+              },
+              {
+                "id": "é"
+              }
+            ],
+            "categories": [],
+            "customAttributes": [],
+            "prePurchase": false,
+            "countriesBlacklist": [],
+            "countriesWhitelist": [],
+            "offerMappings": []
+          }
+        },
+        {
+          "recordKey": "release-app:store:game:linux:store:item",
+          "sha256": "24128a94e7443ca2d68e98b2b0606bfeb40401383c20f4c6709c23427da8e14e",
+          "record": {
+            "type": "release-app",
+            "namespace": "store",
+            "appId": "game",
+            "platform": "Linux",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "releaseId": "winner",
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        },
+        {
+          "recordKey": "release-app:store:game:windows:store:item",
+          "sha256": "a9479ba0416ba0ff1283e5df530e0e7031d900858fad5cb2b5dcf8fb26a13ce5",
+          "record": {
+            "type": "release-app",
+            "namespace": "store",
+            "appId": "game",
+            "platform": "Windows",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "releaseId": "winner",
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Old item",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid",
+          "useCount": 2.5,
+          "linkedOffers": [
+            "official"
+          ],
+          "categories": [
+            "",
+            "🎮",
+            "Z",
+            "🎮",
+            {
+              "path": ""
+            },
+            {
+              "path": "𝄞"
+            }
+          ],
+          "eulaIds": [
+            "",
+            "🎮",
+            "A"
+          ],
+          "releaseInfo": [
+            {
+              "id": "early",
+              "appId": "game",
+              "platform": [
+                "Windows"
+              ]
+            },
+            {
+              "id": "winner",
+              "appId": "game",
+              "platform": [
+                "Windows",
+                "Linux"
+              ]
+            }
+          ]
+        },
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid",
+          "useCount": 2.5,
+          "linkedOffers": [
+            "official"
+          ],
+          "categories": [
+            "",
+            "🎮",
+            "Z",
+            "🎮",
+            {
+              "path": ""
+            },
+            {
+              "path": "𝄞"
+            }
+          ],
+          "eulaIds": [
+            "",
+            "🎮",
+            "A"
+          ],
+          "releaseInfo": [
+            {
+              "id": "early",
+              "appId": "game",
+              "platform": [
+                "Windows"
+              ]
+            },
+            {
+              "id": "winner",
+              "appId": "game",
+              "platform": [
+                "Windows",
+                "Linux"
+              ]
+            }
+          ]
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "store",
+          "id": "official",
+          "title": "Old offer",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "item",
+              "namespace": "store"
+            }
+          ],
+          "tags": [
+            {
+              "id": "é"
+            },
+            {
+              "id": "é"
+            }
+          ],
+          "prePurchase": false
+        },
+        {
+          "namespace": "store",
+          "id": "official",
+          "title": "Offer",
+          "offerType": "BASE_GAME",
+          "items": [
+            {
+              "id": "item",
+              "namespace": "store"
+            }
+          ],
+          "tags": [
+            {
+              "id": "é"
+            },
+            {
+              "id": "é"
+            }
+          ],
+          "prePurchase": false
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        },
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 2.25,
+          "installedSizeBytes": 17100000000
+        }
+      ],
+      "offersubitems": [
+        {
+          "offerId": "official",
+          "subItems": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "release-app",
+          "namespace": "store",
+          "appId": "game",
+          "platform": "Windows"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "release-app:store:game:windows",
+      "identifier": {
+        "type": "release-app",
+        "namespace": "store",
+        "appId": "game",
+        "platform": "Windows"
+      },
+      "status": "resolved",
+      "graphHash": "4273dd1c30fb4046715c2eb8f3e6b453f7ff1530abea098e94915d5e776b8256",
+      "recordKeys": [
+        "asset:store:game:windows:store:item",
+        "item:store:item",
+        "offer-item:store:official:store:item",
+        "offer:store:official",
+        "release-app:store:game:linux:store:item",
+        "release-app:store:game:windows:store:item"
+      ],
+      "records": [
+        {
+          "recordKey": "asset:store:game:windows:store:item",
+          "sha256": "54c35d6ccf06fc684098f552f68049b27e7323311f8728b50b8b583cbdc0940c",
+          "record": {
+            "type": "asset",
+            "namespace": "store",
+            "artifactId": "game",
+            "platform": "Windows",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "downloadSizeBytes": 2.25,
+            "installedSizeBytes": 17100000000,
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        },
+        {
+          "recordKey": "item:store:item",
+          "sha256": "2ff28a2dd2c476f66e9fd2ed85a6a2788d30b67bd320bd40352a0824abfbcdbb",
+          "record": {
+            "type": "item",
+            "namespace": "store",
+            "id": "item",
+            "title": "Example",
+            "keyImages": [],
+            "categories": [
+              "Z",
+              "𝄞",
+              "🎮",
+              ""
+            ],
+            "customAttributes": [],
+            "creationDate": "2024-02-03T00:00:00.000Z",
+            "eulaIds": [
+              "A",
+              "🎮",
+              ""
+            ],
+            "installModes": [],
+            "entitlementStartDate": "2024-02-03T01:00:00.123Z",
+            "useCount": 2.5,
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        },
+        {
+          "recordKey": "offer-item:store:official:store:item",
+          "sha256": "ff20e6e88c86941c6b449907b436b675e66277b1b9dc3259ef721bcd008986c5",
+          "record": {
+            "type": "offer-item",
+            "offerNamespace": "store",
+            "offerId": "official",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "sources": [
+              "direct",
+              "subitem",
+              "linked"
+            ],
+            "isPrimary": true
+          }
+        },
+        {
+          "recordKey": "offer:store:official",
+          "sha256": "770c76400837c3960cf36d78b8ce40fc0681c34f939c39e57cbcf5fde586b2ac",
+          "record": {
+            "type": "offer",
+            "namespace": "store",
+            "id": "official",
+            "title": "Offer",
+            "offerType": "BASE_GAME",
+            "keyImages": [],
+            "tags": [
+              {
+                "id": "é"
+              },
+              {
+                "id": "é"
+              }
+            ],
+            "categories": [],
+            "customAttributes": [],
+            "prePurchase": false,
+            "countriesBlacklist": [],
+            "countriesWhitelist": [],
+            "offerMappings": []
+          }
+        },
+        {
+          "recordKey": "release-app:store:game:linux:store:item",
+          "sha256": "24128a94e7443ca2d68e98b2b0606bfeb40401383c20f4c6709c23427da8e14e",
+          "record": {
+            "type": "release-app",
+            "namespace": "store",
+            "appId": "game",
+            "platform": "Linux",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "releaseId": "winner",
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        },
+        {
+          "recordKey": "release-app:store:game:windows:store:item",
+          "sha256": "a9479ba0416ba0ff1283e5df530e0e7031d900858fad5cb2b5dcf8fb26a13ce5",
+          "record": {
+            "type": "release-app",
+            "namespace": "store",
+            "appId": "game",
+            "platform": "Windows",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "releaseId": "winner",
+            "primaryOfferNamespace": "store",
+            "primaryOfferId": "official"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "tables": {},
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "item",
+          "namespace": "store",
+          "id": "item"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "item:store:item",
+      "identifier": {
+        "type": "item",
+        "namespace": "store",
+        "id": "item"
+      },
+      "status": "not-found"
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "store",
+          "id": "offer",
+          "title": "Offer",
+          "items": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "failRead": 1,
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "asset",
+          "namespace": "store",
+          "artifactId": "game",
+          "platform": "Windows"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "asset:store:game:windows",
+      "identifier": {
+        "type": "asset",
+        "namespace": "store",
+        "artifactId": "game",
+        "platform": "Windows"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "store",
+          "id": "offer",
+          "title": "Offer",
+          "items": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "failRead": 2,
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "asset",
+          "namespace": "store",
+          "artifactId": "game",
+          "platform": "Windows"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "asset:store:game:windows",
+      "identifier": {
+        "type": "asset",
+        "namespace": "store",
+        "artifactId": "game",
+        "platform": "Windows"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "store",
+          "id": "offer",
+          "title": "Offer",
+          "items": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "failRead": 3,
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "asset",
+          "namespace": "store",
+          "artifactId": "game",
+          "platform": "Windows"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "asset:store:game:windows",
+      "identifier": {
+        "type": "asset",
+        "namespace": "store",
+        "artifactId": "game",
+        "platform": "Windows"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "store",
+          "id": "offer",
+          "title": "Offer",
+          "items": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "failRead": 4,
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "asset",
+          "namespace": "store",
+          "artifactId": "game",
+          "platform": "Windows"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "asset:store:game:windows",
+      "identifier": {
+        "type": "asset",
+        "namespace": "store",
+        "artifactId": "game",
+        "platform": "Windows"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "store",
+          "id": "offer",
+          "title": "Offer",
+          "items": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "failRead": 5,
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "asset",
+          "namespace": "store",
+          "artifactId": "game",
+          "platform": "Windows"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "asset:store:game:windows",
+      "identifier": {
+        "type": "asset",
+        "namespace": "store",
+        "artifactId": "game",
+        "platform": "Windows"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "store",
+          "id": "offer",
+          "title": "Offer",
+          "items": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "failRead": 6,
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "asset",
+          "namespace": "store",
+          "artifactId": "game",
+          "platform": "Windows"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "asset:store:game:windows",
+      "identifier": {
+        "type": "asset",
+        "namespace": "store",
+        "artifactId": "game",
+        "platform": "Windows"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "store",
+          "id": "offer",
+          "title": "Offer",
+          "items": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "failRead": 7,
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "asset",
+          "namespace": "store",
+          "artifactId": "game",
+          "platform": "Windows"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "asset:store:game:windows",
+      "identifier": {
+        "type": "asset",
+        "namespace": "store",
+        "artifactId": "game",
+        "platform": "Windows"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "store",
+          "id": "offer",
+          "title": "Offer",
+          "items": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "failRead": 8,
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "asset",
+          "namespace": "store",
+          "artifactId": "game",
+          "platform": "Windows"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "asset:store:game:windows",
+      "identifier": {
+        "type": "asset",
+        "namespace": "store",
+        "artifactId": "game",
+        "platform": "Windows"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": 16167389303,
+          "installedSizeBytes": 17100000000
+        }
+      ],
+      "offers": [
+        {
+          "namespace": "store",
+          "id": "offer",
+          "title": "Offer",
+          "items": [
+            {
+              "id": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "failRead": 9,
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "asset",
+          "namespace": "store",
+          "artifactId": "game",
+          "platform": "Windows"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "asset:store:game:windows",
+      "identifier": {
+        "type": "asset",
+        "namespace": "store",
+        "artifactId": "game",
+        "platform": "Windows"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ]
+    },
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "item",
+          "namespace": "store",
+          "id": "item"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "item:store:item",
+      "identifier": {
+        "type": "item",
+        "namespace": "store",
+        "id": "item"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ],
+      "assets": [
+        {
+          "itemId": "item",
+          "namespace": "store",
+          "platform": "Windows"
+        }
+      ]
+    },
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "item",
+          "namespace": "store",
+          "id": "item"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "item:store:item",
+      "identifier": {
+        "type": "item",
+        "namespace": "store",
+        "id": "item"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid"
+        }
+      ]
+    },
+    "generatedPlatforms": 500,
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "item",
+          "namespace": "store",
+          "id": "item"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "item:store:item",
+      "identifier": {
+        "type": "item",
+        "namespace": "store",
+        "id": "item"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    }
+  },
+  {
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "",
+          "title": "Example",
+          "creationDate": "2024-02-03",
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid",
+          "releaseInfo": [
+            {
+              "appId": "game",
+              "platform": [
+                "Windows"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "release-app",
+          "namespace": "store",
+          "appId": "game",
+          "platform": "Windows"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "release-app:store:game:windows",
+      "identifier": {
+        "type": "release-app",
+        "namespace": "store",
+        "appId": "game",
+        "platform": "Windows"
+      },
+      "status": "error",
+      "error": {
+        "code": "CATALOG_ROOT_RESOLUTION_FAILED",
+        "message": "This catalog root could not be hydrated."
+      }
+    }
+  },
+  {
+    "extendedJson": true,
+    "tables": {
+      "items": [
+        {
+          "namespace": "store",
+          "id": "item",
+          "title": "Example",
+          "creationDate": {
+            "$date": "2024-03-04T00:00:00Z"
+          },
+          "entitlementStartDate": 1706922000123.75,
+          "entitlementEndDate": "invalid",
+          "useCount": {
+            "$numberLong": "9007199254740993"
+          },
+          "developer": {
+            "$oid": "507f1f77bcf86cd799439011"
+          },
+          "description": {
+            "$date": "2024-01-02T00:00:00Z"
+          },
+          "eulaIds": [
+            {
+              "$symbol": "driver-promotes-symbol"
+            }
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "game",
+          "downloadSizeBytes": {
+            "$numberLong": "9007199254740992"
+          },
+          "installedSizeBytes": {
+            "$numberDecimal": "1432.12"
+          }
+        },
+        {
+          "namespace": "store",
+          "itemId": "item",
+          "platform": "Windows",
+          "artifactId": "huge-double",
+          "downloadSizeBytes": {
+            "$numberDouble": "18446744073709551616"
+          },
+          "installedSizeBytes": {
+            "$numberInt": "37"
+          }
+        }
+      ]
+    },
+    "request": {
+      "schemaVersion": 2,
+      "identifiers": [
+        {
+          "type": "item",
+          "namespace": "store",
+          "id": "item"
+        }
+      ],
+      "knownRecords": [],
+      "knownRoots": []
+    },
+    "result": {
+      "schemaVersion": 2,
+      "rootKey": "item:store:item",
+      "identifier": {
+        "type": "item",
+        "namespace": "store",
+        "id": "item"
+      },
+      "status": "resolved",
+      "graphHash": "c1bd9e58530d9ad24931a13fa5f63eec3402b24941dceabfc08edd95ae8629d1",
+      "recordKeys": [
+        "asset:store:game:windows:store:item",
+        "asset:store:huge-double:windows:store:item",
+        "item:store:item"
+      ],
+      "records": [
+        {
+          "recordKey": "asset:store:game:windows:store:item",
+          "sha256": "bf06107198c48a3f8784be1da82d4ef0fe176219be8e9e8dc5465ab4436698d8",
+          "record": {
+            "type": "asset",
+            "namespace": "store",
+            "artifactId": "game",
+            "platform": "Windows",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "downloadSizeBytes": 9007199254740992
+          }
+        },
+        {
+          "recordKey": "asset:store:huge-double:windows:store:item",
+          "sha256": "495eaec043a5af3b3160621bc5cadf21ab88703f6653d933f3545cabec7f0324",
+          "record": {
+            "type": "asset",
+            "namespace": "store",
+            "artifactId": "huge-double",
+            "platform": "Windows",
+            "itemNamespace": "store",
+            "itemId": "item",
+            "downloadSizeBytes": 18446744073709552000,
+            "installedSizeBytes": 37
+          }
+        },
+        {
+          "recordKey": "item:store:item",
+          "sha256": "6ad753c8656d8f96b0bfc1c79561ae227e1764eb498e8a52834cd18702a95154",
+          "record": {
+            "type": "item",
+            "namespace": "store",
+            "id": "item",
+            "title": "Example",
+            "keyImages": [],
+            "categories": [],
+            "customAttributes": [],
+            "creationDate": "2024-03-04T00:00:00.000Z",
+            "eulaIds": [
+              "driver-promotes-symbol"
+            ],
+            "installModes": [],
+            "entitlementStartDate": "2024-02-03T01:00:00.123Z"
+          }
+        }
+      ]
+    }
+  }
+]
