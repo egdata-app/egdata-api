@@ -65,7 +65,7 @@ async fn oidc_verifier_rejects_missing_signer_information_and_provider_outages()
     let rs = signed(Algorithm::RS256, &private, Some("kid-1"));
     let hs = signed(
         Algorithm::HS256,
-        &EncodingKey::from_secret(b"fixture-secret"),
+        &EncodingKey::from_secret(b"fixture-secret").unwrap(),
         Some("kid-1"),
     );
     let no_kid = signed(Algorithm::RS256, &private, None);

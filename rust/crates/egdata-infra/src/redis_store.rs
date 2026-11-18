@@ -1,7 +1,6 @@
 //! Redis connection configuration, response cache, Lua script stores, and in-memory fallbacks.
 
 use std::collections::HashMap;
-use std::num::NonZeroUsize;
 use std::sync::atomic::{AtomicI64, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
@@ -9,7 +8,6 @@ use std::time::Duration;
 use async_trait::async_trait;
 use egdata_core::v1::trim_js_whitespace;
 use indexmap::IndexMap;
-use lru::LruCache;
 use redis::aio::{ConnectionLike, ConnectionManager, MultiplexedConnection};
 use redis::{RedisError, Script, Value as RedisValue};
 use serde::{Deserialize, Serialize};
@@ -1431,9 +1429,36 @@ pub fn is_valid_persisted_query_hash(value: &str) -> bool {
     value.len() == 64 && value.bytes().all(|b| b.is_ascii_hexdigit())
 }
 
+struct PersistedMemoryCache {
+    capacity: usize,
+    entries: IndexMap<String, String>,
+}
+
+impl PersistedMemoryCache {
+    fn new(capacity: usize) -> Self {
+        Self {
+            capacity: capacity.max(1),
+            entries: IndexMap::new(),
+        }
+    }
+
+    fn get(&self, hash: &str) -> Option<&str> {
+        self.entries.get(hash).map(String::as_str)
+    }
+
+    fn put(&mut self, hash: String, query: String) {
+        if self.entries.contains_key(&hash) {
+            self.entries.shift_remove(&hash);
+        } else if self.entries.len() >= self.capacity {
+            self.entries.shift_remove_index(0);
+        }
+        self.entries.insert(hash, query);
+    }
+}
+
 /// GraphQL APQ store with 2000 entries evicted in registration order and 30s Redis outage fallback.
 pub struct PersistedQueryStore {
-    memory: Mutex<LruCache<String, String>>,
+    memory: Mutex<PersistedMemoryCache>,
     backend: Arc<dyn RedisBackend>,
     unavailable_until_ms: AtomicI64,
 }
@@ -1444,9 +1469,8 @@ impl PersistedQueryStore {
     }
 
     pub fn with_capacity(backend: Arc<dyn RedisBackend>, capacity: usize) -> Self {
-        let cap = NonZeroUsize::new(capacity.max(1)).expect("non-zero capacity");
         Self {
-            memory: Mutex::new(LruCache::new(cap)),
+            memory: Mutex::new(PersistedMemoryCache::new(capacity)),
             backend,
             unavailable_until_ms: AtomicI64::new(0),
         }
@@ -1469,8 +1493,8 @@ impl PersistedQueryStore {
     pub async fn get(&self, hash: &str, now_ms: i64) -> Option<String> {
         {
             let cache = self.memory.lock().unwrap_or_else(|e| e.into_inner());
-            if let Some(found) = cache.peek(hash).filter(|query| !query.is_empty()) {
-                return Some(found.clone());
+            if let Some(found) = cache.get(hash).filter(|query| !query.is_empty()) {
+                return Some(found.to_string());
             }
         }
         if !self.is_redis_available(now_ms) {
@@ -2015,6 +2039,8 @@ mod tests {
         let h3 = hash_query("query { c }");
         apq.store(&h2, "query { b }", 1_200).await;
         apq.store(&h3, "query { c }", 1_300).await;
+        apq.store(&h3, "query { c_updated }", 1_350).await;
+        assert_eq!(apq.get(&h3, 1_360).await.as_deref(), Some("query { c_updated }"));
         assert_eq!(apq.get(&h, 1_400).await.as_deref(), Some(q));
 
         // Redis outage fallback in APQ

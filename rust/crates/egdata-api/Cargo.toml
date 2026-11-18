@@ -30,7 +30,6 @@ icu_locale_core.workspace = true
 indexmap.workspace = true
 sys-locale.workspace = true
 jsonwebtoken.workspace = true
-lru.workspace = true
 rand.workspace = true
 redis.workspace = true
 num-bigint.workspace = true

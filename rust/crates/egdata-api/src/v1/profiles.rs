@@ -21,7 +21,7 @@ use egdata_core::{
         mongo_sort_spec, parse_boolean, parse_pagination_map, require_id_param, trim_page,
     },
 };
-use rand::Rng;
+use rand::RngExt;
 use serde_json::{Value, json};
 
 use super::{

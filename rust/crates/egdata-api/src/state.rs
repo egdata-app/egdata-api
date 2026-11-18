@@ -95,12 +95,22 @@ pub struct ApiConfig {
     pub graphql_introspection: bool,
 }
 
+fn resolve_default_collation_locale(detected: Option<String>) -> String {
+    detected
+        .filter(|locale| locale.parse::<icu_locale_core::Locale>().is_ok())
+        .unwrap_or_else(|| "en-US".into())
+}
+
+fn default_collation_locale() -> String {
+    resolve_default_collation_locale(sys_locale::get_locale())
+}
+
 impl Default for ApiConfig {
     fn default() -> Self {
         Self {
             port: 4001,
             node_env: "development".to_string(),
-            collation_locale: sys_locale::get_locale().unwrap_or_else(|| "en-US".into()),
+            collation_locale: default_collation_locale(),
             origin_auth_token: None,
             origin_auth_required: false,
             origin_auth_host: "origin-api.egdata.app".to_string(),
@@ -201,9 +211,7 @@ impl ApiConfig {
             Some(&node_env),
             get("V1_CURSOR_DEV_SECRET").as_deref(),
         );
-        let collation_locale = get("NODE_ICU_LOCALE")
-            .or_else(sys_locale::get_locale)
-            .unwrap_or_else(|| "en-US".into());
+        let collation_locale = get("NODE_ICU_LOCALE").unwrap_or_else(default_collation_locale);
         collation_locale
             .parse::<icu_locale_core::Locale>()
             .map_err(|_| "NODE_ICU_LOCALE must be a valid BCP 47 locale".to_owned())?;
@@ -389,6 +397,15 @@ mod tests {
 
     #[test]
     fn validates_explicit_node_collation_locale() {
+        assert_eq!(
+            resolve_default_collation_locale(Some("C.UTF-8".into())),
+            "en-US"
+        );
+        assert_eq!(resolve_default_collation_locale(None), "en-US");
+        assert_eq!(
+            resolve_default_collation_locale(Some("fr-FR".into())),
+            "fr-FR"
+        );
         let mut env = BTreeMap::from([("NODE_ICU_LOCALE".into(), "es-ES".into())]);
         assert_eq!(
             ApiConfig::from_env_map(&env).unwrap().collation_locale,

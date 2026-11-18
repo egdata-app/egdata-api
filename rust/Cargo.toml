@@ -22,8 +22,9 @@ all = { level = "deny", priority = -1 }
 
 [workspace.dependencies]
 aes = "0.8"
+aes-gcm = "0.11"
 anyhow = "1"
-async-graphql = { version = "7.2", features = ["chrono", "dataloader", "apollo_persisted_queries"] }
+async-graphql = { version = "7.2", features = ["chrono"] }
 async-graphql-axum = "7.2"
 async-trait = "0.1"
 axum = { version = "0.8", features = ["macros", "multipart"] }
@@ -36,20 +37,21 @@ clap = { version = "4", features = ["derive"] }
 futures = "0.3"
 flate2 = "1"
 hex = "0.4"
+hkdf = "0.12"
 hmac = "0.12"
 http = "1"
 http-body-util = "0.1"
 icu_collator = "2.1"
 icu_locale_core = "2.1"
 sys-locale = "0.3"
-jsonwebtoken = "9"
-lru = "0.13"
+jsonwebtoken = { version = "12", features = ["rust_crypto"] }
 mongodb = "3.10"
 num-bigint = "0.4"
 num-traits = "0.2"
 indexmap = "2"
+p256 = { version = "0.14", features = ["ecdh", "ecdsa", "pem"] }
 percent-encoding = "2"
-rand = "0.9"
+rand = "0.10"
 redis = { version = "1.8", features = ["tokio-comp", "connection-manager", "tokio-rustls-comp"] }
 regex = "1"
 ryu-js = "1.0.3"
@@ -71,4 +73,6 @@ url = "2"
 urlencoding = "2"
 utoipa = { version = "5", features = ["axum_extras", "chrono"] }
 uuid = { version = "1", features = ["v4"] }
-web-push = { version = "0.11", default-features = false, features = ["hyper-client"] }
+
+[patch.crates-io]
+gif = { git = "https://github.com/image-rs/image-gif", rev = "a5f89ddc2b29424334244c97456b4a26e208aa7d" }

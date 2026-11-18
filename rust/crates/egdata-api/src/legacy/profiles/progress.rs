@@ -1,5 +1,5 @@
 use super::*;
-use rand::Rng;
+use rand::RngExt;
 
 fn primitive_id(id: &Bson) -> bool {
     matches!(

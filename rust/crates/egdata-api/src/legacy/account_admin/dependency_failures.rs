@@ -124,7 +124,7 @@ async fn accounts_reads_handle_invalid_records_and_provider_failures() {
         let token = encode(
             &Header::new(Algorithm::HS256),
             &claims,
-            &EncodingKey::from_secret(b"fixture-secret"),
+            &EncodingKey::from_secret(b"fixture-secret").unwrap(),
         )
         .unwrap();
         h.mongo.push_find_one(
@@ -330,7 +330,7 @@ async fn verified_services_handle_bad_requests_and_upstream_failures() {
     let token = encode(
         &Header::new(Algorithm::HS256),
         &json!({"sub":"fixture","exp":fixed_now().timestamp()+3600}),
-        &EncodingKey::from_secret(b"fixture-issuer"),
+        &EncodingKey::from_secret(b"fixture-issuer").unwrap(),
     )
     .unwrap();
     let credential = format!("Bearer {token}");
@@ -832,7 +832,7 @@ async fn optional_review_and_provider_fields_are_handled() {
     let credential = encode(
         &Header::new(Algorithm::HS256),
         &json!({"sub":"fixture"}),
-        &EncodingKey::from_secret(b"local-fixture-issuer"),
+        &EncodingKey::from_secret(b"local-fixture-issuer").unwrap(),
     )
     .unwrap();
     h.http

@@ -3543,7 +3543,7 @@ pub(super) mod tests {
         let jwt_tok = encode(
             &Header::new(Algorithm::HS256),
             &json!({ "id": enc_id }),
-            &EncodingKey::from_secret(b"jwt-sec"),
+            &EncodingKey::from_secret(b"jwt-sec").unwrap(),
         )
         .unwrap();
 

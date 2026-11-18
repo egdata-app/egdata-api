@@ -36,7 +36,7 @@ use egdata_core::{
     v1::serialization::node_json,
 };
 use futures::Stream;
-use rand::Rng;
+use rand::RngExt;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};

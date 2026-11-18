@@ -7,6 +7,7 @@ edition.workspace = true
 workspace = true
 
 [dependencies]
+aes-gcm.workspace = true
 anyhow.workspace = true
 async-trait.workspace = true
 base64.workspace = true
@@ -17,10 +18,11 @@ egdata-core = { path = "../egdata-core" }
 futures.workspace = true
 flate2.workspace = true
 hex.workspace = true
+hkdf.workspace = true
 hmac.workspace = true
 indexmap.workspace = true
-lru.workspace = true
 mongodb.workspace = true
+p256.workspace = true
 percent-encoding.workspace = true
 rand.workspace = true
 redis.workspace = true
@@ -36,7 +38,6 @@ tokio.workspace = true
 tracing.workspace = true
 url.workspace = true
 uuid.workspace = true
-web-push.workspace = true
 
 [dev-dependencies]
 tokio.workspace = true

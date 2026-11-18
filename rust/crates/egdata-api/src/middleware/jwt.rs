@@ -39,13 +39,10 @@ pub fn verify_jwt(token: &str, jwt_secret: &str) -> Option<VerifiedJwtUser> {
     }
     let mut validation = Validation::new(Algorithm::HS256);
     validation.required_spec_claims.clear();
-    decode::<BTreeMap<String, Value>>(
-        token,
-        &DecodingKey::from_secret(jwt_secret.as_bytes()),
-        &validation,
-    )
-    .ok()
-    .map(|data| VerifiedJwtUser(data.claims))
+    let key = DecodingKey::from_secret(jwt_secret.as_bytes()).ok()?;
+    decode::<BTreeMap<String, Value>>(token, &key, &validation)
+        .ok()
+        .map(|data| VerifiedJwtUser(data.claims))
 }
 
 fn unauthorized_response() -> Response {
@@ -108,7 +105,7 @@ mod tests {
         encode(
             &Header::new(Algorithm::HS256),
             claims,
-            &EncodingKey::from_secret(secret.as_bytes()),
+            &EncodingKey::from_secret(secret.as_bytes()).unwrap(),
         )
         .unwrap()
     }

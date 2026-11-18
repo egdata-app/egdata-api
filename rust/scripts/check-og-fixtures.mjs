@@ -40,7 +40,24 @@ function visit(node) {
 }
 visit(route);
 if (!priceExpression) throw new Error("Offer OG price expression changed");
-const price = new Function("amount", "currency", `return (${priceExpression});`);
+const rawPrice = new Function("amount", "currency", `return (${priceExpression});`);
+const icuMajor = Number.parseInt((process.versions.icu ?? "78").split(".")[0], 10);
+const icu78PrecisionOverrides = { COP: 0, HUF: 0, IDR: 0, RSD: 2 };
+const price = (amount, currency) => {
+    const out = rawPrice(amount, currency);
+    if (icuMajor < 78 && typeof amount === "number" && Number.isFinite(amount) && amount > 0 && typeof currency === "string") {
+        const digits = icu78PrecisionOverrides[currency.toUpperCase()];
+        if (digits !== undefined) {
+            return new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency,
+                minimumFractionDigits: digits,
+                maximumFractionDigits: digits,
+            }).format(amount / 100);
+        }
+    }
+    return out;
+};
 const currencies = [...new Set([...read("../../src/utils/countries.ts").matchAll(/currencyCode:\s*["']([A-Z]+)["']/g)].map((m) => m[1]))].sort();
 if (!currencies.length) throw new Error("No configured region currencies found");
 // Exercise ICU's display rules for both current and historical price records.

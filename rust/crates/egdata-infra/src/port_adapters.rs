@@ -1168,13 +1168,11 @@ mod tests {
             "failed fetch must render canonical no-cover HTML"
         );
     }
-    use web_push::{WebPushClient, WebPushError, WebPushMessage, request_builder};
-
     use crate::auth_pg::{AuthSessionRecord, AuthUserRecord};
     use crate::catalog_mongo::{CatalogMongoError, MongoDatabaseSource};
     use crate::job_api::JobApiClientConfig;
     use crate::mongo::MongoConfig;
-    use crate::notifications::VapidConfig;
+    use crate::notifications::{PushRequest, PushResponse, PushTransport, VapidConfig};
     use crate::redis_store::{RedisBackend, RedisStoreError};
     use crate::search_clients::{MeilisearchConfig, OpenSearchConfig, VectorizeConfig};
 
@@ -1458,12 +1456,23 @@ mod tests {
     struct MockPushTransport(&'static str);
 
     #[async_trait]
-    impl WebPushClient for MockPushTransport {
-        async fn send(&self, _m: WebPushMessage) -> Result<(), WebPushError> {
+    impl PushTransport for MockPushTransport {
+        async fn send(
+            &self,
+            _req: PushRequest,
+        ) -> Result<PushResponse, crate::notifications::NotificationError> {
             match self.0 {
-                "ok" => Ok(()),
-                "gone" => request_builder::parse_response(410u16.try_into().unwrap(), Vec::new()),
-                _ => Err(WebPushError::InvalidResponse),
+                "ok" => Ok(PushResponse {
+                    status: 201,
+                    body: String::new(),
+                }),
+                "gone" => Ok(PushResponse {
+                    status: 410,
+                    body: String::new(),
+                }),
+                _ => Err(crate::notifications::NotificationError::WebPush(
+                    "mock error".into(),
+                )),
             }
         }
     }

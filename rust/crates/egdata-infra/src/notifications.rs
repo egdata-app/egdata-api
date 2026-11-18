@@ -3,17 +3,27 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use aes_gcm::{
+    Aes128Gcm,
+    aead::{Aead, KeyInit},
+};
 use async_trait::async_trait;
+use base64::{Engine as _, engine::general_purpose::URL_SAFE_NO_PAD};
+use hkdf::Hkdf;
+use p256::{
+    PublicKey, SecretKey,
+    ecdh::diffie_hellman,
+    ecdsa::{Signature, SigningKey, signature::Signer},
+    elliptic_curve::Generate,
+};
+use rand::Rng;
 use reqwest::{Client, Method};
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, json};
+use sha2::Sha256;
 use thiserror::Error;
 use tracing::{error, warn};
 use url::Url;
-use web_push::{
-    ContentEncoding, HyperWebPushClient, SubscriptionInfo, VapidSignatureBuilder, WebPushClient,
-    WebPushError, WebPushMessageBuilder,
-};
 
 pub const DISCORD_API_BASE: &str = "https://discord.com/api/v10";
 pub const TELEGRAM_API_BASE: &str = "https://api.telegram.org";
@@ -398,6 +408,65 @@ pub fn wildcard_topic_patterns(topic: &str) -> Vec<String> {
         .collect()
 }
 
+const WEB_PUSH_DEFAULT_TTL_SECONDS: u32 = 2_419_200;
+const WEB_PUSH_RECORD_SIZE: u32 = 4096;
+const WEB_PUSH_MAX_PAYLOAD_BYTES: usize = 3052;
+const VAPID_TTL_SECONDS: i64 = 43_200;
+
+/// Built Web Push HTTP request ready to send to a push service endpoint.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PushRequest {
+    pub endpoint: String,
+    pub ttl: u32,
+    pub authorization: String,
+    pub body: Vec<u8>,
+}
+
+/// Response returned by [`PushTransport::send`].
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PushResponse {
+    pub status: u16,
+    pub body: String,
+}
+
+/// Transport abstraction for dispatching built Web Push requests.
+#[async_trait]
+pub trait PushTransport: Send + Sync {
+    async fn send(&self, request: PushRequest) -> Result<PushResponse, NotificationError>;
+}
+
+/// Default [`PushTransport`] backed by `reqwest::Client`.
+#[derive(Clone, Default)]
+pub struct ReqwestPushTransport {
+    http: Client,
+}
+
+impl ReqwestPushTransport {
+    pub fn new(http: Client) -> Self {
+        Self { http }
+    }
+}
+
+#[async_trait]
+impl PushTransport for ReqwestPushTransport {
+    async fn send(&self, request: PushRequest) -> Result<PushResponse, NotificationError> {
+        let resp = self
+            .http
+            .post(&request.endpoint)
+            .header("TTL", request.ttl.to_string())
+            .header("Content-Encoding", "aes128gcm")
+            .header("Content-Type", "application/octet-stream")
+            .header("Content-Length", request.body.len().to_string())
+            .header("Authorization", request.authorization)
+            .body(request.body)
+            .send()
+            .await?;
+        let status = resp.status().as_u16();
+        let body = resp.text().await.unwrap_or_default();
+        Ok(PushResponse { status, body })
+    }
+}
+
 /// Trait for dispatching Web Push notifications.
 #[async_trait]
 pub trait WebPushDispatcher: Send + Sync {
@@ -408,20 +477,160 @@ pub trait WebPushDispatcher: Send + Sync {
     ) -> PushSendOutcome;
 }
 
-/// VAPID Web Push client backed by `web-push` (`HyperWebPushClient` by default).
+/// VAPID Web Push client implementing RFC 8291 (`aes128gcm`) and RFC 8292 (`vapid`).
 pub struct VapidWebPushClient {
     config: VapidConfig,
-    client: Arc<dyn WebPushClient + Send + Sync>,
+    client: Arc<dyn PushTransport>,
 }
 
 impl VapidWebPushClient {
     pub fn new(config: VapidConfig) -> Self {
-        Self::with_client(config, Arc::new(HyperWebPushClient::new()))
+        Self::with_client(config, Arc::new(ReqwestPushTransport::default()))
     }
 
-    pub fn with_client(config: VapidConfig, client: Arc<dyn WebPushClient + Send + Sync>) -> Self {
+    pub fn with_client(config: VapidConfig, client: Arc<dyn PushTransport>) -> Self {
         Self { config, client }
     }
+}
+
+fn decode_b64_url(input: &str, label: &str) -> Result<Vec<u8>, NotificationError> {
+    URL_SAFE_NO_PAD
+        .decode(input.trim_end_matches('='))
+        .map_err(|_| NotificationError::WebPush(format!("Invalid {label}")))
+}
+
+fn vapid_audience(endpoint: &str) -> Result<String, NotificationError> {
+    let url = Url::parse(endpoint)
+        .map_err(|e| NotificationError::WebPush(format!("Invalid endpoint URL: {e}")))?;
+    let scheme = url.scheme();
+    if scheme != "http" && scheme != "https" {
+        return Err(NotificationError::WebPush(
+            "Invalid endpoint URL scheme".into(),
+        ));
+    }
+    let host = url.host_str().unwrap_or_default();
+    Ok(match url.port() {
+        Some(port) => format!("{scheme}://{host}:{port}"),
+        None => format!("{scheme}://{host}"),
+    })
+}
+
+fn build_vapid_authorization(
+    private_key_b64: &str,
+    subject: &str,
+    endpoint: &str,
+    exp: i64,
+) -> Result<String, NotificationError> {
+    let key_bytes = decode_b64_url(private_key_b64, "VAPID private key")?;
+    let signing_key = SigningKey::from_slice(&key_bytes)
+        .map_err(|_| NotificationError::WebPush("Invalid VAPID private key".into()))?;
+    let aud = vapid_audience(endpoint)?;
+
+    let header_b64 = URL_SAFE_NO_PAD.encode(br#"{"typ":"JWT","alg":"ES256"}"#);
+    let claims = json!({
+        "aud": aud,
+        "exp": exp,
+        "sub": subject,
+    });
+    let claims_bytes = serde_json::to_vec(&claims)?;
+    let claims_b64 = URL_SAFE_NO_PAD.encode(claims_bytes);
+    let signing_input = format!("{header_b64}.{claims_b64}");
+
+    let signature: Signature = signing_key.sign(signing_input.as_bytes());
+    let sig_b64 = URL_SAFE_NO_PAD.encode(signature.to_bytes());
+    let pub_point = signing_key.verifying_key().to_sec1_point(false);
+    let pub_b64 = URL_SAFE_NO_PAD.encode(pub_point.as_bytes());
+
+    Ok(format!("vapid t={signing_input}.{sig_b64}, k={pub_b64}"))
+}
+
+fn encrypt_aes128gcm_with_ephemeral(
+    p256dh_b64: &str,
+    auth_b64: &str,
+    plaintext: &[u8],
+    ephemeral: &SecretKey,
+    salt: &[u8; 16],
+) -> Result<Vec<u8>, NotificationError> {
+    if plaintext.len() > WEB_PUSH_MAX_PAYLOAD_BYTES {
+        return Err(NotificationError::WebPush("Payload too large".into()));
+    }
+    let ua_bytes = decode_b64_url(p256dh_b64, "p256dh key")?;
+    let ua_key = PublicKey::from_sec1_bytes(&ua_bytes)
+        .map_err(|_| NotificationError::WebPush("Invalid p256dh key".into()))?;
+    let ua_pub = ua_key.to_sec1_bytes();
+
+    let auth_bytes = decode_b64_url(auth_b64, "auth secret")?;
+    if auth_bytes.len() != 16 {
+        return Err(NotificationError::WebPush("Invalid auth secret length".into()));
+    }
+
+    let as_pub = ephemeral.public_key().to_sec1_bytes();
+    let shared = diffie_hellman(ephemeral.to_nonzero_scalar(), ua_key.as_affine());
+
+    let mut ikm_info = Vec::with_capacity(14 + ua_pub.len() + as_pub.len());
+    ikm_info.extend_from_slice(b"WebPush: info\0");
+    ikm_info.extend_from_slice(&ua_pub);
+    ikm_info.extend_from_slice(&as_pub);
+
+    let mut ikm = [0u8; 32];
+    Hkdf::<Sha256>::new(Some(&auth_bytes), shared.raw_secret_bytes())
+        .expand(&ikm_info, &mut ikm)
+        .expect("32-byte IKM fits SHA-256 HKDF");
+
+    let prk = Hkdf::<Sha256>::new(Some(salt), &ikm);
+    let mut cek = [0u8; 16];
+    let mut nonce = [0u8; 12];
+    prk.expand(b"Content-Encoding: aes128gcm\0", &mut cek)
+        .expect("16-byte CEK fits SHA-256 HKDF");
+    prk.expand(b"Content-Encoding: nonce\0", &mut nonce)
+        .expect("12-byte nonce fits SHA-256 HKDF");
+
+    let mut padded = Vec::with_capacity(plaintext.len() + 1);
+    padded.extend_from_slice(plaintext);
+    padded.push(0x02);
+
+    let cipher = Aes128Gcm::new_from_slice(&cek).expect("16-byte key is valid for AES-128-GCM");
+    let ciphertext = cipher
+        .encrypt(&nonce.into(), padded.as_slice())
+        .expect("AES-128-GCM encryption within max payload is infallible");
+
+    let mut body = Vec::with_capacity(21 + as_pub.len() + ciphertext.len());
+    body.extend_from_slice(salt);
+    body.extend_from_slice(&WEB_PUSH_RECORD_SIZE.to_be_bytes());
+    body.push(as_pub.len() as u8);
+    body.extend_from_slice(&as_pub);
+    body.extend_from_slice(&ciphertext);
+    Ok(body)
+}
+
+fn build_web_push_request(
+    config: &VapidConfig,
+    subscription: &PushSubscriptionTarget,
+    payload_json: &[u8],
+) -> Result<PushRequest, NotificationError> {
+    let exp = chrono::Utc::now().timestamp() + VAPID_TTL_SECONDS;
+    let authorization = build_vapid_authorization(
+        &config.private_key,
+        &config.subject,
+        &subscription.endpoint,
+        exp,
+    )?;
+    let mut salt = [0u8; 16];
+    rand::rng().fill_bytes(&mut salt);
+    let ephemeral = SecretKey::generate();
+    let body = encrypt_aes128gcm_with_ephemeral(
+        &subscription.keys.p256dh,
+        &subscription.keys.auth,
+        payload_json,
+        &ephemeral,
+        &salt,
+    )?;
+    Ok(PushRequest {
+        endpoint: subscription.endpoint.clone(),
+        ttl: WEB_PUSH_DEFAULT_TTL_SECONDS,
+        authorization,
+        body,
+    })
 }
 
 #[async_trait]
@@ -431,55 +640,30 @@ impl WebPushDispatcher for VapidWebPushClient {
         subscription: &PushSubscriptionTarget,
         payload_json: &[u8],
     ) -> PushSendOutcome {
-        let sub_info = SubscriptionInfo::new(
-            &subscription.endpoint,
-            &subscription.keys.p256dh,
-            &subscription.keys.auth,
-        );
-        let mut sig_builder =
-            match VapidSignatureBuilder::from_base64(&self.config.private_key, &sub_info) {
-                Ok(b) => b,
-                Err(err) => {
-                    return PushSendOutcome::Failed {
-                        subscription_id: subscription.id.clone(),
-                        error: format!("{err:?}"),
-                    };
-                }
-            };
-        sig_builder.add_claim("sub", self.config.subject.as_str());
-        let signature = match sig_builder.build() {
-            Ok(sig) => sig,
+        let request = match build_web_push_request(&self.config, subscription, payload_json) {
+            Ok(req) => req,
             Err(err) => {
                 return PushSendOutcome::Failed {
                     subscription_id: subscription.id.clone(),
-                    error: format!("{err:?}"),
+                    error: err.to_string(),
                 };
             }
         };
 
-        let mut builder = WebPushMessageBuilder::new(&sub_info);
-        builder.set_payload(ContentEncoding::Aes128Gcm, payload_json);
-        builder.set_vapid_signature(signature);
-        let message = match builder.build() {
-            Ok(msg) => msg,
-            Err(err) => {
-                return PushSendOutcome::Failed {
-                    subscription_id: subscription.id.clone(),
-                    error: format!("{err:?}"),
-                };
-            }
-        };
-
-        match self.client.send(message).await {
-            Ok(()) => PushSendOutcome::Sent {
+        match self.client.send(request).await {
+            Ok(resp) if (200..300).contains(&resp.status) => PushSendOutcome::Sent {
                 subscription_id: subscription.id.clone(),
             },
-            Err(WebPushError::EndpointNotValid(_)) => PushSendOutcome::Expired {
+            Ok(resp) if resp.status == 410 => PushSendOutcome::Expired {
                 subscription_id: subscription.id.clone(),
+            },
+            Ok(resp) => PushSendOutcome::Failed {
+                subscription_id: subscription.id.clone(),
+                error: format!("HTTP {}: {}", resp.status, resp.body),
             },
             Err(err) => PushSendOutcome::Failed {
                 subscription_id: subscription.id.clone(),
-                error: format!("{err:?}"),
+                error: err.to_string(),
             },
         }
     }
@@ -488,10 +672,10 @@ impl WebPushDispatcher for VapidWebPushClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use base64::{Engine as _, engine::general_purpose::URL_SAFE_NO_PAD};
+    use p256::ecdsa::{VerifyingKey, signature::Verifier};
+    use std::sync::Mutex;
     use tokio::io::{AsyncReadExt, AsyncWriteExt};
     use tokio::net::TcpListener;
-    use web_push::{WebPushMessage, request_builder};
 
     async fn spawn_http_server<F>(handler: F) -> String
     where
@@ -524,17 +708,50 @@ mod tests {
         format!("http://{addr}")
     }
 
+    async fn spawn_capture_server(status: u16, resp_body: &'static str) -> (String, Arc<Mutex<Vec<String>>>) {
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let addr = listener.local_addr().unwrap();
+        let captured = Arc::new(Mutex::new(Vec::new()));
+        let captured_clone = captured.clone();
+        tokio::spawn(async move {
+            if let Ok((mut socket, _)) = listener.accept().await {
+                let mut buf = vec![0u8; 16384];
+                let n = socket.read(&mut buf).await.unwrap_or(0);
+                captured_clone
+                    .lock()
+                    .unwrap()
+                    .push(String::from_utf8_lossy(&buf[..n]).to_string());
+                let resp = format!(
+                    "HTTP/1.1 {status} Status\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{resp_body}",
+                    resp_body.len()
+                );
+                let _ = socket.write_all(resp.as_bytes()).await;
+            }
+        });
+        (format!("http://{addr}/push"), captured)
+    }
+
     struct MockWebPushTransport {
         mode: &'static str,
     }
 
     #[async_trait]
-    impl WebPushClient for MockWebPushTransport {
-        async fn send(&self, _message: WebPushMessage) -> Result<(), WebPushError> {
+    impl PushTransport for MockWebPushTransport {
+        async fn send(&self, _request: PushRequest) -> Result<PushResponse, NotificationError> {
             match self.mode {
-                "ok" => Ok(()),
-                "gone" => request_builder::parse_response(410u16.try_into().unwrap(), Vec::new()),
-                _ => Err(WebPushError::InvalidResponse),
+                "ok" => Ok(PushResponse {
+                    status: 201,
+                    body: String::new(),
+                }),
+                "gone" => Ok(PushResponse {
+                    status: 410,
+                    body: "expired".into(),
+                }),
+                "status_err" => Ok(PushResponse {
+                    status: 502,
+                    body: "bad gateway".into(),
+                }),
+                _ => Err(NotificationError::WebPush("transport error".into())),
             }
         }
     }
@@ -705,6 +922,17 @@ mod tests {
             }
         );
 
+        let status_err_sender = VapidWebPushClient::with_client(
+            vapid.clone(),
+            Arc::new(MockWebPushTransport { mode: "status_err" }),
+        );
+        assert!(matches!(
+            status_err_sender
+                .send_notification(&target, b"{\"title\":\"Hi\"}")
+                .await,
+            PushSendOutcome::Failed { .. }
+        ));
+
         let err_sender = VapidWebPushClient::with_client(
             vapid.clone(),
             Arc::new(MockWebPushTransport { mode: "err" }),
@@ -716,14 +944,117 @@ mod tests {
             PushSendOutcome::Failed { .. }
         ));
 
-        // Bad VAPID private key fails gracefully
+        // Bad VAPID private key or oversized payload fails gracefully
         let bad_key = VapidWebPushClient::new(VapidConfig {
             private_key: "not-a-key".into(),
-            ..vapid
+            ..vapid.clone()
         });
         assert!(matches!(
             bad_key.send_notification(&target, b"{}").await,
             PushSendOutcome::Failed { .. }
         ));
+        assert!(matches!(
+            ok_sender.send_notification(&target, &[0u8; 3053]).await,
+            PushSendOutcome::Failed { .. }
+        ));
+
+        // End-to-end ReqwestPushTransport against local HTTP server
+        let (push_url, captured) = spawn_capture_server(201, "").await;
+        let live_target = PushSubscriptionTarget {
+            id: "sub-live".into(),
+            endpoint: push_url,
+            keys: target.keys.clone(),
+        };
+        let live_client = VapidWebPushClient::new(vapid.clone());
+        assert_eq!(
+            live_client
+                .send_notification(&live_target, b"{\"title\":\"Live\"}")
+                .await,
+            PushSendOutcome::Sent {
+                subscription_id: "sub-live".into()
+            }
+        );
+        let raw_req = captured.lock().unwrap().remove(0);
+        assert!(raw_req.starts_with("POST /push "));
+        let lower = raw_req.to_ascii_lowercase();
+        assert!(lower.contains("ttl: 2419200"));
+        assert!(lower.contains("content-encoding: aes128gcm"));
+        assert!(lower.contains("content-type: application/octet-stream"));
+        assert!(lower.contains("authorization: vapid t="));
+
+        // Transport error from ReqwestPushTransport (closed port)
+        let dead_transport = ReqwestPushTransport::new(Client::new());
+        let dead_req = PushRequest {
+            endpoint: "http://127.0.0.1:1/push".into(),
+            ttl: 60,
+            authorization: "vapid t=a.b.c, k=d".into(),
+            body: b"abc".to_vec(),
+        };
+        assert!(dead_transport.send(dead_req).await.is_err());
+
+        // RFC 8291 official aes128gcm test vector
+        let rfc_priv = hex::decode("c9f58f89813e9f8e872e71f42aa64e1757c9254dcc62b72ddc010bb4043ea11c").unwrap();
+        let rfc_ephemeral = SecretKey::from_slice(&rfc_priv).unwrap();
+        let rfc_ua_pub = URL_SAFE_NO_PAD.encode(
+            hex::decode("042571b2becdfde360551aaf1ed0f4cd366c11cebe555f89bcb7b186a53339173168ece2ebe018597bd30479b86e3c8f8eced577ca59187e9246990db682008b0e").unwrap(),
+        );
+        let rfc_auth = URL_SAFE_NO_PAD.encode(hex::decode("05305932a1c7eabe13b6cec9fda48882").unwrap());
+        let rfc_salt: [u8; 16] = hex::decode("0c6bfaadad67958803092d454676f397")
+            .unwrap()
+            .try_into()
+            .unwrap();
+        let encrypted = encrypt_aes128gcm_with_ephemeral(
+            &rfc_ua_pub,
+            &rfc_auth,
+            b"When I grow up, I want to be a watermelon",
+            &rfc_ephemeral,
+            &rfc_salt,
+        )
+        .unwrap();
+        let expected_rfc = hex::decode("0c6bfaadad67958803092d454676f397000010004104fe33f4ab0dea71914db55823f73b54948f41306d920732dbb9a59a53286482200e597a7b7bc260ba1c227998580992e93973002f3012a28ae8f06bbb78e5ec0ff297de5b429bba7153d3a4ae0caa091fd425f3b4b5414add8ab37a19c1bbb05cf5cb5b2a2e0562d558635641ec52812c6c8ff42e95ccb86be7cd").unwrap();
+        assert_eq!(encrypted, expected_rfc);
+
+        // VAPID ES256 signature verification and key derivation check
+        let auth_header = build_vapid_authorization(
+            valid_vapid_priv,
+            "mailto:ops@egdata.app",
+            "https://updates.push.services.mozilla.com/wpush/v2/abc",
+            1_800_000_000,
+        )
+        .unwrap();
+        let (t_part, k_part) = auth_header
+            .strip_prefix("vapid t=")
+            .unwrap()
+            .split_once(", k=")
+            .unwrap();
+        assert_eq!(
+            k_part,
+            "BMjQIp55pdbU8pfCBKyXcZjlmER_mXt5LqNrN1hrXbdBS5EnhIbMu3Au-RV53iIpztzNXkGI56BFB1udQ8Bq_H4"
+        );
+        let pub_raw = URL_SAFE_NO_PAD.decode(k_part).unwrap();
+        let vk = VerifyingKey::from_sec1_bytes(&pub_raw).unwrap();
+        let jwt_parts: Vec<&str> = t_part.split('.').collect();
+        assert_eq!(jwt_parts.len(), 3);
+        let sig_raw = URL_SAFE_NO_PAD.decode(jwt_parts[2]).unwrap();
+        let sig = Signature::from_slice(&sig_raw).unwrap();
+        vk.verify(format!("{}.{}", jwt_parts[0], jwt_parts[1]).as_bytes(), &sig)
+            .unwrap();
+        let claims: Value =
+            serde_json::from_slice(&URL_SAFE_NO_PAD.decode(jwt_parts[1]).unwrap()).unwrap();
+        assert_eq!(claims["aud"], "https://updates.push.services.mozilla.com");
+        assert_eq!(claims["sub"], "mailto:ops@egdata.app");
+        assert_eq!(claims["exp"], 1_800_000_000);
+
+        // Error branches for VAPID & encryption validation
+        assert!(build_vapid_authorization("!!!", "s", "https://example.com", 1).is_err());
+        assert!(build_vapid_authorization(&URL_SAFE_NO_PAD.encode([1u8; 4]), "s", "https://example.com", 1).is_err());
+        assert!(vapid_audience("not a url").is_err());
+        assert!(vapid_audience("ftp://example.com/push").is_err());
+        assert!(vapid_audience("https:///").is_err());
+        assert!(encrypt_aes128gcm_with_ephemeral(&rfc_ua_pub, &rfc_auth, &[0u8; 3053], &rfc_ephemeral, &rfc_salt).is_err());
+        assert!(encrypt_aes128gcm_with_ephemeral("!!!", &rfc_auth, b"{}", &rfc_ephemeral, &rfc_salt).is_err());
+        assert!(encrypt_aes128gcm_with_ephemeral(&URL_SAFE_NO_PAD.encode([1u8; 4]), &rfc_auth, b"{}", &rfc_ephemeral, &rfc_salt).is_err());
+        assert!(encrypt_aes128gcm_with_ephemeral(&rfc_ua_pub, "!!!", b"{}", &rfc_ephemeral, &rfc_salt).is_err());
+        assert!(encrypt_aes128gcm_with_ephemeral(&rfc_ua_pub, &URL_SAFE_NO_PAD.encode([1u8; 4]), b"{}", &rfc_ephemeral, &rfc_salt).is_err());
     }
 }

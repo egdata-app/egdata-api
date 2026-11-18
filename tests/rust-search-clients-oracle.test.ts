@@ -5,6 +5,13 @@ import { it, vi } from "vitest";
 import { assertOracle } from "../rust/oracles/record.js";
 import { queryOffersWithNaturalLanguage } from "../src/clients/vectorize.js";
 
+function canonicalGzip(input: Buffer): Buffer {
+  const gz = Buffer.from(gzipSync(input));
+  // Normalize the RFC 1952 OS header byte so Windows (0x0a) and Linux (0x03) match the recorded oracle.
+  if (gz.length >= 10) gz[9] = 0x0a;
+  return gz;
+}
+
 type Reply = {
   status: number;
   type: string;
@@ -138,7 +145,7 @@ const inputs: Record<string, Input> = {
       {
         ...ok,
         encoding: "gzip",
-        wireHex: gzipSync(Buffer.from(ok.body)).subarray(0, 10).toString("hex"),
+        wireHex: canonicalGzip(Buffer.from(ok.body)).subarray(0, 10).toString("hex"),
       },
     ],
   },
@@ -268,7 +275,7 @@ const inputs: Record<string, Input> = {
   },
   ...Object.fromEntries(
     [
-      ["gzip", gzipSync(Buffer.from(ok.body))],
+      ["gzip", canonicalGzip(Buffer.from(ok.body))],
       ["deflate", deflateSync(Buffer.from(ok.body))],
       ["br", brotliCompressSync(Buffer.from(ok.body))],
       ["broken-gzip", Buffer.from("bad")],

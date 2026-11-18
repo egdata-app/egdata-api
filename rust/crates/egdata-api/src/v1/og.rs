@@ -319,10 +319,11 @@ fn format_currency_en_us(amount_minor: f64, currency: &str) -> String {
     // rounds half up to the currency's display precision, including historic codes.
     let currency = currency.to_ascii_uppercase();
     let precision = match currency.as_str() {
-        "ADP" | "AFN" | "ALL" | "BIF" | "BYR" | "CLP" | "DJF" | "ESP" | "GNF" | "IQD" | "IRR"
-        | "ISK" | "ITL" | "JPY" | "KMF" | "KPW" | "KRW" | "LAK" | "LBP" | "LUF" | "MGA" | "MGF"
-        | "MMK" | "MRO" | "PYG" | "RSD" | "RWF" | "SLL" | "SOS" | "STD" | "SYP" | "TMM" | "TRL"
-        | "UGX" | "UYI" | "VND" | "VUV" | "XAF" | "XOF" | "XPF" | "YER" | "ZMK" | "ZWD" => 0,
+        "ADP" | "AFN" | "ALL" | "BIF" | "BYR" | "CLP" | "COP" | "DJF" | "ESP" | "GNF" | "HUF"
+        | "IDR" | "IQD" | "IRR" | "ISK" | "ITL" | "JPY" | "KMF" | "KPW" | "KRW" | "LAK" | "LBP"
+        | "LUF" | "MGA" | "MGF" | "MMK" | "MRO" | "PYG" | "RWF" | "SLL" | "SOS" | "STD" | "SYP"
+        | "TMM" | "TRL" | "UGX" | "UYI" | "VND" | "VUV" | "XAF" | "XOF" | "XPF" | "YER" | "ZMK"
+        | "ZWD" => 0,
         "BHD" | "JOD" | "KWD" | "LYD" | "OMR" | "TND" => 3,
         "CLF" | "UYW" => 4,
         _ => 2,
