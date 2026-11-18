@@ -1,9 +1,11 @@
 //! Worker-to-origin authentication middleware (`src/middlewares/origin-auth.ts`).
 
+use std::net::{IpAddr, SocketAddr};
+
 use axum::{
     Json,
     body::Body,
-    extract::{Request, State},
+    extract::{ConnectInfo, Request, State},
     http::{HeaderName, HeaderValue, StatusCode, header},
     middleware::Next,
     response::{IntoResponse, Response},
@@ -41,6 +43,45 @@ pub(crate) fn sha256_secure_eq(a: &str, b: &str) -> bool {
     let left = Sha256::digest(a.as_bytes());
     let right = Sha256::digest(b.as_bytes());
     constant_time_eq(&left, &right)
+}
+
+const PROXY_FORWARDING_HEADERS: &[&str] = &[
+    "cf-connecting-ip",
+    "cf-ray",
+    "x-forwarded-for",
+    "x-forwarded-host",
+    "x-real-ip",
+    "forwarded",
+];
+
+fn is_private_or_loopback(ip: IpAddr) -> bool {
+    match ip {
+        IpAddr::V4(v4) => v4.is_loopback() || v4.is_private(),
+        IpAddr::V6(v6) => {
+            v6.is_loopback()
+                || v6.to_ipv4_mapped().is_some_and(|v4| v4.is_loopback() || v4.is_private())
+                || (v6.segments()[0] & 0xfe00) == 0xfc00
+        }
+    }
+}
+
+fn is_direct_internal_service_request(req: &Request<Body>, hostname: &str, origin_host: &str) -> bool {
+    if hostname.is_empty()
+        || hostname == origin_host
+        || hostname.contains('.')
+        || hostname.parse::<IpAddr>().is_ok()
+    {
+        return false;
+    }
+    if PROXY_FORWARDING_HEADERS
+        .iter()
+        .any(|&h| req.headers().contains_key(h))
+    {
+        return false;
+    }
+    req.extensions()
+        .get::<ConnectInfo<SocketAddr>>()
+        .is_some_and(|ci| is_private_or_loopback(ci.0.ip()))
 }
 
 fn extract_hostname(req: &Request<Body>) -> String {
@@ -127,7 +168,9 @@ pub async fn origin_auth_with_config(
     }
 
     let hostname = extract_hostname(&req);
-    if !config.origin_auth_required && hostname != origin_host {
+    if (!config.origin_auth_required && hostname != origin_host)
+        || is_direct_internal_service_request(&req, &hostname, &origin_host)
+    {
         return next.run(req).await;
     }
 
@@ -358,5 +401,71 @@ mod tests {
         )
         .unwrap();
         assert_eq!(uncfg_json["error"]["code"], "ORIGIN_NOT_CONFIGURED");
+    }
+
+    #[tokio::test]
+    async fn allows_direct_private_docker_service_requests_when_required_and_blocks_proxy_or_public() {
+        let cfg = ApiConfig {
+            origin_auth_token: Some("origin-secret".into()),
+            origin_auth_required: true,
+            origin_auth_host: "origin-api.egdata.app".into(),
+            ..Default::default()
+        };
+        let app = app_with(cfg);
+
+        // Direct private IPv4 Docker container call (`Host: egdata-api-nywbml:4000`, no proxy headers) -> 200 OK
+        let mut req = Request::builder()
+            .uri("/test")
+            .header("host", "egdata-api-nywbml:4000")
+            .body(Body::empty())
+            .unwrap();
+        req.extensions_mut()
+            .insert(ConnectInfo("172.18.0.5:54321".parse::<SocketAddr>().unwrap()));
+        let resp = app.clone().oneshot(req).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::OK);
+
+        // IPv6 ULA / IPv4-mapped private address -> 200 OK
+        assert!(is_private_or_loopback("::1".parse().unwrap()));
+        assert!(is_private_or_loopback("fd00::1".parse().unwrap()));
+        assert!(is_private_or_loopback("::ffff:10.0.0.2".parse().unwrap()));
+        assert!(!is_private_or_loopback("2001:4860:4860::8888".parse().unwrap()));
+        assert!(!is_private_or_loopback("8.8.8.8".parse().unwrap()));
+
+        // Same internal Host header arriving through reverse proxy (`x-forwarded-for` present) -> 403
+        let mut proxied = Request::builder()
+            .uri("/test")
+            .header("host", "egdata-api-nywbml:4000")
+            .header("x-forwarded-for", "203.0.113.10")
+            .body(Body::empty())
+            .unwrap();
+        proxied
+            .extensions_mut()
+            .insert(ConnectInfo("172.18.0.2:44321".parse::<SocketAddr>().unwrap()));
+        let proxied_resp = app.clone().oneshot(proxied).await.unwrap();
+        assert_eq!(proxied_resp.status(), StatusCode::FORBIDDEN);
+
+        // Direct call using raw IP literal in Host header -> 403
+        let mut ip_host = Request::builder()
+            .uri("/test")
+            .header("host", "172.18.0.5:4000")
+            .body(Body::empty())
+            .unwrap();
+        ip_host
+            .extensions_mut()
+            .insert(ConnectInfo("172.18.0.5:54321".parse::<SocketAddr>().unwrap()));
+        let ip_resp = app.clone().oneshot(ip_host).await.unwrap();
+        assert_eq!(ip_resp.status(), StatusCode::FORBIDDEN);
+
+        // Direct call from public peer IP -> 403
+        let mut public_peer = Request::builder()
+            .uri("/test")
+            .header("host", "egdata-api-nywbml:4000")
+            .body(Body::empty())
+            .unwrap();
+        public_peer
+            .extensions_mut()
+            .insert(ConnectInfo("8.8.8.8:54321".parse::<SocketAddr>().unwrap()));
+        let public_resp = app.oneshot(public_peer).await.unwrap();
+        assert_eq!(public_resp.status(), StatusCode::FORBIDDEN);
     }
 }

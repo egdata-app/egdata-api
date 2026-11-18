@@ -1,11 +1,11 @@
 {
   "baseCommit": "a27ba8fc5f45090680633eb81d56a17a24778ccf",
-  "diffHash": "232b93f7375d2a27de373f13f6bc771bc7a865914c5e05b197e7b7d70cb80512",
+  "diffHash": "114f0c4272ace72d7ac71825befdcc58370e477c8601f4b5fbe91efac7b70134",
   "operations": [],
   "unknownFiles": [
     {
-      "file": "rust/crates/egdata-api/src/runtime.rs",
-      "reason": "Internal Rust origin listener startup validation in runtime.rs; allows non-loopback binding when ORIGIN_AUTH_TOKEN is configured with ORIGIN_AUTH_REQUIRED=false so internal container requests work while origin-api.egdata.app remains protected. Does not change any public endpoint contract, route, or response behavior.",
+      "file": "rust/crates/egdata-api/src/middleware/origin_auth.rs",
+      "reason": "Internal container-to-container origin authentication allowance in origin_auth.rs; does not change any public endpoint contract, route, or response behavior.",
       "endpoints": []
     }
   ]
