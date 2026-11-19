@@ -358,3 +358,95 @@ pub fn test_app_state_with_rate_limit(
         http: stub,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use egdata_core::ports::{ProfileRefreshPort, UpstreamHttpPort, UpstreamHttpRequest};
+
+    #[tokio::test]
+    async fn stub_ports_and_rate_limit_mock_defaults() {
+        let stub = StubPorts;
+        ProfileRefreshPort::request(&stub, "acct", 1).await.unwrap();
+        assert_eq!(ProfileRefreshPort::status(&stub, "acct").await.unwrap(), None);
+
+        assert_eq!(MongoStorePort::find_one(&stub, "c", Document::new(), None).await.unwrap(), None);
+        assert!(MongoStorePort::find_many(&stub, "c", Document::new(), MongoFindOptions::default()).await.unwrap().is_empty());
+        assert!(MongoStorePort::aggregate(&stub, "c", vec![]).await.unwrap().is_empty());
+        assert_eq!(MongoStorePort::count_documents(&stub, "c", Document::new()).await.unwrap(), 0);
+        assert!(MongoStorePort::distinct(&stub, "c", "f", Document::new()).await.unwrap().is_empty());
+        MongoStorePort::insert_one(&stub, "c", Document::new()).await.unwrap();
+        assert_eq!(MongoStorePort::update_one(&stub, "c", Document::new(), Document::new(), false).await.unwrap(), 0);
+        assert_eq!(MongoStorePort::delete_one(&stub, "c", Document::new()).await.unwrap(), 0);
+        assert!(MongoStorePort::ping(&stub).await.unwrap());
+
+        assert_eq!(ResponseCachePort::get(&stub, "k").await.unwrap(), None);
+        ResponseCachePort::set(&stub, "k", "v", 1).await.unwrap();
+        ResponseCachePort::del(&stub, "k").await.unwrap();
+        assert!(ResponseCachePort::ping(&stub).await.unwrap());
+
+        assert_eq!(RateLimitStorePort::increment(&stub, "ns", "k", 1000).await.unwrap().total_hits, 1);
+        let event: AbuseEvent = serde_json::from_value(json!({
+            "route": "/",
+            "at": 0,
+            "deep": false,
+            "support": false,
+            "mismatch": 0.0,
+        }))
+        .unwrap();
+        assert!(!AbuseRiskStorePort::append(&stub, "k", &event).await.unwrap().trapped);
+        AbuseSummaryStorePort::write(&stub, &[]).await.unwrap();
+        PowCohortStorePort::write(&stub, &[]).await.unwrap();
+        assert!(PowCohortStorePort::read_day(&stub, 0).await.unwrap().is_empty());
+        assert_eq!(AbuseTrialStorePort::get_trial_raw(&stub).await.unwrap(), None);
+        assert!(SessionVerifierPort::verify_token(&stub, "t").await.unwrap().is_none());
+        assert_eq!(MeiliSearchPort::search(&stub, "idx", &MeiliSearchQuery::default()).await.unwrap().hits.len(), 0);
+        assert_eq!(OpenSearchPort::search(&stub, "idx", &json!({})).await.unwrap(), json!({}));
+        assert!(VectorizePort::query_natural_language(&stub, "q", 1).await.unwrap().is_empty());
+        assert_eq!(EpicStorePort::graphql(&stub, "", &json!({})).await.unwrap(), json!({}));
+        assert!(EpicStorePort::featured_games(&stub).await.unwrap().is_empty());
+        assert_eq!(JobApiPort::submit(&stub, JobApiJobType::OfferRegen, &json!({}), None).await.unwrap().job_id, "1");
+        assert!(JobApiPort::submit_batch(&stub, JobApiJobType::OfferRegen, &[], None).await.unwrap().is_empty());
+        assert_eq!(DiscordPort::request(&stub, "GET", "/", None).await.unwrap(), json!({}));
+        TelegramPort::send_message(&stub, "hi").await.unwrap();
+        GaPort::send_measurement(&stub, &json!({})).await.unwrap();
+        GaPort::track(
+            &stub,
+            &GaTrackEvent {
+                event: "e".into(),
+                location: "/".into(),
+                params: BTreeMap::new(),
+                session_id: "s".into(),
+                session_started_at: 0,
+                session_last_active_at: 0,
+                user_id: "u".into(),
+            },
+        )
+        .await
+        .unwrap();
+        WebPushPort::send_notification(&stub, &json!({}), b"").await.unwrap();
+        assert!(OgRendererPort::render_image(&stub, "", 1, 1, OgImageFormat::Png).await.unwrap().is_empty());
+        assert!(CatalogHydrationResolverPort::resolve(&stub, &json!({})).await.unwrap().is_empty());
+        let resp = UpstreamHttpPort::send(
+            &stub,
+            UpstreamHttpRequest {
+                method: "GET".into(),
+                url: "https://example.test".into(),
+                headers: BTreeMap::new(),
+                body: None,
+                multipart_file: None,
+            },
+        )
+        .await
+        .unwrap();
+        assert_eq!(resp.status, 200);
+
+        let mock = MockRateLimitStore::new(false);
+        assert_eq!(mock.increment("ns", "k", 1000).await.unwrap().total_hits, 1);
+        assert_eq!(mock.increment("ns", "k", 1000).await.unwrap().total_hits, 2);
+        let failing = MockRateLimitStore::new(true);
+        assert!(failing.increment("ns", "k", 1000).await.is_err());
+
+        let _ = test_app_state(ApiConfig::default());
+    }
+}
