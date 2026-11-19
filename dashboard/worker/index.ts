@@ -886,6 +886,10 @@ export async function handleInternalTelemetry(
     const ts = typeof e.timestamp === "number" ? e.timestamp : nowMs;
     const timestampIso = new Date(ts).toISOString();
 
+    const rawLimitOutcome = e.limitOutcome ? String(e.limitOutcome) : "ok";
+    const limitOutcome =
+      rawLimitOutcome === "allowed" ? "ok" : rawLimitOutcome;
+
     recordApiTelemetry(
       env,
       {
@@ -896,7 +900,7 @@ export async function handleInternalTelemetry(
         method: String(e.method || "GET"),
         statusCode: typeof e.statusCode === "number" ? e.statusCode : 200,
         cacheStatus: String(e.cacheStatus || "SSR_DIRECT"),
-        limitOutcome: String(e.limitOutcome || "allowed"),
+        limitOutcome,
         origin: "(direct)",
         clientIp: "",
         userAgent: "ssr",

@@ -1,11 +1,87 @@
 {
-  "baseCommit": "4f6fd3122fc0e6d872709a0679ec22b6d6dcb3ea",
-  "diffHash": "a1e8876055337293e629e57b1f007b755ec4c7337523220e5720d37d52d4f172",
-  "operations": [],
+  "baseCommit": "b5646a388d491bf00cd4c133970562c00468ee87",
+  "diffHash": "be6aa26b893a648e8f8c3d4d62b0de31103eeee48ba6f4fe5e247c91949de645",
+  "operations": [
+    {
+      "endpoint": "v1:getSandbox",
+      "impact": "none",
+      "reason": "Included because the shared sandboxes handler module was modified for require_sandbox caching and base-game TTL; GET /v1/sandboxes/{sandboxId} retains the same route, validation, status codes, schema, headers, auth, and limits.",
+      "records": []
+    },
+    {
+      "endpoint": "v1:getSandboxBaseGame",
+      "impact": "none",
+      "reason": "Adds internal Redis caching for sandbox existence validation (v1:sandboxes.exists: 300s positive, 60s negative) and raises the internal v1:sandboxes.base-game Redis TTL from 60s to 300s; HTTP route, query validation, status codes, JSON payload, headers, auth, and limits are preserved.",
+      "records": []
+    },
+    {
+      "endpoint": "v1:getSandboxChangelog",
+      "impact": "none",
+      "reason": "Caches internal requireSandbox / require_sandbox existence lookups under v1:sandboxes.exists (300s positive, 60s negative) without changing route, query validation, status codes, JSON payload, headers, auth, or limits.",
+      "records": []
+    },
+    {
+      "endpoint": "v1:getSandboxStats",
+      "impact": "none",
+      "reason": "Caches internal requireSandbox / require_sandbox existence lookups under v1:sandboxes.exists (300s positive, 60s negative) without changing route, query validation, status codes, JSON payload, headers, auth, or limits.",
+      "records": []
+    },
+    {
+      "endpoint": "v1:listSandboxAchievements",
+      "impact": "none",
+      "reason": "Caches internal requireSandbox / require_sandbox existence lookups under v1:sandboxes.exists (300s positive, 60s negative) without changing route, query validation, status codes, JSON payload, headers, auth, or limits.",
+      "records": []
+    },
+    {
+      "endpoint": "v1:listSandboxAssets",
+      "impact": "none",
+      "reason": "Caches internal requireSandbox / require_sandbox existence lookups under v1:sandboxes.exists (300s positive, 60s negative) without changing route, query validation, status codes, JSON payload, headers, auth, or limits.",
+      "records": []
+    },
+    {
+      "endpoint": "v1:listSandboxBuilds",
+      "impact": "none",
+      "reason": "Caches internal requireSandbox / require_sandbox existence lookups under v1:sandboxes.exists (300s positive, 60s negative) without changing route, query validation, status codes, JSON payload, headers, auth, or limits.",
+      "records": []
+    },
+    {
+      "endpoint": "v1:listSandboxItems",
+      "impact": "none",
+      "reason": "Caches internal requireSandbox / require_sandbox existence lookups under v1:sandboxes.exists (300s positive, 60s negative) without changing route, query validation, status codes, JSON payload, headers, auth, or limits.",
+      "records": []
+    },
+    {
+      "endpoint": "v1:listSandboxOffers",
+      "impact": "none",
+      "reason": "Caches internal requireSandbox / require_sandbox existence lookups under v1:sandboxes.exists (300s positive, 60s negative) without changing route, query validation, status codes, JSON payload, headers, auth, or limits.",
+      "records": []
+    },
+    {
+      "endpoint": "v1:listSandboxes",
+      "impact": "none",
+      "reason": "Included because the shared sandboxes handler module was modified for require_sandbox caching and base-game TTL; GET /v1/sandboxes is untouched and retains the same route, validation, status codes, schema, headers, auth, and limits.",
+      "records": []
+    }
+  ],
   "unknownFiles": [
     {
-      "file": "rust/Cargo.toml",
-      "reason": "Tunes release profile build settings (opt-level=2, codegen-units=32) for faster Cloud Build compiles; no public HTTP endpoint behavior changed.",
+      "file": "dashboard/worker/index.ts",
+      "reason": "Internal Worker entrypoint: normalizes /_internal/telemetry limitOutcome ('allowed' or missing -> 'ok') during SSR telemetry ingestion; no public API endpoint behavior changed.",
+      "endpoints": []
+    },
+    {
+      "file": "rust/crates/egdata-api/src/v1/catalog_list/sandbox_parity_tests.rs",
+      "reason": "Rust unit test file verifying sandbox existence caching, base-game internal Redis TTL behavior, and SSR telemetry reporting; no public API endpoint behavior changed.",
+      "endpoints": []
+    },
+    {
+      "file": "rust/crates/egdata-api/src/v1/helpers.rs",
+      "reason": "Internal v1 helper module: adds task-local V1CacheTracker to observe v1_cache_get Redis hits and misses for internal SSR telemetry without modifying HTTP headers, payloads, or status codes.",
+      "endpoints": []
+    },
+    {
+      "file": "rust/crates/egdata-api/src/v1/ssr_telemetry.rs",
+      "reason": "Internal SSR telemetry middleware: reports limitOutcome 'ok', cacheStatus from Redis V1CacheTracker / 304 status, and responseBytes body size hint fallback to /_internal/telemetry; no public API endpoint behavior changed.",
       "endpoints": []
     }
   ]
