@@ -17,40 +17,35 @@ bson.workspace = true
 bytes.workspace = true
 chrono.workspace = true
 clap.workspace = true
+egdata-api-state = { path = "../egdata-api-state" }
 egdata-core = { path = "../egdata-core" }
 egdata-graphql = { path = "../egdata-graphql" }
+egdata-http-core = { path = "../egdata-http-core" }
 egdata-infra = { path = "../egdata-infra" }
+egdata-openapi = { path = "../egdata-openapi" }
+egdata-routes-legacy = { path = "../egdata-routes-legacy" }
+egdata-routes-v1 = { path = "../egdata-routes-v1" }
 futures.workspace = true
 hex.workspace = true
-hmac.workspace = true
 http.workspace = true
 http-body-util.workspace = true
-icu_collator.workspace = true
-icu_locale_core.workspace = true
 indexmap.workspace = true
-sys-locale.workspace = true
 jsonwebtoken.workspace = true
-rand.workspace = true
 redis.workspace = true
-num-bigint.workspace = true
-num-traits.workspace = true
 regex.workspace = true
 serde.workspace = true
 serde_json = { workspace = true, features = ["raw_value"] }
-sha1.workspace = true
 sha2.workspace = true
-thiserror.workspace = true
 tokio.workspace = true
 tower.workspace = true
 tower-http.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
 url.workspace = true
-urlencoding.workspace = true
-utoipa.workspace = true
 uuid.workspace = true
 
 [dev-dependencies]
+egdata-api-test-support = { path = "../egdata-api-test-support" }
+http-body-util.workspace = true
 tokio.workspace = true
 tower.workspace = true
-http-body-util.workspace = true

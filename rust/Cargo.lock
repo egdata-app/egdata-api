@@ -1405,38 +1405,87 @@ dependencies = [
  "bytes",
  "chrono",
  "clap",
+ "egdata-api-state",
+ "egdata-api-test-support",
  "egdata-core",
  "egdata-graphql",
+ "egdata-http-core",
  "egdata-infra",
+ "egdata-openapi",
+ "egdata-routes-legacy",
+ "egdata-routes-v1",
  "futures",
  "hex",
- "hmac 0.12.1",
  "http",
  "http-body-util",
- "icu_collator",
- "icu_locale_core",
  "indexmap",
  "jsonwebtoken",
- "num-bigint 0.4.8",
- "num-traits",
- "rand 0.10.4",
  "redis",
  "regex",
  "serde",
  "serde_json",
- "sha1 0.10.7",
  "sha2 0.10.9",
- "sys-locale",
- "thiserror",
  "tokio",
  "tower",
  "tower-http",
  "tracing",
  "tracing-subscriber",
  "url",
- "urlencoding",
- "utoipa",
  "uuid",
+]
+
+[[package]]
+name = "egdata-api-oracle"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "axum",
+ "bson",
+ "chrono",
+ "egdata-api",
+ "egdata-api-test-support",
+ "egdata-core",
+ "egdata-http-core",
+ "egdata-infra",
+ "egdata-routes-v1",
+ "futures",
+ "http-body-util",
+ "serde_json",
+ "tokio",
+ "tower",
+ "uuid",
+]
+
+[[package]]
+name = "egdata-api-state"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "bson",
+ "chrono",
+ "egdata-core",
+ "icu_locale_core",
+ "serde_json",
+ "sys-locale",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "egdata-api-test-support"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "axum",
+ "bson",
+ "chrono",
+ "egdata-api-state",
+ "egdata-core",
+ "hex",
+ "http-body-util",
+ "serde_json",
+ "sha2 0.10.9",
+ "tokio",
 ]
 
 [[package]]
@@ -1511,6 +1560,42 @@ dependencies = [
 ]
 
 [[package]]
+name = "egdata-http-core"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "axum",
+ "bson",
+ "chrono",
+ "egdata-api-state",
+ "egdata-api-test-support",
+ "egdata-core",
+ "egdata-infra",
+ "futures",
+ "hex",
+ "http",
+ "http-body-util",
+ "icu_collator",
+ "icu_locale_core",
+ "indexmap",
+ "jsonwebtoken",
+ "num-bigint 0.4.8",
+ "rand 0.10.4",
+ "regex",
+ "serde",
+ "serde_json",
+ "sha1 0.10.7",
+ "sha2 0.10.9",
+ "tokio",
+ "tower",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
+ "url",
+ "uuid",
+]
+
+[[package]]
 name = "egdata-infra"
 version = "0.1.0"
 dependencies = [
@@ -1545,6 +1630,87 @@ dependencies = [
  "tracing",
  "url",
  "uuid",
+]
+
+[[package]]
+name = "egdata-openapi"
+version = "0.1.0"
+dependencies = [
+ "egdata-core",
+ "serde_json",
+]
+
+[[package]]
+name = "egdata-routes-legacy"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "axum",
+ "base64 0.22.1",
+ "bson",
+ "bytes",
+ "chrono",
+ "egdata-api",
+ "egdata-api-oracle",
+ "egdata-api-test-support",
+ "egdata-core",
+ "egdata-graphql",
+ "egdata-http-core",
+ "egdata-infra",
+ "egdata-openapi",
+ "futures",
+ "hex",
+ "http",
+ "http-body-util",
+ "indexmap",
+ "jsonwebtoken",
+ "rand 0.10.4",
+ "redis",
+ "regex",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "tokio",
+ "tower",
+ "tracing",
+ "url",
+ "urlencoding",
+ "uuid",
+]
+
+[[package]]
+name = "egdata-routes-v1"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "axum",
+ "bson",
+ "bytes",
+ "chrono",
+ "egdata-api",
+ "egdata-api-oracle",
+ "egdata-api-test-support",
+ "egdata-core",
+ "egdata-graphql",
+ "egdata-http-core",
+ "egdata-infra",
+ "egdata-openapi",
+ "futures",
+ "hex",
+ "http",
+ "http-body-util",
+ "indexmap",
+ "rand 0.10.4",
+ "redis",
+ "regex",
+ "serde",
+ "serde_json",
+ "sha1 0.10.7",
+ "sha2 0.10.9",
+ "tokio",
+ "tower",
+ "url",
+ "urlencoding",
 ]
 
 [[package]]
@@ -5271,30 +5437,6 @@ name = "utf_types"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a3b425286980a367278453f3b6d28cdcb134b574e5a35824a6ff5eebad50bb6"
-
-[[package]]
-name = "utoipa"
-version = "5.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8bde15df68e80b16c7d16b9616e80770ad158988daa56a27dccd1e55558b0160"
-dependencies = [
- "indexmap",
- "serde",
- "serde_json",
- "utoipa-gen",
-]
-
-[[package]]
-name = "utoipa-gen"
-version = "5.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6ba0b99ee52df3028635d93840c797102da61f8a7bb3cf751032455895b52ef8"
-dependencies = [
- "proc-macro2",
- "quote",
- "regex",
- "syn 2.0.119",
-]
 
 [[package]]
 name = "uuid"

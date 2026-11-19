@@ -1,0 +1,11 @@
+[package]
+name = "egdata-openapi"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+egdata-core = { path = "../egdata-core" }
+serde_json.workspace = true

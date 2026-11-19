@@ -1,0 +1,42 @@
+[package]
+name = "egdata-http-core"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+num-bigint.workspace = true
+indexmap.workspace = true
+async-trait.workspace = true
+axum.workspace = true
+bson.workspace = true
+chrono.workspace = true
+egdata-api-state = { path = "../egdata-api-state" }
+egdata-core = { path = "../egdata-core" }
+egdata-infra = { path = "../egdata-infra" }
+futures.workspace = true
+hex.workspace = true
+http.workspace = true
+http-body-util.workspace = true
+icu_collator.workspace = true
+icu_locale_core.workspace = true
+jsonwebtoken.workspace = true
+rand.workspace = true
+regex.workspace = true
+serde.workspace = true
+serde_json = { workspace = true, features = ["raw_value"] }
+sha1.workspace = true
+sha2.workspace = true
+tokio.workspace = true
+tower.workspace = true
+tower-http.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+url.workspace = true
+uuid.workspace = true
+
+[dev-dependencies]
+egdata-api-test-support = { path = "../egdata-api-test-support" }
+tower.workspace = true

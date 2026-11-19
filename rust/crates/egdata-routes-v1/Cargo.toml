@@ -1,0 +1,43 @@
+[package]
+name = "egdata-routes-v1"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+async-trait.workspace = true
+axum.workspace = true
+bson.workspace = true
+bytes.workspace = true
+chrono.workspace = true
+egdata-core = { path = "../egdata-core" }
+egdata-graphql = { path = "../egdata-graphql" }
+egdata-http-core = { path = "../egdata-http-core" }
+egdata-infra = { path = "../egdata-infra" }
+egdata-openapi = { path = "../egdata-openapi" }
+futures.workspace = true
+hex.workspace = true
+http.workspace = true
+http-body-util.workspace = true
+indexmap.workspace = true
+rand.workspace = true
+redis.workspace = true
+regex.workspace = true
+serde.workspace = true
+serde_json = { workspace = true, features = ["raw_value"] }
+sha1.workspace = true
+sha2.workspace = true
+tokio.workspace = true
+tower.workspace = true
+url.workspace = true
+urlencoding.workspace = true
+
+[dev-dependencies]
+egdata-api = { path = "../egdata-api" }
+egdata-api-oracle = { path = "../egdata-api-oracle" }
+egdata-api-test-support = { path = "../egdata-api-test-support" }
+http-body-util.workspace = true
+tokio.workspace = true
+tower.workspace = true

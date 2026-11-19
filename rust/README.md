@@ -3,6 +3,24 @@
 The local migration server runs all 154 documented `/v1` operations and serves
 `/graphql` with real service connections. The public gateway still uses Node.
 
+## Crate layout
+
+The HTTP surface is split into layers so unrelated routes compile in parallel:
+
+| Crate | Responsibility |
+| --- | --- |
+| `egdata-api-state` | `AppState`, `ApiConfig` and SSR telemetry buffering |
+| `egdata-http-core` | Middleware stack, `/v1` request context, and handler helpers shared by both surfaces |
+| `egdata-openapi` | OpenAPI document builders and contract diffing (no routes) |
+| `egdata-routes-v1` | `/v1` handlers and route inventory |
+| `egdata-routes-legacy` | Unversioned (`/offers`, `/items`, …) handlers |
+| `egdata-api` | Binary, runtime wiring, GraphQL HTTP bridge and tooling CLI |
+| `egdata-api-test-support`, `egdata-api-oracle` | Test-only doubles and fixture-oracle replay (dev-dependencies) |
+
+`egdata-routes-v1` and `egdata-routes-legacy` do not depend on each other: any
+helper they both use lives in `egdata-http-core`, so Cargo compiles the two
+surfaces concurrently. Keep it that way when adding shared code.
+
 From the repository root, using the existing Node checkout's dotenv file:
 
 ```powershell

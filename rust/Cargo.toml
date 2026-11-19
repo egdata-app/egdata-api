@@ -4,7 +4,14 @@ members = [
     "crates/egdata-core",
     "crates/egdata-infra",
     "crates/egdata-graphql",
+    "crates/egdata-api-state",
+    "crates/egdata-http-core",
+    "crates/egdata-openapi",
+    "crates/egdata-routes-v1",
+    "crates/egdata-routes-legacy",
     "crates/egdata-api",
+    "crates/egdata-api-test-support",
+    "crates/egdata-api-oracle",
     "crates/egdata-diff",
 ]
 
