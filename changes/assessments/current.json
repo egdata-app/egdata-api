@@ -1,26 +1,11 @@
 {
-  "baseCommit": "14f0b37d243507f71448c0ba673b7679406839e2",
-  "diffHash": "a7acb183f9e85e8c5ec44d8e568604008ad333bf73973ad3bc0b6acdb35e0d8b",
+  "baseCommit": "7da9dcffac76b1a06a76495e3cd2852d9f5d5825",
+  "diffHash": "d14dc9a6ae7297b852cbbba9df8e8af08852d34d206803ce44ea52a23364ed19",
   "operations": [],
   "unknownFiles": [
     {
       "file": "Dockerfile.rust",
-      "reason": "Container build and healthcheck optimization only; no public HTTP endpoint behavior changed.",
-      "endpoints": []
-    },
-    {
-      "file": "Dockerfile.rust.dockerignore",
-      "reason": "Docker build context exclusions only; no public HTTP endpoint behavior changed.",
-      "endpoints": []
-    },
-    {
-      "file": "rust/Cargo.toml",
-      "reason": "Release profile symbol stripping only; no public HTTP endpoint behavior changed.",
-      "endpoints": []
-    },
-    {
-      "file": "rust/crates/egdata-api/src/operations.rs",
-      "reason": "Adds internal CLI healthcheck subcommand probing local /v1/health; no public HTTP endpoint behavior changed.",
+      "reason": "Adds cargo-chef multi-stage dependency caching for GCP Cloud Build; no public HTTP endpoint behavior changed.",
       "endpoints": []
     }
   ]
