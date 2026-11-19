@@ -714,6 +714,78 @@ it("compares profile cache, storage, projection and pagination at the service bo
       200,
       true,
     );
+    const completed = await record(
+      "games filter completed",
+      "p/games?filter=completed&limit=1",
+      { "player-achievements.aggregate": [games, [{ total: 12 }]] },
+      200,
+      true,
+    );
+    await record(
+      "games filter completed continuation",
+      "p/games?filter=completed&limit=1&cursor=" +
+        encodeURIComponent(completed.meta!.pagination!.nextCursor!),
+      { "player-achievements.aggregate": [[]] },
+      200,
+      true,
+    );
+    await record(
+      "games filter completed rejects mismatched filter cursor",
+      "p/games?filter=in-progress&limit=1&cursor=" +
+        encodeURIComponent(completed.meta!.pagination!.nextCursor!),
+      {},
+      400,
+      true,
+    );
+    await record(
+      "games filter near-platinum",
+      "p/games?filter=near-platinum&limit=1",
+      { "player-achievements.aggregate": [games, [{ total: 4 }]] },
+      200,
+      true,
+    );
+    await record(
+      "games filter in-progress",
+      "p/games?filter=in-progress&limit=1",
+      { "player-achievements.aggregate": [games, [{ total: 7 }]] },
+      200,
+      true,
+    );
+    await record(
+      "games filter platinum reuses platinum total",
+      "p/games?filter=platinum&sort=alphabetical&limit=2",
+      {},
+      200,
+      true,
+    );
+    await record(
+      "games filter all reuses default total",
+      "p/games?filter=all&limit=2",
+      {},
+      200,
+      true,
+    );
+    await record(
+      "games filter all with platinum=true reuses platinum total",
+      "p/games?filter=all&platinum=true&sort=alphabetical&limit=2",
+      {},
+      200,
+      true,
+    );
+    await record(
+      "games filter completed with platinum=true applies filter",
+      "p/games?filter=completed&platinum=true&limit=1",
+      {},
+      200,
+      true,
+    );
+    await record(
+      "games invalid filter",
+      "p/games?filter=invalid",
+      {},
+      400,
+      true,
+    );
     driver.cache.clear();
     driver.cache.set(
       "v1:" + v1CacheKey("profiles.leaderboard", { limit: 3, cursor: null }),

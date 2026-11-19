@@ -76,6 +76,7 @@ pub const DATE_FIELDS: &[&str] = &[
     "releaseDate",
     "pcReleaseDate",
     "viewableDate",
+    "expiryDate",
     "updatedAt",
     "createdAt",
     "fetchedAt",
@@ -117,6 +118,7 @@ pub const OFFER_FIELDS: &[&str] = &[
     "releaseDate",
     "pcReleaseDate",
     "viewableDate",
+    "expiryDate",
     "countriesBlacklist",
     "countriesWhitelist",
     "refundType",
@@ -687,7 +689,7 @@ fn serialize_offer_with_format(
         let value = raw.and_then(|m| m.get(field)).unwrap_or(&Value::Null);
         let serialized = match field {
             "effectiveDate" | "creationDate" | "lastModifiedDate" | "releaseDate"
-            | "pcReleaseDate" | "viewableDate" => format.date(value),
+            | "pcReleaseDate" | "viewableDate" | "expiryDate" => format.date(value),
             "_id" | "id" => format.id(value),
             _ => serialize_value_depth(value, 0, format),
         };
@@ -1154,6 +1156,7 @@ mod tests {
             "id": "offer-1",
             "title": "Test Game",
             "effectiveDate": "2025-01-01T00:00:00Z",
+            "expiryDate": "2026-06-01T12:00:00Z",
             "customAttributes": [
                 {"key": "developerName", "value": "Studio"},
                 {"key": "", "value": "ignored"},
@@ -1179,6 +1182,7 @@ mod tests {
         let serialized = serialize_offer(&offer, Some(&price), true);
         assert_eq!(serialized["id"], "offer-1");
         assert_eq!(serialized["_id"], Value::Null);
+        assert_eq!(serialized["expiryDate"], "2026-06-01T12:00:00.000Z");
         assert_eq!(
             serialized["customAttributes"]["developerName"]["type"],
             "STRING"
@@ -1200,6 +1204,7 @@ mod tests {
 
         let bare_offer = serialize_offer(&json!({}), None, true);
         assert_eq!(bare_offer["customAttributes"], Value::Null);
+        assert_eq!(bare_offer["expiryDate"], Value::Null);
         assert!(bare_offer.get("localization").is_none());
         assert!(bare_offer.get("canonicalLocale").is_none());
 

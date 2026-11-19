@@ -1065,6 +1065,16 @@ const GAME_SORT_VALUES = [
 
 type GameSort = (typeof GAME_SORT_VALUES)[number];
 
+const GAME_FILTER_VALUES = [
+  "all",
+  "completed",
+  "near-platinum",
+  "in-progress",
+  "platinum",
+] as const;
+
+type GameFilter = (typeof GAME_FILTER_VALUES)[number];
+
 const GAME_SORTS: Record<
   GameSort,
   { ordering: string; fields: MongoSortField[] }
@@ -1160,14 +1170,99 @@ function gamesBasePipeline(accountId: string, platinumOnly: boolean): AnyRecord[
   return pipeline;
 }
 
+function gameFilterMatchStage(filter: GameFilter): AnyRecord | null {
+  switch (filter) {
+    case "completed":
+      return {
+        $match: {
+          $expr: { $gte: ["$completionPercentage", 1] },
+        },
+      };
+    case "in-progress":
+      return {
+        $match: {
+          $expr: {
+            $and: [
+              { $gt: ["$totalUnlocked", 0] },
+              { $lt: ["$completionPercentage", 1] },
+              { $eq: [{ $size: { $ifNull: ["$playerAwards", []] } }, 0] },
+            ],
+          },
+        },
+      };
+    case "near-platinum":
+      return {
+        $match: {
+          $expr: {
+            $and: [
+              { $gt: ["$totalUnlocked", 0] },
+              { $gte: ["$completionPercentage", 0.8] },
+              { $lt: ["$completionPercentage", 1] },
+              { $eq: [{ $size: { $ifNull: ["$playerAwards", []] } }, 0] },
+            ],
+          },
+        },
+      };
+    default:
+      return null;
+  }
+}
+
+function gamesCountPipeline(accountId: string, filter: GameFilter): AnyRecord[] {
+  const pipeline = gamesBasePipeline(accountId, filter === "platinum");
+  const filterStage = gameFilterMatchStage(filter);
+  if (filterStage) {
+    pipeline.push(
+      {
+        $lookup: {
+          from: "achievementsets",
+          localField: "_id",
+          foreignField: "sandboxId",
+          as: "achievementSets",
+        },
+      },
+      {
+        $addFields: {
+          totalAchievements: {
+            $sum: {
+              $map: {
+                input: "$achievementSets",
+                as: "s",
+                in: { $size: { $ifNull: ["$$s.achievements", []] } },
+              },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          completionPercentage: {
+            $cond: [
+              { $eq: ["$totalAchievements", 0] },
+              0,
+              { $divide: ["$totalUnlocked", "$totalAchievements"] },
+            ],
+          },
+        },
+      },
+      filterStage,
+    );
+  }
+  pipeline.push({ $count: "total" });
+  return pipeline;
+}
+
 function gamesPipeline(
   accountId: string,
   sort: GameSort,
-  platinumOnly: boolean,
+  filter: GameFilter,
   last: CursorSortTuple | null,
   limit: number,
 ): AnyRecord[] {
-  const pipeline: AnyRecord[] = gamesBasePipeline(accountId, platinumOnly);
+  const pipeline: AnyRecord[] = gamesBasePipeline(
+    accountId,
+    filter === "platinum",
+  );
 
   pipeline.push(
     {
@@ -1275,6 +1370,11 @@ function gamesPipeline(
     },
   );
 
+  const filterStage = gameFilterMatchStage(filter);
+  if (filterStage) {
+    pipeline.push(filterStage);
+  }
+
   if (last) {
     pipeline.push({
       $match: mongoKeysetFilter(GAME_SORTS[sort].fields, last),
@@ -1293,14 +1393,32 @@ app.get("/profiles/:id/games", async (c) => {
   const query = parseStrictQuery(c, {
     ...querySchema.pagination,
     sort: z.enum(GAME_SORT_VALUES).optional(),
+    filter: z.enum(GAME_FILTER_VALUES).optional(),
     platinum: z.string().optional(),
   });
   const { limit, cursor } = parsePagination({ ...query });
   const sort = query.sort ?? "completion";
+  const requestedFilter = query.filter ?? "all";
   const platinumOnly = parseBoolean(query.platinum, "platinum") ?? false;
+  const effectiveFilter: GameFilter =
+    requestedFilter !== "all"
+      ? requestedFilter
+      : platinumOnly
+        ? "platinum"
+        : "all";
+  const effectivePlatinum = effectiveFilter === "platinum";
+  const filterKey =
+    effectiveFilter === "all" || effectiveFilter === "platinum"
+      ? null
+      : effectiveFilter;
   const binding = {
     operation: "profiles.games",
-    filters: { profileId: id, sort, platinum: platinumOnly },
+    filters: {
+      profileId: id,
+      sort,
+      platinum: effectivePlatinum,
+      ...(filterKey ? { filter: filterKey } : {}),
+    },
     ordering: GAME_SORTS[sort].ordering,
     country: COUNTRY,
     locale: LOCALE,
@@ -1313,7 +1431,8 @@ app.get("/profiles/:id/games", async (c) => {
       limit,
       cursor,
       sort,
-      platinum: platinumOnly,
+      platinum: effectivePlatinum,
+      filter: filterKey,
     }),
     GAMES_TTL_SECONDS,
     async () => {
@@ -1329,7 +1448,7 @@ app.get("/profiles/:id/games", async (c) => {
       const [rows, total] = await Promise.all([
         db.db
           .collection("player-achievements")
-          .aggregate(gamesPipeline(id, sort, platinumOnly, last, limit), {
+          .aggregate(gamesPipeline(id, sort, effectiveFilter, last, limit), {
             allowDiskUse: true,
             ...(sort === "alphabetical"
               ? { collation: { locale: "en", strength: 2 } }
@@ -1338,15 +1457,14 @@ app.get("/profiles/:id/games", async (c) => {
           .toArray() as Promise<AnyRecord[]>,
         cachedTotal(
           "profiles.games",
-          { id, platinum: platinumOnly },
+          { id, platinum: effectivePlatinum, filter: filterKey },
           GAMES_TTL_SECONDS,
           async () => {
             const countRows = (await db.db
               .collection("player-achievements")
-              .aggregate(
-                [...gamesBasePipeline(id, platinumOnly), { $count: "total" }],
-                { allowDiskUse: true },
-              )
+              .aggregate(gamesCountPipeline(id, effectiveFilter), {
+                allowDiskUse: true,
+              })
               .toArray()) as AnyRecord[];
             return Number(countRows[0]?.total ?? 0);
           },

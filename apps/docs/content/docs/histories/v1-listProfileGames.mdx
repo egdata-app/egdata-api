@@ -5,6 +5,17 @@ description: History for GET /v1/profiles/{id}/games
 
 `GET /v1/profiles/{id}/games` — active. Recorded dates are not deployment dates.
 
+## 2026-11-19 — Add profile games completion filter and offer expiryDate to v1 responses
+
+Record: [v1-profile-filters-and-offer-expiry](https://github.com/egdata-app/egdata-api/blob/main/changes/records/v1-profile-filters-and-offer-expiry.json).
+
+- **v1 GET /v1/profiles/&#123;id&#125;/games** (listProfileGames; changed; compatible)
+  - Before: Supported `sort` and boolean `platinum` filtering on `GET /v1/profiles/&#123;id&#125;/games`.
+  - After: Adds optional `filter` query parameter (`all`, `completed`, `near-platinum`, `in-progress`, `platinum`; default `all`) with cursor bindings, cache keys, and total counts scoped by the effective filter while preserving `platinum=true` backward compatibility.
+  - Client action: None
+
+Verification: pnpm openapi:check; pnpm test; cargo test -p egdata-core -p egdata-infra -p egdata-graphql -p egdata-diff --locked; cargo clippy --locked --workspace --all-targets -- -D warnings.
+
 ## 2026-11-16 — Accept dashboard console session key identities on v1 endpoints
 
 Record: [console-session-v1-key-context](https://github.com/egdata-app/egdata-api/blob/main/changes/records/console-session-v1-key-context.json).

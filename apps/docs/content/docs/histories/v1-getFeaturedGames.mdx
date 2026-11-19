@@ -5,6 +5,17 @@ description: History for GET /v1/featured
 
 `GET /v1/featured` — active. Recorded dates are not deployment dates.
 
+## 2026-11-19 — Add profile games completion filter and offer expiryDate to v1 responses
+
+Record: [v1-profile-filters-and-offer-expiry](https://github.com/egdata-app/egdata-api/blob/main/changes/records/v1-profile-filters-and-offer-expiry.json).
+
+- **v1 GET /v1/featured** (getFeaturedGames; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+
+Verification: pnpm openapi:check; pnpm test; cargo test -p egdata-core -p egdata-infra -p egdata-graphql -p egdata-diff --locked; cargo clippy --locked --workspace --all-targets -- -D warnings.
+
 ## 2026-11-16 — Accept dashboard console session key identities on v1 endpoints
 
 Record: [console-session-v1-key-context](https://github.com/egdata-app/egdata-api/blob/main/changes/records/console-session-v1-key-context.json).

@@ -144,7 +144,7 @@ export const profilesOperations = defineOperations([
     path: "/v1/profiles/{id}/games",
     summary: "List profile games",
     description:
-      "Returns one achievement-completion summary per sandbox the profile has played, ordered by the selected `sort` with `sandboxId` as the unique tie-breaker. Use `platinum=true` to keep only games with a platinum award. `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`; the legacy `page` parameter is replaced by the cursor.",
+      "Returns one achievement-completion summary per sandbox the profile has played, ordered by the selected `sort` with `sandboxId` as the unique tie-breaker. Use `filter` (`all`, `completed`, `near-platinum`, `in-progress`, or `platinum`) or `platinum=true` to narrow results. `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`; the legacy `page` parameter is replaced by the cursor.",
     tags: ["Profiles"],
     scope: "profiles:read",
     auth: "key",
@@ -165,8 +165,23 @@ export const profilesOperations = defineOperations([
         },
       ),
       queryParameter(
+        "filter",
+        "Optional completion filter: `all` (default), `completed`, `near-platinum`, `in-progress`, or `platinum`.",
+        {
+          type: "string",
+          enum: [
+            "all",
+            "completed",
+            "near-platinum",
+            "in-progress",
+            "platinum",
+          ],
+          default: "all",
+        },
+      ),
+      queryParameter(
         "platinum",
-        "When true, only games with at least one platinum award are returned.",
+        "When true (and `filter` is omitted or `all`), only games with at least one platinum award are returned.",
         { type: "boolean", default: false },
       ),
     ],

@@ -16873,7 +16873,7 @@
       "get": {
         "operationId": "listProfileGames",
         "summary": "List profile games",
-        "description": "Returns one achievement-completion summary per sandbox the profile has played, ordered by the selected `sort` with `sandboxId` as the unique tie-breaker. Use `platinum=true` to keep only games with a platinum award. `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`; the legacy `page` parameter is replaced by the cursor.\n\nAccount closure rejects all account keys, including warm credential caches, with 401 INVALID_API_KEY before quota or cache access. Failure to verify credential/account status returns uncacheable 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30. Initial email/terms onboarding gates the dashboard and existing/new console sessions: 403 EMAIL_VERIFICATION_REQUIRED until email is verified, then 403 AGREEMENT_REQUIRED until the current terms edition is accepted. Existing API keys keep working even after a dashboard visit. Privacy notices do not require acceptance.",
+        "description": "Returns one achievement-completion summary per sandbox the profile has played, ordered by the selected `sort` with `sandboxId` as the unique tie-breaker. Use `filter` (`all`, `completed`, `near-platinum`, `in-progress`, or `platinum`) or `platinum=true` to narrow results. `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`; the legacy `page` parameter is replaced by the cursor.\n\nAccount closure rejects all account keys, including warm credential caches, with 401 INVALID_API_KEY before quota or cache access. Failure to verify credential/account status returns uncacheable 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30. Initial email/terms onboarding gates the dashboard and existing/new console sessions: 403 EMAIL_VERIFICATION_REQUIRED until email is verified, then 403 AGREEMENT_REQUIRED until the current terms edition is accepted. Existing API keys keep working even after a dashboard visit. Privacy notices do not require acceptance.",
         "tags": [
           "Profiles"
         ],
@@ -16933,10 +16933,27 @@
             }
           },
           {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "description": "Optional completion filter: `all` (default), `completed`, `near-platinum`, `in-progress`, or `platinum`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "all",
+                "completed",
+                "near-platinum",
+                "in-progress",
+                "platinum"
+              ],
+              "default": "all"
+            }
+          },
+          {
             "name": "platinum",
             "in": "query",
             "required": false,
-            "description": "When true, only games with at least one platinum award are returned.",
+            "description": "When true (and `filter` is omitted or `all`), only games with at least one platinum award are returned.",
             "schema": {
               "type": "boolean",
               "default": false
