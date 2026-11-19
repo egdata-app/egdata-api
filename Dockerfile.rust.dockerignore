@@ -1,11 +1,11 @@
 *
 !rust/
-!rust/**
 rust/target/
+rust/oracles/
+rust/bench/
+rust/scripts/
+rust/rust-toolchain.toml
+rust/crates/*/tests/
 !openapi/
-!openapi/**
-!src/
 !src/static/
-!src/static/**
-!src/graphql/
 !src/graphql/typedefs.ts

@@ -1,11 +1,26 @@
 {
-  "baseCommit": "20375fd898b5e262e9c3687539bc0978921395eb",
-  "diffHash": "0a89cfb676579979744b2a205427c2d9dadf1b45f5c5df9c416848e5741ccd8e",
+  "baseCommit": "14f0b37d243507f71448c0ba673b7679406839e2",
+  "diffHash": "a7acb183f9e85e8c5ec44d8e568604008ad333bf73973ad3bc0b6acdb35e0d8b",
   "operations": [],
   "unknownFiles": [
     {
-      "file": "rust/crates/egdata-api/src/middleware/origin_auth.rs",
-      "reason": "Internal container-to-container origin authentication allowance in origin_auth.rs; allows private Docker service calls forwarding client IP/Cloudflare headers while still blocking external Host or x-forwarded-host values. Does not change any public endpoint contract, route, or response behavior.",
+      "file": "Dockerfile.rust",
+      "reason": "Container build and healthcheck optimization only; no public HTTP endpoint behavior changed.",
+      "endpoints": []
+    },
+    {
+      "file": "Dockerfile.rust.dockerignore",
+      "reason": "Docker build context exclusions only; no public HTTP endpoint behavior changed.",
+      "endpoints": []
+    },
+    {
+      "file": "rust/Cargo.toml",
+      "reason": "Release profile symbol stripping only; no public HTTP endpoint behavior changed.",
+      "endpoints": []
+    },
+    {
+      "file": "rust/crates/egdata-api/src/operations.rs",
+      "reason": "Adds internal CLI healthcheck subcommand probing local /v1/health; no public HTTP endpoint behavior changed.",
       "endpoints": []
     }
   ]

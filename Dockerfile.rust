@@ -1,20 +1,22 @@
+# syntax=docker/dockerfile:1
+# check=skip=SecretsUsedInArgOrEnv
 FROM rust:1.95.0-alpine AS builder
-RUN apk add --no-cache build-base cmake clang perl tzdata pkgconf openssl-dev openssl-libs-static
+RUN apk add --no-cache build-base cmake clang lld perl tzdata pkgconf openssl-dev openssl-libs-static
 WORKDIR /app
 COPY rust/ rust/
 COPY openapi/ openapi/
 COPY src/static/ src/static/
 COPY src/graphql/typedefs.ts src/graphql/typedefs.ts
 WORKDIR /app/rust
-ENV OPENSSL_STATIC=1
-# COPY preserves host mtimes. Refresh workspace inputs before checking cached crate artifacts.
+ENV OPENSSL_STATIC=1 \
+    RUSTUP_TOOLCHAIN=1.95.0
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/usr/local/cargo/git \
     --mount=type=cache,target=/app/rust/target \
-    find crates ../openapi ../src -type f -exec touch {} + && \
     target="$(rustc -vV | sed -n 's/^host: //p')" && \
-    RUSTFLAGS="-C target-feature=+crt-static" cargo build --release --locked \
-      --target "$target" -p egdata-api --bins && \
-    mkdir /artifacts && cp "target/$target/release/egdata-api" "target/$target/release/generate-openapi" /artifacts/ && \
+    RUSTFLAGS="-C target-feature=+crt-static -C link-arg=-fuse-ld=lld" cargo build --release --locked \
+      --target "$target" -p egdata-api --bin egdata-api && \
+    mkdir /artifacts && cp "target/$target/release/egdata-api" /artifacts/ && \
     ! readelf -l /artifacts/egdata-api | grep -q 'Requesting program interpreter'
 
 FROM scratch
@@ -26,5 +28,7 @@ WORKDIR /app
 USER 65532:65532
 ENV NODE_ENV=production PORT=4000 ORIGIN_AUTH_REQUIRED=true
 EXPOSE 4000
+HEALTHCHECK --interval=10s --timeout=3s --start-period=15s --retries=3 \
+  CMD ["/usr/local/bin/egdata-api", "healthcheck"]
 ENTRYPOINT ["/usr/local/bin/egdata-api"]
 CMD ["--bind","0.0.0.0"]
