@@ -772,6 +772,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -788,6 +795,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -1064,6 +1080,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -1080,6 +1103,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -1276,7 +1308,7 @@
             },
             "localization": {}
           },
-          "ttl": 60
+          "ttl": 300
         },
         "result": null
       }
@@ -2783,6 +2815,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -2799,6 +2838,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -2999,6 +3047,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -3015,6 +3070,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -3154,7 +3218,7 @@
             },
             "localization": {}
           },
-          "ttl": 60
+          "ttl": 300
         },
         "result": null
       }
@@ -4396,6 +4460,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -4412,6 +4483,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -4606,6 +4686,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -4622,6 +4709,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -4758,7 +4854,7 @@
             },
             "localization": {}
           },
-          "ttl": 60
+          "ttl": 300
         },
         "result": null
       }
@@ -6156,6 +6252,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -6172,6 +6275,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -6425,6 +6537,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -6441,6 +6560,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -6619,7 +6747,7 @@
             },
             "localization": {}
           },
-          "ttl": 60
+          "ttl": 300
         },
         "result": null
       }
@@ -8037,6 +8165,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -8053,6 +8188,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -8248,6 +8392,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -8264,6 +8415,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -8400,7 +8560,7 @@
             },
             "localization": {}
           },
-          "ttl": 60
+          "ttl": 300
         },
         "result": null
       }
@@ -9706,6 +9866,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -9722,6 +9889,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -9943,6 +10119,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -9959,6 +10142,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -10107,7 +10299,7 @@
             },
             "localization": {}
           },
-          "ttl": 60
+          "ttl": 300
         },
         "result": null
       }
@@ -11325,6 +11517,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -11341,6 +11540,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -11502,6 +11710,13 @@
     "trace": [
       {
         "call": {
+          "method": "get",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\""
+        },
+        "result": null
+      },
+      {
+        "call": {
           "collection": "sandboxes",
           "method": "one",
           "query": {
@@ -11518,6 +11733,15 @@
         "result": {
           "_id": "ns"
         }
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:sandboxes.exists:sandboxId=\"ns\"",
+          "payload": true,
+          "ttl": 300
+        },
+        "result": null
       },
       {
         "call": {
@@ -11631,7 +11855,7 @@
             },
             "localization": {}
           },
-          "ttl": 60
+          "ttl": 300
         },
         "result": null
       }

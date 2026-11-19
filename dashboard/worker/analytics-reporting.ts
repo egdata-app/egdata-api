@@ -124,7 +124,7 @@ const baseMetricSql = `SUM(_sample_interval * double1) AS requests,
   SUM(_sample_interval * double4) AS cacheHits,
   SUM(_sample_interval * (double1 - double4)) AS cacheMisses,
   SUM(_sample_interval * double3) AS rateLimited,
-  SUM(_sample_interval * if(blob7 != 'ok' AND blob7 != 'rate_limited' AND blob7 != 'monthly_quota_exceeded' AND blob7 != 'period_quota_exceeded' AND blob7 != 'expensive_budget_exceeded', 1, 0)) AS blockedPolicy,
+  SUM(_sample_interval * if(blob7 != 'ok' AND blob7 != 'allowed' AND blob7 != 'rate_limited' AND blob7 != 'monthly_quota_exceeded' AND blob7 != 'period_quota_exceeded' AND blob7 != 'expensive_budget_exceeded', 1, 0)) AS blockedPolicy,
   SUM(_sample_interval * double5) AS errors,
   SUM(_sample_interval * if(startsWith(blob5, '2'), double1, 0.0)) AS status2xx,
   SUM(_sample_interval * if(startsWith(blob5, '3'), double1, 0.0)) AS status3xx,
@@ -383,6 +383,7 @@ function aggregate(events: Event[]): UsageMetrics {
       (e) =>
         ![
           "ok",
+          "allowed",
           "rate_limited",
           "monthly_quota_exceeded",
           "period_quota_exceeded",

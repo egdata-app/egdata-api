@@ -678,6 +678,25 @@ describe("Web ephemeral tokens & computeIpSubnet", () => {
           responseBytes: 2048,
           timestamp: nowMs,
         },
+        {
+          requestId: "req_ssr_test_3",
+          keyId: "key_egdata_web_ssr",
+          projectId: "prj_egdata_web",
+          ownerEpicId: "epic_web_admin",
+          tier: "enterprise",
+          routeTemplate: "/v1/sandboxes/{sandboxId}/base-game",
+          operationId: "getSandboxBaseGame",
+          method: "GET",
+          statusCode: 200,
+          cacheStatus: "HIT",
+          policyFamily: "ssr",
+          errorCode: "",
+          country: "US",
+          latencyMs: 3,
+          upstreamMs: 3,
+          responseBytes: 512,
+          timestamp: nowMs,
+        },
       ];
 
       const request = new Request(
@@ -697,7 +716,14 @@ describe("Web ephemeral tokens & computeIpSubnet", () => {
       expect(response.status).toBe(200);
       const json = (await response.json()) as any;
       expect(json.ok).toBe(true);
-      expect(json.ingested).toBe(2);
+      expect(json.ingested).toBe(3);
+
+      const writeCalls = (env.ANALYTICS.writeDataPoint as ReturnType<typeof vi.fn>)
+        .mock.calls;
+      expect(writeCalls).toHaveLength(3);
+      for (const [point] of writeCalls) {
+        expect(point.blobs[6]).toBe("ok");
+      }
 
       // Verify that usage was written to usage_daily in D1
       const dailyRows = sqlite
@@ -711,6 +737,12 @@ describe("Web ephemeral tokens & computeIpSubnet", () => {
           project_id: "prj_egdata_web",
           key_id: "key_egdata_web_ssr",
           operation_id: "getOffer",
+          usage_date: today,
+        },
+        {
+          project_id: "prj_egdata_web",
+          key_id: "key_egdata_web_ssr",
+          operation_id: "getSandboxBaseGame",
           usage_date: today,
         },
         {

@@ -302,6 +302,7 @@ describe("usage authorization and aggregation", () => {
   it("counts cache, policy failures, errors and limits without treating allowed requests as successful HTTP responses", async () => {
     const { event, call } = await setup();
     event({ cacheStatus: "HIT", latencyMs: 10 });
+    event({ cacheStatus: "HIT", limitOutcome: "allowed", latencyMs: 10 });
     event({ statusCode: 500, latencyMs: 500 });
     event({
       statusCode: 403,
@@ -318,14 +319,14 @@ describe("usage authorization and aggregation", () => {
     });
     const data = (await (await call()).json()) as AnalyticsDashboardSummary;
     expect(data.totals).toMatchObject({
-      requests: 4,
-      cacheHits: 1,
-      cacheHitRate: 25,
+      requests: 5,
+      cacheHits: 2,
+      cacheHitRate: 40,
       errors: 3,
-      errorRate: 75,
+      errorRate: 60,
       rateLimited: 1,
       blockedPolicy: 1,
-      avgLatencyMs: 128.8,
+      avgLatencyMs: 105,
       p95LatencyMs: 500,
     });
     expect(data.previous).toBeNull();
@@ -849,6 +850,13 @@ describe("usage authorization and aggregation", () => {
       queries.some(
         (q) =>
           q.includes("ORDER BY p95LatencyMs DESC") && q.includes("LIMIT 6 "),
+      ),
+    ).toBe(true);
+    expect(
+      queries.some(
+        (q) =>
+          q.includes("blob7 != 'ok' AND blob7 != 'allowed'") &&
+          q.includes("AS blockedPolicy"),
       ),
     ).toBe(true);
     expect(

@@ -1,6 +1,12 @@
 //! Shared Axum helpers for `/v1` handlers: Problem responses, envelopes, strict query, cache.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    sync::{
+        Arc,
+        atomic::{AtomicUsize, Ordering},
+    },
+};
 
 use axum::{
     body::Body,
@@ -108,13 +114,56 @@ pub fn v1_cache_key(operation: &str, parts: &BTreeMap<&str, Value>) -> String {
     }
 }
 
+tokio::task_local! {
+    static V1_CACHE_TRACKER: Arc<V1CacheTracker>;
+}
+
+#[derive(Default)]
+pub struct V1CacheTracker {
+    hits: AtomicUsize,
+    misses: AtomicUsize,
+}
+
+impl V1CacheTracker {
+    pub fn record(&self, hit: bool) {
+        if hit {
+            self.hits.fetch_add(1, Ordering::Relaxed);
+        } else {
+            self.misses.fetch_add(1, Ordering::Relaxed);
+        }
+    }
+
+    pub fn status(&self) -> Option<&'static str> {
+        if self.misses.load(Ordering::Relaxed) > 0 {
+            Some("MISS")
+        } else if self.hits.load(Ordering::Relaxed) > 0 {
+            Some("HIT")
+        } else {
+            None
+        }
+    }
+}
+
+pub async fn scope_v1_cache_tracker<F: Future>(
+    tracker: Arc<V1CacheTracker>,
+    fut: F,
+) -> F::Output {
+    V1_CACHE_TRACKER.scope(tracker, fut).await
+}
+
+pub fn record_v1_cache_lookup(hit: bool) {
+    let _ = V1_CACHE_TRACKER.try_with(|tracker| tracker.record(hit));
+}
+
 pub async fn v1_cache_get(cache: &dyn ResponseCachePort, key: &str) -> Option<Value> {
-    match cache.get(key).await {
+    let hit = match cache.get(key).await {
         Ok(Some(raw)) => serde_json::from_str::<Value>(&raw)
             .ok()
             .filter(|value| !value.is_null()),
         _ => None,
-    }
+    };
+    record_v1_cache_lookup(hit.is_some());
+    hit
 }
 
 pub async fn v1_cache_set(
@@ -470,6 +519,23 @@ mod tests {
         }
         v1_cache_set(&cache, "k", &json!({"ok": true}), 60).await;
         assert_eq!(v1_cache_get(&cache, "k").await, Some(json!({"ok": true})));
+
+        let empty = Arc::new(V1CacheTracker::default());
+        assert_eq!(empty.status(), None);
+        record_v1_cache_lookup(true);
+        let hits = Arc::new(V1CacheTracker::default());
+        scope_v1_cache_tracker(hits.clone(), async {
+            assert_eq!(v1_cache_get(&cache, "k").await, Some(json!({"ok": true})));
+        })
+        .await;
+        assert_eq!(hits.status(), Some("HIT"));
+        let mixed = Arc::new(V1CacheTracker::default());
+        scope_v1_cache_tracker(mixed.clone(), async {
+            assert_eq!(v1_cache_get(&cache, "k").await, Some(json!({"ok": true})));
+            assert_eq!(v1_cache_get(&cache, "missing").await, None);
+        })
+        .await;
+        assert_eq!(mixed.status(), Some("MISS"));
     }
 
     #[tokio::test]
