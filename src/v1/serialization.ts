@@ -10,6 +10,7 @@ const DATE_FIELDS = new Set([
   "releaseDate",
   "pcReleaseDate",
   "viewableDate",
+  "expiryDate",
   "updatedAt",
   "createdAt",
   "fetchedAt",
@@ -124,6 +125,7 @@ const OFFER_FIELDS = [
   "releaseDate",
   "pcReleaseDate",
   "viewableDate",
+  "expiryDate",
   "countriesBlacklist",
   "countriesWhitelist",
   "refundType",
@@ -168,7 +170,8 @@ export function serializeOffer(
       field === "lastModifiedDate" ||
       field === "releaseDate" ||
       field === "pcReleaseDate" ||
-      field === "viewableDate"
+      field === "viewableDate" ||
+      field === "expiryDate"
     ) {
       output[field] = dateValue(value);
     } else if (field === "_id" || field === "id") {

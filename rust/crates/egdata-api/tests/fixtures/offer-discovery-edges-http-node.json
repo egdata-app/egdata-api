@@ -3819,6 +3819,7 @@
                 "releaseDate": null,
                 "pcReleaseDate": null,
                 "viewableDate": null,
+                "expiryDate": null,
                 "countriesBlacklist": null,
                 "countriesWhitelist": null,
                 "refundType": null,
@@ -3869,7 +3870,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"2d628e24264393bf17d59dbfa437ae8f3db8aab9\""
+        "etag": "\"3ad7186678de1ef6d36829a69c44a0b7e6806278\""
       },
       "body": {
         "data": [
@@ -3901,6 +3902,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -4071,6 +4073,7 @@
                 "releaseDate": null,
                 "pcReleaseDate": null,
                 "viewableDate": null,
+                "expiryDate": null,
                 "countriesBlacklist": null,
                 "countriesWhitelist": null,
                 "refundType": null,
@@ -4108,7 +4111,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1048e38b8f7c8d1d47f6b69e0ccb84bb8a80210e\""
+        "etag": "\"c4d5cfb145a0d00399f02e1f30ec75711c2c58cc\""
       },
       "body": {
         "data": [
@@ -4140,6 +4143,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -4278,6 +4282,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -4321,7 +4326,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"8a2515e052dc429e060114f6204679a7f6725797\""
+        "etag": "\"c2db5ec79a8e5dfe56962fc01b6ee12cd2e329aa\""
       },
       "body": {
         "data": {
@@ -4352,6 +4357,7 @@
           "releaseDate": null,
           "pcReleaseDate": null,
           "viewableDate": null,
+          "expiryDate": null,
           "countriesBlacklist": null,
           "countriesWhitelist": null,
           "refundType": null,
@@ -4483,6 +4489,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -4513,7 +4520,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"863ae8d01de925b13b421673a2f44bdc72e0031f\""
+        "etag": "\"82d3157ccd4dc3d4ba4c2e2d2838865b5abaf946\""
       },
       "body": {
         "data": {
@@ -4544,6 +4551,7 @@
           "releaseDate": null,
           "pcReleaseDate": null,
           "viewableDate": null,
+          "expiryDate": null,
           "countriesBlacklist": null,
           "countriesWhitelist": null,
           "refundType": null,
@@ -4632,6 +4640,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": [
                 "US"
               ],
@@ -4662,7 +4671,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"0fdb5d83900ea93559cf38fd0c1e17ed9edd32bb\""
+        "etag": "\"bd4f8de08c48e03259ffb96860f569c47a96ad7a\""
       },
       "body": {
         "data": {
@@ -4693,6 +4702,7 @@
           "releaseDate": null,
           "pcReleaseDate": null,
           "viewableDate": null,
+          "expiryDate": null,
           "countriesBlacklist": [
             "US"
           ],
@@ -4800,6 +4810,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": [
                 "US"
               ],
@@ -4832,7 +4843,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"f23b817a0de14a959ad08c8449b5afb8ca4b39f7\""
+        "etag": "\"42622e6836f17e484d92de33469fa4c9f93dd958\""
       },
       "body": {
         "data": {
@@ -4863,6 +4874,7 @@
           "releaseDate": null,
           "pcReleaseDate": null,
           "viewableDate": null,
+          "expiryDate": null,
           "countriesBlacklist": [
             "US"
           ],
@@ -6561,6 +6573,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -6597,7 +6610,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"adc4ca758fc142c83ae6817663ab613ab212b029\""
+        "etag": "\"28d7e4eaa3d590dd28879ad9be37a76c1e3ea919\""
       },
       "body": {
         "data": {
@@ -6628,6 +6641,7 @@
           "releaseDate": null,
           "pcReleaseDate": null,
           "viewableDate": null,
+          "expiryDate": null,
           "countriesBlacklist": null,
           "countriesWhitelist": null,
           "refundType": null,
@@ -6889,6 +6903,7 @@
                 "releaseDate": null,
                 "pcReleaseDate": null,
                 "viewableDate": null,
+                "expiryDate": null,
                 "countriesBlacklist": null,
                 "countriesWhitelist": null,
                 "refundType": null,
@@ -6924,7 +6939,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"04baf520c72b1f30bf112e8a073c7569c89fdd38\""
+        "etag": "\"a0a418907e82a71f090594ed28455bffc095f091\""
       },
       "body": {
         "data": [
@@ -6956,6 +6971,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -7104,6 +7120,7 @@
                 "releaseDate": null,
                 "pcReleaseDate": null,
                 "viewableDate": null,
+                "expiryDate": null,
                 "countriesBlacklist": null,
                 "countriesWhitelist": null,
                 "refundType": null,
@@ -7139,7 +7156,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d426b53105eeda2be387cb3bec7fabad5a7c478e\""
+        "etag": "\"c98041f46c33c0478c4b1741ee99efb2823a40c1\""
       },
       "body": {
         "data": [
@@ -7171,6 +7188,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -7310,6 +7328,7 @@
                 "releaseDate": null,
                 "pcReleaseDate": null,
                 "viewableDate": null,
+                "expiryDate": null,
                 "countriesBlacklist": null,
                 "countriesWhitelist": null,
                 "refundType": null,
@@ -7345,7 +7364,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1907c6ae621e7118a27b6ff353768a6a92d34488\""
+        "etag": "\"9e220dad4e9bd26320bc58e7c32c27312c97f311\""
       },
       "body": {
         "data": [
@@ -7377,6 +7396,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -7536,6 +7556,7 @@
                 "releaseDate": "2026-10-01T00:00:00.000Z",
                 "pcReleaseDate": null,
                 "viewableDate": null,
+                "expiryDate": null,
                 "countriesBlacklist": null,
                 "countriesWhitelist": null,
                 "refundType": null,
@@ -7571,7 +7592,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"56f85c92a0e4e0e4f4bddf9477887e74ee6d2bdb\""
+        "etag": "\"d76a8e26a158cb3180a0a6ac071b93a5ce4dbfe0\""
       },
       "body": {
         "data": [
@@ -7603,6 +7624,7 @@
             "releaseDate": "2026-10-01T00:00:00.000Z",
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -7952,6 +7974,7 @@
                 "releaseDate": "2026-10-01T00:00:00.000Z",
                 "pcReleaseDate": null,
                 "viewableDate": null,
+                "expiryDate": null,
                 "countriesBlacklist": null,
                 "countriesWhitelist": null,
                 "refundType": null,
@@ -7982,7 +8005,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b2c36487bcb055ec7b30b8aeebc5532c3e43a73f\""
+        "etag": "\"52bab298169d276a0ed1d3807b99a289fd41857b\""
       },
       "body": {
         "data": [
@@ -8014,6 +8037,7 @@
             "releaseDate": "2026-10-01T00:00:00.000Z",
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -8395,6 +8419,7 @@
                 "releaseDate": "2026-10-01T00:00:00.000Z",
                 "pcReleaseDate": null,
                 "viewableDate": null,
+                "expiryDate": null,
                 "countriesBlacklist": null,
                 "countriesWhitelist": null,
                 "refundType": null,
@@ -8425,7 +8450,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"cf4d3f022887e6938867d4394fec90a1ec4c516c\""
+        "etag": "\"6e1883168edbdfaa286730d32ced7b62ff336f27\""
       },
       "body": {
         "data": [
@@ -8457,6 +8482,7 @@
             "releaseDate": "2026-10-01T00:00:00.000Z",
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -8803,6 +8829,7 @@
                 "releaseDate": null,
                 "pcReleaseDate": null,
                 "viewableDate": null,
+                "expiryDate": null,
                 "countriesBlacklist": null,
                 "countriesWhitelist": null,
                 "refundType": null,
@@ -8834,7 +8861,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1c4c251cd996d62245f502fcc6899e7b63e62e6f\""
+        "etag": "\"7926a07403800f580578b6cb1b2131a0e693ab31\""
       },
       "body": {
         "data": [
@@ -8866,6 +8893,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -9250,6 +9278,7 @@
                 "releaseDate": null,
                 "pcReleaseDate": null,
                 "viewableDate": null,
+                "expiryDate": null,
                 "countriesBlacklist": null,
                 "countriesWhitelist": null,
                 "refundType": null,
@@ -9296,7 +9325,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"7d54c9b8dfdbeff19dd5f8898f00503c8335b32c\""
+        "etag": "\"464eab81eacd7b358a40b49474f992f7ce710cc9\""
       },
       "body": {
         "data": [
@@ -9328,6 +9357,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -9771,6 +9801,7 @@
                 "releaseDate": null,
                 "pcReleaseDate": null,
                 "viewableDate": null,
+                "expiryDate": null,
                 "countriesBlacklist": null,
                 "countriesWhitelist": null,
                 "refundType": null,
@@ -9802,7 +9833,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"e51e29338ec13dca38290fb67eeb8a1348faf2e8\""
+        "etag": "\"9c0a14c91526b6cd46e63d09caa6bc269223a685\""
       },
       "body": {
         "data": [
@@ -9834,6 +9865,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -10494,6 +10526,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -10550,6 +10583,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -10591,6 +10625,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -10632,6 +10667,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -10673,6 +10709,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -10714,6 +10751,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -10755,6 +10793,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -10796,6 +10835,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -10837,6 +10877,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -10878,6 +10919,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -10919,6 +10961,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -10960,6 +11003,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -11001,6 +11045,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -11042,6 +11087,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -11083,6 +11129,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -11124,6 +11171,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -11165,6 +11213,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -11206,6 +11255,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -11247,6 +11297,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -11288,6 +11339,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -11316,7 +11368,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"b1db9cd52d7c4344ba567507a3f621907a314fd9\""
+        "etag": "\"bdd195a847c56854acbdd6fad08c101efaedc8bb\""
       },
       "body": {
         "data": [
@@ -11348,6 +11400,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11404,6 +11457,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11445,6 +11499,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11486,6 +11541,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11527,6 +11583,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11568,6 +11625,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11609,6 +11667,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11650,6 +11709,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11691,6 +11751,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11732,6 +11793,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11773,6 +11835,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11814,6 +11877,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11855,6 +11919,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11896,6 +11961,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11937,6 +12003,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11978,6 +12045,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -12019,6 +12087,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -12060,6 +12129,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -12101,6 +12171,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -12142,6 +12213,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -12415,6 +12487,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -12443,7 +12516,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"35d9294e8356115ac5b2a85535f16647c21ccc0b\""
+        "etag": "\"c209e7bb900cedeab8963151d476f56a85b647a3\""
       },
       "body": {
         "data": [
@@ -12475,6 +12548,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,

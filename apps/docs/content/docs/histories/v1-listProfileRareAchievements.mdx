@@ -5,6 +5,17 @@ description: History for GET /v1/profiles/{id}/rare-achievements
 
 `GET /v1/profiles/{id}/rare-achievements` — active. Recorded dates are not deployment dates.
 
+## 2026-11-19 — Add profile games completion filter and offer expiryDate to v1 responses
+
+Record: [v1-profile-filters-and-offer-expiry](https://github.com/egdata-app/egdata-api/blob/main/changes/records/v1-profile-filters-and-offer-expiry.json).
+
+- **v1 GET /v1/profiles/&#123;id&#125;/rare-achievements** (listProfileRareAchievements; changed; compatible)
+  - Before: Offer documents serialized via generic value normalization left `expiryDate` unnormalized.
+  - After: `expiryDate` is included in `DATE_FIELDS` and normalized to a UTC ISO 8601 timestamp when present on returned offer payloads.
+  - Client action: None
+
+Verification: pnpm openapi:check; pnpm test; cargo test -p egdata-core -p egdata-infra -p egdata-graphql -p egdata-diff --locked; cargo clippy --locked --workspace --all-targets -- -D warnings.
+
 ## 2026-11-16 — Accept dashboard console session key identities on v1 endpoints
 
 Record: [console-session-v1-key-context](https://github.com/egdata-app/egdata-api/blob/main/changes/records/console-session-v1-key-context.json).

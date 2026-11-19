@@ -18654,6 +18654,2297 @@
     }
   },
   {
+    "name": "v1 profile games filter completed",
+    "request": {
+      "path": "/v1/profiles/p/games?filter=completed&limit=1",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games:filter=\"completed\":id=\"p\":limit=1:platinum=false:sort=\"completion\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.identity:id=\"p\":ttl=60"
+        },
+        "result": {
+          "accountId": "p",
+          "displayName": "Fixture"
+        }
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$lookup": {
+                "from": "offers",
+                "let": {
+                  "sbx": "$_id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$namespace",
+                              "$$sbx"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$offerType",
+                              "BASE_GAME"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$isCodeRedemptionOnly",
+                              false
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "isDisplayable": -1,
+                      "title": 1,
+                      "lastModifiedDate": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  },
+                  {
+                    "$project": {
+                      "_id": 0,
+                      "id": 1,
+                      "namespace": 1,
+                      "keyImages": 1,
+                      "title": 1,
+                      "productSlug": 1
+                    }
+                  }
+                ],
+                "as": "offer"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$offer",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "achievementsets",
+                "localField": "_id",
+                "foreignField": "sandboxId",
+                "as": "achievementSets"
+              }
+            },
+            {
+              "$addFields": {
+                "totalAchievements": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$size": {
+                          "$ifNull": [
+                            "$$s.achievements",
+                            []
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "totalProductXP": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$reduce": {
+                          "input": {
+                            "$ifNull": [
+                              "$$s.achievements",
+                              []
+                            ]
+                          },
+                          "initialValue": 0,
+                          "in": {
+                            "$add": [
+                              "$$value",
+                              "$$this.xp"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "productAchievements": {
+                  "totalAchievements": "$totalAchievements",
+                  "totalProductXP": "$totalProductXP"
+                },
+                "completionPercentage": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$totalAchievements",
+                        0
+                      ]
+                    },
+                    0,
+                    {
+                      "$divide": [
+                        "$totalUnlocked",
+                        "$totalAchievements"
+                      ]
+                    }
+                  ]
+                },
+                "baseOfferForSandbox": {
+                  "id": "$offer.id",
+                  "namespace": "$offer.namespace",
+                  "keyImages": "$offer.keyImages"
+                },
+                "product": {
+                  "name": "$offer.title",
+                  "slug": "$offer.productSlug"
+                },
+                "sandboxId": "$_id"
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offer": 0,
+                "achievementSets": 0,
+                "totalAchievements": 0,
+                "totalProductXP": 0
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$gte": [
+                    "$completionPercentage",
+                    1
+                  ]
+                }
+              }
+            },
+            {
+              "$sort": {
+                "completionPercentage": -1,
+                "product.name": 1,
+                "sandboxId": 1
+              }
+            },
+            {
+              "$limit": 2
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "sandboxId": "z",
+            "product": {
+              "name": "z"
+            },
+            "totalXP": 8,
+            "totalUnlocked": 1,
+            "completionPercentage": 0.1
+          },
+          {
+            "sandboxId": "a",
+            "product": {
+              "name": "a"
+            },
+            "totalXP": 7,
+            "totalUnlocked": 0,
+            "completionPercentage": 0
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:filter=\"completed\":id=\"p\":platinum=false"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$lookup": {
+                "from": "achievementsets",
+                "localField": "_id",
+                "foreignField": "sandboxId",
+                "as": "achievementSets"
+              }
+            },
+            {
+              "$addFields": {
+                "totalAchievements": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$size": {
+                          "$ifNull": [
+                            "$$s.achievements",
+                            []
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "completionPercentage": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$totalAchievements",
+                        0
+                      ]
+                    },
+                    0,
+                    {
+                      "$divide": [
+                        "$totalUnlocked",
+                        "$totalAchievements"
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$gte": [
+                    "$completionPercentage",
+                    1
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "total": 12
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games.total:filter=\"completed\":id=\"p\":platinum=false",
+          "payload": 12,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games:filter=\"completed\":id=\"p\":limit=1:platinum=false:sort=\"completion\"",
+          "payload": {
+            "achievements": [
+              {
+                "sandboxId": "z",
+                "product": {
+                  "name": "z"
+                },
+                "totalXP": 8,
+                "totalUnlocked": 1,
+                "completionPercentage": 0.1
+              }
+            ],
+            "pagination": {
+              "limit": 1,
+              "hasMore": true,
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOmZhbHNlLCJmaWx0ZXIiOiJjb21wbGV0ZWQifSwiZmlsdGVySGFzaCI6IjlkYzk3MGZhNmJmNzk4MjFiMzBmMTI2OGY5NmUwNWRmZGFmMWU2Y2EzYTI3MGE3NjI0ZmExNjEwMTBmOGEyYTgiLCJvcmRlcmluZyI6ImNvbXBsZXRpb25QZXJjZW50YWdlOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMC4xLCJ6IiwieiJdfQ.rKXnQZJleDq51lxnuGUWKrkKnG0dlRNShh2RTKYo4L0",
+              "total": 12
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d65f2c1dffb05e0e72a0dd95f25fc94450a164fd\""
+      },
+      "body": {
+        "data": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            }
+          ]
+        },
+        "meta": {
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOmZhbHNlLCJmaWx0ZXIiOiJjb21wbGV0ZWQifSwiZmlsdGVySGFzaCI6IjlkYzk3MGZhNmJmNzk4MjFiMzBmMTI2OGY5NmUwNWRmZGFmMWU2Y2EzYTI3MGE3NjI0ZmExNjEwMTBmOGEyYTgiLCJvcmRlcmluZyI6ImNvbXBsZXRpb25QZXJjZW50YWdlOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMC4xLCJ6IiwieiJdfQ.rKXnQZJleDq51lxnuGUWKrkKnG0dlRNShh2RTKYo4L0",
+            "total": 12
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "v1 profile games filter completed continuation",
+    "request": {
+      "path": "/v1/profiles/p/games?filter=completed&limit=1&cursor=eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOmZhbHNlLCJmaWx0ZXIiOiJjb21wbGV0ZWQifSwiZmlsdGVySGFzaCI6IjlkYzk3MGZhNmJmNzk4MjFiMzBmMTI2OGY5NmUwNWRmZGFmMWU2Y2EzYTI3MGE3NjI0ZmExNjEwMTBmOGEyYTgiLCJvcmRlcmluZyI6ImNvbXBsZXRpb25QZXJjZW50YWdlOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMC4xLCJ6IiwieiJdfQ.rKXnQZJleDq51lxnuGUWKrkKnG0dlRNShh2RTKYo4L0",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOmZhbHNlLCJmaWx0ZXIiOiJjb21wbGV0ZWQifSwiZmlsdGVySGFzaCI6IjlkYzk3MGZhNmJmNzk4MjFiMzBmMTI2OGY5NmUwNWRmZGFmMWU2Y2EzYTI3MGE3NjI0ZmExNjEwMTBmOGEyYTgiLCJvcmRlcmluZyI6ImNvbXBsZXRpb25QZXJjZW50YWdlOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMC4xLCJ6IiwieiJdfQ.rKXnQZJleDq51lxnuGUWKrkKnG0dlRNShh2RTKYo4L0\":filter=\"completed\":id=\"p\":limit=1:platinum=false:sort=\"completion\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.identity:id=\"p\":ttl=60"
+        },
+        "result": {
+          "accountId": "p",
+          "displayName": "Fixture"
+        }
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$lookup": {
+                "from": "offers",
+                "let": {
+                  "sbx": "$_id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$namespace",
+                              "$$sbx"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$offerType",
+                              "BASE_GAME"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$isCodeRedemptionOnly",
+                              false
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "isDisplayable": -1,
+                      "title": 1,
+                      "lastModifiedDate": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  },
+                  {
+                    "$project": {
+                      "_id": 0,
+                      "id": 1,
+                      "namespace": 1,
+                      "keyImages": 1,
+                      "title": 1,
+                      "productSlug": 1
+                    }
+                  }
+                ],
+                "as": "offer"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$offer",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "achievementsets",
+                "localField": "_id",
+                "foreignField": "sandboxId",
+                "as": "achievementSets"
+              }
+            },
+            {
+              "$addFields": {
+                "totalAchievements": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$size": {
+                          "$ifNull": [
+                            "$$s.achievements",
+                            []
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "totalProductXP": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$reduce": {
+                          "input": {
+                            "$ifNull": [
+                              "$$s.achievements",
+                              []
+                            ]
+                          },
+                          "initialValue": 0,
+                          "in": {
+                            "$add": [
+                              "$$value",
+                              "$$this.xp"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "productAchievements": {
+                  "totalAchievements": "$totalAchievements",
+                  "totalProductXP": "$totalProductXP"
+                },
+                "completionPercentage": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$totalAchievements",
+                        0
+                      ]
+                    },
+                    0,
+                    {
+                      "$divide": [
+                        "$totalUnlocked",
+                        "$totalAchievements"
+                      ]
+                    }
+                  ]
+                },
+                "baseOfferForSandbox": {
+                  "id": "$offer.id",
+                  "namespace": "$offer.namespace",
+                  "keyImages": "$offer.keyImages"
+                },
+                "product": {
+                  "name": "$offer.title",
+                  "slug": "$offer.productSlug"
+                },
+                "sandboxId": "$_id"
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offer": 0,
+                "achievementSets": 0,
+                "totalAchievements": 0,
+                "totalProductXP": 0
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$gte": [
+                    "$completionPercentage",
+                    1
+                  ]
+                }
+              }
+            },
+            {
+              "$match": {
+                "$or": [
+                  {
+                    "completionPercentage": {
+                      "$lt": 0.1
+                    }
+                  },
+                  {
+                    "completionPercentage": null
+                  },
+                  {
+                    "$and": [
+                      {
+                        "completionPercentage": {
+                          "$eq": 0.1
+                        }
+                      },
+                      {
+                        "product.name": {
+                          "$gt": "z"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "$and": [
+                      {
+                        "completionPercentage": {
+                          "$eq": 0.1
+                        }
+                      },
+                      {
+                        "product.name": {
+                          "$eq": "z"
+                        }
+                      },
+                      {
+                        "sandboxId": {
+                          "$gt": "z"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "$sort": {
+                "completionPercentage": -1,
+                "product.name": 1,
+                "sandboxId": 1
+              }
+            },
+            {
+              "$limit": 2
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": []
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:filter=\"completed\":id=\"p\":platinum=false"
+        },
+        "result": 12
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOmZhbHNlLCJmaWx0ZXIiOiJjb21wbGV0ZWQifSwiZmlsdGVySGFzaCI6IjlkYzk3MGZhNmJmNzk4MjFiMzBmMTI2OGY5NmUwNWRmZGFmMWU2Y2EzYTI3MGE3NjI0ZmExNjEwMTBmOGEyYTgiLCJvcmRlcmluZyI6ImNvbXBsZXRpb25QZXJjZW50YWdlOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMC4xLCJ6IiwieiJdfQ.rKXnQZJleDq51lxnuGUWKrkKnG0dlRNShh2RTKYo4L0\":filter=\"completed\":id=\"p\":limit=1:platinum=false:sort=\"completion\"",
+          "payload": {
+            "achievements": [],
+            "pagination": {
+              "limit": 1,
+              "hasMore": false,
+              "nextCursor": null,
+              "total": 12
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"c96413f5e6988868599ddda6c3b6f0bce1b2a677\""
+      },
+      "body": {
+        "data": {
+          "achievements": []
+        },
+        "meta": {
+          "pagination": {
+            "limit": 1,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 12
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "v1 profile games filter completed rejects mismatched filter cursor",
+    "request": {
+      "path": "/v1/profiles/p/games?filter=in-progress&limit=1&cursor=eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOmZhbHNlLCJmaWx0ZXIiOiJjb21wbGV0ZWQifSwiZmlsdGVySGFzaCI6IjlkYzk3MGZhNmJmNzk4MjFiMzBmMTI2OGY5NmUwNWRmZGFmMWU2Y2EzYTI3MGE3NjI0ZmExNjEwMTBmOGEyYTgiLCJvcmRlcmluZyI6ImNvbXBsZXRpb25QZXJjZW50YWdlOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMC4xLCJ6IiwieiJdfQ.rKXnQZJleDq51lxnuGUWKrkKnG0dlRNShh2RTKYo4L0",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOmZhbHNlLCJmaWx0ZXIiOiJjb21wbGV0ZWQifSwiZmlsdGVySGFzaCI6IjlkYzk3MGZhNmJmNzk4MjFiMzBmMTI2OGY5NmUwNWRmZGFmMWU2Y2EzYTI3MGE3NjI0ZmExNjEwMTBmOGEyYTgiLCJvcmRlcmluZyI6ImNvbXBsZXRpb25QZXJjZW50YWdlOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMC4xLCJ6IiwieiJdfQ.rKXnQZJleDq51lxnuGUWKrkKnG0dlRNShh2RTKYo4L0\":filter=\"in-progress\":id=\"p\":limit=1:platinum=false:sort=\"completion\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.identity:id=\"p\":ttl=60"
+        },
+        "result": {
+          "accountId": "p",
+          "displayName": "Fixture"
+        }
+      }
+    ],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"5746dd10863bee6509a54b324ed0abb191d05e45\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/cursor-mismatch",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The cursor was issued for a different operation, filter set, ordering, country, locale, or page size. Restart pagination with the new parameters.",
+        "instance": "/v1/profiles/p/games",
+        "code": "CURSOR_MISMATCH",
+        "requestId": "req_node_oracle"
+      }
+    }
+  },
+  {
+    "name": "v1 profile games filter near-platinum",
+    "request": {
+      "path": "/v1/profiles/p/games?filter=near-platinum&limit=1",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games:filter=\"near-platinum\":id=\"p\":limit=1:platinum=false:sort=\"completion\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.identity:id=\"p\":ttl=60"
+        },
+        "result": {
+          "accountId": "p",
+          "displayName": "Fixture"
+        }
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$lookup": {
+                "from": "offers",
+                "let": {
+                  "sbx": "$_id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$namespace",
+                              "$$sbx"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$offerType",
+                              "BASE_GAME"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$isCodeRedemptionOnly",
+                              false
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "isDisplayable": -1,
+                      "title": 1,
+                      "lastModifiedDate": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  },
+                  {
+                    "$project": {
+                      "_id": 0,
+                      "id": 1,
+                      "namespace": 1,
+                      "keyImages": 1,
+                      "title": 1,
+                      "productSlug": 1
+                    }
+                  }
+                ],
+                "as": "offer"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$offer",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "achievementsets",
+                "localField": "_id",
+                "foreignField": "sandboxId",
+                "as": "achievementSets"
+              }
+            },
+            {
+              "$addFields": {
+                "totalAchievements": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$size": {
+                          "$ifNull": [
+                            "$$s.achievements",
+                            []
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "totalProductXP": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$reduce": {
+                          "input": {
+                            "$ifNull": [
+                              "$$s.achievements",
+                              []
+                            ]
+                          },
+                          "initialValue": 0,
+                          "in": {
+                            "$add": [
+                              "$$value",
+                              "$$this.xp"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "productAchievements": {
+                  "totalAchievements": "$totalAchievements",
+                  "totalProductXP": "$totalProductXP"
+                },
+                "completionPercentage": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$totalAchievements",
+                        0
+                      ]
+                    },
+                    0,
+                    {
+                      "$divide": [
+                        "$totalUnlocked",
+                        "$totalAchievements"
+                      ]
+                    }
+                  ]
+                },
+                "baseOfferForSandbox": {
+                  "id": "$offer.id",
+                  "namespace": "$offer.namespace",
+                  "keyImages": "$offer.keyImages"
+                },
+                "product": {
+                  "name": "$offer.title",
+                  "slug": "$offer.productSlug"
+                },
+                "sandboxId": "$_id"
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offer": 0,
+                "achievementSets": 0,
+                "totalAchievements": 0,
+                "totalProductXP": 0
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$and": [
+                    {
+                      "$gt": [
+                        "$totalUnlocked",
+                        0
+                      ]
+                    },
+                    {
+                      "$gte": [
+                        "$completionPercentage",
+                        0.8
+                      ]
+                    },
+                    {
+                      "$lt": [
+                        "$completionPercentage",
+                        1
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        {
+                          "$size": {
+                            "$ifNull": [
+                              "$playerAwards",
+                              []
+                            ]
+                          }
+                        },
+                        0
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "$sort": {
+                "completionPercentage": -1,
+                "product.name": 1,
+                "sandboxId": 1
+              }
+            },
+            {
+              "$limit": 2
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "sandboxId": "z",
+            "product": {
+              "name": "z"
+            },
+            "totalXP": 8,
+            "totalUnlocked": 1,
+            "completionPercentage": 0.1
+          },
+          {
+            "sandboxId": "a",
+            "product": {
+              "name": "a"
+            },
+            "totalXP": 7,
+            "totalUnlocked": 0,
+            "completionPercentage": 0
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:filter=\"near-platinum\":id=\"p\":platinum=false"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$lookup": {
+                "from": "achievementsets",
+                "localField": "_id",
+                "foreignField": "sandboxId",
+                "as": "achievementSets"
+              }
+            },
+            {
+              "$addFields": {
+                "totalAchievements": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$size": {
+                          "$ifNull": [
+                            "$$s.achievements",
+                            []
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "completionPercentage": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$totalAchievements",
+                        0
+                      ]
+                    },
+                    0,
+                    {
+                      "$divide": [
+                        "$totalUnlocked",
+                        "$totalAchievements"
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$and": [
+                    {
+                      "$gt": [
+                        "$totalUnlocked",
+                        0
+                      ]
+                    },
+                    {
+                      "$gte": [
+                        "$completionPercentage",
+                        0.8
+                      ]
+                    },
+                    {
+                      "$lt": [
+                        "$completionPercentage",
+                        1
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        {
+                          "$size": {
+                            "$ifNull": [
+                              "$playerAwards",
+                              []
+                            ]
+                          }
+                        },
+                        0
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "total": 4
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games.total:filter=\"near-platinum\":id=\"p\":platinum=false",
+          "payload": 4,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games:filter=\"near-platinum\":id=\"p\":limit=1:platinum=false:sort=\"completion\"",
+          "payload": {
+            "achievements": [
+              {
+                "sandboxId": "z",
+                "product": {
+                  "name": "z"
+                },
+                "totalXP": 8,
+                "totalUnlocked": 1,
+                "completionPercentage": 0.1
+              }
+            ],
+            "pagination": {
+              "limit": 1,
+              "hasMore": true,
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOmZhbHNlLCJmaWx0ZXIiOiJuZWFyLXBsYXRpbnVtIn0sImZpbHRlckhhc2giOiJkMGYxNzE0Zjk4NGY0YzUzNTNjMzgxMGVlNGI0YmJkOTZmYmZlMzIwYzg3MGI3MjM4ZmI4ZTQxNmFlYzgyMDAwIiwib3JkZXJpbmciOiJjb21wbGV0aW9uUGVyY2VudGFnZTpkZXNjLHByb2R1Y3QubmFtZTphc2Msc2FuZGJveElkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzAuMSwieiIsInoiXX0.xVjPQKnLrVqC4_F4A6JKxOncxYzrTY_hUqaI5b6c-3g",
+              "total": 4
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"aa5aa478c205bda5096cf6b6ffb041057c1ac20d\""
+      },
+      "body": {
+        "data": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            }
+          ]
+        },
+        "meta": {
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOmZhbHNlLCJmaWx0ZXIiOiJuZWFyLXBsYXRpbnVtIn0sImZpbHRlckhhc2giOiJkMGYxNzE0Zjk4NGY0YzUzNTNjMzgxMGVlNGI0YmJkOTZmYmZlMzIwYzg3MGI3MjM4ZmI4ZTQxNmFlYzgyMDAwIiwib3JkZXJpbmciOiJjb21wbGV0aW9uUGVyY2VudGFnZTpkZXNjLHByb2R1Y3QubmFtZTphc2Msc2FuZGJveElkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WzAuMSwieiIsInoiXX0.xVjPQKnLrVqC4_F4A6JKxOncxYzrTY_hUqaI5b6c-3g",
+            "total": 4
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "v1 profile games filter in-progress",
+    "request": {
+      "path": "/v1/profiles/p/games?filter=in-progress&limit=1",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games:filter=\"in-progress\":id=\"p\":limit=1:platinum=false:sort=\"completion\""
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.identity:id=\"p\":ttl=60"
+        },
+        "result": {
+          "accountId": "p",
+          "displayName": "Fixture"
+        }
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$lookup": {
+                "from": "offers",
+                "let": {
+                  "sbx": "$_id"
+                },
+                "pipeline": [
+                  {
+                    "$match": {
+                      "$expr": {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$namespace",
+                              "$$sbx"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$offerType",
+                              "BASE_GAME"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$isCodeRedemptionOnly",
+                              false
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      "isDisplayable": -1,
+                      "title": 1,
+                      "lastModifiedDate": -1
+                    }
+                  },
+                  {
+                    "$limit": 1
+                  },
+                  {
+                    "$project": {
+                      "_id": 0,
+                      "id": 1,
+                      "namespace": 1,
+                      "keyImages": 1,
+                      "title": 1,
+                      "productSlug": 1
+                    }
+                  }
+                ],
+                "as": "offer"
+              }
+            },
+            {
+              "$unwind": {
+                "path": "$offer",
+                "preserveNullAndEmptyArrays": true
+              }
+            },
+            {
+              "$lookup": {
+                "from": "achievementsets",
+                "localField": "_id",
+                "foreignField": "sandboxId",
+                "as": "achievementSets"
+              }
+            },
+            {
+              "$addFields": {
+                "totalAchievements": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$size": {
+                          "$ifNull": [
+                            "$$s.achievements",
+                            []
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "totalProductXP": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$reduce": {
+                          "input": {
+                            "$ifNull": [
+                              "$$s.achievements",
+                              []
+                            ]
+                          },
+                          "initialValue": 0,
+                          "in": {
+                            "$add": [
+                              "$$value",
+                              "$$this.xp"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "productAchievements": {
+                  "totalAchievements": "$totalAchievements",
+                  "totalProductXP": "$totalProductXP"
+                },
+                "completionPercentage": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$totalAchievements",
+                        0
+                      ]
+                    },
+                    0,
+                    {
+                      "$divide": [
+                        "$totalUnlocked",
+                        "$totalAchievements"
+                      ]
+                    }
+                  ]
+                },
+                "baseOfferForSandbox": {
+                  "id": "$offer.id",
+                  "namespace": "$offer.namespace",
+                  "keyImages": "$offer.keyImages"
+                },
+                "product": {
+                  "name": "$offer.title",
+                  "slug": "$offer.productSlug"
+                },
+                "sandboxId": "$_id"
+              }
+            },
+            {
+              "$project": {
+                "_id": 0,
+                "offer": 0,
+                "achievementSets": 0,
+                "totalAchievements": 0,
+                "totalProductXP": 0
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$and": [
+                    {
+                      "$gt": [
+                        "$totalUnlocked",
+                        0
+                      ]
+                    },
+                    {
+                      "$lt": [
+                        "$completionPercentage",
+                        1
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        {
+                          "$size": {
+                            "$ifNull": [
+                              "$playerAwards",
+                              []
+                            ]
+                          }
+                        },
+                        0
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "$sort": {
+                "completionPercentage": -1,
+                "product.name": 1,
+                "sandboxId": 1
+              }
+            },
+            {
+              "$limit": 2
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "sandboxId": "z",
+            "product": {
+              "name": "z"
+            },
+            "totalXP": 8,
+            "totalUnlocked": 1,
+            "completionPercentage": 0.1
+          },
+          {
+            "sandboxId": "a",
+            "product": {
+              "name": "a"
+            },
+            "totalXP": 7,
+            "totalUnlocked": 0,
+            "completionPercentage": 0
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games.total:filter=\"in-progress\":id=\"p\":platinum=false"
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "collection": "player-achievements",
+          "method": "aggregate",
+          "query": [
+            {
+              "$match": {
+                "epicAccountId": "p"
+              }
+            },
+            {
+              "$group": {
+                "_id": "$sandboxId",
+                "totalUnlocked": {
+                  "$max": "$totalUnlocked"
+                },
+                "totalXP": {
+                  "$max": "$totalXP"
+                },
+                "playerAwards_arr": {
+                  "$push": "$playerAwards"
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "playerAwards": {
+                  "$reduce": {
+                    "input": "$playerAwards_arr",
+                    "initialValue": [],
+                    "in": {
+                      "$setUnion": [
+                        "$$value",
+                        "$$this"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$project": {
+                "playerAwards_arr": 0
+              }
+            },
+            {
+              "$lookup": {
+                "from": "achievementsets",
+                "localField": "_id",
+                "foreignField": "sandboxId",
+                "as": "achievementSets"
+              }
+            },
+            {
+              "$addFields": {
+                "totalAchievements": {
+                  "$sum": {
+                    "$map": {
+                      "input": "$achievementSets",
+                      "as": "s",
+                      "in": {
+                        "$size": {
+                          "$ifNull": [
+                            "$$s.achievements",
+                            []
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "$addFields": {
+                "completionPercentage": {
+                  "$cond": [
+                    {
+                      "$eq": [
+                        "$totalAchievements",
+                        0
+                      ]
+                    },
+                    0,
+                    {
+                      "$divide": [
+                        "$totalUnlocked",
+                        "$totalAchievements"
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "$match": {
+                "$expr": {
+                  "$and": [
+                    {
+                      "$gt": [
+                        "$totalUnlocked",
+                        0
+                      ]
+                    },
+                    {
+                      "$lt": [
+                        "$completionPercentage",
+                        1
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        {
+                          "$size": {
+                            "$ifNull": [
+                              "$playerAwards",
+                              []
+                            ]
+                          }
+                        },
+                        0
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "$count": "total"
+            }
+          ],
+          "options": {
+            "allowDiskUse": true
+          }
+        },
+        "result": [
+          {
+            "total": 7
+          }
+        ]
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games.total:filter=\"in-progress\":id=\"p\":platinum=false",
+          "payload": 7,
+          "ttl": 60
+        },
+        "result": null
+      },
+      {
+        "call": {
+          "method": "set",
+          "key": "v1:profiles.games:filter=\"in-progress\":id=\"p\":limit=1:platinum=false:sort=\"completion\"",
+          "payload": {
+            "achievements": [
+              {
+                "sandboxId": "z",
+                "product": {
+                  "name": "z"
+                },
+                "totalXP": 8,
+                "totalUnlocked": 1,
+                "completionPercentage": 0.1
+              }
+            ],
+            "pagination": {
+              "limit": 1,
+              "hasMore": true,
+              "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOmZhbHNlLCJmaWx0ZXIiOiJpbi1wcm9ncmVzcyJ9LCJmaWx0ZXJIYXNoIjoiODkzYjg0NzExZjBjNDYxNmY2ZWM1YmE3MzI1NTA4MDNlNDNhNTBlYjEyYWRkNjAyMjRhYzEzMGFlNDFhNDI0YyIsIm9yZGVyaW5nIjoiY29tcGxldGlvblBlcmNlbnRhZ2U6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLjEsInoiLCJ6Il19.LQYH188YzZvbWLiTJYU5JI_ymdPGcK9gHHCxQyS4MK4",
+              "total": 7
+            }
+          },
+          "ttl": 60
+        },
+        "result": null
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"2deaaa106c7bf448a7cb081c02a01dd91c76304f\""
+      },
+      "body": {
+        "data": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            }
+          ]
+        },
+        "meta": {
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOmZhbHNlLCJmaWx0ZXIiOiJpbi1wcm9ncmVzcyJ9LCJmaWx0ZXJIYXNoIjoiODkzYjg0NzExZjBjNDYxNmY2ZWM1YmE3MzI1NTA4MDNlNDNhNTBlYjEyYWRkNjAyMjRhYzEzMGFlNDFhNDI0YyIsIm9yZGVyaW5nIjoiY29tcGxldGlvblBlcmNlbnRhZ2U6ZGVzYyxwcm9kdWN0Lm5hbWU6YXNjLHNhbmRib3hJZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlswLjEsInoiLCJ6Il19.LQYH188YzZvbWLiTJYU5JI_ymdPGcK9gHHCxQyS4MK4",
+            "total": 7
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "v1 profile games filter platinum reuses platinum total",
+    "request": {
+      "path": "/v1/profiles/p/games?filter=platinum&sort=alphabetical&limit=2",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games:id=\"p\":limit=2:platinum=true:sort=\"alphabetical\""
+        },
+        "result": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            },
+            {
+              "sandboxId": "a",
+              "product": {
+                "name": "a"
+              },
+              "totalXP": 7,
+              "totalUnlocked": 0,
+              "completionPercentage": 0
+            }
+          ],
+          "pagination": {
+            "limit": 2,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 17
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8eaae81f54cbbbf6dd85e269831373de6ad99e37\""
+      },
+      "body": {
+        "data": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            },
+            {
+              "sandboxId": "a",
+              "product": {
+                "name": "a"
+              },
+              "totalXP": 7,
+              "totalUnlocked": 0,
+              "completionPercentage": 0
+            }
+          ]
+        },
+        "meta": {
+          "pagination": {
+            "limit": 2,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 17
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "v1 profile games filter all reuses default total",
+    "request": {
+      "path": "/v1/profiles/p/games?filter=all&limit=2",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games:id=\"p\":limit=2:platinum=false:sort=\"completion\""
+        },
+        "result": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            },
+            {
+              "sandboxId": "a",
+              "product": {
+                "name": "a"
+              },
+              "totalXP": 7,
+              "totalUnlocked": 0,
+              "completionPercentage": 0
+            }
+          ],
+          "pagination": {
+            "limit": 2,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 91
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d1ea5e26a6c2b5e2769b3dedea955fe44ea08c19\""
+      },
+      "body": {
+        "data": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            },
+            {
+              "sandboxId": "a",
+              "product": {
+                "name": "a"
+              },
+              "totalXP": 7,
+              "totalUnlocked": 0,
+              "completionPercentage": 0
+            }
+          ]
+        },
+        "meta": {
+          "pagination": {
+            "limit": 2,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 91
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "v1 profile games filter all with platinum=true reuses platinum total",
+    "request": {
+      "path": "/v1/profiles/p/games?filter=all&platinum=true&sort=alphabetical&limit=2",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games:id=\"p\":limit=2:platinum=true:sort=\"alphabetical\""
+        },
+        "result": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            },
+            {
+              "sandboxId": "a",
+              "product": {
+                "name": "a"
+              },
+              "totalXP": 7,
+              "totalUnlocked": 0,
+              "completionPercentage": 0
+            }
+          ],
+          "pagination": {
+            "limit": 2,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 17
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"8eaae81f54cbbbf6dd85e269831373de6ad99e37\""
+      },
+      "body": {
+        "data": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            },
+            {
+              "sandboxId": "a",
+              "product": {
+                "name": "a"
+              },
+              "totalXP": 7,
+              "totalUnlocked": 0,
+              "completionPercentage": 0
+            }
+          ]
+        },
+        "meta": {
+          "pagination": {
+            "limit": 2,
+            "hasMore": false,
+            "nextCursor": null,
+            "total": 17
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "v1 profile games filter completed with platinum=true applies filter",
+    "request": {
+      "path": "/v1/profiles/p/games?filter=completed&platinum=true&limit=1",
+      "method": "GET"
+    },
+    "trace": [
+      {
+        "call": {
+          "method": "get",
+          "key": "v1:profiles.games:filter=\"completed\":id=\"p\":limit=1:platinum=false:sort=\"completion\""
+        },
+        "result": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            }
+          ],
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOmZhbHNlLCJmaWx0ZXIiOiJjb21wbGV0ZWQifSwiZmlsdGVySGFzaCI6IjlkYzk3MGZhNmJmNzk4MjFiMzBmMTI2OGY5NmUwNWRmZGFmMWU2Y2EzYTI3MGE3NjI0ZmExNjEwMTBmOGEyYTgiLCJvcmRlcmluZyI6ImNvbXBsZXRpb25QZXJjZW50YWdlOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMC4xLCJ6IiwieiJdfQ.rKXnQZJleDq51lxnuGUWKrkKnG0dlRNShh2RTKYo4L0",
+            "total": 12
+          }
+        }
+      }
+    ],
+    "response": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "private, no-cache",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"d65f2c1dffb05e0e72a0dd95f25fc94450a164fd\""
+      },
+      "body": {
+        "data": {
+          "achievements": [
+            {
+              "sandboxId": "z",
+              "product": {
+                "name": "z"
+              },
+              "totalXP": 8,
+              "totalUnlocked": 1,
+              "completionPercentage": 0.1
+            }
+          ]
+        },
+        "meta": {
+          "pagination": {
+            "limit": 1,
+            "hasMore": true,
+            "nextCursor": "eyJ2IjoxLCJvcGVyYXRpb24iOiJwcm9maWxlcy5nYW1lcyIsImZpbHRlcnMiOnsicHJvZmlsZUlkIjoicCIsInNvcnQiOiJjb21wbGV0aW9uIiwicGxhdGludW0iOmZhbHNlLCJmaWx0ZXIiOiJjb21wbGV0ZWQifSwiZmlsdGVySGFzaCI6IjlkYzk3MGZhNmJmNzk4MjFiMzBmMTI2OGY5NmUwNWRmZGFmMWU2Y2EzYTI3MGE3NjI0ZmExNjEwMTBmOGEyYTgiLCJvcmRlcmluZyI6ImNvbXBsZXRpb25QZXJjZW50YWdlOmRlc2MscHJvZHVjdC5uYW1lOmFzYyxzYW5kYm94SWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbMC4xLCJ6IiwieiJdfQ.rKXnQZJleDq51lxnuGUWKrkKnG0dlRNShh2RTKYo4L0",
+            "total": 12
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "v1 profile games invalid filter",
+    "request": {
+      "path": "/v1/profiles/p/games?filter=invalid",
+      "method": "GET"
+    },
+    "trace": [],
+    "response": {
+      "status": 400,
+      "headers": {
+        "content-type": "application/problem+json",
+        "cache-control": "private, no-store",
+        "cdn-cache-control": "no-store",
+        "cloudflare-cdn-cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "x-request-id": "req_node_oracle",
+        "etag": "\"1ab9691f3821c9749cce2eea44e823cb7455be81\""
+      },
+      "body": {
+        "type": "https://api.egdata.app/problems/invalid-query",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "One or more query parameters are invalid or not supported.",
+        "instance": "/v1/profiles/p/games",
+        "code": "INVALID_QUERY",
+        "requestId": "req_node_oracle",
+        "errors": [
+          {
+            "parameter": "filter",
+            "pointer": "/filter",
+            "code": "INVALID_VALUE",
+            "message": "Invalid option: expected one of \"all\"|\"completed\"|\"near-platinum\"|\"in-progress\"|\"platinum\""
+          }
+        ]
+      }
+    }
+  },
+  {
     "name": "v1 profile old leaderboard page remains readable",
     "request": {
       "path": "/v1/profiles/leaderboard?limit=3",
