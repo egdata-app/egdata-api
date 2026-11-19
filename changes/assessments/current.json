@@ -1,11 +1,11 @@
 {
-  "baseCommit": "bb2faee0340f6af4c1a7117cf13713e2607f7ebc",
-  "diffHash": "114f0c4272ace72d7ac71825befdcc58370e477c8601f4b5fbe91efac7b70134",
+  "baseCommit": "20375fd898b5e262e9c3687539bc0978921395eb",
+  "diffHash": "0a89cfb676579979744b2a205427c2d9dadf1b45f5c5df9c416848e5741ccd8e",
   "operations": [],
   "unknownFiles": [
     {
       "file": "rust/crates/egdata-api/src/middleware/origin_auth.rs",
-      "reason": "Internal container-to-container origin authentication allowance in origin_auth.rs; does not change any public endpoint contract, route, or response behavior.",
+      "reason": "Internal container-to-container origin authentication allowance in origin_auth.rs; allows private Docker service calls forwarding client IP/Cloudflare headers while still blocking external Host or x-forwarded-host values. Does not change any public endpoint contract, route, or response behavior.",
       "endpoints": []
     }
   ]
