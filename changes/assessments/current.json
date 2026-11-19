@@ -1,11 +1,11 @@
 {
-  "baseCommit": "7da9dcffac76b1a06a76495e3cd2852d9f5d5825",
-  "diffHash": "d14dc9a6ae7297b852cbbba9df8e8af08852d34d206803ce44ea52a23364ed19",
+  "baseCommit": "4f6fd3122fc0e6d872709a0679ec22b6d6dcb3ea",
+  "diffHash": "a1e8876055337293e629e57b1f007b755ec4c7337523220e5720d37d52d4f172",
   "operations": [],
   "unknownFiles": [
     {
-      "file": "Dockerfile.rust",
-      "reason": "Adds cargo-chef multi-stage dependency caching for GCP Cloud Build; no public HTTP endpoint behavior changed.",
+      "file": "rust/Cargo.toml",
+      "reason": "Tunes release profile build settings (opt-level=2, codegen-units=32) for faster Cloud Build compiles; no public HTTP endpoint behavior changed.",
       "endpoints": []
     }
   ]
