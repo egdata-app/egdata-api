@@ -45,38 +45,60 @@ pub(crate) fn sha256_secure_eq(a: &str, b: &str) -> bool {
     constant_time_eq(&left, &right)
 }
 
-const PROXY_FORWARDING_HEADERS: &[&str] = &[
-    "cf-connecting-ip",
-    "cf-ray",
-    "x-forwarded-for",
-    "x-forwarded-host",
-    "x-real-ip",
-    "forwarded",
-];
-
 fn is_private_or_loopback(ip: IpAddr) -> bool {
     match ip {
         IpAddr::V4(v4) => v4.is_loopback() || v4.is_private(),
         IpAddr::V6(v6) => {
             v6.is_loopback()
-                || v6.to_ipv4_mapped().is_some_and(|v4| v4.is_loopback() || v4.is_private())
+                || v6
+                    .to_ipv4_mapped()
+                    .is_some_and(|v4| v4.is_loopback() || v4.is_private())
                 || (v6.segments()[0] & 0xfe00) == 0xfc00
         }
     }
 }
 
-fn is_direct_internal_service_request(req: &Request<Body>, hostname: &str, origin_host: &str) -> bool {
-    if hostname.is_empty()
-        || hostname == origin_host
-        || hostname.contains('.')
-        || hostname.parse::<IpAddr>().is_ok()
-    {
+fn normalize_host(raw: &str) -> String {
+    let trimmed = raw.trim();
+    let host = if let Some(rest) = trimmed.strip_prefix('[') {
+        rest.split(']').next().unwrap_or(trimmed)
+    } else {
+        trimmed.split(':').next().unwrap_or(trimmed)
+    };
+    host.to_ascii_lowercase().trim_end_matches('.').to_string()
+}
+
+fn is_single_label_internal_host(host: &str, origin_host: &str) -> bool {
+    !host.is_empty()
+        && host != origin_host
+        && !host.contains('.')
+        && host.parse::<IpAddr>().is_err()
+}
+
+fn has_external_forwarded_host(req: &Request<Body>, origin_host: &str) -> bool {
+    req.headers()
+        .get_all("x-forwarded-host")
+        .iter()
+        .any(|value| {
+            let Ok(raw) = value.to_str() else {
+                return true;
+            };
+            raw.split(',').any(|entry| {
+                let host = normalize_host(entry);
+                !is_single_label_internal_host(&host, origin_host)
+            })
+        })
+}
+
+fn is_direct_internal_service_request(
+    req: &Request<Body>,
+    hostname: &str,
+    origin_host: &str,
+) -> bool {
+    if !is_single_label_internal_host(hostname, origin_host) {
         return false;
     }
-    if PROXY_FORWARDING_HEADERS
-        .iter()
-        .any(|&h| req.headers().contains_key(h))
-    {
+    if has_external_forwarded_host(req, origin_host) {
         return false;
     }
     req.extensions()
@@ -92,16 +114,9 @@ fn extract_hostname(req: &Request<Body>) -> String {
             req.headers()
                 .get(header::HOST)
                 .and_then(|v| v.to_str().ok())
-                .map(|host| {
-                    if let Some(rest) = host.strip_prefix('[') {
-                        rest.split(']').next().unwrap_or(host)
-                    } else {
-                        host.split(':').next().unwrap_or(host)
-                    }
-                })
         })
         .unwrap_or("");
-    raw.to_ascii_lowercase().trim_end_matches('.').to_string()
+    normalize_host(raw)
 }
 
 fn no_store_headers(resp: &mut Response) {
@@ -404,7 +419,8 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn allows_direct_private_docker_service_requests_when_required_and_blocks_proxy_or_public() {
+    async fn allows_direct_private_docker_service_requests_when_required_and_blocks_proxy_or_public()
+     {
         let cfg = ApiConfig {
             origin_auth_token: Some("origin-secret".into()),
             origin_auth_required: true,
@@ -419,30 +435,70 @@ mod tests {
             .header("host", "egdata-api-nywbml:4000")
             .body(Body::empty())
             .unwrap();
-        req.extensions_mut()
-            .insert(ConnectInfo("172.18.0.5:54321".parse::<SocketAddr>().unwrap()));
+        req.extensions_mut().insert(ConnectInfo(
+            "172.18.0.5:54321".parse::<SocketAddr>().unwrap(),
+        ));
         let resp = app.clone().oneshot(req).await.unwrap();
         assert_eq!(resp.status(), StatusCode::OK);
+
+        // Internal SSR call forwarding client IP/Cloudflare headers from a private IP -> 200 OK
+        let mut ssr_forwarded = Request::builder()
+            .uri("/test")
+            .header("host", "egdata-api-nywbml:4000")
+            .header("x-forwarded-for", "203.0.113.10")
+            .header("cf-connecting-ip", "203.0.113.10")
+            .header("cf-ray", "8a1b2c3d4e5f-MAD")
+            .header("x-real-ip", "203.0.113.10")
+            .header("forwarded", "for=203.0.113.10;proto=https")
+            .body(Body::empty())
+            .unwrap();
+        ssr_forwarded.extensions_mut().insert(ConnectInfo(
+            "172.18.0.6:44321".parse::<SocketAddr>().unwrap(),
+        ));
+        let ssr_resp = app.clone().oneshot(ssr_forwarded).await.unwrap();
+        assert_eq!(ssr_resp.status(), StatusCode::OK);
 
         // IPv6 ULA / IPv4-mapped private address -> 200 OK
         assert!(is_private_or_loopback("::1".parse().unwrap()));
         assert!(is_private_or_loopback("fd00::1".parse().unwrap()));
         assert!(is_private_or_loopback("::ffff:10.0.0.2".parse().unwrap()));
-        assert!(!is_private_or_loopback("2001:4860:4860::8888".parse().unwrap()));
+        assert!(!is_private_or_loopback(
+            "2001:4860:4860::8888".parse().unwrap()
+        ));
         assert!(!is_private_or_loopback("8.8.8.8".parse().unwrap()));
 
-        // Same internal Host header arriving through reverse proxy (`x-forwarded-for` present) -> 403
-        let mut proxied = Request::builder()
+        // Reverse proxy forwarding an external domain via `x-forwarded-host` -> 403
+        for forwarded_host in [
+            "origin-api.egdata.app",
+            "api.egdata.app:443",
+            "egdata-api-nywbml, origin-api.egdata.app",
+            "",
+        ] {
+            let mut proxied = Request::builder()
+                .uri("/test")
+                .header("host", "egdata-api-nywbml:4000")
+                .header("x-forwarded-host", forwarded_host)
+                .body(Body::empty())
+                .unwrap();
+            proxied.extensions_mut().insert(ConnectInfo(
+                "172.18.0.2:44321".parse::<SocketAddr>().unwrap(),
+            ));
+            let proxied_resp = app.clone().oneshot(proxied).await.unwrap();
+            assert_eq!(
+                proxied_resp.status(),
+                StatusCode::FORBIDDEN,
+                "expected 403 for x-forwarded-host={forwarded_host:?}"
+            );
+        }
+
+        // Direct call without ConnectInfo -> 403 (fail closed)
+        let no_connect_info = Request::builder()
             .uri("/test")
             .header("host", "egdata-api-nywbml:4000")
-            .header("x-forwarded-for", "203.0.113.10")
             .body(Body::empty())
             .unwrap();
-        proxied
-            .extensions_mut()
-            .insert(ConnectInfo("172.18.0.2:44321".parse::<SocketAddr>().unwrap()));
-        let proxied_resp = app.clone().oneshot(proxied).await.unwrap();
-        assert_eq!(proxied_resp.status(), StatusCode::FORBIDDEN);
+        let no_ci_resp = app.clone().oneshot(no_connect_info).await.unwrap();
+        assert_eq!(no_ci_resp.status(), StatusCode::FORBIDDEN);
 
         // Direct call using raw IP literal in Host header -> 403
         let mut ip_host = Request::builder()
@@ -450,9 +506,9 @@ mod tests {
             .header("host", "172.18.0.5:4000")
             .body(Body::empty())
             .unwrap();
-        ip_host
-            .extensions_mut()
-            .insert(ConnectInfo("172.18.0.5:54321".parse::<SocketAddr>().unwrap()));
+        ip_host.extensions_mut().insert(ConnectInfo(
+            "172.18.0.5:54321".parse::<SocketAddr>().unwrap(),
+        ));
         let ip_resp = app.clone().oneshot(ip_host).await.unwrap();
         assert_eq!(ip_resp.status(), StatusCode::FORBIDDEN);
 
