@@ -218,6 +218,13 @@ async fn sandbox_node_cache_payloads_skip_loaders_and_do_not_refresh_ttl() {
     for (uri, key, payload, data) in cases {
         let mongo = Arc::new(sandbox_mongo());
         let cache = Arc::new(SandboxCache::default());
+        let is_subresource = uri != "/v1/sandboxes" && uri != "/v1/sandboxes/ns";
+        if is_subresource {
+            cache.values.lock().unwrap().insert(
+                "v1:sandboxes.exists:sandboxId=\"ns\"".into(),
+                "true".into(),
+            );
+        }
         cache
             .values
             .lock()
@@ -226,17 +233,17 @@ async fn sandbox_node_cache_payloads_skip_loaders_and_do_not_refresh_ttl() {
         let (status, body) = sandbox_get(&sandbox_app(mongo.clone(), cache.clone()), uri).await;
         assert_eq!(status, 200, "{uri}: {body}");
         assert_eq!(body["data"], data, "{uri}");
-        assert_eq!(*cache.gets.lock().unwrap(), vec![key], "{uri}");
+        let expected_gets = if is_subresource {
+            vec!["v1:sandboxes.exists:sandboxId=\"ns\"", key]
+        } else {
+            vec![key]
+        };
+        assert_eq!(*cache.gets.lock().unwrap(), expected_gets, "{uri}");
         assert!(cache.sets.lock().unwrap().is_empty(), "{uri}");
         assert!(mongo.many_calls.lock().unwrap().is_empty(), "{uri}");
         assert!(mongo.aggregate_calls.lock().unwrap().is_empty(), "{uri}");
         assert!(mongo.count_calls.lock().unwrap().is_empty(), "{uri}");
-        let existence_calls = usize::from(uri != "/v1/sandboxes" && uri != "/v1/sandboxes/ns");
-        assert_eq!(
-            mongo.one_calls.lock().unwrap().len(),
-            existence_calls,
-            "{uri}"
-        );
+        assert!(mongo.one_calls.lock().unwrap().is_empty(), "{uri}");
     }
 }
 
@@ -276,21 +283,29 @@ async fn sandbox_stats_counts_virtual_assets_and_caches_the_source_shape() {
     let sets = cache.sets.lock().unwrap().clone();
     assert_eq!(
         sets,
-        vec![(
-            "v1:sandboxes.stats:sandboxId=\"ns\"".into(),
-            body["data"].clone(),
-            300
-        )]
+        vec![
+            (
+                "v1:sandboxes.exists:sandboxId=\"ns\"".into(),
+                json!(true),
+                300
+            ),
+            (
+                "v1:sandboxes.stats:sandboxId=\"ns\"".into(),
+                body["data"].clone(),
+                300
+            )
+        ]
     );
     let (_, again) = sandbox_get(&app, "/v1/sandboxes/ns/stats").await;
     assert_eq!(again["data"], body["data"]);
+    assert_eq!(mongo.one_calls.lock().unwrap().len(), 1);
     assert_eq!(mongo.count_calls.lock().unwrap().len(), 2);
     assert_eq!(mongo.many_calls.lock().unwrap().len(), 3);
-    assert_eq!(cache.sets.lock().unwrap().len(), 1);
+    assert_eq!(cache.sets.lock().unwrap().len(), 2);
 }
 
 #[tokio::test]
-async fn sandbox_assets_share_cache_across_pages_but_still_check_existence() {
+async fn sandbox_assets_share_cache_across_pages_and_cache_existence() {
     let mongo = Arc::new(sandbox_mongo());
     let cache = Arc::new(SandboxCache::default());
     let rows = json!([
@@ -313,16 +328,28 @@ async fn sandbox_assets_share_cache_across_pages_but_still_check_existence() {
     .await;
     assert_eq!(status, 200, "{second}");
     assert_eq!(second["data"], json!([rows[1]]));
-    assert_eq!(mongo.one_calls.lock().unwrap().len(), 2);
+    assert_eq!(mongo.one_calls.lock().unwrap().len(), 1);
     assert!(mongo.many_calls.lock().unwrap().is_empty());
-    assert!(cache.sets.lock().unwrap().is_empty());
+    assert_eq!(
+        *cache.sets.lock().unwrap(),
+        vec![(
+            "v1:sandboxes.exists:sandboxId=\"ns\"".into(),
+            json!(true),
+            300
+        )]
+    );
+    cache
+        .values
+        .lock()
+        .unwrap()
+        .remove("v1:sandboxes.exists:sandboxId=\"ns\"");
     let (status, _) = sandbox_get(
         &sandbox_app(Arc::new(RecordingMongo::default()), cache.clone()),
         "/v1/sandboxes/ns/assets",
     )
     .await;
     assert_eq!(status, 404);
-    assert_eq!(cache.gets.lock().unwrap().len(), 2);
+    assert_eq!(cache.gets.lock().unwrap().len(), 5);
 }
 
 #[tokio::test]
@@ -430,7 +457,8 @@ async fn sandbox_changelog_reuses_context_cache_hydrates_rows_and_binds_bson_cur
         json!({"id":"offer","title":"Game"})
     );
     assert!(mongo.many_calls.lock().unwrap().is_empty());
-    assert_eq!(cache.sets.lock().unwrap()[0].2, 60);
+    assert_eq!(cache.sets.lock().unwrap()[0].2, 300);
+    assert_eq!(cache.sets.lock().unwrap()[1].2, 60);
     let cursor = first["meta"]["pagination"]["nextCursor"].as_str().unwrap();
     let (status, second) = sandbox_get(
         &app,
@@ -631,5 +659,165 @@ async fn malformed_cached_sandbox_context_does_not_overwrite_the_changelog_page(
     let (status, error) = sandbox_get(&app, "/v1/sandboxes/ns/changelog").await;
     assert_eq!(status, axum::http::StatusCode::INTERNAL_SERVER_ERROR);
     assert_eq!(error["code"], "INTERNAL_ERROR");
-    assert!(cache.sets.lock().unwrap().is_empty());
+    assert_eq!(
+        *cache.sets.lock().unwrap(),
+        vec![(
+            "v1:sandboxes.exists:sandboxId=\"ns\"".into(),
+            json!(true),
+            300
+        )]
+    );
+}
+
+#[tokio::test]
+async fn sandbox_existence_and_base_game_caching_behavior() {
+    let mongo = Arc::new(RecordingMongo {
+        one_docs: HashMap::from([("sandboxes".into(), Some(doc! {"_id": "ns"}))]),
+        many_by_collection: HashMap::from([(
+            "items".into(),
+            vec![doc! {
+                "id": "exe-1",
+                "namespace": "ns",
+                "entitlementType": "EXECUTABLE",
+                "releaseInfo": [{"appId": "app-1"}],
+            }],
+        )]),
+        ..Default::default()
+    });
+    let cache = Arc::new(SandboxCache::default());
+    let app = sandbox_app(mongo.clone(), cache.clone());
+
+    let (status, first) = sandbox_get(&app, "/v1/sandboxes/ns/base-game").await;
+    assert_eq!(status, 200, "{first}");
+    assert_eq!(first["data"]["id"], "exe-1");
+    assert_eq!(first["data"]["isItem"], true);
+    let sets = cache.sets.lock().unwrap().clone();
+    assert_eq!(sets.len(), 2);
+    assert_eq!(
+        sets[0],
+        (
+            "v1:sandboxes.exists:sandboxId=\"ns\"".into(),
+            json!(true),
+            300
+        )
+    );
+    assert_eq!(
+        sets[1].0,
+        "v1:sandboxes.base-game:locale=\"en-US\":region=\"US\":sandboxId=\"ns\""
+    );
+    assert_eq!(sets[1].2, 300);
+
+    let one_calls_after_miss = mongo.one_calls.lock().unwrap().len();
+    let many_calls_after_miss = mongo.many_calls.lock().unwrap().len();
+    let (status, second) = sandbox_get(&app, "/v1/sandboxes/ns/base-game").await;
+    assert_eq!(status, 200, "{second}");
+    assert_eq!(second, first);
+    assert_eq!(mongo.one_calls.lock().unwrap().len(), one_calls_after_miss);
+    assert_eq!(
+        mongo.many_calls.lock().unwrap().len(),
+        many_calls_after_miss
+    );
+    assert_eq!(cache.sets.lock().unwrap().len(), 2);
+
+    let empty_mongo = Arc::new(RecordingMongo::default());
+    let missing_app = sandbox_app(empty_mongo.clone(), cache.clone());
+    let (status, missing_first) = sandbox_get(&missing_app, "/v1/sandboxes/missing/base-game").await;
+    assert_eq!(status, 404, "{missing_first}");
+    assert_eq!(missing_first["code"], "SANDBOX_NOT_FOUND");
+    assert_eq!(empty_mongo.one_calls.lock().unwrap().len(), 2);
+    assert_eq!(
+        cache.sets.lock().unwrap().last().unwrap(),
+        &("v1:sandboxes.exists:sandboxId=\"missing\"".into(), json!(false), 60)
+    );
+
+    let (status, missing_second) = sandbox_get(&missing_app, "/v1/sandboxes/missing/base-game").await;
+    assert_eq!(status, 404, "{missing_second}");
+    assert_eq!(missing_second["code"], "SANDBOX_NOT_FOUND");
+    assert_eq!(empty_mongo.one_calls.lock().unwrap().len(), 2);
+    assert_eq!(cache.sets.lock().unwrap().len(), 3);
+}
+
+#[tokio::test]
+async fn sandbox_base_game_ssr_telemetry_reports_redis_hits_and_misses() {
+    let cache = Arc::new(SandboxCache::default());
+    let telemetry = Arc::new(crate::v1::ssr_telemetry::SsrTelemetry::from_env(
+        &BTreeMap::from([("WEB_SSR_KEY_ID".into(), "key_website".into())]),
+    ));
+    let make_app = |mongo: Arc<RecordingMongo>| {
+        let mut state =
+            crate::middleware::test_support::test_app_state(crate::state::ApiConfig {
+                v1_worker_token: Some("worker".into()),
+                v1_worker_auth_required: true,
+                ..Default::default()
+            });
+        state.ssr_telemetry = telemetry.clone();
+        state.mongo = mongo;
+        state.cache = cache.clone();
+        crate::v1::router(&state).with_state(state)
+    };
+
+    let ok_app = make_app(Arc::new(RecordingMongo {
+        one_docs: HashMap::from([("sandboxes".into(), Some(doc! {"_id": "ns"}))]),
+        many_by_collection: HashMap::from([(
+            "items".into(),
+            vec![doc! {
+                "id": "exe-1",
+                "namespace": "ns",
+                "entitlementType": "EXECUTABLE",
+                "releaseInfo": [{"appId": "app-1"}],
+            }],
+        )]),
+        ..Default::default()
+    }));
+    let empty_app = make_app(Arc::new(RecordingMongo {
+        one_docs: HashMap::from([("sandboxes".into(), Some(doc! {"_id": "empty-ns"}))]),
+        ..Default::default()
+    }));
+    let missing_app = make_app(Arc::new(RecordingMongo::default()));
+
+    for (router, uri, expected_status) in [
+        (&ok_app, "/v1/sandboxes/ns/base-game", 200),
+        (&ok_app, "/v1/sandboxes/ns/base-game", 200),
+        (&ok_app, "/v1/sandboxes/ns/base-game?country=DE", 200),
+        (&empty_app, "/v1/sandboxes/empty-ns/base-game", 404),
+        (&empty_app, "/v1/sandboxes/empty-ns/base-game", 404),
+        (&missing_app, "/v1/sandboxes/missing-ns/base-game", 404),
+        (&missing_app, "/v1/sandboxes/missing-ns/base-game", 404),
+    ] {
+        let resp = router
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(uri)
+                    .header("x-egdata-key-id", "key_website")
+                    .header("x-egdata-key-tier", "enterprise")
+                    .header("x-egdata-worker-token", "worker")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(resp.status().as_u16(), expected_status, "{uri}");
+    }
+
+    let entries = telemetry.recorded_events();
+    assert_eq!(entries.len(), 7);
+    let cache_statuses: Vec<&str> = entries
+        .iter()
+        .map(|e| e["cacheStatus"].as_str().unwrap())
+        .collect();
+    assert_eq!(
+        cache_statuses,
+        ["MISS", "HIT", "MISS", "MISS", "HIT", "MISS", "HIT"]
+    );
+    let status_codes: Vec<u64> = entries
+        .iter()
+        .map(|e| e["statusCode"].as_u64().unwrap())
+        .collect();
+    assert_eq!(status_codes, [200, 200, 200, 404, 404, 404, 404]);
+    for entry in &entries {
+        assert_eq!(entry["operationId"], "getSandboxBaseGame");
+        assert_eq!(entry["limitOutcome"], "ok");
+        assert!(entry["responseBytes"].as_u64().unwrap() > 0);
+    }
 }

@@ -7,6 +7,10 @@ use crate::v1::{
 use egdata_core::v1::{Pagination, ProblemIssue, localization_meta, parse_csv};
 use std::{cmp::Ordering, future::Future};
 
+const SANDBOX_EXISTS_TTL_SECONDS: u64 = 300;
+const SANDBOX_MISSING_TTL_SECONDS: u64 = 60;
+const BASE_GAME_TTL_SECONDS: u64 = 300;
+
 enum Operation {
     List,
     Detail,
@@ -195,14 +199,39 @@ async fn sorted_one(
         .map_err(|_| internal_error())
 }
 async fn require_sandbox(s: &AppState, id: &str) -> Result<(), ProblemError> {
+    let key = v1_cache_key("sandboxes.exists", &BTreeMap::from([("sandboxId", json!(id))]));
+    match v1_cache_get(s.cache.as_ref(), &key).await {
+        Some(Value::Bool(true)) => return Ok(()),
+        Some(Value::Bool(false)) => {
+            return Err(egdata_core::v1::not_found(
+                "SANDBOX_NOT_FOUND",
+                format!("No sandbox matches '{id}'."),
+            ));
+        }
+        _ => {}
+    }
     for collection in ["sandboxes", "namespaces"] {
         if one(s, collection, doc! {"_id":{"$eq":id}}, Some(doc! {"_id":1}))
             .await?
             .is_some()
         {
+            v1_cache_set(
+                s.cache.as_ref(),
+                &key,
+                &json!(true),
+                SANDBOX_EXISTS_TTL_SECONDS,
+            )
+            .await;
             return Ok(());
         }
     }
+    v1_cache_set(
+        s.cache.as_ref(),
+        &key,
+        &json!(false),
+        SANDBOX_MISSING_TTL_SECONDS,
+    )
+    .await;
     Err(egdata_core::v1::not_found(
         "SANDBOX_NOT_FOUND",
         format!("No sandbox matches '{id}'."),
@@ -640,7 +669,7 @@ async fn base_game(s: &AppState, id: &str, q: &BTreeMap<String, String>) -> Payl
         q.get("locale").map(String::as_str),
     )?;
     require_sandbox(s, id).await?;
-    let result=cached(s,"sandboxes.base-game",BTreeMap::from([("sandboxId",json!(id)),("region",json!(rp.region)),("locale",json!(rp.locale))]),60,|| async {
+    let result=cached(s,"sandboxes.base-game",BTreeMap::from([("sandboxId",json!(id)),("region",json!(rp.region)),("locale",json!(rp.locale))]),BASE_GAME_TTL_SECONDS,|| async {
         let regular=sorted_one(s,"offers",doc!{"namespace":{"$eq":id},"offerType":"BASE_GAME","prePurchase":{"$ne":true},"isCodeRedemptionOnly":false},doc!{"creationDate":1,"id":1}).await?;
         let selected = if regular.is_some() {
             regular

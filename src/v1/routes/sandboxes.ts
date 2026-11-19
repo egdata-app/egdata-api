@@ -19,7 +19,7 @@ import {
   localizeOffers,
 } from "../../utils/offer-localization.js";
 import { orderOffersObject } from "../../utils/order-offers-object.js";
-import { cached, cachedTotal, v1CacheKey } from "../cache.js";
+import { cached, cachedTotal, cacheGet, cacheSet, v1CacheKey } from "../cache.js";
 import { decodeCursor, encodeCursor } from "../cursor.js";
 import { notFound, ProblemError, problemResponse } from "../errors.js";
 import {
@@ -55,6 +55,7 @@ const app = new Hono<{ Variables: V1Variables }>();
 
 const LIST_TTL_SECONDS = 60;
 const DETAIL_TTL_SECONDS = 300;
+const SANDBOX_MISSING_TTL_SECONDS = 60;
 const ASSET_TTL_SECONDS = 300;
 const CHANGELOG_CONTEXT_TTL_SECONDS = 300;
 const CHANGELOG_CONTEXT_LIMIT = 100;
@@ -135,18 +136,29 @@ async function findSandboxDocument(sandboxId: string): Promise<{
 }
 
 async function requireSandbox(sandboxId: string): Promise<void> {
+  const cacheKey = v1CacheKey("sandboxes.exists", { sandboxId });
+  const cachedExists = await cacheGet<boolean>(cacheKey);
+  if (cachedExists === true) return;
+  if (cachedExists === false) {
+    throw notFound("SANDBOX_NOT_FOUND", `No sandbox matches '${sandboxId}'.`);
+  }
   const sandbox = await Sandbox.findOne(
     { _id: { $eq: sandboxId } },
     { _id: 1 },
   ).lean();
-  if (sandbox) return;
+  if (sandbox) {
+    await cacheSet(cacheKey, true, DETAIL_TTL_SECONDS);
+    return;
+  }
   const namespace = await Namespace.findOne(
     { _id: { $eq: sandboxId } },
     { _id: 1 },
   ).lean();
   if (!namespace) {
+    await cacheSet(cacheKey, false, SANDBOX_MISSING_TTL_SECONDS);
     throw notFound("SANDBOX_NOT_FOUND", `No sandbox matches '${sandboxId}'.`);
   }
+  await cacheSet(cacheKey, true, DETAIL_TTL_SECONDS);
 }
 
 /** Merged asset row sort tuple, ordered by `updatedAt` descending. */
@@ -675,7 +687,7 @@ app.get("/sandboxes/:sandboxId/base-game", async (c) => {
 
   const result = await cached<BaseGameResult>(
     v1CacheKey("sandboxes.base-game", { sandboxId, region, locale }),
-    LIST_TTL_SECONDS,
+    DETAIL_TTL_SECONDS,
     async (): Promise<BaseGameResult> => {
       const baseGame =
         (await Offer.findOne(
