@@ -1,0 +1,17 @@
+.git/
+node_modules/
+rust/target/
+rust/oracles/
+rust/bench/
+rust/scripts/
+rust/rust-toolchain.toml
+rust/crates/*/tests/
+apps/
+dashboard/
+changes/
+tests/
+docs/
+dist/
+coverage*/
+.env
+.env.*

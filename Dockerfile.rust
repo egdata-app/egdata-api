@@ -1,21 +1,31 @@
 # syntax=docker/dockerfile:1
 # check=skip=SecretsUsedInArgOrEnv
-FROM rust:1.95.0-alpine AS builder
+FROM rust:1.95.0-alpine AS chef
 RUN apk add --no-cache build-base cmake clang lld perl tzdata pkgconf openssl-dev openssl-libs-static
+COPY --from=lukemathwalker/cargo-chef:0.1.78-rust-alpine /usr/local/cargo/bin/cargo-chef /usr/local/cargo/bin/cargo-chef
+WORKDIR /app/rust
+ENV OPENSSL_STATIC=1 \
+    RUSTUP_TOOLCHAIN=1.95.0
+
+FROM chef AS planner
+COPY rust/ .
+RUN cargo chef prepare --recipe-path recipe.json
+
+FROM chef AS builder
+COPY --from=planner /app/rust/recipe.json recipe.json
+RUN target="$(rustc -vV | sed -n 's/^host: //p')" && \
+    RUSTFLAGS="-C target-feature=+crt-static -C link-arg=-fuse-ld=lld" \
+    cargo chef cook --release --locked --target "$target" --recipe-path recipe.json -p egdata-api --bin egdata-api
+
 WORKDIR /app
 COPY rust/ rust/
 COPY openapi/ openapi/
 COPY src/static/ src/static/
 COPY src/graphql/typedefs.ts src/graphql/typedefs.ts
 WORKDIR /app/rust
-ENV OPENSSL_STATIC=1 \
-    RUSTUP_TOOLCHAIN=1.95.0
-RUN --mount=type=cache,target=/usr/local/cargo/registry \
-    --mount=type=cache,target=/usr/local/cargo/git \
-    --mount=type=cache,target=/app/rust/target \
-    target="$(rustc -vV | sed -n 's/^host: //p')" && \
-    RUSTFLAGS="-C target-feature=+crt-static -C link-arg=-fuse-ld=lld" cargo build --release --locked \
-      --target "$target" -p egdata-api --bin egdata-api && \
+RUN target="$(rustc -vV | sed -n 's/^host: //p')" && \
+    RUSTFLAGS="-C target-feature=+crt-static -C link-arg=-fuse-ld=lld" \
+    cargo build --release --locked --target "$target" -p egdata-api --bin egdata-api && \
     mkdir /artifacts && cp "target/$target/release/egdata-api" /artifacts/ && \
     ! readelf -l /artifacts/egdata-api | grep -q 'Requesting program interpreter'
 
