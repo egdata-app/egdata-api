@@ -34,11 +34,11 @@ steps:
           echo "Skipping Dokploy webhook (_DOKPLOY_WEBHOOK_SECRET is empty)."
           exit 0
         fi
-        WEBHOOK_URL="$(gcloud secrets versions access latest --secret="${_DOKPLOY_WEBHOOK_SECRET}")"
+        WEBHOOK_URL="$(gcloud secrets versions access latest --secret="${_DOKPLOY_WEBHOOK_SECRET}" | tr -d '\r\n')"
         curl -fsSL -X POST "$${WEBHOOK_URL}"
         echo "Triggered Dokploy deploy webhook."
 
 options:
-  machineType: E2_HIGHCPU_8
+  machineType: E2_HIGHCPU_32
   logging: CLOUD_LOGGING_ONLY
 timeout: 1200s

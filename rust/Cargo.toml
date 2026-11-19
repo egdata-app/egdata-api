@@ -78,4 +78,6 @@ uuid = { version = "1", features = ["v4"] }
 gif = { git = "https://github.com/image-rs/image-gif", rev = "a5f89ddc2b29424334244c97456b4a26e208aa7d" }
 
 [profile.release]
+opt-level = 2
+codegen-units = 32
 strip = "symbols"
